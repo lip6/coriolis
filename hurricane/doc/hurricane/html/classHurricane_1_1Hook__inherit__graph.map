@@ -1,6 +1,7 @@
 <map id="Hurricane::Hook" name="Hurricane::Hook">
-<area shape="rect" id="node2" href="$classHurricane_1_1Component_1_1BodyHook.html" title="Hurricane::Component\l::BodyHook" alt="" coords="181,5,349,46"/>
-<area shape="rect" id="node3" href="$classHurricane_1_1Contact_1_1AnchorHook.html" title="Hurricane::Contact\l::AnchorHook" alt="" coords="194,70,337,111"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1Segment_1_1SourceHook.html" title="Hurricane::Segment\l::SourceHook" alt="" coords="190,135,341,177"/>
-<area shape="rect" id="node5" href="$classHurricane_1_1Segment_1_1TargetHook.html" title="Hurricane::Segment\l::TargetHook" alt="" coords="190,201,341,242"/>
+<area shape="rect" id="node1" title="Hook description (API)" alt="" coords="5,111,123,138"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1Component_1_1BodyHook.html" title=" " alt="" coords="171,5,324,47"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1Contact_1_1AnchorHook.html" title=" " alt="" coords="181,71,313,112"/>
+<area shape="rect" id="node4" href="$classHurricane_1_1Segment_1_1SourceHook.html" title=" " alt="" coords="178,136,317,177"/>
+<area shape="rect" id="node5" href="$classHurricane_1_1Segment_1_1TargetHook.html" title=" " alt="" coords="178,201,317,243"/>
 </map>

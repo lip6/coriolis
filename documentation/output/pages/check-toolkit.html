@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable Version of this Document Alliance Check Toolkit. Contents Printable Version of this Document Toolkit Purpose Release Notes Toolkit Contents Toolkit Layout Benchmark Makefiles Setting Up the ...">
+        <meta name="description" content="Printable Version of this Document Alliance Check Toolkit. Contents Printable Version of this Document Toolkit Purpose Release Notes Toolkit Contents Toolkit Layout Benchmark Makefiles Setting Up...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -117,7 +117,7 @@
 <h2><a class="toc-backref" href="#id3">Printable Version of this Document</a></h2>
 <p><a class="reference external" href="../pdfs/CheckToolkit.pdf">Alliance Check Toolkit</a>.</p>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#printable-version-of-this-document" id="id3">Printable Version of this Document</a></li>
 <li><a class="reference internal" href="#toolkit-purpose" id="id4">Toolkit Purpose</a></li>
@@ -634,7 +634,7 @@ technology.</li>
 <h3><span class="sc">Coriolis</span> and Clock Tree Generation</h3>
 <p>When <span class="sc">Coriolis</span> is used, it create a clock tree which modificate the original
 netlist. The new netlist, with a clock tree, has a postfix of <tt class="docutils literal">_clocked</tt>.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Trans-hierarchical Clock-Tree.</strong> As <span class="sc">Coriolis</span> do not flatten the
 designs it creates, not only the top-level netlist is modificated. All the
@@ -706,7 +706,7 @@ check the router. All runs are saved in a <tt class="docutils literal">./runs</t
 </div>
 <div class="section" id="libraries-makefiles">
 <h2><a class="toc-backref" href="#id11">Libraries Makefiles</a></h2>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>For those part to work, you need to get <tt class="docutils literal">hitas</tt> &amp; <tt class="docutils literal">yagle</tt>:</p>
 <blockquote class="last">
@@ -815,7 +815,7 @@ cell (sff2_x4) {
 </pre>
 </li>
 </ol>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The tristate cells <strong>ts_</strong> and <strong>nts_</strong> are not included in the <tt class="docutils literal">.lib</tt>.</p>
 </div>
@@ -857,7 +857,7 @@ file generator, <tt class="docutils literal">Makefile.block_rf2</tt>:</p>
            ./<span class="n">check</span>/<span class="n">block_rf</span>2<span class="n">_p_b_</span>16<span class="n">_p_w_</span>32.<span class="n">ok</span> \
            ./<span class="n">check</span>/<span class="n">block_rf</span>2<span class="n">_p_b_</span>32<span class="n">_p_w_</span>32.<span class="n">ok</span>
 </pre></div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">In the <tt class="docutils literal"><span class="pre">check-gen</span></tt> rule, the name of the block <strong>must</strong> match the <em>dot</em>
 extension of the <span class="cb">Makefile</span>, here: <tt class="docutils literal">block_rf2</tt>.</p>
@@ -902,7 +902,7 @@ in standalone mode. This script is quite straigthforward, what changes between
 generators is the command line options and the <tt class="docutils literal">stratus.buildModel()</tt> call.</p>
 <p>After the generator call, we get a netlist and placement, but it is not finished
 until it is routed with the <span class="sc">Coriolis</span> router.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Currently all macro-block generators are part of the <span class="sc">Stratus</span> netlist capture
 language tool from <span class="sc">Coriolis</span>.</p>
@@ -930,7 +930,7 @@ scaling (i.e. multiply by two) and do whatever adjustments we need.
 So when we have an adjustment to do on a specific segment, say slihgtly shift
 a <tt class="docutils literal">NDIF</tt>, the coordinates must be expressed as in <tt class="docutils literal">SxLib</tt> (once more: <em>before</em>
 scaling).</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">There is a safety in <tt class="docutils literal">./check/scaleCell.py</tt>, it will not run until the
 target library has not been emptied of it's cells.</p>
@@ -987,7 +987,7 @@ see the proper layout.</li>
 <li>When you are satisfied with the new layout of the pads, you can copy
 them back in the official pad cell library.</li>
 </ol>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>How Coriolis Load Cells.</strong>
 Unlike in <span class="sc">Alliance</span>, <span class="sc">Coriolis</span> maintain a much tighter relationship
@@ -1042,7 +1042,7 @@ cells.</td>
 <p>The LEF/DEF file exported or imported by Coriolis are <em>not</em> true physical
 files. They are pseudo-real, in the sense that all the dimensions are
 directly taken from the symbolic with the simple rule <tt class="docutils literal">1 lambda = 1 micron</tt>.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>LEF/DEF files:</strong> Coriolis is able to import/export in those
 formats only if it has been compiled against the <span class="sc">Si2</span> relevant libraries

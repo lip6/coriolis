@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Slice" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Slice</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Slice_1a212d880f5beeba1a4cef5ae7df3a0d3d" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell* Hurricane::Slice::_cell</definition>
+        <argsstring></argsstring>
+        <name>_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="44" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Slice_1a94293db11295d4579cd24298b8cf78d1" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>const Layer* Hurricane::Slice::_layer</definition>
+        <argsstring></argsstring>
+        <name>_layer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="45" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Slice_1a398f84b0f83d92ce4f35a375157f0b16" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1QuadTree" kindref="compound">QuadTree</ref></type>
+        <definition>QuadTree Hurricane::Slice::_quadTree</definition>
+        <argsstring></argsstring>
+        <name>_quadTree</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="46" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Slice_1a6aa3c60c0fbe5fcaf6468835d417aca3" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> *</type>
+        <definition>Slice* Hurricane::Slice::_nextOfCellSliceMap</definition>
+        <argsstring></argsstring>
+        <name>_nextOfCellSliceMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="47" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a169b974aa1aa903e67f714eaa9669dc3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Slice::Slice</definition>
+        <argsstring>(Cell *cell, const Layer *layer)</argsstring>
+        <name>Slice</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="52" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a7f7d784a1efb587013445f329b46da8c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Slice::~Slice</definition>
+        <argsstring>()</argsstring>
+        <name>~Slice</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="59" column="16"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a848e45edbedbaa86682ba23ea1b36f07" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Slice::Slice</definition>
+        <argsstring>(const Slice &amp;slice)</argsstring>
+        <name>Slice</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> &amp;</type>
+          <declname>slice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="54" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a81528d3a60b90465d180a581d03cfafb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> &amp;</type>
+        <definition>Slice&amp; Hurricane::Slice::operator=</definition>
+        <argsstring>(const Slice &amp;slice)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> &amp;</type>
+          <declname>slice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="64" column="20"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Slice_1ae7a75f373a3d4e8878007c38688000f8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell * Hurricane::Slice::getCell</definition>
+        <argsstring>() const</argsstring>
+        <name>getCell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the cell owning the slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="69" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="69" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a76c011cd461e588474a22fd0026e1f8f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Slice::getLayer</definition>
+        <argsstring>() const</argsstring>
+        <name>getLayer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the layer associated to the slice : all components lying in a cell are perforce located on that layer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="70" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1aa1a139b188879c37a8878a2353401d65" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box Hurricane::Slice::getBoundingBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getBoundingBox</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the bounding box of the slice, that is the smallest enclosing rectangle of all its components. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="71" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="71" bodyend="71"/>
+        <references refid="classHurricane_1_1QuadTree_1a80806e2d7e99fee07d0335697ed9b82b">Hurricane::QuadTree::getBoundingBox</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1abc257f5b91c01c01a618787fd73db97b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a4456a34f3bc6766d471c3064ace19759" kindref="member">Gos</ref></type>
+        <definition>const Gos Hurricane::Slice::getGos</definition>
+        <argsstring>() const</argsstring>
+        <name>getGos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of graphic objects lying on the slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="72" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="72" bodyend="72"/>
+        <references refid="classHurricane_1_1QuadTree_1a571dd774ee953dfebb3d4162f98c679c">Hurricane::QuadTree::getGos</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a9d689a54e07bc5ffb335f92202c2e5f3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a4456a34f3bc6766d471c3064ace19759" kindref="member">Gos</ref></type>
+        <definition>Gos Hurricane::Slice::getGosUnder</definition>
+        <argsstring>(const Box &amp;area, DbU::Unit threshold=0) const</argsstring>
+        <name>getGosUnder</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>area</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>threshold</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="73" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1afe7c766d33e16461c3667af88e64773e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a7d26d99aeb5dd6d70d51bd35d2473e72" kindref="member">Components</ref></type>
+        <definition>const Components Hurricane::Slice::getComponents</definition>
+        <argsstring>() const</argsstring>
+        <name>getComponents</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of components lying on the slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="74" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1ada51a63690db8912eb58f1f33aa9f62c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a7d26d99aeb5dd6d70d51bd35d2473e72" kindref="member">Components</ref></type>
+        <definition>const Components Hurricane::Slice::getComponentsUnder</definition>
+        <argsstring>(const Box &amp;area, DbU::Unit threshold=0) const</argsstring>
+        <name>getComponentsUnder</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>area</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>threshold</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of components of the slice whose bounding box intersects the rectangular region defined by <computeroutput>&lt;area&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="75" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a20c8ca60fc1f6a6f766d138221f734c3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Markers</type>
+        <definition>Markers Hurricane::Slice::getMarkers</definition>
+        <argsstring>() const</argsstring>
+        <name>getMarkers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="76" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a0fafba3734a4454cc50960d51b5d99a8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Markers</type>
+        <definition>Markers Hurricane::Slice::getMarkersUnder</definition>
+        <argsstring>(const Box &amp;area) const</argsstring>
+        <name>getMarkersUnder</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>area</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="77" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1aa113432adf31e98fb5c0d90b94c764c4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Slice::isEmpty</definition>
+        <argsstring>() const</argsstring>
+        <name>isEmpty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="82" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a9ba25f253f7dd4875f611782f57271de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Slice::_destroy</definition>
+        <argsstring>()</argsstring>
+        <name>_destroy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="89" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1aa33171674ec043d9e127976346b40c9a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Slice::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="91" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a730a2357391e99f0175e31d5606ebf5f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Slice::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="92" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a64124c43b0e936aa90eb8867a3b5f06b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Slice::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="93" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a3835bf4b1ff4196183937285e57042a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1QuadTree" kindref="compound">QuadTree</ref> *</type>
+        <definition>QuadTree* Hurricane::Slice::_getQuadTree</definition>
+        <argsstring>()</argsstring>
+        <name>_getQuadTree</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="94" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a371e7baf7f1154e6f9d2b7a984fca2b3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> *</type>
+        <definition>Slice* Hurricane::Slice::_getNextOfCellSliceMap</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfCellSliceMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="95" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a739ee3019dcb911fea3e31010d27c51b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Slice::_setNextOfCellSliceMap</definition>
+        <argsstring>(Slice *slice)</argsstring>
+        <name>_setNextOfCellSliceMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> *</type>
+          <declname>slice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="97" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="97" bodyend="97"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Slice_1a6db492223cef0a5425ad669e0cc9d3dd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> *</type>
+        <definition>static Slice* Hurricane::Slice::_create</definition>
+        <argsstring>(Cell *cell, const Layer *layer)</argsstring>
+        <name>_create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="87" column="26"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Slice" kindref="compound">Slice</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Slice_1secSliceIntro">
+<title>Introduction</title>
+<para>The slices are objects which split the layout description of a cell into horizontal slices grouping all objects located on a given layer and storing them into a fast geometrical access structure implemented by a quadtree.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Slice_1secSliceConstructionAndDestruction">
+<title>Construction and destruction</title>
+<para>The slices are fully managed by the cells : they are neither created nor destroyed by the application programmer.</para>
+<para>Components are inserted in a slice (at their creation) and removed from their slice (at their deletion).</para>
+<para>Empty slices being automatically deleted, you must never store pointers to them.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Slice_1secSliceExample">
+<title>Example</title>
+<para>The following example shows how to visit all cell components lying on a given basic layer and whose bounding box intersects some rectangular area. <programlisting><codeline><highlight class="normal">Cell*<sp/>cell<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>the<sp/>cell</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">BasicLayer*<sp/>basicLayer<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>the<sp/>basic<sp/>layer</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">Box<sp/>area<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>define<sp/>the<sp/>rectangular<sp/>area</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">forEach(Slice*,<sp/>islice,<sp/>cell-&gt;getSlices())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>if<sp/>(islice-&gt;getLayer()-&gt;contains(basicLayer))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>forEach(Component*,<sp/>icomponent,<sp/>slice-&gt;getComponentsUnder(area))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>here<sp/>we<sp/>visit<sp/>all<sp/>requested<sp/>components</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Slice</label>
+        <link refid="classHurricane_1_1Slice"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfCellSliceMap</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_layer</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="4">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfTechnologyLayerMap</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="10">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="11" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" line="38" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Slice.h" bodystart="38" bodyend="99"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Slice_1a212d880f5beeba1a4cef5ae7df3a0d3d" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_cell</name></member>
+      <member refid="classHurricane_1_1Slice_1a6db492223cef0a5425ad669e0cc9d3dd" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_create</name></member>
+      <member refid="classHurricane_1_1Slice_1a9ba25f253f7dd4875f611782f57271de" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_destroy</name></member>
+      <member refid="classHurricane_1_1Slice_1a371e7baf7f1154e6f9d2b7a984fca2b3" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_getNextOfCellSliceMap</name></member>
+      <member refid="classHurricane_1_1Slice_1a3835bf4b1ff4196183937285e57042a4" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_getQuadTree</name></member>
+      <member refid="classHurricane_1_1Slice_1a64124c43b0e936aa90eb8867a3b5f06b" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Slice_1a730a2357391e99f0175e31d5606ebf5f" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Slice_1aa33171674ec043d9e127976346b40c9a" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Slice_1a94293db11295d4579cd24298b8cf78d1" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_layer</name></member>
+      <member refid="classHurricane_1_1Slice_1a6aa3c60c0fbe5fcaf6468835d417aca3" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_nextOfCellSliceMap</name></member>
+      <member refid="classHurricane_1_1Slice_1a398f84b0f83d92ce4f35a375157f0b16" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_quadTree</name></member>
+      <member refid="classHurricane_1_1Slice_1a739ee3019dcb911fea3e31010d27c51b" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>_setNextOfCellSliceMap</name></member>
+      <member refid="classHurricane_1_1Slice_1aa1a139b188879c37a8878a2353401d65" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Slice_1ae7a75f373a3d4e8878007c38688000f8" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Slice_1afe7c766d33e16461c3667af88e64773e" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getComponents</name></member>
+      <member refid="classHurricane_1_1Slice_1ada51a63690db8912eb58f1f33aa9f62c" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getComponentsUnder</name></member>
+      <member refid="classHurricane_1_1Slice_1abc257f5b91c01c01a618787fd73db97b" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getGos</name></member>
+      <member refid="classHurricane_1_1Slice_1a9d689a54e07bc5ffb335f92202c2e5f3" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getGosUnder</name></member>
+      <member refid="classHurricane_1_1Slice_1a76c011cd461e588474a22fd0026e1f8f" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getLayer</name></member>
+      <member refid="classHurricane_1_1Slice_1a20c8ca60fc1f6a6f766d138221f734c3" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getMarkers</name></member>
+      <member refid="classHurricane_1_1Slice_1a0fafba3734a4454cc50960d51b5d99a8" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>getMarkersUnder</name></member>
+      <member refid="classHurricane_1_1Slice_1aa113432adf31e98fb5c0d90b94c764c4" prot="public" virt="non-virtual"><scope>Hurricane::Slice</scope><name>isEmpty</name></member>
+      <member refid="classHurricane_1_1Slice_1a81528d3a60b90465d180a581d03cfafb" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Slice_1a169b974aa1aa903e67f714eaa9669dc3" prot="protected" virt="non-virtual"><scope>Hurricane::Slice</scope><name>Slice</name></member>
+      <member refid="classHurricane_1_1Slice_1a848e45edbedbaa86682ba23ea1b36f07" prot="private" virt="non-virtual"><scope>Hurricane::Slice</scope><name>Slice</name></member>
+      <member refid="classHurricane_1_1Slice_1a7f7d784a1efb587013445f329b46da8c" prot="protected" virt="non-virtual"><scope>Hurricane::Slice</scope><name>~Slice</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

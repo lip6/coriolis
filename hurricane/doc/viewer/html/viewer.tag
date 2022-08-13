@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="class">
     <name>Hurricane::CellImage</name>
     <filename>classHurricane_1_1CellImage.html</filename>
@@ -57,9 +57,9 @@
       <anchor>a90ed9b8a07f4302cbeecf52a95ef5578</anchor>
       <arglist>(unsigned int flags=0)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1CellImage" title="Basic Usage">secImageBasicUsage</docanchor>
-    <docanchor file="classHurricane_1_1CellImage" title="Configuration Variables">secImageConfiguration</docanchor>
-    <docanchor file="classHurricane_1_1CellImage" title="Implementation details">secImageImplDetails</docanchor>
+    <docanchor file="classHurricane_1_1CellImage.html" title="Basic Usage">secImageBasicUsage</docanchor>
+    <docanchor file="classHurricane_1_1CellImage.html" title="Configuration Variables">secImageConfiguration</docanchor>
+    <docanchor file="classHurricane_1_1CellImage.html" title="Implementation details">secImageImplDetails</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::CellPrinter</name>
@@ -99,9 +99,9 @@
       <anchor>ac595a0549c1086ab92a3bc56609246ac</anchor>
       <arglist>(QPrinter *, bool imageOnly=false)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1CellPrinter" title="Basic Usage">secPrinterBasicUsage</docanchor>
-    <docanchor file="classHurricane_1_1CellPrinter" title="Configuration Variables">secPrinterConfiguration</docanchor>
-    <docanchor file="classHurricane_1_1CellPrinter" title="Implementation details">secPrinterImplDetails</docanchor>
+    <docanchor file="classHurricane_1_1CellPrinter.html" title="Basic Usage">secPrinterBasicUsage</docanchor>
+    <docanchor file="classHurricane_1_1CellPrinter.html" title="Configuration Variables">secPrinterConfiguration</docanchor>
+    <docanchor file="classHurricane_1_1CellPrinter.html" title="Implementation details">secPrinterImplDetails</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::CellViewer</name>
@@ -559,13 +559,13 @@
       <anchor>a79914005284bdc8426c90f3440714bb4</anchor>
       <arglist>(Occurrence &amp;)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1InspectorWidget" title="Inspector Memory Management">secInspectorMM</docanchor>
+    <docanchor file="classHurricane_1_1InspectorWidget.html" title="Inspector Memory Management">secInspectorMM</docanchor>
   </compound>
   <compound kind="group">
     <name>graphicsGroup</name>
     <title>Graphics</title>
     <filename>group__graphicsGroup.html</filename>
     <class kind="class">Hurricane::Graphics</class>
-    <docanchor file="group__graphicsGroup" title="General Structure of the Graphics Object">secGraphicsStructure</docanchor>
+    <docanchor file="group__graphicsGroup.html" title="General Structure of the Graphics Object">secGraphicsStructure</docanchor>
   </compound>
 </tagfile>

@@ -60,6 +60,8 @@
 #include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyNetRoutingState.h"
 #include "hurricane/isobar/PyNetRoutingProperty.h"
+#include "hurricane/isobar/PyPythonAttributes.h"
+#include "hurricane/isobar/PythonAttributes.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyHookCollection.h"
@@ -476,6 +478,14 @@ extern "C" {
   // |               "PyHurricane" Module Methods                  |
   // +-------------------------------------------------------------+
 
+
+  void showAtExit ()
+  {
+    cout.flush();
+    cerr << "Py_AtExit() called."  << endl;
+  }
+
+
   static PyObject* PyCommons_trace ( PyObject* self, PyObject* args )
   {
     HTRY
@@ -541,6 +551,8 @@ extern "C" {
     PyTechnology_LinkPyType ();
     PyLibrary_LinkPyType ();
     PyEntity_LinkPyType ();
+    PyTypeEntity.tp_getattro = PyEntity_getattro;
+    PyTypeEntity.tp_setattro = PyEntity_setattro;
     PyLayer_LinkPyType ();
     PyLayerMask_LinkPyType ();
     PyBasicLayer_LinkPyType ();
@@ -562,6 +574,7 @@ extern "C" {
     PyNetExternalComponents_LinkPyType ();
     PyNetRoutingState_LinkPyType ();
     PyNetRoutingExtension_LinkPyType ();
+    PyPythonAttributes_LinkPyType ();
     PyCellCollection_LinkPyType ();
     PyPinPlacementStatus_LinkPyType ();
     PyPinDirection_LinkPyType ();
@@ -602,6 +615,8 @@ extern "C" {
     PyPhysicalRule_LinkPyType();
     PyTwoLayersPhysicalRule_LinkPyType();
 
+    PYTYPE_READY( AttributesHolder              )
+    PYTYPE_READY( DebugSession                  )
     PYTYPE_READY( DebugSession                  )
     PYTYPE_READY( UpdateSession                 )
     PYTYPE_READY( DbU                           )
@@ -659,6 +674,7 @@ extern "C" {
     PYTYPE_READY( ReferenceCollectionLocator    )
     PYTYPE_READY( HyperNet                      )
     PYTYPE_READY( NetExternalComponents         )
+    PYTYPE_READY( PythonAttributes              )
     PYTYPE_READY( Breakpoint                    )
     PYTYPE_READY( Query                         )
     PYTYPE_READY( QueryMask                     )
@@ -821,6 +837,8 @@ extern "C" {
     PyModule_AddObject ( module, "NetRoutingState"      , (PyObject*)&PyTypeNetRoutingState );
     Py_INCREF ( &PyTypeNetRoutingExtension );
     PyModule_AddObject ( module, "NetRoutingExtension"  , (PyObject*)&PyTypeNetRoutingExtension );
+    Py_INCREF ( &PyTypePythonAttributes );
+    PyModule_AddObject ( module, "PythonAttributes"     , (PyObject*)&PyTypePythonAttributes );
     Py_INCREF ( &PyTypeDebugSession );
     PyModule_AddObject ( module, "DebugSession"         , (PyObject*)&PyTypeDebugSession );
     Py_INCREF ( &PyTypeUpdateSession );
@@ -885,6 +903,8 @@ extern "C" {
     PyCell_postModuleInit();
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
+
+    Py_AtExit( showAtExit );
 
     cdebug_log(20,0) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
 

@@ -1,4 +1,4 @@
-\hypertarget{clasststream}{}\section{tstream Class Reference}
+\hypertarget{clasststream}{}\doxysection{tstream Class Reference}
 \label{clasststream}\index{tstream@{tstream}}
 
 
@@ -7,9 +7,9 @@ Trace \& indentation enabled stream.
 
 
 
-Inherits ostream.
+Inherits std\+::ostream.
 
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 int \mbox{\hyperlink{clasststream_a86cfc3fc7bfa7d0064d27dea74d6888d}{get\+Min\+Level}} () const
@@ -34,38 +34,38 @@ bool \mbox{\hyperlink{clasststream_a3dab6aeefd316ad326a29cec3c2c574b}{enabled}} 
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 Trace \& indentation enabled stream. 
 
 Traced {\itshape stream} are a derived class of std\+::ostream that provides integrated indentation and selective printing according to a verbosity level. Only messages comprised between {\ttfamily min\+Level} and {\ttfamily max\+Level} are to be printed\+: \[ minLevel \leq level < maxLevel \]
 
 The cdebug instance of this class, in conjunction with \mbox{\hyperlink{classHurricane_1_1DebugSession}{Hurricane\+::\+Debug\+Session}} is provided to create tailored program traces. cdebug is a global variable which is put in the root namespace (not the \mbox{\hyperlink{namespaceHurricane}{Hurricane}} namespace). 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{clasststream_a86cfc3fc7bfa7d0064d27dea74d6888d}\label{clasststream_a86cfc3fc7bfa7d0064d27dea74d6888d}} 
-\index{tstream@{tstream}!get\+Min\+Level@{get\+Min\+Level}}
-\index{get\+Min\+Level@{get\+Min\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{get\+Min\+Level()}{getMinLevel()}}
+\index{tstream@{tstream}!getMinLevel@{getMinLevel}}
+\index{getMinLevel@{getMinLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{getMinLevel()}{getMinLevel()}}
 {\footnotesize\ttfamily int tstream\+::get\+Min\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The current mimimum level for the messages to be printeds (equal or superior). 
+{\bfseries{Returns\+:}} The current mimimum level for the messages to be printeds (equal or superior). 
 
 Referenced by Hurricane\+::\+Debug\+Session\+::open().
 
 \mbox{\Hypertarget{clasststream_abb7ecc2e0ddeab5442d52acb2ea5fd64}\label{clasststream_abb7ecc2e0ddeab5442d52acb2ea5fd64}} 
-\index{tstream@{tstream}!get\+Max\+Level@{get\+Max\+Level}}
-\index{get\+Max\+Level@{get\+Max\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{get\+Max\+Level()}{getMaxLevel()}}
+\index{tstream@{tstream}!getMaxLevel@{getMaxLevel}}
+\index{getMaxLevel@{getMaxLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{getMaxLevel()}{getMaxLevel()}}
 {\footnotesize\ttfamily int tstream\+::get\+Max\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The current maximum level for the messages to be printeds (strictly inferior). 
+{\bfseries{Returns\+:}} The current maximum level for the messages to be printeds (strictly inferior). 
 
 Referenced by Hurricane\+::\+Debug\+Session\+::open().
 
 \mbox{\Hypertarget{clasststream_a0dad8cbc8fc5611b788f55c75a20a88e}\label{clasststream_a0dad8cbc8fc5611b788f55c75a20a88e}} 
-\index{tstream@{tstream}!set\+Min\+Level@{set\+Min\+Level}}
-\index{set\+Min\+Level@{set\+Min\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{set\+Min\+Level()}{setMinLevel()}}
+\index{tstream@{tstream}!setMinLevel@{setMinLevel}}
+\index{setMinLevel@{setMinLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{setMinLevel()}{setMinLevel()}}
 {\footnotesize\ttfamily int tstream\+::set\+Min\+Level (\begin{DoxyParamCaption}\item[{int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Sets the minimum level, returns the {\itshape previous} value of the level. 
@@ -73,9 +73,9 @@ Sets the minimum level, returns the {\itshape previous} value of the level.
 Referenced by Hurricane\+::\+Debug\+Session\+::close(), and Hurricane\+::\+Debug\+Session\+::open().
 
 \mbox{\Hypertarget{clasststream_a75cb778234d7b49d9e89c73e6efcd132}\label{clasststream_a75cb778234d7b49d9e89c73e6efcd132}} 
-\index{tstream@{tstream}!set\+Max\+Level@{set\+Max\+Level}}
-\index{set\+Max\+Level@{set\+Max\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{set\+Max\+Level()}{setMaxLevel()}}
+\index{tstream@{tstream}!setMaxLevel@{setMaxLevel}}
+\index{setMaxLevel@{setMaxLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{setMaxLevel()}{setMaxLevel()}}
 {\footnotesize\ttfamily int tstream\+::set\+Max\+Level (\begin{DoxyParamCaption}\item[{int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Sets the maximum level, returns the {\itshape previous} value of the level. 
@@ -83,15 +83,15 @@ Sets the maximum level, returns the {\itshape previous} value of the level.
 Referenced by Hurricane\+::\+Debug\+Session\+::close(), and Hurricane\+::\+Debug\+Session\+::open().
 
 \mbox{\Hypertarget{clasststream_a01c90e5cc80064cae20d3a4bc3320683}\label{clasststream_a01c90e5cc80064cae20d3a4bc3320683}} 
-\index{tstream@{tstream}!get\+Level@{get\+Level}}
-\index{get\+Level@{get\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{get\+Level()}{getLevel()}}
+\index{tstream@{tstream}!getLevel@{getLevel}}
+\index{getLevel@{getLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{getLevel()}{getLevel()}}
 {\footnotesize\ttfamily int tstream\+::get\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The level of the latest message that was submitted to the stream. It is automatically set up after any call to \mbox{\hyperlink{clasststream_a1fe9745dc492e891a6e765e34fa082c3}{tstream\+::log()}} or \mbox{\hyperlink{clasststream_a5aa7a21d7b95f1bf40e68b5b13118fd0}{tstream\+::tabw()}}. \mbox{\Hypertarget{clasststream_a37fa7894d7ae83674ee7cb5a69a4c4a5}\label{clasststream_a37fa7894d7ae83674ee7cb5a69a4c4a5}} 
-\index{tstream@{tstream}!set\+Level@{set\+Level}}
-\index{set\+Level@{set\+Level}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{set\+Level()}{setLevel()}}
+{\bfseries{Returns\+:}} The level of the latest message that was submitted to the stream. It is automatically set up after any call to \mbox{\hyperlink{clasststream_a1fe9745dc492e891a6e765e34fa082c3}{tstream\+::log()}} or \mbox{\hyperlink{clasststream_a5aa7a21d7b95f1bf40e68b5b13118fd0}{tstream\+::tabw()}}. \mbox{\Hypertarget{clasststream_a37fa7894d7ae83674ee7cb5a69a4c4a5}\label{clasststream_a37fa7894d7ae83674ee7cb5a69a4c4a5}} 
+\index{tstream@{tstream}!setLevel@{setLevel}}
+\index{setLevel@{setLevel}!tstream@{tstream}}
+\doxysubsubsection{\texorpdfstring{setLevel()}{setLevel()}}
 {\footnotesize\ttfamily int tstream\+::set\+Level (\begin{DoxyParamCaption}\item[{int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Sets the current level, returns the {\itshape previous} value of the level. This is the level of the latest message that was submitted to the stream. 
@@ -101,19 +101,19 @@ Referenced by log(), and tabw().
 \mbox{\Hypertarget{clasststream_a01303d5c2c5cd83d06985622ca50d77b}\label{clasststream_a01303d5c2c5cd83d06985622ca50d77b}} 
 \index{tstream@{tstream}!enabled@{enabled}}
 \index{enabled@{enabled}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{enabled()}{enabled()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\doxysubsubsection{\texorpdfstring{enabled()}{enabled()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily bool tstream\+::enabled (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} {\bfseries true} if the currently memorised level is inside the current valid range. \mbox{\Hypertarget{clasststream_a3dab6aeefd316ad326a29cec3c2c574b}\label{clasststream_a3dab6aeefd316ad326a29cec3c2c574b}} 
+{\bfseries{Returns\+:}} {\bfseries{true}} if the currently memorised level is inside the current valid range. \mbox{\Hypertarget{clasststream_a3dab6aeefd316ad326a29cec3c2c574b}\label{clasststream_a3dab6aeefd316ad326a29cec3c2c574b}} 
 \index{tstream@{tstream}!enabled@{enabled}}
 \index{enabled@{enabled}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{enabled()}{enabled()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\doxysubsubsection{\texorpdfstring{enabled()}{enabled()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily bool tstream\+::enabled (\begin{DoxyParamCaption}\item[{int}]{level }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} {\bfseries true} if this level is inside the current valid range. \mbox{\Hypertarget{clasststream_a1fe9745dc492e891a6e765e34fa082c3}\label{clasststream_a1fe9745dc492e891a6e765e34fa082c3}} 
+{\bfseries{Returns\+:}} {\bfseries{true}} if this level is inside the current valid range. \mbox{\Hypertarget{clasststream_a1fe9745dc492e891a6e765e34fa082c3}\label{clasststream_a1fe9745dc492e891a6e765e34fa082c3}} 
 \index{tstream@{tstream}!log@{log}}
 \index{log@{log}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{log()}{log()}}
+\doxysubsubsection{\texorpdfstring{log()}{log()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{clasststream}{tstream}} \& tstream\+::log (\begin{DoxyParamCaption}\item[{int}]{level,  }\item[{int}]{count = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
@@ -133,7 +133,7 @@ References set\+Level().
 \mbox{\Hypertarget{clasststream_a5aa7a21d7b95f1bf40e68b5b13118fd0}\label{clasststream_a5aa7a21d7b95f1bf40e68b5b13118fd0}} 
 \index{tstream@{tstream}!tabw@{tabw}}
 \index{tabw@{tabw}!tstream@{tstream}}
-\subsubsection{\texorpdfstring{tabw()}{tabw()}}
+\doxysubsubsection{\texorpdfstring{tabw()}{tabw()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{clasststream}{tstream}} \& tstream\+::tabw (\begin{DoxyParamCaption}\item[{int}]{level,  }\item[{int}]{count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 

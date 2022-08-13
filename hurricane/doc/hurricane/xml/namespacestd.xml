@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacestd" kind="namespace" language="C++">
+    <compoundname>std</compoundname>
+    <innerclass refid="structstd_1_1less_3_01Hurricane_1_1JsonObject_01_5_01_4" prot="public">std::less&lt; Hurricane::JsonObject * &gt;</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="213" column="1"/>
+  </compounddef>
+</doxygen>

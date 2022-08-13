@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structHurricane_1_1JsonEnabled" kind="struct" language="C++" prot="public">
+    <compoundname>Hurricane::JsonEnabled</compoundname>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="structHurricane_1_1JsonEnabled_1a872809bbe4167bc07b06b1483bdbbac0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>State</name>
+        <enumvalue id="structHurricane_1_1JsonEnabled_1a872809bbe4167bc07b06b1483bdbbac0ae026d2194afd8a08c10c5774796a8037" prot="public">
+          <name>enabled</name>
+          <initializer>=1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="48" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="48" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="48" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="48" bodyend="48"/>
+    <listofallmembers>
+      <member refid="structHurricane_1_1JsonEnabled_1a872809bbe4167bc07b06b1483bdbbac0ae026d2194afd8a08c10c5774796a8037" prot="public" virt="non-virtual"><scope>Hurricane::JsonEnabled</scope><name>enabled</name></member>
+      <member refid="structHurricane_1_1JsonEnabled_1a872809bbe4167bc07b06b1483bdbbac0" prot="public" virt="non-virtual"><scope>Hurricane::JsonEnabled</scope><name>State</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

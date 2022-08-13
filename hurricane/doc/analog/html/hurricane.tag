@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="page">
     <name>index</name>
     <title></title>
-    <filename>index</filename>
-    <docanchor file="index" title="Software Architecture">secMainDoc</docanchor>
-    <docanchor file="index" title="Unique Instance-Cell Relationship">ssecUniqueInstance</docanchor>
-    <docanchor file="index" title="Why Meta-Transistor">ssecWhyMetaTrans</docanchor>
-    <docanchor file="index" title="Class Organization">ssecClassOrg</docanchor>
-    <docanchor file="index" title="Open questions">ssecOpenQuestions</docanchor>
+    <filename>index.html</filename>
+    <docanchor file="index.html" title="Software Architecture">secMainDoc</docanchor>
+    <docanchor file="index.html" title="Unique Instance-Cell Relationship">ssecUniqueInstance</docanchor>
+    <docanchor file="index.html" title="Why Meta-Transistor">ssecWhyMetaTrans</docanchor>
+    <docanchor file="index.html" title="Class Organization">ssecClassOrg</docanchor>
+    <docanchor file="index.html" title="Open questions">ssecOpenQuestions</docanchor>
   </compound>
 </tagfile>

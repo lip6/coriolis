@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1JsonRoutingPad" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::JsonRoutingPad</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Hurricane::JsonComponent</basecompoundref>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonRoutingPad_1a8cf2e2ef16c20a9d78bbccee717c8018" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::JsonRoutingPad::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="111" column="31"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonRoutingPad_1a92b7499ed6c1955703ecb091ccba0a9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::JsonRoutingPad::JsonRoutingPad</definition>
+        <argsstring>(unsigned long flags)</argsstring>
+        <name>JsonRoutingPad</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="112" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonRoutingPad_1afd48df350d66557fc1c27ffb5a628318" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Hurricane::JsonRoutingPad::getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="113" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonRoutingPad_1ac07133296f0ee1d5d2fbd638e64c8436" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>JsonRoutingPad *</type>
+        <definition>virtual JsonRoutingPad* Hurricane::JsonRoutingPad::clone</definition>
+        <argsstring>(unsigned long flags) const</argsstring>
+        <name>clone</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="114" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonRoutingPad_1a7a944c7dd41e79094ba0c8e901fa0537" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::JsonRoutingPad::toData</definition>
+        <argsstring>(JsonStack &amp;)</argsstring>
+        <name>toData</name>
+        <param>
+          <type><ref refid="classHurricane_1_1JsonStack" kindref="compound">JsonStack</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="115" column="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" line="109" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h" bodystart="109" bodyend="116"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1JsonObject_1aa0024b924886b852072a8dd5cd77c624" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_attributes</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a9a3f377904a1402c9b189fa0da8e09ef" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_collections</name></member>
+      <member refid="classHurricane_1_1JsonObject_1abda35fef78180d410c85635fcec1f66b" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a55a27092fcbd9c34a73990e7a603332b" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6840b38ed36f7b99b7c0ca33d31938f7" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_object</name></member>
+      <member refid="classHurricane_1_1JsonObject_1abeea03a6622af5dd458debbd5c399d41" prot="protected" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>_stackeds</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a39ed04c118b19f1b6010b7f3336c360f" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>add</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6ac9230d36590f83fbe1561b6c1bb0e5" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>check</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a5f11139263926dbd8fe87b9c4480bdae" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>clear</name></member>
+      <member refid="classHurricane_1_1JsonRoutingPad_1ac07133296f0ee1d5d2fbd638e64c8436" prot="public" virt="virtual"><scope>Hurricane::JsonRoutingPad</scope><name>clone</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a380ea9ac8689e1e9cad892edf0024c08" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>copyAttrs</name></member>
+      <member refid="classHurricane_1_1JsonObject_1af599fb8e2f3aca9c00dc628927367cb8" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>get</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa4d6d0502f0f25e614ef50ac3dd76263" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1ab1a1aaaa583d5c8f7adbc9c9d0eeeebf" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>getObject</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a34c4e38611238021df8cc69fc32f5e48" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>getStackName</name></member>
+      <member refid="classHurricane_1_1JsonRoutingPad_1afd48df350d66557fc1c27ffb5a628318" prot="public" virt="virtual"><scope>Hurricane::JsonRoutingPad</scope><name>getTypeName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1ac0b8816eab2cbcabf18d5421a59aa780" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>has</name></member>
+      <member refid="classHurricane_1_1JsonRoutingPad_1a8cf2e2ef16c20a9d78bbccee717c8018" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>initialize</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a4bb80844dcd175ad16cf92ee29064850" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>isBound</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a8f0949b75f5900e4ef87196e949cfa6b" prot="public" virt="virtual"><scope>Hurricane::JsonRoutingPad</scope><name>isDummy</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a267c55a1989a9907e25632d820681779" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>issetFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a7a3fe903ceb00a3ebff66d1696edf682" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>jget</name></member>
+      <member refid="classHurricane_1_1JsonComponent_1aa75a62721a5badd931f3067c025abb53" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>JsonComponent</name></member>
+      <member refid="classHurricane_1_1JsonDBo_1a66534a5b35421a4dcb2a08000616e3ed" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>JsonDBo</name></member>
+      <member refid="classHurricane_1_1JsonEntity_1a3039120c68c1f7b83d31f8033db6b25d" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>JsonEntity</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a57d9c022204b30d4b253c2588f2c1215" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>JsonObject</name></member>
+      <member refid="classHurricane_1_1JsonRoutingPad_1a92b7499ed6c1955703ecb091ccba0a9d" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>JsonRoutingPad</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a3819d0c96ee99277e4cc8d349dc4155c" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>presetId</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa5e7db69e2c7f5e5c4482357dae73082" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>print</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6435e5a8655a6b42b61d55e7fd673c65" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a8346b1c958574275fe17f9c4cb40ee8b" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>resetFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a5216e5f5d74f8dbf8665eef8a78b2fe1" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>setFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aeda98a478720cf29e532e2a11f6f54c5" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa8e23d2445b90cced19a97d50372314c" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>setObject</name></member>
+      <member refid="classHurricane_1_1JsonRoutingPad_1a7a944c7dd41e79094ba0c8e901fa0537" prot="public" virt="virtual"><scope>Hurricane::JsonRoutingPad</scope><name>toData</name></member>
+      <member refid="classHurricane_1_1JsonEntity_1a204c3db7e5b2accdab68485efa6a8e0a" prot="public" virt="non-virtual"><scope>Hurricane::JsonRoutingPad</scope><name>update</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a05fded364c9bc8011097245e9186a106" prot="public" virt="virtual"><scope>Hurricane::JsonRoutingPad</scope><name>~JsonObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

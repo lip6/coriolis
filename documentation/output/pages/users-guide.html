@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable Version of this Document Coriolis User&#39;s Guide. Contents Printable Version of this Document Abstract Credits &amp; License Complete Design Flow &amp; Examples Installation Fixed Directory Tree ...">
+        <meta name="description" content="Printable Version of this Document Coriolis User&#39;s Guide. Contents Printable Version of this Document Abstract Credits &amp; License Complete Design Flow &amp; Examples Installation Fixed Directory Tree...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -118,7 +118,7 @@
 <h2><a class="toc-backref" href="#id13">Printable Version of this Document</a></h2>
 <p><a class="reference external" href="../pdfs/UsersGuide.pdf">Coriolis User's Guide</a>.</p>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#printable-version-of-this-document" id="id13">Printable Version of this Document</a></li>
 <li><a class="reference internal" href="#abstract" id="id14">Abstract</a></li>
@@ -220,14 +220,14 @@ examples are supplied in the repository <tt class="docutils literal"><span class
 </div>
 <div class="section" id="installation">
 <h2><a class="toc-backref" href="#id17">Installation</a></h2>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">As the sources are being released, the binary packaging is dropped.
 You may still find (very) old versions here: <a class="reference external" href="http://asim.lip6.fr/pub/coriolis/2.0">http://asim.lip6.fr/pub/coriolis/2.0</a> .</p>
 </div>
 <p>In a nutshell, building source consists in pulling the <span class="cb">git</span> repository then
 running the <span class="cb">ccb</span> installer.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The documentation is already generated and commited in the <span class="cb">git</span> tree.
 You may not install the additional prerequisites for the documentation.
@@ -346,7 +346,7 @@ automatically created either by <span class="cb">ccb</span> or the build system.
 </tr>
 </tbody>
 </table>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><em>Alternate build types:</em> the <tt class="docutils literal">Release.Shared</tt> means an optimized build
 with shared libraries. But there are also available <tt class="docutils literal">Static</tt> instead of <tt class="docutils literal">Shared</tt>
@@ -362,19 +362,19 @@ and Python modules (which must be dynamic).</p>
 <p>The <strong>devel_anabatic</strong> branch is now closed and we go back to a more classical
 scheme where <strong>master</strong> is the stable version and <strong>devel</strong> the development one.</p>
 <p>The <span class="sc">Coriolis</span> <span class="cb">git</span> repository is <a class="reference external" href="https://gitlab.lip6.fr/vlsi-cad/coriolis.git">https://gitlab.lip6.fr/vlsi-cad/coriolis.git</a></p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Again, the <strong>devel_anabatic</strong> branch is now closed. Please revert to <strong>devel</strong>
 or <strong>master</strong>.</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">As it is now possible to mix <span class="sc">PyQt</span> widget with <span class="sc">Coriolis</span> ones, it is simpler
 for us to revert to <span class="sc">qt</span> 4 only. Our reference <span class="sc">os</span> being <span class="sc">rhel</span> 7, there is no
 compatible <span class="sc">PyQt5</span> build compatible with their <span class="sc">qt</span> 5 version (we fall short of
 one minor, they provides <span class="sc">qt</span> 5.9 were we need at least <span class="sc">qt</span> 5.10).</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Under <span class="sc">rhel</span> 7 or clones, they upgraded their version of <span class="sc">qt</span> 4 (from 4.6 to 4.8)
 so the <em>diagonal line</em> bug no longer occurs. So we can safely use the default
@@ -429,7 +429,7 @@ dummy@lepka:coriolis&gt; ./bootstrap/ccb.py --project<span class="o">=</span>sup
 </pre></div>
 </li>
 </ol>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Pre-generated documentation will get installed by the previous command.
 Only if you did made modifications to it you need to regenerate it with:</p>
@@ -519,7 +519,7 @@ a debug one which allows forensic examination by <span class="cb">gdb</span> (or
 <div class="highlight"><pre><span></span>dummy@lepka:~&gt; sudo apt-get install -y qtbase5-dev libqt5svg5-dev libqwt-qt5-dev <span class="se">\</span>
                                        python-pyqt5
 </pre></div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Do not install both versions of Qwt</strong> (for Qt 4 and Qt 5),
 this will confuse the installer and end up with a non functional software
@@ -595,7 +595,7 @@ in the <tt class="docutils literal">bootstrap</tt> source directory (also instal
 <p>Use it like this:</p>
 <div class="highlight"><pre><span></span>dummy@lepka:~&gt; <span class="nb">eval</span> <span class="sb">`</span>~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py<span class="sb">`</span>
 </pre></div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Do not call that script in your environement initialisation.</strong>
 When used under <span class="sc">rhel6</span> or clones, it needs to be run in the <span class="cb">devtoolset</span>
@@ -701,7 +701,7 @@ and write Alliance designs and libraries directly.</p>
 <p>The <span class="sc">Etesian</span> placer is a state of the art (as of 2015) analytical placer. It is
 within <tt class="docutils literal">5%</tt> of other placers' solutions, but is normally a bit worse than ePlace.
 This <span class="sc">Coriolis</span> tool is actually an encapsulation of <span class="sc">Coloquinte</span> which <em>is</em> the placer.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>Instance Uniquification:</em> a same logical instance cannot have
 two different placements. So, if you don't supply a placement for it, it will be
@@ -820,7 +820,7 @@ of <span class="sc">Katana</span>, the algorithms remains essentially the same).
 as its runtime and memory footprint is almost linear (with respect to the number
 of gates). It has successfully routed design of more than <cite>150K</cite> gates.
    <span class="raw-html"><br class="medskip"/></span></p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Slow Layer Assignment.</strong> Most of the time, the layer assignment stage is
 fast (less than a dozen seconds), but in some instances it can take more
@@ -845,14 +845,10 @@ more and more difficult as the capacity of the edges decreases, and at some poin
 it will fail too. So this is a balance.</p>
 <p>Routing a design is done in four ordered steps:</p>
 <ol class="arabic simple">
-<li>Detailed pre-route <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Detailed PreRoute</b></span>
-</li>
-<li>Global routing     <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Global Route</b></span>
-</li>
-<li>Detailed routing   <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Detailed Route</b></span>
-</li>
-<li>Finalize routing   <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Finalize Route</b></span>
-</li>
+<li>Detailed pre-route <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Detailed PreRoute</b></span></li>
+<li>Global routing     <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Global Route</b></span></li>
+<li>Detailed routing   <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Detailed Route</b></span></li>
+<li>Finalize routing   <span class="formula"><b>P&R</b> → <b>Step by Step</b> → <b>Finalize Route</b></span></li>
 </ol>
 <p>It is possible to supply to the router a complete wiring for some nets that the user
 wants to be routed according to a specific topology. The supplied topology must respect
@@ -991,7 +987,7 @@ topological modification</td>
 <div class="section" id="executing-python-scripts-in-cgt">
 <span id="python-scripts-in-cgt"></span><h4>Executing Python Scripts in Cgt</h4>
 <p>Python/Stratus scripts can be executed either in text or graphical mode.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>How Cgt Locates Python Scripts:</strong>
 <span class="cb">cgt</span> uses the Python <tt class="docutils literal">import</tt> mechanism to load Python scripts.
@@ -1041,7 +1037,7 @@ outlines).</td>
 </tr>
 </tbody>
 </table>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>The pdf file size</em>
 Be aware that the generated <span class="sc">pdf</span> files are indeed only pixmaps.
@@ -1365,7 +1361,7 @@ cells) is disabled by default when you load a hierarchical design and enabled
 when you load a single Cell.</p>
 <p>You can choose what kind of form to give to the rubbers and the type of
 unit used to display coordinates.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><em>What are Rubbers:</em> <span class="sc">Hurricane</span> uses <em>Rubbers</em> to materialize
 physical gaps in net topology. That is, if some wires are missing to
@@ -1432,13 +1428,13 @@ to browse through the live DataBase. The <em>Inspector</em> provides three entry
 </ul>
 <p>Once an entry point has been activated, you may recursively expore all
 its fields using the right/left arrows.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>Do not put your fingers in the socket:</em> when inspecting
 anything, do not modify the DataBase. If any object under inspection
 is deleted, you will crash the application...</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>Implementation Detail:</em> the inspector support is done with
 <tt class="docutils literal">Slot</tt>, <tt class="docutils literal">Record</tt> and <tt class="docutils literal">getString()</tt>.</p>

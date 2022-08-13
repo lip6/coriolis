@@ -1,0 +1,814 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Rubber" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Rubber</compoundname>
+    <basecompoundref refid="classHurricane_1_1Go" prot="public" virt="non-virtual">Hurricane::Go</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Rubber_1aa74649cee7cda714020e77194af2210a" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref></type>
+        <definition>Hurricane::Rubber::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for calling upon methods of the base class without knowing it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="42" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Rubber_1a6e58fe3714a63139470f76edc577fcd0" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net* Hurricane::Rubber::_net</definition>
+        <argsstring></argsstring>
+        <name>_net</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="48" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Rubber_1a475d23e7a5e8f9cd80a2a25e234280cc" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook* Hurricane::Rubber::_hook</definition>
+        <argsstring></argsstring>
+        <name>_hook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="49" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Rubber_1af7285db0f666569aae8ddef6bbb1b0be" prot="private" static="no" mutable="no">
+        <type>unsigned</type>
+        <definition>unsigned Hurricane::Rubber::_count</definition>
+        <argsstring></argsstring>
+        <name>_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="50" column="27" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Rubber_1a01d2c8f15b8eaa3446779eed62e8933f" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Rubber::_boundingBox</definition>
+        <argsstring></argsstring>
+        <name>_boundingBox</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="51" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Rubber_1a5f435ee6e8d2c9e6c76a5b1c0e2aaa47" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> *</type>
+        <definition>Rubber* Hurricane::Rubber::_nextOfNetRubberSet</definition>
+        <argsstring></argsstring>
+        <name>_nextOfNetRubberSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="52" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a712fbd6b5a66577ac385e8b9ca5247d7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Rubber::Rubber</definition>
+        <argsstring>(Net *net, Hook *hook)</argsstring>
+        <name>Rubber</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <declname>net</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="57" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a28bc3f15e8a091edcb4099274ddbfc31" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1Go_1a0219a4b726cb46c6a6330739863974f5">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="88" column="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ab8074bef0d66271e3ff974c7a36a9c38" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1Go_1a6b8c642bdd50e2d516bc1108831df354">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="91" column="33"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1aa4770eafcc0ed6c43c0f245fa749ad6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::destroy</definition>
+        <argsstring>()</argsstring>
+        <name>destroy</name>
+        <reimplements refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b">destroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="62" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a004e6e79701d7e9c3e4238a417aec09d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>virtual Cell* Hurricane::Rubber::getCell</definition>
+        <argsstring>() const</argsstring>
+        <name>getCell</name>
+        <reimplements refid="classHurricane_1_1Entity_1a42bdf015f583be477cc54b48652b1007">getCell</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="67" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a3d4156388d0a9e53daa00cdae9732e12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net * Hurricane::Rubber::getNet</definition>
+        <argsstring>() const</argsstring>
+        <name>getNet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the net owning the rubber. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="68" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a9f7b9bc21b4df4c2bac602f045477711" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Rubber::getHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> one hook (necessarily a master hook) of the ring which has created the rubber. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="69" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="69" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a5fbe74e46313c0c1a264f0c7bda11e94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned</type>
+        <definition>unsigned Hurricane::Rubber::getCount</definition>
+        <argsstring>() const</argsstring>
+        <name>getCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the count associated to the rubber (in fact the number of master hooks of the ring).</para>
+<para><simplesect kind="remark"><para>This count is at least equal to two else the rubber doesn&apos;t exists (no need). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="70" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a124ef92401fd95ff794e381acd24e4ff" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Rubber::getCenter</definition>
+        <argsstring>() const</argsstring>
+        <name>getCenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the center of the rubber (computed at the fly). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="71" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1aa62775f4323bdb45daee1f4b061cb96e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Rubber::getBarycenter</definition>
+        <argsstring>() const</argsstring>
+        <name>getBarycenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="72" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ae71ab03870d8b0e307e3ff929bcb251d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>virtual Box Hurricane::Rubber::getBoundingBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getBoundingBox</name>
+        <reimplements refid="classHurricane_1_1Entity_1ad834f8ce33a08a13e2a88446696e63e7">getBoundingBox</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="73" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a6d87ff89d80fbaeeb6fea4157b92d1e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a9dcd9b74dc5e2b51bec7a13c25807e02" kindref="member">Hooks</ref></type>
+        <definition>Hooks Hurricane::Rubber::getHooks</definition>
+        <argsstring>() const</argsstring>
+        <name>getHooks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of master hooks that the rubber virtualy connect. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="74" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a8043b265a6f7b01eba344645427ff17e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::materialize</definition>
+        <argsstring>()</argsstring>
+        <name>materialize</name>
+        <reimplements refid="classHurricane_1_1Go_1a8251eba8fabfca57f574921c6c85728f">materialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="79" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a84d290d4c699cf37567924725cd276fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::unmaterialize</definition>
+        <argsstring>()</argsstring>
+        <name>unmaterialize</name>
+        <reimplements refid="classHurricane_1_1Go_1af79318dc9cbbed85aea1bb8f16eb9724">unmaterialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="80" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a0b3015cbee58f558dfc9ae9ad3c3d67b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::translate</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</argsstring>
+        <name>translate</name>
+        <reimplements refid="classHurricane_1_1Go_1a54c4351dbbf4045e1aa89f06bb893402">translate</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="81" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a56662bcb2c977d879f2fd5a9ddc00acf" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Rubber::invalidate</definition>
+        <argsstring>(bool propagateFlag=true)</argsstring>
+        <name>invalidate</name>
+        <reimplements refid="classHurricane_1_1Go_1a5ee451e118fe8cace16989c0f3a6d855">invalidate</reimplements>
+        <param>
+          <type>bool</type>
+          <declname>propagateFlag</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="82" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a08e28a064a0cb33c6cdb9fad16b9c583" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_destroy</definition>
+        <argsstring>()</argsstring>
+        <name>_destroy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="90" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a93004e7e5e5f223b0f58de129a989155" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Rubber::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="93" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ae1c75db194c4da651d48ec6d507f61fd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Rubber::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Go_1ac86d7897fef19dee7eb254fd889f252c">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="94" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1aa053a1eecf27601c6cfb9ee7dad760f0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Rubber::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Go_1ab7a1606993deb4a47c6a20cb8ec251b8">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="95" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ae08c07e1784694ebbee13d0d0ee9fd71" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> *</type>
+        <definition>Rubber* Hurricane::Rubber::_getNextOfNetRubberSet</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfNetRubberSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="96" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a59fcb8aea1d586fb6e0c48f57c312047" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_setNet</definition>
+        <argsstring>(Net *net)</argsstring>
+        <name>_setNet</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <declname>net</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="98" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a650b9652e66219236583e3166d95dab4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_setHook</definition>
+        <argsstring>(Hook *hook)</argsstring>
+        <name>_setHook</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="99" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1a5e3e20b361c90b5be32d88e48d206cc5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_setNextOfNetRubberSet</definition>
+        <argsstring>(Rubber *rubber)</argsstring>
+        <name>_setNextOfNetRubberSet</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> *</type>
+          <declname>rubber</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="100" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ae4b08af67d38b4330eaeceba7b627c8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_capture</definition>
+        <argsstring>()</argsstring>
+        <name>_capture</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="102" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1ac7b5eb0503c5a610574d77b213649623" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Rubber::_release</definition>
+        <argsstring>()</argsstring>
+        <name>_release</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="103" column="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Rubber_1aeffe1e6764485d6dac03b058d15edcc1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> *</type>
+        <definition>static Rubber* Hurricane::Rubber::_create</definition>
+        <argsstring>(Hook *hook)</argsstring>
+        <name>_create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="87" column="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Rubber_1secRubberIntro">
+<title>Introduction</title>
+<para>Ring introduce the concept of virtual connection between different master hooks present in the ring. <ref refid="classHurricane_1_1Rubber" kindref="compound">Rubber</ref> is just introduced to materialize this implicit relation.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Rubber_1secRubberConstructors">
+<title>Constructors &amp; Destructors</title>
+<para>Rubbers are entirely managed by <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref>. So no constructors nor destructor are avalaible. </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Rubber</label>
+        <link refid="classHurricane_1_1Rubber"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="7">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="9">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="15">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Rubber</label>
+        <link refid="classHurricane_1_1Rubber"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfNetRubberSet</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_hook</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="17">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfQuadTreeGoSet</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="10">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="12">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" line="36" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Rubber.h" bodystart="36" bodyend="105"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Rubber_1a01d2c8f15b8eaa3446779eed62e8933f" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_boundingBox</name></member>
+      <member refid="classHurricane_1_1Rubber_1ae4b08af67d38b4330eaeceba7b627c8c" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_capture</name></member>
+      <member refid="classHurricane_1_1Rubber_1af7285db0f666569aae8ddef6bbb1b0be" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_count</name></member>
+      <member refid="classHurricane_1_1Rubber_1aeffe1e6764485d6dac03b058d15edcc1" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_create</name></member>
+      <member refid="classHurricane_1_1Rubber_1a08e28a064a0cb33c6cdb9fad16b9c583" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_destroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Rubber_1ae08c07e1784694ebbee13d0d0ee9fd71" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_getNextOfNetRubberSet</name></member>
+      <member refid="classHurricane_1_1Go_1ad3617f5af214619cfe286091dab6a863" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_getNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Entity_1a01be68d1d059eb4cdb160d12c0db7a5e" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_getQuark</name></member>
+      <member refid="classHurricane_1_1Rubber_1aa053a1eecf27601c6cfb9ee7dad760f0" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Rubber_1ae1c75db194c4da651d48ec6d507f61fd" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Rubber_1a93004e7e5e5f223b0f58de129a989155" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Rubber_1a475d23e7a5e8f9cd80a2a25e234280cc" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_hook</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Rubber_1a6e58fe3714a63139470f76edc577fcd0" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_net</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Rubber_1a5f435ee6e8d2c9e6c76a5b1c0e2aaa47" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_nextOfNetRubberSet</name></member>
+      <member refid="classHurricane_1_1Go_1a68cf61b178784fc0677cdcc3722a9d08" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_nextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Rubber_1a28bc3f15e8a091edcb4099274ddbfc31" prot="protected" virt="virtual"><scope>Hurricane::Rubber</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Rubber_1ab8074bef0d66271e3ff974c7a36a9c38" prot="protected" virt="virtual"><scope>Hurricane::Rubber</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Go_1a08ecbf04c2664589cf27a34ec60f6ab7" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_quadTree</name></member>
+      <member refid="classHurricane_1_1Rubber_1ac7b5eb0503c5a610574d77b213649623" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_release</name></member>
+      <member refid="classHurricane_1_1Rubber_1a650b9652e66219236583e3166d95dab4" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_setHook</name></member>
+      <member refid="classHurricane_1_1Rubber_1a59fcb8aea1d586fb6e0c48f57c312047" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_setNet</name></member>
+      <member refid="classHurricane_1_1Rubber_1a5e3e20b361c90b5be32d88e48d206cc5" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_setNextOfNetRubberSet</name></member>
+      <member refid="classHurricane_1_1Go_1a2eb3430c581f3b4913150a8e17adf541" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>_setNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1Entity_1a0301fa9a630aae3f17131d909d6ca5e3" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Go_1a1057be4198a7b64c32a2ac3c7d560014" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>autoMaterializationIsDisabled</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1Rubber_1aa4770eafcc0ed6c43c0f245fa749ad6b" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Go_1a0d49d22a3788e8001e58152e62b9f3cc" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>disableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Go_1ab0b1ca3c606247e1ebd7cab8fa828b04" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>enableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Entity_1a97cf0d2e193d947f4e312d471657c06d" prot="protected" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>Entity</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Rubber_1aa62775f4323bdb45daee1f4b061cb96e" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getBarycenter</name></member>
+      <member refid="classHurricane_1_1Rubber_1ae71ab03870d8b0e307e3ff929bcb251d" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Rubber_1a004e6e79701d7e9c3e4238a417aec09d" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Rubber_1a124ef92401fd95ff794e381acd24e4ff" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getCenter</name></member>
+      <member refid="classHurricane_1_1Rubber_1a5fbe74e46313c0c1a264f0c7bda11e94" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getCount</name></member>
+      <member refid="classHurricane_1_1Rubber_1a9f7b9bc21b4df4c2bac602f045477711" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getHook</name></member>
+      <member refid="classHurricane_1_1Rubber_1a6d87ff89d80fbaeeb6fea4157b92d1e3" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getHooks</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Rubber_1a3d4156388d0a9e53daa00cdae9732e12" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getNet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Go_1a9fe76630495793d6567f9fb69b53686b" prot="protected" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>Go</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Rubber_1aa74649cee7cda714020e77194af2210a" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Rubber_1a56662bcb2c977d879f2fd5a9ddc00acf" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>invalidate</name></member>
+      <member refid="classHurricane_1_1Go_1a0fd2574d3e2e0157230209acdc1b8aa6" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>isMaterialized</name></member>
+      <member refid="classHurricane_1_1Rubber_1a8043b265a6f7b01eba344645427ff17e" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>materialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1Rubber_1a712fbd6b5a66577ac385e8b9ca5247d7" prot="protected" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>Rubber</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Rubber_1a0b3015cbee58f558dfc9ae9ad3c3d67b" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>translate</name></member>
+      <member refid="classHurricane_1_1Rubber_1a84d290d4c699cf37567924725cd276fe" prot="public" virt="virtual"><scope>Hurricane::Rubber</scope><name>unmaterialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Rubber</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Rubber</scope><name>~DBo</name></member>
+      <member refid="classHurricane_1_1Entity_1a4bbd1e777d515f98fde3d4601f3adb89" prot="protected" virt="virtual"><scope>Hurricane::Rubber</scope><name>~Entity</name></member>
+      <member refid="classHurricane_1_1Go_1ae9061a10db10066b1b1266fd525dd6ae" prot="protected" virt="virtual"><scope>Hurricane::Rubber</scope><name>~Go</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1743 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Technology" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Technology</compoundname>
+    <basecompoundref refid="classHurricane_1_1DBo" prot="public" virt="non-virtual">Hurricane::DBo</basecompoundref>
+    <innerclass refid="classHurricane_1_1Technology_1_1LayerMap" prot="public">Hurricane::Technology::LayerMap</innerclass>
+    <innerclass refid="structHurricane_1_1Technology_1_1RuleNameCompare" prot="public">Hurricane::Technology::RuleNameCompare</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1ad03b4656d7b7657ef78d0af9e8cd6ac8" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref></type>
+        <definition>typedef DBo Hurricane::Technology::Super</definition>
+        <argsstring></argsstring>
+        <name>Super</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="65" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1a9ffcda187ba963aeaed8b08f507fb329" prot="public" static="no">
+        <type>multimap&lt; <ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref>, <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> * &gt;</type>
+        <definition>typedef multimap&lt;Layer::Mask,Layer*&gt; Hurricane::Technology::LayerMaskMap</definition>
+        <argsstring></argsstring>
+        <name>LayerMaskMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="66" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1a9b82e4e183000fe699076e7edd2928d1" prot="public" static="no">
+        <type>set&lt; DeviceDescriptor *, DeviceDescriptor::DeviceDescriptorComp &gt;</type>
+        <definition>typedef set&lt;DeviceDescriptor*, DeviceDescriptor::DeviceDescriptorComp&gt; Hurricane::Technology::DeviceDescriptors</definition>
+        <argsstring></argsstring>
+        <name>DeviceDescriptors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="67" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1afe30a9dd329ab9f2d2e2fe58799290ae" prot="public" static="no">
+        <type>set&lt; ModelDescriptor *, ModelDescriptor::ModelDescriptorComp &gt;</type>
+        <definition>typedef set&lt;ModelDescriptor* , ModelDescriptor::ModelDescriptorComp&gt; Hurricane::Technology::ModelDescriptors</definition>
+        <argsstring></argsstring>
+        <name>ModelDescriptors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="68" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1a1be5073da93c3d85ee9bba12ca9dc3a9" prot="public" static="no">
+        <type>std::pair&lt; const <ref refid="classHurricane_1_1Layer" kindref="compound">Hurricane::Layer</ref> *, const <ref refid="classHurricane_1_1Layer" kindref="compound">Hurricane::Layer</ref> * &gt;</type>
+        <definition>typedef std::pair&lt;const Hurricane::Layer*, const Hurricane::Layer*&gt; Hurricane::Technology::LayerPair</definition>
+        <argsstring></argsstring>
+        <name>LayerPair</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="77" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1acfed5d57b71be1a5241adf5442457e68" prot="public" static="no">
+        <type>std::set&lt; <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *, RuleNameCompare &gt;</type>
+        <definition>typedef std::set&lt;PhysicalRule* , RuleNameCompare&gt; Hurricane::Technology::UnitRules</definition>
+        <argsstring></argsstring>
+        <name>UnitRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="78" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1a954eef266bcca2e3d7c37f19a027d30d" prot="public" static="no">
+        <type>std::set&lt; <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *, RuleNameCompare &gt;</type>
+        <definition>typedef std::set&lt;PhysicalRule* , RuleNameCompare&gt; Hurricane::Technology::PhysicalRules</definition>
+        <argsstring></argsstring>
+        <name>PhysicalRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="79" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1a2160174789e4d69afa5a3efec07099f5" prot="public" static="no">
+        <type>std::map&lt; const <ref refid="classHurricane_1_1Layer" kindref="compound">Hurricane::Layer</ref> *, PhysicalRules &gt;</type>
+        <definition>typedef std::map&lt;const Hurricane::Layer* , PhysicalRules&gt; Hurricane::Technology::OneLayerRules</definition>
+        <argsstring></argsstring>
+        <name>OneLayerRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="80" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Technology_1adbb4d97054dd090d030000f4a68a863e" prot="public" static="no">
+        <type>std::map&lt; LayerPair, PhysicalRules &gt;</type>
+        <definition>typedef std::map&lt;LayerPair , PhysicalRules&gt; Hurricane::Technology::TwoLayersRules</definition>
+        <argsstring></argsstring>
+        <name>TwoLayersRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="81" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1abca78a7846f6aeaad6fe5317b0127cb3" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> *</type>
+        <definition>DataBase* Hurricane::Technology::_dataBase</definition>
+        <argsstring></argsstring>
+        <name>_dataBase</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="178" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="178" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1af562493c8cac0a7fb7f2aa85af073c3d" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::Technology::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="179" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="179" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a078159ec9c3e5a905b81666847a3ac0e" prot="private" static="no" mutable="no">
+        <type>LayerMap</type>
+        <definition>LayerMap Hurricane::Technology::_layerMap</definition>
+        <argsstring></argsstring>
+        <name>_layerMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="180" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1ac94dfda647e203c43e6b41e8528286b1" prot="private" static="no" mutable="no">
+        <type>LayerMaskMap</type>
+        <definition>LayerMaskMap Hurricane::Technology::_layerMaskMap</definition>
+        <argsstring></argsstring>
+        <name>_layerMaskMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="181" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a9d10fd47741e1a999cf761cf76b7a8e0" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref></type>
+        <definition>Layer::Mask Hurricane::Technology::_cutMask</definition>
+        <argsstring></argsstring>
+        <name>_cutMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="182" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a14d4261a61bd9276cc7bf3adcf8864e7" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref></type>
+        <definition>Layer::Mask Hurricane::Technology::_metalMask</definition>
+        <argsstring></argsstring>
+        <name>_metalMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="183" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a9ec8009861d1ac66bb178e3ce2790c49" prot="private" static="no" mutable="no">
+        <type>DeviceDescriptors</type>
+        <definition>DeviceDescriptors Hurricane::Technology::_deviceDescriptors</definition>
+        <argsstring></argsstring>
+        <name>_deviceDescriptors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="184" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a4c37a16384f4d9ffc39739229062f48d" prot="private" static="no" mutable="no">
+        <type>ModelDescriptors</type>
+        <definition>ModelDescriptors Hurricane::Technology::_modelDescriptors</definition>
+        <argsstring></argsstring>
+        <name>_modelDescriptors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="185" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1a7b09cf697dcd9834a5db807dd09cc595" prot="private" static="no" mutable="no">
+        <type>UnitRules</type>
+        <definition>UnitRules Hurricane::Technology::_unitRules</definition>
+        <argsstring></argsstring>
+        <name>_unitRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="186" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1aac1a789357abc0324dc8c65e69e1c077" prot="private" static="no" mutable="no">
+        <type>PhysicalRules</type>
+        <definition>PhysicalRules Hurricane::Technology::_noLayerRules</definition>
+        <argsstring></argsstring>
+        <name>_noLayerRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="187" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1adac74ec09f9176f4d0ab42662a8d87b6" prot="private" static="no" mutable="no">
+        <type>OneLayerRules</type>
+        <definition>OneLayerRules Hurricane::Technology::_oneLayerRules</definition>
+        <argsstring></argsstring>
+        <name>_oneLayerRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="188" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="188" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Technology_1aac841b02f902806dfd8a3deaaec75293" prot="private" static="no" mutable="no">
+        <type>TwoLayersRules</type>
+        <definition>TwoLayersRules Hurricane::Technology::_twoLayersRules</definition>
+        <argsstring></argsstring>
+        <name>_twoLayersRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="189" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a64670f0d48e9460342005df52f25c152" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> *</type>
+        <definition>*Technology * Hurricane::Technology::create</definition>
+        <argsstring>(DataBase *, const Name &amp;)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> *</type>
+          <defname>dataBase</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> a newly created technology named <computeroutput>&lt;name&gt;</computeroutput> for the data base <computeroutput>&lt;dataBase&gt;</computeroutput>.</para>
+<para><simplesect kind="warning"><para>Throws an exception if the <computeroutput>dataBase</computeroutput> is <computeroutput>NULL</computeroutput>, if the name is empty or if the <computeroutput>dataBase</computeroutput> has already a technology. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="98" column="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ae5590e455d35f76531a6feb0c0f111a2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Technology::isMetal</definition>
+        <argsstring>(const Layer *) const</argsstring>
+        <name>isMetal</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the <computeroutput>layer</computeroutput> is indeed of type <ref refid="classHurricane_1_1BasicLayer_1_1Material_1a3e815440ad4b86b3569fa54ca06fc3e8a9f5ac52339b7bd9bbf7cdac468c51924" kindref="member">BasicLayer::Material::metal</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="100" column="38" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="200" bodyend="200"/>
+        <references refid="classHurricane_1_1Layer_1a29b22c3b59cc24bf82449ad6c068ff1f" compoundref="Layer_8h" startline="158" endline="158">Hurricane::Layer::getMask</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1acf836e738fba14fa493b0e08148cc3ee" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> *</type>
+        <definition>DataBase * Hurricane::Technology::getDataBase</definition>
+        <argsstring>() const</argsstring>
+        <name>getDataBase</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> owning the technology. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="101" column="37" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="201" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ae466071aa1991c853ee71af12fa62d4e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>const Name &amp; Hurricane::Technology::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the technology name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="102" column="37" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="202" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a4ec69c9f8f6b483885f1900c56a97b61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getLayer</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>getLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> named <computeroutput>&lt;name&gt;</computeroutput> if it exists, else <computeroutput>NULL</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="103" column="37" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="203" bodyend="203"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ab096154ce9485cef02244f0037efd4fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+        <definition>BasicLayer * Hurricane::Technology::getBasicLayer</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>getBasicLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> named <computeroutput>&lt;name&gt;</computeroutput> if it exists and is a <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref>, else <computeroutput>NULL</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="104" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a0e93f2f749ee9b6efd30de4ef74546cc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1RegularLayer" kindref="compound">RegularLayer</ref> *</type>
+        <definition>BasicLayer * Hurricane::Technology::getRegularLayer</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>getRegularLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> named <computeroutput>&lt;name&gt;</computeroutput> if it exists and is a <ref refid="classHurricane_1_1RegularLayer" kindref="compound">RegularLayer</ref>, else <computeroutput>NULL</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="105" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a9edd085c08487642dd8745b66cf40c76" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1ViaLayer" kindref="compound">ViaLayer</ref> *</type>
+        <definition>BasicLayer * Hurricane::Technology::getViaLayer</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>getViaLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> named <computeroutput>&lt;name&gt;</computeroutput> if it exists and is a <ref refid="classHurricane_1_1ViaLayer" kindref="compound">ViaLayer</ref>, else <computeroutput>NULL</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="106" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a4e58c5ae8e3e82d7fe1b3bb939d6a633" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a7b7200a36ab7ce8a157ddbe78b625f38" kindref="member">Layers</ref></type>
+        <definition>Layers Hurricane::Technology::getLayers</definition>
+        <argsstring>() const</argsstring>
+        <name>getLayers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of layers of the technology.</para>
+<para><simplesect kind="remark"><para>The layers are traversed according to their creation order. This order is very important, notably for the graphical display. Therefore deeper basic layers must be created first and upper layers later (the order of composite layers has no importance). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="107" column="38" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="204" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a7fccff9da6604fafb90408ba56184fc0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>BasicLayers</type>
+        <definition>BasicLayers Hurricane::Technology::getBasicLayers</definition>
+        <argsstring>() const</argsstring>
+        <name>getBasicLayers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of basic layers of the technology (uses the same order). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="108" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a997457824046ea63eba51210a8e23f85" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>BasicLayers</type>
+        <definition>BasicLayers Hurricane::Technology::getBasicLayers</definition>
+        <argsstring>(const Layer::Mask &amp;) const</argsstring>
+        <name>getBasicLayers</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref> &amp;</type>
+          <defname>mask</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of basic layers of the technology which matches the <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> mask <computeroutput>&lt;mask&gt;</computeroutput> (uses the same order). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="109" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1abffce542bc1cee054b4a09c64449f3b8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RegularLayers</type>
+        <definition>RegularLayers Hurricane::Technology::getRegularLayers</definition>
+        <argsstring>() const</argsstring>
+        <name>getRegularLayers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of regular layers of the technology (uses the same order). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="110" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1aacde973f6a02a232a01f3f618576e1ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>ViaLayers</type>
+        <definition>ViaLayers Hurricane::Technology::getViaLayers</definition>
+        <argsstring>() const</argsstring>
+        <name>getViaLayers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of via layers of the technology (uses the same order). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="111" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a2ab8d2c386bf3daeb2b93d92ecbac6b4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getLayer</definition>
+        <argsstring>(const Layer::Mask &amp;, bool useSymbolic=true) const</argsstring>
+        <name>getLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref> &amp;</type>
+          <defname>mask</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defname>useWorking</defname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the layer whose mask equal <computeroutput>mask</computeroutput> and is flagged as working layer. if there is no working layer, returns the first layer that matches. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="112" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1af5723b08c9d289ffef8159ac2ea71b74" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getMetalAbove</definition>
+        <argsstring>(const Layer *, bool useSymbolic=true) const</argsstring>
+        <name>getMetalAbove</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defname>useWorking</defname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first layer of metal type whose mask is above the current one. if there is no working layer, returns the first layer that matches. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="113" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ae02123406c7362cc14413727e8689d5a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getMetalBelow</definition>
+        <argsstring>(const Layer *, bool useSymbolic=true) const</argsstring>
+        <name>getMetalBelow</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defname>useWorking</defname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first layer of metal type whose mask is below the current one. if there is no working layer, returns the first layer that matches. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="114" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ac7125a8eea871918e74bb295c56caceb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getCutAbove</definition>
+        <argsstring>(const Layer *, bool useSymbolic=true) const</argsstring>
+        <name>getCutAbove</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defname>useWorking</defname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first layer of cut type whose mask is above the current one. if there is no working layer, returns the first layer that matches. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="115" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a3ca39dccc7e19b404181f55777e1b933" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getCutBelow</definition>
+        <argsstring>(const Layer *, bool useSymbolic=true) const</argsstring>
+        <name>getCutBelow</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defname>useWorking</defname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first layer of cut type whose mask is below the current one. if there is no working layer, returns the first layer that matches. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="116" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a8209708bc594a307ea39f15a39bbf196" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getViaBetween</definition>
+        <argsstring>(const Layer *, const Layer *, bool useSymbolic=true) const</argsstring>
+        <name>getViaBetween</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSymbolic</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the cut layer between <computeroutput>layer1</computeroutput> and <computeroutput>layer2</computeroutput>. They must be both of metal kind and contiguous. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="117" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a81a3f3e479aeb686c61a2d0fa2931f3b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer * Hurricane::Technology::getNthMetal</definition>
+        <argsstring>(int) const</argsstring>
+        <name>getNthMetal</name>
+        <param>
+          <type>int</type>
+          <defname>depth</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the <computeroutput>Nth</computeroutput> metal layer from the substrate. So a <computeroutput>depth</computeroutput> of zero should mean <computeroutput>metal1</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="118" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a43a668043dd61ad80d3f99b48907fdb8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>Layer* Hurricane::Technology::getNthCut</definition>
+        <argsstring>(int) const</argsstring>
+        <name>getNthCut</name>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="119" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad384b9b1b8fefec78e9766b25b4be870" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>DeviceDescriptor *</type>
+        <definition>DeviceDescriptor* Hurricane::Technology::getDeviceDescriptor</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>getDeviceDescriptor</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="120" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad7947a948b467acb1e874eb7e95643dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ModelDescriptor *</type>
+        <definition>ModelDescriptor* Hurricane::Technology::getModelDescriptor</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>getModelDescriptor</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="121" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a6f0ca0afd5f99a3dc149cda21793f037" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ModelDescriptors &amp;</type>
+        <definition>Technology::ModelDescriptors &amp; Hurricane::Technology::getModelDescriptors</definition>
+        <argsstring>()</argsstring>
+        <name>getModelDescriptors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="122" column="37" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="205" bodyend="205"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a6ab76e8a246a10a395d68341bca9ea96" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::getUnitRule</definition>
+        <argsstring>(std::string ruleName) const</argsstring>
+        <name>getUnitRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The matching rule in the table of <bold>unit</bold> rules. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="123" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a8228c4df29005013f22124639ebaf07b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule* Hurricane::Technology::getPhysicalRule</definition>
+        <argsstring>(std::string ruleName) const</argsstring>
+        <name>getPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="124" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a21ef6f7507785a587e56aecc52a0c0ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::getPhysicalRule</definition>
+        <argsstring>(std::string ruleName, std::string layerName) const</argsstring>
+        <name>getPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layerName</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the layer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The matching rule in the table of <bold>one layer</bold> rules. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="125" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1aec2ce8a8195e90537e6d35cb3ba8b58f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::getPhysicalRule</definition>
+        <argsstring>(std::string ruleName, std::string layer1Name, std::string layer2Name) const</argsstring>
+        <name>getPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layer1Name</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layer2Name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layer1Name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the first layer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layer2Name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the second layer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The matching rule in the table of <bold>two layers</bold> rules. The order of layers arguments is meaningful and should match The one used at rule creation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="127" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a897f87ac3caeaedfff8ae2f675d8863d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const UnitRules &amp;</type>
+        <definition>const UnitRules&amp; Hurricane::Technology::getUnitRules</definition>
+        <argsstring>() const</argsstring>
+        <name>getUnitRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="130" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad2e7e66ae16a696045ae248c114638ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const PhysicalRules &amp;</type>
+        <definition>const PhysicalRules&amp; Hurricane::Technology::getNoLayerRules</definition>
+        <argsstring>() const</argsstring>
+        <name>getNoLayerRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="131" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a14450d353280b7a673d210cc8998c60e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const OneLayerRules &amp;</type>
+        <definition>const OneLayerRules&amp; Hurricane::Technology::getOneLayerRules</definition>
+        <argsstring>() const</argsstring>
+        <name>getOneLayerRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="132" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a7f6cf05f60c010228f9c8a6f698e9294" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const TwoLayersRules &amp;</type>
+        <definition>const TwoLayersRules&amp; Hurricane::Technology::getTwoLayersRules</definition>
+        <argsstring>() const</argsstring>
+        <name>getTwoLayersRules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="133" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1abb65b48adb99af92696b65b9131451f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::toDtr</definition>
+        <argsstring>(std::ostream &amp;)</argsstring>
+        <name>toDtr</name>
+        <param>
+          <type>std::ostream &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="134" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a9788b354f8af8aca97676b8389f2b762" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::setName</definition>
+        <argsstring>(const std::string &amp;name)</argsstring>
+        <name>setName</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="135" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a247b75d5cbb85198cea9e5e609304cd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::setName</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>setName</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <defname>name</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to change the technology name (if empty name, throws an exception). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="137" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a10275214cb5537be7aad947a0e1d1ff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Technology::setSymbolicLayer</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>setSymbolicLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="138" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a26c12c5828acaeb33068a2899df1134b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Technology::setSymbolicLayer</definition>
+        <argsstring>(const Layer *)</argsstring>
+        <name>setSymbolicLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets this exact <computeroutput>layer</computeroutput> as symbolic (not is mask). Returns <bold>true</bold> on success (the layer exists). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="139" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a1026ace26ae4f004097ceb19744dc55f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>DeviceDescriptor *</type>
+        <definition>DeviceDescriptor* Hurricane::Technology::addDeviceDescriptor</definition>
+        <argsstring>(const Name &amp;)</argsstring>
+        <name>addDeviceDescriptor</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="140" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a9f5f3da27b253c43d1403a4e4772afaf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ModelDescriptor *</type>
+        <definition>ModelDescriptor* Hurricane::Technology::addModelDescriptor</definition>
+        <argsstring>(const Name &amp;name, const Name &amp;simul, const Name &amp;model, std::string netlist, const Name &amp;name_n, const Name &amp;name_p, bool precise)</argsstring>
+        <name>addModelDescriptor</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>simul</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>netlist</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name_n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name_p</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>precise</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="141" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a96d62a8b3eb12560a9cb778328f8a301" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::addUnitRule</definition>
+        <argsstring>(std::string ruleName, std::string reference)</argsstring>
+        <name>addUnitRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>reference</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A free comentary string for further reference.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The newly added rule.</para>
+<para>Create and add to <ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> a rule whithout associated layer. The rule should contain a value which is anything but a length (Volt, Henry, Ohm, ...) The rule is created empty. For a detailed explanation see <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="148" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a267e44b205b97ff46297d16ed278a5bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::addPhysicalRule</definition>
+        <argsstring>(std::string ruleName, std::string reference)</argsstring>
+        <name>addPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>reference</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A free comentary string for further reference.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The newly added rule.</para>
+<para>Create and add to <ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> a rule whithout associated layer. The rule should contain only length value(s) (so <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref>). The rule is created empty. For a detailed explanation see <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="150" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a22902da87e909d0fd774d3bbe111233c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::_addPhysicalRule</definition>
+        <argsstring>(std::string layerName, PhysicalRule *)</argsstring>
+        <name>_addPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>layerName</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="152" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a4210936e097a774035bf52bce7d962bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::addPhysicalRule</definition>
+        <argsstring>(std::string ruleName, std::string layerName, std::string reference)</argsstring>
+        <name>addPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layerName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>reference</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layerName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The one layer associated to the rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A free comentary string for further reference.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The newly added rule.</para>
+<para>Create and add to <ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> a rule associated to <bold>one</bold> layer. The rule should contain only length value(s) (so <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref>). The rule is created empty. For a detailed explanation see <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="154" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a3f04a0d9fe9c76fc3c0911c76c120e00" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref> *</type>
+        <definition>PhysicalRule * Hurricane::Technology::addPhysicalRule</definition>
+        <argsstring>(std::string ruleName, std::string layer1Name, std::string layer2Name, std::string reference)</argsstring>
+        <name>addPhysicalRule</name>
+        <param>
+          <type>std::string</type>
+          <declname>ruleName</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layer1Name</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>layer2Name</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>reference</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ruleName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the rule </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layer1Name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First layer associated to the rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>layer2Name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First layer associated to the rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reference</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A free comentary string for further reference.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<bold>Returns:</bold> The newly added rule.</para>
+<para>Create and add to <ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> a rule associated to <bold>two</bold> layers. The order of layers is meaningful in case of an asymmetric rule. The rule should contain only length value(s) (so <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref>). The rule is created empty. For a detailed explanation see <ref refid="classHurricane_1_1PhysicalRule" kindref="compound">PhysicalRule</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="157" column="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad9a3b89026ee7c646f8929e873900aad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>LayerMap &amp;</type>
+        <definition>Technology::LayerMap &amp; Hurricane::Technology::_getLayerMap</definition>
+        <argsstring>()</argsstring>
+        <name>_getLayerMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="162" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="206" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1abb9177b38c5a0346a73c3d8c8f425226" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>LayerMaskMap &amp;</type>
+        <definition>Technology::LayerMaskMap &amp; Hurricane::Technology::_getLayerMaskMap</definition>
+        <argsstring>()</argsstring>
+        <name>_getLayerMaskMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="163" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="207" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a4892a01308d4ecb955e3c70d7e433d68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::_insertInLayerMaskMap</definition>
+        <argsstring>(Layer *)</argsstring>
+        <name>_insertInLayerMaskMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="164" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a0bbf415512c265770107634c59bc2cd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::_removeFromLayerMaskMap</definition>
+        <argsstring>(Layer *)</argsstring>
+        <name>_removeFromLayerMaskMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="165" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a97abc86f7826cfe03b5cb83c2ec30671" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref> &amp;</type>
+        <definition>Layer::Mask &amp; Hurricane::Technology::_getCutMask</definition>
+        <argsstring>()</argsstring>
+        <name>_getCutMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="166" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="208" bodyend="208"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a363f71cd463015197c270a801ffd3be8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" kindref="member">Layer::Mask</ref> &amp;</type>
+        <definition>Layer::Mask &amp; Hurricane::Technology::_getMetalMask</definition>
+        <argsstring>()</argsstring>
+        <name>_getMetalMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="167" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="209" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a929a074aed05b4e8e36bf5b862d02b03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Technology::_onDbuChange</definition>
+        <argsstring>(float scale)</argsstring>
+        <name>_onDbuChange</name>
+        <param>
+          <type>float</type>
+          <declname>scale</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="168" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad452ef287e886efe6630d8476a628b7b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Technology::_toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJson</name>
+        <reimplements refid="classHurricane_1_1DBo_1af25ab814f1d3f5b740e60e292fad0ea2">_toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="170" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ac876f4dc31b8533a31cb1c6c79c0da10" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Technology::_toJsonCollections</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJsonCollections</name>
+        <reimplements refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6">_toJsonCollections</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="171" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a03b783455877a2a979503dedec160eb3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Technology::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="172" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a5956f2131cff2ad72ad37a19b69988f3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Technology::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1DBo_1a2977898bfe26429c58047f31e99aeeee">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="173" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1aa59db0139bf044e91537d11bb74305f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Technology::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1DBo_1a2b0b963ba17903f0ffd5de938da1c57b">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="174" column="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a6c3721eba952a0c54d39bd6c849d2cd9" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Technology::Technology</definition>
+        <argsstring>(DataBase *, const Name &amp;)</argsstring>
+        <name>Technology</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="193" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1ad60a70bd6c9cc9c6bee7586737330cbc" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Technology::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1DBo_1a83031e41e8655303753b96e3a2d8dfcd">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="194" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Technology_1a0a2813feab0758b3f20dc93de19994b5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Technology::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1DBo_1ade56902fa466b79aef9aa71a2ca8e3f8">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="195" column="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Technological rules description (<bold>API</bold>). </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Technology_1sTechnologyIntro">
+<title>Introduction</title>
+<para>The <ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> object provides the description of all the technology rules needed by the tools, currently it contains:</para>
+<para><itemizedlist>
+<listitem><para>The layers, roughly from bottom (i.e. closest to the subtsrate) to top. Layers can be basic, that is, match a real physical layer, or composite, like for VIAs in symbolic for macro-generation. It also provides a connexity table between layers.</para>
+</listitem><listitem><para>Three sets of rules describing the technology rules (formerly the <computeroutput>DTR</computeroutput> in Alliance).<orderedlist>
+<listitem><para><computeroutput>Zero <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref></computeroutput>: rules not associated to any layer.</para>
+</listitem><listitem><para><computeroutput>One <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref></computeroutput>: rules associated to one layer.</para>
+</listitem><listitem><para><computeroutput>Two Layers</computeroutput>: rules associated to two layer.</para>
+</listitem></orderedlist>
+</para>
+</listitem></itemizedlist>
+</para>
+<para>This object must be created once within the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>, and, in principle never destroyed (this would destroy layers and all objects laying on them ...).</para>
+<para>Here</para>
+<para><simplesect kind="remark"><para>There is only one technology for the current <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>, and only one Database object, so only one technology defined.</para>
+</simplesect>
+</para>
+</sect1>
+<sect1 id="classHurricane_1_1Technology_1sTechnologyRules">
+<title>Using PhysicalRules</title>
+<para>How to create a simple one layer rule, setup the minimal width of <computeroutput>metal1</computeroutput> layer to 0.5<micro/>m.</para>
+<para><programlisting><codeline><highlight class="normal">tech<sp/>=<sp/>DataBase::getDB()-&gt;getTechnology();</highlight></codeline>
+<codeline><highlight class="normal">PhysicalRule*<sp/>rule<sp/>=<sp/>tech-&gt;addPhysicalRule(<sp/>&quot;minWidth&quot;,<sp/>&quot;metal1&quot;<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">rule-&gt;addValue(<sp/>DbU::fromPhysical(<sp/>0.5,<sp/>DbU::UnitPower::Micro<sp/>),<sp/>0<sp/>);</highlight></codeline>
+</programlisting></para>
+<para>How to create a one layer rule, with multiple steps. The minimal spacing of <computeroutput>metal1</computeroutput> layer which will depend on the wire length. The spacing will be of 2<micro/>m for length below 50<micro/>m and 4<micro/>m above.</para>
+<para><programlisting><codeline><highlight class="normal">tech<sp/>=<sp/>DataBase::getDB()-&gt;getTechnology();</highlight></codeline>
+<codeline><highlight class="normal">PhysicalRule*<sp/>rule<sp/>=<sp/>tech-&gt;addPhysicalRule(<sp/>&quot;minWidth&quot;,<sp/>&quot;metal1&quot;<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">rule-&gt;addValue(<sp/>DbU::fromPhysical(<sp/><sp/><sp/><sp/>2.0,<sp/>DbU::UnitPower::Micro<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>DbU::fromPhysical(<sp/><sp/><sp/>50.0,<sp/>DbU::UnitPower::Micro<sp/>)<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">rule-&gt;addValue(<sp/>DbU::fromPhysical(<sp/><sp/><sp/><sp/>4.0,<sp/>DbU::UnitPower::Micro<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>DbU::fromPhysical(<sp/>1000.0,<sp/>DbU::UnitPower::Micro<sp/>)<sp/>);</highlight></codeline>
+</programlisting></para>
+<para>How to create a two layers rule, with non-isomorphic values. The minimum enclosure of <computeroutput>metal1</computeroutput> layer over <computeroutput>cut1</computeroutput> will be 1<micro/>m in horizontal direction and 0.5<micro/>m in vertical. The order of layers is significant in the function call, it must be read as <emphasis>&quot;The encolusre of metal1 over cut1&quot;</emphasis>.</para>
+<para><programlisting><codeline><highlight class="normal">tech<sp/>=<sp/>DataBase::getDB()-&gt;getTechnology();</highlight></codeline>
+<codeline><highlight class="normal">PhysicalRule*<sp/>rule<sp/>=<sp/>tech-&gt;addPhysicalRule(<sp/>&quot;minWidth&quot;,<sp/>&quot;metal1&quot;,<sp/>&quot;cut1&quot;<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">rule-&gt;addValue(<sp/>DbU::fromPhysical(<sp/>1.0,<sp/>DbU::UnitPower::Micro<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>DbU::fromPhysical(<sp/>0.5,<sp/>DbU::UnitPower::Micro<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>0<sp/>);</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" line="62" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Technology.h" bodystart="62" bodyend="196"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Technology_1a22902da87e909d0fd774d3bbe111233c" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_addPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a9d10fd47741e1a999cf761cf76b7a8e0" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_cutMask</name></member>
+      <member refid="classHurricane_1_1Technology_1abca78a7846f6aeaad6fe5317b0127cb3" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_dataBase</name></member>
+      <member refid="classHurricane_1_1Technology_1a9ec8009861d1ac66bb178e3ce2790c49" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_deviceDescriptors</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Technology_1a97abc86f7826cfe03b5cb83c2ec30671" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_getCutMask</name></member>
+      <member refid="classHurricane_1_1Technology_1ad9a3b89026ee7c646f8929e873900aad" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_getLayerMap</name></member>
+      <member refid="classHurricane_1_1Technology_1abb9177b38c5a0346a73c3d8c8f425226" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_getLayerMaskMap</name></member>
+      <member refid="classHurricane_1_1Technology_1a363f71cd463015197c270a801ffd3be8" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_getMetalMask</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Technology_1aa59db0139bf044e91537d11bb74305f5" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Technology_1a5956f2131cff2ad72ad37a19b69988f3" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Technology_1a03b783455877a2a979503dedec160eb3" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Technology_1a4892a01308d4ecb955e3c70d7e433d68" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_insertInLayerMaskMap</name></member>
+      <member refid="classHurricane_1_1Technology_1a078159ec9c3e5a905b81666847a3ac0e" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_layerMap</name></member>
+      <member refid="classHurricane_1_1Technology_1ac94dfda647e203c43e6b41e8528286b1" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_layerMaskMap</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Technology_1a14d4261a61bd9276cc7bf3adcf8864e7" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_metalMask</name></member>
+      <member refid="classHurricane_1_1Technology_1a4c37a16384f4d9ffc39739229062f48d" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_modelDescriptors</name></member>
+      <member refid="classHurricane_1_1Technology_1af562493c8cac0a7fb7f2aa85af073c3d" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Technology_1aac1a789357abc0324dc8c65e69e1c077" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_noLayerRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a929a074aed05b4e8e36bf5b862d02b03" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_onDbuChange</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Technology_1adac74ec09f9176f4d0ab42662a8d87b6" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_oneLayerRules</name></member>
+      <member refid="classHurricane_1_1Technology_1ad60a70bd6c9cc9c6bee7586737330cbc" prot="protected" virt="virtual"><scope>Hurricane::Technology</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Technology_1a0a2813feab0758b3f20dc93de19994b5" prot="protected" virt="virtual"><scope>Hurricane::Technology</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Technology_1a0bbf415512c265770107634c59bc2cd4" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_removeFromLayerMaskMap</name></member>
+      <member refid="classHurricane_1_1Technology_1ad452ef287e886efe6630d8476a628b7b" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1Technology_1ac876f4dc31b8533a31cb1c6c79c0da10" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Technology_1aac841b02f902806dfd8a3deaaec75293" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_twoLayersRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a7b09cf697dcd9834a5db807dd09cc595" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>_unitRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a1026ace26ae4f004097ceb19744dc55f" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addDeviceDescriptor</name></member>
+      <member refid="classHurricane_1_1Technology_1a9f5f3da27b253c43d1403a4e4772afaf" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addModelDescriptor</name></member>
+      <member refid="classHurricane_1_1Technology_1a267e44b205b97ff46297d16ed278a5bc" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a4210936e097a774035bf52bce7d962bc" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a3f04a0d9fe9c76fc3c0911c76c120e00" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a96d62a8b3eb12560a9cb778328f8a301" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>addUnitRule</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Technology_1a64670f0d48e9460342005df52f25c152" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Technology</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Technology</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Technology_1a9b82e4e183000fe699076e7edd2928d1" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>DeviceDescriptors</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Technology_1ab096154ce9485cef02244f0037efd4fb" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getBasicLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1a7fccff9da6604fafb90408ba56184fc0" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getBasicLayers</name></member>
+      <member refid="classHurricane_1_1Technology_1a997457824046ea63eba51210a8e23f85" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getBasicLayers</name></member>
+      <member refid="classHurricane_1_1Technology_1ac7125a8eea871918e74bb295c56caceb" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getCutAbove</name></member>
+      <member refid="classHurricane_1_1Technology_1a3ca39dccc7e19b404181f55777e1b933" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getCutBelow</name></member>
+      <member refid="classHurricane_1_1Technology_1acf836e738fba14fa493b0e08148cc3ee" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getDataBase</name></member>
+      <member refid="classHurricane_1_1Technology_1ad384b9b1b8fefec78e9766b25b4be870" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getDeviceDescriptor</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Technology_1a4ec69c9f8f6b483885f1900c56a97b61" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1a2ab8d2c386bf3daeb2b93d92ecbac6b4" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1a4e58c5ae8e3e82d7fe1b3bb939d6a633" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getLayers</name></member>
+      <member refid="classHurricane_1_1Technology_1af5723b08c9d289ffef8159ac2ea71b74" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getMetalAbove</name></member>
+      <member refid="classHurricane_1_1Technology_1ae02123406c7362cc14413727e8689d5a" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getMetalBelow</name></member>
+      <member refid="classHurricane_1_1Technology_1ad7947a948b467acb1e874eb7e95643dc" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getModelDescriptor</name></member>
+      <member refid="classHurricane_1_1Technology_1a6f0ca0afd5f99a3dc149cda21793f037" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getModelDescriptors</name></member>
+      <member refid="classHurricane_1_1Technology_1ae466071aa1991c853ee71af12fa62d4e" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Technology_1ad2e7e66ae16a696045ae248c114638ca" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getNoLayerRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a43a668043dd61ad80d3f99b48907fdb8" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getNthCut</name></member>
+      <member refid="classHurricane_1_1Technology_1a81a3f3e479aeb686c61a2d0fa2931f3b" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getNthMetal</name></member>
+      <member refid="classHurricane_1_1Technology_1a14450d353280b7a673d210cc8998c60e" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getOneLayerRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a8228c4df29005013f22124639ebaf07b" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a21ef6f7507785a587e56aecc52a0c0ee" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getPhysicalRule</name></member>
+      <member refid="classHurricane_1_1Technology_1aec2ce8a8195e90537e6d35cb3ba8b58f" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getPhysicalRule</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Technology_1a0e93f2f749ee9b6efd30de4ef74546cc" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getRegularLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1abffce542bc1cee054b4a09c64449f3b8" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getRegularLayers</name></member>
+      <member refid="classHurricane_1_1Technology_1a7f6cf05f60c010228f9c8a6f698e9294" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getTwoLayersRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a6ab76e8a246a10a395d68341bca9ea96" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getUnitRule</name></member>
+      <member refid="classHurricane_1_1Technology_1a897f87ac3caeaedfff8ae2f675d8863d" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getUnitRules</name></member>
+      <member refid="classHurricane_1_1Technology_1a8209708bc594a307ea39f15a39bbf196" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getViaBetween</name></member>
+      <member refid="classHurricane_1_1Technology_1a9edd085c08487642dd8745b66cf40c76" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getViaLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1aacde973f6a02a232a01f3f618576e1ee" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>getViaLayers</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Technology_1ae5590e455d35f76531a6feb0c0f111a2" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>isMetal</name></member>
+      <member refid="classHurricane_1_1Technology_1a9ffcda187ba963aeaed8b08f507fb329" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>LayerMaskMap</name></member>
+      <member refid="classHurricane_1_1Technology_1a1be5073da93c3d85ee9bba12ca9dc3a9" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>LayerPair</name></member>
+      <member refid="classHurricane_1_1Technology_1afe30a9dd329ab9f2d2e2fe58799290ae" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>ModelDescriptors</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1Technology_1a2160174789e4d69afa5a3efec07099f5" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>OneLayerRules</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Technology</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Technology_1a954eef266bcca2e3d7c37f19a027d30d" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>PhysicalRules</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1Technology_1a9788b354f8af8aca97676b8389f2b762" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1Technology_1a247b75d5cbb85198cea9e5e609304cd0" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Technology_1a10275214cb5537be7aad947a0e1d1ff0" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setSymbolicLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1a26c12c5828acaeb33068a2899df1134b" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>setSymbolicLayer</name></member>
+      <member refid="classHurricane_1_1Technology_1ad03b4656d7b7657ef78d0af9e8cd6ac8" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>Super</name></member>
+      <member refid="classHurricane_1_1Technology_1a6c3721eba952a0c54d39bd6c849d2cd9" prot="protected" virt="non-virtual"><scope>Hurricane::Technology</scope><name>Technology</name></member>
+      <member refid="classHurricane_1_1Technology_1abb65b48adb99af92696b65b9131451f0" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>toDtr</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Technology_1adbb4d97054dd090d030000f4a68a863e" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>TwoLayersRules</name></member>
+      <member refid="classHurricane_1_1Technology_1acfed5d57b71be1a5241adf5442457e68" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>UnitRules</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Technology</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Technology</scope><name>~DBo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

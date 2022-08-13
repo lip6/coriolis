@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Initializer" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Initializer</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Initializer_1ab80fdb7c17aaf5bd3facdf3f0f9d12ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Initializer&lt; T &gt;::Initializer</definition>
+        <argsstring>(unsigned int order)</argsstring>
+        <name>Initializer</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register a static initializer for the template type <computeroutput>T</computeroutput>. <ref refid="classHurricane_1_1Initializer" kindref="compound">Initializer</ref> is a object that must be kept in a <computeroutput>static</computeroutput> variable in a compilation unit (i.e. a <computeroutput></computeroutput>.cpp file).</para>
+<para>The template type <computeroutput>T</computeroutput> (a class) must provide a static function named <computeroutput>initialize</computeroutput>, with exactly the following signature: <computeroutput>void T::initialize()</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Initializer.h" line="66" column="15" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Initializer.h" bodystart="66" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Register a static initialization function. </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Initializer_1secInitializerMechanism">
+<title>Initializer Mechanism</title>
+<para>In C++, there is currently no way to guarantee the order into which the static initialization (variables) in various modules will be done.</para>
+<para>The <ref refid="classHurricane_1_1Initializer" kindref="compound">Initializer</ref> template class provide a way to perform a static initialization across multiple modules in an ordered fashion, thus solving potential dependency problems between initialisation. </para>
+</sect1>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Initializer.h" line="64" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Initializer.h" bodystart="64" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Initializer_1ab80fdb7c17aaf5bd3facdf3f0f9d12ae" prot="public" virt="non-virtual"><scope>Hurricane::Initializer</scope><name>Initializer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

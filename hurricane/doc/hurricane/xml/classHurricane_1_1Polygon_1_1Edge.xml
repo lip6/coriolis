@@ -1,0 +1,265 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Polygon_1_1Edge" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Polygon::Edge</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Edge_1a29412a15ea9a2c12cf14fafca731565c" prot="private" static="no" mutable="no">
+        <type>uint32_t</type>
+        <definition>uint32_t Hurricane::Polygon::Edge::_flags</definition>
+        <argsstring></argsstring>
+        <name>_flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="73" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Edge_1a6a67fa24d19571c2da2f5ac65866716b" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Polygon::Edge::_xyOrigin</definition>
+        <argsstring></argsstring>
+        <name>_xyOrigin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="74" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Edge_1aeb7d957e09b82e0f089c98527fbc563f" prot="private" static="no" mutable="no">
+        <type>vector&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &gt;</type>
+        <definition>vector&lt;DbU::Unit&gt; Hurricane::Polygon::Edge::_steps</definition>
+        <argsstring></argsstring>
+        <name>_steps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="75" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1acf0a7e0fc0a0d92a6ca2da1b8f89b9f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Polygon::Edge::Edge</definition>
+        <argsstring>(Point origin, Point extremity, uint32_t flags)</argsstring>
+        <name>Edge</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+          <declname>origin</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+          <declname>extremity</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="59" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a07cc6ba39031cd845895b294d3972eb2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Hurricane::Polygon::Edge::getSize</definition>
+        <argsstring>() const</argsstring>
+        <name>getSize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="60" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a51dfe2487c46486a38aae33e63a12f49" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Polygon::Edge::getPoint</definition>
+        <argsstring>(size_t i) const</argsstring>
+        <name>getPoint</name>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="61" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a40c36df41a6ebcef611d0af8ddf2ca10" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isPositiveSlope</definition>
+        <argsstring>() const</argsstring>
+        <name>isPositiveSlope</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="62" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="148" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a3333531eff815738ce65c9e4c030cb50" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isYIncrease</definition>
+        <argsstring>() const</argsstring>
+        <name>isYIncrease</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="63" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="146" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1ab544db4c2430af809620bf45e087466c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isXIncrease</definition>
+        <argsstring>() const</argsstring>
+        <name>isXIncrease</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="64" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="147" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a7db5a64e929360906d8c62f43ccc89a6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isHV</definition>
+        <argsstring>() const</argsstring>
+        <name>isHV</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="65" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="149" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1ace1efdccb9c39ceafee8486ca701efef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isXSteps</definition>
+        <argsstring>() const</argsstring>
+        <name>isXSteps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="66" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="150" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a157fa5c0e57be2c94118898542aa9141" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Polygon::Edge::isYSteps</definition>
+        <argsstring>() const</argsstring>
+        <name>isYSteps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="67" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="151" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a01121308ad386af223da2d28942ecd0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Polygon::Edge::translate</definition>
+        <argsstring>(DbU::Unit dx, DbU::Unit dy)</argsstring>
+        <name>translate</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="68" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1ab130ce1256a5fb42075419d3c7bf90e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Polygon::Edge::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="69" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1adc6dadb77b361ccc7a9c45493821b605" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Polygon::Edge::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="70" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Edge_1a85d4c45eccfa9dfafaf7283472844f1b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Polygon::Edge::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="71" column="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="57" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="57" bodyend="76"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a29412a15ea9a2c12cf14fafca731565c" prot="private" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a85d4c45eccfa9dfafaf7283472844f1b" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1adc6dadb77b361ccc7a9c45493821b605" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1ab130ce1256a5fb42075419d3c7bf90e4" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1aeb7d957e09b82e0f089c98527fbc563f" prot="private" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_steps</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a6a67fa24d19571c2da2f5ac65866716b" prot="private" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>_xyOrigin</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1acf0a7e0fc0a0d92a6ca2da1b8f89b9f2" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>Edge</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a51dfe2487c46486a38aae33e63a12f49" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>getPoint</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a07cc6ba39031cd845895b294d3972eb2" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>getSize</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a7db5a64e929360906d8c62f43ccc89a6" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isHV</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a40c36df41a6ebcef611d0af8ddf2ca10" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isPositiveSlope</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1ab544db4c2430af809620bf45e087466c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isXIncrease</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1ace1efdccb9c39ceafee8486ca701efef" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isXSteps</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a3333531eff815738ce65c9e4c030cb50" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isYIncrease</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a157fa5c0e57be2c94118898542aa9141" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>isYSteps</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Edge_1a01121308ad386af223da2d28942ecd0e" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Edge</scope><name>translate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Polygon::Points_Manhattan::Locator</compoundname>
+    <basecompoundref refid="classHurricane_1_1Locator" prot="public" virt="non-virtual">Hurricane::Locator&lt; Point &gt;</basecompoundref>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a645a2777e8b4f9d485ab0133589a187d" prot="protected" static="no" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> *</type>
+        <definition>const Polygon* Hurricane::Polygon::Points_Manhattan::Locator::_polygon</definition>
+        <argsstring></argsstring>
+        <name>_polygon</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="91" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a636b7b4a0c34f0f8e3e094b931a85bc1" prot="protected" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t Hurricane::Polygon::Points_Manhattan::Locator::_iEdge</definition>
+        <argsstring></argsstring>
+        <name>_iEdge</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="92" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a6dab68cd314a43e9ab6460b0f10f722c" prot="protected" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t Hurricane::Polygon::Points_Manhattan::Locator::_iPoint</definition>
+        <argsstring></argsstring>
+        <name>_iPoint</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="93" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a2511afe6888614a7c8f712fdf60fc115" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Polygon::Points_Manhattan::Locator::Locator</definition>
+        <argsstring>(const Polygon *)</argsstring>
+        <name>Locator</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="83" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1ac6f140e78854f7796e391eb57542d81c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Polygon::Points_Manhattan::Locator::Locator</definition>
+        <argsstring>(const Locator &amp;)</argsstring>
+        <name>Locator</name>
+        <param>
+          <type>const Locator &amp;</type>
+          <defname>locator</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="84" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="155" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1aee9356ea618476d37510eb3e623706d3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>virtual Point Hurricane::Polygon::Points_Manhattan::Locator::getElement</definition>
+        <argsstring>() const</argsstring>
+        <name>getElement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="85" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a95db39dbc60d8a24ec051ed6d90ead35" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Locator" kindref="compound">PointHL</ref> *</type>
+        <definition>virtual PointHL* Hurricane::Polygon::Points_Manhattan::Locator::getClone</definition>
+        <argsstring>() const</argsstring>
+        <name>getClone</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="86" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1aa48770d7dbe09944b9bd5b519212e0ac" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Polygon::Points_Manhattan::Locator::isValid</definition>
+        <argsstring>() const</argsstring>
+        <name>isValid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="87" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a727bda2582ba616aff73adef58d2bc5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Polygon::Points_Manhattan::Locator::progress</definition>
+        <argsstring>()</argsstring>
+        <name>progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="88" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a24ee5200da58d81e33e98b87c0159e86" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Polygon::Points_Manhattan::Locator::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="89" column="32"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::Polygon::Points_Manhattan::Locator</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PointHL</label>
+        <link refid="classHurricane_1_1Locator"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="11">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="13">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="19">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Rubber</label>
+        <link refid="classHurricane_1_1Rubber"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_nextOfNetRubberSet</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_hook</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="21">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Polygon</label>
+        <link refid="classHurricane_1_1Polygon"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_layer</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_nextOfQuadTreeGoSet</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_nextOfTechnologyLayerMap</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="14">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="22">
+        <label>Hurricane::Component::BodyHook</label>
+        <link refid="classHurricane_1_1Component_1_1BodyHook"/>
+        <childnode refid="21" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Polygon::Points_Manhattan::Locator</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_polygon</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Component</label>
+        <link refid="classHurricane_1_1Component"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_rubber</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nextOfNetComponentSet</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_bodyHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PointHL</label>
+        <link refid="classHurricane_1_1Locator"/>
+      </node>
+      <node id="16">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="81" column="11" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="81" bodyend="94"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a24ee5200da58d81e33e98b87c0159e86" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Locator_1a1b35e491cc50b29c1211ed81f71c0004" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a636b7b4a0c34f0f8e3e094b931a85bc1" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>_iEdge</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a6dab68cd314a43e9ab6460b0f10f722c" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>_iPoint</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a645a2777e8b4f9d485ab0133589a187d" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>_polygon</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a95db39dbc60d8a24ec051ed6d90ead35" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1aee9356ea618476d37510eb3e623706d3" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>getElement</name></member>
+      <member refid="classHurricane_1_1Locator_1a24f16e4010b8978adc9ceef57281f684" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>getLocator</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1aa48770d7dbe09944b9bd5b519212e0ac" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>isValid</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a2511afe6888614a7c8f712fdf60fc115" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1ac6f140e78854f7796e391eb57542d81c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1Locator_1a9ea8740165cec25c217a424ccb11294a" prot="protected" virt="non-virtual" ambiguityscope="Hurricane::Locator::"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1Locator_1a3d577933c0c10324b9ba0f1e2988942d" prot="private" virt="non-virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Polygon_1_1Points__Manhattan_1_1Locator_1a727bda2582ba616aff73adef58d2bc5a" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>progress</name></member>
+      <member refid="classHurricane_1_1Locator_1a21286beba819c39472c58aa511686355" prot="public" virt="virtual"><scope>Hurricane::Polygon::Points_Manhattan::Locator</scope><name>~Locator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

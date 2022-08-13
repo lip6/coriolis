@@ -1,0 +1,627 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Hook" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Hurricane::Hook</compoundname>
+    <derivedcompoundref refid="classHurricane_1_1Component_1_1BodyHook" prot="public" virt="non-virtual">Hurricane::Component::BodyHook</derivedcompoundref>
+    <derivedcompoundref refid="classHurricane_1_1Contact_1_1AnchorHook" prot="public" virt="non-virtual">Hurricane::Contact::AnchorHook</derivedcompoundref>
+    <derivedcompoundref refid="classHurricane_1_1Segment_1_1SourceHook" prot="public" virt="non-virtual">Hurricane::Segment::SourceHook</derivedcompoundref>
+    <derivedcompoundref refid="classHurricane_1_1Segment_1_1TargetHook" prot="public" virt="non-virtual">Hurricane::Segment::TargetHook</derivedcompoundref>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Hook_1afaf42e984908810f6590b5c1ad383fe8" prot="private" static="no">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *(*</type>
+        <definition>typedef Hook*(* Hurricane::Hook::compToHook_t) (Component *)</definition>
+        <argsstring>)(Component *)</argsstring>
+        <name>compToHook_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="37" column="14" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Hook_1a1e3c695a81a0f8cf1ef1f1219c854729" prot="private" static="yes" mutable="no">
+        <type>map&lt; string, compToHook_t &gt;</type>
+        <definition>map&lt;string,compToHook_t&gt; Hurricane::Hook::_compToHookMap</definition>
+        <argsstring></argsstring>
+        <name>_compToHookMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="42" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Hook_1a3e9b9589963398a6ca3ff9e50109fdf7" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook* Hurricane::Hook::_nextHook</definition>
+        <argsstring></argsstring>
+        <name>_nextHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="43" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Hook_1af1b979b76e29dd5073b9a2d48e5c7028" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Hook::Hook</definition>
+        <argsstring>()</argsstring>
+        <name>Hook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="48" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a6ad8b0ea4b0bd0e92f658f4b91bfc355" prot="protected" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="virtual">
+        <type></type>
+        <definition>virtual Hurricane::Hook::~Hook</definition>
+        <argsstring>() noexcept(false)</argsstring>
+        <name>~Hook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="55" column="22"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Hook_1abf64cf9dd76626b15a6a7f38c431ac62" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Hook::Hook</definition>
+        <argsstring>(const Hook &amp;hook)</argsstring>
+        <name>Hook</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> &amp;</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="50" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1ae9ec6be9790bb14ac9d21d4fba7d5b50" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> &amp;</type>
+        <definition>Hook&amp; Hurricane::Hook::operator=</definition>
+        <argsstring>(const Hook &amp;hook)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> &amp;</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="60" column="19"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Hook_1ab420305aa59b8ff10d59678363de2511" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+        <definition>Component * Hurricane::Hook::getComponent</definition>
+        <argsstring>() const =0</argsstring>
+        <name>getComponent</name>
+        <reimplementedby refid="classHurricane_1_1Component_1_1BodyHook_1a9d564944f3272f16b073d02e1fb4f18e">getComponent</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Contact_1_1AnchorHook_1a506f6b21209a33b558fa0a50e89f8f49">getComponent</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1SourceHook_1a5fefc4bd319da5ca5d884f68a43916c2">getComponent</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1TargetHook_1a821e5a8e29c54867bf9fe78eaf4e3c4d">getComponent</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the component whose hook represents a part.</para>
+<para><simplesect kind="remark"><para>The result is never NULL because hooks are byforce nested objects in their component. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="65" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a03044fa995d6d784d6c441927ca8af04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::getNextHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getNextHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the next hook within the ring.</para>
+<para><simplesect kind="remark"><para>The result is never NULL because every hook has by construction its next one (which may be itself is the ring is empty). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="67" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1ad69ebbbf3d64343aca23ca435f24c624" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::getPreviousHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getPreviousHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the previous hook within the ring.</para>
+<para><simplesect kind="remark"><para>Less efficient than getNextHook because it requires a complete ring loop. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="68" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1af18e0531df4ed14b64cf058b780aee46" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::getMasterHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getMasterHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the master of the relation master-slaves identified by the hook.</para>
+<para><simplesect kind="remark"><para>May return itself if the hook is a master and return NULL if the hook is a slave and has no associated master. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="70" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a0923a5a2d0a7ee0458876eed72008e46" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::getNextMasterHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getNextMasterHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first master found when starting the search immediately after the given hook.</para>
+<para><simplesect kind="remark"><para>May return NULL if there is no master within the ring or return the hook itself if it is a master and the only one in the ring. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="71" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a80bf5cdd4e81952064f1be94fe10188f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::getPreviousMasterHook</definition>
+        <argsstring>() const</argsstring>
+        <name>getPreviousMasterHook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the first master found when starting a backwards search immediately before the given hook.</para>
+<para><simplesect kind="remark"><para>May return NULL if there is no master within the ring or return the hook itself if it is a master and the only one in the ring.</para>
+</simplesect>
+<simplesect kind="remark"><para>Of course the search is done in the natural forward direction (else it would be trully inefficient). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="72" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a2def96fbcd444bebc16e589357c2a779" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a9dcd9b74dc5e2b51bec7a13c25807e02" kindref="member">Hooks</ref></type>
+        <definition>Hooks Hurricane::Hook::getHooks</definition>
+        <argsstring>() const</argsstring>
+        <name>getHooks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of hooks of the ring containing the given hook.</para>
+<para><simplesect kind="remark"><para>Hooks are always visited in the natural order starting from the hook itself. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="74" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1ad3c977e4f253a18cf24dfe4a6fd24cb1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a9dcd9b74dc5e2b51bec7a13c25807e02" kindref="member">Hooks</ref></type>
+        <definition>Hooks Hurricane::Hook::getSlaveHooks</definition>
+        <argsstring>() const</argsstring>
+        <name>getSlaveHooks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the hook collection which are slaves of the given hook.</para>
+<para><simplesect kind="remark"><para>This collection will be empty if the given hook is not a master or if it has no attached slaves.</para>
+</simplesect>
+When visiting the slaves of a master, those are accessed in the assembly order : the first one is the oldest inserted (they are accessed starting from the first slave found when starting a ring loop from the master itself).</para>
+<para>The master is not included in this collection. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="75" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1af0940eb0761f05df0b82c4198e22a01c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Hook::isMaster</definition>
+        <argsstring>() const =0</argsstring>
+        <name>isMaster</name>
+        <reimplementedby refid="classHurricane_1_1Component_1_1BodyHook_1aa17a3acbeb411d8a501b82286b263518">isMaster</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Contact_1_1AnchorHook_1a70d7ac357fac4841adcd9d08ed1282c2">isMaster</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1SourceHook_1a714f9951006abf10486cbc23ee1adf76">isMaster</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1TargetHook_1ad6ac857810495bdfe8310241367ff963">isMaster</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the hook must be considered as a master, else <bold>false</bold>.</para>
+<para><simplesect kind="remark"><para>For any new kind of hook this predicate must be overloaded. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="85" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1acd62c7de2c023a1013d5a728159d068d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Hook::isAttached</definition>
+        <argsstring>() const</argsstring>
+        <name>isAttached</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the hook is a slave :</para>
+<para><bold>Returns:</bold> <bold>true</bold> if the hook has an associated master, else <bold>false</bold>.</para>
+<para><simplesect kind="remark"><para>You can&apos;t find two slaves in the same ring without at least a master.</para>
+</simplesect>
+If the hook is a master :</para>
+<para>Let us consider the hyper-ring made upon hyper-hooks. Then the function returns <bold>true</bold> if the ring contains at least an other master else <bold>false</bold>.</para>
+<para><simplesect kind="par"><title>Caution: The meaning here is very different than for a slave hook! </title><para></para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="87" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a83f5beb5092e97947d24bd18adb33db1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::detach</definition>
+        <argsstring>()</argsstring>
+        <name>detach</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the hook is a slave :</para>
+<para>detaches the hook from its ring and returns its old predecessor.</para>
+<para><simplesect kind="remark"><para>Will return NULL if the hook is the only one in the ring.</para>
+</simplesect>
+If the hook is a master :</para>
+<para>Let us consider the hyper-ring made upon hyper-hooks. Then, the function detaches the hyper-hook (the sub-ring made up of the master and its slaves, if any) from the hyper-ring and returns the old predecessor of the hyper-hook.</para>
+<para>Within the detached hyper-hook, the relationship master hook<itemizedlist>
+<listitem><para>slave hooks remains unaltered and forms a new ring.</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="remark"><para>May return NULL if the hook is the only master of the ring.</para>
+</simplesect>
+The returned hook, if not NULL, is byforce a master. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="92" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1aacc4dacd0d128b35fd15546bc6dde3c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::attach</definition>
+        <argsstring>(Hook *hook)</argsstring>
+        <name>attach</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+          <defname>masterHook</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If the hook (this) is a slave :</para>
+<para>The function inserts the hook immediately before <computeroutput>&lt;masterHook&gt;</computeroutput> and returns this masterHook.</para>
+<para><simplesect kind="par"><title>Caution: Might throw an exception if the hook already has a master or </title><para>if <computeroutput>&lt;masterHook&gt;</computeroutput> is not a master hook.</para>
+</simplesect>
+If the hook (this) is a master :</para>
+<para>Let us consider the hyper-ring made upon hyper-hooks. Then, the function attaches the the hyper-hook (the sub-ring made up of this master hook and its slaves, if any) before the <computeroutput>&lt;masterHook&gt;</computeroutput> and returns this masterHook.</para>
+<para><simplesect kind="par"><title>Caution: Might throw an exception if the hyper-hook is already </title><para>attached within a ring including an other master or if <computeroutput>&lt;masterHook&gt;</computeroutput> is not a master hook. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="93" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a7b98f0796a9080495472d574a23bcca0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::Hook::merge</definition>
+        <argsstring>(Hook *hook)</argsstring>
+        <name>merge</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+          <defname>masterHook</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>merges the rings represented by the two hooks which both must be masters, returns <computeroutput>&lt;masterHook&gt;</computeroutput>.</para>
+<para><simplesect kind="remark"><para>Throws an exception if both hooks are not masters.</para>
+</simplesect>
+This function doesn&apos;t change the two relatioships master-slaves but modifies the connection request between corresponding hyper-hooks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="94" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1ad4035ab2772f78d4503a52293c45f87c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Hook::_setNextHook</definition>
+        <argsstring>(Hook *hook)</argsstring>
+        <name>_setNextHook</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <declname>hook</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="95" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1abeb82dde7f4d157eb7dc63c797b7e565" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Hook::toJson</definition>
+        <argsstring>() const</argsstring>
+        <name>toJson</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="102" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a1697fbfc6731d7e74ecf2b00dad61bfc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Hook::_getTypeName</definition>
+        <argsstring>() const =0</argsstring>
+        <name>_getTypeName</name>
+        <reimplementedby refid="classHurricane_1_1Component_1_1BodyHook_1a69ddb053d0c97952e6b5d95ffeef46ce">_getTypeName</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Contact_1_1AnchorHook_1ac4c6d31e08cb9740fbc0a483d0ef1c7a">_getTypeName</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1SourceHook_1a731e72139b5c029edab8e14527bfba26">_getTypeName</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1TargetHook_1a10e778fbb8d87b854d328d60a811c7bd">_getTypeName</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="103" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a2d13c036a187ee84573e1321227e70d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Hook::_getString</definition>
+        <argsstring>() const =0</argsstring>
+        <name>_getString</name>
+        <reimplementedby refid="classHurricane_1_1Component_1_1BodyHook_1a4258a9318ace4650a5fff14f5ea7a88b">_getString</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Contact_1_1AnchorHook_1a2e29e3ecee7725761fec4d3478359fe1">_getString</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1SourceHook_1af762db22f42ea37ae0fe75173f075914">_getString</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Segment_1_1TargetHook_1a5e001017fe6a534144890a2453f7179a">_getString</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="104" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1afb5a16856d629d37bafc437ab435a36a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Hook::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="105" column="28"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a837abef57c2c05f164c4e14fa34da52c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a9287de05984b91e55592a77e8d394324" kindref="member">HookFilter</ref></type>
+        <definition>static HookFilter Hurricane::Hook::getIsMasterFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsMasterFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="80" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1a3941bc7d313aab128e9e967a57348040" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::Hook::addCompToHook</definition>
+        <argsstring>(const string &amp;, compToHook_t)</argsstring>
+        <name>addCompToHook</name>
+        <param>
+          <type>const string &amp;</type>
+        </param>
+        <param>
+          <type>compToHook_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="100" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Hook_1aac6b6ca17ff5ab253dfb14c578e68ba1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>static Hook* Hurricane::Hook::compToHook</definition>
+        <argsstring>(const string &amp;tname, Component *)</argsstring>
+        <name>compToHook</name>
+        <param>
+          <type>const string &amp;</type>
+          <declname>tname</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="101" column="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Hook_1secHookIntro">
+<title>Introduction</title>
+<para>The hook is an object which is nested inside a component and which represents some specific part of this component (like its body, its origin or its extremity ...).</para>
+<para>The <ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> class is an abstract one, that means that for any new type of <bold>part</bold> a new hook subclass must be derived. Each hook specialization will be described altogether with the component which includes it.</para>
+<para>The <ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> for instance introduces the concept of <bold>BodyHook</bold> representing the body of the component (which can be assimilated to the component itself).</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookRings">
+<title>Rings</title>
+<para>Hooks are assembled into a <bold>ring</bold> (circular link) thanks to a special field pointing to the next hook within the ring.</para>
+<para>This field is never NULL, by default it points to itself, generating a minimal ring.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookMasterAndSlaveHookTypes">
+<title>Master and Slave hook types</title>
+<para>There are two kinds of hooks : the <bold>masters</bold> and the <bold>slaves</bold>.</para>
+<para>Rings are organized such that all slave hooks of a master hook are placed in the ring immediately before it (the ordering of slaves is not significant).</para>
+<para>Therefore, to find the master of a given slave, it&apos;s enough to follow the ring pointers, starting from the slave, until a master is found.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookExplicitConnections">
+<title>Explicit connections</title>
+<para>This dependency between a slave and its master means that the part of the component represented by the slave is anchored on the part of the component represented by the master.</para>
+<para>This dependence relationship is indeed an explicit connection.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookImplicitConnections">
+<title>Implicit connections</title>
+<para>Within a ring many relationships master-slaves can cohabit.</para>
+<para>This cohabitation has a specific meaning for the different masters of the ring. In fact, the ring must be considered as a connection request between the different masters of the ring.</para>
+<para>In other words, this means that the different masters remains to be connected together, or more generaly stated, that the different connected subsets of components associated to those masters remains to be connected together.</para>
+<para>The ordering of masters within a ring has no particular signification.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookConceptsOfHyperhooksAndHyperrings">
+<title>Concepts of HyperHooks and HyperRings</title>
+<para>We can imagine the master-slaves relation as a kind of hyper-hook representing the associated sub-ring, and the ring containing multiple master-slaves relations as an hyper-ring made up of hyper-hooks needing to be connected.</para>
+<para>Therefore there will be two different levels of ring processing functions depending on wether we handle hooks stricktly speaking or we handle hyper-hooks representing multiple master hooks.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Hook_1secHookConstructorAndDestructor">
+<title>Constructor and Destructor</title>
+<para>There is no <ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> constructor available because they are created by the components themselves.</para>
+<para>On the same way, hooks disapear automatically with their owner. </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Hurricane::Segment::SourceHook</label>
+        <link refid="classHurricane_1_1Segment_1_1SourceHook"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+      </node>
+      <node id="2">
+        <label>Hurricane::Component::BodyHook</label>
+        <link refid="classHurricane_1_1Component_1_1BodyHook"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Contact::AnchorHook</label>
+        <link refid="classHurricane_1_1Contact_1_1AnchorHook"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::Segment::TargetHook</label>
+        <link refid="classHurricane_1_1Segment_1_1TargetHook"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" line="34" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Hook.h" bodystart="34" bodyend="107"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Hook_1a1e3c695a81a0f8cf1ef1f1219c854729" prot="private" virt="non-virtual"><scope>Hurricane::Hook</scope><name>_compToHookMap</name></member>
+      <member refid="classHurricane_1_1Hook_1afb5a16856d629d37bafc437ab435a36a" prot="public" virt="virtual"><scope>Hurricane::Hook</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Hook_1a2d13c036a187ee84573e1321227e70d5" prot="public" virt="pure-virtual"><scope>Hurricane::Hook</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Hook_1a1697fbfc6731d7e74ecf2b00dad61bfc" prot="public" virt="pure-virtual"><scope>Hurricane::Hook</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Hook_1a3e9b9589963398a6ca3ff9e50109fdf7" prot="private" virt="non-virtual"><scope>Hurricane::Hook</scope><name>_nextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad4035ab2772f78d4503a52293c45f87c" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>_setNextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a3941bc7d313aab128e9e967a57348040" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>addCompToHook</name></member>
+      <member refid="classHurricane_1_1Hook_1aacc4dacd0d128b35fd15546bc6dde3c3" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>attach</name></member>
+      <member refid="classHurricane_1_1Hook_1aac6b6ca17ff5ab253dfb14c578e68ba1" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>compToHook</name></member>
+      <member refid="classHurricane_1_1Hook_1afaf42e984908810f6590b5c1ad383fe8" prot="private" virt="non-virtual"><scope>Hurricane::Hook</scope><name>compToHook_t</name></member>
+      <member refid="classHurricane_1_1Hook_1a83f5beb5092e97947d24bd18adb33db1" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>detach</name></member>
+      <member refid="classHurricane_1_1Hook_1ab420305aa59b8ff10d59678363de2511" prot="public" virt="pure-virtual"><scope>Hurricane::Hook</scope><name>getComponent</name></member>
+      <member refid="classHurricane_1_1Hook_1a2def96fbcd444bebc16e589357c2a779" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getHooks</name></member>
+      <member refid="classHurricane_1_1Hook_1a837abef57c2c05f164c4e14fa34da52c" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getIsMasterFilter</name></member>
+      <member refid="classHurricane_1_1Hook_1af18e0531df4ed14b64cf058b780aee46" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a03044fa995d6d784d6c441927ca8af04" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getNextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a0923a5a2d0a7ee0458876eed72008e46" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getNextMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad69ebbbf3d64343aca23ca435f24c624" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getPreviousHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a80bf5cdd4e81952064f1be94fe10188f" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getPreviousMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad3c977e4f253a18cf24dfe4a6fd24cb1" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>getSlaveHooks</name></member>
+      <member refid="classHurricane_1_1Hook_1af1b979b76e29dd5073b9a2d48e5c7028" prot="protected" virt="non-virtual"><scope>Hurricane::Hook</scope><name>Hook</name></member>
+      <member refid="classHurricane_1_1Hook_1abf64cf9dd76626b15a6a7f38c431ac62" prot="private" virt="non-virtual"><scope>Hurricane::Hook</scope><name>Hook</name></member>
+      <member refid="classHurricane_1_1Hook_1acd62c7de2c023a1013d5a728159d068d" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>isAttached</name></member>
+      <member refid="classHurricane_1_1Hook_1af0940eb0761f05df0b82c4198e22a01c" prot="public" virt="pure-virtual"><scope>Hurricane::Hook</scope><name>isMaster</name></member>
+      <member refid="classHurricane_1_1Hook_1a7b98f0796a9080495472d574a23bcca0" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Hook_1ae9ec6be9790bb14ac9d21d4fba7d5b50" prot="private" virt="non-virtual"><scope>Hurricane::Hook</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Hook_1abeb82dde7f4d157eb7dc63c797b7e565" prot="public" virt="non-virtual"><scope>Hurricane::Hook</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Hook_1a6ad8b0ea4b0bd0e92f658f4b91bfc355" prot="protected" virt="virtual"><scope>Hurricane::Hook</scope><name>~Hook</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1HookElement" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::HookElement</compoundname>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850" prot="public" static="no" strong="no">
+        <type></type>
+        <name>Flags</name>
+        <enumvalue id="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850a8ec949217100773dcd50e27f9793d994" prot="public">
+          <name>OpenRingStart</name>
+          <initializer>= (1&lt;&lt;0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850a549e89680abf47faf8f4c1cf56e35482" prot="public">
+          <name>ClosedRing</name>
+          <initializer>= (1&lt;&lt;1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="302" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="302" bodyend="304"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1HookElement_1a4d993fd4b3ef77484c3d8f125d37b938" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook* Hurricane::HookElement::_hook</definition>
+        <argsstring></argsstring>
+        <name>_hook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="316" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1HookElement_1aa5a6d10b70397cd47e5935e5c3926b41" prot="private" static="no" mutable="no">
+        <type>HookElement *</type>
+        <definition>HookElement* Hurricane::HookElement::_next</definition>
+        <argsstring></argsstring>
+        <name>_next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="317" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="317" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1HookElement_1a68a31927fc47e74d2a16933f6c1ddb77" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long Hurricane::HookElement::_flags</definition>
+        <argsstring></argsstring>
+        <name>_flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="318" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a3b466d006408a1d25664ddeac59715f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::HookElement::HookElement</definition>
+        <argsstring>(Hook *, unsigned long flags=0)</argsstring>
+        <name>HookElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <defname>hook</defname>
+        </param>
+        <param>
+          <type>unsigned long</type>
+          <declname>flags</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="306" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="322" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a5529297f9ca3a9adb0e5e1c00252d09c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook * Hurricane::HookElement::hook</definition>
+        <argsstring>() const</argsstring>
+        <name>hook</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="307" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="323" bodyend="323"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1ab4017d9cd831b6b9dfc7fcc0d79b26ab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>HookElement *</type>
+        <definition>HookElement * Hurricane::HookElement::next</definition>
+        <argsstring>() const</argsstring>
+        <name>next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="308" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="324" bodyend="324"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1ab9e97eceeb9c9d288f83e563357d6ddf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::HookElement::setHook</definition>
+        <argsstring>(Hook *)</argsstring>
+        <name>setHook</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+          <defname>hook</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="309" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="325" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a252e425c633940b1da6f01af34dd7b11" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::HookElement::setNext</definition>
+        <argsstring>(HookElement *)</argsstring>
+        <name>setNext</name>
+        <param>
+          <type>HookElement *</type>
+          <defname>element</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="310" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="326" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a07b7b4761ec89b50e4ea3d03de67634b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long Hurricane::HookElement::flags</definition>
+        <argsstring>() const</argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="311" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="327" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a58b967866a444e2d66829e7c8bcf41ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>HookElement &amp;</type>
+        <definition>HookElement &amp; Hurricane::HookElement::setFlags</definition>
+        <argsstring>(unsigned long mask)</argsstring>
+        <name>setFlags</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="312" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="328" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a72f9d2867c217489ddefba3293b69111" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>HookElement &amp;</type>
+        <definition>HookElement &amp; Hurricane::HookElement::resetFlags</definition>
+        <argsstring>(unsigned long mask)</argsstring>
+        <name>resetFlags</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="313" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="329" bodyend="329"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1HookElement_1a67125736df09c1511b1ad84bf5b059fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::HookElement::issetFlags</definition>
+        <argsstring>(unsigned long mask) const</argsstring>
+        <name>issetFlags</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>mask</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="314" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="330" bodyend="330"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::HookElement</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_hook</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="300" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="300" bodyend="319"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1HookElement_1a68a31927fc47e74d2a16933f6c1ddb77" prot="private" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1HookElement_1a4d993fd4b3ef77484c3d8f125d37b938" prot="private" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>_hook</name></member>
+      <member refid="classHurricane_1_1HookElement_1aa5a6d10b70397cd47e5935e5c3926b41" prot="private" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>_next</name></member>
+      <member refid="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850a549e89680abf47faf8f4c1cf56e35482" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>ClosedRing</name></member>
+      <member refid="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>Flags</name></member>
+      <member refid="classHurricane_1_1HookElement_1a07b7b4761ec89b50e4ea3d03de67634b" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>flags</name></member>
+      <member refid="classHurricane_1_1HookElement_1a5529297f9ca3a9adb0e5e1c00252d09c" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>hook</name></member>
+      <member refid="classHurricane_1_1HookElement_1a3b466d006408a1d25664ddeac59715f8" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>HookElement</name></member>
+      <member refid="classHurricane_1_1HookElement_1a67125736df09c1511b1ad84bf5b059fa" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>issetFlags</name></member>
+      <member refid="classHurricane_1_1HookElement_1ab4017d9cd831b6b9dfc7fcc0d79b26ab" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>next</name></member>
+      <member refid="classHurricane_1_1HookElement_1a9b1e70d37364bea881ac34d3279dd850a8ec949217100773dcd50e27f9793d994" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>OpenRingStart</name></member>
+      <member refid="classHurricane_1_1HookElement_1a72f9d2867c217489ddefba3293b69111" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>resetFlags</name></member>
+      <member refid="classHurricane_1_1HookElement_1a58b967866a444e2d66829e7c8bcf41ab" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>setFlags</name></member>
+      <member refid="classHurricane_1_1HookElement_1ab9e97eceeb9c9d288f83e563357d6ddf" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>setHook</name></member>
+      <member refid="classHurricane_1_1HookElement_1a252e425c633940b1da6f01af34dd7b11" prot="public" virt="non-virtual"><scope>Hurricane::HookElement</scope><name>setNext</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

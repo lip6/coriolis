@@ -1,0 +1,887 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="DbU_8h" kind="file" language="C++">
+    <compoundname>DbU.h</compoundname>
+    <includes local="no">cstdint</includes>
+    <includes local="no">cmath</includes>
+    <includes refid="Commons_8h" local="yes">hurricane/Commons.h</includes>
+    <includedby refid="Point_8h" local="yes">Point.h</includedby>
+    <includedby refid="Interval_8h" local="yes">Interval.h</includedby>
+    <includedby refid="DataBase_8h" local="yes">DataBase.h</includedby>
+    <includedby refid="PhysicalRule_8h" local="yes">PhysicalRule.h</includedby>
+    <includedby refid="Layer_8h" local="yes">Layer.h</includedby>
+    <incdepgraph>
+      <node id="9">
+        <label>list</label>
+      </node>
+      <node id="20">
+        <label>hurricane/Tabulation.h</label>
+        <link refid="Tabulation_8h_source"/>
+      </node>
+      <node id="23">
+        <label>functional</label>
+      </node>
+      <node id="16">
+        <label>iomanip</label>
+      </node>
+      <node id="19">
+        <label>hurricane/Record.h</label>
+      </node>
+      <node id="2">
+        <label>cstdint</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
+      <node id="8">
+        <label>string</label>
+      </node>
+      <node id="11">
+        <label>map</label>
+      </node>
+      <node id="17">
+        <label>fstream</label>
+      </node>
+      <node id="29">
+        <label>boost/any.hpp</label>
+      </node>
+      <node id="26">
+        <label>typeinfo</label>
+      </node>
+      <node id="24">
+        <label>hurricane/JsonWriter.h</label>
+      </node>
+      <node id="5">
+        <label>cstdio</label>
+      </node>
+      <node id="21">
+        <label>hurricane/Slot.h</label>
+      </node>
+      <node id="14">
+        <label>vector</label>
+      </node>
+      <node id="12">
+        <label>stack</label>
+      </node>
+      <node id="25">
+        <label>hurricane/JsonObject.h</label>
+        <link refid="JsonObject_8h_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>DbU.h</label>
+        <link refid="DbU_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>array</label>
+      </node>
+      <node id="18">
+        <label>sstream</label>
+      </node>
+      <node id="4">
+        <label>hurricane/Commons.h</label>
+        <link refid="Commons_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>iostream</label>
+      </node>
+      <node id="22">
+        <label>hurricane/Initializer.h</label>
+        <link refid="Initializer_8h_source"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>type_traits</label>
+      </node>
+      <node id="10">
+        <label>set</label>
+      </node>
+      <node id="7">
+        <label>memory</label>
+      </node>
+      <node id="27">
+        <label>typeindex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="14">
+        <label>Segment.h</label>
+        <link refid="Segment_8h_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>Pathes.h</label>
+        <link refid="Pathes_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Vertical.h</label>
+        <link refid="Vertical_8h_source"/>
+      </node>
+      <node id="21">
+        <label>Boxes.h</label>
+        <link refid="Boxes_8h_source"/>
+      </node>
+      <node id="28">
+        <label>Quark.h</label>
+        <link refid="Quark_8h_source"/>
+      </node>
+      <node id="38">
+        <label>PhysicalRule.h</label>
+        <link refid="PhysicalRule_8h_source"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Diagonal.h</label>
+        <link refid="Diagonal_8h_source"/>
+      </node>
+      <node id="39">
+        <label>Technology.h</label>
+        <link refid="Technology_8h_source"/>
+      </node>
+      <node id="42">
+        <label>ViaLayer.h</label>
+        <link refid="ViaLayer_8h_source"/>
+      </node>
+      <node id="36">
+        <label>Intervals.h</label>
+        <link refid="Intervals_8h_source"/>
+      </node>
+      <node id="9">
+        <label>Library.h</label>
+        <link refid="Library_8h_source"/>
+      </node>
+      <node id="30">
+        <label>HyperNet.h</label>
+        <link refid="HyperNet_8h_source"/>
+      </node>
+      <node id="25">
+        <label>Path.h</label>
+        <link refid="Path_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>DataBase.h</label>
+        <link refid="DataBase_8h_source"/>
+      </node>
+      <node id="34">
+        <label>QuadTree.h</label>
+        <link refid="QuadTree_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>Transformation.h</label>
+        <link refid="Transformation_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Contact.h</label>
+        <link refid="Contact_8h_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Pad.h</label>
+        <link refid="Pad_8h_source"/>
+      </node>
+      <node id="35">
+        <label>Interval.h</label>
+        <link refid="Interval_8h_source"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Occurrences.h</label>
+        <link refid="Occurrences_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Pin.h</label>
+        <link refid="Pin_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Net.h</label>
+        <link refid="Net_8h_source"/>
+      </node>
+      <node id="43">
+        <label>ContactLayer.h</label>
+        <link refid="ContactLayer_8h_source"/>
+      </node>
+      <node id="10">
+        <label>Query.h</label>
+        <link refid="Query_8h_source"/>
+      </node>
+      <node id="23">
+        <label>Go.h</label>
+        <link refid="Go_8h_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>DiffusionLayer.h</label>
+        <link refid="DiffusionLayer_8h_source"/>
+      </node>
+      <node id="18">
+        <label>Polygon.h</label>
+        <link refid="Polygon_8h_source"/>
+      </node>
+      <node id="1">
+        <label>DbU.h</label>
+        <link refid="DbU_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>Entity.h</label>
+        <link refid="Entity_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>RoutingPad.h</label>
+        <link refid="RoutingPad_8h_source"/>
+      </node>
+      <node id="7">
+        <label>Instance.h</label>
+        <link refid="Instance_8h_source"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Point.h</label>
+        <link refid="Point_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Component.h</label>
+        <link refid="Component_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>Layer.h</label>
+        <link refid="Layer_8h_source"/>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>Box.h</label>
+        <link refid="Box_8h_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Horizontal.h</label>
+        <link refid="Horizontal_8h_source"/>
+      </node>
+      <node id="31">
+        <label>Slice.h</label>
+        <link refid="Slice_8h_source"/>
+      </node>
+      <node id="32">
+        <label>BasicLayer.h</label>
+        <link refid="BasicLayer_8h_source"/>
+      </node>
+      <node id="3">
+        <label>Points.h</label>
+        <link refid="Points_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>Occurrence.h</label>
+        <link refid="Occurrence_8h_source"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="41">
+        <label>RegularLayer.h</label>
+        <link refid="RegularLayer_8h_source"/>
+      </node>
+      <node id="6">
+        <label>Plug.h</label>
+        <link refid="Plug_8h_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Rubber.h</label>
+        <link refid="Rubber_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>TransistorLayer.h</label>
+        <link refid="TransistorLayer_8h_source"/>
+      </node>
+      <node id="8">
+        <label>Cell.h</label>
+        <link refid="Cell_8h_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classHurricane_1_1DbU" prot="public">Hurricane::DbU</innerclass>
+    <innernamespace refid="namespaceHurricane">Hurricane</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="DbU_8h_1a1b8fcd7a66777b62a78908494b384b99" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string getString</definition>
+        <argsstring>(const std::pair&lt; Hurricane::DbU::Unit, Hurricane::DbU::Unit &gt; &amp;p)</argsstring>
+        <name>getString</name>
+        <param>
+          <type>const std::pair&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref>, <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="213" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="213" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="DbU_8h_1a41b5ac1c2c18f335fc8563213fc40082" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>Hurricane::Record *</type>
+        <definition>Hurricane::Record* getRecord</definition>
+        <argsstring>(const std::pair&lt; Hurricane::DbU::Unit, Hurricane::DbU::Unit &gt; &amp;p)</argsstring>
+        <name>getRecord</name>
+        <param>
+          <type>const std::pair&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref>, <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="220" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="220" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="DbU_8h_1a634eacf4f44e2c4589dbf91afffd6b31" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string getString</definition>
+        <argsstring>(const std::array&lt; Hurricane::DbU::Unit *, 3 &gt; &amp;a)</argsstring>
+        <name>getString</name>
+        <param>
+          <type>const std::array&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> *, 3 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="231" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="231" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="DbU_8h_1a727790046c594e53e9b3a01096f3e1f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>Hurricane::Record *</type>
+        <definition>Hurricane::Record* getRecord</definition>
+        <argsstring>(const std::array&lt; Hurricane::DbU::Unit *, 3 &gt; &amp;a)</argsstring>
+        <name>getRecord</name>
+        <param>
+          <type>const std::array&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> *, 3 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="238" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="238" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="function" id="DbU_8h_1a74864ff12a68347911cfe311eccacbb2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string getString</definition>
+        <argsstring>(const std::vector&lt; Hurricane::DbU::Unit &gt; *v)</argsstring>
+        <name>getString</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> &gt; *</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="252" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="252" bodyend="256"/>
+      </memberdef>
+      <memberdef kind="function" id="DbU_8h_1aaf00c5885929cdb31ec438adfd7ee46f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>Hurricane::Record *</type>
+        <definition>Hurricane::Record* getRecord</definition>
+        <argsstring>(const std::vector&lt; Hurricane::DbU::Unit &gt; *v)</argsstring>
+        <name>getRecord</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Hurricane::DbU::Unit</ref> &gt; *</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="260" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="260" bodyend="270"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Copyright<sp/>(c)<sp/>BULL<sp/>S.A.<sp/>2000-2018,<sp/>All<sp/>Rights<sp/>Reserved</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>Hurricane.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Hurricane<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/><sp/>and/or<sp/><sp/>modify</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/><sp/>Lesser<sp/><sp/>General<sp/><sp/>Public<sp/><sp/>License<sp/><sp/>as</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//<sp/>published<sp/>by<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>3<sp/>of<sp/><sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">//<sp/>License,<sp/>or<sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Hurricane<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/><sp/>be<sp/><sp/>useful,<sp/><sp/>but</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of<sp/>MERCHAN-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/>TABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/>See<sp/><sp/>the<sp/><sp/>Lesser<sp/><sp/>GNU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>Lesser<sp/><sp/>GNU<sp/><sp/>General<sp/><sp/>Public</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>License<sp/>along<sp/>with<sp/>Hurricane.<sp/>If<sp/>not,<sp/>see</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">//<sp/>+-----------------------------------------------------------------+</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H<sp/>U<sp/>R<sp/>R<sp/>I<sp/>C<sp/>A<sp/>N<sp/>E<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/><sp/><sp/><sp/>V<sp/>L<sp/>S<sp/>I<sp/><sp/><sp/>B<sp/>a<sp/>c<sp/>k<sp/>e<sp/>n<sp/>d<sp/><sp/><sp/>D<sp/>a<sp/>t<sp/>a<sp/>-<sp/>B<sp/>a<sp/>s<sp/>e<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/>Author<sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Remy<sp/>Escassut<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/>E-mail<sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Jean-Paul.Chaput@lip6.fr<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/>===============================================================<sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">//<sp/>|<sp/><sp/>C++<sp/>Header<sp/><sp/>:<sp/><sp/>&quot;./hurricane/DbU.h&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>+-----------------------------------------------------------------+</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/><sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdint&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cmath&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;hurricane/Commons.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceHurricane" kindref="compound">Hurricane</ref><sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DataBase;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43" refid="classHurricane_1_1DbU" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classHurricane_1_1DbU" kindref="compound">DbU</ref><sp/>{</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>FunctionFlags<sp/>{<sp/>NoFlags<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>NoTechnoUpdate<sp/>=<sp/>(1&lt;&lt;0)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="49" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557" kindref="member">Pico</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1</highlight></codeline>
+<codeline lineno="50" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" kindref="member">Nano</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="51" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb" kindref="member">Micro</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="52" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be" kindref="member">Milli</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="53" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6" kindref="member">Unity</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="54" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74" kindref="member">Kilo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="55" refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="56" refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><sp/><ref refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4" kindref="member">StringMode</ref><sp/><sp/><sp/>{<sp/><ref refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233" kindref="member">Db</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(1&lt;&lt;0)</highlight></codeline>
+<codeline lineno="57" refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c" kindref="member">Grid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(1&lt;&lt;1)</highlight></codeline>
+<codeline lineno="58" refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8" kindref="member">Symbolic</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(1&lt;&lt;2)</highlight></codeline>
+<codeline lineno="59" refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>Physical<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>(1&lt;&lt;3)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>SmartTruncate<sp/><sp/>=<sp/>(1&lt;&lt;4)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="62" refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/><sp/><sp/><sp/><sp/>{<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3" kindref="member">Inferior</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1</highlight></codeline>
+<codeline lineno="63" refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" kindref="member">Superior</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2</highlight></codeline>
+<codeline lineno="64" refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>4</highlight></codeline>
+<codeline lineno="65" refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="67" refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/><sp/>std::int64_t<sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref>;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>checkGridBound<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>checkLambdaBound<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>checkPhysicalBound<sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>User<sp/>to<sp/>DB<sp/>Converters.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">fromDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">fromGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" kindref="member">fromLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">fromPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fromMicrons<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fromNanos<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Old<sp/>naming<sp/>scheme<sp/>(was<sp/>not<sp/>very<sp/>clear).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" kindref="member">db</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" kindref="member">grid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" kindref="member">lambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>physicalToDbu<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Precision<sp/>&amp;<sp/>Resolution<sp/>Managment.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="classHurricane_1_1DbU_1a6169efbdd9b3d54a0bd8467c8f957fda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a6169efbdd9b3d54a0bd8467c8f957fda" kindref="member">getPrecision</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="87" refid="classHurricane_1_1DbU_1a8756c9f0a32af5f601cd150e73b02c03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a8756c9f0a32af5f601cd150e73b02c03" kindref="member">getMaximalPrecision</ref><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="88" refid="classHurricane_1_1DbU_1a120a60b09b344d01c583567a1e489d9e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a120a60b09b344d01c583567a1e489d9e" kindref="member">getResolution</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="89" refid="classHurricane_1_1DbU_1ace9a8644e7e80dcaed2a8a95deeb1622" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ace9a8644e7e80dcaed2a8a95deeb1622" kindref="member">setPrecision</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>precision,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>flags=NoFlags<sp/>);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Foundry<sp/>Grid<sp/>Managment.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getUnitPower<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>setPhysicalsPerGrid<sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gridsPerLambda,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getPhysicalsPerGrid<sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>physicalToGrid<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>physical,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Huge<sp/>Polygon<sp/>Step<sp/>Managment.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getPolygonStep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>setPolygonStep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Lamba<sp/>Managment.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classHurricane_1_1DbU_1ac93f9ba2a09105227e34bd05bcb1500c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ac93f9ba2a09105227e34bd05bcb1500c" kindref="member">setGridsPerLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gridsPerLambda,<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>flags=NoFlags<sp/>);</highlight></codeline>
+<codeline lineno="100" refid="classHurricane_1_1DbU_1a9a0359adbfafc356326f5c6adf57ff04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a9a0359adbfafc356326f5c6adf57ff04" kindref="member">getGridsPerLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Snap<sp/>Grid<sp/>Managment.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="classHurricane_1_1DbU_1a09e46fcca6aaca94851adfa196e10170" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a09e46fcca6aaca94851adfa196e10170" kindref="member">getRealSnapGridStep</ref><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="103" refid="classHurricane_1_1DbU_1a8746e486f153aa37ee469c1604eba5c0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a8746e486f153aa37ee469c1604eba5c0" kindref="member">getOnRealSnapGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/>mode=<ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref><sp/>);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" kindref="member">setRealSnapGridStep</ref><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>);</highlight></codeline>
+<codeline lineno="105" refid="classHurricane_1_1DbU_1a687a9134729b107c42fb7f69596c4c3b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a687a9134729b107c42fb7f69596c4c3b" kindref="member">getSymbolicSnapGridStep</ref><sp/>();</highlight></codeline>
+<codeline lineno="106" refid="classHurricane_1_1DbU_1ad1b0c0f3680093cf5a63d901312c925d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ad1b0c0f3680093cf5a63d901312c925d" kindref="member">getOnSymbolicSnapGrid</ref><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/>mode=<ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref><sp/>);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" kindref="member">setSymbolicSnapGridStep</ref><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>);</highlight></codeline>
+<codeline lineno="108" refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" kindref="member">getOnCustomGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/>mode=<ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref><sp/>);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" kindref="member">getOnPhysicalGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/>mode=<ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" kindref="member">Superior</ref><sp/>);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>toCeil<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>toFloor<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Conversions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" kindref="member">toDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">toLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">toLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>toMicrons<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>toNanos<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Old<sp/>naming<sp/>scheme<sp/>(not<sp/>very<sp/>clear).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" kindref="member">getDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" kindref="member">getGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" kindref="member">getGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" kindref="member">getLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" kindref="member">getLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getPhysical<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getPhysical<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="130" refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" kindref="member">getValueString</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/>u,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mode=SmartTruncate<sp/>);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" kindref="member">getValueString</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mode=SmartTruncate<sp/>);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Record*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getValueRecord<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref>*<sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Slot*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getValueSlot<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal">&amp;<sp/>name,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref>*<sp/>u<sp/>);</highlight></codeline>
+<codeline lineno="134" refid="classHurricane_1_1DbU_1a89ab8f8326c54113336086663ecf1d25" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a89ab8f8326c54113336086663ecf1d25" kindref="member">setStringMode</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mode,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p=<ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" kindref="member">Nano</ref><sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>getStringMode<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>mode,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref>&amp;<sp/>p<sp/>);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_updateBounds<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>();</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Static<sp/>Attributes:<sp/>constants.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Min;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Max;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Internal:<sp/>Static<sp/>Attributes.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/>_maximalPrecision;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_precision;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_resolution;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_gridsPerLambda;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_physicalsPerGrid;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_stringMode;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">DbU::UnitPower</ref><sp/><sp/><sp/><sp/><sp/><sp/>_stringModeUnitPower;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_realSnapGridStep;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_symbolicSnapGridStep;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_polygonStep;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_gridMax;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_lambdaMax;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>_physicalMax;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Inline<sp/>Functions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">//<sp/>New<sp/>converter<sp/>naming<sp/>scheme.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">DbU::fromDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value;<sp/>}</highlight></codeline>
+<codeline lineno="164" refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">DbU::fromGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>checkGridBound<sp/><sp/><sp/><sp/>(value);<sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(<ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref>)rint(<sp/>value/_resolution<sp/>);<sp/>}</highlight></codeline>
+<codeline lineno="165" refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" kindref="member">DbU::fromLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>checkLambdaBound<sp/><sp/>(value);<sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">fromGrid</ref>(value*_gridsPerLambda);<sp/>}</highlight></codeline>
+<codeline lineno="166" refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">DbU::fromPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>)<sp/><sp/>{<sp/>checkPhysicalBound(value,p);<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">fromGrid</ref>((value*getUnitPower(p))/_physicalsPerGrid);<sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::fromMicrons<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">fromPhysical</ref>(value,UnitPower::Micro);<sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::fromNanos<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">fromPhysical</ref>(value,UnitPower::Nano);<sp/>}</highlight></codeline>
+<codeline lineno="169" refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" kindref="member">DbU::toDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>u;<sp/>}</highlight></codeline>
+<codeline lineno="170" refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">DbU::toGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_resolution*(double)u;<sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">DbU::toGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_resolution*u;<sp/>}</highlight></codeline>
+<codeline lineno="172" refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">DbU::toLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref>(u)/_gridsPerLambda;<sp/>}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">DbU::toLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref>(u)/_gridsPerLambda;<sp/>}</highlight></codeline>
+<codeline lineno="174" refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">DbU::toPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref><sp/>p<sp/>)<sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(_physicalsPerGrid*_resolution*(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)u)/getUnitPower(p);<sp/>}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">DbU::toPhysical</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u,<sp/>UnitPower<sp/>p<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(_physicalsPerGrid*_resolution*u)/getUnitPower(p);<sp/>}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>DbU::toMicrons<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>Unit<sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref>(u,UnitPower::Micro);<sp/>}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>DbU::toNanos<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>Unit<sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref>(u,UnitPower::Nano);<sp/>}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::getPolygonStep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>_polygonStep;<sp/>}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Old<sp/>converter<sp/>naming<sp/>scheme.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" kindref="member">DbU::db</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">fromDb</ref>(value);<sp/>}</highlight></codeline>
+<codeline lineno="182" refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" kindref="member">DbU::grid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">fromGrid</ref>(value);<sp/>}</highlight></codeline>
+<codeline lineno="183" refid="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" kindref="member">DbU::lambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" kindref="member">fromLambda</ref>(value);<sp/>}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::physicalToDbu<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>value,<sp/>UnitPower<sp/>p<sp/>)<sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">fromPhysical</ref>(value,p);<sp/>}</highlight></codeline>
+<codeline lineno="185" refid="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" kindref="member">DbU::getDb</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" kindref="member">toDb</ref>(u);<sp/>}</highlight></codeline>
+<codeline lineno="186" refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" kindref="member">DbU::getGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref>(u);<sp/>}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" kindref="member">DbU::getGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">toGrid</ref>(u);<sp/>}</highlight></codeline>
+<codeline lineno="188" refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" kindref="member">DbU::getLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">toLambda</ref>(u);<sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" kindref="member">DbU::getLambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">toLambda</ref>(u);<sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>DbU::getPhysical<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/>UnitPower<sp/>p<sp/>)<sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref>(u,p);<sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>DbU::getPhysical<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u,<sp/>UnitPower<sp/>p<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">toPhysical</ref>(u,p);<sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" kindref="member">DbU::setRealSnapGridStep</ref><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>_realSnapGridStep<sp/>=<sp/>step;<sp/>}</highlight></codeline>
+<codeline lineno="194" refid="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" kindref="member">DbU::setSymbolicSnapGridStep</ref><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>_symbolicSnapGridStep<sp/>=<sp/>step;<sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>DbU::setPolygonStep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>_polygonStep<sp/>=<sp/>step;<sp/>}</highlight></codeline>
+<codeline lineno="196" refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/><ref refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" kindref="member">DbU::getOnPhysicalGrid</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref><sp/>mode<sp/>)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" kindref="member">getOnCustomGrid</ref>(u,<sp/><ref refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" kindref="member">grid</ref>(1),<sp/>mode);<sp/>}</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::toCeil<sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/>{<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>modulo<sp/>=<sp/>u<sp/>%<sp/>step;<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(modulo)<sp/>?<sp/>(u<sp/>+<sp/>step<sp/>-<sp/>modulo)<sp/>:<sp/>u;<sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/><sp/>DbU::toFloor<sp/>(<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>u,<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>step<sp/>)</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/>{<sp/><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref><sp/>modulo<sp/>=<sp/>u<sp/>%<sp/>step;<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(modulo)<sp/>?<sp/>(u<sp/>-<sp/>modulo)<sp/>:<sp/>u;<sp/>}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>End<sp/>of<sp/>Hurricane<sp/>namespace.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//<sp/>inline<sp/>void<sp/><sp/>jsonWriteDbU<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>std::string&amp;<sp/>key,<sp/>long*<sp/>value<sp/>)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="comment">//<sp/>{<sp/>w-&gt;key(<sp/>key<sp/>);<sp/>w-&gt;write(<sp/>value<sp/>);<sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><sp/>getString<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;Hurricane::DbU::Unit,Hurricane::DbU::Unit&gt;&amp;<sp/>p<sp/>)</highlight></codeline>
+<codeline lineno="214"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;const<sp/>std::pair&lt;DbU::Unit,DbU::Unit&gt;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>Hurricane::Record*<sp/>getRecord<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::pair&lt;Hurricane::DbU::Unit,Hurricane::DbU::Unit&gt;&amp;<sp/>p<sp/>)</highlight></codeline>
+<codeline lineno="221"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/>Hurricane::Record*<sp/>record<sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/>record<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>Hurricane::Record<sp/>(<sp/></highlight><highlight class="stringliteral">&quot;const<sp/>std::pair&lt;DbU::Unit,DbU::Unit&gt;&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/>record-&gt;add(<sp/>Hurricane::DbU::getValueSlot(</highlight><highlight class="stringliteral">&quot;first&quot;</highlight><highlight class="normal"><sp/>,<sp/>&amp;p.first<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/>record-&gt;add(<sp/>Hurricane::DbU::getValueSlot(</highlight><highlight class="stringliteral">&quot;second&quot;</highlight><highlight class="normal">,<sp/>&amp;p.second)<sp/>);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>record;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><sp/>getString<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::array&lt;Hurricane::DbU::Unit*,3&gt;&amp;<sp/>a<sp/>)</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;const<sp/>array&lt;DbU::Unit*,3&gt;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>Hurricane::Record*<sp/>getRecord<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::array&lt;Hurricane::DbU::Unit*,3&gt;&amp;<sp/>a<sp/>)</highlight></codeline>
+<codeline lineno="239"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>Hurricane::Record*<sp/>record<sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/>record<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>Hurricane::Record<sp/>(<sp/></highlight><highlight class="stringliteral">&quot;const<sp/>array&lt;DbU::Unit*,3&gt;&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i=0<sp/>;<sp/>i&lt;a.size()<sp/>;<sp/>++i<sp/>)<sp/>{</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>label<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;[&quot;</highlight><highlight class="normal"><sp/>+<sp/>getString(i)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;]<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>record-&gt;add(<sp/>Hurricane::DbU::getValueSlot(label,<sp/>a[i])<sp/>);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>record;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><sp/>getString<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;Hurricane::DbU::Unit&gt;*<sp/>v<sp/>)</highlight></codeline>
+<codeline lineno="253"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>std::string<sp/>name<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;const<sp/>std::vector&lt;DbU::Unit&gt;:&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>name<sp/>+<sp/>getString&lt;size_t&gt;(v-&gt;size());</highlight></codeline>
+<codeline lineno="256"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>Hurricane::Record*<sp/>getRecord<sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;Hurricane::DbU::Unit&gt;*<sp/>v<sp/>)</highlight></codeline>
+<codeline lineno="261"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/>Hurricane::Record*<sp/>record<sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/>record<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>Hurricane::Record<sp/>(<sp/></highlight><highlight class="stringliteral">&quot;const<sp/>vector&lt;DbU::Unit&gt;&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i=0<sp/>;<sp/>i&lt;v-&gt;size()<sp/>;<sp/>++i<sp/>)<sp/>{</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>label<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;[&quot;</highlight><highlight class="normal"><sp/>+<sp/>getString(i)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;]<sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/>record-&gt;add(<sp/>Hurricane::DbU::getValueSlot(label,<sp/>&amp;(*v)[i])<sp/>);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>record;</highlight></codeline>
+<codeline lineno="270"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h"/>
+  </compounddef>
+</doxygen>

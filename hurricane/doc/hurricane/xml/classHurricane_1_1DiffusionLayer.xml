@@ -1,0 +1,601 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1DiffusionLayer" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::DiffusionLayer</compoundname>
+    <basecompoundref refid="classHurricane_1_1Layer" prot="public" virt="non-virtual">Hurricane::Layer</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1DiffusionLayer_1acea72cad2778aac3f672005bc1327f63" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref></type>
+        <definition>typedef Layer Hurricane::DiffusionLayer::Super</definition>
+        <argsstring></argsstring>
+        <name>Super</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="47" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1DiffusionLayer_1a47d73cdea74893f58e2e7953ceae05ec" prot="private" static="no" mutable="no">
+        <type>vector&lt; <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> * &gt;</type>
+        <definition>vector&lt;BasicLayer*&gt; Hurricane::DiffusionLayer::_basicLayers</definition>
+        <argsstring></argsstring>
+        <name>_basicLayers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="75" column="15" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DiffusionLayer_1aae404abbd7227251fb75ec3463bcd11e" prot="private" static="no" mutable="no">
+        <type>vector&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &gt;</type>
+        <definition>vector&lt;DbU::Unit&gt; Hurricane::DiffusionLayer::_extentionCaps</definition>
+        <argsstring></argsstring>
+        <name>_extentionCaps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="76" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DiffusionLayer_1abeee5de9710cb584c99ea21aef68ea82" prot="private" static="no" mutable="no">
+        <type>vector&lt; <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &gt;</type>
+        <definition>vector&lt;DbU::Unit&gt; Hurricane::DiffusionLayer::_extentionWidths</definition>
+        <argsstring></argsstring>
+        <name>_extentionWidths</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="77" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DiffusionLayer_1a955a5eb76cfbec94004ec86d5954946a" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DiffusionLayer::_maximalExtentionCap</definition>
+        <argsstring></argsstring>
+        <name>_maximalExtentionCap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="78" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DiffusionLayer_1a008b8b227c3fd75a81be39a54f22302d" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DiffusionLayer::_maximalExtentionWidth</definition>
+        <argsstring></argsstring>
+        <name>_maximalExtentionWidth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="79" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a91b5f8a20b005c20b4b9b9080250939e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DiffusionLayer" kindref="compound">DiffusionLayer</ref> *</type>
+        <definition>DiffusionLayer * Hurricane::DiffusionLayer::create</definition>
+        <argsstring>(Technology *technology, const Name &amp;name, BasicLayer *activeLayer, BasicLayer *diffusionLayer, BasicLayer *wellLayer)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> *</type>
+          <declname>technology</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>activeLayer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>diffusionLayer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>wellLayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>creates and returns a new diffusion layer named <computeroutput>&lt;name&gt;</computeroutput>, composed of active &amp; diffusion <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> and an optional WELL <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref>. A NULL value indicates that no NWELL is used.</para>
+<para><simplesect kind="par"><title>Caution: Throws an exception if the technology is null, if the name is </title><para>empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="51" column="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1ad58bdd7688b6ed4b3b9983588d32d735" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>BasicLayers</type>
+        <definition>virtual BasicLayers Hurricane::DiffusionLayer::getBasicLayers</definition>
+        <argsstring>() const</argsstring>
+        <name>getBasicLayers</name>
+        <reimplements refid="classHurricane_1_1Layer_1a7e953c126a02952e3a0b0d32f37e2ae0">getBasicLayers</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="58" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a348205ce7a9f1e4edb8e68f80d145a10" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::DiffusionLayer::getExtentionCap</definition>
+        <argsstring>() const</argsstring>
+        <name>getExtentionCap</name>
+        <reimplements refid="classHurricane_1_1Layer_1a8cfdc1089644b8dcf671249b83fb5905">getExtentionCap</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="59" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a9a359a8cc2e291bb2ebc9f2d53fc0fde" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::DiffusionLayer::getExtentionWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>getExtentionWidth</name>
+        <reimplements refid="classHurricane_1_1Layer_1a5f867b79fd0ef630f53033b4bc38804b">getExtentionWidth</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="60" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a1b5cedcc597fe178bd8c045cfd9bfaf6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::DiffusionLayer::getExtentionCap</definition>
+        <argsstring>(const BasicLayer *layer) const</argsstring>
+        <name>getExtentionCap</name>
+        <reimplements refid="classHurricane_1_1Layer_1a054659082ee4630aa93c6efe94a8cee9">getExtentionCap</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="61" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1af73934ff95299c3cba3aaa7a0b5967be" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::DiffusionLayer::getExtentionWidth</definition>
+        <argsstring>(const BasicLayer *layer) const</argsstring>
+        <name>getExtentionWidth</name>
+        <reimplements refid="classHurricane_1_1Layer_1afef1036df50f5b93cb09d2f3de929b19">getExtentionWidth</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="62" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1af11483eaf5449f98a2e96d67b2a3b4cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::DiffusionLayer::setExtentionCap</definition>
+        <argsstring>(const BasicLayer *layer, DbU::Unit cap)</argsstring>
+        <name>setExtentionCap</name>
+        <reimplements refid="classHurricane_1_1Layer_1a55c7b39e000442ea36a0774d26b7fbde">setExtentionCap</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>cap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="64" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a6a9ce7e15e85bb59cb0941433c35e26c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::DiffusionLayer::setExtentionWidth</definition>
+        <argsstring>(const BasicLayer *layer, DbU::Unit width)</argsstring>
+        <name>setExtentionWidth</name>
+        <reimplements refid="classHurricane_1_1Layer_1a7a6943dbcb3403aff34056cd5de00e66">setExtentionWidth</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>width</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="65" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1afd46ef9e1e0beb87412894b46bda7641" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::DiffusionLayer::_toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJson</name>
+        <reimplements refid="classHurricane_1_1Layer_1a2454f6bdc9acb09c8631fe6e48eb6b71">_toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="67" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a57d92da36c46fa98ee429c5ab9b8f875" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::DiffusionLayer::_onDbuChange</definition>
+        <argsstring>(float scale)</argsstring>
+        <name>_onDbuChange</name>
+        <reimplements refid="classHurricane_1_1Layer_1a2d919ec8eca14166ef392898dd3752e1">_onDbuChange</reimplements>
+        <param>
+          <type>float</type>
+          <declname>scale</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="68" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a09a0df7c407f92f6a02c2a7e0dd3b67a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::DiffusionLayer::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="69" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a1f92bf0d80b73663ab5f125f3454697b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::DiffusionLayer::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Layer_1a2891ad3a9af7acea29d8b245a09c8416">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="70" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1acbbe98d4e8d2a3f72f94f08c40a631a1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::DiffusionLayer::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Layer_1a47f22cdfa14bf765777a04fbeb2f76e1">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="71" column="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1DiffusionLayer_1a4513b36b63f0c8c2a88b2a20f7a5f729" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::DiffusionLayer::DiffusionLayer</definition>
+        <argsstring>(Technology *technology, const Name &amp;name, BasicLayer *activeLayer, BasicLayer *diffusionLayer, BasicLayer *wellLayer)</argsstring>
+        <name>DiffusionLayer</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Technology" kindref="compound">Technology</ref> *</type>
+          <declname>technology</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>activeLayer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>diffusionLayer</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+          <declname>wellLayer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="83" column="7"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1DiffusionLayer" kindref="compound">DiffusionLayer</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<para>For a more complete description of the Layers objects, please refer to <ref refid="classHurricane_1_1Layer_1secLayerIntro" kindref="member">Layer Introduction</ref>.</para>
+<para><ref refid="classHurricane_1_1DiffusionLayer" kindref="compound">DiffusionLayer</ref> is a symbolic layer that contains two or three layers, an active layer, a diffusion layer and an optional WELL layer.</para>
+<para>The accessors functions: <itemizedlist>
+<listitem>
+<para><ref refid="classHurricane_1_1Layer_1a5f7c43a29f3dd02a9ebccbcbf91d6727" kindref="member">DiffusionLayer::getTop()</ref> </para>
+</listitem>
+<listitem>
+<para><ref refid="classHurricane_1_1Layer_1a4dab4552a219d2d900ed0b1245dc6580" kindref="member">DiffusionLayer::getBottom()</ref> </para>
+</listitem>
+<listitem>
+<para><ref refid="classHurricane_1_1Layer_1a69e76c09a56260169c4f5c145a35a47f" kindref="member">DiffusionLayer::getOpposite()</ref> </para>
+</listitem>
+</itemizedlist>
+Have no meaning here.</para>
+<para>Only extention cap &amp; extention width are used here. Enclosure is not used. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::DiffusionLayer</label>
+        <link refid="classHurricane_1_1DiffusionLayer"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::DiffusionLayer</label>
+        <link refid="classHurricane_1_1DiffusionLayer"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfTechnologyLayerMap</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" line="45" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h" bodystart="45" bodyend="89"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1DiffusionLayer_1a47d73cdea74893f58e2e7953ceae05ec" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_basicLayers</name></member>
+      <member refid="classHurricane_1_1Layer_1a7e5de1f36d9746a778c18083f8101d53" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_blockage</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1aae404abbd7227251fb75ec3463bcd11e" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_extentionCaps</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1abeee5de9710cb584c99ea21aef68ea82" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_extentionWidths</name></member>
+      <member refid="classHurricane_1_1Layer_1aec92efef3058a8e172dbbbb952bac29d" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_extractMask</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Layer_1a40d47c3280521fc2fcdaf31ddd3f77e3" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_getNextOfTechnologyLayerMap</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1acbbe98d4e8d2a3f72f94f08c40a631a1" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a1f92bf0d80b73663ab5f125f3454697b" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a09a0df7c407f92f6a02c2a7e0dd3b67a" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Layer_1ade957bc4a9ecd6a0f41d270d5339e1c5" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_mask</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a955a5eb76cfbec94004ec86d5954946a" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_maximalExtentionCap</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a008b8b227c3fd75a81be39a54f22302d" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_maximalExtentionWidth</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Layer_1ace6cd3237329c674b10c2d78e86050ee" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_minimalArea</name></member>
+      <member refid="classHurricane_1_1Layer_1a6725cf7e5d5f6e5e64cdd5ac0f52a860" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_minimalSize</name></member>
+      <member refid="classHurricane_1_1Layer_1a44074cd58253d477d5328e3a47c56da7" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_minimalSpacing</name></member>
+      <member refid="classHurricane_1_1Layer_1a622c08c4f60322fa9476183a301bd1c0" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Layer_1a92a8319818044b4ebabd5301f31f0043" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_nextOfTechnologyLayerMap</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a57d92da36c46fa98ee429c5ab9b8f875" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_onDbuChange</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Layer_1a3a45ac4d3844ea887d5039506a3feec1" prot="protected" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Layer_1a286efaca54cd3e9fbc12c15d88aecdb7" prot="protected" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Layer_1ad9ca7088f36dd5b9ce3e9c4bdc0e9d97" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_setExtractMask</name></member>
+      <member refid="classHurricane_1_1Layer_1a4a04a05ed743a8c25d6691bc250a1fbf" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_setMask</name></member>
+      <member refid="classHurricane_1_1Layer_1a278c70672667202e5a6d0c0d20a10c1e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_setNextOfTechnologyLayerMap</name></member>
+      <member refid="classHurricane_1_1Layer_1ad50a6345c63ffbcb95c34947ba48bb49" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_sgetName</name></member>
+      <member refid="classHurricane_1_1Layer_1a5230e9b64ffff149946df06ae79086ef" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_symbolic</name></member>
+      <member refid="classHurricane_1_1Layer_1af2db141d9729a136e25eaefd6549d2b2" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>_technology</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1afd46ef9e1e0beb87412894b46bda7641" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Layer_1abbd13bf66cf75dd6445d0353987119f3" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>above</name></member>
+      <member refid="classHurricane_1_1Layer_1a090f8697946f721351a626052af25027" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>below</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Layer_1af63dd0a48e2a3514a1cdaccd4586bad8" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>contains</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a91b5f8a20b005c20b4b9b9080250939e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a4513b36b63f0c8c2a88b2a20f7a5f729" prot="protected" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>DiffusionLayer</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Layer_1a4d6c9d1985196e73c7b9c6381beaf043" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>EnclosureH</name></member>
+      <member refid="classHurricane_1_1Layer_1a646370c1fcdaf7bd8176b4244ebb572e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>EnclosureMax</name></member>
+      <member refid="classHurricane_1_1Layer_1ae42c305f9d5720d789e8b6cc05fcc7cf" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>EnclosureV</name></member>
+      <member refid="classHurricane_1_1Layer_1ac2ab4a3febd49f428bd066242e42280d" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>ExtensionCap</name></member>
+      <member refid="classHurricane_1_1Layer_1a9f555decd6aff4fcb2e1688b9bc11d9e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>ExtensionWidth</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1ad58bdd7688b6ed4b3b9983588d32d735" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getBasicLayers</name></member>
+      <member refid="classHurricane_1_1Layer_1a6da189eab232c3d8d8c89269588a2d14" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getBlockageLayer</name></member>
+      <member refid="classHurricane_1_1Layer_1a4dab4552a219d2d900ed0b1245dc6580" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getBottom</name></member>
+      <member refid="classHurricane_1_1Layer_1ac76508166c50f83173a9e04607a7bbbe" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getBottomEnclosure</name></member>
+      <member refid="classHurricane_1_1Layer_1ab5466dfd96d7bc45196c5c027658a8e2" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getCut</name></member>
+      <member refid="classHurricane_1_1Layer_1ad9fca94fed1837e3e80e9b6445822b7d" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getCutAbove</name></member>
+      <member refid="classHurricane_1_1Layer_1a983956c8127688390f978cc5bd0d768d" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getCutBelow</name></member>
+      <member refid="classHurricane_1_1Layer_1a1ebce43b438610979f50b5ff95c1d972" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getEnclosure</name></member>
+      <member refid="classHurricane_1_1Layer_1a0afb51d5f191408ab48f9c133d0f8d12" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getEnclosure</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a348205ce7a9f1e4edb8e68f80d145a10" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getExtentionCap</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a1b5cedcc597fe178bd8c045cfd9bfaf6" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getExtentionCap</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a9a359a8cc2e291bb2ebc9f2d53fc0fde" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getExtentionWidth</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1af73934ff95299c3cba3aaa7a0b5967be" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getExtentionWidth</name></member>
+      <member refid="classHurricane_1_1Layer_1af009bbd89a8e8260122b7244bfa10349" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getExtractMask</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Layer_1a29b22c3b59cc24bf82449ad6c068ff1f" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMask</name></member>
+      <member refid="classHurricane_1_1Layer_1ac32eff2dc51180660fe9b4ce17cae42c" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMetalAbove</name></member>
+      <member refid="classHurricane_1_1Layer_1a4bc8358f67c1a1a9b2581e4b3732108c" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMetalBelow</name></member>
+      <member refid="classHurricane_1_1Layer_1a265005f55b2f464b1888aae1d9bc5b74" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMinimalArea</name></member>
+      <member refid="classHurricane_1_1Layer_1afed9a488bf20daaeed18874f2b16268e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMinimalSize</name></member>
+      <member refid="classHurricane_1_1Layer_1a6a03f9f40ca855d33763497162414062" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getMinimalSpacing</name></member>
+      <member refid="classHurricane_1_1Layer_1a3dc54f6efc60fddb8529599caa6b0f1f" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Layer_1a69e76c09a56260169c4f5c145a35a47f" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getOpposite</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Layer_1ae506b17bd7a245de622f8a8e9947629b" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>getTechnology</name></member>
+      <member refid="classHurricane_1_1Layer_1a5f7c43a29f3dd02a9ebccbcbf91d6727" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getTop</name></member>
+      <member refid="classHurricane_1_1Layer_1aa260137e48e82bc5aa193ec5231611ff" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>getTopEnclosure</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Layer_1adbea0bafaa87b033efdaa98bf2709182" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>intersect</name></member>
+      <member refid="classHurricane_1_1Layer_1a9a3ca3b9b6fe8fbf87b235bbe92e11a0" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>isBlockage</name></member>
+      <member refid="classHurricane_1_1Layer_1a9a3cef8ec43e2f98d6905ce5dab198e3" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>isSymbolic</name></member>
+      <member refid="classHurricane_1_1Layer_1a6471e06d699bfd4b482bca5dd6d39334" prot="protected" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>Layer</name></member>
+      <member refid="classHurricane_1_1Layer_1af5277c670637bd5d910237e7afe01a91" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>Mask</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1Layer_1a5c0a859005d2dd842c30aaee7061b101" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>NoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1Layer_1af45f8189ac78b0b439215479f2acba4b" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setBlockage</name></member>
+      <member refid="classHurricane_1_1Layer_1a04e9c983525d074508d7e10107c1c3c7" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>setEnclosure</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1af11483eaf5449f98a2e96d67b2a3b4cb" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>setExtentionCap</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1a6a9ce7e15e85bb59cb0941433c35e26c" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>setExtentionWidth</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1Layer_1ad4af0ce58f523b94d6f153877882a3e6" prot="public" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>setMinimalArea</name></member>
+      <member refid="classHurricane_1_1Layer_1a400d17fe999c0080bb50489948986fe7" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setMinimalSize</name></member>
+      <member refid="classHurricane_1_1Layer_1a81a8a24526e8535fba5a35cdcc194a8f" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setMinimalSpacing</name></member>
+      <member refid="classHurricane_1_1Layer_1ab93809f19bc360f58d35e91438ef2f87" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Layer_1afc623b3fd4ed529df5ee6c0e098e823d" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>setSymbolic</name></member>
+      <member refid="classHurricane_1_1DiffusionLayer_1acea72cad2778aac3f672005bc1327f63" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>Super</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::DiffusionLayer</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::DiffusionLayer</scope><name>~DBo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

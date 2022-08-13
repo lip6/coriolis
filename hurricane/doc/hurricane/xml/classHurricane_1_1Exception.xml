@@ -1,0 +1,276 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Exception" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>Hurricane::Exception</compoundname>
+    <derivedcompoundref refid="classHurricane_1_1Error" prot="public" virt="non-virtual">Hurricane::Error</derivedcompoundref>
+    <derivedcompoundref refid="classHurricane_1_1Interruption" prot="public" virt="non-virtual">Hurricane::Interruption</derivedcompoundref>
+    <derivedcompoundref refid="classHurricane_1_1Warning" prot="public" virt="non-virtual">Hurricane::Warning</derivedcompoundref>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Exception_1aede264d231105289ce16e9488f3ea2d4" prot="private" static="yes" mutable="no">
+        <type>TextTranslator</type>
+        <definition>TextTranslator Hurricane::Exception::_textTranslator</definition>
+        <argsstring></argsstring>
+        <name>_textTranslator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="40" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Exception_1ac39b9718b444f09a0738c4ed58e21255" prot="private" static="yes" mutable="no">
+        <type>TextTranslator</type>
+        <definition>TextTranslator Hurricane::Exception::_htmlTranslator</definition>
+        <argsstring></argsstring>
+        <name>_htmlTranslator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="41" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a52f62b7ecbd5e8abf8cd8dcc9be9ad71" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Exception::Exception</definition>
+        <argsstring>()</argsstring>
+        <name>Exception</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="46" column="16"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a5151ba69755ffdbc73b40b311dc04311" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Exception::Exception</definition>
+        <argsstring>(const Exception &amp;exception)</argsstring>
+        <name>Exception</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Exception" kindref="compound">Exception</ref> &amp;</type>
+          <declname>exception</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="48" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a5295749ae52853b717e7d7017397550e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Exception" kindref="compound">Exception</ref> &amp;</type>
+        <definition>Exception&amp; Hurricane::Exception::operator=</definition>
+        <argsstring>(const Exception &amp;exception)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Exception" kindref="compound">Exception</ref> &amp;</type>
+          <declname>exception</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="58" column="24"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Exception_1aeb261a75c5c35332b8c07a4beb01243e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Hurricane::Exception::~Exception</definition>
+        <argsstring>()</argsstring>
+        <name>~Exception</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="53" column="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a6d8036af345628567494eeab9c8e2e3a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Exception::what</definition>
+        <argsstring>() const</argsstring>
+        <name>what</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> an alias over the <ref refid="classHurricane_1_1Exception_1a19b5d24e8f02bb99625a5206638c44e8" kindref="member">textWhat()</ref> method for convenience. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="63" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="63" bodyend="63"/>
+        <references refid="classHurricane_1_1Exception_1a19b5d24e8f02bb99625a5206638c44e8" compoundref="Exception_8h" startline="64" endline="64">textWhat</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a19b5d24e8f02bb99625a5206638c44e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Exception::textWhat</definition>
+        <argsstring>() const</argsstring>
+        <name>textWhat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> an informative (hopefully) about what has caused the exception to occurs. Formatted for an output on a tty.</para>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Exception_1a1a57fbbc4b57a014558ba31d18ec9b62" kindref="member">setTextTranslator</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="64" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="64" bodyend="64"/>
+        <referencedby refid="classHurricane_1_1Exception_1a6d8036af345628567494eeab9c8e2e3a" compoundref="Exception_8h" startline="63" endline="63">what</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a2582e6c3acb236e24f48cb873f64e3e9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Exception::htmlWhat</definition>
+        <argsstring>() const</argsstring>
+        <name>htmlWhat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> an informative (hopefully) about what has caused the exception to occurs. Formatted for an output on a HTML capable device.</para>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Exception_1a0effe808df00f4efe10925131304b8d0" kindref="member">setHtmlTranslator</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="65" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1ae52c6066fa48003018144eee0b389537" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Exception::_getString</definition>
+        <argsstring>() const =0</argsstring>
+        <name>_getString</name>
+        <reimplementedby refid="classHurricane_1_1Error_1ac3db1aea37b2a616d473f191134377a9">_getString</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Interruption_1acd9cefc5f4ad9a0e267876df685f5010">_getString</reimplementedby>
+        <reimplementedby refid="classHurricane_1_1Warning_1a84680812dedab4749ced2b0759299eac">_getString</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="72" column="28"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a1a57fbbc4b57a014558ba31d18ec9b62" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>string Hurricane::Exception::setTextTranslator</definition>
+        <argsstring>(const TextTranslator &amp;translator)</argsstring>
+        <name>setTextTranslator</name>
+        <param>
+          <type>const TextTranslator &amp;</type>
+          <declname>translator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the translator used for text (tty) output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="70" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Exception_1a0effe808df00f4efe10925131304b8d0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>string Hurricane::Exception::setHtmlTranslator</definition>
+        <argsstring>(const TextTranslator &amp;translator)</argsstring>
+        <name>setHtmlTranslator</name>
+        <param>
+          <type>const TextTranslator &amp;</type>
+          <declname>translator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the translator used for HTML (hint: Qt manage simple HTML in text) output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="71" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="71" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Exception" kindref="compound">Exception</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Exception_1secExceptionIntro">
+<title>Introduction</title>
+<para>The <ref refid="classHurricane_1_1Exception" kindref="compound">Exception</ref> class groups all exceptions thrown by functions from the API. This virtual class is only useful to catch exceptions originating from one of those functions.</para>
+<para><simplesect kind="remark"><para>Copy construction is disabled.</para>
+</simplesect>
+</para>
+</sect1>
+<sect1 id="classHurricane_1_1Exception_1secExceptionExample">
+<title>Example</title>
+<para><programlisting><codeline><highlight class="normal">try<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>//<sp/>do<sp/>something</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">catch<sp/>(Exception&amp;<sp/>exception)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>//<sp/>Go<sp/>through<sp/>here<sp/>if<sp/>the<sp/>exception<sp/>comes<sp/>from<sp/>a<sp/>function<sp/>of<sp/>the<sp/>API</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>cerr<sp/>&lt;&lt;<sp/>exception.what()<sp/>&lt;&lt;<sp/>endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">catch<sp/>(...)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>//<sp/>Go<sp/>through<sp/>here<sp/>for<sp/>all<sp/>other<sp/>system<sp/>exceptions</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>cerr<sp/>&lt;&lt;<sp/>Error(&quot;abnormal<sp/>termination&quot;)<sp/>&lt;&lt;<sp/>endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>//<sp/>We<sp/>use<sp/>the<sp/>Error()<sp/>in<sp/>order<sp/>to<sp/>get<sp/>the<sp/>same<sp/>kind<sp/>of<sp/>printing</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>exit(2);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Hurricane::Warning</label>
+        <link refid="classHurricane_1_1Warning"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Error</label>
+        <link refid="classHurricane_1_1Error"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Interruption</label>
+        <link refid="classHurricane_1_1Interruption"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Exception</label>
+        <link refid="classHurricane_1_1Exception"/>
+      </node>
+    </inheritancegraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" line="34" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Exception.h" bodystart="34" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Exception_1ae52c6066fa48003018144eee0b389537" prot="public" virt="pure-virtual"><scope>Hurricane::Exception</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Exception_1ac39b9718b444f09a0738c4ed58e21255" prot="private" virt="non-virtual"><scope>Hurricane::Exception</scope><name>_htmlTranslator</name></member>
+      <member refid="classHurricane_1_1Exception_1aede264d231105289ce16e9488f3ea2d4" prot="private" virt="non-virtual"><scope>Hurricane::Exception</scope><name>_textTranslator</name></member>
+      <member refid="classHurricane_1_1Exception_1a52f62b7ecbd5e8abf8cd8dcc9be9ad71" prot="protected" virt="non-virtual"><scope>Hurricane::Exception</scope><name>Exception</name></member>
+      <member refid="classHurricane_1_1Exception_1a5151ba69755ffdbc73b40b311dc04311" prot="private" virt="non-virtual"><scope>Hurricane::Exception</scope><name>Exception</name></member>
+      <member refid="classHurricane_1_1Exception_1a2582e6c3acb236e24f48cb873f64e3e9" prot="public" virt="non-virtual"><scope>Hurricane::Exception</scope><name>htmlWhat</name></member>
+      <member refid="classHurricane_1_1Exception_1a5295749ae52853b717e7d7017397550e" prot="private" virt="non-virtual"><scope>Hurricane::Exception</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Exception_1a0effe808df00f4efe10925131304b8d0" prot="public" virt="non-virtual"><scope>Hurricane::Exception</scope><name>setHtmlTranslator</name></member>
+      <member refid="classHurricane_1_1Exception_1a1a57fbbc4b57a014558ba31d18ec9b62" prot="public" virt="non-virtual"><scope>Hurricane::Exception</scope><name>setTextTranslator</name></member>
+      <member refid="classHurricane_1_1Exception_1a19b5d24e8f02bb99625a5206638c44e8" prot="public" virt="non-virtual"><scope>Hurricane::Exception</scope><name>textWhat</name></member>
+      <member refid="classHurricane_1_1Exception_1a6d8036af345628567494eeab9c8e2e3a" prot="public" virt="non-virtual"><scope>Hurricane::Exception</scope><name>what</name></member>
+      <member refid="classHurricane_1_1Exception_1aeb261a75c5c35332b8c07a4beb01243e" prot="public" virt="virtual"><scope>Hurricane::Exception</scope><name>~Exception</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

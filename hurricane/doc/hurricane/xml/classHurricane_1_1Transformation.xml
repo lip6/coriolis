@@ -1,0 +1,755 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Transformation" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Transformation</compoundname>
+    <innerclass refid="classHurricane_1_1Transformation_1_1Orientation" prot="public">Hurricane::Transformation::Orientation</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Transformation_1a3120d92c598f2f7d3dc388626bec89cb" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::_tx</definition>
+        <argsstring></argsstring>
+        <name>_tx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="63" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Transformation_1a675f772ad22803567d72d32bb604ed13" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::_ty</definition>
+        <argsstring></argsstring>
+        <name>_ty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="64" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Transformation_1a732f4a160b05149630b7775d7a9d4d2e" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Orientation</ref></type>
+        <definition>Orientation Hurricane::Transformation::_orientation</definition>
+        <argsstring></argsstring>
+        <name>_orientation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="65" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a7a28cd6c2f62898bc947dc3f41fe3bcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Transformation::Transformation</definition>
+        <argsstring>()</argsstring>
+        <name>Transformation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default constructor : The translation is null and the orientation is equal to <bold>ID</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="70" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a6bb0e856cd0374bd6f38ee835a4744c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Transformation::Transformation</definition>
+        <argsstring>(const DbU::Unit &amp;tx, const DbU::Unit &amp;ty, const Orientation &amp;orientation=Orientation::ID)</argsstring>
+        <name>Transformation</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>tx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>ty</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Orientation</ref> &amp;</type>
+          <declname>orientation</declname>
+          <defval>Orientation::ID</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds a transformation whose translation part is defined by the arguments <computeroutput>&lt;xt&gt;</computeroutput> and <computeroutput>&lt;ty&gt;</computeroutput> and whose orientation is defined by <computeroutput>&lt;orientation&gt;</computeroutput> (<computeroutput>&lt;ID&gt;</computeroutput> by default). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="72" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a01a6844815e536ca38d549a13b6c034f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Transformation::Transformation</definition>
+        <argsstring>(const Point &amp;translation, const Orientation &amp;orientation=Orientation::ID)</argsstring>
+        <name>Transformation</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>translation</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Orientation</ref> &amp;</type>
+          <declname>orientation</declname>
+          <defval>Orientation::ID</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds a transformation whose translation part is defined by the argument <computeroutput>&lt;translation&gt;</computeroutput> and whose default orientation is <bold>ID</bold>.</para>
+<para>Builds a transformation whose translation part is defined by the argument <computeroutput>&lt;translation&gt;</computeroutput> and whose orientation is defined by <computeroutput>&lt;orientation&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="73" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1acd94913a75fd4d3624b89e50acf4962f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Transformation::Transformation</definition>
+        <argsstring>(const Transformation &amp;transformation)</argsstring>
+        <name>Transformation</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Copy constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="75" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1aad1158c828cc8ad72eb9f17804495cd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+        <definition>Transformation &amp; Hurricane::Transformation::operator=</definition>
+        <argsstring>(const Transformation &amp;transformation)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="80" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a6dbb6fe21e65506f35e1ee21d09e8447" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Transformation::operator==</definition>
+        <argsstring>(const Transformation &amp;transformation) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Two transformations are identical if their translations and orientation are identical. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="82" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a7cb2ff77e4297fadbbf357d654de66a6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Transformation::operator!=</definition>
+        <argsstring>(const Transformation &amp;transformation) const</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Two transformations are different if eitheir their translations or orientation differ. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="83" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a08e8c1f23a73fcd1eb111c65695e848a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Transformation::getTx</definition>
+        <argsstring>() const</argsstring>
+        <name>getTx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the horizontal component of the translation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="88" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="88" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a0915bbf45c26ae91662653ce394ee203" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Transformation::getTy</definition>
+        <argsstring>() const</argsstring>
+        <name>getTy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the vertical component of the translation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="89" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a45a5133c16af3ce80ffd084b02064013" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Transformation::getTranslation</definition>
+        <argsstring>() const</argsstring>
+        <name>getTranslation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the translation component of the transformation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="90" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1ad1f4de093e3b87783b2b931444acbb76" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Orientation</ref> &amp;</type>
+        <definition>const Translation::Orientation &amp; Hurricane::Transformation::getOrientation</definition>
+        <argsstring>() const</argsstring>
+        <name>getOrientation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the orientation of the transformation (may be used in a switch). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="91" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1af3b16accc64a12c5dcd4c099115a93f3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getX</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y) const</argsstring>
+        <name>getX</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point abscissa resulting of the transformation application on the point defined by <computeroutput>&lt;x&gt;</computeroutput> et <computeroutput>&lt;y&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="93" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a8ad883a70823c00772293549b6e611e7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getY</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y) const</argsstring>
+        <name>getY</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point ordinate resulting of the transformation application on the point defined by <computeroutput>&lt;x&gt;</computeroutput> et <computeroutput>&lt;y&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="94" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1adcd79ae74399431387d246dce68b8d70" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getX</definition>
+        <argsstring>(const Point &amp;point) const</argsstring>
+        <name>getX</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point abscissa resulting of the transformation application on <computeroutput>&lt;point&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="96" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a87152b7b585cf409950e9aba878143d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getY</definition>
+        <argsstring>(const Point &amp;point) const</argsstring>
+        <name>getY</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point ordinate resulting of the transformation application on <computeroutput>&lt;point&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="97" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a2c20ee8506ad770a28c2e2b91e9b0153" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getDx</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy) const</argsstring>
+        <name>getDx</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the horizontal component of the vector resulting from the application of the transformation on the vector defined by <computeroutput>&lt;dx&gt;</computeroutput> et <computeroutput>&lt;dy&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="99" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1aa03354ff0a204e77863f392da8bb8678" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Transformation::getDy</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy) const</argsstring>
+        <name>getDy</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the vertical component of the vector resulting from the application of the transformation on the vector defined by <computeroutput>&lt;dx&gt;</computeroutput> et <computeroutput>&lt;dy&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="100" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1aea9a0f1d1ffeb4a38accbf0c9287a93f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Transformation::getPoint</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y) const</argsstring>
+        <name>getPoint</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point resulting from the application of the transformation on the point defined by <computeroutput>&lt;dx&gt;</computeroutput> et <computeroutput>&lt;dy&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="102" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a002347125ae10c408aa5e74d3c36d62f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Transformation::getPoint</definition>
+        <argsstring>(const Point &amp;point) const</argsstring>
+        <name>getPoint</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the point resulting from the application of the transformation on <computeroutput>&lt;point&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="103" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a1335b209ff017d8bfd6f81ae65ae6cd7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Transformation::getBox</definition>
+        <argsstring>(const DbU::Unit &amp;x1, const DbU::Unit &amp;y1, const DbU::Unit &amp;x2, const DbU::Unit &amp;y2) const</argsstring>
+        <name>getBox</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box resulting from the application of the transformation on the box defined by <computeroutput>&lt;x1&gt;</computeroutput>, <computeroutput>&lt;y1&gt;</computeroutput>, <computeroutput>&lt;x2&gt;</computeroutput> et <computeroutput>&lt;y2&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="105" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a4d3ad1601d31e05c76bda4b417445aff" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Transformation::getBox</definition>
+        <argsstring>(const Point &amp;point1, const Point &amp;point2) const</argsstring>
+        <name>getBox</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box resulting from the application of the transformation on the box defined by <computeroutput>&lt;point1&gt;</computeroutput> et <computeroutput>&lt;point2&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="106" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a051ddd67572c50b3b8edf75f790006e2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Transformation::getBox</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>getBox</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box resulting from the application of the transformation on the box <computeroutput>&lt;box&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="107" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a12ba0cbe9154661e704ce0f2638f860f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref></type>
+        <definition>Transformation Hurricane::Transformation::getTransformation</definition>
+        <argsstring>(const Transformation &amp;transformation) const</argsstring>
+        <name>getTransformation</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the transformation resulting from the application of the transformation on the transformation <computeroutput>&lt;transformation&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="109" column="28"/>
+        <referencedby refid="classHurricane_1_1Query_1aabe2c0588f95c30a3acfec8fed269be4" compoundref="Query_8h" startline="403" endline="403">Hurricane::Query::getTransformation</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1af9b37e39fb0ba02655eba41fe7779990" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref></type>
+        <definition>Transformation Hurricane::Transformation::getInvert</definition>
+        <argsstring>() const</argsstring>
+        <name>getInvert</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the inverse transformation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="111" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a44e5b17fa375f46f4c70f4ba79d1e448" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Transformation::isEven</definition>
+        <argsstring>() const</argsstring>
+        <name>isEven</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="116" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a2525e7889e9e9228a3230f50e8d73749" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Transformation::isOdd</definition>
+        <argsstring>() const</argsstring>
+        <name>isOdd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="117" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a4d49d9fde0fe04eba9e8f0c7360f2c79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+        <definition>Transformation &amp; Hurricane::Transformation::invert</definition>
+        <argsstring>()</argsstring>
+        <name>invert</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>inverts the transformation <computeroutput>&lt;this&gt;</computeroutput> and returns a reference to it in order to apply in sequence a new function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="122" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Transformation::applyOn</definition>
+        <argsstring>(DbU::Unit &amp;x, DbU::Unit &amp;y) const</argsstring>
+        <name>applyOn</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<sect1 id="classHurricane_1_1Transformation_1secTransformationTransformers">
+<title>Transformers</title>
+<para><bold><ref refid="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" kindref="member">Transformation::applyOn</ref></bold></para>
+<para><bold><ref refid="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" kindref="member">Transformation::applyOn</ref></bold></para>
+<para><bold><ref refid="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" kindref="member">Transformation::applyOn</ref></bold></para>
+<para><bold><ref refid="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" kindref="member">Transformation::applyOn</ref></bold></para>
+<para>Applies the transformation on the coordinates given in arguments. </para>
+</sect1>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="127" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1ae73ca0f0e10d85267ef685d94eda9bcc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Transformation::applyOn</definition>
+        <argsstring>(Point &amp;point) const</argsstring>
+        <name>applyOn</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Applies the transformation on the point given in argument. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="128" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1aa3ab2731934330107a3f2a3079f21132" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Transformation::applyOn</definition>
+        <argsstring>(Box &amp;box) const</argsstring>
+        <name>applyOn</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Applies the transformation on the box given in argument. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="129" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a3ac2c40977ecf061b4316ecedc87918a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Transformation::applyOn</definition>
+        <argsstring>(Transformation &amp;transformation) const</argsstring>
+        <name>applyOn</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Applies the transformation on the transformation given in argument. This last one becomes then the transformation resulting of the product of those two. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="130" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1ab6831015e17894b571b3cffe9b9796fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Transformation::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="135" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="135" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1a9e7fd26f6dc046e7fe3697b5e3d6d4d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Transformation::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="136" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1ab577c32396ffe9eacf9b47dc74282f40" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Transformation::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="137" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Transformation_1abdc70313e794c059ae0010f5ab91babe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Transformation::toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>toJson</name>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="138" column="19"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Transformation_1secTransformationIntro">
+<title>Introduction</title>
+<para><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> objects are a combination of a <bold>translation</bold> and an <bold>orientation</bold> defined by the new enumeration <bold><ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Transformation::Orientation</ref></bold> whose different values are described in table below. The <bold>orientation</bold> is done <emphasis>before</emphasis> the <bold>translation</bold>, which is to say that the orientation is applied in the coordinate system of the model.</para>
+<para>The transformation formula is given by: <formula id="1">\[ \Large \left \{ \begin{array}{r c l l l l l} x&apos; &amp; = &amp; (a \times x) &amp; + &amp; (b \times y) &amp; + &amp; tx \\ y&apos; &amp; = &amp; (c \times x) &amp; + &amp; (d \times y) &amp; + &amp; ty \end{array} \right . \]</formula> where x and y are the coordinates of any point, x&apos; and y&apos; the coordinates of the transformed point, tx and ty the horizontal and vertical components of the translation and where a, b, c and d are the coefficients of the matrix associated to the orientation. See <ref refid="classHurricane_1_1Transformation_1_1Orientation" kindref="compound">Orientation</ref> for the value of a, b, c &amp; d.</para>
+<para><simplesect kind="remark"><para><bold>Rotations are done counter clock wise</bold> </para>
+</simplesect>
+</para>
+</sect1>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::Transformation</label>
+        <link refid="classHurricane_1_1Transformation"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_orientation</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Transformation::Orientation</label>
+        <link refid="classHurricane_1_1Transformation_1_1Orientation"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" line="32" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Transformation.h" bodystart="32" bodyend="140"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Transformation_1ab577c32396ffe9eacf9b47dc74282f40" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Transformation_1a9e7fd26f6dc046e7fe3697b5e3d6d4d5" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Transformation_1ab6831015e17894b571b3cffe9b9796fa" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Transformation_1a732f4a160b05149630b7775d7a9d4d2e" prot="private" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_orientation</name></member>
+      <member refid="classHurricane_1_1Transformation_1a3120d92c598f2f7d3dc388626bec89cb" prot="private" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_tx</name></member>
+      <member refid="classHurricane_1_1Transformation_1a675f772ad22803567d72d32bb604ed13" prot="private" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>_ty</name></member>
+      <member refid="classHurricane_1_1Transformation_1ad37365bfd47851ca33519bb9a05b5402" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>applyOn</name></member>
+      <member refid="classHurricane_1_1Transformation_1ae73ca0f0e10d85267ef685d94eda9bcc" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>applyOn</name></member>
+      <member refid="classHurricane_1_1Transformation_1aa3ab2731934330107a3f2a3079f21132" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>applyOn</name></member>
+      <member refid="classHurricane_1_1Transformation_1a3ac2c40977ecf061b4316ecedc87918a" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>applyOn</name></member>
+      <member refid="classHurricane_1_1Transformation_1a1335b209ff017d8bfd6f81ae65ae6cd7" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getBox</name></member>
+      <member refid="classHurricane_1_1Transformation_1a4d3ad1601d31e05c76bda4b417445aff" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getBox</name></member>
+      <member refid="classHurricane_1_1Transformation_1a051ddd67572c50b3b8edf75f790006e2" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getBox</name></member>
+      <member refid="classHurricane_1_1Transformation_1a2c20ee8506ad770a28c2e2b91e9b0153" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getDx</name></member>
+      <member refid="classHurricane_1_1Transformation_1aa03354ff0a204e77863f392da8bb8678" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getDy</name></member>
+      <member refid="classHurricane_1_1Transformation_1af9b37e39fb0ba02655eba41fe7779990" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getInvert</name></member>
+      <member refid="classHurricane_1_1Transformation_1ad1f4de093e3b87783b2b931444acbb76" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getOrientation</name></member>
+      <member refid="classHurricane_1_1Transformation_1aea9a0f1d1ffeb4a38accbf0c9287a93f" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getPoint</name></member>
+      <member refid="classHurricane_1_1Transformation_1a002347125ae10c408aa5e74d3c36d62f" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getPoint</name></member>
+      <member refid="classHurricane_1_1Transformation_1a12ba0cbe9154661e704ce0f2638f860f" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getTransformation</name></member>
+      <member refid="classHurricane_1_1Transformation_1a45a5133c16af3ce80ffd084b02064013" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getTranslation</name></member>
+      <member refid="classHurricane_1_1Transformation_1a08e8c1f23a73fcd1eb111c65695e848a" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getTx</name></member>
+      <member refid="classHurricane_1_1Transformation_1a0915bbf45c26ae91662653ce394ee203" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getTy</name></member>
+      <member refid="classHurricane_1_1Transformation_1af3b16accc64a12c5dcd4c099115a93f3" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getX</name></member>
+      <member refid="classHurricane_1_1Transformation_1adcd79ae74399431387d246dce68b8d70" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getX</name></member>
+      <member refid="classHurricane_1_1Transformation_1a8ad883a70823c00772293549b6e611e7" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getY</name></member>
+      <member refid="classHurricane_1_1Transformation_1a87152b7b585cf409950e9aba878143d5" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>getY</name></member>
+      <member refid="classHurricane_1_1Transformation_1a4d49d9fde0fe04eba9e8f0c7360f2c79" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>invert</name></member>
+      <member refid="classHurricane_1_1Transformation_1a44e5b17fa375f46f4c70f4ba79d1e448" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>isEven</name></member>
+      <member refid="classHurricane_1_1Transformation_1a2525e7889e9e9228a3230f50e8d73749" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>isOdd</name></member>
+      <member refid="classHurricane_1_1Transformation_1a7cb2ff77e4297fadbbf357d654de66a6" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>operator!=</name></member>
+      <member refid="classHurricane_1_1Transformation_1aad1158c828cc8ad72eb9f17804495cd2" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Transformation_1a6dbb6fe21e65506f35e1ee21d09e8447" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>operator==</name></member>
+      <member refid="classHurricane_1_1Transformation_1abdc70313e794c059ae0010f5ab91babe" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Transformation_1a7a28cd6c2f62898bc947dc3f41fe3bcf" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>Transformation</name></member>
+      <member refid="classHurricane_1_1Transformation_1a6bb0e856cd0374bd6f38ee835a4744c0" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>Transformation</name></member>
+      <member refid="classHurricane_1_1Transformation_1a01a6844815e536ca38d549a13b6c034f" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>Transformation</name></member>
+      <member refid="classHurricane_1_1Transformation_1acd94913a75fd4d3624b89e50acf4962f" prot="public" virt="non-virtual"><scope>Hurricane::Transformation</scope><name>Transformation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

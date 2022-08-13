@@ -1,5 +1,5 @@
-\hypertarget{classHurricane_1_1SubTypeCollection}{}\section{Hurricane\+:\+:Sub\+Type\+Collection$<$ Type, Sub\+Type $>$ Class Template Reference}
-\label{classHurricane_1_1SubTypeCollection}\index{Hurricane\+::\+Sub\+Type\+Collection$<$ Type, Sub\+Type $>$@{Hurricane\+::\+Sub\+Type\+Collection$<$ Type, Sub\+Type $>$}}
+\hypertarget{classHurricane_1_1SubTypeCollection}{}\doxysection{Hurricane\+::Sub\+Type\+Collection$<$ Type, Sub\+Type $>$ Class Template Reference}
+\label{classHurricane_1_1SubTypeCollection}\index{Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}}
 
 
 Applies a Type \mbox{\hyperlink{classHurricane_1_1Filter}{Filter}} to a \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}}.  
@@ -7,15 +7,20 @@ Applies a Type \mbox{\hyperlink{classHurricane_1_1Filter}{Filter}} to a \mbox{\h
 
 
 
-Inheritance diagram for Hurricane\+:\+:Sub\+Type\+Collection$<$ Type, Sub\+Type $>$\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Sub\+Type\+Collection$<$ Type, Sub\+Type $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=240pt]{classHurricane_1_1SubTypeCollection__inherit__graph}
+\includegraphics[width=226pt]{classHurricane_1_1SubTypeCollection__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{Indent}\textbf{ Collection Collection}\par
+{\em \hypertarget{Collection_8h_secCollectionUtilitarians}{}\doxysubsection{Utilitarians}\label{Collection_8h_secCollectionUtilitarians}
+{\bfseries{Collection\+::\+Fill}} {\bfseries{Collection\+::\+Fill}} {\bfseries{Collection\+::\+Fill}} \begin{DoxyRemark}{Remarks}
+The elements are added to the container in the order with which the collection is visited. So the same order will appear in a list or a vector, but for a set they will be inserted according to the set ordering method. 
+\end{DoxyRemark}
+}\begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1SubTypeCollection_a0fd6c8e781097e607b813306fd2ad677}{Sub\+Type\+Collection}} (const \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}}$<$ Type $>$ $\ast$collection)
 \item 
@@ -23,9 +28,10 @@ Inheritance diagram for Hurricane\+:\+:Sub\+Type\+Collection$<$ Type, Sub\+Type 
 \item 
 \mbox{\hyperlink{classHurricane_1_1SubTypeCollection_a5c223a20f42ebb72d8d4be5ee99bb2d8}{Sub\+Type\+Collection}} (const \mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Sub\+Type\+Collection}} \&sub\+Type\+Collection)
 \end{DoxyCompactItemize}
+\end{Indent}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 \subsubsection*{template$<$class Type, class Sub\+Type$>$\newline
 class Hurricane\+::\+Sub\+Type\+Collection$<$ Type, Sub\+Type $>$}
 
@@ -33,25 +39,25 @@ Applies a Type \mbox{\hyperlink{classHurricane_1_1Filter}{Filter}} to a \mbox{\h
 
 Build a sub-\/\+Collection of all the elements of the primary that are of a certain sub-\/type. The filtering mechanism relies on a {\ttfamily dynamic\+\_\+cast$<$$>$} so there must be an inheritance path between the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} type and the sub-\/type. 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1SubTypeCollection_a0fd6c8e781097e607b813306fd2ad677}\label{classHurricane_1_1SubTypeCollection_a0fd6c8e781097e607b813306fd2ad677}} 
-\index{Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}!Sub\+Type\+Collection@{Sub\+Type\+Collection}}
-\index{Sub\+Type\+Collection@{Sub\+Type\+Collection}!Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}}
-\subsubsection{\texorpdfstring{Sub\+Type\+Collection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+\index{Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}!SubTypeCollection@{SubTypeCollection}}
+\index{SubTypeCollection@{SubTypeCollection}!Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}}
+\doxysubsubsection{\texorpdfstring{SubTypeCollection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
 {\footnotesize\ttfamily template$<$class Type , class Sub\+Type $>$ \\
 \mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Hurricane\+::\+Sub\+Type\+Collection}}$<$ Type, Sub\+Type $>$\+::\mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Sub\+Type\+Collection}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}}$<$ Type $>$ $\ast$}]{collection }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Constructor from a primary \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} and a \mbox{\hyperlink{classHurricane_1_1Filter}{Filter}}. \mbox{\Hypertarget{classHurricane_1_1SubTypeCollection_a09df045ff335493ac3068a865b793291}\label{classHurricane_1_1SubTypeCollection_a09df045ff335493ac3068a865b793291}} 
-\index{Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}!Sub\+Type\+Collection@{Sub\+Type\+Collection}}
-\index{Sub\+Type\+Collection@{Sub\+Type\+Collection}!Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}}
-\subsubsection{\texorpdfstring{Sub\+Type\+Collection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+\index{Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}!SubTypeCollection@{SubTypeCollection}}
+\index{SubTypeCollection@{SubTypeCollection}!Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}}
+\doxysubsubsection{\texorpdfstring{SubTypeCollection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
 {\footnotesize\ttfamily template$<$class Type , class Sub\+Type $>$ \\
 \mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Hurricane\+::\+Sub\+Type\+Collection}}$<$ Type, Sub\+Type $>$\+::\mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Sub\+Type\+Collection}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}}$<$ Type $>$ \&}]{collection }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Constructor from a primary \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} and a \mbox{\hyperlink{classHurricane_1_1Filter}{Filter}}. \mbox{\Hypertarget{classHurricane_1_1SubTypeCollection_a5c223a20f42ebb72d8d4be5ee99bb2d8}\label{classHurricane_1_1SubTypeCollection_a5c223a20f42ebb72d8d4be5ee99bb2d8}} 
-\index{Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}!Sub\+Type\+Collection@{Sub\+Type\+Collection}}
-\index{Sub\+Type\+Collection@{Sub\+Type\+Collection}!Hurricane\+::\+Sub\+Type\+Collection@{Hurricane\+::\+Sub\+Type\+Collection}}
-\subsubsection{\texorpdfstring{Sub\+Type\+Collection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+\index{Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}!SubTypeCollection@{SubTypeCollection}}
+\index{SubTypeCollection@{SubTypeCollection}!Hurricane::SubTypeCollection$<$ Type, SubType $>$@{Hurricane::SubTypeCollection$<$ Type, SubType $>$}}
+\doxysubsubsection{\texorpdfstring{SubTypeCollection()}{SubTypeCollection()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
 {\footnotesize\ttfamily template$<$class Type , class Sub\+Type $>$ \\
 \mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Hurricane\+::\+Sub\+Type\+Collection}}$<$ Type, Sub\+Type $>$\+::\mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Sub\+Type\+Collection}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1SubTypeCollection}{Sub\+Type\+Collection}}$<$ Type, Sub\+Type $>$ \&}]{sub\+Type\+Collection }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 

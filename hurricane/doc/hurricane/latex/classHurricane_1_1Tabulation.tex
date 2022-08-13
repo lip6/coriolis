@@ -1,11 +1,11 @@
-\hypertarget{classHurricane_1_1Tabulation}{}\section{Hurricane\+:\+:Tabulation Class Reference}
-\label{classHurricane_1_1Tabulation}\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
+\hypertarget{classHurricane_1_1Tabulation}{}\doxysection{Hurricane\+::Tabulation Class Reference}
+\label{classHurricane_1_1Tabulation}\index{Hurricane::Tabulation@{Hurricane::Tabulation}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} description ({\bfseries{API}})  
 
 
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1Tabulation_a59932db80223de3ba630592218cb1005}{Tabulation}} (const string \&s=\char`\"{}   \char`\"{})
@@ -26,131 +26,135 @@
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Tabulation_secTabulationIntro}{}\subsection{Introduction}\label{classHurricane_1_1Tabulation_secTabulationIntro}
-This object provides an indentation capability for printing readable texts.\hypertarget{classHurricane_1_1Tabulation_secTabulationNewGlobalVariable}{}\subsection{New global variable}\label{classHurricane_1_1Tabulation_secTabulationNewGlobalVariable}
+\hypertarget{classHurricane_1_1Tabulation_secTabulationIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Tabulation_secTabulationIntro}
+This object provides an indentation capability for printing readable texts.\hypertarget{classHurricane_1_1Tabulation_secTabulationNewGlobalVariable}{}\doxysubsection{New global variable}\label{classHurricane_1_1Tabulation_secTabulationNewGlobalVariable}
 
-\begin{DoxyCode}
-\mbox{\hyperlink{classHurricane_1_1Tabulation_a59932db80223de3ba630592218cb1005}{Tabulation}} tab(\textcolor{stringliteral}{"    "});
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classHurricane_1_1Tabulation_a59932db80223de3ba630592218cb1005}{Tabulation}} tab(\textcolor{stringliteral}{"{}    "{}});}
+
 \end{DoxyCode}
- Represents the global tabulation variable usable by all application programmers. The elementary tabulation being fixed to 3 space characters.\hypertarget{classHurricane_1_1Tabulation_secTabulationUsage}{}\subsection{Usage}\label{classHurricane_1_1Tabulation_secTabulationUsage}
+ Represents the global tabulation variable usable by all application programmers. The elementary tabulation being fixed to 3 space characters.\hypertarget{classHurricane_1_1Tabulation_secTabulationUsage}{}\doxysubsection{Usage}\label{classHurricane_1_1Tabulation_secTabulationUsage}
 Let us write a sample code of printing a succinct cell description \+: 
-\begin{DoxyCode}
-\textcolor{keywordtype}{void} Describe(Cell* cell)
-\textcolor{comment}{// **********************}
-\{
-   cout << tab++ << \textcolor{stringliteral}{"cell : "} << cellGetName() << endl;
-   \textcolor{keywordflow}{if} (!cellGetInstances().IsEmpty()) \{
-      cout << tab++ << \textcolor{stringliteral}{"instances : \{"} << endl;
-      for\_each\_instance(instance, cellGetInstances()) \{
-         cout << tab << \textcolor{stringliteral}{"instance : "} << instanceGetName() << endl;
-         end\_for;
-      \}
-      cout << --tab << \textcolor{stringliteral}{"\}"};
-   \}
-   \textcolor{keywordflow}{if} (!cellGetNets().IsEmpty()) \{
-      cout << tab++ << \textcolor{stringliteral}{"nets : \{"} << endl;
-      for\_each\_net(net, cellGetNets()) \{
-         cout << tab++ << \textcolor{stringliteral}{"net : "} << netGetName() << endl;
-         \textcolor{keywordflow}{if} (!netGetPlugs().IsEmpty()) \{
-            cout << tab++ << \textcolor{stringliteral}{"plugs : \{"} << endl;
-            for\_each\_plug(plug, netGetPlugs()) \{
-               cout << tab << \textcolor{stringliteral}{"master\_net : "}
-                    << plugGetMasterNet()GetName() << endl;
-               end\_for;
-            \}
-            cout << --tab << "\}";
-         \}
-         end\_for;
-      \}
-      cout << --tab << "\}";
-   \}
-   --tab;
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Describe(Cell* cell)}
+\DoxyCodeLine{\textcolor{comment}{// **********************}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{   cout << tab++ << \textcolor{stringliteral}{"{}cell : "{}} << cellGetName() << endl;}
+\DoxyCodeLine{   \textcolor{keywordflow}{if} (!cellGetInstances().IsEmpty()) \{}
+\DoxyCodeLine{      cout << tab++ << \textcolor{stringliteral}{"{}instances : \{"{}} << endl;}
+\DoxyCodeLine{      for\_each\_instance(instance, cellGetInstances()) \{}
+\DoxyCodeLine{         cout << tab << \textcolor{stringliteral}{"{}instance : "{}} << instanceGetName() << endl;}
+\DoxyCodeLine{         end\_for;}
+\DoxyCodeLine{      \}}
+\DoxyCodeLine{      cout << -\/-\/tab << \textcolor{stringliteral}{"{}\}"{}};}
+\DoxyCodeLine{   \}}
+\DoxyCodeLine{   \textcolor{keywordflow}{if} (!cellGetNets().IsEmpty()) \{}
+\DoxyCodeLine{      cout << tab++ << \textcolor{stringliteral}{"{}nets : \{"{}} << endl;}
+\DoxyCodeLine{      for\_each\_net(net, cellGetNets()) \{}
+\DoxyCodeLine{         cout << tab++ << \textcolor{stringliteral}{"{}net : "{}} << netGetName() << endl;}
+\DoxyCodeLine{         \textcolor{keywordflow}{if} (!netGetPlugs().IsEmpty()) \{}
+\DoxyCodeLine{            cout << tab++ << \textcolor{stringliteral}{"{}plugs : \{"{}} << endl;}
+\DoxyCodeLine{            for\_each\_plug(plug, netGetPlugs()) \{}
+\DoxyCodeLine{               cout << tab << \textcolor{stringliteral}{"{}master\_net : "{}}}
+\DoxyCodeLine{                    << plugGetMasterNet()GetName() << endl;}
+\DoxyCodeLine{               end\_for;}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{            cout << -\/-\/tab << "{}\}"{};}
+\DoxyCodeLine{         \}}
+\DoxyCodeLine{         end\_for;}
+\DoxyCodeLine{      \}}
+\DoxyCodeLine{      cout << -\/-\/tab << "{}\}"{};}
+\DoxyCodeLine{   \}}
+\DoxyCodeLine{   -\/-\/tab;}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  The call \+: 
-\begin{DoxyCode}
-Describe(cell);
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Describe(cell);}
+
 \end{DoxyCode}
  Will print the result in the following form \+: 
-\begin{DoxyCode}
-cell : ...
-   instances : \{
-      instance : ...
-      instance : ...
-      ...
-   \}
-   nets : \{
-      net : ...
-         plugs : \{
-            master\_net : ...
-            master\_net : ...
-            ...
-         \}
-      net : ...
-         plugs : \{
-            master\_net : ...
-            master\_net : ...
-            ...
-         \}
-      ...
-   \}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cell : ...}
+\DoxyCodeLine{   instances : \{}
+\DoxyCodeLine{      instance : ...}
+\DoxyCodeLine{      instance : ...}
+\DoxyCodeLine{      ...}
+\DoxyCodeLine{   \}}
+\DoxyCodeLine{   nets : \{}
+\DoxyCodeLine{      net : ...}
+\DoxyCodeLine{         plugs : \{}
+\DoxyCodeLine{            master\_net : ...}
+\DoxyCodeLine{            master\_net : ...}
+\DoxyCodeLine{            ...}
+\DoxyCodeLine{         \}}
+\DoxyCodeLine{      net : ...}
+\DoxyCodeLine{         plugs : \{}
+\DoxyCodeLine{            master\_net : ...}
+\DoxyCodeLine{            master\_net : ...}
+\DoxyCodeLine{            ...}
+\DoxyCodeLine{         \}}
+\DoxyCodeLine{      ...}
+\DoxyCodeLine{   \}}
+
 \end{DoxyCode}
-\hypertarget{classHurricane_1_1Tabulation_secTabulationRemark}{}\subsection{Remark}\label{classHurricane_1_1Tabulation_secTabulationRemark}
+\hypertarget{classHurricane_1_1Tabulation_secTabulationRemark}{}\doxysubsection{Remark}\label{classHurricane_1_1Tabulation_secTabulationRemark}
 Of course this automatic indentation works also in recursive mode. Its main interest is for that purpose because you don\textquotesingle{}t need to transfer through recursive function calls an additional argument for controling the indentation when formating print-\/outs. 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Tabulation_a59932db80223de3ba630592218cb1005}\label{classHurricane_1_1Tabulation_a59932db80223de3ba630592218cb1005}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!Tabulation@{Tabulation}}
-\index{Tabulation@{Tabulation}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{Tabulation()}{Tabulation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!Tabulation@{Tabulation}}
+\index{Tabulation@{Tabulation}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{Tabulation()}{Tabulation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily Hurricane\+::\+Tabulation\+::\+Tabulation (\begin{DoxyParamCaption}\item[{const string \&}]{s = {\ttfamily \char`\"{}~~~\char`\"{}} }\end{DoxyParamCaption})}
 
 Default constructor \+: The string {\ttfamily $<$s$>$} represents the elementary tabulation (fixed by default to 3 space characters) \mbox{\Hypertarget{classHurricane_1_1Tabulation_a78f765f6b4fc0e629f5d3babf7a785aa}\label{classHurricane_1_1Tabulation_a78f765f6b4fc0e629f5d3babf7a785aa}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!Tabulation@{Tabulation}}
-\index{Tabulation@{Tabulation}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{Tabulation()}{Tabulation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!Tabulation@{Tabulation}}
+\index{Tabulation@{Tabulation}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{Tabulation()}{Tabulation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily Hurricane\+::\+Tabulation\+::\+Tabulation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} \&}]{tabulation }\end{DoxyParamCaption})}
 
 Copy constructor. \mbox{\Hypertarget{classHurricane_1_1Tabulation_aa549d938b7534f8eae8e8e954b1f3207}\label{classHurricane_1_1Tabulation_aa549d938b7534f8eae8e8e954b1f3207}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!````~Tabulation@{$\sim$\+Tabulation}}
-\index{````~Tabulation@{$\sim$\+Tabulation}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{$\sim$\+Tabulation()}{~Tabulation()}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!````~Tabulation@{$\sim$Tabulation}}
+\index{````~Tabulation@{$\sim$Tabulation}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{$\sim$Tabulation()}{~Tabulation()}}
 {\footnotesize\ttfamily Hurricane\+::\+Tabulation\+::$\sim$\+Tabulation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 No description. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Tabulation_a33c4a5152580309407e3e2730f07c321}\label{classHurricane_1_1Tabulation_a33c4a5152580309407e3e2730f07c321}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!operator=@{operator=}}
-\index{operator=@{operator=}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{operator=()}{operator=()}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!operator=@{operator=}}
+\index{operator=@{operator=}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} \& Hurricane\+::\+Tabulation\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} \&}]{tabulation }\end{DoxyParamCaption})}
 
 Assignment operator. \mbox{\Hypertarget{classHurricane_1_1Tabulation_ad108353099b0755a45a18ec1ab6c0b7c}\label{classHurricane_1_1Tabulation_ad108353099b0755a45a18ec1ab6c0b7c}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!operator++@{operator++}}
-\index{operator++@{operator++}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{operator++()}{operator++()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!operator++@{operator++}}
+\index{operator++@{operator++}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{operator++()}{operator++()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} \& Hurricane\+::\+Tabulation\+::operator++ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Incrementation operator \+: returns the tabulation augmented of an elementary tabulation. \mbox{\Hypertarget{classHurricane_1_1Tabulation_ae609e34474086ac1b9748368d798acae}\label{classHurricane_1_1Tabulation_ae609e34474086ac1b9748368d798acae}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!operator++@{operator++}}
-\index{operator++@{operator++}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{operator++()}{operator++()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!operator++@{operator++}}
+\index{operator++@{operator++}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{operator++()}{operator++()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} Hurricane\+::\+Tabulation\+::operator++ (\begin{DoxyParamCaption}\item[{int}]{ }\end{DoxyParamCaption})}
 
 Postfixed version of the incrementation operator \+: the tabulation is augmented of an elementary tabulation, but returns the previous tabulation. \mbox{\Hypertarget{classHurricane_1_1Tabulation_af95446070605eb5d2ce89e9b8b3049be}\label{classHurricane_1_1Tabulation_af95446070605eb5d2ce89e9b8b3049be}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!operator-\/-\/@{operator-\/-\/}}
-\index{operator-\/-\/@{operator-\/-\/}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{operator-\/-\/()}{operator--()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!operator-\/-\/@{operator-\/-\/}}
+\index{operator-\/-\/@{operator-\/-\/}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{operator-\/-\/()}{operator--()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} \& Hurricane\+::\+Tabulation\+::operator-\/-\/ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Decrementation operator \+: returns the tabulation reduced of an elementary tabulation. \mbox{\Hypertarget{classHurricane_1_1Tabulation_a9bdb9f81cd412ffcfb1da048b75cbd99}\label{classHurricane_1_1Tabulation_a9bdb9f81cd412ffcfb1da048b75cbd99}} 
-\index{Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}!operator-\/-\/@{operator-\/-\/}}
-\index{operator-\/-\/@{operator-\/-\/}!Hurricane\+::\+Tabulation@{Hurricane\+::\+Tabulation}}
-\subsubsection{\texorpdfstring{operator-\/-\/()}{operator--()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\index{Hurricane::Tabulation@{Hurricane::Tabulation}!operator-\/-\/@{operator-\/-\/}}
+\index{operator-\/-\/@{operator-\/-\/}!Hurricane::Tabulation@{Hurricane::Tabulation}}
+\doxysubsubsection{\texorpdfstring{operator-\/-\/()}{operator--()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Tabulation}{Tabulation}} Hurricane\+::\+Tabulation\+::operator-\/-\/ (\begin{DoxyParamCaption}\item[{int}]{ }\end{DoxyParamCaption})}
 
 Postfixed version of the decrementation operator \+: the tabulation is reduced of an elementary tabulation, but returns the previous tabulation. 

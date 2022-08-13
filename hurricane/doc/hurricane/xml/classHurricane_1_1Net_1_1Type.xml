@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Net_1_1Type" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Net::Type</compoundname>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" prot="public" static="no" strong="no">
+        <type></type>
+        <name>Code</name>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a973ba9d650b909a277813926d7ec4f96" prot="public">
+          <name>UNDEFINED</name>
+          <initializer>=0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> undefined. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a8f454d4a48d8dbdd7d6341e7285b4a35" prot="public">
+          <name>LOGICAL</name>
+          <initializer>=1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> assigned to ordinary signals. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a94d77dd6484c8f8524a3960d42d3974b" prot="public">
+          <name>CLOCK</name>
+          <initializer>=2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> assigned to clock signals. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a0b7ce81772b3f4df72edb083a52b2748" prot="public">
+          <name>POWER</name>
+          <initializer>=3</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> assigned to supply signals. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a87f5f36bbfcfac211f3dff73a8e46e65" prot="public">
+          <name>GROUND</name>
+          <initializer>=4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> assigned to supply signals. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5ac7305d4380cbb6a88ac467eb951dc4e8" prot="public">
+          <name>BLOCKAGE</name>
+          <initializer>=5</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5af458f0e532fc9e8518c9e28cd0445b54" prot="public">
+          <name>FUSED</name>
+          <initializer>=6</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This enumeration defines the signal category inside the <ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Net::Type</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="61" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="61" bodyend="61"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Net_1_1Type_1a8c56514158fd1d08b2567c313a24fa93" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" kindref="member">Code</ref></type>
+        <definition>Code Hurricane::Net::Type::_code</definition>
+        <argsstring></argsstring>
+        <name>_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="63" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1adfbe9a231f7c1a3f631d16b033379054" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::Type::Type</definition>
+        <argsstring>(const Code &amp;code=UNDEFINED)</argsstring>
+        <name>Type</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" kindref="member">Code</ref> &amp;</type>
+          <declname>code</declname>
+          <defval><ref refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a973ba9d650b909a277813926d7ec4f96" kindref="member">UNDEFINED</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="65" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a921d03781c47827d074d917d4f84dcb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::Type::Type</definition>
+        <argsstring>(const Type &amp;type)</argsstring>
+        <name>Type</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> &amp;</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="66" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1aa18a67f4c52147b8e92da3735ea0d92f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::Type::Type</definition>
+        <argsstring>(string)</argsstring>
+        <name>Type</name>
+        <param>
+          <type>string</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="67" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a95358a6903cc64b21d3e4cd4762993c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> &amp;</type>
+        <definition>Type&amp; Hurricane::Net::Type::operator=</definition>
+        <argsstring>(const Type &amp;type)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> &amp;</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="69" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a1f8a039510084fb895b435599ffb4d30" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::Type::operator const Code &amp;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator const Code &amp;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="71" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a20155fecd45a0ac2314fe3021dbc7ff2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" kindref="member">Code</ref> &amp;</type>
+        <definition>const Code&amp; Hurricane::Net::Type::getCode</definition>
+        <argsstring>() const</argsstring>
+        <name>getCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="73" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a07baa2df5a62a8c00170d6defc79c3dc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Net::Type::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="75" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1af1d12f4a625b3f788e768e3e745d16e8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Net::Type::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="76" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1Type_1a153ef525ef0a7c41245fb9ba049d84d2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Net::Type::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="77" column="24"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Encapsulate the <ref refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" kindref="member">Net::Type::Code</ref> enumeration that defines the signal category. </para>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="58" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="58" bodyend="79"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Net_1_1Type_1a8c56514158fd1d08b2567c313a24fa93" prot="private" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>_code</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a153ef525ef0a7c41245fb9ba049d84d2" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1af1d12f4a625b3f788e768e3e745d16e8" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a07baa2df5a62a8c00170d6defc79c3dc" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5ac7305d4380cbb6a88ac467eb951dc4e8" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>BLOCKAGE</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a94d77dd6484c8f8524a3960d42d3974b" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>CLOCK</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>Code</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5af458f0e532fc9e8518c9e28cd0445b54" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>FUSED</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a20155fecd45a0ac2314fe3021dbc7ff2" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>getCode</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a87f5f36bbfcfac211f3dff73a8e46e65" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>GROUND</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a8f454d4a48d8dbdd7d6341e7285b4a35" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>LOGICAL</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a1f8a039510084fb895b435599ffb4d30" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>operator const Code &amp;</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a95358a6903cc64b21d3e4cd4762993c8" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a0b7ce81772b3f4df72edb083a52b2748" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>POWER</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1adfbe9a231f7c1a3f631d16b033379054" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>Type</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a921d03781c47827d074d917d4f84dcb9" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>Type</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1aa18a67f4c52147b8e92da3735ea0d92f" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>Type</name></member>
+      <member refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a973ba9d650b909a277813926d7ec4f96" prot="public" virt="non-virtual"><scope>Hurricane::Net::Type</scope><name>UNDEFINED</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

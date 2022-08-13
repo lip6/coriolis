@@ -12,6 +12,7 @@
 .. _Point:                  ../../hurricane/classHurricane_1_1Point.html
 .. _Points:                 ../../hurricane/classHurricane_1_1Point.html
 .. _Box:                    ../../hurricane/classHurricane_1_1Box.html
+.. _DBo:                    ../../hurricane/classHurricane_1_1DBo.html
 .. _Cell:                   ../../hurricane/classHurricane_1_1Cell.html
 .. _Net:                    ../../hurricane/classHurricane_1_1Net.html
 .. _Nets:                   ../../hurricane/classHurricane_1_1Net.html
@@ -34,6 +35,7 @@
 .. _Transformation:         ../../hurricane/classHurricane_1_1Transformation.html
 .. _Orientation:            ../../hurricane/classHurricane_1_1Orientation.html
 .. _Occurrence:             ../../hurricane/classHurricane_1_1Occurrence.html
+.. _PythonAttributes:       ../../hurricane/classIsobar_1_1PythonAttributes.html
 
 .. Hurricane Viewer doxygen doc links.
 .. _CellViewer:             ../../viewer/classHurricane_1_1CellViewer.html

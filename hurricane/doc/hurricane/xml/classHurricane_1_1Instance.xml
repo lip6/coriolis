@@ -1,0 +1,1424 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Instance" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Instance</compoundname>
+    <basecompoundref refid="classHurricane_1_1Go" prot="public" virt="non-virtual">Hurricane::Go</basecompoundref>
+    <innerclass refid="classHurricane_1_1Instance_1_1PlacementStatus" prot="public">Hurricane::Instance::PlacementStatus</innerclass>
+    <innerclass refid="classHurricane_1_1Instance_1_1PlugMap" prot="public">Hurricane::Instance::PlugMap</innerclass>
+    <innerclass refid="classHurricane_1_1Instance_1_1SharedPathMap" prot="public">Hurricane::Instance::SharedPathMap</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Instance_1a227e1f98670e466328ca95fe45546590" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref></type>
+        <definition>Hurricane::Instance::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for calling upon methods of the base class without knowing it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="41" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1a1d45823e5a3c996df442ac21dce17f22" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell* Hurricane::Instance::_cell</definition>
+        <argsstring></argsstring>
+        <name>_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="97" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1a0f4d8594f0e2343e43cd1d362e265918" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::Instance::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="98" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1a7f1a7526005b4846326db959b4eafdf3" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell* Hurricane::Instance::_masterCell</definition>
+        <argsstring></argsstring>
+        <name>_masterCell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="99" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1a7475922e469eba36f8e62890e78cde52" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref></type>
+        <definition>Transformation Hurricane::Instance::_transformation</definition>
+        <argsstring></argsstring>
+        <name>_transformation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="100" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1ae6d1433b0f21627450be835719922bbd" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref></type>
+        <definition>PlacementStatus Hurricane::Instance::_placementStatus</definition>
+        <argsstring></argsstring>
+        <name>_placementStatus</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="101" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1a522764c949422f372ae3266dbf659415" prot="private" static="no" mutable="no">
+        <type>PlugMap</type>
+        <definition>PlugMap Hurricane::Instance::_plugMap</definition>
+        <argsstring></argsstring>
+        <name>_plugMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="102" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1ab6c7c715b133561217f202b2bdda517a" prot="private" static="no" mutable="no">
+        <type>SharedPathMap</type>
+        <definition>SharedPathMap Hurricane::Instance::_sharedPathMap</definition>
+        <argsstring></argsstring>
+        <name>_sharedPathMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="103" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1adc0cf1f6ee0a60aa8fb928b926fe9e1e" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance* Hurricane::Instance::_nextOfCellInstanceMap</definition>
+        <argsstring></argsstring>
+        <name>_nextOfCellInstanceMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="104" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1ad06f365b727211994f15c9ba1bc75723" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance* Hurricane::Instance::_nextOfCellSlaveInstanceSet</definition>
+        <argsstring></argsstring>
+        <name>_nextOfCellSlaveInstanceSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="105" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Instance_1abdd0df1c78e0f0df6c8e1b6fcc3185ba" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Instance::Instance</definition>
+        <argsstring>(Cell *cell, const Name &amp;name, Cell *masterCell, const Transformation &amp;transformation, const PlacementStatus &amp;placementstatus, bool secureFlag)</argsstring>
+        <name>Instance</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>masterCell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+          <declname>placementstatus</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>secureFlag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="110" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a5bb1c074e216e8fb41c20e8f1eb2a060" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1Go_1a0219a4b726cb46c6a6330739863974f5">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="174" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aa59212b149bbd80dcc46be19b1203407" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1Go_1a6b8c642bdd50e2d516bc1108831df354">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="176" column="29"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae130b66536e4536ba8852fb79abfb89e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance * Hurricane::Instance::create</definition>
+        <argsstring>(Cell *cell, const Name &amp;name, Cell *masterCell, bool secureFlag=true)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>masterCell</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>secureFlag</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No description. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="112" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ad5784305151e45c9d949a74bd85aaa36" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance * Hurricane::Instance::create</definition>
+        <argsstring>(Cell *cell, const Name &amp;name, Cell *masterCell, const Transformation &amp;transformation, const PlacementStatus &amp;placementstatus, bool secureFlag=true)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>masterCell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+          <declname>placementstatus</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>secureFlag</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create and return a pointer to a new instance of name <computeroutput>&lt;name&gt;</computeroutput> belonging to the cell <computeroutput>&lt;cell&gt;</computeroutput> and refering the cell <computeroutput>&lt;masterCell&gt;</computeroutput> through a transformation <computeroutput>&lt;transformation&gt;</computeroutput> if it is provided (else the identity transform is assumed).</para>
+<para><simplesect kind="par"><title>Caution: Throws an exception if the cell <computeroutput>&lt;cell&gt;</computeroutput> is null, if the </title><para><computeroutput>&lt;masterCell&gt;</computeroutput> is null, if an instance of same name already exists or if a cyclic assembly is detected.</para>
+</simplesect>
+<simplesect kind="remark"><para>If the <computeroutput>&lt;secureFlag&gt;</computeroutput> is set to <bold>false</bold> the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="113" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae2bc936dfecfaf70a0052959b4b2861e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>InstanceFilter Hurricane::Instance::getIsUnderFilter</definition>
+        <argsstring>(const Box &amp;area)</argsstring>
+        <name>getIsUnderFilter</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>area</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting instances which intersect the given area. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="146" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a0782e7dbea2444f5ba1012ae343a4c2b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsTerminalFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsTerminalFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="147" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a75087e03c977e973c77cd2302ef8cbdb" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsTerminalNetlistFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsTerminalNetlistFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="148" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a450f3bf9ed07c358b08873e64825a286" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsUnplacedFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsUnplacedFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="149" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a246a485b50cdccc23e619116cc0e128e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsPlacedFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsPlacedFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="150" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a8d69c802beb6dda2a690206d84096909" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsFixedFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsFixedFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="151" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a316eb7ef004488487e28ad4aeaf7d629" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getIsNotUnplacedFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsNotUnplacedFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="152" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a46194e3b4e840da534ee63e11225d537" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a889ec1441e1876d9addf89dfab32e772" kindref="member">InstanceFilter</ref></type>
+        <definition>static InstanceFilter Hurricane::Instance::getPruneMasterFilter</definition>
+        <argsstring>(uint64_t)</argsstring>
+        <name>getPruneMasterFilter</name>
+        <param>
+          <type>uint64_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="153" column="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a38e13a93c8c707bd64a4ca3c4bf67811" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>virtual Cell* Hurricane::Instance::getCell</definition>
+        <argsstring>() const</argsstring>
+        <name>getCell</name>
+        <reimplements refid="classHurricane_1_1Entity_1a42bdf015f583be477cc54b48652b1007">getCell</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="118" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aea70a2bfa46396a654795515e9f4e622" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>virtual Box Hurricane::Instance::getBoundingBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getBoundingBox</name>
+        <reimplements refid="classHurricane_1_1Entity_1ad834f8ce33a08a13e2a88446696e63e7">getBoundingBox</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="119" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aa48280b4d7127d283c89983cf7a42c23" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>const Name &amp; Hurricane::Instance::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the instance name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="120" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ad08a772e5e36582070cdc407cfcc1a64" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell * Hurricane::Instance::getMasterCell</definition>
+        <argsstring>() const</argsstring>
+        <name>getMasterCell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the cell model referenced by the instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="121" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="121" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a5042051d648fd93548dc6c5e14782645" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+        <definition>const Transformation &amp; Hurricane::Instance::getTransformation</definition>
+        <argsstring>() const</argsstring>
+        <name>getTransformation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the transformation associated to the instance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="122" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1af91dbbb643a81f9c2ea60737be1e2006" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+        <definition>const PlacementStatus&amp; Hurricane::Instance::getPlacementStatus</definition>
+        <argsstring>() const</argsstring>
+        <name>getPlacementStatus</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="123" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a1afe07edc0374ddfb505b4973c902834" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Plug" kindref="compound">Plug</ref> *</type>
+        <definition>Plug * Hurricane::Instance::getPlug</definition>
+        <argsstring>(const Net *masterNet) const</argsstring>
+        <name>getPlug</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <declname>masterNet</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the plug associated to the <computeroutput>&lt;masterNet&gt;</computeroutput> if it exists or else NULL (if the net is not external). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="124" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a5433b64eed99f9a099004490fae6d8f4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Instance::getPlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getPlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of instance plugs.</para>
+<para><simplesect kind="par"><title>Important:\n Each external net of the master cell of the instance has by </title><para>construction an associated plug. This one may be connected or not to a net in the owner cell of the instance. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="125" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="125" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a18beeab0def83c20e25a710b30dd8ca9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Instance::getConnectedPlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getConnectedPlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of instance plugs which are effectively connected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="126" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a9622b8b961f459469c275b3dafe1733c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Instance::getUnconnectedPlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getUnconnectedPlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of instance plugs which are not connected. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="127" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a4d13f5b9294d0361b724b5824fd86378" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Path" kindref="compound">Path</ref></type>
+        <definition>Path Hurricane::Instance::getPath</definition>
+        <argsstring>(const Path &amp;tailPath=Path()) const</argsstring>
+        <name>getPath</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Path" kindref="compound">Path</ref> &amp;</type>
+          <declname>tailPath</declname>
+          <defval><ref refid="classHurricane_1_1Path" kindref="compound">Path</ref>()</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the path composed of the instance solely.</para>
+<para><bold>Returns:</bold> the path resulting of the concatenation of the instance and the tail path (possibly empty).</para>
+<para><simplesect kind="par"><title>Caution: An exception will be thrown if the tail path is not </title><para>consistent with the instance (that is if the owner cell of the tail path is not the master cell of the instance). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="128" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a29bedbd05939bf43757ef036bb506d01" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Instance::getAbutmentBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getAbutmentBox</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="129" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a37e3a653c212c80c78f9570e140cbe6d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isUnplaced</definition>
+        <argsstring>() const</argsstring>
+        <name>isUnplaced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="134" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a60d083757b38ac4750210fb6ed9b2854" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isPlaced</definition>
+        <argsstring>() const</argsstring>
+        <name>isPlaced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="135" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="135" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a2046612380005cba7f1f8ed26f16968d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isFixed</definition>
+        <argsstring>() const</argsstring>
+        <name>isFixed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="136" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="136" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a323d1960dff7d76ffaeb378ae68643d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isTerminal</definition>
+        <argsstring>() const</argsstring>
+        <name>isTerminal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="137" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae2dc356227a0507183ef20fb2cf8b95c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isTerminalNetlist</definition>
+        <argsstring>() const</argsstring>
+        <name>isTerminalNetlist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="138" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ab2f8b93b76710d46e036ba19044f6e41" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isUnique</definition>
+        <argsstring>() const</argsstring>
+        <name>isUnique</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="139" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a0d72e45a658c96a9cd14f3ae4b8e4b1c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isUniquified</definition>
+        <argsstring>() const</argsstring>
+        <name>isUniquified</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="140" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a9f71fffa08d98b9c90246596608d3e3d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Instance::isUniquifyMaster</definition>
+        <argsstring>() const</argsstring>
+        <name>isUniquifyMaster</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="141" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae9683075be74ff76cfa9167bb663c248" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::materialize</definition>
+        <argsstring>()</argsstring>
+        <name>materialize</name>
+        <reimplements refid="classHurricane_1_1Go_1a8251eba8fabfca57f574921c6c85728f">materialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="158" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aee1acf094e38531ea64562476f20d7b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::unmaterialize</definition>
+        <argsstring>()</argsstring>
+        <name>unmaterialize</name>
+        <reimplements refid="classHurricane_1_1Go_1af79318dc9cbbed85aea1bb8f16eb9724">unmaterialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="159" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a65b19d1449773b9b5111c153e551a7a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::invalidate</definition>
+        <argsstring>(bool propagateFlag=true)</argsstring>
+        <name>invalidate</name>
+        <reimplements refid="classHurricane_1_1Go_1a5ee451e118fe8cace16989c0f3a6d855">invalidate</reimplements>
+        <param>
+          <type>bool</type>
+          <declname>propagateFlag</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="160" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a4764de78e346db56e0c4cb999a1d2647" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::translate</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</argsstring>
+        <name>translate</name>
+        <reimplements refid="classHurricane_1_1Go_1a54c4351dbbf4045e1aa89f06bb893402">translate</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="161" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae3b67792d1659f1a20c6533b8843b905" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::setName</definition>
+        <argsstring>(const Name &amp;name)</argsstring>
+        <name>setName</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to change the instance name.</para>
+<para><simplesect kind="remark"><para>Throws an exception if the name is empty or if an instance with the same name exists in the owner cell. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="163" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a8890d2e1b2ba2542997454297e63512f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::setTransformation</definition>
+        <argsstring>(const Transformation &amp;transformation)</argsstring>
+        <name>setTransformation</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Transformation" kindref="compound">Transformation</ref> &amp;</type>
+          <declname>transformation</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to modify the instance transformation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="164" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a758fe948d4c82c9fa44852a1e41b6feb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::setPlacementStatus</definition>
+        <argsstring>(const PlacementStatus &amp;placementstatus)</argsstring>
+        <name>setPlacementStatus</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+          <declname>placementstatus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="165" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a9f626fd058c21ffc2ed5bfee8d29a853" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::setMasterCell</definition>
+        <argsstring>(Cell *masterCell, bool secureFlag=true)</argsstring>
+        <name>setMasterCell</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>masterCell</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>secureFlag</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to change the cell referenced by this instance.</para>
+<para><simplesect kind="par"><title>Caution: Throws an exception if either the cell is null, a cyclic </title><para>assembly is detected or the substitution can&apos;t succeed.</para>
+</simplesect>
+<simplesect kind="remark"><para>If the <computeroutput>&lt;secureFlag&gt;</computeroutput> is set to <bold>false</bold> the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks).</para>
+</simplesect>
+<simplesect kind="par"><title>Important:\n In order to succeed with the substitution, it is necessary </title><para>that for each connected plug, refering an external net of the old master cell, a net of same name can be found in the new master cell.</para>
+</simplesect>
+The properties of the instance, of its existing plugs and of the different occurences of those ones are preserved. On the other hand, all the hierarchical pathes going through that instance and not ending on it, as well as all associated occurences, become obsolete. The properties attached to those occurences are therefore deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="166" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1adf28fcd01f6ff89c5435e83482f66d4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::uniquify</definition>
+        <argsstring>()</argsstring>
+        <name>uniquify</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Replace the <computeroutput></computeroutput> &lt;masterCell&gt; of this instance by a cloned copy.</para>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Cell_1a092f53c7f517ecc70d9ba375296c5d5b" kindref="member">Cell::getClone()</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="167" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a26b1f431803710d4e3e690c3000d7328" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::slaveAbutmentBox</definition>
+        <argsstring>()</argsstring>
+        <name>slaveAbutmentBox</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="168" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ac5e111eef5767762e00f21fcd7a35702" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance * Hurricane::Instance::getClone</definition>
+        <argsstring>(Cell *cloneCell) const</argsstring>
+        <name>getClone</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cloneCell</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Build a duplicate of instance (<computeroutput></computeroutput> &lt;this&gt;) inside a cloned <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> <computeroutput></computeroutput> &lt;cloneCell&gt;. The connections (<ref refid="classHurricane_1_1Plug" kindref="compound">Plug</ref>) on the copied instance are copied. That is, connected to <ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> with identical names in <computeroutput></computeroutput> &lt;cloneCell&gt;.</para>
+<para><simplesect kind="par"><title>Important:\n In <computeroutput></computeroutput>, a copy (by name) of all the nets this instance</title><para>is connected to must exits. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="169" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1af9771c45f771ee55281ebbb873abba54" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Instance::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="178" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="178" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ae31d7f0fd40120da84daf64330ad1038" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Instance::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Go_1ac86d7897fef19dee7eb254fd889f252c">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="179" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a9edee109dfa00f7ec132f576b472b68b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Instance::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Go_1ab7a1606993deb4a47c6a20cb8ec251b8">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="180" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aea8e9d8739e3d8b39b0ced537575fbbe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::_toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJson</name>
+        <reimplements refid="classHurricane_1_1Entity_1a0301fa9a630aae3f17131d909d6ca5e3">_toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="181" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a395f088539c292f6d9caa8b828543a0e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Instance::_toJsonCollections</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJsonCollections</name>
+        <reimplements refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6">_toJsonCollections</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="182" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a2da923c4c3acd1852320ce52c3f6d142" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>PlugMap &amp;</type>
+        <definition>PlugMap&amp; Hurricane::Instance::_getPlugMap</definition>
+        <argsstring>()</argsstring>
+        <name>_getPlugMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="183" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="183" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a7344b85c7438e3327d0d03359e473663" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>SharedPath *</type>
+        <definition>SharedPath* Hurricane::Instance::_getSharedPath</definition>
+        <argsstring>(const SharedPath *tailSharedPath) const</argsstring>
+        <name>_getSharedPath</name>
+        <param>
+          <type>const SharedPath *</type>
+          <declname>tailSharedPath</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="184" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="184" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1ab59226493edc4de5698ab167dd1dfd50" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>SharedPathes</type>
+        <definition>SharedPathes Hurricane::Instance::_getSharedPathes</definition>
+        <argsstring>() const</argsstring>
+        <name>_getSharedPathes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="185" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="185" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a5ed4539a3c9c2973c9eedd9e42ba44ef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>SharedPathMap &amp;</type>
+        <definition>SharedPathMap&amp; Hurricane::Instance::_getSharedPathMap</definition>
+        <argsstring>()</argsstring>
+        <name>_getSharedPathMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="186" column="27" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="186" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1acb8e1b69a1440caf29516d74aa1b03d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance* Hurricane::Instance::_getNextOfCellInstanceMap</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfCellInstanceMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="187" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="187" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1aa5f2111f2f633dadc332d645bab5a5f1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>Instance* Hurricane::Instance::_getNextOfCellSlaveInstanceSet</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfCellSlaveInstanceSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="188" column="22" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="188" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1abb1c0cf308135e8106e795f9fd7d3b8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::_setNextOfCellInstanceMap</definition>
+        <argsstring>(Instance *instance)</argsstring>
+        <name>_setNextOfCellInstanceMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>instance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="190" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="190" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1a63394bcf175386242c677e57992f1427" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Instance::_setNextOfCellSlaveInstanceSet</definition>
+        <argsstring>(Instance *instance)</argsstring>
+        <name>_setNextOfCellSlaveInstanceSet</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>instance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="191" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="191" bodyend="191"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Instance_1secInstanceIntro">
+<title>Introduction</title>
+<para>Instances provide the capability to build hierarchical assemblies. An instance belongs to a cell (the &quot;&lt;b&gt;owner 
+              cell&lt;/b&gt;&quot;) and references (calls) a model cell which we will call the &quot;&lt;b&gt;mater cell&lt;/b&gt;&quot;. Seen from the other hand, a cell may be the master cell of many instances belonging to other cells, this set of instances is named the &quot;&lt;b&gt;slave 
+              instances&lt;/b&gt;&quot; of this cell (it is empty for the top most cell of a hierachical assembly, as well as for all cells from the library which are not instanciated in the current design).</para>
+</sect1>
+<sect1 id="classHurricane_1_1Instance_1secInstancePlacement">
+<title>Placement Status</title>
+<para>See <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">Instance::PlacementStatus</ref> and <ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" kindref="member">Instance::PlacementStatus::Code</ref>.</para>
+<para>An <ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> can have three kind of placement status:<itemizedlist>
+<listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216" kindref="member">Instance::PlacementStatus::UNPLACED</ref> : the instance doesn&apos;t have a meaningful position. It shouldn&apos;t be materialized either. It&apos;s position therfore shouldn&apos;t be used.</para>
+</listitem><listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457" kindref="member">Instance::PlacementStatus::PLACED</ref> : the instance has be placed manually or by an automated tool. It is movable.</para>
+</listitem><listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7" kindref="member">Instance::PlacementStatus::FIXED</ref> : the instance is placed and mustn&apos;t be moved by automated tools. It can still be moved manually.</para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="classHurricane_1_1Instance_1secInstancePredefinedFilters">
+<title>Predefined filters</title>
+<para><bold><ref refid="classHurricane_1_1Instance_1ae2bc936dfecfaf70a0052959b4b2861e" kindref="member">Hurricane::Instance::getIsUnderFilter</ref></bold></para>
+</sect1>
+<sect1 id="classHurricane_1_1Instance_1secInstanceDestroy">
+<title>Instance Destruction</title>
+<para>When the <ref refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" kindref="member">Instance::destroy()</ref> method is called, if the master <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> is uniquified, that is, is unique <bold>and</bold> a copy of the reference <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref>, it is destroyed as well. That state means that the master <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> has been created for the only purpose as to serve as a model for this peculiar <ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref>. It is then logical that it should be removed with it. </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Instance</label>
+        <link refid="classHurricane_1_1Instance"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="14">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Instance</label>
+        <link refid="classHurricane_1_1Instance"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfCellInstanceMap</edgelabel>
+          <edgelabel>_nextOfCellSlaveInstanceSet</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_placementStatus</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_transformation</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_cell</edgelabel>
+          <edgelabel>_masterCell</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="2">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfQuadTreeGoSet</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Instance::PlacementStatus</label>
+        <link refid="classHurricane_1_1Instance_1_1PlacementStatus"/>
+      </node>
+      <node id="8">
+        <label>Hurricane::Transformation</label>
+        <link refid="classHurricane_1_1Transformation"/>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_orientation</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="11">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Hurricane::Transformation::Orientation</label>
+        <link refid="classHurricane_1_1Transformation_1_1Orientation"/>
+      </node>
+      <node id="4">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="35" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="35" bodyend="193"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Instance_1a1d45823e5a3c996df442ac21dce17f22" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_cell</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Instance_1acb8e1b69a1440caf29516d74aa1b03d5" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getNextOfCellInstanceMap</name></member>
+      <member refid="classHurricane_1_1Instance_1aa5f2111f2f633dadc332d645bab5a5f1" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getNextOfCellSlaveInstanceSet</name></member>
+      <member refid="classHurricane_1_1Go_1ad3617f5af214619cfe286091dab6a863" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1Instance_1a2da923c4c3acd1852320ce52c3f6d142" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getPlugMap</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Entity_1a01be68d1d059eb4cdb160d12c0db7a5e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getQuark</name></member>
+      <member refid="classHurricane_1_1Instance_1a9edee109dfa00f7ec132f576b472b68b" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Instance_1a7344b85c7438e3327d0d03359e473663" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getSharedPath</name></member>
+      <member refid="classHurricane_1_1Instance_1ab59226493edc4de5698ab167dd1dfd50" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getSharedPathes</name></member>
+      <member refid="classHurricane_1_1Instance_1a5ed4539a3c9c2973c9eedd9e42ba44ef" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_getSharedPathMap</name></member>
+      <member refid="classHurricane_1_1Instance_1ae31d7f0fd40120da84daf64330ad1038" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Instance_1af9771c45f771ee55281ebbb873abba54" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Instance_1a7f1a7526005b4846326db959b4eafdf3" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_masterCell</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Instance_1a0f4d8594f0e2343e43cd1d362e265918" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Instance_1adc0cf1f6ee0a60aa8fb928b926fe9e1e" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_nextOfCellInstanceMap</name></member>
+      <member refid="classHurricane_1_1Instance_1ad06f365b727211994f15c9ba1bc75723" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_nextOfCellSlaveInstanceSet</name></member>
+      <member refid="classHurricane_1_1Go_1a68cf61b178784fc0677cdcc3722a9d08" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_nextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Instance_1ae6d1433b0f21627450be835719922bbd" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_placementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1a522764c949422f372ae3266dbf659415" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_plugMap</name></member>
+      <member refid="classHurricane_1_1Instance_1a5bb1c074e216e8fb41c20e8f1eb2a060" prot="protected" virt="virtual"><scope>Hurricane::Instance</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Instance_1aa59212b149bbd80dcc46be19b1203407" prot="protected" virt="virtual"><scope>Hurricane::Instance</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Go_1a08ecbf04c2664589cf27a34ec60f6ab7" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_quadTree</name></member>
+      <member refid="classHurricane_1_1Instance_1abb1c0cf308135e8106e795f9fd7d3b8d" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_setNextOfCellInstanceMap</name></member>
+      <member refid="classHurricane_1_1Instance_1a63394bcf175386242c677e57992f1427" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_setNextOfCellSlaveInstanceSet</name></member>
+      <member refid="classHurricane_1_1Go_1a2eb3430c581f3b4913150a8e17adf541" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_setNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1Instance_1ab6c7c715b133561217f202b2bdda517a" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_sharedPathMap</name></member>
+      <member refid="classHurricane_1_1Instance_1aea8e9d8739e3d8b39b0ced537575fbbe" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1Instance_1a395f088539c292f6d9caa8b828543a0e" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Instance_1a7475922e469eba36f8e62890e78cde52" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>_transformation</name></member>
+      <member refid="classHurricane_1_1Go_1a1057be4198a7b64c32a2ac3c7d560014" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>autoMaterializationIsDisabled</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Instance_1ae130b66536e4536ba8852fb79abfb89e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Instance_1ad5784305151e45c9d949a74bd85aaa36" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Instance</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Go_1a0d49d22a3788e8001e58152e62b9f3cc" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>disableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Go_1ab0b1ca3c606247e1ebd7cab8fa828b04" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>enableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Entity_1a97cf0d2e193d947f4e312d471657c06d" prot="protected" virt="non-virtual"><scope>Hurricane::Instance</scope><name>Entity</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Instance_1a29bedbd05939bf43757ef036bb506d01" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getAbutmentBox</name></member>
+      <member refid="classHurricane_1_1Instance_1aea70a2bfa46396a654795515e9f4e622" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Instance_1a38e13a93c8c707bd64a4ca3c4bf67811" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Instance_1ac5e111eef5767762e00f21fcd7a35702" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1Instance_1a18beeab0def83c20e25a710b30dd8ca9" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getConnectedPlugs</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Instance_1a8d69c802beb6dda2a690206d84096909" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsFixedFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a316eb7ef004488487e28ad4aeaf7d629" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsNotUnplacedFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a246a485b50cdccc23e619116cc0e128e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsPlacedFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a0782e7dbea2444f5ba1012ae343a4c2b" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsTerminalFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a75087e03c977e973c77cd2302ef8cbdb" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsTerminalNetlistFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1ae2bc936dfecfaf70a0052959b4b2861e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsUnderFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a450f3bf9ed07c358b08873e64825a286" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getIsUnplacedFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1ad08a772e5e36582070cdc407cfcc1a64" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getMasterCell</name></member>
+      <member refid="classHurricane_1_1Instance_1aa48280b4d7127d283c89983cf7a42c23" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Instance_1a4d13f5b9294d0361b724b5824fd86378" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getPath</name></member>
+      <member refid="classHurricane_1_1Instance_1af91dbbb643a81f9c2ea60737be1e2006" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getPlacementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1a1afe07edc0374ddfb505b4973c902834" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getPlug</name></member>
+      <member refid="classHurricane_1_1Instance_1a5433b64eed99f9a099004490fae6d8f4" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getPlugs</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Instance_1a46194e3b4e840da534ee63e11225d537" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getPruneMasterFilter</name></member>
+      <member refid="classHurricane_1_1Instance_1a5042051d648fd93548dc6c5e14782645" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getTransformation</name></member>
+      <member refid="classHurricane_1_1Instance_1a9622b8b961f459469c275b3dafe1733c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>getUnconnectedPlugs</name></member>
+      <member refid="classHurricane_1_1Go_1a9fe76630495793d6567f9fb69b53686b" prot="protected" virt="non-virtual"><scope>Hurricane::Instance</scope><name>Go</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Instance_1a227e1f98670e466328ca95fe45546590" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Instance_1abdd0df1c78e0f0df6c8e1b6fcc3185ba" prot="protected" virt="non-virtual"><scope>Hurricane::Instance</scope><name>Instance</name></member>
+      <member refid="classHurricane_1_1Instance_1a65b19d1449773b9b5111c153e551a7a1" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>invalidate</name></member>
+      <member refid="classHurricane_1_1Instance_1a2046612380005cba7f1f8ed26f16968d" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isFixed</name></member>
+      <member refid="classHurricane_1_1Go_1a0fd2574d3e2e0157230209acdc1b8aa6" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isMaterialized</name></member>
+      <member refid="classHurricane_1_1Instance_1a60d083757b38ac4750210fb6ed9b2854" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isPlaced</name></member>
+      <member refid="classHurricane_1_1Instance_1a323d1960dff7d76ffaeb378ae68643d5" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isTerminal</name></member>
+      <member refid="classHurricane_1_1Instance_1ae2dc356227a0507183ef20fb2cf8b95c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isTerminalNetlist</name></member>
+      <member refid="classHurricane_1_1Instance_1ab2f8b93b76710d46e036ba19044f6e41" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isUnique</name></member>
+      <member refid="classHurricane_1_1Instance_1a0d72e45a658c96a9cd14f3ae4b8e4b1c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isUniquified</name></member>
+      <member refid="classHurricane_1_1Instance_1a9f71fffa08d98b9c90246596608d3e3d" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isUniquifyMaster</name></member>
+      <member refid="classHurricane_1_1Instance_1a37e3a653c212c80c78f9570e140cbe6d" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>isUnplaced</name></member>
+      <member refid="classHurricane_1_1Instance_1ae9683075be74ff76cfa9167bb663c248" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>materialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Instance</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1Instance_1a9f626fd058c21ffc2ed5bfee8d29a853" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setMasterCell</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1Instance_1ae3b67792d1659f1a20c6533b8843b905" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Instance_1a758fe948d4c82c9fa44852a1e41b6feb" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setPlacementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1a8890d2e1b2ba2542997454297e63512f" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>setTransformation</name></member>
+      <member refid="classHurricane_1_1Instance_1a26b1f431803710d4e3e690c3000d7328" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>slaveAbutmentBox</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Instance_1a4764de78e346db56e0c4cb999a1d2647" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>translate</name></member>
+      <member refid="classHurricane_1_1Instance_1adf28fcd01f6ff89c5435e83482f66d4c" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>uniquify</name></member>
+      <member refid="classHurricane_1_1Instance_1aee1acf094e38531ea64562476f20d7b8" prot="public" virt="virtual"><scope>Hurricane::Instance</scope><name>unmaterialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Instance</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Instance</scope><name>~DBo</name></member>
+      <member refid="classHurricane_1_1Entity_1a4bbd1e777d515f98fde3d4601f3adb89" prot="protected" virt="virtual"><scope>Hurricane::Instance</scope><name>~Entity</name></member>
+      <member refid="classHurricane_1_1Go_1ae9061a10db10066b1b1266fd525dd6ae" prot="protected" virt="virtual"><scope>Hurricane::Instance</scope><name>~Go</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

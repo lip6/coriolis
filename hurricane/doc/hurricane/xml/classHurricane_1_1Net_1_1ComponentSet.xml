@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Net_1_1ComponentSet" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Net::ComponentSet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">IntrusiveSet&lt; Component &gt;</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Net_1_1ComponentSet_1aa4a77ad7f432e8f8f86b8a2b744d8daa" prot="public" static="no">
+        <type>IntrusiveSet&lt; <ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> &gt;</type>
+        <definition>typedef IntrusiveSet&lt;Component&gt; Hurricane::Net::ComponentSet::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="122" column="38" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1ComponentSet_1a024716523b2132666154f20e9e08d718" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::ComponentSet::ComponentSet</definition>
+        <argsstring>()</argsstring>
+        <name>ComponentSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="124" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1ComponentSet_1a0c8824df474eb43ab9836b259149ba28" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned</type>
+        <definition>virtual unsigned Hurricane::Net::ComponentSet::_getHashValue</definition>
+        <argsstring>(Component *component) const</argsstring>
+        <name>_getHashValue</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+          <declname>component</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="126" column="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1ComponentSet_1a4e338311484f33f9decea1a6a401953c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+        <definition>virtual Component* Hurricane::Net::ComponentSet::_getNextElement</definition>
+        <argsstring>(Component *component) const</argsstring>
+        <name>_getNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+          <declname>component</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="127" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1_1ComponentSet_1a5d3f07498a89730cc669bccddc749fa1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::ComponentSet::_setNextElement</definition>
+        <argsstring>(Component *component, Component *nextComponent) const</argsstring>
+        <name>_setNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+          <declname>component</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+          <declname>nextComponent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="128" column="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="119" column="5" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="119" bodyend="130"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Net_1_1ComponentSet_1a0c8824df474eb43ab9836b259149ba28" prot="public" virt="virtual"><scope>Hurricane::Net::ComponentSet</scope><name>_getHashValue</name></member>
+      <member refid="classHurricane_1_1Net_1_1ComponentSet_1a4e338311484f33f9decea1a6a401953c" prot="public" virt="virtual"><scope>Hurricane::Net::ComponentSet</scope><name>_getNextElement</name></member>
+      <member refid="classHurricane_1_1Net_1_1ComponentSet_1a5d3f07498a89730cc669bccddc749fa1" prot="public" virt="virtual"><scope>Hurricane::Net::ComponentSet</scope><name>_setNextElement</name></member>
+      <member refid="classHurricane_1_1Net_1_1ComponentSet_1a024716523b2132666154f20e9e08d718" prot="public" virt="non-virtual"><scope>Hurricane::Net::ComponentSet</scope><name>ComponentSet</name></member>
+      <member refid="classHurricane_1_1Net_1_1ComponentSet_1aa4a77ad7f432e8f8f86b8a2b744d8daa" prot="public" virt="non-virtual"><scope>Hurricane::Net::ComponentSet</scope><name>Inherit</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

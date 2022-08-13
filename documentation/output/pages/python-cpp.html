@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable version of this Document PythonCpp.pdf Contents Printable version of this Document 1. Introduction 2. Basic File Structure and CMake configuration 3. Case 1 - DBo Derived, Standalone 4. ...">
+        <meta name="description" content="Printable version of this Document PythonCpp.pdf Contents Printable version of this Document 1. Introduction 2. Basic File Structure and CMake configuration 3. Case 1 - DBo Derived, Standalone 4....">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -123,7 +123,7 @@
 <h2><a class="toc-backref" href="#id7">Printable version of this Document</a></h2>
 <p><a class="reference external" href="../pdfs/PythonCpp.pdf">PythonCpp.pdf</a></p>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#printable-version-of-this-document" id="id7">Printable version of this Document</a></li>
 <li><a class="reference internal" href="#introduction" id="id8">1. Introduction</a></li>
@@ -262,7 +262,7 @@ At some point I may root it out, but it is used in so many places...</p>
 <p>What I should have used the <tt class="docutils literal">&quot;O!&quot;</tt> capablity of <tt class="docutils literal">PyArg_ParseTuple()</tt>,
 like in the code below:</p>
 <p></p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyContact_create</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyContact_create</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Contact</span><span class="o">*</span> <span class="n">contact</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
   <span class="n">HTRY</span>
@@ -360,8 +360,8 @@ as a base class.</p>
 
     <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeLibrary</span><span class="p">;</span>
     <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyLibrary_Methods</span><span class="p">[];</span>
-    <span class="k">extern</span>  <span class="n">PyObject</span><span class="o">*</span>     <span class="nf">PyLibrary_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Library</span><span class="o">*</span> <span class="n">lib</span> <span class="p">);</span>
-    <span class="k">extern</span>  <span class="kt">void</span>          <span class="nf">PyLibrary_LinkPyType</span> <span class="p">();</span>
+    <span class="k">extern</span>  <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyLibrary_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Library</span><span class="o">*</span> <span class="n">lib</span> <span class="p">);</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyLibrary_LinkPyType</span> <span class="p">();</span>
 
 
 <span class="cp">#define IsPyLibrary(v) ( (v)-&gt;ob_type == &amp;PyTypeLibrary )</span>
@@ -383,7 +383,7 @@ of the C++ class we want to wrap (<tt class="docutils literal">Library.h</tt>).<
 an <tt class="docutils literal">extern &quot;C&quot;</tt> namespace.</p>
 </li>
 <li><p class="first">Definition of the wrapped <span class="cb">struct</span>, <tt class="docutils literal">PyLibrary</tt>. It is standard Python here.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For our set of macros to work, the name of the pointer to the
 C++ class must always be <strong>_object</strong>, and the various functions and
@@ -444,12 +444,12 @@ to the C++ working object.</li>
 the class. For common predicates, accessors, and mutators macros
 are supplied.</p>
 <p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::getCell()</span></tt> method:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyLibrary_getCell</span> <span class="p">(</span> <span class="n">PyLibrary</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyLibrary_getCell</span> <span class="p">(</span> <span class="n">PyLibrary</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Cell</span><span class="o">*</span> <span class="n">cell</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 
   <span class="n">HTRY</span>
-    <span class="n">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Library.getCell()&quot;</span> <span class="p">)</span>
+    <span class="nf">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Library.getCell()&quot; )</span>
     <span class="kt">char</span><span class="o">*</span> <span class="n">name</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="s">&quot;s:Library.getCell&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">))</span> <span class="p">{</span>
       <span class="n">cell</span> <span class="o">=</span> <span class="n">lib</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">(</span> <span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">);</span>
@@ -476,7 +476,7 @@ it must be included.</li>
 </ol>
 <p></p>
 <p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::create()</span></tt> method:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyLibrary_create</span><span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyLibrary_create</span><span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">PyObject</span><span class="o">*</span> <span class="n">arg0</span><span class="p">;</span>
   <span class="n">PyObject</span><span class="o">*</span> <span class="n">arg1</span><span class="p">;</span>
@@ -563,7 +563,7 @@ named from the class: <tt class="docutils literal">PyLibrary_Methods</tt>.</p>
 <p>Defining the <tt class="docutils literal">PyTypeLibrary</tt> class methods and the type linking function.</p>
 <p>Those are the functions for the Python object itself to work, not the
 wrapped method from the C++ class.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">At this point we <strong>do not</strong> define the <tt class="docutils literal">PyTypeLibrary</tt> itself.
 Only it's functions and a function to set them up <em>once</em> the
@@ -627,15 +627,15 @@ namespace.</p>
 
   <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;library&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeLibrary</span><span class="p">,</span> <span class="s">&quot;&lt;Library&gt;&quot;</span><span class="p">,</span> <span class="nb">false</span> <span class="p">);</span> <span class="c1">// step 3.</span>
 
-  <span class="n">PyObject</span><span class="o">*</span> <span class="n">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">PyObject</span><span class="o">*</span> <span class="k">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
          <span class="o">&lt;&lt;</span> <span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
     <span class="k">return</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="n">Py_INCREF</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">PyTypeLibrary</span> <span class="p">);</span>                                        <span class="c1">// step 4.</span>
-  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="n">module</span><span class="p">,</span> <span class="s">&quot;Library&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span> <span class="p">);</span> <span class="c1">// step 4.</span>
+  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="k">module</span><span class="p">,</span> <span class="s">&quot;Library&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span> <span class="p">);</span> <span class="c1">// step 4.</span>
 <span class="p">}</span>
 </pre></div>
 <p>The <tt class="docutils literal">initHurricane()</tt> initialisation function shown above has
@@ -756,7 +756,7 @@ macro: <tt class="docutils literal">PyTypeRootObjectDefinitions</tt>, dedicated 
         <span class="nf">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Entity.getCell()&quot; )</span>
         <span class="n">cell</span> <span class="o">=</span> <span class="n">entity</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">();</span>
       <span class="n">HCATCH</span>
-      <span class="k">return</span> <span class="nf">PyCell_Link</span><span class="p">(</span> <span class="n">cell</span> <span class="p">);</span>
+      <span class="k">return</span> <span class="n">PyCell_Link</span><span class="p">(</span> <span class="n">cell</span> <span class="p">);</span>
     <span class="p">}</span>
 
     <span class="n">PyMethodDef</span> <span class="n">PyEntity_Methods</span><span class="p">[]</span> <span class="o">=</span>
@@ -841,7 +841,7 @@ this is <em>not</em> a pointer but a whole object).</li>
 
     <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeComponent</span><span class="p">;</span>
     <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyComponent_Methods</span><span class="p">[];</span>
-    <span class="k">extern</span>  <span class="kt">void</span>          <span class="nf">PyComponent_LinkPyType</span> <span class="p">();</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyComponent_LinkPyType</span> <span class="p">();</span>
 
 <span class="cp">#define IsPyComponent(v) ((v)-&gt;ob_type == &amp;PyTypeComponent)</span>
 <span class="cp">#define PYCOMPONENT(v)   ((PyComponent*)(v))</span>
@@ -901,7 +901,7 @@ base class.</li>
         <span class="nf">METHOD_HEAD</span><span class="p">(</span> <span class="s">&quot;Component.getNet()&quot; )</span>
         <span class="n">net</span> <span class="o">=</span> <span class="n">component</span><span class="o">-&gt;</span><span class="n">getNet</span><span class="p">(</span> <span class="p">);</span>
       <span class="n">HCATCH</span>
-      <span class="k">return</span> <span class="nf">PyNet_Link</span><span class="p">(</span> <span class="n">net</span> <span class="p">);</span>
+      <span class="k">return</span> <span class="n">PyNet_Link</span><span class="p">(</span> <span class="n">net</span> <span class="p">);</span>
     <span class="p">}</span>
 
     <span class="n">PyMethodDef</span> <span class="n">PyComponent_Methods</span><span class="p">[]</span> <span class="o">=</span>
@@ -949,8 +949,8 @@ at this level because the class is a concrete one and can be instanciated.</p>
 
     <span class="k">extern</span> <span class="n">PyTypeObject</span>  <span class="n">PyTypeContact</span><span class="p">;</span>
     <span class="k">extern</span> <span class="n">PyMethodDef</span>   <span class="n">PyContact_Methods</span><span class="p">[];</span>
-    <span class="k">extern</span> <span class="n">PyObject</span><span class="o">*</span>     <span class="nf">PyContact_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Contact</span><span class="o">*</span> <span class="n">object</span> <span class="p">);</span>
-    <span class="k">extern</span> <span class="kt">void</span>          <span class="nf">PyContact_LinkPyType</span> <span class="p">();</span>
+    <span class="k">extern</span> <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyContact_Link</span>       <span class="p">(</span> <span class="n">Hurricane</span><span class="o">::</span><span class="n">Contact</span><span class="o">*</span> <span class="n">object</span> <span class="p">);</span>
+    <span class="k">extern</span> <span class="kt">void</span>          <span class="n">PyContact_LinkPyType</span> <span class="p">();</span>
 
 <span class="cp">#define IsPyContact(v)    ( (v)-&gt;ob_type == &amp;PyTypeContact )</span>
 <span class="cp">#define PYCONTACT(v)      ( (PyContact*)(v) )</span>
@@ -1049,15 +1049,15 @@ terminal or not.</li>
   <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;comp&quot;</span>   <span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeComponent</span><span class="p">,</span> <span class="s">&quot;&lt;Component&gt;&quot;</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="s">&quot;ent&quot;</span>  <span class="p">);</span>
   <span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span> <span class="s">&quot;contact&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">PyTypeContact</span>  <span class="p">,</span> <span class="s">&quot;&lt;Contact&gt;&quot;</span>  <span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="s">&quot;comp&quot;</span> <span class="p">);</span>
 
-  <span class="n">PyObject</span><span class="o">*</span> <span class="n">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">PyObject</span><span class="o">*</span> <span class="k">module</span> <span class="o">=</span> <span class="n">Py_InitModule</span><span class="p">(</span> <span class="s">&quot;Hurricane&quot;</span><span class="p">,</span> <span class="n">PyHurricane_Methods</span> <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="k">module</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
          <span class="o">&lt;&lt;</span> <span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
     <span class="k">return</span><span class="p">;</span>
   <span class="p">}</span>
 
   <span class="n">Py_INCREF</span><span class="p">(</span> <span class="o">&amp;</span><span class="n">PyTypeContact</span> <span class="p">);</span>                                        <span class="c1">// step 4.</span>
-  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="n">module</span><span class="p">,</span> <span class="s">&quot;Contact&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeContact</span> <span class="p">);</span> <span class="c1">// step 4.</span>
+  <span class="n">PyModule_AddObject</span><span class="p">(</span> <span class="k">module</span><span class="p">,</span> <span class="s">&quot;Contact&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeContact</span> <span class="p">);</span> <span class="c1">// step 4.</span>
 <span class="p">}</span>
 </pre></div>
 <!-- -*- Mode: rst -*- -->
@@ -1077,7 +1077,7 @@ that the C++ object is <em>copy constructible</em> (which should be the case).</
 <li>There is no <tt class="docutils literal">PyPoint_Link()</tt> function, as it's related to the
 bi-directional communication mechanism.</li>
 </ul>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>About the _object attribute</strong> of the PyPoint. As the C++ object life span
 (<tt class="docutils literal">Point</tt>) is linked to the Python (<tt class="docutils literal">PyPoint</tt>) one, we may have used a
@@ -1100,7 +1100,7 @@ written for <tt class="docutils literal">DBo</tt> derived classes will remain us
 
     <span class="k">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypePoint</span><span class="p">;</span>
     <span class="k">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyPoint_Methods</span><span class="p">[];</span>
-    <span class="k">extern</span>  <span class="kt">void</span>          <span class="nf">PyPoint_LinkPyType</span><span class="p">();</span>
+    <span class="k">extern</span>  <span class="kt">void</span>          <span class="n">PyPoint_LinkPyType</span><span class="p">();</span>
 
 <span class="cp">#define IsPyPoint(v)    ( (v)-&gt;ob_type == &amp;PyTypePoint )</span>
 <span class="cp">#define PYPOINT(v)      ( (PyPoint*)(v) )</span>
@@ -1140,7 +1140,7 @@ a <tt class="docutils literal">PyPoint_Init()</tt> (field <tt class="docutils li
 
 <span class="cp">#if defined(__PYTHON_MODULE__)</span>
 
-    <span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_NEW</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">module</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
+    <span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_NEW</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span> <span class="k">module</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span> <span class="p">)</span>
     <span class="p">{</span>
       <span class="n">Point</span><span class="o">*</span> <span class="n">point</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
       <span class="n">HTRY</span>
@@ -1229,7 +1229,7 @@ the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; PyAny_
 </pre></div>
 <p></p>
 <p>We would get:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyPoint_setX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_setX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Point</span><span class="o">*</span> <span class="n">cobject</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span> <span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">cobject</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
@@ -1251,7 +1251,7 @@ the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; PyAny_
 <div class="highlight"><pre><span></span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_GetX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
 </pre></div>
 <p>We would get:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">PyPoint_GetX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">PyPoint_GetX</span> <span class="p">(</span> <span class="n">PyPoint</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span> <span class="p">)</span>
 <span class="p">{</span>
   <span class="n">Point</span><span class="o">*</span> <span class="n">cobject</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span> <span class="p">);</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">cobject</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>

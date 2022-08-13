@@ -1,0 +1,421 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1StandardPrivateProperty" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::StandardPrivateProperty</compoundname>
+    <basecompoundref refid="classHurricane_1_1PrivateProperty" prot="public" virt="non-virtual">Hurricane::PrivateProperty</basecompoundref>
+    <innerclass refid="classHurricane_1_1StandardPrivateProperty_1_1JsonProperty" prot="public">Hurricane::StandardPrivateProperty::JsonProperty</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename Value</type>
+      </param>
+      <param>
+        <type>typename JsonState</type>
+        <defval>JsonDisabled</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1StandardPrivateProperty_1a58d52c441de82b19347c5b1bc2c7e25a" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="181" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1StandardPrivateProperty_1a79b8e0683c304877d942d0063d7a7207" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> *</type>
+        <definition>DBo * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_owner</definition>
+        <argsstring></argsstring>
+        <name>_owner</name>
+        <initializer>= NULL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="182" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1StandardPrivateProperty_1afcd01f2f911cbbbf01049018ad15662b" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1StandardPrivateProperty" kindref="compound">StandardPrivateProperty</ref> *</type>
+        <definition>StandardPrivateProperty&lt; Value, JsonState &gt; * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_cache</definition>
+        <argsstring></argsstring>
+        <name>_cache</name>
+        <initializer>= NULL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="183" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1StandardPrivateProperty_1afc33bd2ad9245286fe96d195454ce5c8" prot="private" static="no" mutable="yes">
+        <type>Value</type>
+        <definition>Value Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_value</definition>
+        <argsstring></argsstring>
+        <name>_value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="184" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1aa1373a7d5f1dbd494bb63b95609e8105" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::staticGetName</definition>
+        <argsstring>()</argsstring>
+        <name>staticGetName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="164" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="251" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a3d039afd37c6d7dda726294a19324c78" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Value *</type>
+        <definition>Value * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::staticGetValue</definition>
+        <argsstring>(const DBo *)</argsstring>
+        <name>staticGetValue</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> *</type>
+          <defname>object</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="165" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="258" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a38c0e78af57761bc047e5b43addc990a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1StandardPrivateProperty" kindref="compound">StandardPrivateProperty</ref> *</type>
+        <definition>StandardPrivateProperty&lt; Value, JsonState &gt; * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::get</definition>
+        <argsstring>(const DBo *, bool create=false)</argsstring>
+        <name>get</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> *</type>
+          <defname>object</defname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>create</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="166" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="284" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a14d20469d333a3806d864539f55b440a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1StandardPrivateProperty" kindref="compound">StandardPrivateProperty</ref> *</type>
+        <definition>StandardPrivateProperty&lt; Value, JsonState &gt; * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::create</definition>
+        <argsstring>()</argsstring>
+        <name>create</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="168" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="266" bodyend="271"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a30969fa538a25e7673abd3412f1331e4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1StandardPrivateProperty" kindref="compound">StandardPrivateProperty</ref> *</type>
+        <definition>StandardPrivateProperty&lt; Value, JsonState &gt; * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::create</definition>
+        <argsstring>(const Value &amp;)</argsstring>
+        <name>create</name>
+        <param>
+          <type>const Value &amp;</type>
+          <defname>value</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="169" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="275" bodyend="280"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a8c8295fc40fb538586433abf3e0efc92" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <reimplements refid="classHurricane_1_1Property_1a2759e2003c15d417b925092bc253ddd1">getName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="171" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="317" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a442e64f71a5ba9f5e6313344e74bae7a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Value &amp;</type>
+        <definition>Value &amp; Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::getValue</definition>
+        <argsstring>() const</argsstring>
+        <name>getValue</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="172" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="324" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1af8652c2093e3eeb8bc1df9a3a3d565b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::setValue</definition>
+        <argsstring>(const Value &amp;)</argsstring>
+        <name>setValue</name>
+        <param>
+          <type>const Value &amp;</type>
+          <defname>value</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="173" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="331" bodyend="334"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a8e7aa9e749ec075bc25775abe9f7a183" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::hasJson</definition>
+        <argsstring>() const</argsstring>
+        <name>hasJson</name>
+        <reimplements refid="classHurricane_1_1Property_1a7f3d8d6b626bce11ff45e0ce35e4b680">hasJson</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="174" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="338" bodyend="341"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1af57c5854d272619201e5f154f897e95d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::toJson</definition>
+        <argsstring>(JsonWriter *, const DBo *) const</argsstring>
+        <name>toJson</name>
+        <reimplements refid="classHurricane_1_1Property_1a4c33dc222d5dd7cc2dc7d176744df2d9">toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+          <defname>w</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="175" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="345" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a42242be526b9b2bbb726bb24c9f95e68" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>string Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1Property_1a6ac1f828e5a4d3b0fd81ad3845329141">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="176" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="356" bodyend="359"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a3ff46ebb4d3b068db6b5662c54495212" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>string Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1PrivateProperty_1af0aabd827a445b8ad6649604a02e6b8e">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="177" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="362" bodyend="367"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1abff0f71247e02262931d729b96093ed9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>Record * Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1PrivateProperty_1aacc504b9d749b6d2aeb7502b18d064d8">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="178" column="39" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="370" bodyend="379"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1a16864673d6e04e0f4966472edc5d6476" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::StandardPrivateProperty</definition>
+        <argsstring>()</argsstring>
+        <name>StandardPrivateProperty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="187" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="305" bodyend="307"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1StandardPrivateProperty_1acc6024244dd84f9bb14ad1193fb2c1ab" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;::StandardPrivateProperty</definition>
+        <argsstring>(const Value &amp;)</argsstring>
+        <name>StandardPrivateProperty</name>
+        <param>
+          <type>const Value &amp;</type>
+          <defname>value</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="188" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="311" bodyend="313"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1StandardPrivateProperty" kindref="compound">StandardPrivateProperty</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1StandardPrivateProperty_1secStandardPrivatePropertyIntro">
+<title>Introduction</title>
+<para>Those properties allow to assign to an object a relation between a name and a value. </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Hurricane::PrivateProperty</label>
+        <link refid="classHurricane_1_1PrivateProperty"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Property</label>
+        <link refid="classHurricane_1_1Property"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;</label>
+        <link refid="classHurricane_1_1StandardPrivateProperty"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="4">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::PrivateProperty</label>
+        <link refid="classHurricane_1_1PrivateProperty"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_owner</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Property</label>
+        <link refid="classHurricane_1_1Property"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_baseName</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::StandardPrivateProperty&lt; Value, JsonState &gt;</label>
+        <link refid="classHurricane_1_1StandardPrivateProperty"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_cache</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_owner</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="162" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="162" bodyend="198"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Property_1ab549e402dae44022251611183a7ec61c" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_baseName</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1afcd01f2f911cbbbf01049018ad15662b" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_cache</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1abff0f71247e02262931d729b96093ed9" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a3ff46ebb4d3b068db6b5662c54495212" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a42242be526b9b2bbb726bb24c9f95e68" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a58d52c441de82b19347c5b1bc2c7e25a" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a79b8e0683c304877d942d0063d7a7207" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_owner</name></member>
+      <member refid="classHurricane_1_1Property_1a5fc6e74271f81e09b4c931d16810c743" prot="protected" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1a03b3a793ddff8b95c128b9b8b8bc5237" prot="protected" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1afc33bd2ad9245286fe96d195454ce5c8" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>_value</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a14d20469d333a3806d864539f55b440a" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>create</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a30969fa538a25e7673abd3412f1331e4" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Property_1ab60362699e6c6ea35ace45dbd1075a2f" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a38c0e78af57761bc047e5b43addc990a" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>get</name></member>
+      <member refid="classHurricane_1_1Property_1afb79a0d2b3ec8fa4f842361418d99a9c" prot="public" virt="non-virtual" ambiguityscope="Hurricane::PrivateProperty::"><scope>Hurricane::StandardPrivateProperty</scope><name>get</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a8c8295fc40fb538586433abf3e0efc92" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1a070ea464f4859734163b12a134e2d8f2" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>getOwner</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a442e64f71a5ba9f5e6313344e74bae7a" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>getValue</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a8e7aa9e749ec075bc25775abe9f7a183" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>hasJson</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1abc4c49a46763b39d6fa381163ca2133c" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>onCapturedBy</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1a4495c8548231a38318529238fa09ae26" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>onNotOwned</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1ae49dc42754f96ec72fc539dc0627d222" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>onReleasedBy</name></member>
+      <member refid="classHurricane_1_1Property_1af32f262939908a2899c925d58d437876" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1PrivateProperty_1aa376958e5349a56c87d8b11c9215ba92" prot="protected" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>PrivateProperty</name></member>
+      <member refid="classHurricane_1_1Property_1a3c5b2435a4cd89c4c0dd0c141d3e2902" prot="protected" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>Property</name></member>
+      <member refid="classHurricane_1_1Property_1aef9b4d4754f0dc33f8537144432aef39" prot="private" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>Property</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1af8652c2093e3eeb8bc1df9a3a3d565b6" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>setValue</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a16864673d6e04e0f4966472edc5d6476" prot="protected" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>StandardPrivateProperty</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1acc6024244dd84f9bb14ad1193fb2c1ab" prot="protected" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>StandardPrivateProperty</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1aa1373a7d5f1dbd494bb63b95609e8105" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>staticGetName</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1a3d039afd37c6d7dda726294a19324c78" prot="public" virt="non-virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>staticGetValue</name></member>
+      <member refid="classHurricane_1_1StandardPrivateProperty_1af57c5854d272619201e5f154f897e95d" prot="public" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Property_1a5870e80c21feda0d8ca46a38c902bb20" prot="protected" virt="virtual"><scope>Hurricane::StandardPrivateProperty</scope><name>~Property</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
