@@ -70,7 +70,7 @@ namespace Isobar {
       };
 
 
-#if __GNUC__ && (__GNUC__ > 8)
+#if defined(__GNUC__) && (__GNUC__ > 8)
     PyTypeObject  PyTypeAttributesHolder = {
       PyVarObject_HEAD_INIT(NULL,0)
       .tp_name       = "Hurricane.AttributesHolder",
