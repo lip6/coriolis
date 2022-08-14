@@ -87,9 +87,9 @@ namespace Isobar {
     PyTypeObject  PyTypeAttributesHolder =
       { PyVarObject_HEAD_INIT(NULL,0)
         "Hurricane.AttributeHolder"             /* tp_name.          */
-      , sizeof( PyAttributeHolder )             /* tp_basicsize.     */          
+      , sizeof( PyAttributesHolder )            /* tp_basicsize.     */          
       , 0                                       /* tp_itemsize.      */          
-      , (destructor)PyAttributeHolder_DeAlloc   /* tp_dealloc.       */          
+      , (destructor)PyAttributesHolder_DeAlloc  /* tp_dealloc.       */          
       , 0                                       /* tp_print.         */          
       , 0                                       /* tp_getattr.       */          
       , 0                                       /* tp_setattr.       */          
