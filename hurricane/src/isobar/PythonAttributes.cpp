@@ -70,6 +70,7 @@ namespace Isobar {
       };
 
 
+#if __GNUC__ && (__GNUC__ > 8)
     PyTypeObject  PyTypeAttributesHolder = {
       PyVarObject_HEAD_INIT(NULL,0)
       .tp_name       = "Hurricane.AttributesHolder",
@@ -82,6 +83,58 @@ namespace Isobar {
       .tp_methods    =  PyAttributesHolder_Methods,
       .tp_dictoffset =  offsetof( PyAttributesHolder, dict ),
     };
+#else
+    PyTypeObject  PyTypeAttributesHolder =
+      { PyVarObject_HEAD_INIT(NULL,0)
+        "Hurricane.AttributeHolder"             /* tp_name.          */
+      , sizeof( PyAttributeHolder )             /* tp_basicsize.     */          
+      , 0                                       /* tp_itemsize.      */          
+      , (destructor)PyAttribute_DeAlloc         /* tp_dealloc.       */          
+      , 0                                       /* tp_print.         */          
+      , 0                                       /* tp_getattr.       */          
+      , 0                                       /* tp_setattr.       */          
+      , 0                                       /* tp_compare.       */          
+      , 0                                       /* tp_repr.          */          
+      , 0                                       /* tp_as_number.     */          
+      , 0                                       /* tp_as_sequence.   */          
+      , 0                                       /* tp_as_mapping.    */          
+      , 0                                       /* tp_hash.          */          
+      , 0                                       /* tp_call.          */          
+      , 0                                       /* tp_str            */          
+      , PyObject_GenericGetAttr                 /* tp_getattro.      */          
+      , PyObject_GenericSetAttr                 /* tp_setattro.      */          
+      , 0                                       /* tp_as_buffer.     */          
+      , Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE  /* tp_flags          */          
+      , PyDoc_STR("Attributes holder for ancillary Python object (Property).")
+                                                /* tp_doc.           */          
+      , 0                                       /* tp_traverse       */
+      , 0                                       /* tp_clear          */
+      , 0                                       /* tp_richcompare    */
+      , 0                                       /* tp_weaklistoffset */
+      , 0                                       /* tp_iter           */
+      , 0                                       /* tp_iternext       */
+      , PyAttributesHolder_Methods              /* tp_methods        */
+      , 0                                       /* tp_members        */
+      , 0                                       /* tp_getset         */
+      , 0                                       /* tp_base           */
+      , 0                                       /* tp_dict           */
+      , 0                                       /* tp_decr_get       */
+      , 0                                       /* tp_decr_set       */
+      , offsetof( PyAttributesHolder, dict )    /* tp_dictoffset     */
+      };
+
+      PyVarObject_HEAD_INIT(NULL,0)
+      .tp_name       = "Hurricane.AttributesHolder",
+      .tp_basicsize  =  sizeof( PyAttributesHolder ),
+      .tp_dealloc    =  (destructor)PyAttributesHolder_DeAlloc,
+      .tp_getattro   =  PyObject_GenericGetAttr,
+      .tp_setattro   =  PyObject_GenericSetAttr,
+      .tp_flags      =  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
+      .tp_doc        =  PyDoc_STR("Attributes holder for ancillary Python object (Property)."),
+      .tp_methods    =  PyAttributesHolder_Methods,
+      .tp_dictoffset =  offsetof( PyAttributesHolder, dict ),
+    };
+#endif
 
   }  // extern "C".
 

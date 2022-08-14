@@ -904,7 +904,7 @@ extern "C" {
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 
-    Py_AtExit( showAtExit );
+  //Py_AtExit( showAtExit );
 
     cdebug_log(20,0) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
 
