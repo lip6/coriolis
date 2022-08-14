@@ -89,7 +89,7 @@ namespace Isobar {
         "Hurricane.AttributeHolder"             /* tp_name.          */
       , sizeof( PyAttributeHolder )             /* tp_basicsize.     */          
       , 0                                       /* tp_itemsize.      */          
-      , (destructor)PyAttribute_DeAlloc         /* tp_dealloc.       */          
+      , (destructor)PyAttributeHolder_DeAlloc   /* tp_dealloc.       */          
       , 0                                       /* tp_print.         */          
       , 0                                       /* tp_getattr.       */          
       , 0                                       /* tp_setattr.       */          
@@ -122,18 +122,6 @@ namespace Isobar {
       , 0                                       /* tp_decr_set       */
       , offsetof( PyAttributesHolder, dict )    /* tp_dictoffset     */
       };
-
-      PyVarObject_HEAD_INIT(NULL,0)
-      .tp_name       = "Hurricane.AttributesHolder",
-      .tp_basicsize  =  sizeof( PyAttributesHolder ),
-      .tp_dealloc    =  (destructor)PyAttributesHolder_DeAlloc,
-      .tp_getattro   =  PyObject_GenericGetAttr,
-      .tp_setattro   =  PyObject_GenericSetAttr,
-      .tp_flags      =  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
-      .tp_doc        =  PyDoc_STR("Attributes holder for ancillary Python object (Property)."),
-      .tp_methods    =  PyAttributesHolder_Methods,
-      .tp_dictoffset =  offsetof( PyAttributesHolder, dict ),
-    };
 #endif
 
   }  // extern "C".
