@@ -33,29 +33,25 @@ using the menu:
 .. code-block:: Python
 
    def buildInvertor ( editor ):
-       UpdateSession.open()
-   
-       cell = AllianceFramework.get().createCell( 'invertor' )
-       cell.setTerminal( True )
-   
-       cell.setAbutmentBox( Box( toDbU(0.0), toDbU(0.0), toDbU(15.0), toDbU(50.0) ) )
-   
+       """Build step by step an invertor standard cell."""
+       with UpdateSession():
+           cell = AllianceFramework.get().createCell( 'invertor' )
+           cell.setTerminalNetlist( True )
+           
+           cell.setAbutmentBox( Box( l(0.0), l(0.0), l(15.0), l(50.0) ) )
        if editor:
-         UpdateSession.close()
-         editor.setCell( cell )
-         editor.fit()
-         UpdateSession.open()
+           editor.setCell( cell )
+           editor.fit()
 
        # The rest of the script...
-
        return
 
 
    def scriptMain ( **kw ):
+       """The Mandatory function to be run by Coriolis interactively."""
        editor = None
-       if kw.has_key('editor') and kw['editor']:
-         editor = kw['editor']
-   
+       if 'editor' in kw and kw['editor']:
+           editor = kw['editor']
        buildInvertor( editor )
        return True 
 
@@ -64,8 +60,8 @@ using the menu:
 ~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to add breakpoints inside a script by calling the ``Breakpoint.stop()``
-function. To be able to see exactly what has just been mofied, we must close the
-UpdateSession_ just before calling the breakpoint and reopen it just after.
+function. To be able to see exactly what has just been modified, be sure to have
+closed any UpdateSession_ before calling breakpoints.
 The ``Breakpoint.stop()`` function takes two arguments:
 
 #. The ``level`` above which it will be active.
@@ -76,6 +72,4 @@ We can create a little function to ease the work:
 .. code-block:: Python
 
    def doBreak ( level, message ):
-       UpdateSession.close()
        Breakpoint.stop( level, message )
-       UpdateSession.open()

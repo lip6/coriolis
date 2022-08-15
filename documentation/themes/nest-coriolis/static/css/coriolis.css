@@ -100,7 +100,8 @@ div#contents ul > li > a {
 */
 
 span.cb {
-  background: yellow;
+  font-family: "courrier";
+  font-weight: bold;
 }
 
 div.note {

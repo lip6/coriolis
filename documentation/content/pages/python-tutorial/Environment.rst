@@ -37,53 +37,68 @@ Use it like this (don't forget the ``eval`` **and** the backquotes):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You may create, in the directory you are lanching |Coriolis| tools, a special
-sub-directory ``.coriolis2/`` that can contain two configuration files:
+sub-directory ``coriolis2/`` that can contain the configuration files:
 
-* ``techno.py`` tells which technology to use.
+* ``__init__.py`` to tell |Python| this directory is a module. 
 * ``settings.py`` can override almost any default configuration setting.
-
-Those two files are *optional*, if they do not exist the default settings
-will be used and the technology is ``symbolic/cmos`` (i.e. purely symbolic).
 
 .. note:: Those two files will by processed by the |Python| interpreter,
 	  so they can contain any code in addition to the mandatory
 	  variables.
+  
 
-2.2.1 The :cb:`techno.py` File
-------------------------------
+2.3 The :cb:`settings.py` File
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Must provide one variable named :cb:`technology` which values the path towards
-the technology file. The available technologies are installed under
-``<CORIOLIS_INSTALL>/etc/coriolis2``. For example, to use the 45nm FreeDPK
-which is in: ::
+The attributes name and definitions of :cb:`cfg` are detailed
+in `CGT - The Graphical Interface <../UsersGuide/ViewerTools.html>`_.
 
-    <CORIOLIS_INSTALL>/etc/coriolis2/45/freepdk_45/
+**Selecting the Technology**
 
-The ``techno.py`` file must contain:
+The important line here is:
 
 .. code-block:: Python
 
-   technology = '45/freepdk_45'
-  
+   import symbolic.cmos
 
-2.2.2 The :cb:`settings.py` File
---------------------------------
 
-The entries of the ``parametersTable`` and their definitions are detailed
-in `CGT - The Graphical Interface <../UsersGuide/ViewerTools.html>`_.
+This import loads and setup the technology used througout this run of
+|Coriolis|. One and only one technology can be loaded in a |Coriolis| run.
 
 Example of file:
 
 .. code-block:: Python
 
-   defaultStyle = 'Alliance.Classic [black]'
+   # -*- Mode:Python -*-
    
-   parametersTable = \
-       ( ('misc.catchCore'           , TypeBool      , False   )
-       , ('misc.info'                , TypeBool      , False   )
-       , ('misc.paranoid'            , TypeBool      , False   )
-       , ('misc.bug'                 , TypeBool      , False   )
-       , ('misc.logMode'             , TypeBool      , False   )
-       , ('misc.verboseLevel1'       , TypeBool      , False   )
-       , ('misc.verboseLevel2'       , TypeBool      , True    )
-       )
+   import os
+   import Cfg 
+   import Viewer
+   import CRL 
+   import symbolic.cmos
+   from   helpers       import overlay
+   
+   if 'CELLS_TOP' in os.environ:
+       cellsTop = os.environ['CELLS_TOP']
+   else:
+       cellsTop = '../../../cells'
+   
+   with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+       cfg.misc.catchCore              = False
+       cfg.misc.info                   = False
+       cfg.misc.paranoid               = False
+       cfg.misc.bug                    = False
+       cfg.misc.logMode                = True
+       cfg.misc.verboseLevel1          = True
+       cfg.misc.verboseLevel2          = True
+       cfg.misc.minTraceLevel          = 1900
+       cfg.misc.maxTraceLevel          = 3000
+       cfg.katana.eventsLimit          = 1000000
+       cfg.katana.termSatReservedLocal = 6 
+       cfg.katana.termSatThreshold     = 9 
+       Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+       af  = CRL.AllianceFramework.get()
+       env = af.getEnvironment()
+       env.setCLOCK( '^ck$|m_clock|^clk$' )
+       env.addSYSTEM_LIBRARY( library=cellsTop+'/nsxlib', mode=CRL.Environment.Prepend )
+       env.addSYSTEM_LIBRARY( library=cellsTop+'/niolib', mode=CRL.Environment.Prepend )
