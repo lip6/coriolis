@@ -1,30 +1,30 @@
-\hypertarget{classHurricane_1_1Instance}{}\section{Hurricane\+:\+:Instance Class Reference}
-\label{classHurricane_1_1Instance}\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
+\hypertarget{classHurricane_1_1Instance}{}\doxysection{Hurricane\+::Instance Class Reference}
+\label{classHurricane_1_1Instance}\index{Hurricane::Instance@{Hurricane::Instance}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Instance\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Instance\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=190pt]{classHurricane_1_1Instance__inherit__graph}
+\includegraphics[width=182pt]{classHurricane_1_1Instance__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Classes}
+\doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Placement\+Status}}
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries A\+PI}) \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{Public Types}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries{API}}) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
 typedef \mbox{\hyperlink{classHurricane_1_1Go}{Go}} \mbox{\hyperlink{classHurricane_1_1Instance_a227e1f98670e466328ca95fe45546590}{Inherit}}
 \end{DoxyCompactItemize}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classHurricane_1_1Instance_aa48280b4d7127d283c89983cf7a42c23}{get\+Name}} () const
@@ -55,7 +55,7 @@ void \mbox{\hyperlink{classHurricane_1_1Instance_adf28fcd01f6ff89c5435e83482f66d
 \item 
 \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Instance_ac5e111eef5767762e00f21fcd7a35702}{get\+Clone}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$clone\+Cell) const
 \end{DoxyCompactItemize}
-\subsection*{Static Public Member Functions}
+\doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 static \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Instance_ae130b66536e4536ba8852fb79abfb89e}{create}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$master\+Cell, bool secure\+Flag=true)
@@ -66,44 +66,42 @@ static \mbox{\hyperlink{namespaceHurricane_a889ec1441e1876d9addf89dfab32e772}{In
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Instance_secInstanceIntro}{}\subsection{Introduction}\label{classHurricane_1_1Instance_secInstanceIntro}
-Instances provide the capability to build hierarchical assemblies. An instance belongs to a cell (the \char`\"{}$<$b$>$owner 
-              cell$<$/b$>$\char`\"{}) and references (calls) a model cell which we will call the \char`\"{}$<$b$>$mater cell$<$/b$>$\char`\"{}. Seen from the other hand, a cell may be the master cell of many instances belonging to other cells, this set of instances is named the \char`\"{}$<$b$>$slave 
-              instances$<$/b$>$\char`\"{} of this cell (it is empty for the top most cell of a hierachical assembly, as well as for all cells from the library which are not instanciated in the current design).\hypertarget{classHurricane_1_1Instance_secInstancePlacement}{}\subsection{Placement Status}\label{classHurricane_1_1Instance_secInstancePlacement}
+\hypertarget{classHurricane_1_1Instance_secInstanceIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Instance_secInstanceIntro}
+Instances provide the capability to build hierarchical assemblies. An instance belongs to a cell (the \char`\"{}$<$b$>$owner                cell$<$/b$>$\char`\"{}) and references (calls) a model cell which we will call the \char`\"{}$<$b$>$mater cell$<$/b$>$\char`\"{}. Seen from the other hand, a cell may be the master cell of many instances belonging to other cells, this set of instances is named the \char`\"{}$<$b$>$slave                instances$<$/b$>$\char`\"{} of this cell (it is empty for the top most cell of a hierachical assembly, as well as for all cells from the library which are not instanciated in the current design).\hypertarget{classHurricane_1_1Instance_secInstancePlacement}{}\doxysubsection{Placement Status}\label{classHurricane_1_1Instance_secInstancePlacement}
 See \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Instance\+::\+Placement\+Status}} and \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Instance\+::\+Placement\+Status\+::\+Code}}.
 
 An \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} can have three kind of placement status\+:
 \begin{DoxyItemize}
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{Instance\+::\+Placement\+Status\+::\+U\+N\+P\+L\+A\+C\+ED}} \+: the instance doesn\textquotesingle{}t have a meaningful position. It shouldn\textquotesingle{}t be materialized either. It\textquotesingle{}s position therfore shouldn\textquotesingle{}t be used.
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{Instance\+::\+Placement\+Status\+::\+P\+L\+A\+C\+ED}} \+: the instance has be placed manually or by an automated tool. It is movable.
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{Instance\+::\+Placement\+Status\+::\+F\+I\+X\+ED}} \+: the instance is placed and mustn\textquotesingle{}t be moved by automated tools. It can still be moved manually.
-\end{DoxyItemize}\hypertarget{classHurricane_1_1Instance_secInstancePredefinedFilters}{}\subsection{Predefined filters}\label{classHurricane_1_1Instance_secInstancePredefinedFilters}
-{\bfseries \mbox{\hyperlink{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}{Hurricane\+::\+Instance\+::get\+Is\+Under\+Filter}}}\hypertarget{classHurricane_1_1Instance_secInstanceDestroy}{}\subsection{Instance Destruction}\label{classHurricane_1_1Instance_secInstanceDestroy}
-When the \mbox{\hyperlink{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}{Instance\+::destroy()}} method is called, if the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is uniquified, that is, is unique {\bfseries and} a copy of the reference \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, it is destroyed as well. That state means that the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} has been created for the only purpose as to serve as a model for this peculiar \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}}. It is then logical that it should be removed with it. 
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{Instance\+::\+Placement\+Status\+::\+UNPLACED}} \+: the instance doesn\textquotesingle{}t have a meaningful position. It shouldn\textquotesingle{}t be materialized either. It\textquotesingle{}s position therfore shouldn\textquotesingle{}t be used.
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{Instance\+::\+Placement\+Status\+::\+PLACED}} \+: the instance has be placed manually or by an automated tool. It is movable.
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{Instance\+::\+Placement\+Status\+::\+FIXED}} \+: the instance is placed and mustn\textquotesingle{}t be moved by automated tools. It can still be moved manually.
+\end{DoxyItemize}\hypertarget{classHurricane_1_1Instance_secInstancePredefinedFilters}{}\doxysubsection{Predefined filters}\label{classHurricane_1_1Instance_secInstancePredefinedFilters}
+{\bfseries{\mbox{\hyperlink{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}{Hurricane\+::\+Instance\+::get\+Is\+Under\+Filter}}}}\hypertarget{classHurricane_1_1Instance_secInstanceDestroy}{}\doxysubsection{Instance Destruction}\label{classHurricane_1_1Instance_secInstanceDestroy}
+When the \mbox{\hyperlink{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}{Instance\+::destroy()}} method is called, if the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is uniquified, that is, is unique {\bfseries{and}} a copy of the reference \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, it is destroyed as well. That state means that the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} has been created for the only purpose as to serve as a model for this peculiar \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}}. It is then logical that it should be removed with it. 
 
-\subsection{Member Typedef Documentation}
+\doxysubsection{Member Typedef Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Instance_a227e1f98670e466328ca95fe45546590}\label{classHurricane_1_1Instance_a227e1f98670e466328ca95fe45546590}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!Inherit@{Inherit}}
-\index{Inherit@{Inherit}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{Inherit}{Inherit}}
+\index{Hurricane::Instance@{Hurricane::Instance}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{Inherit}{Inherit}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance_a227e1f98670e466328ca95fe45546590}{Hurricane\+::\+Instance\+::\+Inherit}}}
 
 Useful for calling upon methods of the base class without knowing it. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Instance_ae130b66536e4536ba8852fb79abfb89e}\label{classHurricane_1_1Instance_ae130b66536e4536ba8852fb79abfb89e}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!create@{create}}
-\index{create@{create}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+\index{Hurricane::Instance@{Hurricane::Instance}!create@{create}}
+\index{create@{create}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ Hurricane\+::\+Instance\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{master\+Cell,  }\item[{bool}]{secure\+Flag = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
 No description. \mbox{\Hypertarget{classHurricane_1_1Instance_ad5784305151e45c9d949a74bd85aaa36}\label{classHurricane_1_1Instance_ad5784305151e45c9d949a74bd85aaa36}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!create@{create}}
-\index{create@{create}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\index{Hurricane::Instance@{Hurricane::Instance}!create@{create}}
+\index{create@{create}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ Hurricane\+::\+Instance\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{master\+Cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Placement\+Status}} \&}]{placementstatus,  }\item[{bool}]{secure\+Flag = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
 Create and return a pointer to a new instance of name {\ttfamily $<$name$>$} belonging to the cell {\ttfamily $<$cell$>$} and refering the cell {\ttfamily $<$master\+Cell$>$} through a transformation {\ttfamily $<$transformation$>$} if it is provided (else the identity transform is assumed).
@@ -112,84 +110,84 @@ Create and return a pointer to a new instance of name {\ttfamily $<$name$>$} bel
 {\ttfamily $<$master\+Cell$>$} is null, if an instance of same name already exists or if a cyclic assembly is detected.
 \end{DoxyParagraph}
 \begin{DoxyRemark}{Remarks}
-If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks). 
+If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries{false}} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks). 
 \end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Instance_aa48280b4d7127d283c89983cf7a42c23}\label{classHurricane_1_1Instance_aa48280b4d7127d283c89983cf7a42c23}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Name@{get\+Name}}
-\index{get\+Name@{get\+Name}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!getName@{getName}}
+\index{getName@{getName}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& Hurricane\+::\+Instance\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the instance name. \mbox{\Hypertarget{classHurricane_1_1Instance_ad08a772e5e36582070cdc407cfcc1a64}\label{classHurricane_1_1Instance_ad08a772e5e36582070cdc407cfcc1a64}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Master\+Cell@{get\+Master\+Cell}}
-\index{get\+Master\+Cell@{get\+Master\+Cell}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Master\+Cell()}{getMasterCell()}}
+{\bfseries{Returns\+:}} the instance name. \mbox{\Hypertarget{classHurricane_1_1Instance_ad08a772e5e36582070cdc407cfcc1a64}\label{classHurricane_1_1Instance_ad08a772e5e36582070cdc407cfcc1a64}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getMasterCell@{getMasterCell}}
+\index{getMasterCell@{getMasterCell}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getMasterCell()}{getMasterCell()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Instance\+::get\+Master\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the cell model referenced by the instance. \mbox{\Hypertarget{classHurricane_1_1Instance_a5042051d648fd93548dc6c5e14782645}\label{classHurricane_1_1Instance_a5042051d648fd93548dc6c5e14782645}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Transformation@{get\+Transformation}}
-\index{get\+Transformation@{get\+Transformation}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Transformation()}{getTransformation()}}
+{\bfseries{Returns\+:}} the cell model referenced by the instance. \mbox{\Hypertarget{classHurricane_1_1Instance_a5042051d648fd93548dc6c5e14782645}\label{classHurricane_1_1Instance_a5042051d648fd93548dc6c5e14782645}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getTransformation@{getTransformation}}
+\index{getTransformation@{getTransformation}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getTransformation()}{getTransformation()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \& Hurricane\+::\+Instance\+::get\+Transformation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the transformation associated to the instance. \mbox{\Hypertarget{classHurricane_1_1Instance_a1afe07edc0374ddfb505b4973c902834}\label{classHurricane_1_1Instance_a1afe07edc0374ddfb505b4973c902834}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Plug@{get\+Plug}}
-\index{get\+Plug@{get\+Plug}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Plug()}{getPlug()}}
+{\bfseries{Returns\+:}} the transformation associated to the instance. \mbox{\Hypertarget{classHurricane_1_1Instance_a1afe07edc0374ddfb505b4973c902834}\label{classHurricane_1_1Instance_a1afe07edc0374ddfb505b4973c902834}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getPlug@{getPlug}}
+\index{getPlug@{getPlug}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getPlug()}{getPlug()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} $\ast$ Hurricane\+::\+Instance\+::get\+Plug (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$}]{master\+Net }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the plug associated to the {\ttfamily $<$master\+Net$>$} if it exists or else N\+U\+LL (if the net is not external). \mbox{\Hypertarget{classHurricane_1_1Instance_a5433b64eed99f9a099004490fae6d8f4}\label{classHurricane_1_1Instance_a5433b64eed99f9a099004490fae6d8f4}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Plugs@{get\+Plugs}}
-\index{get\+Plugs@{get\+Plugs}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Plugs()}{getPlugs()}}
+{\bfseries{Returns\+:}} the plug associated to the {\ttfamily $<$master\+Net$>$} if it exists or else NULL (if the net is not external). \mbox{\Hypertarget{classHurricane_1_1Instance_a5433b64eed99f9a099004490fae6d8f4}\label{classHurricane_1_1Instance_a5433b64eed99f9a099004490fae6d8f4}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getPlugs@{getPlugs}}
+\index{getPlugs@{getPlugs}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getPlugs()}{getPlugs()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs}} Hurricane\+::\+Instance\+::get\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the collection of instance plugs.
+{\bfseries{Returns\+:}} the collection of instance plugs.
 
-\begin{DoxyParagraph}{Important\+: Each external net of the master cell of the instance has by }
+\begin{DoxyParagraph}{Important\+:\textbackslash{}n Each external net of the master cell of the instance has by }
 construction an associated plug. This one may be connected or not to a net in the owner cell of the instance. 
 \end{DoxyParagraph}
 \mbox{\Hypertarget{classHurricane_1_1Instance_a18beeab0def83c20e25a710b30dd8ca9}\label{classHurricane_1_1Instance_a18beeab0def83c20e25a710b30dd8ca9}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Connected\+Plugs@{get\+Connected\+Plugs}}
-\index{get\+Connected\+Plugs@{get\+Connected\+Plugs}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Connected\+Plugs()}{getConnectedPlugs()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!getConnectedPlugs@{getConnectedPlugs}}
+\index{getConnectedPlugs@{getConnectedPlugs}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getConnectedPlugs()}{getConnectedPlugs()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs}} Hurricane\+::\+Instance\+::get\+Connected\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the collection of instance plugs which are effectively connected. \mbox{\Hypertarget{classHurricane_1_1Instance_a9622b8b961f459469c275b3dafe1733c}\label{classHurricane_1_1Instance_a9622b8b961f459469c275b3dafe1733c}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Unconnected\+Plugs@{get\+Unconnected\+Plugs}}
-\index{get\+Unconnected\+Plugs@{get\+Unconnected\+Plugs}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Unconnected\+Plugs()}{getUnconnectedPlugs()}}
+{\bfseries{Returns\+:}} the collection of instance plugs which are effectively connected. \mbox{\Hypertarget{classHurricane_1_1Instance_a9622b8b961f459469c275b3dafe1733c}\label{classHurricane_1_1Instance_a9622b8b961f459469c275b3dafe1733c}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getUnconnectedPlugs@{getUnconnectedPlugs}}
+\index{getUnconnectedPlugs@{getUnconnectedPlugs}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getUnconnectedPlugs()}{getUnconnectedPlugs()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs}} Hurricane\+::\+Instance\+::get\+Unconnected\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the collection of instance plugs which are not connected. \mbox{\Hypertarget{classHurricane_1_1Instance_a4d13f5b9294d0361b724b5824fd86378}\label{classHurricane_1_1Instance_a4d13f5b9294d0361b724b5824fd86378}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Path@{get\+Path}}
-\index{get\+Path@{get\+Path}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Path()}{getPath()}}
+{\bfseries{Returns\+:}} the collection of instance plugs which are not connected. \mbox{\Hypertarget{classHurricane_1_1Instance_a4d13f5b9294d0361b724b5824fd86378}\label{classHurricane_1_1Instance_a4d13f5b9294d0361b724b5824fd86378}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getPath@{getPath}}
+\index{getPath@{getPath}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getPath()}{getPath()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Path}{Path}} Hurricane\+::\+Instance\+::get\+Path (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Path}{Path}} \&}]{tail\+Path = {\ttfamily \mbox{\hyperlink{classHurricane_1_1Path}{Path}}()} }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the path composed of the instance solely.
+{\bfseries{Returns\+:}} the path composed of the instance solely.
 
-{\bfseries Returns\+:} the path resulting of the concatenation of the instance and the tail path (possibly empty).
+{\bfseries{Returns\+:}} the path resulting of the concatenation of the instance and the tail path (possibly empty).
 
 \begin{DoxyParagraph}{Caution\+: An exception will be thrown if the tail path is not }
 consistent with the instance (that is if the owner cell of the tail path is not the master cell of the instance). 
 \end{DoxyParagraph}
 \mbox{\Hypertarget{classHurricane_1_1Instance_a29bedbd05939bf43757ef036bb506d01}\label{classHurricane_1_1Instance_a29bedbd05939bf43757ef036bb506d01}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Abutment\+Box@{get\+Abutment\+Box}}
-\index{get\+Abutment\+Box@{get\+Abutment\+Box}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Abutment\+Box()}{getAbutmentBox()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!getAbutmentBox@{getAbutmentBox}}
+\index{getAbutmentBox@{getAbutmentBox}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getAbutmentBox()}{getAbutmentBox()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Box}{Box}} Hurricane\+::\+Instance\+::get\+Abutment\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation. \mbox{\Hypertarget{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}\label{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Is\+Under\+Filter@{get\+Is\+Under\+Filter}}
-\index{get\+Is\+Under\+Filter@{get\+Is\+Under\+Filter}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Is\+Under\+Filter()}{getIsUnderFilter()}}
+{\bfseries{Returns\+:}} the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation. \mbox{\Hypertarget{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}\label{classHurricane_1_1Instance_ae2bc936dfecfaf70a0052959b4b2861e}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!getIsUnderFilter@{getIsUnderFilter}}
+\index{getIsUnderFilter@{getIsUnderFilter}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getIsUnderFilter()}{getIsUnderFilter()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a889ec1441e1876d9addf89dfab32e772}{Instance\+Filter}} Hurricane\+::\+Instance\+::get\+Is\+Under\+Filter (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-{\bfseries Returns\+:} the filter selecting instances which intersect the given area. \mbox{\Hypertarget{classHurricane_1_1Instance_ae3b67792d1659f1a20c6533b8843b905}\label{classHurricane_1_1Instance_ae3b67792d1659f1a20c6533b8843b905}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!set\+Name@{set\+Name}}
-\index{set\+Name@{set\+Name}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
+{\bfseries{Returns\+:}} the filter selecting instances which intersect the given area. \mbox{\Hypertarget{classHurricane_1_1Instance_ae3b67792d1659f1a20c6533b8843b905}\label{classHurricane_1_1Instance_ae3b67792d1659f1a20c6533b8843b905}} 
+\index{Hurricane::Instance@{Hurricane::Instance}!setName@{setName}}
+\index{setName@{setName}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{setName()}{setName()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Instance\+::set\+Name (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})}
 
 Allows to change the instance name.
@@ -198,15 +196,15 @@ Allows to change the instance name.
 Throws an exception if the name is empty or if an instance with the same name exists in the owner cell. 
 \end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Instance_a8890d2e1b2ba2542997454297e63512f}\label{classHurricane_1_1Instance_a8890d2e1b2ba2542997454297e63512f}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!set\+Transformation@{set\+Transformation}}
-\index{set\+Transformation@{set\+Transformation}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{set\+Transformation()}{setTransformation()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!setTransformation@{setTransformation}}
+\index{setTransformation@{setTransformation}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{setTransformation()}{setTransformation()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Instance\+::set\+Transformation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation }\end{DoxyParamCaption})}
 
 Allows to modify the instance transformation. \mbox{\Hypertarget{classHurricane_1_1Instance_a9f626fd058c21ffc2ed5bfee8d29a853}\label{classHurricane_1_1Instance_a9f626fd058c21ffc2ed5bfee8d29a853}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!set\+Master\+Cell@{set\+Master\+Cell}}
-\index{set\+Master\+Cell@{set\+Master\+Cell}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{set\+Master\+Cell()}{setMasterCell()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!setMasterCell@{setMasterCell}}
+\index{setMasterCell@{setMasterCell}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{setMasterCell()}{setMasterCell()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Instance\+::set\+Master\+Cell (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{master\+Cell,  }\item[{bool}]{secure\+Flag = {\ttfamily true} }\end{DoxyParamCaption})}
 
 Allows to change the cell referenced by this instance.
@@ -215,15 +213,15 @@ Allows to change the cell referenced by this instance.
 assembly is detected or the substitution can\textquotesingle{}t succeed.
 \end{DoxyParagraph}
 \begin{DoxyRemark}{Remarks}
-If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks).
+If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries{false}} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks).
 \end{DoxyRemark}
-\begin{DoxyParagraph}{Important\+: In order to succeed with the substitution, it is necessary }
+\begin{DoxyParagraph}{Important\+:\textbackslash{}n In order to succeed with the substitution, it is necessary }
 that for each connected plug, refering an external net of the old master cell, a net of same name can be found in the new master cell.
 \end{DoxyParagraph}
 The properties of the instance, of its existing plugs and of the different occurences of those ones are preserved. On the other hand, all the hierarchical pathes going through that instance and not ending on it, as well as all associated occurences, become obsolete. The properties attached to those occurences are therefore deleted. \mbox{\Hypertarget{classHurricane_1_1Instance_adf28fcd01f6ff89c5435e83482f66d4c}\label{classHurricane_1_1Instance_adf28fcd01f6ff89c5435e83482f66d4c}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!uniquify@{uniquify}}
-\index{uniquify@{uniquify}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{uniquify()}{uniquify()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!uniquify@{uniquify}}
+\index{uniquify@{uniquify}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{uniquify()}{uniquify()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Instance\+::uniquify (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Replace the {\ttfamily } $<$master\+Cell$>$ of this instance by a cloned copy.
@@ -232,14 +230,14 @@ Replace the {\ttfamily } $<$master\+Cell$>$ of this instance by a cloned copy.
 \mbox{\hyperlink{classHurricane_1_1Cell_a092f53c7f517ecc70d9ba375296c5d5b}{Cell\+::get\+Clone()}}. 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{classHurricane_1_1Instance_ac5e111eef5767762e00f21fcd7a35702}\label{classHurricane_1_1Instance_ac5e111eef5767762e00f21fcd7a35702}} 
-\index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Clone@{get\+Clone}}
-\index{get\+Clone@{get\+Clone}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
-\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+\index{Hurricane::Instance@{Hurricane::Instance}!getClone@{getClone}}
+\index{getClone@{getClone}!Hurricane::Instance@{Hurricane::Instance}}
+\doxysubsubsection{\texorpdfstring{getClone()}{getClone()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ Hurricane\+::\+Instance\+::get\+Clone (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{clone\+Cell }\end{DoxyParamCaption}) const}
 
 Build a duplicate of instance ({\ttfamily } $<$this$>$) inside a cloned \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} {\ttfamily } $<$clone\+Cell$>$. The connections (\mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}) on the copied instance are copied. That is, connected to \mbox{\hyperlink{classHurricane_1_1Net}{Net}} with identical names in {\ttfamily } $<$clone\+Cell$>$.
 
-\begin{DoxyParagraph}{Important\+: In {\ttfamily }, a copy (by name) of all the nets this instance}
+\begin{DoxyParagraph}{Important\+:\textbackslash{}n In {\ttfamily }, a copy (by name) of all the nets this instance}
 is connected to must exits. 
 \end{DoxyParagraph}
 

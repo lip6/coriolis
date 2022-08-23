@@ -1,0 +1,103 @@
+
+ // -*- C++ -*-
+
+
+ namespace Isobar {
+
+ /*! \class        PyAttributesHolder
+  *  \brief        A simple Python object to store attributes.
+  * 
+  *  \see          PythonAttributes
+  */
+
+ /*! \class        PyHolderProperty
+  *  \brief        A Property to contain PyAttributesHolder
+  * 
+  *  \see          PythonAttributes
+  */
+
+ /*! \class        PythonAttributes
+  *  \brief        A Property to store Python objects (\b API).
+  * 
+  *  \section      sPythonPropertiesIntro  Introduction
+  *
+  *                The problem to solve here is <em>how to decorate a DBo in Python code</em>.
+  *                In the C++ realm, Hurricane provides the Property mechanism.
+  *                But a Property is a template that needs to be defined at compile
+  *                time, whether a Python object is only known at run time.
+  *
+  *                So, instead of trying to create one property per Python
+  *                attribute, we create one PyHolderProperty property, which
+  *                has one PyAttributesHolder attribute (a basic derived class
+  *                of PyObject with only a dictionnary). All the Python attributes
+  *                of the DBo are then stored as attributes of PyAttributesHolder.
+  *
+  *                Finally, to make the Python syntax straigthforward, we modify the
+  *                PyTypeEntity.tp_setatto and PyTypeEntity.tp_getattro so that when
+  *                trying to access an attribute, we get redirected towards the
+  *                PyAttributesHolder (which is another PyObject). So we can write
+  *                the following code:
+  *
+  *                \code{.py}
+class MyAttribute ( object ):
+
+    count = 0
+
+    def __init__ ( self ):
+        self.value = MyAttribute.count 
+        print( '{} has been created'.format(self) )
+        MyAttribute.count += 1
+
+    def __del__ ( self ):
+        print( '{} has been deleted'.format(self) )
+
+    def __str__ ( self ):
+        return '<MyAttribute {}>'.format(self.value)
+
+
+def demoAttributes ( cell ):
+    PythonAttributes.enable( cell )
+    cell.myAttribute0 = MyAttribute()
+    cell.myAttribute1 = MyAttribute()
+    print( 'cell.myAttribute0 =', cell.myAttribute0 )
+    del cell.myAttribute0
+    PythonAttributes.disableAll()
+
+\endcode
+  *
+  *  Some interresting references concerning the Python/C API:
+  *  <ul> 
+  *    <li><a href="https://stackoverflow.com/questions/64599762/how-does-one-use-both-tp-getattro-tp-setattro-and-tp-getset-in-a-custom-pyt">Stackoverflow, how to implement setattro and getattro</a>
+  *    <li><a href="https://stackoverflow.com/questions/5061251/create-a-python-type-from-c-that-implements-a-dict">Stackoverflow, how to implement a dict</a>
+  *  </ul> 
+  */
+
+ //! \function PyAttributesHolder* PythonAttributes::get ( const DBo* );
+ //!           Retrieve the Python attributes holder of the DBo. If there is none,
+ //!           return NULL.
+ //!
+ //! \Remark   This is the Python property holder (PyAttributesHolder), not
+ //!           the property itself which is returned.
+
+ //! \function int32_t  PythonAttributes::delattr ( DBo* dbo, std::string attrName );
+ //!           Remove the attribute named \b attrName from \b dbo.
+
+ //! \function void  PythonAttributes::enable ( DBo* dbo );
+ //!           Create the PyHolderProperty on \b dbo. This operation is mandatory
+ //!           before one can add attributes on a DBo.
+
+ //! \function void  PythonAttributes::disable ( DBo* dbo );
+ //!           Remove the PyHolderProperty from \b dbo. The refcount of all the
+ //!           Python attributes will be decremented. So if they are only
+ //!           referenced in the PyHolderProperty, that means they will be
+ //!           deleted.
+
+ //! \function void  PythonAttributes::disableAll ();
+ //!           Remove the PyHolderProperty from all the DBo.
+
+ //! \function void  PythonAttributes::disableAll ( std::string attrName );
+ //!           Remove the attribute named \b attrName on all the DBo, if, after
+ //!           deletion, no attributes remains the PyHolderProperty is removed.
+   
+
+} // Isobar namespace.

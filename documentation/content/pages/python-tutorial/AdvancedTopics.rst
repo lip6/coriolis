@@ -32,3 +32,6 @@ go through all the components of a trans-hierarchical net.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For a starter, how to get all the leaf cells...
+   
+
+     

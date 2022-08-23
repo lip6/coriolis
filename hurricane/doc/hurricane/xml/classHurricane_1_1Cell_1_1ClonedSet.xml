@@ -1,0 +1,264 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Cell_1_1ClonedSet" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Cell::ClonedSet</compoundname>
+    <basecompoundref refid="classHurricane_1_1Collection" prot="public" virt="non-virtual">Hurricane::Collection&lt; Cell * &gt;</basecompoundref>
+    <innerclass refid="classHurricane_1_1Cell_1_1ClonedSet_1_1Locator" prot="public">Hurricane::Cell::ClonedSet::Locator</innerclass>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Cell_1_1ClonedSet_1a9580bf55272b5d7bda51b999a74ad0bb" prot="protected" static="no" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>const Cell* Hurricane::Cell::ClonedSet::_cell</definition>
+        <argsstring></argsstring>
+        <name>_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="173" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="173" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1ClonedSet_1a0eb9ec70bf2d1a3363c42d4749a3bc72" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Cell::ClonedSet::ClonedSet</definition>
+        <argsstring>(const Cell *cell)</argsstring>
+        <name>ClonedSet</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="167" column="47" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="537" bodyend="540"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1ClonedSet_1acedc779da16f29c7207a39e065e42d1f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Cell::ClonedSet::ClonedSet</definition>
+        <argsstring>(const ClonedSet &amp;)</argsstring>
+        <name>ClonedSet</name>
+        <param>
+          <type>const ClonedSet &amp;</type>
+          <defname>other</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="168" column="47" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="542" bodyend="545"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1ClonedSet_1a051d56a387cfe8bd4955b8b0428bd768" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Collection" kindref="compound">Hurricane::Collection</ref>&lt; <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> * &gt; *</type>
+        <definition>virtual Hurricane::Collection&lt;Cell*&gt;* Hurricane::Cell::ClonedSet::getClone</definition>
+        <argsstring>() const</argsstring>
+        <name>getClone</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="169" column="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1ClonedSet_1a2f3f2bef072ead6dcc2a569c27030793" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Locator" kindref="compound">Hurricane::Locator</ref>&lt; <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> * &gt; *</type>
+        <definition>virtual Hurricane::Locator&lt;Cell*&gt;* Hurricane::Cell::ClonedSet::getLocator</definition>
+        <argsstring>() const</argsstring>
+        <name>getLocator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="170" column="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1ClonedSet_1a34206b4370a2bde2882b8a961143b6bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Cell::ClonedSet::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="171" column="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Hurricane::Collection&lt; Cell * &gt;</label>
+        <link refid="classHurricane_1_1Collection"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::Cell::ClonedSet</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="9">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="2">
+        <label>Hurricane::Collection&lt; Cell * &gt;</label>
+        <link refid="classHurricane_1_1Collection"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::Cell::ClonedSet</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="3">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="150" column="5" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="150" bodyend="174"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1a9580bf55272b5d7bda51b999a74ad0bb" prot="protected" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>_cell</name></member>
+      <member refid="classHurricane_1_1Collection_1a16575a202d17448f989df8dffd242ebf" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1a34206b4370a2bde2882b8a961143b6bf" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Collection_1a932ce759bea5022ef302a679aa08ea90" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Collection_1ab68531402b19649f02a6c2b0021354ec" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>begin</name></member>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1a0eb9ec70bf2d1a3363c42d4749a3bc72" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>ClonedSet</name></member>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1acedc779da16f29c7207a39e065e42d1f" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>ClonedSet</name></member>
+      <member refid="classHurricane_1_1Collection_1af4549158ab8875f8f96690ca4dfb42a0" prot="protected" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>Collection</name></member>
+      <member refid="classHurricane_1_1Collection_1a3742402abd0603cd508bb218b0a1129d" prot="private" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>Collection</name></member>
+      <member refid="classHurricane_1_1Collection_1ae98948c714b5664e6fb3455a61c9ed3b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>empty</name></member>
+      <member refid="classHurricane_1_1Collection_1abb40704519d3ff36ed1698dc648704ad" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>end</name></member>
+      <member refid="classHurricane_1_1Collection_1aeb2e8875b60cb6aad62f2c9640f1fa23" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>fill</name></member>
+      <member refid="classHurricane_1_1Collection_1a087a86e240e7695c8a00e8975cf4385a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>fill</name></member>
+      <member refid="classHurricane_1_1Collection_1abaa7dac9adab0cb6025059cfd495e221" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>fill</name></member>
+      <member refid="classHurricane_1_1Collection_1a24420b64124ffee31c1cc296b33f015c" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>fill</name></member>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1a051d56a387cfe8bd4955b8b0428bd768" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1Collection_1a846a042646e02a0f77d2ce0f6190288a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getFirst</name></member>
+      <member refid="classHurricane_1_1Cell_1_1ClonedSet_1a2f3f2bef072ead6dcc2a569c27030793" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getLocator</name></member>
+      <member refid="classHurricane_1_1Collection_1a9076419d7ee2359d16a46e4e6366a832" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getNotSubSet</name></member>
+      <member refid="classHurricane_1_1Collection_1a1292aabe88c9aadfdfe21dabddb62c19" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getSize</name></member>
+      <member refid="classHurricane_1_1Collection_1aa32ea7249d57ee05e3c71dcde8106832" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getSubSet</name></member>
+      <member refid="classHurricane_1_1Collection_1a91d986e21395d4021d927e06f204ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getSubSet</name></member>
+      <member refid="classHurricane_1_1Collection_1a673afd14782da82ad03a68366ae1f09b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>getSubSet</name></member>
+      <member refid="classHurricane_1_1Collection_1a83b09bcd4c26dd4f3977c59c547da428" prot="public" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>isEmpty</name></member>
+      <member refid="classHurricane_1_1Collection_1acf3eb413942b1edeb73550ce13c661fa" prot="private" virt="non-virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Collection_1aafcf8e05658e245b2a762baa7a59f281" prot="public" virt="virtual"><scope>Hurricane::Cell::ClonedSet</scope><name>~Collection</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

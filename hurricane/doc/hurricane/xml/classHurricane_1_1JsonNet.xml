@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1JsonNet" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::JsonNet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">Hurricane::JsonEntity</basecompoundref>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1JsonNet_1ae20299682366a068ad244bc5cb227ad1" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Hurricane::JsonNet::_autoMaterialize</definition>
+        <argsstring></argsstring>
+        <name>_autoMaterialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="354" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1JsonNet_1ac0356dc586943c13c8dffc0dedbc1dab" prot="protected" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net* Hurricane::JsonNet::_net</definition>
+        <argsstring></argsstring>
+        <name>_net</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="355" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1JsonNet_1a9d787cc7846c359587ce80a67c0361e0" prot="protected" static="no" mutable="no">
+        <type>HookLut</type>
+        <definition>HookLut Hurricane::JsonNet::_hooks</definition>
+        <argsstring></argsstring>
+        <name>_hooks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="356" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ae28a4c64a1762a4d633f796e48716d21" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool Hurricane::JsonNet::hookFromString</definition>
+        <argsstring>(std::string s, unsigned int &amp;id, std::string &amp;tname)</argsstring>
+        <name>hookFromString</name>
+        <param>
+          <type>std::string</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>unsigned int &amp;</type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>tname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="341" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ab9ced071e76fbce64eccbea5a5eea385" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::JsonNet::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="342" column="24"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ae67d5ca687e3f84a0d28785f7000c1d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::JsonNet::JsonNet</definition>
+        <argsstring>(unsigned long flags)</argsstring>
+        <name>JsonNet</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="343" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1aa0470e57bfbd561c694daa2c522bc1c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Hurricane::JsonNet::~JsonNet</definition>
+        <argsstring>()</argsstring>
+        <name>~JsonNet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="344" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1a4209e54e5e7be90de8196016ad2feb3d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::JsonNet::getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="345" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ad946ad77c8acb73b9fb0f7d88c1f6c51" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>JsonNet *</type>
+        <definition>virtual JsonNet* Hurricane::JsonNet::clone</definition>
+        <argsstring>(unsigned long) const</argsstring>
+        <name>clone</name>
+        <param>
+          <type>unsigned long</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="346" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1aebf3f3d5db82eed4bfac6f83f9d003fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::JsonNet::toData</definition>
+        <argsstring>(JsonStack &amp;)</argsstring>
+        <name>toData</name>
+        <param>
+          <type><ref refid="classHurricane_1_1JsonStack" kindref="compound">JsonStack</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="347" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1a09bedf4b430b4dbe2dfa8fabf40987a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::JsonNet::addHookLink</definition>
+        <argsstring>(Hook *, unsigned int jsonId, const std::string &amp;jsonNext)</argsstring>
+        <name>addHookLink</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>jsonId</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>jsonNext</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="348" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1a31677fba298bc07bf121781a39ff9983" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>Hook* Hurricane::JsonNet::getHook</definition>
+        <argsstring>(unsigned int jsonId, const std::string &amp;tname) const</argsstring>
+        <name>getHook</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>jsonId</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="349" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ab40fe306c7860091bf7e21a946bd64d5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::JsonNet::checkRings</definition>
+        <argsstring>() const</argsstring>
+        <name>checkRings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="350" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1ae7477a9383cdc9b8371762d7c9e948a5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::JsonNet::buildRings</definition>
+        <argsstring>() const</argsstring>
+        <name>buildRings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="351" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonNet_1a5163ceaffc584c3fe7ffaf53140223e5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::JsonNet::clearHookLinks</definition>
+        <argsstring>()</argsstring>
+        <name>clearHookLinks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="352" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="360" bodyend="360"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="6">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::JsonNet</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="14">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="7">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="9">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="339" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="339" bodyend="357"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1JsonObject_1aa0024b924886b852072a8dd5cd77c624" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_attributes</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ae20299682366a068ad244bc5cb227ad1" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_autoMaterialize</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a9a3f377904a1402c9b189fa0da8e09ef" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_collections</name></member>
+      <member refid="classHurricane_1_1JsonObject_1abda35fef78180d410c85635fcec1f66b" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1JsonNet_1a9d787cc7846c359587ce80a67c0361e0" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_hooks</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a55a27092fcbd9c34a73990e7a603332b" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ac0356dc586943c13c8dffc0dedbc1dab" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_net</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6840b38ed36f7b99b7c0ca33d31938f7" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_object</name></member>
+      <member refid="classHurricane_1_1JsonObject_1abeea03a6622af5dd458debbd5c399d41" prot="protected" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>_stackeds</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a39ed04c118b19f1b6010b7f3336c360f" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>add</name></member>
+      <member refid="classHurricane_1_1JsonNet_1a09bedf4b430b4dbe2dfa8fabf40987a4" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>addHookLink</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ae7477a9383cdc9b8371762d7c9e948a5" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>buildRings</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6ac9230d36590f83fbe1561b6c1bb0e5" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>check</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ab40fe306c7860091bf7e21a946bd64d5" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>checkRings</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a5f11139263926dbd8fe87b9c4480bdae" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>clear</name></member>
+      <member refid="classHurricane_1_1JsonNet_1a5163ceaffc584c3fe7ffaf53140223e5" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>clearHookLinks</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ad946ad77c8acb73b9fb0f7d88c1f6c51" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>clone</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a380ea9ac8689e1e9cad892edf0024c08" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>copyAttrs</name></member>
+      <member refid="classHurricane_1_1JsonObject_1af599fb8e2f3aca9c00dc628927367cb8" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>get</name></member>
+      <member refid="classHurricane_1_1JsonNet_1a31677fba298bc07bf121781a39ff9983" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>getHook</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa4d6d0502f0f25e614ef50ac3dd76263" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1ab1a1aaaa583d5c8f7adbc9c9d0eeeebf" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>getObject</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a34c4e38611238021df8cc69fc32f5e48" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>getStackName</name></member>
+      <member refid="classHurricane_1_1JsonNet_1a4209e54e5e7be90de8196016ad2feb3d" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>getTypeName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1ac0b8816eab2cbcabf18d5421a59aa780" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>has</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ae28a4c64a1762a4d633f796e48716d21" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>hookFromString</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ab9ced071e76fbce64eccbea5a5eea385" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>initialize</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a4bb80844dcd175ad16cf92ee29064850" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>isBound</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a8f0949b75f5900e4ef87196e949cfa6b" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>isDummy</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a267c55a1989a9907e25632d820681779" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>issetFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a7a3fe903ceb00a3ebff66d1696edf682" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>jget</name></member>
+      <member refid="classHurricane_1_1JsonDBo_1a66534a5b35421a4dcb2a08000616e3ed" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>JsonDBo</name></member>
+      <member refid="classHurricane_1_1JsonEntity_1a3039120c68c1f7b83d31f8033db6b25d" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>JsonEntity</name></member>
+      <member refid="classHurricane_1_1JsonNet_1ae67d5ca687e3f84a0d28785f7000c1d6" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>JsonNet</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a57d9c022204b30d4b253c2588f2c1215" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>JsonObject</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a3819d0c96ee99277e4cc8d349dc4155c" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>presetId</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa5e7db69e2c7f5e5c4482357dae73082" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>print</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a6435e5a8655a6b42b61d55e7fd673c65" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a8346b1c958574275fe17f9c4cb40ee8b" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>resetFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a5216e5f5d74f8dbf8665eef8a78b2fe1" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>setFlags</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aeda98a478720cf29e532e2a11f6f54c5" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1JsonObject_1aa8e23d2445b90cced19a97d50372314c" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>setObject</name></member>
+      <member refid="classHurricane_1_1JsonNet_1aebf3f3d5db82eed4bfac6f83f9d003fb" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>toData</name></member>
+      <member refid="classHurricane_1_1JsonEntity_1a204c3db7e5b2accdab68485efa6a8e0a" prot="public" virt="non-virtual"><scope>Hurricane::JsonNet</scope><name>update</name></member>
+      <member refid="classHurricane_1_1JsonNet_1aa0470e57bfbd561c694daa2c522bc1c0" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>~JsonNet</name></member>
+      <member refid="classHurricane_1_1JsonObject_1a05fded364c9bc8011097245e9186a106" prot="public" virt="virtual"><scope>Hurricane::JsonNet</scope><name>~JsonObject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

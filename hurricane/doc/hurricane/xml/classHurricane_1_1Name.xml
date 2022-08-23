@@ -1,0 +1,432 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Name" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Name</compoundname>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Name_1af8aff8c8831512e619dac15f4d84193d" prot="private" static="yes" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>const Name Hurricane::Name::_emptyName</definition>
+        <argsstring></argsstring>
+        <name>_emptyName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="38" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Name_1abb0296fdb8ace284187b795560d7763d" prot="private" static="no" mutable="no">
+        <type>SharedName *</type>
+        <definition>SharedName* Hurricane::Name::_sharedName</definition>
+        <argsstring></argsstring>
+        <name>_sharedName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="44" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Name_1ae96b90e365691d5db760952de6385bb8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>static const Name&amp; Hurricane::Name::emptyName</definition>
+        <argsstring>()</argsstring>
+        <name>emptyName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="39" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="39" bodyend="39"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Name_1a42636ecb0d4d7d03eb881420a244038b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Name::Name</definition>
+        <argsstring>()</argsstring>
+        <name>Name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default constructor (initialized with an empty string). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="49" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a754d54199d54c5e4568421c89f0682cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Name::Name</definition>
+        <argsstring>(const char *c)</argsstring>
+        <name>Name</name>
+        <param>
+          <type>const char *</type>
+          <declname>c</declname>
+          <defname>s</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Standard constructor, from a C like character string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="51" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a446df795ebe2e641710696bf775eb491" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Name::Name</definition>
+        <argsstring>(const string &amp;s)</argsstring>
+        <name>Name</name>
+        <param>
+          <type>const string &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Standard constructor, from a STL string. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="52" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a56ffee3e75dc343c7ec8b61102c1d3a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Name::Name</definition>
+        <argsstring>(const Name &amp;name)</argsstring>
+        <name>Name</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Copy constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="54" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a1ce605ce16980334f93d7cc278984842" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Name::~Name</definition>
+        <argsstring>()</argsstring>
+        <name>~Name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The destructor releases the shared string if it no longer referenced. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="59" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1adcd165de286782c011acc31727adb4a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>Name &amp; Hurricane::Name::operator=</definition>
+        <argsstring>(const Name &amp;name)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. Very fast because there is only an assignement of pointer to the shared string and an incrementation of its reference counter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="64" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a3b728f0b8aa027639ebd47c60addf738" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator==</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Equality operator. Very fast because it only tests the equality of pointers to the two shared strings (and not the equality of the two strings).</para>
+<para><simplesect kind="remark"><para>Don&apos;t loose on one side what you save on the other as shown in the following code : <programlisting><codeline><highlight class="normal">Cell*<sp/>cell<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>the<sp/>cell</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">for_each_net(net,<sp/>cellGetNets())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>if<sp/>(netGetName()<sp/>==<sp/>&quot;vdd&quot;)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>...<sp/>;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>end_for;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> Indeed, for each equality test, a name will be created from the string &quot;vdd&quot;. If the equality test is very fast, it is not the same for the name construction. So it is faster to write : <programlisting><codeline><highlight class="normal">Cell*<sp/>cell<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>the<sp/>cell</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">Name<sp/>vdd<sp/>=<sp/>&quot;vdd&quot;;</highlight></codeline>
+<codeline><highlight class="normal">for_each_net(net,<sp/>cellGetNets())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>if<sp/>(netGetName()<sp/>==<sp/>vdd)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>end_for;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> Or yet faster : <programlisting><codeline><highlight class="normal">Cell*<sp/>cell<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>the<sp/>cell</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">static<sp/>Name<sp/>VDD<sp/>=<sp/>&quot;vdd&quot;;</highlight></codeline>
+<codeline><highlight class="normal">for_each_net(net,<sp/>cellGetNets())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>if<sp/>(netGetName()<sp/>==<sp/>VDD)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>end_for;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="66" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1aff97f0bcf698ad76f6f3c9a4c4833cc3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator!=</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Difference operator. Very fast because it only tests the difference of pointers to the two shared strings (and not the difference of the two strings). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="67" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a9ce91a54cd340fb1e14baf56797f1577" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator&lt;</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No description. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="68" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a9704f9fe4c605a86de13b6a8d90feab2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator&lt;=</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No description. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="69" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a33bd981f4f6923a50c603cd06283032d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator&gt;</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>No description. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="70" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a241d0568f16c8ba60d4c5148be6a48b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::operator&gt;=</definition>
+        <argsstring>(const Name &amp;name) const</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Those operators need to process the two shared strings and are not as fast as the previous ones. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="71" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a2e6f3869321016de8f98f2b35f136ab4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>char</type>
+        <definition>char Hurricane::Name::operator[]</definition>
+        <argsstring>(unsigned index) const</argsstring>
+        <name>operator[]</name>
+        <param>
+          <type>unsigned</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indexation operator (for reading the character of rank index). Throws an exception if index is out of bounds. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="73" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a6c05cf200a0aeb95f98603fa0c9c9d4b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Name::isEmpty</definition>
+        <argsstring>() const</argsstring>
+        <name>isEmpty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the shared string is empty, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="78" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a5609ed3356324d5c8a2ebb2312c49359" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Hurricane::Name::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="79" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1aeaece1f4f98071dc69e0f782d3552d36" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Name::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="84" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a11ef9b75552b47fb10da3920f1c0b504" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Name::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="85" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1a2c7fe9752023dc998c96280bad3b2ec9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Name::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="86" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Name_1ae331d6540b05961bda1f284cb4a13e16" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>SharedName *</type>
+        <definition>SharedName* Hurricane::Name::_getSharedName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getSharedName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="87" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="87" bodyend="87"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Name_1secNameIntro">
+<title>Introduction</title>
+<para>Those objects provide an automatic management of shared name (character strings).</para>
+<para>The underlying representation is based on a string shared by the different names. Each shared string is automatically released when the last name referencing it disapears (managed by a reference count technic). </para>
+</sect1>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" line="35" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Name.h" bodystart="35" bodyend="89"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Name_1af8aff8c8831512e619dac15f4d84193d" prot="private" virt="non-virtual"><scope>Hurricane::Name</scope><name>_emptyName</name></member>
+      <member refid="classHurricane_1_1Name_1a2c7fe9752023dc998c96280bad3b2ec9" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Name_1ae331d6540b05961bda1f284cb4a13e16" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>_getSharedName</name></member>
+      <member refid="classHurricane_1_1Name_1a11ef9b75552b47fb10da3920f1c0b504" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Name_1aeaece1f4f98071dc69e0f782d3552d36" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Name_1abb0296fdb8ace284187b795560d7763d" prot="private" virt="non-virtual"><scope>Hurricane::Name</scope><name>_sharedName</name></member>
+      <member refid="classHurricane_1_1Name_1ae96b90e365691d5db760952de6385bb8" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>emptyName</name></member>
+      <member refid="classHurricane_1_1Name_1a6c05cf200a0aeb95f98603fa0c9c9d4b" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>isEmpty</name></member>
+      <member refid="classHurricane_1_1Name_1a42636ecb0d4d7d03eb881420a244038b" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>Name</name></member>
+      <member refid="classHurricane_1_1Name_1a754d54199d54c5e4568421c89f0682cb" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>Name</name></member>
+      <member refid="classHurricane_1_1Name_1a446df795ebe2e641710696bf775eb491" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>Name</name></member>
+      <member refid="classHurricane_1_1Name_1a56ffee3e75dc343c7ec8b61102c1d3a2" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>Name</name></member>
+      <member refid="classHurricane_1_1Name_1aff97f0bcf698ad76f6f3c9a4c4833cc3" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator!=</name></member>
+      <member refid="classHurricane_1_1Name_1a9ce91a54cd340fb1e14baf56797f1577" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator&lt;</name></member>
+      <member refid="classHurricane_1_1Name_1a9704f9fe4c605a86de13b6a8d90feab2" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator&lt;=</name></member>
+      <member refid="classHurricane_1_1Name_1adcd165de286782c011acc31727adb4a1" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Name_1a3b728f0b8aa027639ebd47c60addf738" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator==</name></member>
+      <member refid="classHurricane_1_1Name_1a33bd981f4f6923a50c603cd06283032d" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator&gt;</name></member>
+      <member refid="classHurricane_1_1Name_1a241d0568f16c8ba60d4c5148be6a48b3" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator&gt;=</name></member>
+      <member refid="classHurricane_1_1Name_1a2e6f3869321016de8f98f2b35f136ab4" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>operator[]</name></member>
+      <member refid="classHurricane_1_1Name_1a5609ed3356324d5c8a2ebb2312c49359" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>size</name></member>
+      <member refid="classHurricane_1_1Name_1a1ce605ce16980334f93d7cc278984842" prot="public" virt="non-virtual"><scope>Hurricane::Name</scope><name>~Name</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

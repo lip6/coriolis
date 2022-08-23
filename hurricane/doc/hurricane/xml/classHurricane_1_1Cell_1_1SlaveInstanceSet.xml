@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Cell_1_1SlaveInstanceSet" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Cell::SlaveInstanceSet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">IntrusiveSet&lt; Instance &gt;</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a198ec98c6fcb798d266fa1a3145338ce" prot="public" static="no">
+        <type>IntrusiveSet&lt; <ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> &gt;</type>
+        <definition>typedef IntrusiveSet&lt;Instance&gt; Hurricane::Cell::SlaveInstanceSet::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="257" column="38" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="257" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a8cfa66ace41914dae390a18d82b0cd56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Cell::SlaveInstanceSet::SlaveInstanceSet</definition>
+        <argsstring>()</argsstring>
+        <name>SlaveInstanceSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="259" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a575db997198e3f757f668bc35e1571a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned</type>
+        <definition>virtual unsigned Hurricane::Cell::SlaveInstanceSet::_getHashValue</definition>
+        <argsstring>(Instance *slaveInstance) const</argsstring>
+        <name>_getHashValue</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>slaveInstance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="261" column="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a4b0bea63f38710bcb7a27b532c6e5989" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+        <definition>virtual Instance* Hurricane::Cell::SlaveInstanceSet::_getNextElement</definition>
+        <argsstring>(Instance *slaveInstance) const</argsstring>
+        <name>_getNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>slaveInstance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="262" column="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1SlaveInstanceSet_1aabce0c8d3bca8767c75a8788fb6376b9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Cell::SlaveInstanceSet::_setNextElement</definition>
+        <argsstring>(Instance *slaveInstance, Instance *nextSlaveInstance) const</argsstring>
+        <name>_setNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>slaveInstance</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> *</type>
+          <declname>nextSlaveInstance</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="263" column="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="254" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="254" bodyend="265"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a575db997198e3f757f668bc35e1571a4" prot="public" virt="virtual"><scope>Hurricane::Cell::SlaveInstanceSet</scope><name>_getHashValue</name></member>
+      <member refid="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a4b0bea63f38710bcb7a27b532c6e5989" prot="public" virt="virtual"><scope>Hurricane::Cell::SlaveInstanceSet</scope><name>_getNextElement</name></member>
+      <member refid="classHurricane_1_1Cell_1_1SlaveInstanceSet_1aabce0c8d3bca8767c75a8788fb6376b9" prot="public" virt="virtual"><scope>Hurricane::Cell::SlaveInstanceSet</scope><name>_setNextElement</name></member>
+      <member refid="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a198ec98c6fcb798d266fa1a3145338ce" prot="public" virt="non-virtual"><scope>Hurricane::Cell::SlaveInstanceSet</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Cell_1_1SlaveInstanceSet_1a8cfa66ace41914dae390a18d82b0cd56" prot="public" virt="non-virtual"><scope>Hurricane::Cell::SlaveInstanceSet</scope><name>SlaveInstanceSet</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

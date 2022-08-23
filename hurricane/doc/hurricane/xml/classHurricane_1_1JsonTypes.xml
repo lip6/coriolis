@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1JsonTypes" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::JsonTypes</compoundname>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1JsonTypes_1aa160461b5fdf16c7c533d7547f5816f8" prot="private" static="yes" mutable="no">
+        <type>JsonTypes *</type>
+        <definition>JsonTypes* Hurricane::JsonTypes::_jsonTypes</definition>
+        <argsstring></argsstring>
+        <name>_jsonTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="241" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" bodystart="241" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1JsonTypes_1a0feb6e9401e26ca50e37dae51a19acf9" prot="private" static="no" mutable="no">
+        <type>std::set&lt; <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> * &gt;</type>
+        <definition>std::set&lt;JsonObject*&gt; Hurricane::JsonTypes::_jsonObjects</definition>
+        <argsstring></argsstring>
+        <name>_jsonObjects</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="242" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" bodystart="242" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1a512f06424c84f98908d161442bddd001" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::JsonTypes::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="231" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1aea905f37fc866f8a0d73444745616aa5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::JsonTypes::registerType</definition>
+        <argsstring>(JsonObject *)</argsstring>
+        <name>registerType</name>
+        <param>
+          <type><ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="232" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1ab9a30ee7ff5358a2c69d0c7423bdbb19" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> *</type>
+        <definition>static JsonObject* Hurricane::JsonTypes::find</definition>
+        <argsstring>(const std::string &amp;tname)</argsstring>
+        <name>find</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="233" column="26"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1ac95edf6d367f813c5efb5b47cd4d6729" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::JsonTypes::JsonTypes</definition>
+        <argsstring>()</argsstring>
+        <name>JsonTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="235" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1a0f004d58526b460f05578ce55b22398d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::JsonTypes::~JsonTypes</definition>
+        <argsstring>()</argsstring>
+        <name>~JsonTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="236" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1a22c7b116f34d39ef96c1f20d410cb838" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::JsonTypes::JsonTypes</definition>
+        <argsstring>(const JsonTypes &amp;)</argsstring>
+        <name>JsonTypes</name>
+        <param>
+          <type>const JsonTypes &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="237" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1a7e05d1bfdfc6bd7589b95456bba8a205" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::JsonTypes::_registerType</definition>
+        <argsstring>(JsonObject *)</argsstring>
+        <name>_registerType</name>
+        <param>
+          <type><ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="238" column="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1JsonTypes_1a9d44be0a08d19be927e7cad3cd8772d0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> *</type>
+        <definition>JsonObject* Hurricane::JsonTypes::_find</definition>
+        <argsstring>(const std::string &amp;tname)</argsstring>
+        <name>_find</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>tname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="239" column="26"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" line="229" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h" bodystart="229" bodyend="243"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1JsonTypes_1a9d44be0a08d19be927e7cad3cd8772d0" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>_find</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1a0feb6e9401e26ca50e37dae51a19acf9" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>_jsonObjects</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1aa160461b5fdf16c7c533d7547f5816f8" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>_jsonTypes</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1a7e05d1bfdfc6bd7589b95456bba8a205" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>_registerType</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1ab9a30ee7ff5358a2c69d0c7423bdbb19" prot="public" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>find</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1a512f06424c84f98908d161442bddd001" prot="public" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>initialize</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1ac95edf6d367f813c5efb5b47cd4d6729" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>JsonTypes</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1a22c7b116f34d39ef96c1f20d410cb838" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>JsonTypes</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1aea905f37fc866f8a0d73444745616aa5" prot="public" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>registerType</name></member>
+      <member refid="classHurricane_1_1JsonTypes_1a0f004d58526b460f05578ce55b22398d" prot="private" virt="non-virtual"><scope>Hurricane::JsonTypes</scope><name>~JsonTypes</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

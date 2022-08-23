@@ -1,25 +1,22 @@
-\hypertarget{classHurricane_1_1Instance_1_1PlacementStatus}{}\section{Hurricane\+:\+:Instance\+:\+:Placement\+Status Class Reference}
-\label{classHurricane_1_1Instance_1_1PlacementStatus}\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
+\hypertarget{classHurricane_1_1Instance_1_1PlacementStatus}{}\doxysection{Hurricane\+::Instance\+::Placement\+Status Class Reference}
+\label{classHurricane_1_1Instance_1_1PlacementStatus}\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries{API}})  
 
 
-\subsection*{Public Types}
+\doxysubsection*{Instance Collection}
 \begin{DoxyCompactItemize}
 \item 
 enum \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \{ \newline
-\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{U\+N\+P\+L\+A\+C\+ED}} =0, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{P\+L\+A\+C\+ED}} =1, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{F\+I\+X\+ED}} =2
+\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{UNPLACED}} =0
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{PLACED}} =1
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{FIXED}} =2
  \}
-\end{DoxyCompactItemize}
-\subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_a29d2678343f4b712a9bbbb8f5460ec11}{Placement\+Status}} (const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \&code=\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{U\+N\+P\+L\+A\+C\+ED}})
+\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_a29d2678343f4b712a9bbbb8f5460ec11}{Placement\+Status}} (const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \&code=\mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{UNPLACED}})
 \item 
 \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_a121a628ab6f7a86b99acacc0d874d97b}{Placement\+Status}} (const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Placement\+Status}} \&placementstatus)
 \item 
@@ -29,41 +26,41 @@ const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc08387
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} Placement Status ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_secInstancePStatus}{}\subsection{Instance Placement Status}\label{classHurricane_1_1Instance_1_1PlacementStatus_secInstancePStatus}
+\hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_secInstancePStatus}{}\doxysubsection{Instance Placement Status}\label{classHurricane_1_1Instance_1_1PlacementStatus_secInstancePStatus}
 An \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} can have three kind of placement status\+:
 \begin{DoxyItemize}
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{Instance\+::\+Placement\+Status\+::\+U\+N\+P\+L\+A\+C\+ED}} \+: the instance doesn\textquotesingle{}t have a meaningful position. It shouldn\textquotesingle{}t be materialized either. It\textquotesingle{}s position therfore shouldn\textquotesingle{}t be used.
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{Instance\+::\+Placement\+Status\+::\+P\+L\+A\+C\+ED}} \+: the instance has be placed manually or by an automated tool. It is movable.
-\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{Instance\+::\+Placement\+Status\+::\+F\+I\+X\+ED}} \+: the instance is placed and mustn\textquotesingle{}t be moved by automated tools. It can still be moved manually. 
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{Instance\+::\+Placement\+Status\+::\+UNPLACED}} \+: the instance doesn\textquotesingle{}t have a meaningful position. It shouldn\textquotesingle{}t be materialized either. It\textquotesingle{}s position therfore shouldn\textquotesingle{}t be used.
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}{Instance\+::\+Placement\+Status\+::\+PLACED}} \+: the instance has be placed manually or by an automated tool. It is movable.
+\item \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}{Instance\+::\+Placement\+Status\+::\+FIXED}} \+: the instance is placed and mustn\textquotesingle{}t be moved by automated tools. It can still be moved manually. 
 \end{DoxyItemize}
 
-\subsection{Member Enumeration Documentation}
+\doxysubsection{Member Enumeration Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}} 
-\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!Code@{Code}}
-\index{Code@{Code}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
-\subsubsection{\texorpdfstring{Code}{Code}}
+\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!Code@{Code}}
+\index{Code@{Code}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
+\doxysubsubsection{\texorpdfstring{Code}{Code}}
 {\footnotesize\ttfamily enum \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Hurricane\+::\+Instance\+::\+Placement\+Status\+::\+Code}}}
 
 Describe the various placement status an \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} can be in. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{U\+N\+P\+L\+A\+C\+ED@{U\+N\+P\+L\+A\+C\+ED}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!U\+N\+P\+L\+A\+C\+ED@{U\+N\+P\+L\+A\+C\+ED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}} 
-U\+N\+P\+L\+A\+C\+ED&\begin{DoxySeeAlso}{See also}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UNPLACED@{UNPLACED}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!UNPLACED@{UNPLACED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}} 
+UNPLACED&\begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Instance\+::\+Placement\+Status}}. 
 \end{DoxySeeAlso}
 \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{P\+L\+A\+C\+ED@{P\+L\+A\+C\+ED}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!P\+L\+A\+C\+ED@{P\+L\+A\+C\+ED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}} 
-P\+L\+A\+C\+ED&\begin{DoxySeeAlso}{See also}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PLACED@{PLACED}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!PLACED@{PLACED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457}} 
+PLACED&\begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Instance\+::\+Placement\+Status}}. 
 \end{DoxySeeAlso}
 \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{F\+I\+X\+ED@{F\+I\+X\+ED}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!F\+I\+X\+ED@{F\+I\+X\+ED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}} 
-F\+I\+X\+ED&\begin{DoxySeeAlso}{See also}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FIXED@{FIXED}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!FIXED@{FIXED}}}\mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}\label{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7}} 
+FIXED&\begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Instance\+::\+Placement\+Status}}. 
 \end{DoxySeeAlso}
 \\
@@ -72,32 +69,32 @@ F\+I\+X\+ED&\begin{DoxySeeAlso}{See also}
 \end{DoxyEnumFields}
 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_a29d2678343f4b712a9bbbb8f5460ec11}\label{classHurricane_1_1Instance_1_1PlacementStatus_a29d2678343f4b712a9bbbb8f5460ec11}} 
-\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!Placement\+Status@{Placement\+Status}}
-\index{Placement\+Status@{Placement\+Status}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
-\subsubsection{\texorpdfstring{Placement\+Status()}{PlacementStatus()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily Hurricane\+::\+Instance\+::\+Placement\+Status\+::\+Placement\+Status (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \&}]{code = {\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{U\+N\+P\+L\+A\+C\+ED}}} }\end{DoxyParamCaption})}
+\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!PlacementStatus@{PlacementStatus}}
+\index{PlacementStatus@{PlacementStatus}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
+\doxysubsubsection{\texorpdfstring{PlacementStatus()}{PlacementStatus()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Hurricane\+::\+Instance\+::\+Placement\+Status\+::\+Placement\+Status (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \&}]{code = {\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216}{UNPLACED}}} }\end{DoxyParamCaption})}
 
 Constructor. By default the status is unplaced. \mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_a121a628ab6f7a86b99acacc0d874d97b}\label{classHurricane_1_1Instance_1_1PlacementStatus_a121a628ab6f7a86b99acacc0d874d97b}} 
-\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!Placement\+Status@{Placement\+Status}}
-\index{Placement\+Status@{Placement\+Status}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
-\subsubsection{\texorpdfstring{Placement\+Status()}{PlacementStatus()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!PlacementStatus@{PlacementStatus}}
+\index{PlacementStatus@{PlacementStatus}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
+\doxysubsubsection{\texorpdfstring{PlacementStatus()}{PlacementStatus()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily Hurricane\+::\+Instance\+::\+Placement\+Status\+::\+Placement\+Status (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus}{Placement\+Status}} \&}]{placementstatus }\end{DoxyParamCaption})}
 
 Copy Constructor. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_a375d2547ed3e8a127e34b0ee3ca14ad6}\label{classHurricane_1_1Instance_1_1PlacementStatus_a375d2547ed3e8a127e34b0ee3ca14ad6}} 
-\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!operator const Code \&@{operator const Code \&}}
-\index{operator const Code \&@{operator const Code \&}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
-\subsubsection{\texorpdfstring{operator const Code \&()}{operator const Code \&()}}
+\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!operator const Code \&@{operator const Code \&}}
+\index{operator const Code \&@{operator const Code \&}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
+\doxysubsubsection{\texorpdfstring{operator const Code \&()}{operator const Code \&()}}
 {\footnotesize\ttfamily Hurricane\+::\+Instance\+::\+Placement\+Status\+::operator const \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Code}} \& (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 Type converter toward \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Instance\+::\+Placement\+Status\+::\+Code}} enum. \mbox{\Hypertarget{classHurricane_1_1Instance_1_1PlacementStatus_aa907067c594076ed8422bf6c949c8731}\label{classHurricane_1_1Instance_1_1PlacementStatus_aa907067c594076ed8422bf6c949c8731}} 
-\index{Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}!get\+Code@{get\+Code}}
-\index{get\+Code@{get\+Code}!Hurricane\+::\+Instance\+::\+Placement\+Status@{Hurricane\+::\+Instance\+::\+Placement\+Status}}
-\subsubsection{\texorpdfstring{get\+Code()}{getCode()}}
+\index{Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}!getCode@{getCode}}
+\index{getCode@{getCode}!Hurricane::Instance::PlacementStatus@{Hurricane::Instance::PlacementStatus}}
+\doxysubsubsection{\texorpdfstring{getCode()}{getCode()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance_1_1PlacementStatus_af76cc0838783b3eb3a515eb3c3e0f7bf}{Instance\+::\+Placement\+Status\+::\+Code}} \& Hurricane\+::\+Instance\+::\+Placement\+Status\+::get\+Code (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 \begin{DoxyReturn}{Returns}

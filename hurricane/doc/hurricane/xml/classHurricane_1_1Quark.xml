@@ -1,0 +1,342 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Quark" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Quark</compoundname>
+    <basecompoundref refid="classHurricane_1_1DBo" prot="public" virt="non-virtual">Hurricane::DBo</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Quark_1a21ab96c68d2896e9a9ff4ec9601c9931" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref></type>
+        <definition>typedef DBo Hurricane::Quark::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="41" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Quark_1afcfb08d057dc9b59f99f2e270ec002ba" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Occurrence" kindref="compound">Occurrence</ref></type>
+        <definition>Occurrence Hurricane::Quark::_occurrence</definition>
+        <argsstring></argsstring>
+        <name>_occurrence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="46" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Quark_1a63ea220650738c7381847b0e5a03c402" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Quark" kindref="compound">Quark</ref> *</type>
+        <definition>Quark* Hurricane::Quark::_nextOfSharedPathQuarkMap</definition>
+        <argsstring></argsstring>
+        <name>_nextOfSharedPathQuarkMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="47" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Quark_1ad846128699aaff85f25e74204cadebe3" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Quark::Quark</definition>
+        <argsstring>(const Occurrence &amp;occurrence)</argsstring>
+        <name>Quark</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Occurrence" kindref="compound">Occurrence</ref> &amp;</type>
+          <declname>occurrence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="52" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1aec91ef6904e15e4d5a59be9787d0053d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Quark::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1DBo_1a83031e41e8655303753b96e3a2d8dfcd">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="63" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1a2408ea5814de4c95ec7ddb087a38df3c" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Quark::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1DBo_1ade56902fa466b79aef9aa71a2ca8e3f8">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="65" column="29"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Quark_1a22ee192574dae1546ec17d6c549b2ca0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Occurrence" kindref="compound">Occurrence</ref> &amp;</type>
+        <definition>const Occurrence &amp; Hurricane::Quark::getOccurrence</definition>
+        <argsstring>() const</argsstring>
+        <name>getOccurrence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> an occurence of which this quark is a representative. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="57" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="57" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1a94e79e48dd3f373dce51fd4ecc6c6555" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Quark::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="67" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1aca5a00f2b3554964c567483d11b07fe8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Quark::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1DBo_1a2977898bfe26429c58047f31e99aeeee">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="68" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1ab99fd906e2d9b92fd11194739bfa4cd2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Quark::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1DBo_1a2b0b963ba17903f0ffd5de938da1c57b">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="69" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1a646391f6a07521d03006b93a75448b8f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Quark" kindref="compound">Quark</ref> *</type>
+        <definition>Quark* Hurricane::Quark::_getNextOfSharedPathQuarkMap</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfSharedPathQuarkMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="70" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Quark_1ae722fadf5b2f49a9f52db138e84692d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Quark::_setNextOfSharedPathQuarkMap</definition>
+        <argsstring>(Quark *quark)</argsstring>
+        <name>_setNextOfSharedPathQuarkMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Quark" kindref="compound">Quark</ref> *</type>
+          <declname>quark</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="72" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="72" bodyend="72"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Quark_1a0fef472dd429b21b8af99af171498d09" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Quark" kindref="compound">Quark</ref> *</type>
+        <definition>static Quark* Hurricane::Quark::_create</definition>
+        <argsstring>(const Occurrence &amp;occurrence)</argsstring>
+        <name>_create</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Occurrence" kindref="compound">Occurrence</ref> &amp;</type>
+          <declname>occurrence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="62" column="26"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Quark" kindref="compound">Quark</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Quark_1secQuarkIntro">
+<title>Introduction</title>
+<para>As explained in the Occurence class, occurences are very simple objects used to designate any entity of the virtually unfolded hierarchy. However, those occurences, which are built and deleted very easily, are very volatile objects to which we can&apos;t, of course, attach properties directly.</para>
+<para>But the usefullness of occurences lies in their ability to attach them properties.</para>
+<para>In order to do that, properties must be stored in a secure place, where they can be found when needed. That is the purpose of quarks : they are data base objects and then can own the properties of the occurences.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Quark_1secQuarkImportant">
+<title>Important</title>
+<para>A quark designates all occurences refering to the same entity of the virtually unfolded hierarchy.</para>
+<para>This means that a property put on an occurence can be recovered by an other occurence refering the same entity of the virtually unfolded hierarchy.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Quark_1secQuarkConstructionAndDestruction">
+<title>Construction and destruction</title>
+<para>Quarks being completely managed by the system, there is no constructor provided.</para>
+<para>They are themselves volatile because they need to exist only if there is at least a property attached to them (you must never store pointers to them !).</para>
+<para>An occurence may have, during its life, different quarks representing it.</para>
+<para>Nevertheless, it is possible to destroy a quark. This one will carry away with it the destruction of all its owned properties (like any other data base object). This is equivalent to destroying the properties associated to the occurences whom it is the unique representative. Conceptually, it is wiser to use the call : <bold>occurence.clearProperties()</bold> which does the same.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Quark_1secQuarkExample">
+<title>Example</title>
+<para>The following sample code shows how to print the set of owners of a shared property : <programlisting><codeline><highlight class="normal">Property*<sp/>property<sp/>=<sp/>...;<sp/>//<sp/>we<sp/>get<sp/>a<sp/>property</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(is_a&lt;SharedPropery*&gt;(property))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>forEach(DBo*,<sp/>idbo,<sp/>((SharedProperty*)property)getOwners())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(not<sp/>is_a&lt;Quark*&gt;(*idbo))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cerr<sp/>&lt;&lt;<sp/>*idbo<sp/>&lt;&lt;<sp/>endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>else</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cerr<sp/>&lt;&lt;<sp/>((Quark*)*idbo)-&gt;getOccurence()<sp/>&lt;&lt;<sp/>endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::Quark</label>
+        <link refid="classHurricane_1_1Quark"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>Hurricane::Occurrence</label>
+        <link refid="classHurricane_1_1Occurrence"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_entity</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Quark</label>
+        <link refid="classHurricane_1_1Quark"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_occurrence</edgelabel>
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfSharedPathQuarkMap</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" line="35" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Quark.h" bodystart="35" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Quark_1a0fef472dd429b21b8af99af171498d09" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_create</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Quark_1a646391f6a07521d03006b93a75448b8f" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_getNextOfSharedPathQuarkMap</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Quark_1ab99fd906e2d9b92fd11194739bfa4cd2" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Quark_1aca5a00f2b3554964c567483d11b07fe8" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Quark_1a94e79e48dd3f373dce51fd4ecc6c6555" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Quark_1a63ea220650738c7381847b0e5a03c402" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_nextOfSharedPathQuarkMap</name></member>
+      <member refid="classHurricane_1_1Quark_1afcfb08d057dc9b59f99f2e270ec002ba" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_occurrence</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Quark_1aec91ef6904e15e4d5a59be9787d0053d" prot="protected" virt="virtual"><scope>Hurricane::Quark</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Quark_1a2408ea5814de4c95ec7ddb087a38df3c" prot="protected" virt="virtual"><scope>Hurricane::Quark</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Quark_1ae722fadf5b2f49a9f52db138e84692d6" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>_setNextOfSharedPathQuarkMap</name></member>
+      <member refid="classHurricane_1_1DBo_1af25ab814f1d3f5b740e60e292fad0ea2" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Quark</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Quark</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Quark_1a22ee192574dae1546ec17d6c549b2ca0" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getOccurrence</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Quark_1a21ab96c68d2896e9a9ff4ec9601c9931" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Quark</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>put</name></member>
+      <member refid="classHurricane_1_1Quark_1ad846128699aaff85f25e74204cadebe3" prot="protected" virt="non-virtual"><scope>Hurricane::Quark</scope><name>Quark</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Quark</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Quark</scope><name>~DBo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

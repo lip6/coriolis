@@ -51,15 +51,12 @@ environment is provided by the |CRL| module.
 
    from Hurricane import *
    from CRL       import *
+   from helpers.overlay import UpdateSession
 
    af = AllianceFramework.get()
-   UpdateSession.open()
-
-   cell = af.createCell( 'my_inv' )
-
-   # Build then save the Cell.
-
-   UpdateSession.close()
+   with UpdateSession():
+       cell = af.createCell( 'my_inv' )
+       # Build then save the Cell.
 
 
 This is the simplest call to ``createCell()``, and in that case, the newly
@@ -89,6 +86,24 @@ two conversion functions are provided:
 In the weakly typed |Python| world, :cb:`lbd` is *float* while :cb:`unit`
 is *integer*.
 
+In order to reduce the number of characters one has to code, the :cb:`helpers`
+module provides three very short function to perform conversion *towards*
+DbU_ :
+
+.. code-block:: Python
+
+   def l ( value ):
+       """Convert a lambda into a DbU."""
+       return DbU.fromLambda( value )
+
+   def u ( value ):
+       """Convert a length in micrometer into a DbU."""
+       return DbU.fromPhysical( value, Hurricane.DbU.UnitPowerMicro )
+
+   def n ( value ):
+       """Convert a length in nanometer into a DbU."""
+       return DbU.fromPhysical( value, Hurricane.DbU.UnitPowerNano  )
+
 
 3.5 Setting up the Abutment Box
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,20 +114,17 @@ corner ``(x2,y2)``.
 
 .. code-block:: Python
 
-   b = Box( DbU.fromLambda( 0.0)    # x1
-          , DbU.fromLambda( 0.0)    # y1
-          , DbU.fromLambda(15.0)    # x2
-          , DbU.fromLambda(50.0) )  # y2
+   b = Box( l( 0.0)    # x1
+          , l( 0.0)    # y1
+          , l(15.0)    # x2
+          , l(50.0) )  # y2
    cell.setAbutmentBox( b )
 
 Or more simply:
 
 .. code-block:: Python
 
-   cell.setAbutmentBox( Box( DbU.fromLambda( 0.0)
-                           , DbU.fromLambda( 0.0)
-                           , DbU.fromLambda(15.0)
-                           , DbU.fromLambda(50.0) ) )
+   cell.setAbutmentBox( Box( l( 0.0), l( 0.0), l(15.0), l(50.0) ) ) 
 
 
 3.6 Adding Nets and Components
@@ -180,12 +192,12 @@ of ``METAL1``.
 
 .. code-block:: Python
 
-   segment = Vertical.create( i                         # The owner Net.
-                            , layer                     # The layer.
-			    , DbU.fromLambda(  5.0 )    # The X coordinate.
-			    , DbU.fromLambda(  2.0 )    # The width.
-			    , DbU.fromLambda( 10.0 )    # The Y source coordinate.
-			    , DbU.fromLambda( 40.0 ) )  # The Y target coordinate.
+   segment = Vertical.create( i            # The owner Net.
+                            , layer        # The layer.
+			    , l(  5.0 )    # The X coordinate.
+			    , l(  2.0 )    # The width.
+			    , l( 10.0 )    # The Y source coordinate.
+			    , l( 40.0 ) )  # The Y target coordinate.
 
 With this overload of the ``Vertical.create()`` function the segment is created at an
 absolute position. There is a second overload for creating a relatively placed
@@ -236,101 +248,99 @@ explanation of that part of the code, refer to `5. Make a script runnable throug
    #!/usr/bin/python
    
    import sys
-   from   Hurricane import *
-   from   CRL       import *
-   
-   
-   def toDbU ( l ): return DbU.fromLambda(l)
+   from   Hurricane import DataBase, NetExternalComponents, Net, \
+                           DbU, Point, Box, Horizontal, Vertical, Contact, RoutingPad, \
+                           Breakpoint
+   from   CRL       import AllianceFramework, Catalog
+   from   helpers   import l
+   from   helpers.overlay import UpdateSession
    
    
    def doBreak ( level, message ):
-       UpdateSession.close()
+       """Put a breakpoint into the script."""
        Breakpoint.stop( level, message )
-       UpdateSession.open()
    
    
    def buildInvertor ( editor ):
-       UpdateSession.open()
-   
-       cell = AllianceFramework.get().createCell( 'invertor' )
-       cell.setTerminal( True )
-   
-       cell.setAbutmentBox( Box( toDbU(0.0), toDbU(0.0), toDbU(15.0), toDbU(50.0) ) )
+       """Build step by step an invertor standard cell."""
+       with UpdateSession():
+           cell = AllianceFramework.get().createCell( 'invertor' )
+           cell.setTerminalNetlist( True )
+           cell.setAbutmentBox( Box( l(0.0), l(0.0), l(15.0), l(50.0) ) )
    
        if editor:
-         UpdateSession.close()
          editor.setCell( cell )
          editor.fit()
-         UpdateSession.open()
        
-       technology = DataBase.getDB().getTechnology()
-       metal1     = technology.getLayer( "METAL1"     ) 
-       poly       = technology.getLayer( "POLY"       )
-       ptrans     = technology.getLayer( "PTRANS"     )
-       ntrans     = technology.getLayer( "NTRANS"     )
-       pdif       = technology.getLayer( "PDIF"       )
-       ndif       = technology.getLayer( "NDIF"       )
-       contdifn   = technology.getLayer( "CONT_DIF_N" )
-       contdifp   = technology.getLayer( "CONT_DIF_P" )
-       nwell      = technology.getLayer( "NWELL"      )
-       contpoly   = technology.getLayer( "CONT_POLY"  )
-       ntie       = technology.getLayer( "NTIE"       )
-   
-       net = Net.create( cell, "nwell" )
-       Vertical.create( net, nwell, toDbU(7.5), toDbU(15.0), toDbU(27.0), toDbU(51.0) )
-       
-       vdd = Net.create( cell, "vdd" )
-       vdd.setExternal( True )
-       vdd.setGlobal  ( True )
-       h = Horizontal.create(vdd, metal1, toDbU(47.0), toDbU(6.0), toDbU(0.0), toDbU(15.0) )
-       NetExternalComponents.setExternal( h )
-       Contact.create ( vdd, contdifn, toDbU(10.0), toDbU(47.0), toDbU( 1.0), toDbU( 1.0) )
-       Contact.create ( vdd, contdifp, toDbU( 4.0), toDbU(45.0), toDbU( 1.0), toDbU( 1.0) )
-       Vertical.create( vdd, pdif    , toDbU( 3.5), toDbU( 4.0), toDbU(28.0), toDbU(46.0) )
-       Vertical.create( vdd, ntie    , toDbU(10.0), toDbU( 3.0), toDbU(43.0), toDbU(48.0) )
+       with UpdateSession():
+           technology = DataBase.getDB().getTechnology()
+           metal1     = technology.getLayer( "METAL1"     ) 
+           poly       = technology.getLayer( "POLY"       )
+           ptrans     = technology.getLayer( "PTRANS"     )
+           ntrans     = technology.getLayer( "NTRANS"     )
+           pdif       = technology.getLayer( "PDIF"       )
+           ndif       = technology.getLayer( "NDIF"       )
+           contdifn   = technology.getLayer( "CONT_DIF_N" )
+           contdifp   = technology.getLayer( "CONT_DIF_P" )
+           nwell      = technology.getLayer( "NWELL"      )
+           contpoly   = technology.getLayer( "CONT_POLY"  )
+           ntie       = technology.getLayer( "NTIE"       )
+           
+           net = Net.create( cell, "nwell" )
+           Vertical.create( net, nwell, l(7.5), l(15.0), l(27.0), l(51.0) )
+           
+           vdd = Net.create( cell, "vdd" )
+           vdd.setExternal( True )
+           vdd.setGlobal  ( True )
+           h = Horizontal.create(vdd, metal1, l(47.0), l(6.0), l(0.0), l(15.0) )
+           NetExternalComponents.setExternal( h )
+           Contact.create ( vdd, contdifn, l(10.0), l(47.0), l( 1.0), l( 1.0) )
+           Contact.create ( vdd, contdifp, l( 4.0), l(45.0), l( 1.0), l( 1.0) )
+           Vertical.create( vdd, pdif    , l( 3.5), l( 4.0), l(28.0), l(46.0) )
+           Vertical.create( vdd, ntie    , l(10.0), l( 3.0), l(43.0), l(48.0) )
        doBreak( 1, 'Done building vdd.' )
        
-       vss = Net.create( cell, "vss" )
-       vss.setExternal( True )
-       vss.setGlobal  ( True )
-       h = Horizontal.create(vss, metal1, toDbU(3.0), toDbU(6.0), toDbU(0.0), toDbU(15.0))
-       NetExternalComponents.setExternal( h )
-       Vertical.create( vss, ndif    , toDbU(3.5), toDbU(4.0), toDbU(4.0), toDbU(12.0) )
-       Contact.create ( vss, contdifn, toDbU(4.0), toDbU(5.0), toDbU(1.0), toDbU( 1.0) )
+       with UpdateSession():
+           vss = Net.create( cell, "vss" )
+           vss.setExternal( True )
+           vss.setGlobal  ( True )
+           h = Horizontal.create(vss, metal1, l(3.0), l(6.0), l(0.0), l(15.0))
+           NetExternalComponents.setExternal( h )
+           Vertical.create( vss, ndif    , l(3.5), l(4.0), l(4.0), l(12.0) )
+           Contact.create ( vss, contdifn, l(4.0), l(5.0), l(1.0), l( 1.0) )
        doBreak( 1, 'Done building vss.' )
        
-       i = Net.create( cell, "i" )
-       i.setExternal( True )
-       v = Vertical.create ( i, metal1, toDbU(5.0), toDbU(2.0), toDbU(10.0), toDbU(40.0) )
-       NetExternalComponents.setExternal( v )
-       Vertical.create  ( i, ptrans  , toDbU( 7.0), toDbU( 1.0), toDbU(26.0), toDbU(39.0) )
-       Vertical.create  ( i, ntrans  , toDbU( 7.0), toDbU( 1.0), toDbU( 6.0), toDbU(14.0) )
-       Vertical.create  ( i, poly    , toDbU( 7.0), toDbU( 1.0), toDbU(14.0), toDbU(26.0) )
-       Horizontal.create( i, poly    , toDbU(20.0), toDbU( 3.0), toDbU( 4.0), toDbU( 7.0) )
-       Contact.create   ( i, contpoly, toDbU( 5.0), toDbU(20.0), toDbU( 1.0), toDbU( 1.0) )
+       with UpdateSession():
+           i = Net.create( cell, "i" )
+           i.setExternal( True )
+           v = Vertical.create ( i, metal1, l(5.0), l(2.0), l(10.0), l(40.0) )
+           NetExternalComponents.setExternal( v )
+           Vertical.create  ( i, ptrans  , l( 7.0), l( 1.0), l(26.0), l(39.0) )
+           Vertical.create  ( i, ntrans  , l( 7.0), l( 1.0), l( 6.0), l(14.0) )
+           Vertical.create  ( i, poly    , l( 7.0), l( 1.0), l(14.0), l(26.0) )
+           Horizontal.create( i, poly    , l(20.0), l( 3.0), l( 4.0), l( 7.0) )
+           Contact.create   ( i, contpoly, l( 5.0), l(20.0), l( 1.0), l( 1.0) )
        doBreak( 1, 'Done building i.' )
        
-       nq = Net.create ( cell, "nq" )
-       nq.setExternal( True )
-       v = Vertical.create( nq, metal1, toDbU(10.0), toDbU(2.0), toDbU(10.0), toDbU(40.0) )
-       NetExternalComponents.setExternal( v )
-       Vertical.create( nq, pdif    , toDbU(10.0), toDbU( 3.0), toDbU(28.0), toDbU(37.0) )
-       Vertical.create( nq, ndif    , toDbU(10.0), toDbU( 3.0), toDbU( 8.0), toDbU(12.0) )
-       Contact.create ( nq, contdifp, toDbU(10.0), toDbU(35.0), toDbU( 1.0), toDbU( 1.0) )
-       Contact.create ( nq, contdifp, toDbU(10.0), toDbU(30.5), toDbU( 1.0), toDbU( 1.0) )
-       Contact.create ( nq, contdifn, toDbU(10.0), toDbU(10.0), toDbU( 1.0), toDbU( 1.0) )
+       with UpdateSession():
+           nq = Net.create ( cell, "nq" )
+           nq.setExternal( True )
+           v = Vertical.create( nq, metal1, l(10.0), l(2.0), l(10.0), l(40.0) )
+           NetExternalComponents.setExternal( v )
+           Vertical.create( nq, pdif    , l(10.0), l( 3.0), l(28.0), l(37.0) )
+           Vertical.create( nq, ndif    , l(10.0), l( 3.0), l( 8.0), l(12.0) )
+           Contact.create ( nq, contdifp, l(10.0), l(35.0), l( 1.0), l( 1.0) )
+           Contact.create ( nq, contdifp, l(10.0), l(30.5), l( 1.0), l( 1.0) )
+           Contact.create ( nq, contdifn, l(10.0), l(10.0), l( 1.0), l( 1.0) )
        doBreak( 1, 'Done building q.' )
    
-       UpdateSession.close()
        AllianceFramework.get().saveCell( cell, Catalog.State.Views )
-
-       return
    
    
    def scriptMain ( **kw ):
+       """The Mandatory function to be run by Coriolis interactively."""
        editor = None
-       if kw.has_key('editor') and kw['editor']:
-         editor = kw['editor']
-   
+       if 'editor' in kw and kw['editor']:
+           editor = kw['editor']
        buildInvertor( editor )
        return True 

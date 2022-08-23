@@ -1,0 +1,380 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Cell_1_1UniquifyRelation" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Cell::UniquifyRelation</compoundname>
+    <basecompoundref refid="classHurricane_1_1Relation" prot="public" virt="non-virtual">Hurricane::Relation</basecompoundref>
+    <innerclass refid="classHurricane_1_1Cell_1_1UniquifyRelation_1_1JsonProperty" prot="public">Hurricane::Cell::UniquifyRelation::JsonProperty</innerclass>
+    <innerclass refid="classHurricane_1_1Cell_1_1UniquifyRelation_1_1JsonPropertyRef" prot="public">Hurricane::Cell::UniquifyRelation::JsonPropertyRef</innerclass>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Cell_1_1UniquifyRelation_1aae05a967454671978c549f6e7774ed26" prot="private" static="yes" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>const Name Hurricane::Cell::UniquifyRelation::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="123" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Cell_1_1UniquifyRelation_1ace3025d2e122e5fc6e64483a35c98822" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int Hurricane::Cell::UniquifyRelation::_duplicates</definition>
+        <argsstring></argsstring>
+        <name>_duplicates</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="124" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1affd477ed27b9381eaee6a9c9777a866f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UniquifyRelation *</type>
+        <definition>static UniquifyRelation* Hurricane::Cell::UniquifyRelation::create</definition>
+        <argsstring>(Cell *)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="110" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a17fb9b30ca6d56f8804474d5b6197c97" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>UniquifyRelation *</type>
+        <definition>static UniquifyRelation* Hurricane::Cell::UniquifyRelation::get</definition>
+        <argsstring>(const Cell *)</argsstring>
+        <name>get</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="111" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a8711c0556b487b84813416164c0376bc" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>static Name Hurricane::Cell::UniquifyRelation::staticGetName</definition>
+        <argsstring>()</argsstring>
+        <name>staticGetName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="113" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a8ccf7c1c5196d999070314b34367cb30" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>static std::string Hurricane::Cell::UniquifyRelation::getTrunkName</definition>
+        <argsstring>(Name name)</argsstring>
+        <name>getTrunkName</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="115" column="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a3e16731c52000147697d69e5e2589a9c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>virtual Name Hurricane::Cell::UniquifyRelation::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="112" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a9ba7ced9f01b86be9b0474a076fbc2a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::Cell::UniquifyRelation::getUniqueName</definition>
+        <argsstring>()</argsstring>
+        <name>getUniqueName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="114" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a6e713b3346c4d958fc581fe839da8bfa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Cell::UniquifyRelation::hasJson</definition>
+        <argsstring>() const</argsstring>
+        <name>hasJson</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="116" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1ab90e86aa2455ce475cb8435358668194" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Cell::UniquifyRelation::toJson</definition>
+        <argsstring>(JsonWriter *, const DBo *) const</argsstring>
+        <name>toJson</name>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="117" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a275410a6dd173b6373085cdc3d59a7f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Cell::UniquifyRelation::_setOwner</definition>
+        <argsstring>(Cell *)</argsstring>
+        <name>_setOwner</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <defname>owner</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="118" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="548" bodyend="548"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1ada5d57704ab32b8cc63386dd9518755a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Cell::UniquifyRelation::_setDuplicates</definition>
+        <argsstring>(unsigned int)</argsstring>
+        <name>_setDuplicates</name>
+        <param>
+          <type>unsigned int</type>
+          <defname>duplicates</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="119" column="36" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="549" bodyend="549"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1ae2766583dbc0043c69f7cac0c8a850c9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Cell::UniquifyRelation::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="120" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1a56c7571dfb40c14ce2d99ea992a37443" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Cell::UniquifyRelation::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="121" column="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1ae05a5893d55fbc223abefa70b46b8957" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Cell::UniquifyRelation::UniquifyRelation</definition>
+        <argsstring>(Cell *)</argsstring>
+        <name>UniquifyRelation</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="126" column="36"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1UniquifyRelation_1aadb08e1ab97b0426fa4f410ec6fb559d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Cell::UniquifyRelation::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="128" column="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Hurricane::Relation</label>
+        <link refid="classHurricane_1_1Relation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Property</label>
+        <link refid="classHurricane_1_1Property"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::Cell::UniquifyRelation</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::SharedProperty</label>
+        <link refid="classHurricane_1_1SharedProperty"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Relation</label>
+        <link refid="classHurricane_1_1Relation"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_masterOwner</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Property</label>
+        <link refid="classHurricane_1_1Property"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_baseName</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Cell::UniquifyRelation</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+      <node id="3">
+        <label>Hurricane::SharedProperty</label>
+        <link refid="classHurricane_1_1SharedProperty"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="108" column="5" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="108" bodyend="148"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Property_1ab549e402dae44022251611183a7ec61c" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_baseName</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1ace3025d2e122e5fc6e64483a35c98822" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_duplicates</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a0b019663b549b319ff4f129a89c0a95f" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_erase</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a953f4d4fa79abdbb5372cf4777601f2a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_getOwnerSet</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a56c7571dfb40c14ce2d99ea992a37443" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Relation_1a61e970cd97e581e4bf4fc31dad5bd02c" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1ae2766583dbc0043c69f7cac0c8a850c9" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Relation_1af1999d8d67d297ee3722813105621607" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_masterOwner</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1aae05a967454671978c549f6e7774ed26" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a02c04fb73af1801624f10d527cd1b4c1" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_orphaneds</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1ac576afc8f7ab4976d7b520ef9540941d" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_ownerSet</name></member>
+      <member refid="classHurricane_1_1Relation_1a0ac255bf3df68da8c12d0b6710f4c0f6" prot="protected" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1aadb08e1ab97b0426fa4f410ec6fb559d" prot="protected" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1ada5d57704ab32b8cc63386dd9518755a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_setDuplicates</name></member>
+      <member refid="classHurricane_1_1Relation_1a023179baf7ca7ec64ef681a53e753529" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_setMasterOwner</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a275410a6dd173b6373085cdc3d59a7f0" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>_setOwner</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1acd27338e66b989af175479ade2238f5d" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>addOrphaned</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a76dafb384d1dd4e813b723feeaa096fd" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>clearOrphaneds</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a8107255cdd5333336c040e9f58e6559d" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>countOrphaned</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1affd477ed27b9381eaee6a9c9777a866f" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Property_1ae56ebb559f7b874b3ef602beaa051e14" prot="public" virt="non-virtual" ambiguityscope="Hurricane::Relation::"><scope>Hurricane::Cell::UniquifyRelation</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Property_1a241c84b30078b7adaf4be37892a5de5b" prot="public" virt="non-virtual" ambiguityscope="Hurricane::Relation::"><scope>Hurricane::Cell::UniquifyRelation</scope><name>create</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a26e873dc187cc912537c6f165550de77" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>DBoSet</name></member>
+      <member refid="classHurricane_1_1Property_1ab60362699e6c6ea35ace45dbd1075a2f" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a17fb9b30ca6d56f8804474d5b6197c97" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>get</name></member>
+      <member refid="classHurricane_1_1Property_1afb79a0d2b3ec8fa4f842361418d99a9c" prot="public" virt="non-virtual" ambiguityscope="Hurricane::Relation::"><scope>Hurricane::Cell::UniquifyRelation</scope><name>get</name></member>
+      <member refid="classHurricane_1_1Relation_1a2e8e4554e78b9200c0d90dba60865f9a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getMasterOwner</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a3e16731c52000147697d69e5e2589a9c" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a8ea5ae1627ba12756ee23aee1ff6299b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getOrphaned</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1aedeb9b6f5b18a6be8fade8e894ad8124" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getOrphaneds</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a04ddc41aba500284b81b85e221e83411" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getOwners</name></member>
+      <member refid="classHurricane_1_1Relation_1a43bb78fafe25bff7657849b8b52266a7" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getSlaveOwners</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a8ccf7c1c5196d999070314b34367cb30" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getTrunkName</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a9ba7ced9f01b86be9b0474a076fbc2a2" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>getUniqueName</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a6e713b3346c4d958fc581fe839da8bfa" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>hasJson</name></member>
+      <member refid="classHurricane_1_1Relation_1a90dcf8bbe4aa85f0ba1d8f9eaa2d88df" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1ad364fd26ebca2a68fae69d10f18ad3fe" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>onCapturedBy</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1ad907e0ce28172ee74005ff0e8f4e2f0e" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>onNotOwned</name></member>
+      <member refid="classHurricane_1_1Relation_1ac23fde2bd806ddf2b94ba82269371075" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>onReleasedBy</name></member>
+      <member refid="classHurricane_1_1Property_1af32f262939908a2899c925d58d437876" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a5958f3b9a95792211be33857c140b053" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>OrphanedMap</name></member>
+      <member refid="classHurricane_1_1Property_1a3c5b2435a4cd89c4c0dd0c141d3e2902" prot="protected" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>Property</name></member>
+      <member refid="classHurricane_1_1Property_1aef9b4d4754f0dc33f8537144432aef39" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>Property</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1ae41b2545fe62dcc40cccc9c15335eff2" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>refOrphaned</name></member>
+      <member refid="classHurricane_1_1Relation_1ac1568de141ed1f9633a4c09ed5c87277" prot="protected" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>Relation</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1afc1d1c454ac9f63496b91763dbb98d64" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>removeOrphaned</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1a536a063589173158beb06ebc05b824c2" prot="protected" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>SharedProperty</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1a8711c0556b487b84813416164c0376bc" prot="public" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>staticGetName</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1ab90e86aa2455ce475cb8435358668194" prot="public" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Cell_1_1UniquifyRelation_1ae05a5893d55fbc223abefa70b46b8957" prot="private" virt="non-virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>UniquifyRelation</name></member>
+      <member refid="classHurricane_1_1Property_1a5870e80c21feda0d8ca46a38c902bb20" prot="protected" virt="virtual"><scope>Hurricane::Cell::UniquifyRelation</scope><name>~Property</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

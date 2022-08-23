@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Contents About Alliance Circuit Designed with Alliance Useful Links Installing Alliance from a Distribution Fedora Ubuntu LTS 18.04 Rebuild From Source (Git) Debian 9 &amp; Ubuntu 18 RHEL, CentOS, Fedora ...">
+        <meta name="description" content="Contents About Alliance Circuit Designed with Alliance Useful Links Installing Alliance from a Distribution Fedora Ubuntu LTS 18.04 Rebuild From Source (Git) Debian 9 &amp; Ubuntu 18 RHEL, CentOS,...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -115,7 +115,7 @@
 <!-- URLs that changes between the various backends. -->
 <!-- For HTML backend -->
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#about-alliance" id="id2">About Alliance</a><ul>
 <li><a class="reference internal" href="#circuit-designed-with-alliance" id="id3">Circuit Designed with Alliance</a></li>
@@ -186,7 +186,7 @@ from <a class="reference external" href="http://www.udb.edu.sv/">Don Bosco Unive
 <p>That's all folks. <span class="sc">Alliance</span> is ready to use.</p>
 </li>
 </ol>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>With the packaged version of <span class="sc">Alliance</span>, files and directories are not at
 the same places as in the default install. They have been made compliant
@@ -297,25 +297,25 @@ your system. The main ones are listed below.</p>
 </tr>
 </tbody>
 </table>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Before running the <span class="cb">autotools</span>, you have to run the <span class="cb">autostuff</span>
 script in <tt class="docutils literal">./alliance/src</tt> which generate the top-level automake files.</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">If you happen to have forgotten one of the dependency and have to
 install it after running <cite>configure</cite>, please remove the <em>whole</em>
 build directory tree and re-run <cite>configure</cite>. The same rule applies
 if you switch from static libraries to dynamic ones.</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Do not build in parallel</strong>, always uses <tt class="docutils literal"><span class="pre">-j1</span></tt>, the build process
 fail in strange ways when run in parallel (this is a known problem
 due to the way Alliance was developped).</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Bison/Flex</strong> versions. Alliance is very sensitive to the versions
 of thoses programs. The reference OSes for the build are <span class="sc">Scientific Linux</span>
@@ -342,7 +342,7 @@ ego@home:src&gt; git clone https://gitlab.lip6.fr/jpc/alliance.git
 </li>
 <li><p class="first">Compilation &amp; installation. For that step, you can use the following shell
 script.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>The commonRoot variable</strong>, the <tt class="docutils literal">/Linux.x86_64/</tt> component of
 the path is dependent on the <span class="sc">os</span> you are using. It is determined

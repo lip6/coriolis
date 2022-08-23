@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="JsonObject_8dox" kind="file" language="C++">
+    <compoundname>JsonObject.dox</compoundname>
+    <innernamespace refid="namespaceHurricane">Hurricane</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceHurricane" kindref="compound">Hurricane</ref><sp/>{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"></codeline>
+<codeline lineno="15"></codeline>
+<codeline lineno="34"></codeline>
+<codeline lineno="37"></codeline>
+<codeline lineno="41"></codeline>
+<codeline lineno="58"></codeline>
+<codeline lineno="62"></codeline>
+<codeline lineno="66"></codeline>
+<codeline lineno="70"></codeline>
+<codeline lineno="81"></codeline>
+<codeline lineno="85"></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/></highlight></codeline>
+<codeline lineno="103"></codeline>
+<codeline lineno="115"></codeline>
+<codeline lineno="125"></codeline>
+<codeline lineno="134"></codeline>
+<codeline lineno="138"></codeline>
+<codeline lineno="146"></codeline>
+<codeline lineno="151"></codeline>
+<codeline lineno="159"></codeline>
+<codeline lineno="165"></codeline>
+<codeline lineno="169"></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/></highlight></codeline>
+<codeline lineno="188"></codeline>
+<codeline lineno="199"></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"></codeline>
+<codeline lineno="240"></codeline>
+<codeline lineno="245"></codeline>
+<codeline lineno="256"></codeline>
+<codeline lineno="266"></codeline>
+<codeline lineno="279"></codeline>
+<codeline lineno="287"></codeline>
+<codeline lineno="290"></codeline>
+<codeline lineno="293"></codeline>
+<codeline lineno="305"></codeline>
+<codeline lineno="314"></codeline>
+<codeline lineno="318"></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/>}</highlight></codeline>
+    </programlisting>
+    <location file="JsonObject.dox"/>
+  </compounddef>
+</doxygen>

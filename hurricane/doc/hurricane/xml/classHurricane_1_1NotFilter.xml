@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1NotFilter" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::NotFilter</compoundname>
+    <basecompoundref refid="classHurricane_1_1Filter" prot="public" virt="non-virtual">Hurricane::Filter&lt; Type &gt;</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>class Type</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1NotFilter_1a6f677ecc29fa47db7e955fe49a14f683" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref>&lt; Type &gt;</type>
+        <definition>typedef Filter&lt;Type&gt; Hurricane::NotFilter&lt; Type &gt;::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="220" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1NotFilter_1a0426ceb9b207262016527b7924707cf0" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1GenericFilter" kindref="compound">GenericFilter</ref>&lt; Type &gt;</type>
+        <definition>GenericFilter&lt;Type&gt; Hurricane::NotFilter&lt; Type &gt;::_genericFilter</definition>
+        <argsstring></argsstring>
+        <name>_genericFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="225" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a330438186709b3f357fb07e78a4543cc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::NotFilter&lt; Type &gt;::NotFilter</definition>
+        <argsstring>()</argsstring>
+        <name>NotFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="230" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="230" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a8c75f2e192929c1b559f4ca876e47126" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::NotFilter&lt; Type &gt;::NotFilter</definition>
+        <argsstring>(const Filter&lt; Type &gt; &amp;filter)</argsstring>
+        <name>NotFilter</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref>&lt; Type &gt; &amp;</type>
+          <declname>filter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructor from a raw <ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref>.</para>
+<para><simplesect kind="remark"><para>This constructor build a <emphasis>copy</emphasis> of the raw filter. So the originating filter can be safely deleted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="237" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="237" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a232102dc584111a704e66b2ac793af86" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::NotFilter&lt; Type &gt;::NotFilter</definition>
+        <argsstring>(const NotFilter&lt; Type &gt; &amp;notFilter)</argsstring>
+        <name>NotFilter</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1NotFilter" kindref="compound">NotFilter</ref>&lt; Type &gt; &amp;</type>
+          <declname>notFilter</declname>
+          <defname>filter</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Copy constructor.</para>
+<para><simplesect kind="remark"><para>This constructor build a <emphasis>copy</emphasis> of the raw filter. So the originating filter can be safely deleted. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="244" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="244" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a1c171124b98dcf53c0f836e09bade04f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1NotFilter" kindref="compound">NotFilter</ref> &amp;</type>
+        <definition>NotFilter&amp; Hurricane::NotFilter&lt; Type &gt;::operator=</definition>
+        <argsstring>(const NotFilter&lt; Type &gt; &amp;notFilter)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1NotFilter" kindref="compound">NotFilter</ref>&lt; Type &gt; &amp;</type>
+          <declname>notFilter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="254" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="254" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a6163d354b4ced011321bd458d7b2ddb1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref>&lt; Type &gt; *</type>
+        <definition>virtual Filter&lt;Type&gt;* Hurricane::NotFilter&lt; Type &gt;::getClone</definition>
+        <argsstring>() const</argsstring>
+        <name>getClone</name>
+        <reimplements refid="classHurricane_1_1Filter_1a596cad421801115efbc5c541f8d29e0b">getClone</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="264" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="264" bodyend="268"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1abf67be5cd8232522bd825cc468ef4a4d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::NotFilter&lt; Type &gt;::accept</definition>
+        <argsstring>(Type type) const</argsstring>
+        <name>accept</name>
+        <reimplements refid="classHurricane_1_1Filter_1aeaa771f17950fe05273c471ccfffb7f7">accept</reimplements>
+        <param>
+          <type>Type</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="273" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="273" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1ad3eaf6d7d5185a9dd4c8e8af236d167d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::NotFilter&lt; Type &gt;::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1Filter_1ad239207daa6fbb7283830819c48b92ed">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="282" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="282" bodyend="286"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1NotFilter_1a8535791b793b0d0c4c7d3231fd0420a7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::NotFilter&lt; Type &gt;::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Filter_1a1b7b0dcff35dafcc1cee0f8165e3360a">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" line="288" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="288" bodyend="292"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref> negation. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This filter invert the matching criterion of any other filter.</para>
+<para><simplesect kind="remark"><para>This is a raw <ref refid="classHurricane_1_1Filter" kindref="compound">Filter</ref>. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::NotFilter&lt; Type &gt;</label>
+        <link refid="classHurricane_1_1NotFilter"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Filter&lt; Type &gt;</label>
+        <link refid="classHurricane_1_1Filter"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::NotFilter&lt; Type &gt;</label>
+        <link refid="classHurricane_1_1NotFilter"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Filter&lt; Type &gt;</label>
+        <link refid="classHurricane_1_1Filter"/>
+      </node>
+    </collaborationgraph>
+    <location file="Filter.dox" line="216" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Filter.h" bodystart="214" bodyend="294"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1NotFilter_1a0426ceb9b207262016527b7924707cf0" prot="private" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>_genericFilter</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a8535791b793b0d0c4c7d3231fd0420a7" prot="public" virt="virtual"><scope>Hurricane::NotFilter</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1NotFilter_1ad3eaf6d7d5185a9dd4c8e8af236d167d" prot="public" virt="virtual"><scope>Hurricane::NotFilter</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1NotFilter_1abf67be5cd8232522bd825cc468ef4a4d" prot="public" virt="virtual"><scope>Hurricane::NotFilter</scope><name>accept</name></member>
+      <member refid="classHurricane_1_1Filter_1a724656fbf69d4310da15d80a7ea6c0f5" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>Filter</name></member>
+      <member refid="classHurricane_1_1Filter_1ac3558b6ab17562a406c16d5744613ebf" prot="private" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>Filter</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a6163d354b4ced011321bd458d7b2ddb1" prot="public" virt="virtual"><scope>Hurricane::NotFilter</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a6f677ecc29fa47db7e955fe49a14f683" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a330438186709b3f357fb07e78a4543cc" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>NotFilter</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a8c75f2e192929c1b559f4ca876e47126" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>NotFilter</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a232102dc584111a704e66b2ac793af86" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>NotFilter</name></member>
+      <member refid="classHurricane_1_1Filter_1a90c1a8c4caf6c6018ff50f5b9754e061" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>operator!</name></member>
+      <member refid="classHurricane_1_1NotFilter_1a1c171124b98dcf53c0f836e09bade04f" prot="public" virt="non-virtual"><scope>Hurricane::NotFilter</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Filter_1a11fdea0355a3cb2cb6b4f4c570c5b2f5" prot="public" virt="virtual"><scope>Hurricane::NotFilter</scope><name>~Filter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

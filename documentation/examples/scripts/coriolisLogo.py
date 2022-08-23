@@ -1,73 +1,61 @@
 #!/usr/bin/python
 
 import sys
-from   Hurricane import *
-from   CRL       import *
-
-
-def toDbU ( l ): return DbU.fromLambda(l)
-
-
-def doBreak ( level, message ):
-    UpdateSession.close()
-    Breakpoint.stop( level, message )
-    UpdateSession.open()
+from   Hurricane import DataBase, Box, Net, Vertical, Horizontal
+from   CRL       import AllianceFramework, Catalog
+from   helpers   import l
+from   helpers.overlay import UpdateSession
 
 
 def drawLogo ( editor ):
-    UpdateSession.open()
-
-    cell = AllianceFramework.get().createCell( 'coriolis_logo' )
-    cell.setTerminal( True )
-
-    cell.setAbutmentBox( Box( toDbU(-16.0), toDbU(-16.0), toDbU(76.0), toDbU(76.0) ) )
-
+    """Draw a small logo of Coriolis in GDS."""
+    with UpdateSession():
+        cell = AllianceFramework.get().createCell( 'coriolis_logo' )
+        cell.setTerminalNetlist( True )
+        cell.setAbutmentBox( Box( l(-16.0), l(-16.0), l(76.0), l(76.0) ) )
+        
     if editor:
-      UpdateSession.close()
-      editor.setCell( cell )
-      editor.fit()
-      UpdateSession.open()
-    
-    technology = DataBase.getDB().getTechnology()
-    metal1     = technology.getLayer( "metal1"     ) 
-    metal2     = technology.getLayer( "metal2"     ) 
-    metal4     = technology.getLayer( "metal4"     ) 
-    poly       = technology.getLayer( "POLY"       )
-    ptrans     = technology.getLayer( "PTRANS"     )
-    ntrans     = technology.getLayer( "NTRANS"     )
-    pdif       = technology.getLayer( "PDIF"       )
-    ndif       = technology.getLayer( "NDIF"       )
-    contdifn   = technology.getLayer( "CONT_DIF_N" )
-    contdifp   = technology.getLayer( "CONT_DIF_P" )
-    nwell      = technology.getLayer( "NWELL"      )
-    contpoly   = technology.getLayer( "CONT_POLY"  )
-    ntie       = technology.getLayer( "NTIE"       )
-
-    net = Net.create( cell, 'logo' )
-    net.setExternal( True )
-
-    Vertical  .create( net, metal1, toDbU(10.0), toDbU(12.0), toDbU( 4.0), toDbU(56.0) )
-    Horizontal.create( net, metal1, toDbU(50.0), toDbU(12.0), toDbU( 4.0), toDbU(56.0) )
-    Vertical  .create( net, metal1, toDbU(50.0), toDbU(12.0), toDbU(56.0), toDbU( 4.0) )
-    Horizontal.create( net, metal1, toDbU(10.0), toDbU(12.0), toDbU(56.0), toDbU( 4.0) )
-
-    Vertical  .create( net, metal1, toDbU(-6.0), toDbU(12.0), toDbU(22.0), toDbU(56.0) )
-    Horizontal.create( net, metal1, toDbU(66.0), toDbU(12.0), toDbU(22.0), toDbU(56.0) )
-    Vertical  .create( net, metal1, toDbU(66.0), toDbU(12.0), toDbU(36.0), toDbU( 4.0) )
-    Horizontal.create( net, metal1, toDbU(-6.0), toDbU(12.0), toDbU(36.0), toDbU( 4.0) )
-
-    Horizontal.create( net,  nwell, toDbU(30.0), toDbU(92.0), toDbU(-16.0), toDbU(76.0) )
-
-    UpdateSession.close()
-
+        editor.setCell( cell )
+        editor.fit()
+        
+    with UpdateSession():
+        technology = DataBase.getDB().getTechnology()
+        metal1     = technology.getLayer( "metal1"     ) 
+        metal2     = technology.getLayer( "metal2"     ) 
+        metal4     = technology.getLayer( "metal4"     ) 
+        poly       = technology.getLayer( "POLY"       )
+        ptrans     = technology.getLayer( "PTRANS"     )
+        ntrans     = technology.getLayer( "NTRANS"     )
+        pdif       = technology.getLayer( "PDIF"       )
+        ndif       = technology.getLayer( "NDIF"       )
+        contdifn   = technology.getLayer( "CONT_DIF_N" )
+        contdifp   = technology.getLayer( "CONT_DIF_P" )
+        nwell      = technology.getLayer( "NWELL"      )
+        contpoly   = technology.getLayer( "CONT_POLY"  )
+        ntie       = technology.getLayer( "NTIE"       )
+        
+        net = Net.create( cell, 'logo' )
+        net.setExternal( True )
+        
+        Vertical  .create( net, metal1, l(10.0), l(12.0), l( 4.0), l(56.0) )
+        Horizontal.create( net, metal1, l(50.0), l(12.0), l( 4.0), l(56.0) )
+        Vertical  .create( net, metal1, l(50.0), l(12.0), l(56.0), l( 4.0) )
+        Horizontal.create( net, metal1, l(10.0), l(12.0), l(56.0), l( 4.0) )
+        
+        Vertical  .create( net, metal1, l(-6.0), l(12.0), l(22.0), l(56.0) )
+        Horizontal.create( net, metal1, l(66.0), l(12.0), l(22.0), l(56.0) )
+        Vertical  .create( net, metal1, l(66.0), l(12.0), l(36.0), l( 4.0) )
+        Horizontal.create( net, metal1, l(-6.0), l(12.0), l(36.0), l( 4.0) )
+        
+        Horizontal.create( net,  nwell, l(30.0), l(92.0), l(-16.0), l(76.0) )
+        
     AllianceFramework.get().saveCell( cell, Catalog.State.Views )
-    return
 
 
 def scriptMain ( **kw ):
+    """The mandatory function to be called by Coriolis CGT/Unicorn."""
     editor = None
-    if kw.has_key('editor') and kw['editor']:
-      editor = kw['editor']
-
+    if 'editor' in kw and kw['editor']:
+        editor = kw['editor']
     drawLogo( editor )
     return True 

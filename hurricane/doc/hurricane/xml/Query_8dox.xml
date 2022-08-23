@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Query_8dox" kind="file" language="C++">
+    <compoundname>Query.dox</compoundname>
+    <innernamespace refid="namespaceHurricane">Hurricane</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>-*-<sp/>C++<sp/>-*-</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceHurricane" kindref="compound">Hurricane</ref><sp/>{</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"></codeline>
+<codeline lineno="50"></codeline>
+<codeline lineno="54"></codeline>
+<codeline lineno="57"></codeline>
+<codeline lineno="60"></codeline>
+<codeline lineno="63"></codeline>
+<codeline lineno="66"></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"></codeline>
+<codeline lineno="76"></codeline>
+<codeline lineno="79"></codeline>
+<codeline lineno="82"></codeline>
+<codeline lineno="85"></codeline>
+<codeline lineno="88"></codeline>
+<codeline lineno="93"></codeline>
+<codeline lineno="96"></codeline>
+<codeline lineno="99"></codeline>
+<codeline lineno="102"></codeline>
+<codeline lineno="106"></codeline>
+<codeline lineno="109"></codeline>
+<codeline lineno="112"></codeline>
+<codeline lineno="115"></codeline>
+<codeline lineno="118"></codeline>
+<codeline lineno="121"></codeline>
+<codeline lineno="125"></codeline>
+<codeline lineno="129"></codeline>
+<codeline lineno="133"></codeline>
+<codeline lineno="137"></codeline>
+<codeline lineno="142"></codeline>
+<codeline lineno="154"></codeline>
+<codeline lineno="157"></codeline>
+<codeline lineno="160"></codeline>
+<codeline lineno="163"></codeline>
+<codeline lineno="166"></codeline>
+<codeline lineno="169"></codeline>
+<codeline lineno="172"></codeline>
+<codeline lineno="175"></codeline>
+<codeline lineno="178"></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/><sp/>\}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/>}</highlight></codeline>
+    </programlisting>
+    <location file="Query.dox"/>
+  </compounddef>
+</doxygen>

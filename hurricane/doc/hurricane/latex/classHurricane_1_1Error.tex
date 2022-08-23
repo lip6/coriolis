@@ -1,20 +1,20 @@
-\hypertarget{classHurricane_1_1Error}{}\section{Hurricane\+:\+:Error Class Reference}
-\label{classHurricane_1_1Error}\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}}
+\hypertarget{classHurricane_1_1Error}{}\doxysection{Hurricane\+::Error Class Reference}
+\label{classHurricane_1_1Error}\index{Hurricane::Error@{Hurricane::Error}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Error}{Error}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Error}{Error}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Error\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Error\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=198pt]{classHurricane_1_1Error__inherit__graph}
+\includegraphics[width=187pt]{classHurricane_1_1Error__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}} (const string \&reason)
@@ -35,116 +35,122 @@ string \mbox{\hyperlink{classHurricane_1_1Error_ab3b8bb521802f332340eaf0b37eb1df
 \item 
 string \mbox{\hyperlink{classHurricane_1_1Error_afafcbeae105f75906c7c45024de41c18}{html\+Where}} () const
 \end{DoxyCompactItemize}
-\subsection*{Additional Inherited Members}
+\doxysubsection*{Additional Inherited Members}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Error}{Error}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Error}{Error}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Error_secErrorPrintingFormat}{}\subsection{Printing format}\label{classHurricane_1_1Error_secErrorPrintingFormat}
+\hypertarget{classHurricane_1_1Error_secErrorPrintingFormat}{}\doxysubsection{Printing format}\label{classHurricane_1_1Error_secErrorPrintingFormat}
 Errors are printed with different formats wether the error code is null or not \+: text\+: So the following code \+: 
-\begin{DoxyCode}
-\textcolor{keywordflow}{try} \{
-   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(\textcolor{stringliteral}{"Something strange"});
-\}
-\textcolor{keywordflow}{catch} \{Exception& exception) \{
-   cerr << exception.what() << endl;
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(\textcolor{stringliteral}{"{}Something strange"{}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordflow}{catch} \{Exception\& exception) \{}
+\DoxyCodeLine{   cerr << exception.what() << endl;}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  Will produce the message \+: 
-\begin{DoxyCode}
-[ERROR] Something strange
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[ERROR] Something strange}
+
 \end{DoxyCode}
  while the following code \+: 
-\begin{DoxyCode}
-\textcolor{keywordflow}{try} \{
-   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(3, \textcolor{stringliteral}{"Can't create Net : null cell"});
-\}
-\textcolor{keywordflow}{catch} \{Exception& exception) \{
-   cerr << exception.what() << endl;
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(3, \textcolor{stringliteral}{"{}Can't create Net : null cell"{}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordflow}{catch} \{Exception\& exception) \{}
+\DoxyCodeLine{   cerr << exception.what() << endl;}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  Will produce the message \+: 
-\begin{DoxyCode}
-[ERROR:3] Can\textcolor{stringliteral}{'t create Net : null cell}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[ERROR:3] Can\textcolor{stringliteral}{'t create Net : null cell}}
+
 \end{DoxyCode}
  You can always print something different as shown in the following code \+: 
-\begin{DoxyCode}
-\textcolor{keywordflow}{try} \{
-   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(3, \textcolor{stringliteral}{"Can't create Net : null cell"});
-\}
-\textcolor{keywordflow}{catch} \{\mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}& error) \{
-   cerr << error.getReason() << \textcolor{stringliteral}{" (code "} << error.getCode() << \textcolor{stringliteral}{")"} << endl;
-\}
-\textcolor{keywordflow}{catch} \{Exception& exception) \{
-   cerr << exception.what() << endl;
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{   \textcolor{keywordflow}{throw} \mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}(3, \textcolor{stringliteral}{"{}Can't create Net : null cell"{}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordflow}{catch} \{\mbox{\hyperlink{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}{Error}}\& error) \{}
+\DoxyCodeLine{   cerr << error.getReason() << \textcolor{stringliteral}{"{} (code "{}} << error.getCode() << \textcolor{stringliteral}{"{})"{}} << endl;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordflow}{catch} \{Exception\& exception) \{}
+\DoxyCodeLine{   cerr << exception.what() << endl;}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  Which will produce the message \+: 
-\begin{DoxyCode}
-Can\textcolor{stringliteral}{'t create Net : null cell (code 3)}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Can\textcolor{stringliteral}{'t create Net : null cell (code 3)}}
+
 \end{DoxyCode}
  
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}\label{classHurricane_1_1Error_ab58387c890740ed8082532c5342f2d03}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!Error@{Error}}
-\index{Error@{Error}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+\index{Hurricane::Error@{Hurricane::Error}!Error@{Error}}
+\index{Error@{Error}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Error\+::\+Error (\begin{DoxyParamCaption}\item[{const string \&}]{reason }\end{DoxyParamCaption})}
 
 Builds a error characterized by a reason (code defaults to zero). \mbox{\Hypertarget{classHurricane_1_1Error_a98f50dcce8258982d450e8f5f79cff38}\label{classHurricane_1_1Error_a98f50dcce8258982d450e8f5f79cff38}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!Error@{Error}}
-\index{Error@{Error}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+\index{Hurricane::Error@{Hurricane::Error}!Error@{Error}}
+\index{Error@{Error}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Error\+::\+Error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 Builds a error characterized by a reason, using the {\ttfamily vararg} protocol and {\ttfamily printf} format (code defaults to zero). \mbox{\Hypertarget{classHurricane_1_1Error_a33e4d2a1ea71be6395dc2716b68378c8}\label{classHurricane_1_1Error_a33e4d2a1ea71be6395dc2716b68378c8}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!Error@{Error}}
-\index{Error@{Error}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+\index{Hurricane::Error@{Hurricane::Error}!Error@{Error}}
+\index{Error@{Error}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Error\+::\+Error (\begin{DoxyParamCaption}\item[{int}]{code,  }\item[{const string \&}]{reason }\end{DoxyParamCaption})}
 
 Builds a error characterized by a reason and a code useful within a switch. \mbox{\Hypertarget{classHurricane_1_1Error_a32ccc14fe29d7d2a7b5fe66ee0a3845c}\label{classHurricane_1_1Error_a32ccc14fe29d7d2a7b5fe66ee0a3845c}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!Error@{Error}}
-\index{Error@{Error}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+\index{Hurricane::Error@{Hurricane::Error}!Error@{Error}}
+\index{Error@{Error}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Error\+::\+Error (\begin{DoxyParamCaption}\item[{int}]{code,  }\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 Builds a error characterized by a reason and a code useful within a switch. The reason is supplied in a {\ttfamily printf} like fashion. \mbox{\Hypertarget{classHurricane_1_1Error_a7d90d5f5727dab2a9cc0a6427fb2b084}\label{classHurricane_1_1Error_a7d90d5f5727dab2a9cc0a6427fb2b084}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!Error@{Error}}
-\index{Error@{Error}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+\index{Hurricane::Error@{Hurricane::Error}!Error@{Error}}
+\index{Error@{Error}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{Error()}{Error()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Error\+::\+Error (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Error}{Error}} \&}]{error }\end{DoxyParamCaption})}
 
 Copy constructor. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Error_a1a18927a2d4eb2b0b0acfc2908be7008}\label{classHurricane_1_1Error_a1a18927a2d4eb2b0b0acfc2908be7008}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!get\+Reason@{get\+Reason}}
-\index{get\+Reason@{get\+Reason}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{get\+Reason()}{getReason()}}
+\index{Hurricane::Error@{Hurricane::Error}!getReason@{getReason}}
+\index{getReason@{getReason}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{getReason()}{getReason()}}
 {\footnotesize\ttfamily string Hurricane\+::\+Error\+::get\+Reason (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the reason for which the error was thrown. \mbox{\Hypertarget{classHurricane_1_1Error_a1ba11c6ba6eff9fdf2923520fe80a6b2}\label{classHurricane_1_1Error_a1ba11c6ba6eff9fdf2923520fe80a6b2}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!get\+Code@{get\+Code}}
-\index{get\+Code@{get\+Code}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{get\+Code()}{getCode()}}
+{\bfseries{Returns\+:}} the reason for which the error was thrown. \mbox{\Hypertarget{classHurricane_1_1Error_a1ba11c6ba6eff9fdf2923520fe80a6b2}\label{classHurricane_1_1Error_a1ba11c6ba6eff9fdf2923520fe80a6b2}} 
+\index{Hurricane::Error@{Hurricane::Error}!getCode@{getCode}}
+\index{getCode@{getCode}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{getCode()}{getCode()}}
 {\footnotesize\ttfamily int Hurricane\+::\+Error\+::get\+Code (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the error code number. \mbox{\Hypertarget{classHurricane_1_1Error_ab3b8bb521802f332340eaf0b37eb1dfc}\label{classHurricane_1_1Error_ab3b8bb521802f332340eaf0b37eb1dfc}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!text\+Where@{text\+Where}}
-\index{text\+Where@{text\+Where}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{text\+Where()}{textWhere()}}
+{\bfseries{Returns\+:}} the error code number. \mbox{\Hypertarget{classHurricane_1_1Error_ab3b8bb521802f332340eaf0b37eb1dfc}\label{classHurricane_1_1Error_ab3b8bb521802f332340eaf0b37eb1dfc}} 
+\index{Hurricane::Error@{Hurricane::Error}!textWhere@{textWhere}}
+\index{textWhere@{textWhere}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{textWhere()}{textWhere()}}
 {\footnotesize\ttfamily string Hurricane\+::\+Error\+::text\+Where (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} A stack trace, suitable for tty. \mbox{\Hypertarget{classHurricane_1_1Error_afafcbeae105f75906c7c45024de41c18}\label{classHurricane_1_1Error_afafcbeae105f75906c7c45024de41c18}} 
-\index{Hurricane\+::\+Error@{Hurricane\+::\+Error}!html\+Where@{html\+Where}}
-\index{html\+Where@{html\+Where}!Hurricane\+::\+Error@{Hurricane\+::\+Error}}
-\subsubsection{\texorpdfstring{html\+Where()}{htmlWhere()}}
+{\bfseries{Returns\+:}} A stack trace, suitable for tty. \mbox{\Hypertarget{classHurricane_1_1Error_afafcbeae105f75906c7c45024de41c18}\label{classHurricane_1_1Error_afafcbeae105f75906c7c45024de41c18}} 
+\index{Hurricane::Error@{Hurricane::Error}!htmlWhere@{htmlWhere}}
+\index{htmlWhere@{htmlWhere}!Hurricane::Error@{Hurricane::Error}}
+\doxysubsubsection{\texorpdfstring{htmlWhere()}{htmlWhere()}}
 {\footnotesize\ttfamily string Hurricane\+::\+Error\+::html\+Where (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} A stack trace, suitable for H\+T\+ML. 
+{\bfseries{Returns\+:}} A stack trace, suitable for HTML. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group__DbUGroup" kind="group">
+    <compoundname>DbUGroup</compoundname>
+    <title>DbU/Unit description</title>
+    <innerclass refid="classHurricane_1_1DbU" prot="public">Hurricane::DbU</innerclass>
+    <briefdescription>
+<para>Fixed point numbers management. </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="group__DbUGroup_1secDbUIntro">
+<title>Introduction</title>
+<para>The <ref refid="classHurricane_1_1DbU" kindref="compound">DbU</ref> class provides the <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> type for modelling geometric length, that is abscissas, ordinates, widths, offsets and a set of functions to convert <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> to and from external coordinates.</para>
+<para><simplesect kind="remark"><para>The <ref refid="classHurricane_1_1DbU" kindref="compound">DbU</ref> class contains only static methods, and is not meant to be instanciated. The working type is <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref>.</para>
+</simplesect>
+The <ref refid="classHurricane_1_1DbU" kindref="compound">DbU</ref> class manage three king of length : <itemizedlist>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></bold> : the working type. It is currently associated to a long integer and a precision/resolution. This way all numbers are bound to the same precision (unlike floating point numbers) preventing rounding errors. </para>
+</listitem>
+<listitem>
+<para><bold>Real</bold> length : length, expressed in steps of founder grid. We have the straight relation ship : grid = unit * resolution </para>
+</listitem>
+<listitem>
+<para><bold>Symbolic</bold> length : length, expressed in lambdas. A lambda is an even multiple of the founder grid step. lambda = grid / lambdaPerGrid </para>
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+<sect1 id="group__DbUGroup_1secDbUPrecision">
+<title>Precision</title>
+<para>It is possible to choose (once for all) the precision with which unit values are stored.</para>
+<para>This precision represents the maximal number of decimal digits allowed (it applies globally to all units). Therefore for a precision of 3, the unit will represent a value of 0.001 and the founder grid value 23.54 will be represented by a unit equal to 23540.</para>
+<para>Related functions : <itemizedlist>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a6169efbdd9b3d54a0bd8467c8f957fda" kindref="member">DbU::getPrecision()</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a8756c9f0a32af5f601cd150e73b02c03" kindref="member">DbU::getMaximalPrecision()</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1ace9a8644e7e80dcaed2a8a95deeb1622" kindref="member">DbU::setPrecision()</ref></bold> </para>
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+<sect1 id="group__DbUGroup_1secDbUResolution">
+<title>Resolution</title>
+<para>The resolution is associated to the precision. Indeed it represents the external value associated to the smallest unit, that is the value returned by getGrid(Unit::db(1)).</para>
+<para>Related functions : <bold><ref refid="classHurricane_1_1DbU_1a120a60b09b344d01c583567a1e489d9e" kindref="member">DbU::getResolution()</ref></bold></para>
+</sect1>
+<sect1 id="group__DbUGroup_1secDbUGridsPerLamba">
+<title>Grids per Lambda ratio</title>
+<para>Set the ratio between grids and lambdas. This must be an even integer. Once sets, musn&apos;t be changed.</para>
+<para>Related functions : <itemizedlist>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1ac93f9ba2a09105227e34bd05bcb1500c" kindref="member">DbU::setGridsPerLambda()</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a9a0359adbfafc356326f5c6adf57ff04" kindref="member">DbU::getGridsPerLambda()</ref></bold> </para>
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+<sect1 id="group__DbUGroup_1secDbUGrid">
+<title>Grid</title>
+<para>Thoses function are closely related to editors. They allow to restrict to positions on a grid. We support three kind of grid, real, symbolic and user defined.</para>
+<para><itemizedlist>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a09e46fcca6aaca94851adfa196e10170" kindref="member">DbU::getRealSnapGridStep</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a8746e486f153aa37ee469c1604eba5c0" kindref="member">DbU::getOnRealSnapGrid</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" kindref="member">DbU::setRealSnapGridStep</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a687a9134729b107c42fb7f69596c4c3b" kindref="member">DbU::getSymbolicSnapGridStep</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1ad1b0c0f3680093cf5a63d901312c925d" kindref="member">DbU::getOnSymbolicSnapGrid</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" kindref="member">DbU::setSymbolicSnapGridStep</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" kindref="member">DbU::getOnCustomGrid</ref></bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" kindref="member">DbU::getOnPhysicalGrid</ref></bold> </para>
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+<sect1 id="group__DbUGroup_1secDbUTranslators">
+<title>Translators</title>
+<para>Translate a <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> into grid or lambda length : <itemizedlist>
+<listitem>
+<para><bold>long <ref refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" kindref="member">DbU::toDb</ref> (<ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> u)</bold> </para>
+</listitem>
+<listitem>
+<para><bold>double <ref refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" kindref="member">DbU::toGrid</ref> (<ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> u)</bold> </para>
+</listitem>
+<listitem>
+<para><bold>double <ref refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" kindref="member">DbU::toLambda</ref> (<ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> u)</bold> </para>
+</listitem>
+<listitem>
+<para><bold>double <ref refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" kindref="member">DbU::toPhysical</ref> (<ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> u, UnitPower p)</bold> </para>
+</listitem>
+</itemizedlist>
+</para>
+<para>Translate a lambda length into a <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> : <itemizedlist>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> <ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">DbU::fromDb</ref> (long v)</bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> <ref refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" kindref="member">DbU::fromGrid</ref> (double v)</bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> <ref refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" kindref="member">DbU::fromLambda</ref> (double v)</bold> </para>
+</listitem>
+<listitem>
+<para><bold><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> <ref refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" kindref="member">DbU::fromPhysical</ref> (double v, UnitPower p)</bold> </para>
+</listitem>
+</itemizedlist>
+</para>
+</sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

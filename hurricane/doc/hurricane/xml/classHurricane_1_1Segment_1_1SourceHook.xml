@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Segment_1_1SourceHook" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Segment::SourceHook</compoundname>
+    <basecompoundref refid="classHurricane_1_1Hook" prot="public" virt="non-virtual">Hurricane::Hook</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Segment_1_1SourceHook_1ac5ea8f0c6afa7c07b61f313e838f8e32" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref></type>
+        <definition>typedef Hook Hurricane::Segment::SourceHook::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="46" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classHurricane_1_1Segment_1_1SourceHook_1a3686fc7786dbff5d4f068e021ebacdca" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Segment</definition>
+        <argsstring></argsstring>
+        <name>Segment</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Segment" kindref="compound">Segment</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="44" column="9" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1a598f7ddeae6c3093a589410ecd83a5f7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Segment::SourceHook::SourceHook</definition>
+        <argsstring>(Segment *segment)</argsstring>
+        <name>SourceHook</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Segment" kindref="compound">Segment</ref> *</type>
+          <declname>segment</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="48" column="18"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1a5fefc4bd319da5ca5d884f68a43916c2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+        <definition>virtual Component* Hurricane::Segment::SourceHook::getComponent</definition>
+        <argsstring>() const</argsstring>
+        <name>getComponent</name>
+        <reimplements refid="classHurricane_1_1Hook_1ab420305aa59b8ff10d59678363de2511">getComponent</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="50" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1a714f9951006abf10486cbc23ee1adf76" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Segment::SourceHook::isMaster</definition>
+        <argsstring>() const</argsstring>
+        <name>isMaster</name>
+        <reimplements refid="classHurricane_1_1Hook_1af0940eb0761f05df0b82c4198e22a01c">isMaster</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="52" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1a731e72139b5c029edab8e14527bfba26" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Segment::SourceHook::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1Hook_1a1697fbfc6731d7e74ecf2b00dad61bfc">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="54" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" bodystart="54" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1af762db22f42ea37ae0fe75173f075914" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Segment::SourceHook::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Hook_1a2d13c036a187ee84573e1321227e70d5">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="55" column="32"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Segment_1_1SourceHook_1a3c98d8c52d5801b7d6a5d37c552ec730" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> *</type>
+        <definition>static Hook* Hurricane::Segment::SourceHook::_compToHook</definition>
+        <argsstring>(Component *)</argsstring>
+        <name>_compToHook</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="56" column="29"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>With segments, a new type of <ref refid="classHurricane_1_1Hook" kindref="compound">Hook</ref> appears : the <bold><ref refid="classHurricane_1_1Segment_1_1SourceHook" kindref="compound">SourceHook</ref></bold>, which allows to attach the segment origin upon an other component, on which it is said to be &quot;anchored&quot;. The <ref refid="classHurricane_1_1Segment_1_1SourceHook" kindref="compound">SourceHook</ref> is always a slave hook. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::Segment::SourceHook</label>
+        <link refid="classHurricane_1_1Segment_1_1SourceHook"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::Segment::SourceHook</label>
+        <link refid="classHurricane_1_1Segment_1_1SourceHook"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" line="41" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Segment.h" bodystart="41" bodyend="57"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a3c98d8c52d5801b7d6a5d37c552ec730" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_compToHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a1e3c695a81a0f8cf1ef1f1219c854729" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_compToHookMap</name></member>
+      <member refid="classHurricane_1_1Hook_1afb5a16856d629d37bafc437ab435a36a" prot="public" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1af762db22f42ea37ae0fe75173f075914" prot="public" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a731e72139b5c029edab8e14527bfba26" prot="public" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Hook_1a3e9b9589963398a6ca3ff9e50109fdf7" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_nextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad4035ab2772f78d4503a52293c45f87c" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>_setNextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a3941bc7d313aab128e9e967a57348040" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>addCompToHook</name></member>
+      <member refid="classHurricane_1_1Hook_1aacc4dacd0d128b35fd15546bc6dde3c3" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>attach</name></member>
+      <member refid="classHurricane_1_1Hook_1aac6b6ca17ff5ab253dfb14c578e68ba1" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>compToHook</name></member>
+      <member refid="classHurricane_1_1Hook_1afaf42e984908810f6590b5c1ad383fe8" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>compToHook_t</name></member>
+      <member refid="classHurricane_1_1Hook_1a83f5beb5092e97947d24bd18adb33db1" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>detach</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a5fefc4bd319da5ca5d884f68a43916c2" prot="public" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getComponent</name></member>
+      <member refid="classHurricane_1_1Hook_1a2def96fbcd444bebc16e589357c2a779" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getHooks</name></member>
+      <member refid="classHurricane_1_1Hook_1a837abef57c2c05f164c4e14fa34da52c" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getIsMasterFilter</name></member>
+      <member refid="classHurricane_1_1Hook_1af18e0531df4ed14b64cf058b780aee46" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a03044fa995d6d784d6c441927ca8af04" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getNextHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a0923a5a2d0a7ee0458876eed72008e46" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getNextMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad69ebbbf3d64343aca23ca435f24c624" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getPreviousHook</name></member>
+      <member refid="classHurricane_1_1Hook_1a80bf5cdd4e81952064f1be94fe10188f" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getPreviousMasterHook</name></member>
+      <member refid="classHurricane_1_1Hook_1ad3c977e4f253a18cf24dfe4a6fd24cb1" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>getSlaveHooks</name></member>
+      <member refid="classHurricane_1_1Hook_1af1b979b76e29dd5073b9a2d48e5c7028" prot="protected" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>Hook</name></member>
+      <member refid="classHurricane_1_1Hook_1abf64cf9dd76626b15a6a7f38c431ac62" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>Hook</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1ac5ea8f0c6afa7c07b61f313e838f8e32" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Hook_1acd62c7de2c023a1013d5a728159d068d" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>isAttached</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a714f9951006abf10486cbc23ee1adf76" prot="public" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>isMaster</name></member>
+      <member refid="classHurricane_1_1Hook_1a7b98f0796a9080495472d574a23bcca0" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Hook_1ae9ec6be9790bb14ac9d21d4fba7d5b50" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a3686fc7786dbff5d4f068e021ebacdca" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>Segment</name></member>
+      <member refid="classHurricane_1_1Segment_1_1SourceHook_1a598f7ddeae6c3093a589410ecd83a5f7" prot="private" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>SourceHook</name></member>
+      <member refid="classHurricane_1_1Hook_1abeb82dde7f4d157eb7dc63c797b7e565" prot="public" virt="non-virtual"><scope>Hurricane::Segment::SourceHook</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Hook_1a6ad8b0ea4b0bd0e92f658f4b91bfc355" prot="protected" virt="virtual"><scope>Hurricane::Segment::SourceHook</scope><name>~Hook</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

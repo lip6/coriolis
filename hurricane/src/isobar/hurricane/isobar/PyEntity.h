@@ -39,6 +39,8 @@ namespace  Isobar {
 // Functions & Types exported to "PyHurricane.ccp".
 
   extern  PyObject* PyEntity_NEW        ( Hurricane::Entity* entity );
+  extern  PyObject* PyEntity_getattro   ( PyObject* self, PyObject* attrName );
+  extern  int32_t   PyEntity_setattro   ( PyObject* self, PyObject* attrName, PyObject* value );
   extern  void      PyEntity_LinkPyType ();
 
   extern  PyTypeObject  PyTypeEntity;

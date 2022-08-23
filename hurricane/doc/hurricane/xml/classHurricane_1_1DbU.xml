@@ -1,0 +1,1645 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1DbU" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::DbU</compoundname>
+      <sectiondef kind="user-defined">
+      <header>Obsoleteds</header>
+      <description><para>Due to their somewhat unclear naming convention, those functions have been renamed by the <emphasis>to</emphasis> / <emphasis>from</emphasis> variants. </para>
+</description>
+      <memberdef kind="enum" id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" prot="public" static="no" strong="no">
+        <type></type>
+        <name>UnitPower</name>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557" prot="public">
+          <name>Pico</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>10e-12 </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" prot="public">
+          <name>Nano</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>10e-9 </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb" prot="public">
+          <name>Micro</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>10e-6 </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be" prot="public">
+          <name>Milli</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>10e-3 </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6" prot="public">
+          <name>Unity</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>1 </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74" prot="public">
+          <name>Kilo</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>10e+3 </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This enumeration defines the power applicable to physical units. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="49" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="49" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="enum" id="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" prot="public" static="no" strong="no">
+        <type></type>
+        <name>SnapMode</name>
+        <enumvalue id="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3" prot="public">
+          <name>Inferior</name>
+          <initializer>= 1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Round to the inferior grid point. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" prot="public">
+          <name>Superior</name>
+          <initializer>= 2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Round to the superior grid point. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" prot="public">
+          <name>Nearest</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Round nearest grid point, inferior or superior depending on the distance. </para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This enumeration defines the rounding applicable to the grid management functions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="62" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="62" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::db</definition>
+        <argsstring>(Unit value)</argsstring>
+        <name>db</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. This function do nothing apart from a cast. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="81" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="181" bodyend="181"/>
+        <references refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" compoundref="DbU_8h" startline="163" endline="163">fromDb</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::grid</definition>
+        <argsstring>(double value)</argsstring>
+        <name>grid</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the <emphasis>grid</emphasis> value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="82" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="182" bodyend="182"/>
+        <references refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" compoundref="DbU_8h" startline="164" endline="164">fromGrid</references>
+        <referencedby refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" compoundref="DbU_8h" startline="196" endline="196">getOnPhysicalGrid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::lambda</definition>
+        <argsstring>(double value)</argsstring>
+        <name>lambda</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the <emphasis>symbolic</emphasis> value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="83" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="183" bodyend="183"/>
+        <references refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" compoundref="DbU_8h" startline="165" endline="165">fromLambda</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>long Hurricane::DbU::getDb</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>getDb</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the external value associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. This function do nothing apart from a type cast. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="123" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="185" bodyend="185"/>
+        <references refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" compoundref="DbU_8h" startline="169" endline="169">toDb</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getGrid</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>getGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the value expressed as a number of founder grid steps associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="124" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="186" bodyend="186"/>
+        <references refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" compoundref="DbU_8h" startline="170" endline="170">toGrid</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getLambda</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>getLambda</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the symbolic value (expressed as a number lambdas) associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="126" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="188" bodyend="188"/>
+        <references refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" compoundref="DbU_8h" startline="172" endline="172">toLambda</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045" prot="public" static="no" strong="no">
+        <type></type>
+        <name>FunctionFlags</name>
+        <enumvalue id="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045af02fd8ff901b02a86f176ee6b0b4a103" prot="public">
+          <name>NoFlags</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045af17a3a9177f9716ba8ce43d3c8e6ef8c" prot="public">
+          <name>NoTechnoUpdate</name>
+          <initializer>= (1&lt;&lt;0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="46" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="46" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="enum" id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4" prot="public" static="no" strong="no">
+        <type></type>
+        <name>StringMode</name>
+        <enumvalue id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233" prot="public">
+          <name>Db</name>
+          <initializer>= (1&lt;&lt;0)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Units are printed &quot;as is&quot;, their true value as stored in the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c" prot="public">
+          <name>Grid</name>
+          <initializer>= (1&lt;&lt;1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Units are printed as founder grid steps. </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8" prot="public">
+          <name>Symbolic</name>
+          <initializer>= (1&lt;&lt;2)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para>Units are printed as symbolic (lambdas). </para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a5f86f7f4d831f216c84967c0a47e7bd1" prot="public">
+          <name>Physical</name>
+          <initializer>= (1&lt;&lt;3)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac13f5dd82b22e580cbb3373f7c62207b" prot="public">
+          <name>SmartTruncate</name>
+          <initializer>= (1&lt;&lt;4)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Select how units are to be printed by <ref refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" kindref="member">getValueString()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="56" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="56" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" prot="public" static="no">
+        <type>std::int64_t</type>
+        <definition>long Hurricane::DbU::Unit</definition>
+        <argsstring></argsstring>
+        <name>Unit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The working <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> type for storing dimensions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="67" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classHurricane_1_1DbU_1a86626eec6660d843db053761db67336e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class DataBase</definition>
+        <argsstring></argsstring>
+        <name>DataBase</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="44" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a9924985f39bdebc4762225ab0520c410" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>const Unit Hurricane::DbU::Min</definition>
+        <argsstring></argsstring>
+        <name>Min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="141" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1adc2321cdebbf694f23e3dcb936e1a0cf" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>const Unit Hurricane::DbU::Max</definition>
+        <argsstring></argsstring>
+        <name>Max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="142" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1ada3df6ef549a8637285f00a28bb19e12" prot="private" static="yes" mutable="no">
+        <type>const unsigned int</type>
+        <definition>const unsigned int Hurricane::DbU::_maximalPrecision</definition>
+        <argsstring></argsstring>
+        <name>_maximalPrecision</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="145" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a67f9823c6ce0f1a0b5b5578f9032a3a8" prot="private" static="yes" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int Hurricane::DbU::_precision</definition>
+        <argsstring></argsstring>
+        <name>_precision</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="146" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a94a3d4db896d85ec8f07a75dc8907be0" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_resolution</definition>
+        <argsstring></argsstring>
+        <name>_resolution</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="147" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a602e15b4c2344a1e9bf4f4c6c37cfaf4" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_gridsPerLambda</definition>
+        <argsstring></argsstring>
+        <name>_gridsPerLambda</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="148" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1ac08e9db3c280355268e389904c9f6516" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_physicalsPerGrid</definition>
+        <argsstring></argsstring>
+        <name>_physicalsPerGrid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="149" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a7827c96a17c82e4bf02e5c87313427dd" prot="private" static="yes" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int Hurricane::DbU::_stringMode</definition>
+        <argsstring></argsstring>
+        <name>_stringMode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="150" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a63fdfbcfab72fb9664b5d682d5c653e5" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">DbU::UnitPower</ref></type>
+        <definition>DbU::UnitPower Hurricane::DbU::_stringModeUnitPower</definition>
+        <argsstring></argsstring>
+        <name>_stringModeUnitPower</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="151" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a04c1b99ce1c0a1777a86ab7e65e3114c" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::_realSnapGridStep</definition>
+        <argsstring></argsstring>
+        <name>_realSnapGridStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="152" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1ac469eb64be15ec5cc6ca941518af15f9" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::_symbolicSnapGridStep</definition>
+        <argsstring></argsstring>
+        <name>_symbolicSnapGridStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="153" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1acc59dc820f52b4069af9c1ebefb367c2" prot="private" static="yes" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::_polygonStep</definition>
+        <argsstring></argsstring>
+        <name>_polygonStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="154" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1ae4f63badfd455919602c2d34797a30e1" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_gridMax</definition>
+        <argsstring></argsstring>
+        <name>_gridMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="155" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a2c31a4d26229e50c562bd5c0f1f2a25f" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_lambdaMax</definition>
+        <argsstring></argsstring>
+        <name>_lambdaMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="156" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1DbU_1a34bb53310087a2ff94a6ddef48193067" prot="private" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Hurricane::DbU::_physicalMax</definition>
+        <argsstring></argsstring>
+        <name>_physicalMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="157" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aca59eeb300dfc1bf52fb3e43cce3cb02" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::checkGridBound</definition>
+        <argsstring>(double value)</argsstring>
+        <name>checkGridBound</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="70" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aea987be9904453b385f2d2c097630c2f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::checkLambdaBound</definition>
+        <argsstring>(double value)</argsstring>
+        <name>checkLambdaBound</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="71" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ae572d614b0f88786d4bbb88f757477a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::checkPhysicalBound</definition>
+        <argsstring>(double value, UnitPower p)</argsstring>
+        <name>checkPhysicalBound</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="72" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromDb</definition>
+        <argsstring>(Unit value)</argsstring>
+        <name>fromDb</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. This function do nothing apart from a cast. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="74" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="163" bodyend="163"/>
+        <referencedby refid="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" compoundref="DbU_8h" startline="181" endline="181">db</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromGrid</definition>
+        <argsstring>(double value)</argsstring>
+        <name>fromGrid</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the <emphasis>grid</emphasis> value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="75" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="164" bodyend="164"/>
+        <referencedby refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" compoundref="DbU_8h" startline="165" endline="165">fromLambda</referencedby>
+        <referencedby refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" compoundref="DbU_8h" startline="166" endline="166">fromPhysical</referencedby>
+        <referencedby refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" compoundref="DbU_8h" startline="182" endline="182">grid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromLambda</definition>
+        <argsstring>(double value)</argsstring>
+        <name>fromLambda</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the <emphasis>symbolic</emphasis> value <computeroutput>&lt;value&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="76" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="165" bodyend="165"/>
+        <references refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" compoundref="DbU_8h" startline="164" endline="164">fromGrid</references>
+        <referencedby refid="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" compoundref="DbU_8h" startline="183" endline="183">lambda</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromPhysical</definition>
+        <argsstring>(double value, UnitPower p)</argsstring>
+        <name>fromPhysical</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the unit corresponding to the <emphasis>physical</emphasis> value <computeroutput>&lt;value&gt;</computeroutput> with power <computeroutput>p</computeroutput>, according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="77" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="166" bodyend="166"/>
+        <references refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" compoundref="DbU_8h" startline="164" endline="164">fromGrid</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a106f4a0f670b4d890f333abc69cad550" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromMicrons</definition>
+        <argsstring>(double value)</argsstring>
+        <name>fromMicrons</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="78" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a9b7d86e474d32ce5e318a7e1f608ab22" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::fromNanos</definition>
+        <argsstring>(double value)</argsstring>
+        <name>fromNanos</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="79" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="168" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aa20ba7c755d6edf3c76be8996f650e5f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::physicalToDbu</definition>
+        <argsstring>(double value, UnitPower p)</argsstring>
+        <name>physicalToDbu</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="84" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="184" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a6169efbdd9b3d54a0bd8467c8f957fda" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned Hurricane::DbU::getPrecision</definition>
+        <argsstring>()</argsstring>
+        <name>getPrecision</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the current precision (whose default is fixed to 1). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="86" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a8756c9f0a32af5f601cd150e73b02c03" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned Hurricane::DbU::getMaximalPrecision</definition>
+        <argsstring>()</argsstring>
+        <name>getMaximalPrecision</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the maximal precision allowed (currently fixed to 3). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="87" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a120a60b09b344d01c583567a1e489d9e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getResolution</definition>
+        <argsstring>()</argsstring>
+        <name>getResolution</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the current resolution. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="88" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ace9a8644e7e80dcaed2a8a95deeb1622" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setPrecision</definition>
+        <argsstring>(unsigned int precision, unsigned int flags=NoFlags)</argsstring>
+        <name>setPrecision</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>precision</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>flags</declname>
+          <defval>NoFlags</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to set the precision at a requested value. This must be done at the begining of the program (before the creation of the first unit) and not changed for the following (unless mandatory and for a temporary period because all existing units would be misinterpreted).</para>
+<para><simplesect kind="remark"><para>This function throws an exception if the requested precision is greater than the maximal one. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="89" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ad5f6ba373d596b7f0510b137d948b38f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Hurricane::DbU::getUnitPower</definition>
+        <argsstring>(UnitPower p)</argsstring>
+        <name>getUnitPower</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="91" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a4ba5a12d194ec46e2c9aae5dae7c54c9" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::setPhysicalsPerGrid</definition>
+        <argsstring>(double gridsPerLambda, UnitPower p)</argsstring>
+        <name>setPhysicalsPerGrid</name>
+        <param>
+          <type>double</type>
+          <declname>gridsPerLambda</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="92" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a4bac0413f1a4c3441eb4a5a023d0418e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Hurricane::DbU::getPhysicalsPerGrid</definition>
+        <argsstring>()</argsstring>
+        <name>getPhysicalsPerGrid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="93" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ad3f2b1c3fe2b4ec03d5a2ce69629d5ee" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Hurricane::DbU::physicalToGrid</definition>
+        <argsstring>(double physical, UnitPower p)</argsstring>
+        <name>physicalToGrid</name>
+        <param>
+          <type>double</type>
+          <declname>physical</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="94" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a52efccce829120abb72f7167e08ae72a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getPolygonStep</definition>
+        <argsstring>()</argsstring>
+        <name>getPolygonStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="96" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="178" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a2e7023aadf96786deb43e96a21a28a85" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setPolygonStep</definition>
+        <argsstring>(DbU::Unit)</argsstring>
+        <name>setPolygonStep</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <defname>step</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="97" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="195" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ac93f9ba2a09105227e34bd05bcb1500c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setGridsPerLambda</definition>
+        <argsstring>(double gridsPerLambda, unsigned int flags=NoFlags)</argsstring>
+        <name>setGridsPerLambda</name>
+        <param>
+          <type>double</type>
+          <declname>gridsPerLambda</declname>
+        </param>
+        <param>
+          <type>unsigned int</type>
+          <declname>flags</declname>
+          <defval>NoFlags</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> Sets how many founder grid steps makes one <emphasis>lambda</emphasis>. It must be an event integer otherwise an exception is thrown. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="99" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a9a0359adbfafc356326f5c6adf57ff04" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getGridsPerLambda</definition>
+        <argsstring>()</argsstring>
+        <name>getGridsPerLambda</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> How many founder grid steps makes one <emphasis>lambda</emphasis>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="100" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a09e46fcca6aaca94851adfa196e10170" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getRealSnapGridStep</definition>
+        <argsstring>()</argsstring>
+        <name>getRealSnapGridStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the real (founder) grid step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="102" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a8746e486f153aa37ee469c1604eba5c0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getOnRealSnapGrid</definition>
+        <argsstring>(DbU::Unit u, SnapMode mode=Nearest)</argsstring>
+        <name>getOnRealSnapGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the snap point from the unit <computeroutput>u</computeroutput>, using the rounding mode <computeroutput>mode</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="103" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setRealSnapGridStep</definition>
+        <argsstring>(DbU::Unit step)</argsstring>
+        <name>setRealSnapGridStep</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the real (founder) grid step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="104" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="193" bodyend="193"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a687a9134729b107c42fb7f69596c4c3b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getSymbolicSnapGridStep</definition>
+        <argsstring>()</argsstring>
+        <name>getSymbolicSnapGridStep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the symbolic grid step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="105" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ad1b0c0f3680093cf5a63d901312c925d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getOnSymbolicSnapGrid</definition>
+        <argsstring>(DbU::Unit u, SnapMode mode=Nearest)</argsstring>
+        <name>getOnSymbolicSnapGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the snap point from the unit <computeroutput>u</computeroutput>, using the rounding mode <computeroutput>mode</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="106" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setSymbolicSnapGridStep</definition>
+        <argsstring>(DbU::Unit step)</argsstring>
+        <name>setSymbolicSnapGridStep</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the symbolic grid step. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="107" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="194" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getOnCustomGrid</definition>
+        <argsstring>(DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest)</argsstring>
+        <name>getOnCustomGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>step</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" kindref="member">Nearest</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the snap point from the unit <computeroutput>u</computeroutput>, with grid step <computeroutput>step</computeroutput> using the rounding mode <computeroutput>mode</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="108" column="41"/>
+        <referencedby refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" compoundref="DbU_8h" startline="196" endline="196">getOnPhysicalGrid</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::getOnPhysicalGrid</definition>
+        <argsstring>(DbU::Unit u, SnapMode mode=Superior)</argsstring>
+        <name>getOnPhysicalGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" kindref="member">SnapMode</ref></type>
+          <declname>mode</declname>
+          <defval><ref refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" kindref="member">Superior</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the physical grid unit nearest to <computeroutput>u</computeroutput>, with <computeroutput>mode</computeroutput> rounding. using the rounding mode <computeroutput>mode</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="109" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="196" bodyend="196"/>
+        <references refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a">getOnCustomGrid</references>
+        <references refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" compoundref="DbU_8h" startline="182" endline="182">grid</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a927e1aaeff66bedf4acee555500f0cbd" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::toCeil</definition>
+        <argsstring>(DbU::Unit u, DbU::Unit step)</argsstring>
+        <name>toCeil</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="110" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="198" bodyend="199"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1abb3b350a8a5f3839c186ab327319913c" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::DbU::toFloor</definition>
+        <argsstring>(DbU::Unit u, DbU::Unit step)</argsstring>
+        <name>toFloor</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="111" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="201" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+        <definition>long Hurricane::DbU::toDb</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>toDb</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the external value associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. This function do nothing apart from a type cast. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="113" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="169" bodyend="169"/>
+        <referencedby refid="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" compoundref="DbU_8h" startline="185" endline="185">getDb</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toGrid</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>toGrid</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the value expressed as a number of founder grid steps associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="114" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="170" bodyend="170"/>
+        <referencedby refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" compoundref="DbU_8h" startline="186" endline="186">getGrid</referencedby>
+        <referencedby refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" compoundref="DbU_8h" startline="172" endline="172">toLambda</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a3f54c3ad2d4103482407d6d0d285d10b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toGrid</definition>
+        <argsstring>(double u)</argsstring>
+        <name>toGrid</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="115" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toLambda</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>toLambda</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the symbolic value (expressed as a number lambdas) associated to the unit <computeroutput>&lt;unit&gt;</computeroutput> according to the current precision. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="116" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="172" bodyend="172"/>
+        <references refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" compoundref="DbU_8h" startline="170" endline="170">toGrid</references>
+        <referencedby refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" compoundref="DbU_8h" startline="188" endline="188">getLambda</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a6fa56cbb3401bf5838ee654a4376e9f7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toLambda</definition>
+        <argsstring>(double u)</argsstring>
+        <name>toLambda</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="117" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="173" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toPhysical</definition>
+        <argsstring>(Unit u, UnitPower p)</argsstring>
+        <name>toPhysical</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the physical value of <computeroutput>u</computeroutput>, expressed in the power <computeroutput>p</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="118" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a8857635cded45497669801bdd83227fc" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toPhysical</definition>
+        <argsstring>(double u, UnitPower p)</argsstring>
+        <name>toPhysical</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="119" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="175" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1ae185f9d34ae4c5d621e3a0ff927ef3d8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toMicrons</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>toMicrons</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="120" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1af015e45065332c22f1f18fce3dc8f460" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::toNanos</definition>
+        <argsstring>(Unit u)</argsstring>
+        <name>toNanos</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="121" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aec480808261d1f50a9b6c9a316387351" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getGrid</definition>
+        <argsstring>(double u)</argsstring>
+        <name>getGrid</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="125" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="187" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a751c026d6f3b4810e505d4a4f6fdb891" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getLambda</definition>
+        <argsstring>(double u)</argsstring>
+        <name>getLambda</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="127" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="189" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a212aa4d59b330c205e008d41ec55fcd7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getPhysical</definition>
+        <argsstring>(Unit u, UnitPower p)</argsstring>
+        <name>getPhysical</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="128" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="190" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a15e253558b958999db4c3ae2f8ee9493" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Hurricane::DbU::getPhysical</definition>
+        <argsstring>(double u, UnitPower p)</argsstring>
+        <name>getPhysical</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="129" column="41" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="191" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::DbU::getValueString</definition>
+        <argsstring>(Unit u, int mode=SmartTruncate)</argsstring>
+        <name>getValueString</name>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref></type>
+          <declname>u</declname>
+          <defname>unit</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mode</declname>
+          <defval>SmartTruncate</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>A character string representing the external value of <computeroutput>&lt;unit&gt;</computeroutput>. The value is converted in the length according to <ref refid="classHurricane_1_1DbU_1a89ab8f8326c54113336086663ecf1d25" kindref="member">setStringMode()</ref>: database, grid or symbolic.</para>
+</simplesect>
+<simplesect kind="remark"><para>This string is shorter than the one we could print from the external value because non needed decimals are not drawn (nor the point if value is integer). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="130" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a85724b813cebb815790a647eac499050" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>static string Hurricane::DbU::getValueString</definition>
+        <argsstring>(double u, int mode=SmartTruncate)</argsstring>
+        <name>getValueString</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mode</declname>
+          <defval>SmartTruncate</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="131" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a2d476ccd91afb0f6b38c2137358c254e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>static Record* Hurricane::DbU::getValueRecord</definition>
+        <argsstring>(const Unit *u)</argsstring>
+        <name>getValueRecord</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref> *</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="132" column="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a70ed695eca6895f0016947fe76344ea0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Slot *</type>
+        <definition>static Slot* Hurricane::DbU::getValueSlot</definition>
+        <argsstring>(const string &amp;name, const Unit *u)</argsstring>
+        <name>getValueSlot</name>
+        <param>
+          <type>const string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">Unit</ref> *</type>
+          <declname>u</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="133" column="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1a89ab8f8326c54113336086663ecf1d25" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::DbU::setStringMode</definition>
+        <argsstring>(unsigned int mode, UnitPower p=Nano)</argsstring>
+        <name>setStringMode</name>
+        <param>
+          <type>unsigned int</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref></type>
+          <declname>p</declname>
+          <defval><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" kindref="member">Nano</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets in which length the units are to be displayed by <ref refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" kindref="member">getValueString()</ref>. Avalaibles modes are : </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="134" column="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aba18c995b62588115f8c89bd91578552" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::getStringMode</definition>
+        <argsstring>(unsigned int &amp;mode, UnitPower &amp;p)</argsstring>
+        <name>getStringMode</name>
+        <param>
+          <type>unsigned int &amp;</type>
+          <declname>mode</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" kindref="member">UnitPower</ref> &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="135" column="41"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classHurricane_1_1DbU_1aeeafc7054d89644f5ccc77183d750ef2" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Hurricane::DbU::_updateBounds</definition>
+        <argsstring>()</argsstring>
+        <name>_updateBounds</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="137" column="41"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> Unit managment (<bold>API</bold>). </para>
+    </briefdescription>
+    <detaileddescription>
+<para><bold>Explanations about this class are here <ref refid="group__DbUGroup" kindref="compound">DbU/Unit description</ref>.</bold> </para>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" line="43" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/DbU.h" bodystart="43" bodyend="158"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1DbU_1ae4f63badfd455919602c2d34797a30e1" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_gridMax</name></member>
+      <member refid="classHurricane_1_1DbU_1a602e15b4c2344a1e9bf4f4c6c37cfaf4" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_gridsPerLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a2c31a4d26229e50c562bd5c0f1f2a25f" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_lambdaMax</name></member>
+      <member refid="classHurricane_1_1DbU_1ada3df6ef549a8637285f00a28bb19e12" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_maximalPrecision</name></member>
+      <member refid="classHurricane_1_1DbU_1a34bb53310087a2ff94a6ddef48193067" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_physicalMax</name></member>
+      <member refid="classHurricane_1_1DbU_1ac08e9db3c280355268e389904c9f6516" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_physicalsPerGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1acc59dc820f52b4069af9c1ebefb367c2" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_polygonStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a67f9823c6ce0f1a0b5b5578f9032a3a8" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_precision</name></member>
+      <member refid="classHurricane_1_1DbU_1a04c1b99ce1c0a1777a86ab7e65e3114c" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_realSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a94a3d4db896d85ec8f07a75dc8907be0" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_resolution</name></member>
+      <member refid="classHurricane_1_1DbU_1a7827c96a17c82e4bf02e5c87313427dd" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_stringMode</name></member>
+      <member refid="classHurricane_1_1DbU_1a63fdfbcfab72fb9664b5d682d5c653e5" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_stringModeUnitPower</name></member>
+      <member refid="classHurricane_1_1DbU_1ac469eb64be15ec5cc6ca941518af15f9" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_symbolicSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1aeeafc7054d89644f5ccc77183d750ef2" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>_updateBounds</name></member>
+      <member refid="classHurricane_1_1DbU_1aca59eeb300dfc1bf52fb3e43cce3cb02" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>checkGridBound</name></member>
+      <member refid="classHurricane_1_1DbU_1aea987be9904453b385f2d2c097630c2f" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>checkLambdaBound</name></member>
+      <member refid="classHurricane_1_1DbU_1ae572d614b0f88786d4bbb88f757477a1" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>checkPhysicalBound</name></member>
+      <member refid="classHurricane_1_1DbU_1a86626eec6660d843db053761db67336e" prot="private" virt="non-virtual"><scope>Hurricane::DbU</scope><name>DataBase</name></member>
+      <member refid="classHurricane_1_1DbU_1acd77957381fb93fc4203bdca215e0b48" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>db</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Db</name></member>
+      <member refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromDb</name></member>
+      <member refid="classHurricane_1_1DbU_1a367e1d1b5ac1df076745550cba8a83c1" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a4b570755b19ea9ff0f2f258a221bd935" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a106f4a0f670b4d890f333abc69cad550" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromMicrons</name></member>
+      <member refid="classHurricane_1_1DbU_1a9b7d86e474d32ce5e318a7e1f608ab22" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromNanos</name></member>
+      <member refid="classHurricane_1_1DbU_1a11d4dbd9134a19bda35cbacde1cb2769" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>fromPhysical</name></member>
+      <member refid="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>FunctionFlags</name></member>
+      <member refid="classHurricane_1_1DbU_1a4233772b1b3e68f3ec723c7509ea87ff" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getDb</name></member>
+      <member refid="classHurricane_1_1DbU_1ad4485d0d7b5fd7ae87b32f165155c0a2" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1aec480808261d1f50a9b6c9a316387351" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a9a0359adbfafc356326f5c6adf57ff04" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getGridsPerLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1adea6b9a6e84243f70f3a5e2725b2c6d8" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a751c026d6f3b4810e505d4a4f6fdb891" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a8756c9f0a32af5f601cd150e73b02c03" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getMaximalPrecision</name></member>
+      <member refid="classHurricane_1_1DbU_1a87323d9038656dceabffc37d45de408a" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getOnCustomGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a9419025221579f4277475c65655be3dc" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getOnPhysicalGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a8746e486f153aa37ee469c1604eba5c0" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getOnRealSnapGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1ad1b0c0f3680093cf5a63d901312c925d" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getOnSymbolicSnapGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a212aa4d59b330c205e008d41ec55fcd7" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getPhysical</name></member>
+      <member refid="classHurricane_1_1DbU_1a15e253558b958999db4c3ae2f8ee9493" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getPhysical</name></member>
+      <member refid="classHurricane_1_1DbU_1a4bac0413f1a4c3441eb4a5a023d0418e" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getPhysicalsPerGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a52efccce829120abb72f7167e08ae72a" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getPolygonStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a6169efbdd9b3d54a0bd8467c8f957fda" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getPrecision</name></member>
+      <member refid="classHurricane_1_1DbU_1a09e46fcca6aaca94851adfa196e10170" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getRealSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a120a60b09b344d01c583567a1e489d9e" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getResolution</name></member>
+      <member refid="classHurricane_1_1DbU_1aba18c995b62588115f8c89bd91578552" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getStringMode</name></member>
+      <member refid="classHurricane_1_1DbU_1a687a9134729b107c42fb7f69596c4c3b" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getSymbolicSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1ad5f6ba373d596b7f0510b137d948b38f" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getUnitPower</name></member>
+      <member refid="classHurricane_1_1DbU_1a2d476ccd91afb0f6b38c2137358c254e" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getValueRecord</name></member>
+      <member refid="classHurricane_1_1DbU_1a70ed695eca6895f0016947fe76344ea0" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getValueSlot</name></member>
+      <member refid="classHurricane_1_1DbU_1adc9c1a06b4296dbddcf711077113f4bd" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getValueString</name></member>
+      <member refid="classHurricane_1_1DbU_1a85724b813cebb815790a647eac499050" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>getValueString</name></member>
+      <member refid="classHurricane_1_1DbU_1a1d4bac6e3b68c8cd44b345de3b425753" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>grid</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Grid</name></member>
+      <member refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Inferior</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Kilo</name></member>
+      <member refid="classHurricane_1_1DbU_1aa1ba98acc939ff1c370c18544a5e0dce" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>lambda</name></member>
+      <member refid="classHurricane_1_1DbU_1adc2321cdebbf694f23e3dcb936e1a0cf" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Max</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Micro</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Milli</name></member>
+      <member refid="classHurricane_1_1DbU_1a9924985f39bdebc4762225ab0520c410" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Min</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Nano</name></member>
+      <member refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Nearest</name></member>
+      <member refid="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045af02fd8ff901b02a86f176ee6b0b4a103" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>NoFlags</name></member>
+      <member refid="classHurricane_1_1DbU_1af4bca9884dffb5550c05717881942045af17a3a9177f9716ba8ce43d3c8e6ef8c" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>NoTechnoUpdate</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a5f86f7f4d831f216c84967c0a47e7bd1" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Physical</name></member>
+      <member refid="classHurricane_1_1DbU_1aa20ba7c755d6edf3c76be8996f650e5f" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>physicalToDbu</name></member>
+      <member refid="classHurricane_1_1DbU_1ad3f2b1c3fe2b4ec03d5a2ce69629d5ee" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>physicalToGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Pico</name></member>
+      <member refid="classHurricane_1_1DbU_1ac93f9ba2a09105227e34bd05bcb1500c" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setGridsPerLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a4ba5a12d194ec46e2c9aae5dae7c54c9" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setPhysicalsPerGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a2e7023aadf96786deb43e96a21a28a85" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setPolygonStep</name></member>
+      <member refid="classHurricane_1_1DbU_1ace9a8644e7e80dcaed2a8a95deeb1622" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setPrecision</name></member>
+      <member refid="classHurricane_1_1DbU_1a202cc3aa3364c2224647a29dde047fae" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setRealSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a89ab8f8326c54113336086663ecf1d25" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setStringMode</name></member>
+      <member refid="classHurricane_1_1DbU_1a9ccd423c8f268ef54770f4663e6c9304" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>setSymbolicSnapGridStep</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4ac13f5dd82b22e580cbb3373f7c62207b" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>SmartTruncate</name></member>
+      <member refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>SnapMode</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>StringMode</name></member>
+      <member refid="classHurricane_1_1DbU_1a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Superior</name></member>
+      <member refid="classHurricane_1_1DbU_1a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Symbolic</name></member>
+      <member refid="classHurricane_1_1DbU_1a927e1aaeff66bedf4acee555500f0cbd" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toCeil</name></member>
+      <member refid="classHurricane_1_1DbU_1aec07c6e7ae2a2a6f54e2a16b32c8bf26" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toDb</name></member>
+      <member refid="classHurricane_1_1DbU_1abb3b350a8a5f3839c186ab327319913c" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toFloor</name></member>
+      <member refid="classHurricane_1_1DbU_1a318d673386c9424e07c12efd598c730d" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a3f54c3ad2d4103482407d6d0d285d10b" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toGrid</name></member>
+      <member refid="classHurricane_1_1DbU_1a4923a9a443871282ad7d331be2a2a5d4" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1a6fa56cbb3401bf5838ee654a4376e9f7" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toLambda</name></member>
+      <member refid="classHurricane_1_1DbU_1ae185f9d34ae4c5d621e3a0ff927ef3d8" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toMicrons</name></member>
+      <member refid="classHurricane_1_1DbU_1af015e45065332c22f1f18fce3dc8f460" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toNanos</name></member>
+      <member refid="classHurricane_1_1DbU_1ab901e9d5c12e878728178f113def6c45" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toPhysical</name></member>
+      <member refid="classHurricane_1_1DbU_1a8857635cded45497669801bdd83227fc" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>toPhysical</name></member>
+      <member refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Unit</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>UnitPower</name></member>
+      <member refid="classHurricane_1_1DbU_1a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6" prot="public" virt="non-virtual"><scope>Hurricane::DbU</scope><name>Unity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

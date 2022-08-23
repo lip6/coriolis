@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Cell_1_1Flags" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Cell::Flags</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">BaseFlags</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0" prot="public" static="no" strong="no">
+        <type></type>
+        <name>Flag</name>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a95d6a601da3ca0b84fa18d43d882e67c" prot="public">
+          <name>NoFlags</name>
+          <initializer>=  0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a59201b2ceaa0aac1a514d0cc1234f817" prot="public">
+          <name>BuildRings</name>
+          <initializer>= (1 &lt;&lt;  1)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3ecc6a2a18ff179a0a7073597ca8338b" prot="public">
+          <name>BuildClockRings</name>
+          <initializer>= (1 &lt;&lt;  2)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a30cbf650e1e7a24c1ad4b392e72217c5" prot="public">
+          <name>BuildSupplyRings</name>
+          <initializer>= (1 &lt;&lt;  3)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ad964706995bc9d964b3ba3c23cd1251b" prot="public">
+          <name>NoClockFlatten</name>
+          <initializer>= (1 &lt;&lt;  4)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a7ec18a36bb21df5c2c9ca06eca131f42" prot="public">
+          <name>WarnOnUnplacedInstances</name>
+          <initializer>= (1 &lt;&lt;  5)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0aaff70c67adde34d93b9b95ef13708343" prot="public">
+          <name>StayOnPlugs</name>
+          <initializer>= (1 &lt;&lt;  6)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a7b5fd34a65a0b84e8265bd3cd8932301" prot="public">
+          <name>MaskRings</name>
+          <initializer>= BuildRings|BuildClockRings|BuildSupplyRings</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a77a7a033dde51f93c8e047585f620170" prot="public">
+          <name>CellAboutToChange</name>
+          <initializer>= (1 &lt;&lt; 10)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3492fed7d53249097a5860e49139272b" prot="public">
+          <name>CellChanged</name>
+          <initializer>= (1 &lt;&lt; 11)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a6e7a571ae1afccf35ccdf68c58f30400" prot="public">
+          <name>CellDestroyed</name>
+          <initializer>= (1 &lt;&lt; 12)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ae2486166c962557985a72cf890fb55bd" prot="public">
+          <name>TerminalNetlist</name>
+          <initializer>= (1 &lt;&lt; 20)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a1f571824655e48938e2a33075bbf45e4" prot="public">
+          <name>Pad</name>
+          <initializer>= (1 &lt;&lt; 21)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ab25b022467a1406a8cba8b6d72e94579" prot="public">
+          <name>Feed</name>
+          <initializer>= (1 &lt;&lt; 22)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ae8fa318bc12d3ea0d92b9835b6bdfc5d" prot="public">
+          <name>Diode</name>
+          <initializer>= (1 &lt;&lt; 23)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3a941b0b4b314dcea6a7eb3a69282c9c" prot="public">
+          <name>PowerFeed</name>
+          <initializer>= (1 &lt;&lt; 24)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a0d06daaafe166740ad9390fe939c28b8" prot="public">
+          <name>FlattenedNets</name>
+          <initializer>= (1 &lt;&lt; 25)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0acd8a087727127afb4729990714eaad94" prot="public">
+          <name>AbstractedSupply</name>
+          <initializer>= (1 &lt;&lt; 26)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a0b9d173a10abc64c4dc7f9300f442bea" prot="public">
+          <name>Placed</name>
+          <initializer>= (1 &lt;&lt; 27)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a546a043a105c8a40001a4d15015e6c0d" prot="public">
+          <name>Routed</name>
+          <initializer>= (1 &lt;&lt; 28)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0add6652dbb7c3021412844871d312f61e" prot="public">
+          <name>SlavedAb</name>
+          <initializer>= (1 &lt;&lt; 29)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0abb8521d64fd7d73ecdb64f793819234e" prot="public">
+          <name>Materialized</name>
+          <initializer>= (1 &lt;&lt; 30)</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="75" column="9" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="75" bodyend="99"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1Flags_1a2801ac6b492fb75fbe00fbcd8ef9986a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Cell::Flags::Flags</definition>
+        <argsstring>(uint64_t flags=NoFlags)</argsstring>
+        <name>Flags</name>
+        <param>
+          <type>uint64_t</type>
+          <declname>flags</declname>
+          <defval>NoFlags</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="102" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1Flags_1a50d61a338458ac07582f1c2aa6091916" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual Hurricane::Cell::Flags::~Flags</definition>
+        <argsstring>()</argsstring>
+        <name>~Flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="103" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1Flags_1ac3f84ec52b4ce31759647479f039d335" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Hurricane::Cell::Flags::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="104" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Cell_1_1Flags_1a70b0e7f31917b349e592d42cbb568108" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Hurricane::Cell::Flags::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="105" column="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" line="73" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Cell.h" bodystart="73" bodyend="106"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a70b0e7f31917b349e592d42cbb568108" prot="public" virt="virtual"><scope>Hurricane::Cell::Flags</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1ac3f84ec52b4ce31759647479f039d335" prot="public" virt="virtual"><scope>Hurricane::Cell::Flags</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0acd8a087727127afb4729990714eaad94" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>AbstractedSupply</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3ecc6a2a18ff179a0a7073597ca8338b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>BuildClockRings</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a59201b2ceaa0aac1a514d0cc1234f817" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>BuildRings</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a30cbf650e1e7a24c1ad4b392e72217c5" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>BuildSupplyRings</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a77a7a033dde51f93c8e047585f620170" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>CellAboutToChange</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3492fed7d53249097a5860e49139272b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>CellChanged</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a6e7a571ae1afccf35ccdf68c58f30400" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>CellDestroyed</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ae8fa318bc12d3ea0d92b9835b6bdfc5d" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Diode</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ab25b022467a1406a8cba8b6d72e94579" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Feed</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Flag</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a2801ac6b492fb75fbe00fbcd8ef9986a" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Flags</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a0d06daaafe166740ad9390fe939c28b8" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>FlattenedNets</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a7b5fd34a65a0b84e8265bd3cd8932301" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>MaskRings</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0abb8521d64fd7d73ecdb64f793819234e" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Materialized</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ad964706995bc9d964b3ba3c23cd1251b" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>NoClockFlatten</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a95d6a601da3ca0b84fa18d43d882e67c" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>NoFlags</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a1f571824655e48938e2a33075bbf45e4" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Pad</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a0b9d173a10abc64c4dc7f9300f442bea" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Placed</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a3a941b0b4b314dcea6a7eb3a69282c9c" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>PowerFeed</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a546a043a105c8a40001a4d15015e6c0d" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>Routed</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0add6652dbb7c3021412844871d312f61e" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>SlavedAb</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0aaff70c67adde34d93b9b95ef13708343" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>StayOnPlugs</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0ae2486166c962557985a72cf890fb55bd" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>TerminalNetlist</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a84afe158b71d4be1f49a714fd6df47c0a7ec18a36bb21df5c2c9ca06eca131f42" prot="public" virt="non-virtual"><scope>Hurricane::Cell::Flags</scope><name>WarnOnUnplacedInstances</name></member>
+      <member refid="classHurricane_1_1Cell_1_1Flags_1a50d61a338458ac07582f1c2aa6091916" prot="public" virt="virtual"><scope>Hurricane::Cell::Flags</scope><name>~Flags</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

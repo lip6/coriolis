@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable version of this Document RDS.pdf Contents Printable version of this Document Symbolic Layout Symbolic Components Symbolic Segments The RDS File Physical Grid &amp; Lambda Value The ...">
+        <meta name="description" content="Printable version of this Document RDS.pdf Contents Printable version of this Document Symbolic Layout Symbolic Components Symbolic Segments The RDS File Physical Grid &amp; Lambda Value The...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -123,7 +123,7 @@
 <h2><a class="toc-backref" href="#id2">Printable version of this Document</a></h2>
 <p><a class="reference external" href="../pdfs/RDS.pdf">RDS.pdf</a></p>
 <div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
+<p class="topic-title">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#printable-version-of-this-document" id="id2">Printable version of this Document</a></li>
 <li><a class="reference internal" href="#symbolic-layout" id="id3">Symbolic Layout</a><ul>
@@ -297,12 +297,12 @@ bend. Not used anymore in recent technos</td>
 </tr>
 </tbody>
 </table>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Not all association of object and symbolic layers are meaningful.
 For instance you cannot associate a contact to a <tt class="docutils literal">NTRANS</tt> layer.</p>
 </div>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The symbolic layer associated with blockages is prefixed by a <tt class="docutils literal">T</tt>,
 for <em>transparency</em>, which may seems silly. It is for historical reasons,
@@ -324,7 +324,7 @@ It allows to generate, if needed, asymetric object in the real layout file.</p>
 <h2><a class="toc-backref" href="#id6">The RDS File</a></h2>
 <p>The RDS file control how a symbolic layout is transformed into it's real
 conterpart.</p>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Unit used inside the RDS file:</strong> all units are expressed in micrometers.</p>
 </div>
@@ -500,7 +500,7 @@ TABLE MBK_TO_RDS_VIA
 
 END
 </pre>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>In CONT_DIF_P</strong> you may see that only three layers will be shown under
 <tt class="docutils literal">graal</tt>, but five will be generated in the <tt class="docutils literal">gds</tt> layout.</p>
@@ -532,7 +532,7 @@ TABLE MBK_TO_RDS_BIGVIA_HOLE
 
 END
 </pre>
-<div class="note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>BIGVIA demotion.</strong> If the size of the bigvia is too small, there is
 a possibility that no hole from the global matrix will be under it.

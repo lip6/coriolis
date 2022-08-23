@@ -23,12 +23,12 @@ allowing to simply write:
 .. code-block:: Python
 
    for net in cell.getNets():
-     print 'Components of', net
-     for component in net.getComponents():
-       print '|', component
+       print( 'Components of', net )
+       for component in net.getComponents():
+           print( '|', component )
 
 
-In C++ we would have written:
+In C++ we would have been written:
 
 .. code-block:: C++
 
@@ -54,13 +54,13 @@ loop. For example:
 
    cellNets = []
    for net in cell.getNets():
-     cellNets.append( net )
+       cellNets.append( net )
 
    # Remove all the anonymous nets.
    for net in cellNets:
-      if net.getName().endswith('nymous_'):
-        print 'Destroy', net
-        net.destroy()
+       if net.getName().endswith('nymous_'):
+           print( 'Destroy', net )
+           net.destroy()
 
 
 

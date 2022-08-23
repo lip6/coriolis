@@ -31,6 +31,7 @@
 #include "hurricane/isobar/PyPolygon.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyRoutingPad.h"
+#include "hurricane/isobar/PythonAttributes.h"
 #include "hurricane/Cell.h"
 
 namespace Isobar {
@@ -76,6 +77,63 @@ extern "C" {
       boundingBox->_object = new Box ( entity->getBoundingBox() );
     HCATCH
     return ( (PyObject*)boundingBox );
+  }
+
+
+// https://stackoverflow.com/questions/64599762/how-does-one-use-both-tp-getattro-tp-setattro-and-tp-getset-in-a-custom-pyt
+
+  PyObject* PyEntity_getattro ( PyObject* self, PyObject* attrName )
+  {
+    cout.flush();
+    PyObject* type      = NULL;
+    PyObject* value     = NULL;
+    PyObject* traceback = NULL;
+    PyObject* attribute = PyObject_GenericGetAttr( self, attrName );
+    if (attribute) return attribute;
+
+    Entity* entity = ((PyEntity*)self)->_object;
+    PyAttributesHolder* holder = PythonAttributes::get( entity );
+    if (not holder) return NULL;
+
+    PyErr_Fetch( &type, &value, &traceback );
+    attribute = PyObject_GenericGetAttr( (PyObject*)holder, attrName );
+    if (not attribute) {
+      PyErr_Restore(type, value, traceback);
+      return NULL;
+    }
+
+    Py_XDECREF( type );
+    Py_XDECREF( value );
+    Py_XDECREF( traceback );
+    return attribute;
+  }
+
+
+  int32_t  PyEntity_setattro ( PyObject* self, PyObject * attrName, PyObject* attrValue )
+  {
+    int32_t   status    = -1;
+    PyObject* type      = NULL;
+    PyObject* value     = NULL;
+    PyObject* traceback = NULL;
+
+    status = PyObject_GenericSetAttr( self, attrName, attrValue );
+    if (status == 0) return status;
+
+    Entity* entity = ((PyEntity*)self)->_object;
+    PyAttributesHolder* holder = PythonAttributes::get( entity );
+    if (not holder) return status;
+
+    PyErr_Fetch( &type, &value, &traceback );
+    status = PyObject_GenericSetAttr( (PyObject*)holder, attrName, attrValue );
+    if (status != 0) {
+      PyErr_Restore( type, value, traceback );
+    } else {
+      Py_XDECREF( type );
+      Py_XDECREF( value );
+      Py_XDECREF( traceback );
+    }
+
+    return status;
   }
 
 

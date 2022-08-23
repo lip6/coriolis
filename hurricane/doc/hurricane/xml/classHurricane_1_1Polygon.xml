@@ -1,0 +1,1017 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Polygon" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Polygon</compoundname>
+    <basecompoundref refid="classHurricane_1_1Component" prot="public" virt="non-virtual">Hurricane::Component</basecompoundref>
+    <innerclass refid="classHurricane_1_1Polygon_1_1Edge" prot="public">Hurricane::Polygon::Edge</innerclass>
+    <innerclass refid="classHurricane_1_1Polygon_1_1Points__Manhattan" prot="public">Hurricane::Polygon::Points_Manhattan</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Polygon_1adac4dcd1480b81e7778775540b95f81c" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Component" kindref="compound">Component</ref></type>
+        <definition>Hurricane::Polygon::Super</definition>
+        <argsstring></argsstring>
+        <name>Super</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for calling upon methods of the base class without knowing it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="46" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1ace764d45f3666e08da67668464c5ef0b" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::Above</definition>
+        <argsstring></argsstring>
+        <name>Above</name>
+        <initializer>= (1&lt;&lt;0)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="48" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a9e92f47b48913b4bd797f262fccf8f9d" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::YSteps</definition>
+        <argsstring></argsstring>
+        <name>YSteps</name>
+        <initializer>= (1&lt;&lt;1)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="49" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a65533423a8ce9b5b39f97dfcfd0a56e7" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::XSteps</definition>
+        <argsstring></argsstring>
+        <name>XSteps</name>
+        <initializer>= (1&lt;&lt;2)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="50" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a25f1729786f7b241b54156e4841e726c" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::XIncrease</definition>
+        <argsstring></argsstring>
+        <name>XIncrease</name>
+        <initializer>= (1&lt;&lt;3)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="51" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a88a453d21bdc38e726d0cca94c04de36" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::YIncrease</definition>
+        <argsstring></argsstring>
+        <name>YIncrease</name>
+        <initializer>= (1&lt;&lt;4)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="52" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1ae93ddd31ac2219c4f8bd2605c42e91c2" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::Horizontal</definition>
+        <argsstring></argsstring>
+        <name>Horizontal</name>
+        <initializer>= (1&lt;&lt;5)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="53" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a7cad6a3a4a98c142722d1f509340cfd9" prot="public" static="yes" mutable="no">
+        <type>const uint32_t</type>
+        <definition>const uint32_t Hurricane::Polygon::Vertical</definition>
+        <argsstring></argsstring>
+        <name>Vertical</name>
+        <initializer>= (1&lt;&lt;6)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="54" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1ad2db0bb0113116ea892ba5451f03b8a7" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>const Layer* Hurricane::Polygon::_layer</definition>
+        <argsstring></argsstring>
+        <name>_layer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="137" column="40" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1a238388ea14c27ea3906e2e485f02e4e2" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt;</type>
+        <definition>std::vector&lt;Point&gt; Hurricane::Polygon::_points</definition>
+        <argsstring></argsstring>
+        <name>_points</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="138" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Polygon_1ae178a32f378f2a14701707d2e7833285" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; Edge * &gt;</type>
+        <definition>std::vector&lt;Edge*&gt; Hurricane::Polygon::_edges</definition>
+        <argsstring></argsstring>
+        <name>_edges</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="139" column="34" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1ac248679558ff51bf509b28050027b7da" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> *</type>
+        <definition>Polygon * Hurricane::Polygon::create</definition>
+        <argsstring>(Net *, const Layer *, const std::vector&lt; Point &gt; &amp;)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <defname>net</defname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <defname>layer</defname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &amp;</type>
+          <defname>points</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create a polygon of <computeroutput>layer</computeroutput> in <computeroutput>net</computeroutput>. <computeroutput>points</computeroutput> define the vertexes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="106" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a858dd5a168c319bb54fdd47c1d72bbde" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>static float Hurricane::Polygon::getSlope</definition>
+        <argsstring>(const Point &amp;, const Point &amp;)</argsstring>
+        <name>getSlope</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="107" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1aa84fcb9ca1485ecce293558b84398cd6" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>static float Hurricane::Polygon::getSign</definition>
+        <argsstring>(const vector&lt; Point &gt; &amp;, size_t)</argsstring>
+        <name>getSign</name>
+        <param>
+          <type>const vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &amp;</type>
+        </param>
+        <param>
+          <type>size_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="124" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a77b24e8059b82a99e8adba58102fa994" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> *</type>
+        <definition>static JsonObject* Hurricane::Polygon::getJsonObject</definition>
+        <argsstring>(unsigned long flags)</argsstring>
+        <name>getJsonObject</name>
+        <param>
+          <type>unsigned long</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="129" column="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a50160ef0379ad9699aa149557be8c70a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Polygon::isNonRectangle</definition>
+        <argsstring>() const</argsstring>
+        <name>isNonRectangle</name>
+        <reimplements refid="classHurricane_1_1Component_1a7ee98963963123d78b1eb70f81f32904">isNonRectangle</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="109" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1aa463b0d405981041376f2e556667c432" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Polygon::isManhattanized</definition>
+        <argsstring>() const</argsstring>
+        <name>isManhattanized</name>
+        <reimplements refid="classHurricane_1_1Component_1a794ff898d08ba8e68da23c49eac8d6e4">isManhattanized</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="110" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a64edbc25f292f831c8a3cc8af7b97e9d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::Polygon::getX</definition>
+        <argsstring>() const</argsstring>
+        <name>getX</name>
+        <reimplements refid="classHurricane_1_1Component_1a0f8299ed73705fd4fbf56589dcc7e074">getX</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="111" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1acade30c5e7e9e92a22081545006c8f5d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>virtual DbU::Unit Hurricane::Polygon::getY</definition>
+        <argsstring>() const</argsstring>
+        <name>getY</name>
+        <reimplements refid="classHurricane_1_1Component_1a727da3f127c3a7a0a09468219f98c3e6">getY</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="112" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a949200b1ee63858361c12ab9d2b0ef07" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &amp;</type>
+        <definition>const vector&lt; Point &gt; &amp; Hurricane::Polygon::getPoints</definition>
+        <argsstring>() const</argsstring>
+        <name>getPoints</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="113" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="144" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1ad8ee3c96688e71fcf2f9b91f8575f26f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const vector&lt; Edge * &gt; &amp;</type>
+        <definition>const vector&lt; Polygon::Edge * &gt; &amp; Hurricane::Polygon::getEdges</definition>
+        <argsstring>() const</argsstring>
+        <name>getEdges</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="114" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="143" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1af108a8abefb76c507065f5424760fe4a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>size_t</type>
+        <definition>virtual size_t Hurricane::Polygon::getPointsSize</definition>
+        <argsstring>() const</argsstring>
+        <name>getPointsSize</name>
+        <reimplements refid="classHurricane_1_1Component_1ab9b1e6aa46becfd18e9cf2bc70a2499d">getPointsSize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="115" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a90c79db058f4d1e586193d3d2c45e81a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>virtual Point Hurricane::Polygon::getPoint</definition>
+        <argsstring>(size_t) const</argsstring>
+        <name>getPoint</name>
+        <reimplements refid="classHurricane_1_1Component_1a4e8ac66e0ec335209f0d036412ac0f57">getPoint</reimplements>
+        <param>
+          <type>size_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="116" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a6432890beacd486d9771dc90ca22e8a0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>virtual Box Hurricane::Polygon::getBoundingBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getBoundingBox</name>
+        <reimplements refid="classHurricane_1_1Component_1a0de756ca414309ac40a9952f0065487f">getBoundingBox</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="117" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a66c3eb1648a710f9875ef090406b04c6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>virtual Box Hurricane::Polygon::getBoundingBox</definition>
+        <argsstring>(const BasicLayer *) const</argsstring>
+        <name>getBoundingBox</name>
+        <reimplements refid="classHurricane_1_1Component_1aabb87b9ef71f71cea681a03a6213f616">getBoundingBox</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1BasicLayer" kindref="compound">BasicLayer</ref> *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="118" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a4d36b2aadf79eb6f3f2ccb5eeb44c204" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Polygon::getSubPolygons</definition>
+        <argsstring>(vector&lt; vector&lt; Point &gt; &gt; &amp;) const</argsstring>
+        <name>getSubPolygons</name>
+        <param>
+          <type>vector&lt; vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="119" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a1ead95c78dd433fb38250a7d850c9d83" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        <definition>virtual const Layer* Hurricane::Polygon::getLayer</definition>
+        <argsstring>() const</argsstring>
+        <name>getLayer</name>
+        <reimplements refid="classHurricane_1_1Component_1ab451ef19059e6e5bbb77ae391d02a039">getLayer</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="120" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a30008ab4edaa5e334fdbc7decd4d970f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Polygon::setLayer</definition>
+        <argsstring>(const Layer *layer)</argsstring>
+        <name>setLayer</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="121" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a0db71b944258860ca7df34b003d6a854" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Polygon::translate</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</argsstring>
+        <name>translate</name>
+        <reimplements refid="classHurricane_1_1Go_1a54c4351dbbf4045e1aa89f06bb893402">translate</reimplements>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="122" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a861bde6d0aa96d971d0eab25fb1920d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Polygon::setPoints</definition>
+        <argsstring>(const vector&lt; Point &gt; &amp;)</argsstring>
+        <name>setPoints</name>
+        <param>
+          <type>const vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="123" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a220184b0efabffe1d3e37d1a5436bbbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float Hurricane::Polygon::getSlope</definition>
+        <argsstring>(size_t i) const</argsstring>
+        <name>getSlope</name>
+        <param>
+          <type>size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="125" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a280401ef249410609dc362a68a710133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Polygon::manhattanize</definition>
+        <argsstring>()</argsstring>
+        <name>manhattanize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="126" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a48843253bdec085269ae281fa46932ae" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1GenericCollection" kindref="compound">Points</ref></type>
+        <definition>virtual Points Hurricane::Polygon::getMContour</definition>
+        <argsstring>() const</argsstring>
+        <name>getMContour</name>
+        <reimplements refid="classHurricane_1_1Component_1a39f58433a66668e2e9e14894429b6f77">getMContour</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="127" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a06603cb43ec8e56351f34c7ea0bf608b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Polygon::_toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJson</name>
+        <reimplements refid="classHurricane_1_1Component_1abfc73a91605893578ab125365bf48d85">_toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="128" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a308ce23971c2d8e927049630039f22a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Polygon::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="130" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a05d97d8973548e82db8d7e1f6be206c1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Polygon::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Component_1a30d4e5c5767687df611cdd7e818215b1">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="131" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1ae333a6bfc40ae0dd5fb3d9985c98b140" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Polygon::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Component_1a43a84788ad2cbe7de22c507e1eeaf48d">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="132" column="35"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a67dd1ede00d18515bc121adea85621bd" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Polygon::Polygon</definition>
+        <argsstring>(Net *, const Layer *, const std::vector&lt; Point &gt; &amp;)</argsstring>
+        <name>Polygon</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="134" column="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Polygon_1a126beffd4e1a3760b4194076fdc0a88d" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Polygon::~Polygon</definition>
+        <argsstring>()</argsstring>
+        <name>~Polygon</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="135" column="35"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Polygon_1secPolygonIntro">
+<title>Introduction</title>
+<para><ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> should be used to create huge convex and manhattanized polygons. Manhattanization is done so the real geometric shape is completly included in it. The memory representation has been optimized for very large shape (compare to the foundry grid) and is inefficient for small ones.</para>
+<para>The minimal step length for the manhattanisation is set up with DbU::setPolygonStep().</para>
+<para><simplesect kind="warning"><para><ref refid="classHurricane_1_1Polygon" kindref="compound">Polygon</ref> objects <bold>cannot</bold> be exported in symbolic layout. </para>
+</simplesect>
+</para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="4">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Polygon</label>
+        <link refid="classHurricane_1_1Polygon"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Component</label>
+        <link refid="classHurricane_1_1Component"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="9">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="11">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="17">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="13">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::Rubber</label>
+        <link refid="classHurricane_1_1Rubber"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nextOfNetRubberSet</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_hook</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="19">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Polygon</label>
+        <link refid="classHurricane_1_1Polygon"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_layer</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_nextOfQuadTreeGoSet</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="18">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="21">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_nextOfTechnologyLayerMap</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="12">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="20">
+        <label>Hurricane::Component::BodyHook</label>
+        <link refid="classHurricane_1_1Component_1_1BodyHook"/>
+        <childnode refid="19" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Component</label>
+        <link refid="classHurricane_1_1Component"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_rubber</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_nextOfNetComponentSet</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_bodyHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" line="44" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Polygon.h" bodystart="44" bodyend="140"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Component_1ab0d425e5bdd711381c5af935b90080b8" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_bodyHook</name></member>
+      <member refid="classHurricane_1_1Polygon_1ae178a32f378f2a14701707d2e7833285" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_edges</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Component_1a75ac62079c9392f9f3f0fda0a761313b" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_getNextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1ad3617f5af214619cfe286091dab6a863" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_getNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Entity_1a01be68d1d059eb4cdb160d12c0db7a5e" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_getQuark</name></member>
+      <member refid="classHurricane_1_1Polygon_1ae333a6bfc40ae0dd5fb3d9985c98b140" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Polygon_1a05d97d8973548e82db8d7e1f6be206c1" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Polygon_1a308ce23971c2d8e927049630039f22a9" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Polygon_1ad2db0bb0113116ea892ba5451f03b8a7" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_layer</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Component_1abdfe98424461809df82573591b312e36" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_net</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Component_1a1c39eeb71b3cf8c992c16535732b86ab" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_nextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1a68cf61b178784fc0677cdcc3722a9d08" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_nextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Polygon_1a238388ea14c27ea3906e2e485f02e4e2" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_points</name></member>
+      <member refid="classHurricane_1_1Component_1ac1b58b179c8358a044e22e52d3d0f5f2" prot="protected" virt="virtual"><scope>Hurricane::Polygon</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Component_1a0ca65150f497bef0244449d141cc5044" prot="protected" virt="virtual"><scope>Hurricane::Polygon</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Go_1a08ecbf04c2664589cf27a34ec60f6ab7" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_quadTree</name></member>
+      <member refid="classHurricane_1_1Component_1aab69d4a8ce88502b51dfb09b242b998c" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_rubber</name></member>
+      <member refid="classHurricane_1_1Component_1aec198c632c18463f39806160398b3530" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_setNet</name></member>
+      <member refid="classHurricane_1_1Component_1afd1006d474ea6ff5e3c3318321479df9" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_setNextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1a2eb3430c581f3b4913150a8e17adf541" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_setNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1Component_1a784e50b9179a9c2d8c484952b44faa28" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>_setRubber</name></member>
+      <member refid="classHurricane_1_1Polygon_1a06603cb43ec8e56351f34c7ea0bf608b" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1Component_1a652c62ea03baba8b80852f743c3bc1c2" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Polygon_1ace764d45f3666e08da67668464c5ef0b" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Above</name></member>
+      <member refid="classHurricane_1_1Go_1a1057be4198a7b64c32a2ac3c7d560014" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>autoMaterializationIsDisabled</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Component_1a3194dd34e5d6a060216097dcf7de6be0" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Component</name></member>
+      <member refid="classHurricane_1_1Polygon_1ac248679558ff51bf509b28050027b7da" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Go_1a0d49d22a3788e8001e58152e62b9f3cc" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>disableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Go_1ab0b1ca3c606247e1ebd7cab8fa828b04" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>enableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Entity_1a97cf0d2e193d947f4e312d471657c06d" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Entity</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Component_1a70f428c6a48d27b74096fe06a3713001" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>forceId</name></member>
+      <member refid="classHurricane_1_1Component_1a19f06d7cad163bab3b97a13f4736c9d1" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getBodyHook</name></member>
+      <member refid="classHurricane_1_1Polygon_1a6432890beacd486d9771dc90ca22e8a0" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Polygon_1a66c3eb1648a710f9875ef090406b04c6" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Component_1aded90232be0978bcb9166d5bbd4d76a1" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Component_1a508eb472c5e171d35e51d606a9a680ab" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getCenter</name></member>
+      <member refid="classHurricane_1_1Component_1a4acf996c03b0b94a186fad653ba578a6" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getConnexComponents</name></member>
+      <member refid="classHurricane_1_1Component_1a764806dff055eddf8a32569f831cc4ab" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getContour</name></member>
+      <member refid="classHurricane_1_1Polygon_1ad8ee3c96688e71fcf2f9b91f8575f26f" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getEdges</name></member>
+      <member refid="classHurricane_1_1Component_1a1fc513b9465b2b8c22f41d56bf775594" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getHooks</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Component_1a8680f2756892366db8642bfcfd7ce097" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getIsUnderFilter</name></member>
+      <member refid="classHurricane_1_1Polygon_1a77b24e8059b82a99e8adba58102fa994" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getJsonObject</name></member>
+      <member refid="classHurricane_1_1Polygon_1a1ead95c78dd433fb38250a7d850c9d83" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getLayer</name></member>
+      <member refid="classHurricane_1_1Polygon_1a48843253bdec085269ae281fa46932ae" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getMContour</name></member>
+      <member refid="classHurricane_1_1Component_1a1556ef77d6b89bfc17698d52ebde9791" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getNet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Polygon_1a90c79db058f4d1e586193d3d2c45e81a" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getPoint</name></member>
+      <member refid="classHurricane_1_1Polygon_1a949200b1ee63858361c12ab9d2b0ef07" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getPoints</name></member>
+      <member refid="classHurricane_1_1Polygon_1af108a8abefb76c507065f5424760fe4a" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getPointsSize</name></member>
+      <member refid="classHurricane_1_1Component_1aa4e9a47c89fe701670ca34355195d519" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getPosition</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Component_1ab701515debfdf1bf4142d4d917aaab1d" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getRubber</name></member>
+      <member refid="classHurricane_1_1Polygon_1aa84fcb9ca1485ecce293558b84398cd6" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getSign</name></member>
+      <member refid="classHurricane_1_1Component_1af6d6b7c6b3cb18754cfa02bc5fb1e754" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getSlaveComponents</name></member>
+      <member refid="classHurricane_1_1Polygon_1a858dd5a168c319bb54fdd47c1d72bbde" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getSlope</name></member>
+      <member refid="classHurricane_1_1Polygon_1a220184b0efabffe1d3e37d1a5436bbbc" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getSlope</name></member>
+      <member refid="classHurricane_1_1Polygon_1a4d36b2aadf79eb6f3f2ccb5eeb44c204" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>getSubPolygons</name></member>
+      <member refid="classHurricane_1_1Polygon_1a64edbc25f292f831c8a3cc8af7b97e9d" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getX</name></member>
+      <member refid="classHurricane_1_1Polygon_1acade30c5e7e9e92a22081545006c8f5d" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>getY</name></member>
+      <member refid="classHurricane_1_1Go_1a9fe76630495793d6567f9fb69b53686b" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Go</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1Polygon_1ae93ddd31ac2219c4f8bd2605c42e91c2" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Horizontal</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Component_1a3911e94f9d220eb809d349b1181034e3" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Component_1a8334b04428fcc163deee2f07bf89e2bb" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>invalidate</name></member>
+      <member refid="classHurricane_1_1Polygon_1aa463b0d405981041376f2e556667c432" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>isManhattanized</name></member>
+      <member refid="classHurricane_1_1Go_1a0fd2574d3e2e0157230209acdc1b8aa6" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>isMaterialized</name></member>
+      <member refid="classHurricane_1_1Polygon_1a50160ef0379ad9699aa149557be8c70a" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>isNonRectangle</name></member>
+      <member refid="classHurricane_1_1Polygon_1a280401ef249410609dc362a68a710133" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>manhattanize</name></member>
+      <member refid="classHurricane_1_1Component_1a0b8fd3c2af7624646e02d9804f318e9c" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>materialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Polygon_1a67dd1ede00d18515bc121adea85621bd" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Polygon</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1Polygon_1a30008ab4edaa5e334fdbc7decd4d970f" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setLayer</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Polygon_1a861bde6d0aa96d971d0eab25fb1920d3" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>setPoints</name></member>
+      <member refid="classHurricane_1_1Polygon_1adac4dcd1480b81e7778775540b95f81c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Super</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Polygon_1a0db71b944258860ca7df34b003d6a854" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>translate</name></member>
+      <member refid="classHurricane_1_1Component_1af005fecbd3106d707a2d33c7aad930ea" prot="public" virt="virtual"><scope>Hurricane::Polygon</scope><name>unmaterialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1Polygon_1a7cad6a3a4a98c142722d1f509340cfd9" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>Vertical</name></member>
+      <member refid="classHurricane_1_1Polygon_1a25f1729786f7b241b54156e4841e726c" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>XIncrease</name></member>
+      <member refid="classHurricane_1_1Polygon_1a65533423a8ce9b5b39f97dfcfd0a56e7" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>XSteps</name></member>
+      <member refid="classHurricane_1_1Polygon_1a88a453d21bdc38e726d0cca94c04de36" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>YIncrease</name></member>
+      <member refid="classHurricane_1_1Polygon_1a9e92f47b48913b4bd797f262fccf8f9d" prot="public" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>YSteps</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Polygon</scope><name>~DBo</name></member>
+      <member refid="classHurricane_1_1Entity_1a4bbd1e777d515f98fde3d4601f3adb89" prot="protected" virt="virtual"><scope>Hurricane::Polygon</scope><name>~Entity</name></member>
+      <member refid="classHurricane_1_1Go_1ae9061a10db10066b1b1266fd525dd6ae" prot="protected" virt="virtual"><scope>Hurricane::Polygon</scope><name>~Go</name></member>
+      <member refid="classHurricane_1_1Polygon_1a126beffd4e1a3760b4194076fdc0a88d" prot="protected" virt="non-virtual"><scope>Hurricane::Polygon</scope><name>~Polygon</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

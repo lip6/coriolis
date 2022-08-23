@@ -9,6 +9,7 @@
                         ${Python_INCLUDE_DIRS}
                       )
                    set( pyCpps     ProxyProperty.cpp
+                                   PythonAttributes.cpp
                                    PyBreakpoint.cpp
                                    PyInterval.cpp
                                    PyBox.cpp
@@ -46,6 +47,7 @@
                                    PyNetExternalComponents.cpp
                                    PyNetRoutingState.cpp
                                    PyNetRoutingProperty.cpp
+                                   PyPythonAttributes.cpp
                                    PyOccurrence.cpp
                                    PyOccurrenceCollection.cpp
                                    PyHook.cpp
@@ -85,6 +87,7 @@
                                    PyTwoLayersPhysicalRule.cpp
                       )	    
                    set( pyIncludes hurricane/isobar/ProxyProperty.h
+                                   hurricane/isobar/PythonAttributes.h
                                    hurricane/isobar/PyBreakpoint.h
                                    hurricane/isobar/PyInterval.h
                                    hurricane/isobar/PyBox.h
@@ -123,6 +126,7 @@
                                    hurricane/isobar/PyNetExternalComponents.h
                                    hurricane/isobar/PyNetRoutingState.h
                                    hurricane/isobar/PyNetRoutingProperty.h
+                                   hurricane/isobar/PyPythonAttributes.h
                                    hurricane/isobar/PyOccurrence.h
                                    hurricane/isobar/PyOccurrenceCollection.h
                                    hurricane/isobar/PyHook.h
