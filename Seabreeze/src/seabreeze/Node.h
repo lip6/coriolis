@@ -25,7 +25,7 @@ namespace Seabreeze {
 
 
 //----------------------------------------------------------
-// Class : Seabreeze::Tree.
+// Class : Seabreeze::Node.
 
   class Node {
     public:
