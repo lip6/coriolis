@@ -553,6 +553,7 @@ extern "C" {
     PyEntity_LinkPyType ();
     PyTypeEntity.tp_getattro = PyEntity_getattro;
     PyTypeEntity.tp_setattro = PyEntity_setattro;
+    PyEntityVector_LinkPyType ();
     PyLayer_LinkPyType ();
     PyLayerMask_LinkPyType ();
     PyBasicLayer_LinkPyType ();
@@ -630,6 +631,8 @@ extern "C" {
     PYTYPE_READY( Technology                    )
     PYTYPE_READY( Library                       )
     PYTYPE_READY( Entity                        )
+    PYTYPE_READY( EntityVector                  )
+    PYTYPE_READY( EntityVectorIterator          )
     PYTYPE_READY( Hook                          )
     PYTYPE_READY( HookCollection                )
     PYTYPE_READY( Material                      )

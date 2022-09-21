@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ISOBAR_PY_ENTITY_H
-#define ISOBAR_PY_ENTITY_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/Entity.h"
 
@@ -39,6 +37,7 @@ namespace  Isobar {
 // Functions & Types exported to "PyHurricane.ccp".
 
   extern  PyObject* PyEntity_NEW        ( Hurricane::Entity* entity );
+  extern  PyObject* PyEntity_Link       ( Hurricane::Entity* entity );
   extern  PyObject* PyEntity_getattro   ( PyObject* self, PyObject* attrName );
   extern  int32_t   PyEntity_setattro   ( PyObject* self, PyObject* attrName, PyObject* value );
   extern  void      PyEntity_LinkPyType ();
@@ -51,6 +50,9 @@ namespace  Isobar {
 #define PYENTITY(v)      ( (PyEntity*)(v) )
 #define PYENTITY_O(v)    ( PYENTITY(v)->_object )
 
+declareVectorObject(Entity);
+    
+
 
   }  // extern "C".
 
@@ -59,5 +61,3 @@ namespace  Isobar {
 
 
 }  // Isobar namespace.
-
-#endif  // ISOBAR_PY_ENTITY_H

@@ -151,6 +151,10 @@ extern "C" {
   DBoDeleteMethod(Entity)
   PyTypeObjectLinkPyType(Entity) 
 
+  IteratorNextMethod(Entity)
+  VectorMethods     (Entity)
+
+
 #else  // End of Python Module Code Part.
 
 // +=================================================================+
@@ -214,7 +218,16 @@ extern "C" {
   }
 
 
+  PyObject* PyEntity_Link ( Entity* entity )
+  { return PyEntity_NEW( entity ); }
+
+
   PyTypeRootObjectDefinitions(Entity)
+
+
+  PyTypeVectorObjectDefinitions(EntityVector)
+  PyTypeVectorObjectDefinitions(EntityVectorIterator)
+
 
 
   // ---------------------------------------------------------------
