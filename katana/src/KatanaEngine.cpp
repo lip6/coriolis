@@ -673,8 +673,9 @@ namespace Katana {
     ostringstream          result;
     bool                   isSymbolic =
       const_cast<KatanaEngine*>(this)->getConfiguration()->getRoutingGauge()->isSymbolic();
-  // Max symbolic wire: 100000L, max real wire: 3mm.
-    uint64_t               maxWL = (isSymbolic) ? 100000 : 3000000;
+  // Max symbolic wire: 100000L, max real wire: 5mm.
+    uint64_t               maxWL = (isSymbolic) ? DbU::fromLambda( 100000.0 )
+                                                : DbU::fromPhysical( 5.0, DbU::UnitPower::Milli );
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
     for ( ; ilut != _getAutoSegmentLut().end() ; ilut++ ) {
@@ -683,9 +684,9 @@ namespace Katana {
 
       uint64_t wl = 0;
       if (isSymbolic)
-        wl = (unsigned long long)DbU::toLambda( segment->getLength() );
+        wl = (uint64_t)DbU::toLambda( segment->getLength() );
       else
-        wl = (unsigned long long)DbU::toPhysical( segment->getLength(), DbU::UnitPower::Nano );
+        wl = (uint64_t)DbU::toPhysical( segment->getLength(), DbU::UnitPower::Nano );
       if (wl > maxWL) {
         cerr << Error("KatanaEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
                      ,wl,ilut->first,getString(segment).c_str()) << endl;
@@ -726,7 +727,9 @@ namespace Katana {
     //   }
     // }
 
+    string units = "L";
     if (not isSymbolic) {
+      units = "um";
       totalWireLength  /= 1000;
       routedWireLength /= 1000;
     }
@@ -736,8 +739,8 @@ namespace Katana {
 
     result.str("");
     result << setprecision(4) << wireLengthRatio
-            << "% [" << totalWireLength << "+"
-            << (totalWireLength - routedWireLength) << "]";
+           << "% [" << totalWireLength << units << "+"
+           << (totalWireLength - routedWireLength) << "]";
     cmess1 << Dots::asString( "     - Wire Length Completion Ratio", result.str() ) << endl;
 
     float expandRatio = 1.0;
@@ -745,16 +748,20 @@ namespace Katana {
       expandRatio = ((totalWireLength-_minimumWL) / _minimumWL) * 100.0;
 
       result.str("");
-      result << setprecision(3) << expandRatio << "% [min:" << setprecision(9) << _minimumWL << "]";
+      result << setprecision(3) << expandRatio
+             << "% [min:" << setprecision(9) << _minimumWL << units << "]";
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
-    float ratio = ((float)hunrouteds / (float)unrouteds.size()) * 100.0;
+    float ratio = 0.0;
+    if (not unrouteds.empty())
+      ratio = ((float)hunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
     result << setprecision(4) << ratio << "% [" << hunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted horizontals", result.str() ) << endl;
 
-    ratio = ((float)vunrouteds / (float)unrouteds.size()) * 100.0;
+    if (not unrouteds.empty())
+      ratio = ((float)vunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
     result << setprecision(4) << ratio << "% [" << vunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted verticals", result.str() ) << endl;
