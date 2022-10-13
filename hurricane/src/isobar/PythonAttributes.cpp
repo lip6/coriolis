@@ -145,8 +145,6 @@ namespace Isobar {
   
   void  PyHolderProperty::_preDestroy ()
   {
-    cout.flush();
-    cerr << "Removing PyHolderProperty on " << getOwner() << endl;
     Py_DECREF( _holder );
     Super::_preDestroy();
   }
@@ -264,13 +262,10 @@ namespace Isobar {
 
   void  PythonAttributes::disableAll ( std::string name )
   {
-    cout.flush();
-    cerr << "disableAll() name=" << name << endl;
     if (allPyProperties.empty()) return;
     
     size_t removeds = 0;
     for ( size_t i=0 ; i+removeds<allPyProperties.size() ; ) {
-      cerr << "i=" << i << endl;
       if (not name.empty())
         allPyProperties[i]->delattr( name );
       if (name.empty() or (allPyProperties[i]->getDictSize() == 0)) {
