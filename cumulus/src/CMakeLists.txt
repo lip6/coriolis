@@ -13,8 +13,6 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chiproute.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/conductor.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/matrixplacer.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sramplacer1.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sramplacer2.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/block.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsave.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsaveall.py
@@ -44,6 +42,12 @@
                   )
               set ( pyTools       ${CMAKE_CURRENT_SOURCE_DIR}/tools/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/tools/yosys.py
+                  )
+              set ( pyPluginSRAM  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sram/__init__.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sram/sram.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sram/sram_256x32.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sram/sramplacer1.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/sram/sramplacer2.py
                   )
               set ( pyPluginAlpha      ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/utils.py
@@ -92,6 +96,7 @@
           install ( FILES    ${pyPluginC2C}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/core2chip )
           install ( FILES    ${pyPluginC2C}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/core2chip )
           install ( FILES    ${pyPluginChip}         DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/chip )
+          install ( FILES    ${pyPluginSRAM}         DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/sram )
           install ( FILES    ${pyPluginAlpha}        DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha )
           install ( FILES    ${pyPluginAlphaBlock}   DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/block )
           install ( FILES    ${pyPluginAlphaC2C}     DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/core2chip )

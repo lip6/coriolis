@@ -51,6 +51,8 @@ Automatic placement of a Yosys generated SRAM
   own structure. 26 signals takes up more than half the horizontal
   routing capacity of a slice (40), this result in an unroutable
   design, the bits are kept into one row each.
+    832 gates is for the TSMC 180nm, for SkyWater 130nm we got
+  976 gates on the third level.
 
 Conclusions
 ~~~~~~~~~~~
