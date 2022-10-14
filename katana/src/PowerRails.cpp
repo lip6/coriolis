@@ -231,12 +231,12 @@ namespace {
       DeepNet* deepNet = getTopCell()->getDeepNet( path, net );
       if (deepNet) {
         cdebug_log(159,0) << "    Deep Clock Net:" << deepNet
-                    << " state:" << NetRoutingExtension::getFlags(deepNet) << endl;
+                          << " state:" << NetRoutingExtension::getFlags(deepNet) << endl;
 
         return NetRoutingExtension::isFixed(deepNet) ? _blockage : NULL;
       } else {
         cdebug_log(159,0) << "    Top DeepNet:" << net
-                    << " state:" << NetRoutingExtension::getFlags(net) << endl;
+                          << " state:" << NetRoutingExtension::getFlags(net) << endl;
       }
 
       Path       upPath   = path;
@@ -255,6 +255,12 @@ namespace {
 
         upNet = plug->getNet();
         path  = path.getHeadPath();
+
+        if (not upNet) {
+          cerr << Warning( "GlobalNetTable::getRootNet(): Unconnected %s."
+                         , getString(plug).c_str() ) << endl;
+          return NULL;
+        }
       }
     }
 
