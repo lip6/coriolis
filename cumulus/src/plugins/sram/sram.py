@@ -26,8 +26,8 @@ from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 from   helpers         import trace, l, u, n
 import plugins
-from   Hurricane import Breakpoint, DbU, Box, Net, Cell, Instance, \
-                        Transformation, PythonAttributes
+from   Hurricane import DataBase, Breakpoint, DbU, Box, Net, Cell, \
+                        Instance, Transformation, PythonAttributes
 import CRL
 from   Foehn     import FoehnEngine, DagExtension
 from   plugins.chip.configuration import GaugeConf
@@ -48,6 +48,12 @@ class StdCellConf ( object ):
     reMux     = re.compile( r'^n?mx[0-9]_' )
     reDataIn  = re.compile( r'^i[0-9]?' )
     reDataOut = re.compile( r'^n?q' )
+
+    def __init__ ( self ):
+        self.techName = DataBase.getDB().getTechnology().getName()
+
+    def __repr__ ( self ):
+        return '<StdCellConf "{}">'.format( self.techName )
 
     def isRegister ( self, cell ):
         """Returns True if the cell is a register."""
@@ -84,6 +90,16 @@ class StdCellConf ( object ):
     def isData ( self, net ):
         """Returns True if the net is a data flow (i.e. not a control)."""
         return self.isDataIn(net) or self.isDataOut(net)
+
+    def getStdCellName ( self, name ):
+        if self.techName == 'Sky130':
+            if name == 'na2_x1': name = 'nand2_x0'
+            if name == 'no2_x1': name = 'nor2_x0'
+            if name == 'no3_x1': name = 'nor3_x0'
+        return name
+
+    def getStdCell ( self, name ):
+        return af.getCell( self.getStdCellName(name), CRL.Catalog.State.Views )
 
 
 # --------------------------------------------------------------------
@@ -186,6 +202,9 @@ class Column ( object ):
         Connect a bus to the column. ``busName`` is the name of the master net
         in the reference cell of the column.
         """
+        if not busName in self.busPlugs:
+            raise ErrorMessage( 1, 'Column.setBusNet(): {} has no bus named "{}".' \
+                                   .format( self.tag, busName ))
         busPlug = self.busPlugs[ busName ]
         if busPlug[0].getNet() and busPlug[0].getNet() != busNet[0]:
             print( Warning( 'Column.setBusNet(): Overrode {} {} -> {} with {}' \
@@ -318,11 +337,12 @@ class ColGroup ( object ):
         Initialize an *empty* column group. Sub-group or columns must be
         added afterwards.
         """
-        self.tag    = tag
-        self.parent = None
-        self.order  = None
-        self.depth  = 0
-        self.childs = []
+        self.tag        = tag
+        self.parent     = None
+        self.order      = None
+        self.depth      = 0
+        self.childs     = []
+        self.isReversed = False
 
     def __iter__ ( self ):
         return ColGroupIterator( self )
@@ -358,11 +378,25 @@ class ColGroup ( object ):
             busWidth = max( busWidth, child.busWidth )
         return busWidth
 
-    def group ( self, child ):
+    def group ( self, newChild, after=None, before=None ):
         """ Add a new child to the group. """
-        self.childs.append( child )
-        child.parent = self
-        self.depth = max( self.depth, child.depth+1 )
+        inserted = False
+        if after is not None:
+            for i in range(len(self.childs)):
+                if self.childs[i] == after:
+                    self.childs.insert( i+1, newChild )
+                    inserted = True
+                    break
+        if before is not None:
+            for i in range(len(self.childs)):
+                if self.childs[i] == before:
+                    self.childs.insert( i, newChild )
+                    inserted = True
+                    break
+        if not inserted:
+            self.childs.append( newChild )
+        newChild.parent = self
+        self.depth = max( self.depth, newChild.depth+1 )
 
     def unGroup ( self, child=None ):
         """ Remove a child from the group (the child is *not* deleted). """
@@ -403,6 +437,7 @@ class ColGroup ( object ):
         for child in self.childs:
             child.reverse()
         self.childs.reverse()
+        self.isReversed = not self.isReversed
 
     def place ( self ):
         """ Place childs/colums from left to rigth. """
@@ -572,7 +607,7 @@ class FoldState ( object ):
         else:
             self.direction = BaseSRAM.TO_RIGHT
             self.x         = self.xmin
-        self.irow += self.sram.rootGroup.busWidth + 1
+        self.irow += self.sram.rootGroup.busWidth + 2
         self.fold += 1
 
     def addWidth ( self, width ):
@@ -622,12 +657,16 @@ class BaseSRAM ( object ):
         The overall relative placement is organized as follow : ::
 
             +---------+-------------------------------------------+
-            |         |            headers[1] (1 row)             |
+            |         |            headers[4] (1 row)             |
+            |         +-------------------------------------------+
+            |         |            headers[3] (1 row)             |
             |         +-------------------------------------------+
             |         |                                           |
             |         |       Column area, fold 1 (N rows)        |
             |         |                                           |
             | decoder +-------------------------------------------+
+            |         |            headers[1] (1 row)             |
+            |         +-------------------------------------------+
             |         |            headers[0] (1 row)             |
             |         +-------------------------------------------+
             |         |                                           |
@@ -646,7 +685,7 @@ class BaseSRAM ( object ):
         self.busses      = {}
         self.decoder     = None
         self.toHeaders   = []
-        self.headers     = [ HeaderRow( self ) for row in range(fold) ]
+        self.headers     = [ HeaderRow( self ) for row in range(fold*2) ]
 
     @property
     def fold ( self ):
@@ -655,6 +694,12 @@ class BaseSRAM ( object ):
     def doFoldAtColumn ( self, column ):
         if column.tag in self.foldTags:
             self.foldState.forceFold()
+
+    def getBus ( self, fmt ):
+        """ Find a bus by it's formatting string. """
+        if fmt in self.busses:
+            return self.busses[ fmt ]
+        return None
 
     def getNet ( self, name, create=True ):
         """
@@ -694,7 +739,9 @@ class BaseSRAM ( object ):
                              ,  'q' : 'net_output_X' } )
         """
         masterCell = af.getCell( masterName, CRL.Catalog.State.Views )
-        inst       = Instance.create( self.cell, instName, masterCell )
+        if not masterCell:
+            raise ErrorMessage( 1, 'BaseSRAM.addInstance(): Cannot find cell "{}".'.format( masterName ))
+        inst = Instance.create( self.cell, instName, masterCell )
         for masterNetName, netName in netMapNames.items():
             masterNet = masterCell.getNet( masterNetName )
             net       = self.getNet( netName )
@@ -796,18 +843,18 @@ class BaseSRAM ( object ):
             bb = Box()
             bb.merge( self.decoder.place( 0 ) )
             bb.merge( self.rootGroup.place() )
-            for inst, refInst in self.toHeaders:
-                self.headers[ refInst.fold ].addInstanceAt( inst, refInst )
+            for inst, refInst, headerRow in self.toHeaders:
+                self.headers[ refInst.fold*2 + headerRow ].addInstanceAt( inst, refInst )
             for i in range(len(self.headers)):
                 trace( 610, ',+', 'Place row header {} {}\n'.format( i, self.headers[i].row ))
-                if i % 2:
+                if i//2 % 2:
                     xstart    = bb.getXMax()
                     direction = BaseSRAM.TO_LEFT
                 else:
                     xstart    = self.decoder.width
                     direction = BaseSRAM.TO_RIGHT
                 bb.merge( self.headers[i].place( xstart
-                                               , self.rootGroup.busWidth*(i + 1) + i
+                                               , self.rootGroup.busWidth*(i//2 + 1) + i
                                                , direction ))
                 trace( 610, '-,' )
             self.cell.setAbutmentBox( bb )

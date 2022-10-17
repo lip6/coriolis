@@ -73,31 +73,50 @@ Provisional results
 
 .. note:: All length are in micro-meters.
 
-+--------------+-----------------------------+-----------------------------+
-| Kind         | Generator                   | Yosys                       |
-+==============+=============================+=============================+
-| # Gates      | 23209      (-25.4%)         | 32121                       |
-+--------------+-----------------------------+-----------------------------+
-|                                  1 Fold                                  |
-+--------------+-----------------------------+-----------------------------+
-| Area         | 7182 x 330  (-5.5%)         | 7380 x 340                  |
-+--------------+-----------------------------+-----------------------------+
-| Wirelength   | 1841036     (-4.3%)         | 1924153                     |
-+--------------+-----------------------------+-----------------------------+
-|                                  2 Fold                                  |
-+--------------+-----------------------------+-----------------------------+
-| Area         | 3599 x 660  (-5.3%)         | 3690 x 680                  |
-+--------------+-----------------------------+-----------------------------+
-| Wirelength   | 1670455     (-6.3%)         | 1782558                     |
-+--------------+-----------------------------+-----------------------------+
-|                                  4 Fold                                  |
-+--------------+-----------------------------+-----------------------------+
-| Area         | 1812 x 1320 (-4.6%)         | 1900 x 1320                 |
-+--------------+-----------------------------+-----------------------------+
-| Wirelength   | 1699810     (-1.5%)         | 1726436                     |
-+--------------+-----------------------------+-----------------------------+
++--------+--------------+-----------------------------+-----------------------------+
+| Arch   | Kind         | Generator                   | Yosys                       |
++========+==============+=============================+=============================+
+|  Mux   | # Gates      | 23209      (-25.4%)         | 32121                       |
++--------+--------------+-----------------------------+                             |
+|  Nao   | # Gates      | 34637      (+7.8%)          |                             |
++--------+--------------+-----------------------------+-----------------------------+
+|                                       1 Fold                                      |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 7182 x 330  (-5.5%)         | 7380 x 340                  |
+|  Mux   +--------------+-----------------------------+-----------------------------+
+|        | Wirelength   | 1841036     (-4.3%)         | 1924153                     |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 6680 x 340  (-14.9%)        |                             |
+|  Nao   +--------------+-----------------------------+                             |
+|        | Wirelength   | 1637781     (-14.9%)        |                             |
++--------+--------------+-----------------------------+-----------------------------+
+|                                       2 Fold                                      |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 3599 x 660  (-5.3%)         | 3690 x 680                  |
+|  Mux   +--------------+-----------------------------+-----------------------------+
+|        | Wirelength   | 1670455     (-6.3%)         | 1782558                     |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 3350 x 680  (-9.2%)         |                             |
+|  Nao   +--------------+-----------------------------+                             |
+|        | Wirelength   | 1548358     (-13.1%)        |                             |
++--------+--------------+-----------------------------+-----------------------------+
+|                                       4 Fold                                      |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 1812 x 1320 (-4.6%)         | 1900 x 1320                 |
+|  Mux   +--------------+-----------------------------+-----------------------------+
+|        | Wirelength   | 1699810     (-1.5%)         | 1726436                     |
++--------+--------------+-----------------------------+-----------------------------+
+|        | Area         | 1692 x 1360 (-8.2%)         |                             |
+|  Nao   +--------------+-----------------------------+                             |
+|        | Wirelength   | 1512107     (-12.4%)        |                             |
++--------+--------------+-----------------------------+-----------------------------+
 
-Conclusions that we can draw from those results are :
+
+The difference between the two implementations resides only in the *output*
+multiplexer. With a 4 inputs mux made of mux2+mux3 or 2 inputs multiplexer
+made of alternate layers of nand2+nor2.
+
+Conclusions for the mux2+mux3 implementation :
 
 1. The generator version uses subtantially less gates than the Yosys one.
    As the both SRAM uses the exact same number of SFFs, the difference is
@@ -111,25 +130,41 @@ Conclusions that we can draw from those results are :
 
    In particular, to build the output multiplexer we only have mx2 and
    mx3 cells, which are large. The density of the SRAM could be much
-   increased if we did have nmx2 and nmx3. We could also try to synthesise
-   the tree using nandX and norX but we are short of time.
+   increased if we did have nmx2 and nmx3.
 
    Furthermore for the output multiplexers, as it is a controlled case,
    we may also uses three-state drivers cells (which have not been
    ported either).
+
+Conclusion for the nand2+nor2 implementation:
+
+1. The multiplexer allows us for a much more compact area and noticeably
+   lesser wire length. With an increased number of cells (not an issue).
+
+2. The total wire length is extremely sensitive to the placement, which
+   in our case is just a column ordering. To optimize, the binary tree
+   (for the netlist) is not placed fully symmetrically but slightly
+   "askew".
+
 
 .. note:: Cell width in the SkyWater 130 port of FlexLib:
 
           ==============  =====
           Cell            Width
           ==============  =====
+          inv_x2          2
           mx2_x2          7
           mx3_x2          11
+          a3_x2           5
           nand2_x0        2
           nand3_x0        3
           nand4_x0        4
           nor2_x0         2
+          nor3_x0         3
+          sff1_x4         15
           ==============  =====
+
+          Differrent ways of implementing the output multiplexer :
 
           1. mx2_x2 + mx3_x2         = 18
           2. 9 * nand2_x0            = 18
@@ -178,15 +213,18 @@ class SRAM_256x32 ( BaseSRAM ):
         if fold == 1:
             pass
         elif fold == 2:
-            self.foldTags = [ 'imux_addr0128' ]
+           #self.foldTags = [ 'imux_addr0128' ]
+            self.foldTags = [ 'imux_addr0192' ]
         elif fold == 4:
-            self.foldTags = [ 'omux_0_to_127', 'imux_addr0128', 'imux_addr0240' ]
-           #self.foldTags = [ 'imux_addr0064', 'imux_addr0128', 'imux_addr0192' ]
+           #self.foldTags = [ 'omux_0_to_127', 'imux_addr0128', 'imux_addr0240' ]
+            self.foldTags = [ 'imux_addr0096', 'imux_addr0192', 'imux_addr0160' ]
         else:
             raise ErrorMessage( 1, 'SRAM_256x32.__init__(): Unsupported fold {}, valid values are 1, 2, 4.'.format( fold ))
         self.cell    = af.createCell( 'spram_256x32' )
-        self.mx2Cell = af.getCell( 'mx2_x2', CRL.Catalog.State.Views )
-        self.mx3Cell = af.getCell( 'mx3_x2', CRL.Catalog.State.Views )
+        self.mx2Cell = self.confLib.getStdCell( 'mx2_x2' )
+        self.mx3Cell = self.confLib.getStdCell( 'mx3_x2' )
+        self.na2Cell = self.confLib.getStdCell( 'na2_x1' )
+        self.no2Cell = self.confLib.getStdCell( 'no2_x1' )
         with UpdateSession():
             self.buildInterface()
             self.decoder = ColBlock( self, 'decod', 33 )
@@ -203,61 +241,149 @@ class SRAM_256x32 ( BaseSRAM ):
                                       , 'bit_addr{:04d}'.format( addr )
                                       , '_byte{byte}_{bbit}'
                                       , 32 ))
-                bus = Bus( self, 'imux_addr{:04d}_b_q({{}})'.format(addr), 32 )
+                bus = Bus( self, 'imux_addr{:04d}_q({{}})'.format(addr), 32 )
                 bitGroup.childs[0].setBusNet( 'q', bus )
                 bitGroup.childs[1].setBusNet( 'i', bus )
-                bus = Bus( self, 'bit_addr{:04d}_b_q({{}})'.format(addr), 32 )
+                bus = Bus( self, 'bit_addr{:04d}_q({{}})'.format(addr), 32 )
                 bitGroup.childs[0].setBusNet( 'i0', bus )
                 bitGroup.childs[1].setBusNet(  'q', bus )
                 bus = Bus( self, 'di({})', 32 )
                 bitGroup.childs[0].setBusNet( 'i1', bus )
                 bitGroup.childs[1].setCmdNet( 'ck', self.getNet( 'clk' ))
-            omuxGroupsCurr = []
-            omuxGroupsNext = []
-            muxDepth       = 0
-            for i in range(256//4):
-                childs = []
-                for addr in range(i*4, (i+1)*4):
-                    tag = SRAM_256x32.BIT_GROUP_FMT.format( addr )
-                    childs.append( self.rootGroup.findChild( tag ))
-                    childs[-1].unGroup()
-                omuxGroupsCurr.append( self._doMux4( childs, muxDepth ))
-            while len(omuxGroupsCurr) >= 4:
-                trace( 610, '\tGrouping {} elements.\n'.format( len(omuxGroupsCurr )))
-                muxDepth += 1
-                for i in range(len(omuxGroupsCurr)//4):
-                    omuxGroupsNext.append( self._doMux4( omuxGroupsCurr[i*4:(i+1)*4], muxDepth ))
-                omuxGroupsCurr = omuxGroupsNext
-                omuxGroupsNext = []
-            for group in omuxGroupsCurr:
-                self.rootGroup.group( group )
+            self.buildDecoder()
+           #self._buildOutputMux_mx23()
+            self._buildOutputMux_nao23()
+           #inst = self.addInstance( 'inv_x2'
+           #                        , 'nrst_inv'
+           #                        , { 'i'  : 'rst'
+           #                          , 'nq' : 'n_rst'
+           #                          }
+           #                       )
+           #self.decoder.addInstance( 0, inst )
             inst = self.addInstance( 'inv_x2'
-                                    , 'nrst_inv'
-                                    , { 'i'  : 'rst'
-                                      , 'nq' : 'nrst'
+                                    , 'nce_inv'
+                                    , { 'i'  : 'ce'
+                                      , 'nq' : 'n_ce'
                                       }
                                    )
             self.decoder.addInstance( 0, inst )
             for child in self.rootGroup.childs[0].childs:
                 if child.kind == Column.KIND_COLUMN:
-                    if child.insts[0].getMasterCell() != self.mx3Cell:
-                        continue
-                    rstCol = Column( self
-                                   , af.getCell( 'a2_x2', CRL.Catalog.State.Views )
-                                   , 'omux_nrst'
-                                   , '_byte{byte}_{bbit}'
-                                   , 32 )
-                    busOMux = Bus( self, child.tag+'_b_q({})', 32 )
-                    busDato = Bus( self, 'dato({})', 32 )
-                    child .setBusNet( 'q' , busOMux )
-                    rstCol.setBusNet( 'i0', busOMux )
-                    rstCol.setCmdNet( 'i1', self.getNet('nrst') )
-                    rstCol.setBusNet( 'q' , busDato )
-                    self.rootGroup.group( rstCol )
-            self.buildDecoder()
+                    if child.insts[0].getMasterCell() == self.mx3Cell:
+                        rstCol = Column( self
+                                       , af.getCell( 'a2_x2', CRL.Catalog.State.Views )
+                                       , 'omux_n_rst'
+                                       , '_byte{byte}_{bbit}'
+                                       , 32 )
+                        busOMux = Bus( self, child.tag+'_q({})', 32 )
+                        busDato = Bus( self, 'dato({})', 32 )
+                        child .setBusNet( 'q' , busOMux )
+                        rstCol.setBusNet( 'i0', busOMux )
+                        rstCol.setCmdNet( 'i1', self.getNet('n_rst') )
+                        rstCol.setBusNet( 'q' , busDato )
+                        self.rootGroup.group( rstCol )
+                        break
+            omuxRoot = self.rootGroup.findChild( 'omux_0_to_255' )
+            rstCol = Column( self
+                           , self.no2Cell
+                           , 'omux_rst'
+                           , '_byte{byte}_{bbit}'
+                           , 32 )
+            busOMux = Bus( self, 'omux_0_to_255_nq({})', 32 )
+            busDato = Bus( self, 'dato({})', 32 )
+            omuxRoot.setBusNet( 'nq', busOMux )
+            rstCol.setBusNet( 'i0', busOMux )
+            rstCol.setCmdNet( 'i1', self.getNet('rst') )
+            rstCol.setBusNet( 'nq', busDato )
+            omuxRoot.parent.group( rstCol, after=omuxRoot )
             af.saveCell( self.cell, CRL.Catalog.State.Logical )
 
-    def _doMux4 ( self, childs, muxDepth ):
+    def _buildOutputMux_nao23 ( self ):
+        """
+        Build the complete output mux based on successive layers of NAND2
+        then NOR2. More compact than the mux based version.
+
+        Use an "askew" tree to minimize wiring.
+        """
+        muxDepth = 0
+        levels   = [ [], ]
+        for addr in range(256):
+            oneHotName = 'rdecod_' + self._getDecodNetName( addr, 8 ).replace('_n_','_')
+            tag        = SRAM_256x32.BIT_GROUP_FMT.format( addr )
+            bitGroup   = self.rootGroup.findChild(tag)
+            bitGroup.unGroup()
+            tag = 'sel_' + tag[:-2]
+            nand2Col  = Column( self
+                              , self.na2Cell
+                              , tag
+                              , '_byte{byte}_{bbit}'
+                              , 32 )
+            nand2Col.setCmdNet( 'i0', self.getNet( oneHotName ))
+            busDff = self.getBus( 'bit_addr{:04d}_q({{}})'.format(addr) )
+            nand2Col.setBusNet( 'i1', busDff )
+            bitGroup.group( nand2Col )
+            levels[0].append( (bitGroup, nand2Col ) )
+        while len(levels[muxDepth]) > 1:
+            levels.append( [] )
+            childIndex = 1 if muxDepth else 2
+            for i in range(len( levels[muxDepth]) // 2 ):
+                naoCell     = self.no2Cell if muxDepth%2 else self.na2Cell
+                childs      = [ levels[muxDepth][i*2][0], levels[muxDepth][i*2+1][0] ]
+                leftRoot    = levels[muxDepth][i*2    ][1]
+                rightRoot   = levels[muxDepth][i*2 + 1][1]
+                tags        = [ childs[0].tag, childs[1].tag ]
+                naoTag      = SRAM_256x32._mergeOMuxTags( tags )
+                naoGroup    = ColGroup( naoTag+'_g' )
+                trace( 610, ',+', '\tSRAM_256x32._buildOutputmux() {} + {} -> {}\n' \
+                                  .format( tags[0], tags[1], naoTag ))
+                nao2Col  = Column( self
+                                 , naoCell
+                                 , naoTag
+                                 , '_byte{byte}_{bbit}'
+                                 , 32 )
+                naoGroup.group( childs[0] )
+                naoGroup.group( childs[1] )
+                bus0   = Bus( self, tags[0][:-2]+'_nq({})', 32 )
+                bus1   = Bus( self, tags[1][:-2]+'_nq({})', 32 )
+                busNao = Bus( self, naoTag+'_nq({})', 32 )
+                leftRoot .setBusNet( 'nq', bus0 )
+                rightRoot.setBusNet( 'nq', bus1 )
+                nao2Col.setBusNet( 'i0', bus0 )
+                nao2Col.setBusNet( 'i1', bus1 )
+                childs[1].reverse()
+                rightRoot.parent.group( nao2Col, before=rightRoot )
+                trace( 610, '\tInsert mux {} before {}\n'.format( nao2Col, rightRoot.parent ))
+                levels[muxDepth+1].append( (naoGroup, nao2Col) )
+                trace( 610, '-,' )
+            muxDepth += 1
+        self.rootGroup.group( levels[muxDepth][0][0] )
+
+    def _buildOutputMux_mx23 ( self ):
+        """
+        Build the complete output mux based on successive layers of mux4,
+        each mux4 beeing built upon a mux2 + mux3 (_doMux4_mux23).
+        """
+        omuxGroupsCurr = []
+        omuxGroupsNext = []
+        muxDepth       = 0
+        for i in range(256//4):
+            childs = []
+            for addr in range(i*4, (i+1)*4):
+                tag = SRAM_256x32.BIT_GROUP_FMT.format( addr )
+                childs.append( self.rootGroup.findChild( tag ))
+                childs[-1].unGroup()
+            omuxGroupsCurr.append( self._doMux4_mx23( childs, muxDepth ))
+        while len(omuxGroupsCurr) >= 4:
+            trace( 610, '\tGrouping {} elements.\n'.format( len(omuxGroupsCurr )))
+            muxDepth += 1
+            for i in range(len(omuxGroupsCurr)//4):
+                omuxGroupsNext.append( self._doMux4_mx23( omuxGroupsCurr[i*4:(i+1)*4], muxDepth ))
+            omuxGroupsCurr = omuxGroupsNext
+            omuxGroupsNext = []
+        for group in omuxGroupsCurr:
+            self.rootGroup.group( group )
+
+    def _doMux4_mx23 ( self, childs, muxDepth ):
         """
         Build a 4 entry mux. It uses a mux2 / mux3 combination.
         Returns a newly build group.
@@ -276,7 +402,7 @@ class SRAM_256x32 ( BaseSRAM ):
         mux2Tag    = SRAM_256x32._mergeOMuxTags( tags[0:2] )
         mux3Tag    = SRAM_256x32._mergeOMuxTags( tags )
         muxGroup   = ColGroup( muxTag+'_g' )
-        trace( 610, ',+', '\tSRAM_256x32._doMux4() {} + {} -> {}\n' \
+        trace( 610, ',+', '\tSRAM_256x32._doMux4_mx23() {} + {} -> {}\n' \
                           .format( mux2Tag, mux3Tag, muxTag ))
         mux2Col  = Column( self
                          , self.mx2Cell
@@ -297,11 +423,11 @@ class SRAM_256x32 ( BaseSRAM ):
         muxGroup.group( childs[2] )
         muxGroup.group( mux3Col )
         muxGroup.group( childs[3] )
-        bus0   = Bus( self, tags[0][:-2]+'_b_q({})', 32 )
-        bus1   = Bus( self, tags[1][:-2]+'_b_q({})', 32 )
-        bus2   = Bus( self, tags[2][:-2]+'_b_q({})', 32 )
-        bus3   = Bus( self, tags[3][:-2]+'_b_q({})', 32 )
-        busMx2 = Bus( self, mux2Tag+'_b_q({})', 32 )
+        bus0   = Bus( self, tags[0][:-2]+'_q({})', 32 )
+        bus1   = Bus( self, tags[1][:-2]+'_q({})', 32 )
+        bus2   = Bus( self, tags[2][:-2]+'_q({})', 32 )
+        bus3   = Bus( self, tags[3][:-2]+'_q({})', 32 )
+        busMx2 = Bus( self, mux2Tag+'_q({})', 32 )
         childs[0].childs[ childIndex ].setBusNet( 'q', bus0 )
         childs[1].childs[ childIndex ].setBusNet( 'q', bus1 )
         childs[2].childs[ childIndex ].setBusNet( 'q', bus2 )
@@ -331,8 +457,10 @@ class SRAM_256x32 ( BaseSRAM ):
         addrs    = []
         for tag in tags:
             end = -2 if tag.endswith('_g') else 0
-            if tag.startswith('bit'):
+            if tag.startswith('bit_addr'):
                 addrs.append( int( tag[8:end] ))
+            if tag.startswith('sel_bit_addr'):
+                addrs.append( int( tag[12:end] ))
             elif tag.startswith('omux'):
                 m = vectorRe.match( tag )
                 addrs += [ int(m.group('lsb')), int(m.group('msb')) ]
@@ -397,14 +525,14 @@ class SRAM_256x32 ( BaseSRAM ):
         if addrWidth == 2:
             indexFirstBit = (oneHot >> addrWidth) * addrWidth
             valueAddr     =  oneHot % (1 << addrWidth)
-            trunkName     = self._getDecodNetName( oneHot, addrWidth )
-            instConf.append( 'a2_x2' )
-            instConf.append( 'decod_a2_{}'.format( trunkName ))
+            trunkName     = 'n_'+self._getDecodNetName( oneHot, addrWidth )
+            instConf.append( self.confLib.getStdCellName('na2_x1') )
+            instConf.append( 'decod_nand2_{}'.format( trunkName ))
             instConf.append( {} )
             for i in range(2):
                 inv  = '' if (valueAddr & (1 << i)) else 'n_'
                 instConf[2][ 'i{}'.format(i) ] = '{}addr({})'.format( inv, indexFirstBit+i )
-            instConf[2][ 'q' ] = 'decod_'+trunkName
+            instConf[2][ 'nq' ] = 'decod_'+trunkName
         elif addrWidth == 4 or addrWidth == 8:
             halfWidth = addrWidth>>1
             halfMask  = 0
@@ -413,15 +541,16 @@ class SRAM_256x32 ( BaseSRAM ):
             indexFirstBit = (oneHot >> addrWidth) * addrWidth
             valueAddr     =  oneHot % (1 << addrWidth)
             trunkName     = self._getDecodNetName( oneHot, addrWidth )
-            instConf.append( 'a2_x2' )
-            instConf.append( 'decod_a2_{}'.format( trunkName ))
+            gate          = 'no2_x1' if addrWidth == 4 else 'na2_x1'
+            instConf.append( self.confLib.getStdCellName(gate) )
+            instConf.append( 'decod_{}_{}'.format( gate[:-3], trunkName ))
             instConf.append( {} )
             offset  = (oneHot >> addrWidth) << (halfWidth+1)
             oneHot0 = (oneHot & halfMask) + offset
-            instConf[2][ 'i0' ] = 'decod_'+self._getDecodNetName( oneHot0, halfWidth )
+            instConf[2][ 'i0' ] = 'decod_n_'+self._getDecodNetName( oneHot0, halfWidth )
             oneHot1 = ((oneHot >> halfWidth) & halfMask) + (1<<(halfWidth)) + offset
-            instConf[2][ 'i1' ] = 'decod_'+self._getDecodNetName( oneHot1, halfWidth )
-            instConf[2][ 'q'  ] = 'decod_'+trunkName
+            instConf[2][ 'i1' ] = 'decod_n_'+self._getDecodNetName( oneHot1, halfWidth )
+            instConf[2][ 'nq' ] = 'decod_n_'+trunkName
             trace( 610, '\t{:08b} {:3d}:{} + {:3d}:{} => {:3d}::{:08b}:{}\n' \
                         .format( halfMask
                                , oneHot0, self._getDecodNetName( oneHot0, halfWidth )
@@ -449,6 +578,14 @@ class SRAM_256x32 ( BaseSRAM ):
                                    )
             self.decoder.addInstance( bit * 4, inst )
             self.connect( 'raddr_sff_{}'.format(bit), 'ck', 'clk' )
+        for we in range(4):
+            inst = self.addInstance( 'inv_x1'
+                                   , 'decod_n_we_{}'.format(we)
+                                   , {  'i' :   'we({})'.format(we)
+                                     , 'nq' : 'n_we({})'.format(we)
+                                     }
+                                   )
+            self.decoder.addInstance( we*4 + 1, inst )
         for bit in range(8):
             inst = self.addInstance( 'inv_x1'
                                    , 'decod_inv_{}'.format(bit)
@@ -460,6 +597,7 @@ class SRAM_256x32 ( BaseSRAM ):
         for oneHot in range(16):
             trace( 610, '\t{}\n'.format( self._getDecodNetName(oneHot,2) ))
             instDatas = self._getDecodInstConf( oneHot, 2 )
+            print( instDatas )
             inst = self.addInstance( instDatas[0], instDatas[1], instDatas[2] )
             self.decoder.addInstance( oneHot*2 + 1, inst )
         for oneHot in range(32):
@@ -473,21 +611,38 @@ class SRAM_256x32 ( BaseSRAM ):
             inst      = self.addInstance( instDatas[0], instDatas[1], instDatas[2] )
             dffCol    = self.rootGroup.findChild( bitTag )
             imuxCol   = self.rootGroup.findChild( imuxTag )
-            self.toHeaders.append(( inst, imuxCol.insts[0] ))
+            self.toHeaders.append(( inst, imuxCol.insts[0], 0 ))
             for we in range(4):
                 cmdNetName = 'decod_addr{:04d}_we({})'.format( oneHot, we )
-                inst = self.addInstance( 'a3_x2'
-                                       , 'decod_a3_we_{}_{}'.format(we,oneHot)
-                                       , { 'i0' : instDatas[2]['q']
-                                         , 'i1' : 'ce'
-                                         , 'i2' : 'we({})'.format(we)
-                                         , 'q'  : cmdNetName
+                inst = self.addInstance( self.confLib.getStdCellName('no3_x1')
+                                       , 'decod_no3_we_{}_{}'.format(we,oneHot)
+                                       , { 'i0' : instDatas[2]['nq']
+                                         , 'i1' : 'n_ce'
+                                         , 'i2' : 'n_we({})'.format(we)
+                                         , 'nq' : cmdNetName
                                          }
                                        )
-                self.toHeaders.append(( inst, dffCol.insts[0] ))
+                self.toHeaders.append(( inst, imuxCol.insts[0], 0 ))
                 for bit in range(8):
                     self.connect( 'imux_addr{:04d}_byte{byte}_{bbit}'.format( oneHot, byte=we, bbit=bit )
                                 , 'cmd'
                                 , cmdNetName
                                 )
+            oneHotName = instDatas[2]['nq'].replace('_n_','_')
+            inst = self.addInstance( 'inv_x1'
+                                   , 'omux_onehot_inv_{:04d}'.format(oneHot)
+                                   , {  'i' : instDatas[2]['nq']
+                                     , 'nq' : oneHotName
+                                     }
+                                   )
+            self.toHeaders.append(( inst, imuxCol.insts[0], 0))
+            sffName = 'omux_onehot_dff_{:04d}'.format(oneHot)
+            inst = self.addInstance( 'sff1_x4'
+                                   , sffName
+                                   , { 'i' :     oneHotName
+                                     , 'q' : 'r'+oneHotName
+                                     }
+                                   )
+            self.connect( sffName, 'ck', 'clk' )
+            self.toHeaders.append(( inst, imuxCol.insts[0], 1 ))
         trace( 610, '-,' )
