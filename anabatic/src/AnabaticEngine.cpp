@@ -376,6 +376,7 @@ namespace Anabatic {
     , _viewer           (NULL)
     , _flags            (Flags::DestroyBaseContact)
     , _stamp            (-1)
+    , _routingMode      (DigitalMode)
     , _densityMode      (MaxDensity)
     , _autoSegmentLut   ()
     , _autoContactLut   ()

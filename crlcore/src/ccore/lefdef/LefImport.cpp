@@ -104,6 +104,8 @@ namespace {
       inline       void               incNthMetal              ();
       inline       int                getNthCut                () const;
       inline       void               incNthCut                ();
+      inline       int                getNthRouting            () const;
+      inline       void               incNthRouting            ();
       inline       RoutingGauge*      getRoutingGauge          () const;
       inline       void               addPinSegment            ( string name, Segment* );
       inline       void               clearPinSegments         ();
@@ -130,6 +132,7 @@ namespace {
                    vector<string>      _errors;
                    int                 _nthMetal;
                    int                 _nthCut;
+                   int                 _nthRouting;
                    RoutingGauge*       _routingGauge;
                    CellGauge*          _cellGauge;
                    DbU::Unit           _minTerminalWidth;
@@ -154,6 +157,8 @@ namespace {
   inline       void              LefParser::incNthMetal              () { ++_nthMetal; }
   inline       int               LefParser::getNthCut                () const { return _nthCut; }
   inline       void              LefParser::incNthCut                () { ++_nthCut; }
+  inline       int               LefParser::getNthRouting            () const { return _nthRouting; }
+  inline       void              LefParser::incNthRouting            () { ++_nthRouting; }
   inline       RoutingGauge*     LefParser::getRoutingGauge          () const { return _routingGauge; }
   inline       CellGauge*        LefParser::getCellGauge             () const { return _cellGauge; }
   inline       void              LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
@@ -210,6 +215,7 @@ namespace {
     , _errors          ()
     , _nthMetal        (0)
     , _nthCut          (0)
+    , _nthRouting      (0)
     , _routingGauge    (NULL)
     , _cellGauge       (NULL)
     , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
@@ -305,9 +311,9 @@ namespace {
 
         cerr << "     - \"" << lefLayer->name() << "\" map to \"" << basicLayer->getName() << "\"" << endl;
 
-        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthMetal() );
+        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthRouting() );
 
-        if (gauge) {
+        if (gauge and (layer == gauge->getLayer())) {
           if (lefLayer->hasPitch()) {
             double lefPitch = lefLayer->pitch();
             double crlPitch = DbU::toPhysical(gauge->getPitch(),DbU::Micro);
@@ -336,6 +342,7 @@ namespace {
               cerr << Warning( "LefParser::_layerCbk(): CRL Routing direction discrepency for \"%s\", LEF is VERTICAL."
                              , getString( basicLayer->getName() ).c_str() ) << endl;
           }
+          parser->incNthRouting();
         } else {
           cerr << Warning( "LefParser::_layerCbk(): No CRL routing gauge defined for \"%s\"."
                          , getString( basicLayer->getName() ).c_str()

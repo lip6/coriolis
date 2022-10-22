@@ -105,12 +105,14 @@ namespace Katana {
       }
 
       if ( not perpandicular ) {
-        cerr << Bug("Not a TrackSegment: %s:%s\n      (perpandicular: %s:%s)"
-                   ,getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
-                   ,getString(basePerpand->getCanonical(interval)).c_str()
-                   ,getString((void*)basePerpand->base()).c_str()
-                   ,getString(basePerpand).c_str()
-                   ) << endl;
+        if (Session::isChannelMode()
+           and not (basePerpand->isReduced() or basePerpand->isNonPref()))
+          cerr << Bug("Not a TrackSegment: %s:%s\n      (perpandicular: %s:%s)"
+                     ,getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
+                     ,getString(basePerpand->getCanonical(interval)).c_str()
+                     ,getString((void*)basePerpand->base()).c_str()
+                     ,getString(basePerpand).c_str()
+                     ) << endl;
         continue;
       }
       interval.inflate ( DbU::lambda(-1.5) );

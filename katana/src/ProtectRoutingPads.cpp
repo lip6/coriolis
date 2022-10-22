@@ -99,9 +99,10 @@ namespace {
 
     if (CatalogExtension::isPad(masterNet->getCell())) {
       if (   rp->getNet()->isPower()
-         or (rp->getNet()->getName() == padNetName) )
+         or (rp->getNet()->getName() == padNetName) ) {
         cdebug_tabw(145,-1);
         return;
+      }
     }
 
     vector<Segment*> segments;

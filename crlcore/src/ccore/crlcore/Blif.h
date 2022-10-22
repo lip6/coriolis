@@ -59,6 +59,7 @@ namespace CRL {
       static              Cell*                  load         ( std::string netlist, bool enforceVhdl=true );
       static              void                   add          ( Library* );
       static inline const std::vector<Library*>& getLibraries ();
+      static              Cell*                  getCell      ( std::string );
     private:
       static std::vector<Library*>  _libraries;
   };

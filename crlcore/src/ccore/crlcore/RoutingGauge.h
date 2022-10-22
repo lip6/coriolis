@@ -64,6 +64,7 @@ namespace CRL {
       inline  const Name          getName             () const;
       inline  Technology*         getTechnology       () const;
       inline  size_t              getDepth            () const;
+      inline  size_t              getUsableLayers     () const;
       inline  DbU::Unit           getHorizontalPitch  () const;
       inline  DbU::Unit           getVerticalPitch    () const;
               RoutingLayerGauge*  getHorizontalGauge  () const;
@@ -109,6 +110,7 @@ namespace CRL {
       Technology*                 _technology;
       bool                        _isSymbolic;
       bool                        _isSuperPitched;
+      size_t                      _usableLayers;
 
     // Internal - Constructors & Destructors.
                                   RoutingGauge ( const char* name );
@@ -121,13 +123,14 @@ namespace CRL {
 
   inline bool          RoutingGauge::isSymbolic         () const { return _isSymbolic; }
   inline  bool         RoutingGauge::isSuperPitched     () const { return _isSuperPitched; }
-  inline bool          RoutingGauge::isTwoMetals        () const { return (getDepth() < 3); }
+  inline bool          RoutingGauge::isTwoMetals        () const { return (_usableLayers < 3); }
   inline bool          RoutingGauge::isHV               () const { return not isTwoMetals() and (getLayerGauge(1)->isHorizontal()); }
   inline bool          RoutingGauge::isVH               () const { return not isTwoMetals() and (getLayerGauge(1)->isVertical()); }
   inline bool          RoutingGauge::hasPowerSupply     () const { return (getPowerSupplyGauge() != NULL); }
   inline const Name    RoutingGauge::getName            () const { return _name; }
   inline size_t        RoutingGauge::getDepth           () const { return _layerGauges.size(); }
   inline Technology*   RoutingGauge::getTechnology      () const { return _technology; }
+  inline size_t        RoutingGauge::getUsableLayers    () const { return _usableLayers; }
   inline DbU::Unit     RoutingGauge::getHorizontalPitch () const { return getHorizontalGauge()->getPitch(); }
   inline DbU::Unit     RoutingGauge::getVerticalPitch   () const { return getVerticalGauge  ()->getPitch(); }
   inline unsigned int  RoutingGauge::getLayerType       ( size_t depth ) const { return getLayerGauge(depth)->getType(); }

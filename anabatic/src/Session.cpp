@@ -412,12 +412,19 @@ namespace Anabatic {
     if (y < constraint.getYMin()) y += lg->getPitch();
     if (y > constraint.getYMax()) y -= lg->getPitch();
 
+    y = std::max( y, constraint.getYMin() );
+    y = std::min( y, constraint.getYMax() );
+
     return Point(x,y);
   }
 
 
   bool  Session::isInDemoMode ()
   { return get("isInDemoMode()")->_anabatic->isInDemoMode(); }
+
+
+  bool  Session::isChannelMode ()
+  { return get("isChannelMode()")->_anabatic->isChannelMode(); }
 
 
   float  Session::getSaturateRatio ()

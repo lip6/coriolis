@@ -503,6 +503,9 @@ namespace Anabatic {
           AutoContact* opposite      = _segment->getOppositeAnchor(this);
           AutoSegment* perpandicular = opposite->getPerpandicular( _segment );
           if (perpandicular) {
+            cdebug_log(145,0) << "Draging V interval ["
+                              << DbU::getValueString(getCBYMin()) << " "
+                              << DbU::getValueString(getCBYMax()) << "]" << endl;
             DbU::Unit y = perpandicular->getAxis();
             y = std::min( y, getCBYMax() );
             y = std::max( y, getCBYMin() );

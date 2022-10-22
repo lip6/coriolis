@@ -466,8 +466,10 @@ namespace Anabatic {
       bool       isVertical     = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
       uint32_t   flags          = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
 
-    //cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
-    //     << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
+      // cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
+      //      << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
+      // cerr << "  minimalSpacing: "
+      //      << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
 
       *viaToSameCap = Session::getPWireWidth(depth)/2;
 
@@ -492,12 +494,12 @@ namespace Anabatic {
           *minimalLength += twoGrid - modulo;
       }
 
-    //cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
-    //cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
-    //if (depth > 0)                                                                          
-    //  cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-    //cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-    //cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+      // cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
+      // cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
+      // if (depth > 0)                                                                          
+      //   cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
+      // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
+      // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
  
       _extensionCaps.push_back( std::array<DbU::Unit*,4>( {{ viaToTopCap
                                                            , viaToBottomCap
@@ -1794,13 +1796,20 @@ namespace Anabatic {
     DbU::Unit length = getAnchoredLength();
     if (isGlobal() and (length > getPPitch())) return false;
 
-    if (isDrag() or isFixed()) return false;
+    if (isDrag()) return false;
     if (not isSpinTopOrBottom()) return false;
-    if ((getDepth() == 1) and isSpinBottom()) return false;
-    if ((flags & Flags::WithPerpands) and _reduceds) return false;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
+
+    if (isFixed()) {
+      if (isSpinTopOrBottom() and source->isTurn() and target->isTurn())
+        return true;
+      return false;
+    }
+
+    if ((getDepth() == 1) and isSpinBottom()) return false;
+    if ((flags & Flags::WithPerpands) and _reduceds) return false;
 
     cdebug_log(159,0) << "  source:" << source->isHTee() << "+" << source->isVTee() << endl;
     cdebug_log(159,0) << "  target:" << target->isHTee() << "+" << target->isVTee() << endl;
@@ -3214,6 +3223,9 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "getTopologicalInfos() - " << seed << endl;
 
+    bool  isSourceBoundToChannel = false;
+    bool  isTargetBoundToChannel = false;
+
     leftBound  = DbU::Max;
     rightBound = DbU::Min;
 
@@ -3271,9 +3283,18 @@ namespace Anabatic {
           Flags perpandFlags = (currentSegment->getAutoSource() == sourceContact)
             ? Flags::Source : Flags::Target;
           perpandiculars.push_back( make_tuple( currentSegment, perpandFlags ));
+          if (Session::getAnabatic()->isChannelMode()) {
+            if (currentSegment->isNonPref() and currentSegment->isFixed()) {
+              if (perpandFlags & Flags::Source) isSourceBoundToChannel = true;
+              else                              isTargetBoundToChannel = true;
+            }
+          }
         }
       }
     }
+
+    if (isSourceBoundToChannel) rightBound -= (leftBound + rightBound)/2;
+    if (isTargetBoundToChannel) leftBound  += (leftBound + rightBound)/2;
 
     cdebug_tabw(145,-1);
   }

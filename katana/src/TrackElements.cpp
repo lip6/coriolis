@@ -45,8 +45,12 @@ namespace Katana {
     Interval bounds;
     if ( _locator.isValid() ) {
       _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
-      if ( !_element ) {
-        cerr << Bug("Canonical segment without TrackElement.") << endl;
+      if (not _element) {
+          AutoSegment* segment = _locator.getElement()->getCanonical(bounds);
+          if (Session::isChannelMode()
+             and not ((segment->isReduced() or segment->isNonPref()) and segment->isFixed()))
+            cerr << Bug( "Canonical segment without TrackElement on %s."
+                       , getString(segment).c_str()) << endl;
         progress ();
       }
     }
@@ -67,8 +71,12 @@ namespace Katana {
 
       if ( _locator.isValid() ) {
         _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
-        if ( !_element ) {
-          cerr << Bug("Canonical segment without TrackElement.") << endl;
+        if (not _element ) {
+          AutoSegment* segment = _locator.getElement()->getCanonical(bounds);
+          if (Session::isChannelMode()
+             and not ((segment->isReduced() or segment->isNonPref()) and segment->isFixed()))
+            cerr << Bug( "Canonical segment without TrackElement on %s."
+                       , getString(segment).c_str() ) << endl;
           continue;
         }
 

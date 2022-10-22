@@ -377,10 +377,12 @@ namespace {
     static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
     static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
 
-    _zeroCell     = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
-    _oneCell      = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
-    _groundName   = Cfg::getParamString("crlcore.groundName","vss")->asString();
-    _powerName    = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
+    _zeroCell   = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    _oneCell    = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+    _groundName = Cfg::getParamString("crlcore.groundName","vss")->asString();
+    _powerName  = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
+    if (not _zeroCell) _zeroCell = Blif::getCell( zeroName );
+    if (not  _oneCell)  _oneCell = Blif::getCell(  oneName );
 
     if (_zeroCell) {
       for ( Net* net : _zeroCell->getNets() ) {
@@ -816,6 +818,17 @@ namespace CRL {
 
   void  Blif::add ( Library* library )
   { if (library) _libraries.push_back( library ); }
+
+
+  Cell* Blif::getCell ( string name )
+  {
+    Cell* cell = nullptr;
+    for ( Library* library : getLibraries() ) {
+      cell = library->getCell( name );
+      if (cell) return cell;
+    }
+    return nullptr;
+  }
 
 
   Cell* Blif::load ( string cellPath, bool enforceVhdl )

@@ -195,7 +195,6 @@ namespace Katana {
     , _minimumWL      (0.0)
     , _shortDoglegs   ()
     , _symmetrics     ()
-    , _mode           (DigitalMode)
     , _stage          (StageNegociate)
     , _successState   (0)
   {
@@ -241,7 +240,7 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
-    _mode |= DigitalMode;
+    setRoutingMode( DigitalMode );
 
     Super::chipPrep();
 
@@ -270,8 +269,8 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
 
-    _mode &= ~DigitalMode;
-    _mode |=  AnalogMode;
+    resetRoutingMode( DigitalMode );
+    setRoutingMode( AnalogMode );
 
     Super::chipPrep();
 
@@ -286,11 +285,11 @@ namespace Katana {
   {
     cdebug_log(155,1) << "KatanaEngine::setupChannelMode()" << endl;
 
-    RoutingGauge* rg       = getConfiguration()->getRoutingGauge();
-    size_t        maxDepth = rg->getDepth();
-    if (maxDepth < 3) {
-      _mode |= ChannelMode;
+    RoutingGauge* rg = getConfiguration()->getRoutingGauge();
+    if (rg->isTwoMetals()) {
+      setRoutingMode( ChannelMode );
 
+      size_t maxDepth = rg->getDepth();
       if (maxDepth < 2) {
         throw Error( "KatanaEngine::setupChannelMode(): Layer gauge %s must contains at least two layers (%u)."
                    , getString(rg->getName()).c_str(), maxDepth );
@@ -554,10 +553,10 @@ namespace Katana {
       }
     }
 
-    if (Session::getConfiguration()->isTwoMetals()) {
+    if (Session::isChannelMode()) {
       for ( GCell* gcell : getGCells() ) {
         if (not gcell->isStdCellRow()) continue;
-        
+      
         set<DbU::Unit>  terminalsX;
         for ( Component* component : getCell()->getComponentsUnder(gcell->getBoundingBox()) ) {
           RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
@@ -574,7 +573,7 @@ namespace Katana {
         edge = gcell->getSouthEdge();
         if (edge) {
           capacity = edge->getCapacity();
-          if (terminalsX.size() < capacity) capacity = terminalsX.size();
+          if (terminalsX.size()/2 < capacity) capacity = terminalsX.size()/2;
           edge->reserveCapacity( capacity );
         }
       }
@@ -849,9 +848,15 @@ namespace Katana {
         AutoSegment* autoSegment = anbtSession->lookup( segment );
         if (not autoSegment) continue;
         if (not autoSegment->isCanonical()) continue;
+        if (autoSegment->isReduced()) continue;
 
         TrackElement* trackSegment = Session::lookup( segment );
         if (not trackSegment) {
+          if (   isChannelMode()
+             and autoSegment->isFixed()
+             and autoSegment->isHorizontal()
+             and autoSegment->isNonPref())
+            continue;
           coherency = false;
           cerr << Bug( "%p %s without Track Segment"
                      , autoSegment

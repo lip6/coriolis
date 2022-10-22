@@ -685,7 +685,8 @@ namespace Katana {
       addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
       addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
-      _buildBloatProfile();
+      if (not Session::isChannelMode())
+        _buildBloatProfile();
 
       if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );
       if (flags & Flags::ShowFailedGSegments ) selectSegments        ( this, segments );

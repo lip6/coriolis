@@ -747,16 +747,22 @@ namespace Katana {
       RoutingPlane* plane   = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
       Track*        track   = plane->getTrackByPosition(_constraints.getVMin());
 
-      if ( track && (track->getAxis() < _constraints.getVMin()) ) track = track->getNextTrack();
-      for ( ; track && (track->getAxis() <= _constraints.getVMax())
-            ; track = track->getNextTrack(), _tracksNb++ );
+      if ( track and (track->getAxis() < _constraints.getVMin()) ) track = track->getNextTrack();
+      cdebug_log(159,0) << "| Nearest " << track << endl;
+      while ( track and (track->getAxis() <= _constraints.getVMax()) ) {
+        _tracksNb++;
+        track = track->getNextTrack();
+        cdebug_log(159,0) << "| Next " << track << endl;
+      }
     }
+    cdebug_log(159,0) << "| _tracksNb " << _tracksNb << endl;
     if (not _tracksNb) {
       cdebug_log(159,0) << "| Pure constraints are too tight." << endl;
       if (_segment->base())
         _overConstrained =     _segment->base()->getAutoSource()->isTerminal()
                            and _segment->base()->getAutoTarget()->isTerminal();
     }
+    cdebug_log(159,0) << "| _tracksNb " << _tracksNb << endl;
 
     _segment->computePriority();
 

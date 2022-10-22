@@ -62,6 +62,7 @@ namespace CRL {
     , _technology    (DataBase::getDB()->getTechnology())
     , _isSymbolic    (true)
     , _isSuperPitched(true)
+    , _usableLayers  (0)
   { }
 
 
@@ -72,6 +73,7 @@ namespace CRL {
     , _technology    (gauge._technology)
     , _isSymbolic    (gauge._isSymbolic)
     , _isSuperPitched(gauge._isSuperPitched)
+    , _usableLayers  (0)
   {
   // Make a deep copy of the map.
     for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ ) {
@@ -312,6 +314,8 @@ namespace CRL {
       if (fabsf(roundf(r) - r) > 0.00001f)
         _isSuperPitched = false;
     }
+
+    if (layerGauge->getType() == Constant::LayerGaugeType::Default) ++_usableLayers;
   }
 
 
@@ -354,12 +358,14 @@ namespace CRL {
 
   Record* RoutingGauge::_getRecord ( Record* record ) const
   {
-    if ( record == NULL )
+    if (not record)
       record = new Record ( getString(this) );
 
-    record->add ( getSlot("_name"      , _name       ) );
-    record->add ( getSlot("_gauges"    ,&_layerGauges) );
-    record->add ( getSlot("_isSymbolic", _isSymbolic ) );
+    record->add( getSlot("_name"           , _name          ));
+    record->add( getSlot("_gauges"        ,&_layerGauges    ));
+    record->add( getSlot("_isSymbolic"    , _isSymbolic     ));
+    record->add( getSlot("_isSuperPitched", _isSuperPitched ));
+    record->add( getSlot("_usableLayers"  , _usableLayers   ));
     return ( record );
   }
 

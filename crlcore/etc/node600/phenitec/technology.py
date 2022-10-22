@@ -24,7 +24,7 @@ from   Hurricane  import Technology
 
 tech = DataBase.getDB().getTechnology()
 if tech:
-    print( WarningMessage( 'cmos.technology: Technology already exists, "{}"'format(tech.getName()) ))
+    print( WarningMessage( 'cmos.technology: Technology already exists, "{}"'.format(tech.getName()) ))
 else:
     tech = Technology.create( DataBase.getDB(), 'phenitec06' )
 

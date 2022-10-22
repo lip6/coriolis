@@ -1551,20 +1551,24 @@ namespace Anabatic {
     }
 
   // Add the blockages.
-    int contiguousNonSaturated = 0;
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      uLengths2[i] += _blockages[i];
-      if (not i) continue;
-      if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)
-        continue;
-      if ((float)(_blockages[i] * Session::getPitch(i)) > 0.60*(float)(width*height))
-        contiguousNonSaturated = 0;
-      else
-        contiguousNonSaturated++;
-    }
-    if (contiguousNonSaturated < 2) {
-      flags() |= Flags::GoStraight;
-    //cerr << "| Set GoStraight on " << this << endl;
+    if (isStdCellRow() or isChannelRow()) {
+      flags().reset( Flags::GoStraight );
+    } else {
+      int contiguousNonSaturated = 0;
+      for ( size_t i=0 ; i<_depth ; i++ ) {
+        uLengths2[i] += _blockages[i];
+        if (not i) continue;
+        if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)
+          continue;
+        if ((float)(_blockages[i] * Session::getPitch(i)) > 0.60*(float)(width*height))
+          contiguousNonSaturated = 0;
+        else
+          contiguousNonSaturated++;
+      }
+      if (contiguousNonSaturated < 2) {
+        flags() |= Flags::GoStraight;
+      //cerr << "| Set GoStraight on " << this << endl;
+      }
     }
 
   // Compute the number of non pass-through tracks.

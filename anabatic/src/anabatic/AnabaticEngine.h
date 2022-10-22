@@ -191,20 +191,27 @@ namespace Anabatic {
 
   class AnabaticEngine : public ToolEngine {
     public:
-      enum DensityMode { AverageHVDensity=1  // Average between all densities.
-                       , AverageHDensity =2  // Average between all H densities.
-                       , AverageVDensity =3  // Average between all V densities.
-                       , MaxHVDensity    =4  // Maximum between average H and average V.
-                       , MaxVDensity     =5  // Maximum of V densities.
-                       , MaxHDensity     =6  // Maximum of H densities.
-                       , MaxDensity      =7  // Maximum of H & V densities.
-                       };
+      static const uint32_t  DigitalMode      = (1 <<  0);
+      static const uint32_t  AnalogMode       = (1 <<  1);
+      static const uint32_t  MixedMode        = (1 <<  2);
+      static const uint32_t  ChannelMode      = (1 <<  3);
+      static const uint32_t  AverageHVDensity = 1;  // Average between all densities.
+      static const uint32_t  AverageHDensity  = 2;  // Average between all H densities.
+      static const uint32_t  AverageVDensity  = 3;  // Average between all V densities.
+      static const uint32_t  MaxHVDensity     = 4;  // Maximum between average H and average V.
+      static const uint32_t  MaxVDensity      = 5;  // Maximum of V densities.
+      static const uint32_t  MaxHDensity      = 6;  // Maximum of H densities.
+      static const uint32_t  MaxDensity       = 7;  // Maximum of H & V densities.
     public:
       typedef ToolEngine  Super;
     public:
       static        AnabaticEngine*   create                  ( Cell* );
       static        AnabaticEngine*   get                     ( const Cell* );
       inline        bool              isCanonizeDisabled      () const;
+      inline        bool              isDigitalMode           () const;
+      inline        bool              isAnalogMode            () const;
+      inline        bool              isMixedMode             () const;
+      inline        bool              isChannelMode           () const;
       static  const Name&             staticGetName           ();
       virtual const Name&             getName                 () const;
       virtual       Configuration*    getConfiguration        ();
@@ -269,6 +276,8 @@ namespace Anabatic {
                     void              invalidateRoutingPads   ();
                     void              updateDensity           ();
                     size_t            checkGCellDensities     ();
+      inline        void              setRoutingMode          ( uint32_t );
+      inline        void              resetRoutingMode        ( uint32_t );
       inline        void              setGlobalThreshold      ( DbU::Unit );
       inline        void              setSaturateRatio        ( float );
       inline        void              setSaturateRp           ( size_t );
@@ -350,6 +359,7 @@ namespace Anabatic {
              CellViewer*         _viewer;
              Flags               _flags;
              int                 _stamp;
+             uint32_t            _routingMode;
              uint64_t            _densityMode;
              AutoSegmentLut      _autoSegmentLut;
              AutoContactLut      _autoContactLut;
@@ -359,6 +369,12 @@ namespace Anabatic {
   };
 
 
+  inline       bool              AnabaticEngine::isDigitalMode         () const { return (_routingMode & DigitalMode); };
+  inline       bool              AnabaticEngine::isAnalogMode          () const { return (_routingMode & AnalogMode); };
+  inline       bool              AnabaticEngine::isMixedMode           () const { return (_routingMode & MixedMode); };
+  inline       bool              AnabaticEngine::isChannelMode         () const { return (_routingMode & ChannelMode); };
+  inline       void              AnabaticEngine::setRoutingMode        ( uint32_t mode ) { _routingMode |=  mode;  };
+  inline       void              AnabaticEngine::resetRoutingMode      ( uint32_t mode ) { _routingMode &= ~mode;  };
   inline       EngineState       AnabaticEngine::getState              () const { return _state; }
   inline       void              AnabaticEngine::setState              ( EngineState state ) { _state = state; }
   inline       CellViewer*       AnabaticEngine::getViewer             () const { return _viewer; }

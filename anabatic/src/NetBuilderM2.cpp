@@ -187,7 +187,7 @@ namespace Anabatic {
     contact2 ->setFlags( CntFixed );
 
     AutoSegment* fixed  = AutoSegment::create( rpContact, contact1, Flags::Vertical   );
-    AutoSegment* dogleg = AutoSegment::create( contact1 , contact2, Flags::Horizontal );
+    AutoSegment* dogleg = AutoSegment::create( contact1 , contact2, Flags::Horizontal|Flags::UseNonPref );
     fixed ->setFlags( AutoSegment::SegFixed );
     dogleg->setFlags( AutoSegment::SegFixed );
 

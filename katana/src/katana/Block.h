@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_BLOCK_H
-#define  KATANA_BLOCK_H
-
+#pragma  once
 #include <string>
 #include <vector>
 #include <map>
@@ -113,5 +111,3 @@ namespace Katana {
 
 INSPECTOR_P_SUPPORT(Katana::Row);
 INSPECTOR_P_SUPPORT(Katana::Block);
-
-#endif  // KATANA_BLOCK_H

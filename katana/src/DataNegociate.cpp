@@ -95,6 +95,7 @@ namespace Katana {
     vector<AutoSegment*> collapseds;
     vector< tuple<AutoSegment*,Anabatic::Flags> > perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
+    size_t               reducedPerpands = 0;
 
     _reduceRanges[0].makeEmpty();
     _reduceRanges[1].makeEmpty();
@@ -125,12 +126,16 @@ namespace Katana {
         perpandicular = Session::lookup( basePerpand->getCanonical(interval)->base() );
       }
       if (not perpandicular) {
-        cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
-                 //, getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
-                   , getString(basePerpand->getCanonical(interval)).c_str()
-                 //, getString((void*)basePerpand->base()).c_str()
-                   , getString(basePerpand).c_str()
-                   ) << endl;
+        if (not (Session::isChannelMode()
+                and (basePerpand->isReduced() or basePerpand->isNonPref())))
+          cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
+                   //, getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
+                     , getString(basePerpand->getCanonical(interval)).c_str()
+                   //, getString((void*)basePerpand->base()).c_str()
+                     , getString(basePerpand).c_str()
+                     ) << endl;
+        else
+          ++reducedPerpands;
         continue;
       }
 
@@ -266,7 +271,7 @@ namespace Katana {
 
       cdebug_tabw(159,-1);
     }
-    if ( not _trackSegment->isTerminal() and (_perpandiculars.size() < 2) )
+    if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )
       cerr << Bug( "Less than two perpandiculars on %s.", getString(_trackSegment).c_str() ) << endl;
 
     map<DbU::Unit,int>::iterator iattractor = attractorSpins.begin();

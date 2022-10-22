@@ -60,7 +60,9 @@ namespace {
 
     if (not intersect.intersect(cost.getInterval())) return;
 
-    if (segment->isBlockage() or segment->isFixed()) {
+    if (   segment->isBlockage()
+       or (segment->isFixed()
+          and not (segment->isVertical() and Session::getKatanaEngine()->isChannelMode()))) {
       cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
       cost.setInfinite   ();
       cost.setOverlap    ();
@@ -329,13 +331,25 @@ namespace Katana {
   // Special case: fixed AutoSegments must not interfere with blockages.
   // Ugly: uses of getExtensionCap().
     if (autoSegment->isFixed()) {
+      if (Session::isChannelMode() and autoSegment->isReduced()) {
+        cdebug_log(159,0) << "* Fixed segment is reduced, ignore " << autoSegment << endl;
+        cdebug_tabw(159,-1);
+        return NULL;
+      }
+
       size_t        begin;
       size_t        end;
       Interval      fixedSpan;
       Interval      blockageSpan;
 
+      if (Session::isChannelMode() and autoSegment->isNonPref()) {
+        cdebug_log(159,0) << "Fixed in non-preferred direction, do not attempt to set on track." << endl;
+        cdebug_tabw(159,-1);
+        DebugSession::close();
+        return NULL;
+      }
       if (not refTrack) {
-        string message = "NULL refTrack for " + getString(autoSegment);
+        string message = "NULL refTrack for " + getString(autoSegment) + " brace for crashing!";
         Breakpoint::stop( 0, message );
       }
       

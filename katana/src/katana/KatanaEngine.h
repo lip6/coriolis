@@ -55,10 +55,6 @@ namespace Katana {
 
   class KatanaEngine : public AnabaticEngine {
     public:
-      static const uint32_t  DigitalMode            = (1 <<  0);
-      static const uint32_t  AnalogMode             = (1 <<  1);
-      static const uint32_t  MixedMode              = (1 <<  2);
-      static const uint32_t  ChannelMode            = (1 <<  3);
       static const uint32_t  GlobalRoutingSuccess   = (1 <<  0);
       static const uint32_t  DetailedRoutingSuccess = (1 <<  1);
     public:
@@ -68,10 +64,6 @@ namespace Katana {
       static  KatanaEngine*            create                     ( Cell* );
       static  KatanaEngine*            get                        ( const Cell* );
     public:                                                      
-      inline  bool                     isDigitalMode              () const;
-      inline  bool                     isAnalogMode               () const;
-      inline  bool                     isMixedMode                () const;
-      inline  bool                     isChannelMode              () const;
       inline  bool                     isGlobalRoutingSuccess     () const;
       inline  bool                     isDetailedRoutingSuccess   () const;
       inline  bool                     useClockTree               () const;
@@ -172,7 +164,6 @@ namespace Katana {
               double                   _minimumWL;
               TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
-              uint32_t                 _mode;
               uint32_t                 _stage;
       mutable uint32_t                 _successState;
     protected:
@@ -188,10 +179,6 @@ namespace Katana {
 
 
 // Inline Functions.
-  inline  bool                          KatanaEngine::isDigitalMode           () const { return (_mode & DigitalMode); };
-  inline  bool                          KatanaEngine::isAnalogMode            () const { return (_mode & AnalogMode); };
-  inline  bool                          KatanaEngine::isMixedMode             () const { return (_mode & MixedMode); };
-  inline  bool                          KatanaEngine::isChannelMode           () const { return (_mode & ChannelMode); };
   inline  bool                          KatanaEngine::isGlobalRoutingSuccess  () const { return (_successState & GlobalRoutingSuccess); }
   inline  bool                          KatanaEngine::isDetailedRoutingSuccess() const { return (_successState & DetailedRoutingSuccess); }
   inline  bool                          KatanaEngine::useClockTree            () const { return _configuration->useClockTree(); }

@@ -76,6 +76,7 @@ namespace Anabatic {
       static  inline bool                              doDestroyBaseSegment  ();
       static  inline bool                              doDestroyTool         ();
       static         bool                              isInDemoMode          ();
+      static         bool                              isChannelMode         ();
       static         bool                              doWarnGCellOverload   ();
       static         Session*                          get                   ( const char* message=NULL );
       static  inline Technology*                       getTechnology         ();

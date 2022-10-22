@@ -18,6 +18,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Cell.h"
 #include "anabatic/Edge.h"
@@ -37,6 +38,7 @@ namespace Katana {
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::SubTypeCollection;
+  using Hurricane::UpdateSession;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
@@ -104,8 +106,14 @@ namespace Katana {
       throw Error( "Row::createChannel(): NULL southWest GCell." );
     if (_occurrences.empty())
       throw Error( "Row::createChannel(): No instances in row." );
-    if (southWest->getXMin() != (*_occurrences.begin()).first)
-      throw Error( "Row::createChannel(): South-west GCell XMin and Row X min differs." );
+    if (southWest->getXMin() != (*_occurrences.begin()).first) {
+      UpdateSession::close();
+      throw Error( "Row::createChannel(): South-west GCell XMin and Row X min differs.\n"
+                   "        * southWest=%s\n"
+                   "        * first=%s\n"
+                 , getString(southWest).c_str()
+                 , DbU::getValueString((*_occurrences.begin()).first).c_str() );
+    }
     if (southWest->getYMin() != _y)
       throw Error( "Row::createChannel(): South-west GCell YMIn and Row Y min differs (%s vs. %s)."
                  , DbU::getValueString(southWest->getYMin()).c_str()
@@ -198,6 +206,7 @@ namespace Katana {
       //   _channelHeight = std::max( _channelHeight, east->getRealOccupancy() );
       gcell = gcell->getEast();
     }
+    _channelHeight += 2;
 
     return _channelHeight;
   }

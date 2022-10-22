@@ -722,8 +722,10 @@ namespace Katana {
         cdebug_log(159,0) << "No intersection with: " << segment2->getCanonicalInterval() << endl;
         continue;
       }
-      if ( segment2->isBlockage() or segment2->isFixed() ) {
-        cdebug_log(159,0) << "Ovelap is blockage or fixed." << endl;
+      if (   segment2->isBlockage()
+         or (segment2->isFixed()
+            and not (segment2->isVertical() and Session::getKatanaEngine()->isChannelMode()))) {
+        cdebug_log(159,0) << "Overlap is blockage or fixed." << endl;
         success = false;
         continue;
       }
@@ -890,6 +892,7 @@ namespace Katana {
     set<TrackElement*>  canonicals;
     bool                success    = true;
 
+    toFree.inflate( -1 );
     cdebug_log(159,1) << "Manipulator::_forceToTrack(size_t) - " << toFree << endl;
 
     for ( size_t i=begin ; success and (i < end) ; ++i ) {
@@ -898,7 +901,15 @@ namespace Katana {
       cdebug_log(159,0) << "* Looking // " << segment2 << endl;
 
       if (segment2->getNet() == ownerNet) continue;
-      if (not toFree.intersect(segment2->getCanonicalInterval())) continue;
+      Interval segCanon  = segment2->getCanonicalInterval();
+      if (not toFree.intersect(segment2->getCanonicalInterval()))
+        continue;
+      cdebug_log(159,0) << "toFree   = " << toFree
+                        << " [" << toFree.getVMin()
+                        << " "  << toFree.getVMax() << "]" << endl;
+      cdebug_log(159,0) << "segCanon = " << segCanon
+                        << " [" << segCanon.getVMin()
+                        << " "  << segCanon.getVMax() << "]" << endl;
       if (segment2->isFixed()) {
         success = false;
         continue;
