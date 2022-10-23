@@ -1802,7 +1802,7 @@ namespace Anabatic {
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
-    if (isFixed()) {
+    if (isFixed() and (length < getPPitch())) {
       if (isSpinTopOrBottom() and source->isTurn() and target->isTurn())
         return true;
       return false;
