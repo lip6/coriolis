@@ -147,6 +147,39 @@ namespace Etesian {
   }  
 
 
+  BloatChannel::BloatChannel ()
+    : BloatCell("channel")
+  { }
+
+
+  BloatChannel::~BloatChannel ()
+  { }
+
+
+  DbU::Unit  BloatChannel::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
+  {
+    int terminals = 0;
+    for ( Net* net : cell->getNets() ) {
+      if (net->isExternal() and not net->isPower()) ++terminals;
+    }
+
+    Box ab ( cell->getAbutmentBox() );
+    DbU::Unit vpitch = etesian->getSliceStep();;
+    int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
+
+    // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
+    // if (termRatio > 0.5) {
+    //   return vpitch*6;
+    // }
+
+    // if (xsize < 4) return vpitch*4;
+    // if (xsize < 6) return vpitch*2;
+    // if (xsize < 8) return vpitch*1;
+    
+    return vpitch*3;
+  }  
+
+
   Bloat90Percents::Bloat90Percents ()
     : BloatCell("90%")
   { }
