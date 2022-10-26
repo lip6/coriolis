@@ -184,7 +184,6 @@ import plugins
 from   Hurricane import Breakpoint, DbU, Box, Net, Cell, Instance, \
                         Transformation, PythonAttributes
 import CRL
-from   Foehn     import FoehnEngine, DagExtension
 from   plugins.chip.configuration import GaugeConf
 from   plugins.sram.sram          import Bus, Column, ColBlock, ColGroup, \
                                          HeaderRow, BaseSRAM 
