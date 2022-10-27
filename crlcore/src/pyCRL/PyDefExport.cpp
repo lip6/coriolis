@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -99,6 +99,15 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,DefExport)
+
+
+  extern  void  PyDefExport_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeDefExport.tp_dict,DefExport::WithLEF        ,"WithLEF");
+    LoadObjectConstant(PyTypeDefExport.tp_dict,DefExport::ExpandDieArea  ,"ExpandDieArea");
+    LoadObjectConstant(PyTypeDefExport.tp_dict,DefExport::ProtectNetNames,"ProtectNetNames");
+  }
 
 
 #endif  // End of Shared Library Code Part.

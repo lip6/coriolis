@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,9 +15,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_PY_DEF_EXPORT_H
-#define CRL_PY_DEF_EXPORT_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/DefExport.h"
 
@@ -41,7 +39,8 @@ extern "C" {
   extern  PyTypeObject  PyTypeDefExport;
   extern  PyMethodDef   PyDefExport_Methods[];
 
-  extern  void          PyDefExport_LinkPyType();
+  extern  void          PyDefExport_LinkPyType ();
+  extern  void          PyDefExport_postModuleInit ();
 
 
 #define IsPyDefExport(v)    ( (v)->ob_type == &PyTypeDefExport )
@@ -51,5 +50,3 @@ extern "C" {
 }  // extern "C".
 
 }  // CRL namespace.
-
-#endif  // CRL_PY_DEF_EXPORT_H
