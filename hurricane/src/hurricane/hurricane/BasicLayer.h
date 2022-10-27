@@ -30,12 +30,10 @@
 // +-----------------------------------------------------------------+
 
 
-# ifndef  HURRICANE_BASIC_LAYER_H
-# define  HURRICANE_BASIC_LAYER_H
-
-# include  "hurricane/Layer.h"
-# include  "hurricane/BasicLayers.h"
-# include  "hurricane/Box.h"
+#pragma  once
+#include "hurricane/Layer.h"
+#include "hurricane/BasicLayers.h"
+#include "hurricane/Box.h"
 
 
 namespace Hurricane {
@@ -84,15 +82,16 @@ namespace Hurricane {
       static  BasicLayer*     create                 ( Technology*      technology
                                                      , const Name&      name
                                                      , const Material&  material
-                                                     , unsigned         gds2Layer      = 0
-                                                     , unsigned         gds2Datatype   = 0
+                                                     , uint32_t         gds2Layer      = 0
+                                                     , uint32_t         gds2Datatype   = 0
                                                      , const DbU::Unit& minimalSize    = 0
                                                      , const DbU::Unit& minimalSpacing = 0
                                                      );
     // Accessors.                                    
+      inline  bool            hasGds                 () const;
       inline  const Material& getMaterial            () const;
-      inline  unsigned        getGds2Layer           () const;
-      inline  unsigned        getGds2Datatype        () const;
+      inline  uint32_t        getGds2Layer           () const;
+      inline  uint32_t        getGds2Datatype        () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getBlockageLayer       () const;
       virtual const Layer*    getTop                 () const;
@@ -100,8 +99,8 @@ namespace Hurricane {
       inline  const Name&     getRealName            () const;
     // Updators                                      
       inline  void            setBlockageLayer       ( BasicLayer* layer);
-      inline  void            setGds2Layer           ( unsigned int );
-      inline  void            setGds2Datatype        ( unsigned int );
+      inline  void            setGds2Layer           ( uint32_t );
+      inline  void            setGds2Datatype        ( uint32_t );
       inline  void            setRealName            ( const char* realName);
     // Hurricane Managment.
       virtual void            _toJson                ( JsonWriter* writer ) const;
@@ -113,18 +112,19 @@ namespace Hurricane {
     private:
     // Internal: Attributes
               Material        _material;
-              unsigned        _gds2Layer;
-              unsigned        _gds2Datatype;
+              uint32_t        _gds2Layer;
+              uint32_t        _gds2Datatype;
               BasicLayer*     _blockageLayer;
               Name            _realName;
+              bool            _hasGds;
 
     protected:
     // Internal: Constructors & Destructors.
                               BasicLayer             ( Technology*      technology
                                                      , const Name&      name
                                                      , const Material&  material
-                                                     , unsigned         gds2Layer
-                                                     , unsigned         gds2Datatype
+                                                     , uint32_t         gds2Layer
+                                                     , uint32_t         gds2Datatype
                                                      , const DbU::Unit& minimalSize    = 0
                                                      , const DbU::Unit& minimalSpacing = 0
                                                      );
@@ -138,14 +138,15 @@ namespace Hurricane {
   inline const BasicLayer::Material::Code&
                          BasicLayer::Material::getCode              () const { return _code; }
   inline string          BasicLayer::Material::_getTypeName         () const { return _TName("BasicLayer::Material"); }
+  inline bool            BasicLayer::hasGds                         () const { return _hasGds; }
   inline const BasicLayer::Material&
                          BasicLayer::getMaterial                    () const { return _material; }
-  inline unsigned        BasicLayer::getGds2Layer                   () const { return _gds2Layer; }
-  inline unsigned        BasicLayer::getGds2Datatype                () const { return _gds2Datatype; }
+  inline uint32_t        BasicLayer::getGds2Layer                   () const { return _gds2Layer; }
+  inline uint32_t        BasicLayer::getGds2Datatype                () const { return _gds2Datatype; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
   inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; layer->setBlockage(true); }
-  inline void            BasicLayer::setGds2Layer                   ( unsigned int number ) { _gds2Layer=number; }
-  inline void            BasicLayer::setGds2Datatype                ( unsigned int number ) { _gds2Datatype=number; }
+  inline void            BasicLayer::setGds2Layer                   ( uint32_t number ) { _gds2Layer=number; _hasGds=true; }
+  inline void            BasicLayer::setGds2Datatype                ( uint32_t number ) { _gds2Datatype=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
 
 
@@ -204,6 +205,3 @@ inline Hurricane::Record* getRecord<const Hurricane::BasicLayer::Material::Code*
 INSPECTOR_P_SUPPORT(Hurricane::BasicLayer);
 INSPECTOR_P_SUPPORT(Hurricane::BasicLayer::Material);
 IOSTREAM_POINTER_SUPPORT(Hurricane::BasicLayer::Material::Code);
-
-
-# endif

@@ -180,6 +180,7 @@ namespace Hurricane {
                            ,_gds2Datatype  (gds2Datatype)
                            ,_blockageLayer (NULL)
                            ,_realName      ("<not associated>")
+                           ,_hasGds        (false)
   { }
 
 
