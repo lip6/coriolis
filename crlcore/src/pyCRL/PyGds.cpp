@@ -87,13 +87,14 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyGds_load()" << endl;
 
-    char* path = NULL;
+    char*     path  = NULL;
+    uint32_t  flags = 0;
     
     HTRY
       PyObject* pyLibrary = NULL;
-      if (PyArg_ParseTuple( args, "Os:Gds.load", &pyLibrary, &path )) {
+      if (PyArg_ParseTuple( args, "Os|I:Gds.load", &pyLibrary, &path, &flags )) {
         if (IsPyLibrary(pyLibrary)) {
-          Gds::load( PYLIBRARY_O(pyLibrary), string(path) );
+          Gds::load( PYLIBRARY_O(pyLibrary), string(path), flags );
         } else {
           PyErr_SetString( ConstructorError, "Gds.load(): Bad parameter type (not a Library)." );
           return NULL;
@@ -133,6 +134,14 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,Gds)
+
+
+  extern  void  PyGds_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix       ,"NoGdsPrefix");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary,"Layer_0_IsBoundary");
+  }
 
 
 #endif  // End of Shared Library Code Part.

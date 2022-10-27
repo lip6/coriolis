@@ -648,7 +648,9 @@ namespace {
       static const Layer* gdsToLayer           ( uint16_t gdsLayer, uint16_t datatype );
     public:                                    
       static       void   _staticInit          ();
-                          GdsStream            ( string gdsPath );
+                          GdsStream            ( string gdsPath, uint32_t flags );
+      inline       bool   useGdsPrefix         () const;
+      inline       bool   useLayer0AsBoundary  () const;
       inline       bool   isValidSyntax        () const;
                    bool   misplacedRecord      ();
       inline       void   resetStrans          ();
@@ -666,6 +668,7 @@ namespace {
                    bool   readTextbody         ( const Layer* );
                    bool   readStrans           ();
                    bool   readProperty         ();
+                   void   xyToAbutmentBox      ();
                    void   xyToComponent        ( const Layer* );
                    void   xyToPath             ( uint16_t pathtype
                                                , const Layer*
@@ -693,6 +696,7 @@ namespace {
     private:
       static map<uint32_t,const Layer*>  _gdsLayerTable;
              vector<DelayedInstance>     _delayedInstances;
+             uint32_t                    _flags;
              string                      _gdsPath;
              ifstream                    _stream;
              GdsRecord                   _record;
@@ -730,8 +734,10 @@ namespace {
   void  GdsStream::_staticInit ()
   {
     for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-      uint32_t gdsNumber = (layer->getGds2Layer() << 16) + layer->getGds2Datatype();
-      _gdsLayerTable[gdsNumber] = layer;
+      if (layer->hasGds()) {
+        uint32_t gdsNumber = (layer->getGds2Layer() << 16) + layer->getGds2Datatype();
+        _gdsLayerTable[gdsNumber] = layer;
+      }
     }
   }
 
@@ -749,11 +755,14 @@ namespace {
   }
 
 
-  inline bool  GdsStream::isValidSyntax () const { return _validSyntax; }
+  inline bool  GdsStream::isValidSyntax       () const { return _validSyntax; }
+  inline bool  GdsStream::useGdsPrefix        () const { return not(_flags & Gds::NoGdsPrefix); }
+  inline bool  GdsStream::useLayer0AsBoundary () const { return    (_flags & Gds::Layer_0_IsBoundary); }
 
 
-  GdsStream::GdsStream ( string gdsPath )
+  GdsStream::GdsStream ( string gdsPath, uint32_t flags )
     : _delayedInstances()
+    , _flags           (flags)
     , _gdsPath         (gdsPath)
     , _stream          ()
     , _record          ()
@@ -890,11 +899,12 @@ namespace {
     
     if (_record.isSTRNAME()) {
       if (_library) {
-        string cellName = "gds_" + _record.getName();
+        string cellName = _record.getName();
+        if (useGdsPrefix()) cellName.insert( 0, "gds_" );
         _cell = _library->getCell( cellName );
         if (not _cell) {
-          cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"gds_%s\" in Library \"%s\" (created)."
-                              , _record.getName().c_str()
+          cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
+                              , cellName.c_str()
                               , getString(_library).c_str()
                               ) << endl;
           _cell = Cell::create( _library, cellName );
@@ -969,11 +979,13 @@ namespace {
     }
 
     const Layer* layer = gdsToLayer( gdsLayer, gdsDatatype );
-    cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
-    if (not layer) {
-      cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
-                   , gdsLayer, gdsDatatype
-                   ) << endl;
+    if ((gdsLayer == 0) and not useLayer0AsBoundary()) {
+      cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
+      if (not layer) {
+        cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
+                     , gdsLayer, gdsDatatype
+                     ) << endl;
+      }
     }
 
     return layer;
@@ -1105,8 +1117,13 @@ namespace {
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
-      else                 _stream >> _record;
+      if (_cell and layer)
+        xyToComponent( layer );
+      else if (not layer and useLayer0AsBoundary()) {
+        xyToAbutmentBox();
+      }
+      else
+        _stream >> _record;
     } else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
@@ -1240,8 +1257,9 @@ namespace {
       //      << " XR:" << _xReflection << " angle:" << _angle
       //      << " " << Transformation(xpos,ypos,orient)
       //      << " in " << _cell << endl;
+      if (useGdsPrefix()) masterName.insert( 0, "gds_" );
       _delayedInstances.push_back( DelayedInstance( _cell
-                                                  , "gds_" + masterName
+                                                  , masterName
                                                   , Transformation(xpos,ypos,orient)) );
     }
 
@@ -1376,6 +1394,70 @@ namespace {
 
     cdebug_log(101,0) << "GdsStream::readProperty() - return:" << _validSyntax << endl;
     return _validSyntax;
+  }
+
+
+  void  GdsStream::xyToAbutmentBox ()
+  {
+    DbU::Unit oneGrid = DbU::fromGrid( 1 );
+    
+    vector<Point>   points;
+    vector<int32_t> coordinates = _record.getInt32s();
+    vector<size_t>  offgrids;
+    for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
+      points.push_back( Point( coordinates[i  ]*_scale
+                             , coordinates[i+1]*_scale ) );
+      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
+        offgrids.push_back( i );
+      }
+    }
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on abutment box (foundry grid: %s).\n"
+                     "%s"
+                   , DbU::getValueString(oneGrid).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
+
+    _stream >> _record;
+
+    if (  (_record.getType() == GdsRecord::ENDEL)
+       or (_record.getType() == GdsRecord::STRING)) {
+    //_stream >> _record;
+    } else {
+      _validSyntax = false;
+      return;
+    }
+    
+    if (_record.getType() == GdsRecord::TEXT) {
+      _stream >> _record;
+      readText();
+    } else
+      _skipENDEL = true;
+
+    bool isRectilinear = true;
+    for ( size_t i=1 ; i<points.size() ; ++i ) {
+      if (   (points[i-1].getX() != points[i].getX()) 
+         and (points[i-1].getY() != points[i].getY()) ) {
+        isRectilinear = false;
+        break;
+      }
+    }
+    if (isRectilinear and (points.size() == 5)) {
+      Box ab; 
+      for ( Point p : points ) ab.merge( p );
+      _cell->setAbutmentBox( ab );
+      cdebug_log(101,0) << "| Abutment box =" << ab << endl;
+    }
   }
 
 
@@ -1651,7 +1733,7 @@ namespace {
       for ( const PinPoint& ref : netPins.second ) {
         const Layer* layer = ref._layer;
         string layerName = getString( layer->getName() );
-        if (layerName.substr(layerName.size()-4) == ".pin") {
+        if ((layerName.size() > 4) and layerName.substr(layerName.size()-4) == ".pin") {
           layer = DataBase::getDB()->getTechnology()->getLayer( layerName.substr(0,layerName.size()-4) );
         }
         cdebug_log(101,0) << "Looking for components of \"" << net->getName()
@@ -1737,13 +1819,13 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::Gds".
 
-  bool  Gds::load ( Library* library, string gdsPath )
+  bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
   //DebugSession::open( 101, 110 );
     UpdateSession::open();
     Contact::disableCheckMinSize();
 
-    GdsStream gstream ( gdsPath );
+    GdsStream gstream ( gdsPath, flags );
 
     if (not gstream.read( library ))
       cerr << Error( "Gds::load(): An error occurred while reading GDSII stream\n"
