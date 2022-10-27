@@ -79,6 +79,7 @@ namespace {
                                       LefParser                ( string file, string libraryName );
                                      ~LefParser                ();
       inline       bool               isVH                     () const;
+                   bool               isUnmatchedLayer         ( string );
                    Library*           createLibrary            ();
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
@@ -129,6 +130,7 @@ namespace {
                    double              _unitsMicrons;
                    map< string, vector<Segment*> >  _pinSegments;
       static       map<string,Layer*>  _layerLut;
+                   vector<string>      _unmatchedLayers;
                    vector<string>      _errors;
                    int                 _nthMetal;
                    int                 _nthCut;
@@ -204,6 +206,15 @@ namespace {
   }
 
 
+  bool  LefParser::isUnmatchedLayer ( string layerName )
+  {
+    for ( string layer : _unmatchedLayers ) {
+      if (layer == layerName) return true;
+    }
+    return false;
+  }
+
+
   LefParser::LefParser ( string file, string libraryName )
     : _file            (file)
     , _libraryName     (libraryName)
@@ -212,6 +223,7 @@ namespace {
     , _net             (NULL)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
+    , _unmatchedLayers ()
     , _errors          ()
     , _nthMetal        (0)
     , _nthCut          (0)
@@ -228,6 +240,18 @@ namespace {
 
     if (not _cellGauge)
       throw Error( "LefParser::LefParser(): No default cell gauge defined in Alliance framework." );
+
+    string unmatcheds = Cfg::getParamString("LefImport.unmatchedLayers","")->asString();
+    if (not unmatcheds.empty()) {
+      size_t ibegin = 0;
+      size_t iend   = unmatcheds.find( ',', ibegin );
+      while (iend != string::npos) {
+        _unmatchedLayers.push_back( unmatcheds.substr(ibegin,iend-ibegin) );
+        ibegin = iend+1;
+        iend   = unmatcheds.find( ',', ibegin );
+      }
+      _unmatchedLayers.push_back( unmatcheds.substr(ibegin) );
+    }
     
     lefrInit();
     lefrSetUnitsCbk      ( _unitsCbk       );
@@ -295,6 +319,10 @@ namespace {
 
     if (lefType == "CUT") {
       Layer* layer = techno->getNthCut( parser->getNthCut() );
+      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+        parser->incNthCut();
+        layer = techno->getNthCut( parser->getNthCut() );
+      }
       if (layer) {
         parser->addLayer( lefLayer->name(), layer );
         parser->incNthCut();
@@ -305,6 +333,11 @@ namespace {
 
     if (lefType == "ROUTING") {
       Layer* layer = techno->getNthMetal( parser->getNthMetal() );
+      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+        parser->incNthMetal();
+        layer = techno->getNthMetal( parser->getNthMetal() );
+      }
+      
       if (layer) {
         BasicLayer* basicLayer = layer->getBasicLayers().getFirst();
         parser->addLayer( lefLayer->name(), basicLayer );
