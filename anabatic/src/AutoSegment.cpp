@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -3293,8 +3293,8 @@ namespace Anabatic {
       }
     }
 
-    if (isSourceBoundToChannel) rightBound -= (leftBound + rightBound)/2;
-    if (isTargetBoundToChannel) leftBound  += (leftBound + rightBound)/2;
+    if (isSourceBoundToChannel) leftBound  += (rightBound - leftBound)/2;
+    if (isTargetBoundToChannel) rightBound -= (rightBound - leftBound)/2;
 
     cdebug_tabw(145,-1);
   }
