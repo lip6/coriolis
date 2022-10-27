@@ -137,7 +137,7 @@ namespace {
   Point  extractRpOffset ( const RoutingPad* rp )
   {
     Cell*      masterCell = rp->getOccurrence().getMasterCell();
-    Component* component  = rp->_getEntityAsComponent();
+    Component* component  = rp->_getEntityAs<Component>();
 
     // TODO: verify that it doesn't assume that the orientation is North
     Box        masterBox  = masterCell->getAbutmentBox();

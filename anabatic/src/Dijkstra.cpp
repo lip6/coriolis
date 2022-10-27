@@ -265,7 +265,7 @@ namespace Anabatic {
         }
       }
       if (rp) {
-        Vertical* v = dynamic_cast<Vertical*>(rp->_getEntityAsSegment());
+        Vertical* v = dynamic_cast<Vertical*>(rp->_getEntityAs<Segment>());
         if (v) { return true; }
       }
     } 
@@ -285,7 +285,7 @@ namespace Anabatic {
         }
       }
       if (rp) {
-        Horizontal* h = dynamic_cast<Horizontal*>(rp->_getEntityAsSegment());
+        Horizontal* h = dynamic_cast<Horizontal*>(rp->_getEntityAs<Segment>());
         if (h) { return true; }
       }
     } 
@@ -2873,8 +2873,8 @@ namespace Anabatic {
   {
     cdebug_log(112,0) << "void Dijkstra::_setSourcesGRAData() : " << seed << endl;
     GCell*      gseed = seed->getGCell();
-    Horizontal* h    = dynamic_cast<Horizontal*>(rp->_getEntityAsSegment());
-    Vertical*   v    = dynamic_cast<Vertical*>  (rp->_getEntityAsSegment());
+    Horizontal* h    = dynamic_cast<Horizontal*>(rp->_getEntityAs<Segment>());
+    Vertical*   v    = dynamic_cast<Vertical*>  (rp->_getEntityAs<Segment>());
     if (h) {
       cdebug_log(112,0) << "case H " << endl;
       seed->unsetFlags(Vertex::iHorizontal);

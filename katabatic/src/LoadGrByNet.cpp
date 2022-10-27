@@ -870,7 +870,7 @@ namespace {
               throw Error( mismatchGCell );
             }
           } else {
-            if (rp and AllianceFramework::get()->isPad(rp->_getEntityAsComponent()->getCell())) {
+            if (rp and AllianceFramework::get()->isPad(rp->_getEntityAs<Component>()->getCell())) {
               _connexity.fields.Pad++;
             } else {
               const Layer* layer = anchor->getLayer();

@@ -26,6 +26,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Pin.h"
+#include "hurricane/Pad.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
@@ -56,6 +57,7 @@ namespace Anabatic {
   using  Hurricane::BasicLayer;
   using  Hurricane::RegularLayer;
   using  Hurricane::Segment;
+  using  Hurricane::Pad;
   using  Hurricane::Pin;
   using  Hurricane::Plug;
   using  Hurricane::Path;
@@ -497,10 +499,12 @@ namespace Anabatic {
         break;
       }
 
-      Component* candidate = dynamic_cast<Segment*>(component);
+      Component* candidate = dynamic_cast<Segment*>( component );
       if (not candidate
          or  (candidate->getLayer()->getMask() != metal1->getMask()) )
         candidate = dynamic_cast<Pin*>(component);
+      if (not candidate)
+        candidate = dynamic_cast<Pad*>( component );
       if (not candidate) continue;
 
       Box        bb       = transformation.getBox( candidate->getBoundingBox() );

@@ -76,7 +76,7 @@ namespace {
     cdebug_log(145,1) << "::protectRoutingPad() " << rp << endl;
     
     Name            padNetName     = "pad";
-    Component*      usedComponent  = rp->_getEntityAsComponent();
+    Component*      usedComponent  = rp->_getEntityAs<Component>();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();

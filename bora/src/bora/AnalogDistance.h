@@ -130,8 +130,8 @@ namespace Bora {
         if (rp) break;
       }
       if (rp) {
-        Horizontal* h = dynamic_cast<Horizontal*>( rp->_getEntityAsSegment() );
-        Vertical*   v = dynamic_cast<Vertical*  >( rp->_getEntityAsSegment() );
+        Horizontal* h = dynamic_cast<Horizontal*>( rp->_getEntityAs<Segment>() );
+        Vertical*   v = dynamic_cast<Vertical*  >( rp->_getEntityAs<Segment>() );
         cdebug_log(112,0) << "Current: isDevice, ";
         if (h) {
           cdebug_log(112,0) << " rp: Horizontal and ";
@@ -212,8 +212,8 @@ namespace Bora {
       }
       if (rp) {
         cdebug_log(112,0) << "Case: Next is a Device and ";
-        Horizontal* h = dynamic_cast<Horizontal*>( rp->_getEntityAsSegment() );
-        Vertical*   v = dynamic_cast<Vertical*  >( rp->_getEntityAsSegment() );
+        Horizontal* h = dynamic_cast<Horizontal*>( rp->_getEntityAs<Segment>() );
+        Vertical*   v = dynamic_cast<Vertical*  >( rp->_getEntityAs<Segment>() );
         if (h) {
           if (gcurr->isNorth(gnext) or gcurr->isSouth(gnext)) {
             cdebug_log(112,0) << "COST." << std::endl;

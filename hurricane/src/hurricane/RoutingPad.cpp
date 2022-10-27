@@ -159,72 +159,85 @@ namespace Hurricane {
 
   Box RoutingPad::getBoundingBox () const
   {
-    Component* component = _getEntityAsComponent();
-    if ( component )
-      return _occurrence.getPath().getTransformation().getBox ( component->getBoundingBox() );
-
-    return Box(getPosition());
+    Component* component = _getEntityAs<Component>();
+    if (component)
+      return _occurrence.getPath().getTransformation().getBox( component->getBoundingBox() );
+    return Box( getPosition() );
   }
 
 
   Box RoutingPad::getBoundingBox ( const BasicLayer* basicLayer ) const
   {
-    Component* component = _getEntityAsComponent();
-    if ( component ) {
-      return _occurrence.getPath().getTransformation().getBox ( component->getBoundingBox(basicLayer) );
-    }
-
-    return Box(getPosition());
+    Component* component = _getEntityAs<Component>();
+    if (component)
+      return _occurrence.getPath().getTransformation().getBox( component->getBoundingBox(basicLayer) );
+    return Box( getPosition() );
   }
 
 
   const Layer* RoutingPad::getLayer () const
   {
-    Component* component = _getEntityAsComponent();
-    if (component) return component->getLayer ();
-
-    return NULL;
+    Component* component = _getEntityAs<Component>();
+    if (not component) return nullptr;
+    return component->getLayer ();
   }
 
 
   Point RoutingPad::getPosition () const
   {
-    Component* component = _getEntityAsComponent();
-    if (component) {
+    Component* component = _getEntityAs<Component>();
+    if (component)
       return _occurrence.getPath().getTransformation().getPoint( component->getCenter() );
-    }
-
     return Point();
   }
 
 
   Point RoutingPad::getSourcePosition () const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment ) {
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getSourcePosition() );
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getSourcePosition() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad) {
+      Box   bb = pad->getBoundingBox();
+      Point position;
+      if (bb.getWidth() > bb.getHeight())
+        position = Point( bb.getXMin() + bb.getHeight()/2, bb.getYCenter() );
+      else
+        position = Point( bb.getYCenter(), bb.getYMin() + bb.getWidth()/2 );
+      return _occurrence.getPath().getTransformation().getPoint( position );
     }
-
     return getPosition();
   }
 
 
   Point RoutingPad::getTargetPosition() const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment )
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getTargetPosition() );
-
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getTargetPosition() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad) {
+      Box   bb = pad->getBoundingBox();
+      Point position;
+      if (bb.getWidth() > bb.getHeight())
+        position = Point( bb.getXMax() - bb.getHeight()/2, bb.getYCenter() );
+      else
+        position = Point( bb.getYCenter(), bb.getYMax() - bb.getWidth()/2 );
+      return _occurrence.getPath().getTransformation().getPoint( position );
+    }
     return getPosition();
   }
 
 
   Point RoutingPad::getCenter() const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment )
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getCenter() );
-    
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getCenter() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad)
+      return _occurrence.getPath().getTransformation().getPoint( pad->getCenter() );
     return getPosition();
   }
 
@@ -272,24 +285,6 @@ namespace Hurricane {
       record->add(getSlot("_occurrence",_occurrence));
     }
     return record;
-  }
-
-
-  Component* RoutingPad::_getEntityAsComponent () const
-  {
-    if ( _occurrence.isValid() )
-      return dynamic_cast<Component*>( _occurrence.getEntity() );
-
-    return NULL;
-  }
-
-
-  Segment* RoutingPad::_getEntityAsSegment () const
-  {
-    if ( _occurrence.isValid() )
-      return dynamic_cast<Segment*>( _occurrence.getEntity() );
-    
-    return NULL;
   }
 
 

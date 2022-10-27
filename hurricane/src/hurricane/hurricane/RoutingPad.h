@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_ROUTINGPAD_H
-#define HURRICANE_ROUTINGPAD_H
-
+#pragma  once
 #include "hurricane/Component.h"
 #include "hurricane/Occurrence.h"
 #include "hurricane/Pin.h"
@@ -48,18 +46,19 @@ namespace Hurricane {
   class RoutingPad : public Component {
     public:
       typedef Component Inherit;
-      enum    Flags { BiggestArea       = (1 <<  0)
-                    , HighestLayer      = (1 <<  1)
-                    , LowestLayer       = (1 <<  2)
-                    , ComponentSelection= BiggestArea|HighestLayer|LowestLayer
-                    , ShowWarning       = (1 <<  4)
-                    };
+      static const uint32_t BiggestArea        = (1 << 0); 
+      static const uint32_t HighestLayer       = (1 << 1); 
+      static const uint32_t LowestLayer        = (1 << 2); 
+      static const uint32_t ShowWarning        = (1 << 3); 
+      static const uint32_t IsOnSegment        = (1 << 4); 
+      static const uint32_t IsOnPad            = (1 << 5); 
+      static const uint32_t ComponentSelection = BiggestArea|HighestLayer|LowestLayer;
     public:
-      static RoutingPad*   create                ( Net*, Occurrence, unsigned int flags=0 );
+      static RoutingPad*   create                ( Net*, Occurrence, uint32_t flags=0 );
       static RoutingPad*   create                ( Pin* );
     public:
     // Accessors.
-              bool         isPlacedOccurrence    ( unsigned int flags ) const;
+              bool         isPlacedOccurrence    ( uint32_t flags ) const;
       inline  bool         isAtTopLevel          () const;
       inline  Occurrence   getOccurrence         () const;
               Occurrence   getPlugOccurrence     ();
@@ -79,11 +78,11 @@ namespace Hurricane {
     // Mutators.                                 
       virtual void         translate             ( const DbU::Unit& dx, const DbU::Unit& dy );
               void         setExternalComponent  ( Component* );
-              Component*   setOnBestComponent    ( unsigned int flags );
+              Component*   setOnBestComponent    ( uint32_t flags );
               void         restorePlugOccurrence ();
     // Miscellaeous.
-              Component*   _getEntityAsComponent () const;
-              Segment*     _getEntityAsSegment   () const;
+      template<typename T>
+              T*           _getEntityAs          () const;
       virtual void         _toJson               ( JsonWriter* ) const;
       virtual std::string  _getTypeName          () const {return _TName("RoutingPad");};
       virtual std::string  _getString            () const;
@@ -103,6 +102,14 @@ namespace Hurricane {
   inline  Occurrence  RoutingPad::getOccurrence () const { return _occurrence; };
 
 
+  template<typename T>
+  inline T* RoutingPad::_getEntityAs () const
+  {
+    if (not _occurrence.isValid()) return nullptr;
+    return dynamic_cast<T*>( _occurrence.getEntity() );
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "JsonRoutingPad".
 
@@ -119,5 +126,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::RoutingPad);
-
-#endif  // HURRICANE_ROUTINGPAD_H
