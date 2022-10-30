@@ -207,7 +207,7 @@ class SRAM_256x32 ( BaseSRAM ):
     BIT_GROUP_FMT = 'bit_addr{:04d}_g'
     MUX_GROUP_FMT = 'bits_{}_g'
 
-    def __init__ ( self, fold ):
+    def __init__ ( self, fold, name=None ):
         BaseSRAM.__init__( self, fold )
         if fold == 1:
             pass
@@ -219,7 +219,9 @@ class SRAM_256x32 ( BaseSRAM ):
             self.foldTags = [ 'imux_addr0096', 'imux_addr0192', 'imux_addr0160' ]
         else:
             raise ErrorMessage( 1, 'SRAM_256x32.__init__(): Unsupported fold {}, valid values are 1, 2, 4.'.format( fold ))
-        self.cell    = af.createCell( 'spram_256x32' )
+        if not name:
+            name = 'spram_256x32'
+        self.cell    = af.createCell( name )
         self.mx2Cell = self.confLib.getStdCell( 'mx2_x2' )
         self.mx3Cell = self.confLib.getStdCell( 'mx3_x2' )
         self.na2Cell = self.confLib.getStdCell( 'na2_x1' )
@@ -296,6 +298,7 @@ class SRAM_256x32 ( BaseSRAM ):
             rstCol.setBusNet( 'nq', busDato )
             omuxRoot.parent.group( rstCol, after=omuxRoot )
             af.saveCell( self.cell, CRL.Catalog.State.Logical )
+            self.cell.updatePlacedFlag()
 
     def _buildOutputMux_nao23 ( self ):
         """

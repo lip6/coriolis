@@ -795,7 +795,7 @@ class BaseSRAM ( object ):
         transf = Transformation( x, y, orient )
         self.position.applyOn( transf )
         inst.setTransformation( transf )
-        inst.setPlacementStatus( Instance.PlacementStatus.PLACED )
+        inst.setPlacementStatus( Instance.PlacementStatus.FIXED )
         return inst.getAbutmentBox()
 
     def findFoldColumns ( self ):
