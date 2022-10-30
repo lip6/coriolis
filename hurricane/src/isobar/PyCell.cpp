@@ -808,7 +808,8 @@ extern "C" {
   DirectGetBoolAttribute(PyCell_isFeed           , isFeed           ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isDiode          , isDiode          ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isPowerFeed      , isPowerFeed      ,PyCell,Cell)
-  //DirectGetLongAttribute(PyCell_getFlags         , getFlags         ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_updatePlacedFlag , updatePlacedFlag ,PyCell,Cell)
+//DirectGetLongAttribute(PyCell_getFlags         , getFlags         ,PyCell,Cell)
   DirectSetBoolAttribute(PyCell_setRouted        , setRouted        ,PyCell,Cell)
   DirectSetBoolAttribute(PyCell_setPad           , setPad           ,PyCell,Cell)
   DirectSetBoolAttribute(PyCell_setFeed          , setFeed          ,PyCell,Cell)
@@ -865,6 +866,7 @@ extern "C" {
     , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
     , { "setFlags"            , (PyCFunction)PyCell_setFlags            , METH_VARARGS, "Set state flags." }
     , { "resetFlags"          , (PyCFunction)PyCell_resetFlags          , METH_VARARGS, "Reset state flags." }
+    , { "updatePlacedFlag"    , (PyCFunction)PyCell_updatePlacedFlag    , METH_VARARGS, "Recompute the state of the *fully placed* flag." }
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
     , { "setTerminalNetlist"  , (PyCFunction)PyCell_setTerminalNetlist  , METH_VARARGS, "Sets the cell terminal netlist status." }
