@@ -241,7 +241,7 @@ namespace {
     if (not _cellGauge)
       throw Error( "LefParser::LefParser(): No default cell gauge defined in Alliance framework." );
 
-    string unmatcheds = Cfg::getParamString("LefImport.unmatchedLayers","")->asString();
+    string unmatcheds = Cfg::getParamString("lefImport.unmatchedLayers","")->asString();
     if (not unmatcheds.empty()) {
       size_t ibegin = 0;
       size_t iend   = unmatcheds.find( ',', ibegin );
@@ -321,6 +321,7 @@ namespace {
       Layer* layer = techno->getNthCut( parser->getNthCut() );
       while (parser->isUnmatchedLayer(getString(layer->getName()))) {
         parser->incNthCut();
+        cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
         layer = techno->getNthCut( parser->getNthCut() );
       }
       if (layer) {
@@ -335,6 +336,7 @@ namespace {
       Layer* layer = techno->getNthMetal( parser->getNthMetal() );
       while (parser->isUnmatchedLayer(getString(layer->getName()))) {
         parser->incNthMetal();
+        cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
         layer = techno->getNthMetal( parser->getNthMetal() );
       }
       

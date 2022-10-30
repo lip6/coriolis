@@ -566,26 +566,26 @@ namespace CRL {
 
   Cell* AllianceFramework::createCell ( const string& name, AllianceLibrary* library )
   {
-    Catalog::State* state = _catalog.getState ( name );
+    Catalog::State* state = _catalog.getState( name );
 
   // The cell is not in the CATAL : add an entry.
-    if ( state == NULL ) state = _catalog.getState ( name, true );
+    if (not state) state = _catalog.getState( name, true );
 
-    if ( library == NULL ) {
+    if (not library) {
       if (_libraries.empty())
         throw Error( "AllianceFramework::createCell(): Libraries are not set up, maybe an initialization problem." );
 
       library = _libraries[0];
     }
 
-    if ( !state->getCell() ) {
-      state->setPhysical ( true );
-      state->setLogical  ( true );
-      state->setDepth    ( 1 );
+    if (not state->getCell()) {
+      state->setPhysical( true );
+      state->setLogical ( true );
+      state->setDepth   ( 1 );
 
-      state->setCell ( Cell::create ( library->getLibrary() , name ) );
-      state->getCell ()->put ( CatalogProperty::create(state) );
-      state->getCell ()->setTerminalNetlist ( false );
+      state->setCell( Cell::create ( library->getLibrary(), name ));
+      state->getCell()->put( CatalogProperty::create(state) );
+      state->getCell()->setTerminalNetlist( false );
     }
 
     return state->getCell ();
