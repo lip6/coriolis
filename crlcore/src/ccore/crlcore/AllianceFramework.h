@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -13,10 +13,7 @@
 // |  C++ Header  :  "./crlcore/AllianceFramework.h"                 |
 // +-----------------------------------------------------------------+
 
-
-#ifndef  CRL_ALLIANCE_FRAMEWORK_H
-#define  CRL_ALLIANCE_FRAMEWORK_H
-
+#pragma  once
 #include <map>
 #include <limits>
 #include "hurricane/Cell.h"
@@ -87,6 +84,10 @@ namespace CRL {
       inline  bool                     isPad                    ( const string& name );
       inline  bool                     isPad                    ( const Name&   name );
       inline  bool                     isPad                    ( const Cell* );
+      inline  bool                     isRegister               ( const char*   name );
+      inline  bool                     isRegister               ( const string& name );
+      inline  bool                     isRegister               ( const Name&   name );
+      inline  bool                     isRegister               ( const Cell* );
     // Accessors.
       inline  Environment*             getEnvironment           ();
       inline  Catalog*                 getCatalog               ();
@@ -176,6 +177,10 @@ namespace CRL {
   inline bool         AllianceFramework::isPad                 ( const string& name ) { return isPad(name.c_str()); }
   inline bool         AllianceFramework::isPad                 ( const Name&   name ) { return isPad(getString(name)); }
   inline bool         AllianceFramework::isPad                 ( const Cell*   cell ) { return isPad(cell->getName()); }
+  inline bool         AllianceFramework::isRegister            ( const char*   name ) { return _environment.isRegister(name); }
+  inline bool         AllianceFramework::isRegister            ( const string& name ) { return isRegister(name.c_str()); }
+  inline bool         AllianceFramework::isRegister            ( const Name&   name ) { return isRegister(getString(name)); }
+  inline bool         AllianceFramework::isRegister            ( const Cell*   cell ) { return isRegister(cell->getName()); }
   inline Environment* AllianceFramework::getEnvironment        () { return &_environment; }
   inline Catalog*     AllianceFramework::getCatalog            () { return &_catalog; }
   inline const Name&  AllianceFramework::getParentLibraryName
@@ -206,5 +211,3 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::AllianceFramework);
-
-#endif // CRL_ALLIANCE_FRAMEWORK_H

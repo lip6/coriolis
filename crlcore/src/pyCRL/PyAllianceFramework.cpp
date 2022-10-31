@@ -351,6 +351,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_isRegister ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_isRegister ()" << endl;
+    char* name = NULL;
+    HTRY
+      METHOD_HEAD("AllianceFramework.isRegister()")
+      if ( not PyArg_ParseTuple(args,"s",&name) ) {
+        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell AllianceFramework.isRegister().");
+        return NULL;
+      }
+      if (af->isRegister(name)) Py_RETURN_TRUE;
+    HCATCH
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyAllianceFramework_isCLOCK ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_isCLOCK ()" << endl;
@@ -622,6 +638,8 @@ extern "C" {
                                , "Load in memory all Cells from an Alliance Library." }                           
     , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS
                                , "Tells if a cell name is a Pad." }
+    , { "isRegister"           , (PyCFunction)PyAllianceFramework_isRegister           , METH_VARARGS
+                               , "Tells if a cell name is a register (flip-flop)." }
     , { "isCLOCK"              , (PyCFunction)PyAllianceFramework_isCLOCK              , METH_VARARGS
                                , "Tells if a net name matches the clock pattern." }
     , { "isInCatalog"          , (PyCFunction)PyAllianceFramework_isInCatalog          , METH_VARARGS

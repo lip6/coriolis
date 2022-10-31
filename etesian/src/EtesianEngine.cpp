@@ -752,7 +752,7 @@ namespace Etesian {
         if (instance == getBlockInstance()) continue;
         string masterName = getString( instance->getMasterCell()->getName() );
         Box    instanceAb = instance->getAbutmentBox();
-        if (masterName.substr(0,3) == "sff") {
+        if (af->isRegister(masterName)) {
           ++registerNb;
           registerLength += instanceAb.getWidth();
         }
@@ -774,7 +774,7 @@ namespace Etesian {
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
       string    masterName = getString( instance->getMasterCell()->getName() );
-      if (masterName.substr(0,3) == "sff") {
+      if (af->isRegister(masterName)) {
         ++registerNb;
         registerLength += instanceAb.getWidth();
       }

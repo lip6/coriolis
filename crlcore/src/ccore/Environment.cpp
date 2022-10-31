@@ -68,19 +68,22 @@ namespace CRL {
     , _GROUND             ("vss")
     , _CLOCK              ("^ck$")
     , _BLOCKAGE           ("^blockage$")
-    , _pad                ("^.*_px$")
+    , _pad                (".*_px$")
+    , _register           (".*dff.*")
     , _LIBRARIES          ()
     , _PowerRegex         (new regex_t)
     , _GroundRegex        (new regex_t)
     , _ClockRegex         (new regex_t)
     , _BlockageRegex      (new regex_t)
     , _padRegex           (new regex_t)
+    , _registerRegex      (new regex_t)
   {
-    setPOWER   ( "vdd" );
-    setGROUND  ( "vss" );
-    setCLOCK   ( "^ck$" );
-    setBLOCKAGE( "^blockage$" );
-    setPad     ( "^.*_px$" );
+    setPOWER   ( _POWER   .c_str() );
+    setGROUND  ( _GROUND  .c_str() );
+    setCLOCK   ( _CLOCK   .c_str() );
+    setBLOCKAGE( _BLOCKAGE.c_str() );
+    setPad     ( _pad     .c_str() );
+    setRegister( _register.c_str() );
 
     _LIBRARIES.append( ".", "working" );
   }
@@ -93,11 +96,13 @@ namespace CRL {
     regfree( _ClockRegex    );
     regfree( _BlockageRegex );
     regfree( _padRegex      );
+    regfree( _registerRegex );
     delete _PowerRegex;
     delete _GroundRegex;
     delete _ClockRegex;
     delete _BlockageRegex;
     delete _padRegex;
+    delete _registerRegex;
   }
 
 
@@ -136,6 +141,13 @@ namespace CRL {
   }
 
 
+  bool  Environment::isRegister ( const char* name ) const
+  {
+    if (not _registerRegex) return false;
+    return regexec ( _registerRegex, name, 0, NULL, 0 ) == 0;
+  }
+
+
   void  Environment::setPOWER ( const char* value )
   {
     _POWER = value;
@@ -168,6 +180,13 @@ namespace CRL {
   {
     _pad = value;
     _setRegex ( _padRegex , _pad , "Pad" );
+  }
+
+
+  void  Environment::setRegister ( const char* value )
+  {
+    _register = value;
+    _setRegex ( _registerRegex , _register , "Register" );
   }
 
 
@@ -204,7 +223,8 @@ namespace CRL {
       << Dots::asString( "        - Clock Signal"    , _CLOCK    )  << "\n"
       << Dots::asString( "        - Blockages"       , _BLOCKAGE )  << "\n"
       << "     o  Special Cells.\n"
-      << Dots::asString( "        - Pads"            , _pad      )  << "\n\n";
+      << Dots::asString( "        - Pads"            , _pad      )  << "\n"
+      << Dots::asString( "        - Registers"       , _register )  << "\n\n";
 
     return s.str();
   }
@@ -327,6 +347,7 @@ namespace CRL {
     record->add ( getSlot ( "_CLOCK"              , &_CLOCK               ) );
     record->add ( getSlot ( "_BLOCKAGE"           , &_BLOCKAGE            ) );
     record->add ( getSlot ( "_pad"                , &_pad                 ) );
+    record->add ( getSlot ( "_register"           , &_register            ) );
     record->add ( getSlot ( "_LIBRARIES"          , &_LIBRARIES           ) );
     return record;
   }
