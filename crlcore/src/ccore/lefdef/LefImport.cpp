@@ -450,9 +450,10 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    const Layer* layer       = NULL;
-          Cell*  cell        = parser->getCell();
-          Net*   blockageNet = cell->getNet( "blockage" );
+    const Layer* layer         = NULL;
+    const Layer* blockageLayer = NULL;
+          Cell*  cell          = parser->getCell();
+          Net*   blockageNet   = cell->getNet( "blockage" );
 
     if (not blockageNet) {
       blockageNet = Net::create( cell, "blockage" );
@@ -464,9 +465,17 @@ namespace {
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
       if (geoms->itemType(igeom) == lefiGeomLayerE) {
-        layer = parser->getLayer( geoms->getLayer(igeom) )->getBlockageLayer();
+        layer         = parser->getLayer( geoms->getLayer(igeom) );
+        blockageLayer = layer->getBlockageLayer();
       }
-      if (not layer) continue;
+      if (not blockageLayer) {
+        cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
+                       "        (while parsing \"%s\")"
+                     , getString( layer->getName() ).c_str()
+                     , getString( cell ).c_str()
+                     ) << endl;
+        continue;
+      }
       
       if (geoms->itemType(igeom) == lefiGeomRectE) {
         lefiGeomRect* r         = geoms->getRect(igeom);
@@ -474,14 +483,14 @@ namespace {
         double        h         = r->yh - r->yl;
         Segment*      segment   = NULL;
         if (w >= h) {
-          segment = Horizontal::create( blockageNet, layer
+          segment = Horizontal::create( blockageNet, blockageLayer
                                       , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
                                       , parser->fromUnitsMicrons( h  )
                                       , parser->fromUnitsMicrons( r->xl )
                                       , parser->fromUnitsMicrons( r->xh )
                                       );
         } else {
-          segment = Vertical::create( blockageNet, layer
+          segment = Vertical::create( blockageNet, blockageLayer
                                     , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
                                     , parser->fromUnitsMicrons( w  )
                                     , parser->fromUnitsMicrons( r->yl )
