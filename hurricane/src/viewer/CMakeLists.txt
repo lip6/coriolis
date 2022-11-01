@@ -20,6 +20,7 @@
                                     hurricane/viewer/PaletteExtensionGoItem.h
                                     hurricane/viewer/PaletteWidget.h
                                     hurricane/viewer/GraphicsWidget.h
+                                    hurricane/viewer/ErrorWidget.h
                                     hurricane/viewer/ExceptionWidget.h
                                     hurricane/viewer/BreakpointWidget.h
                                     hurricane/viewer/GotoWidget.h
@@ -44,6 +45,7 @@
                                     hurricane/viewer/DisplayFilterWidget.h
                                     hurricane/viewer/ControllerWidget.h
                                     hurricane/viewer/ScriptWidget.h
+                                    hurricane/viewer/AboutWindow.h
                       )
                    set( includes    hurricane/viewer/ScreenUtilities.h
                                     hurricane/viewer/DisplayStyle.h
@@ -70,6 +72,8 @@
                                     hurricane/viewer/PyHApplication.h
                                     hurricane/viewer/PyGraphics.h
                                     hurricane/viewer/PyCellViewer.h
+                                    hurricane/viewer/PyErrorWidget.h
+                                    hurricane/viewer/PyAboutWindow.h
                                     hurricane/viewer/Script.h
                       )
                    set( cpps        HApplication.cpp
@@ -78,6 +82,7 @@
                                     ColorScale.cpp
                                     Graphics.cpp
                                     GraphicsWidget.cpp
+                                    ErrorWidget.cpp
                                     ExceptionWidget.cpp
                                     BreakpointWidget.cpp
                                     GotoWidget.cpp
@@ -101,7 +106,7 @@
                                     CellViewer.cpp
                                     CellPrinter.cpp
                                     CellImage.cpp
-				    OpenBlobDialog.cpp
+                                    OpenBlobDialog.cpp
                                     RecordModel.cpp
                                     InspectorWidget.cpp
                                     SelectionPopupModel.cpp
@@ -120,6 +125,7 @@
                                     ScriptWidget.cpp
                                     DesignBlob.cpp
                                     JsonConfiguration.cpp
+                                    AboutWindow.cpp
                       )
                    set( pyCpps      PyHSVr.cpp
                                     PyDrawingStyle.cpp
@@ -129,6 +135,8 @@
                                     PyGraphics.cpp
                                     PyViewer.cpp
                                     PyCellViewer.cpp
+                                    PyErrorWidget.cpp
+                                    PyAboutWindow.cpp
                                     Script.cpp
                       )
 

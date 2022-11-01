@@ -19,155 +19,10 @@ import os
 import os.path
 import re
 import traceback
-pyQtIsEnabled = True
-try:
-    from PyQt4.QtCore import Qt
-    from PyQt4.QtGui  import QSizePolicy
-    from PyQt4.QtGui  import QDialog
-    from PyQt4.QtGui  import QPalette
-    from PyQt4.QtGui  import QColor
-    from PyQt4.QtGui  import QFont
-    from PyQt4.QtGui  import QFontMetrics
-    from PyQt4.QtGui  import QWidget
-    from PyQt4.QtGui  import QFrame
-    from PyQt4.QtGui  import QLabel
-    from PyQt4.QtGui  import QPixmap
-    from PyQt4.QtGui  import QPushButton
-    from PyQt4.QtGui  import QTextEdit
-    from PyQt4.QtGui  import QVBoxLayout
-    from PyQt4.QtGui  import QHBoxLayout
-    from PyQt4.QtGui  import QAction
-    from PyQt4.QtGui  import QKeySequence
-except Exception as e:
-    try:
-        from PyQt5.QtCore    import Qt
-        from PyQt5.QtWidgets import QSizePolicy
-        from PyQt5.QtWidgets import QDialog
-        from PyQt5.QtGui     import QPalette
-        from PyQt5.QtGui     import QColor
-        from PyQt5.QtGui     import QFont
-        from PyQt5.QtGui     import QFontMetrics
-        from PyQt5.QtWidgets import QWidget
-        from PyQt5.QtWidgets import QFrame
-        from PyQt5.QtWidgets import QLabel
-        from PyQt5.QtGui     import QPixmap
-        from PyQt5.QtWidgets import QPushButton
-        from PyQt5.QtWidgets import QTextEdit
-        from PyQt5.QtWidgets import QVBoxLayout
-        from PyQt5.QtWidgets import QHBoxLayout
-        from PyQt5.QtWidgets import QAction
-        from PyQt5.QtGui     import QKeySequence
-    except Exception:
-        print( '[WARNING] helpers.io, neither PyQt4 nor PyQt5 is available, disabling ErrorWidget.' )
-        pyQtIsEnabled = False
 import Cfg
 import helpers
 from   Hurricane import UpdateSession
 import Viewer
-
-
-# -------------------------------------------------------------------
-# Class  :  "ErrorWidget".
-
-def getErrorWidget ():
-
-    if pyQtIsEnabled:
-
-        class ErrorWidget ( QDialog ):
-        
-            def __init__ ( self, e ):
-                
-                QWidget.__init__ ( self, None )
-                
-                self.setWindowTitle( 'Error' )
-                
-                message = QLabel( e.getLinesAsString() )
-                message.setAlignment( Qt.AlignLeft )
-                message.setFont( QFont('Courier',10,QFont.Bold) )
-                
-                error = QLabel( '[ERROR]' )
-                error.setAlignment( Qt.AlignLeft )
-                font = error.font()
-                font.setWeight( QFont.Bold )
-                error.setFont( font )
-                
-                self._tryCont = QPushButton()
-                self._tryCont.setSizePolicy( QSizePolicy.Fixed, QSizePolicy.Fixed )
-                self._tryCont.setText      ( 'Try to continue' )
-                self._abort = QPushButton()
-                self._abort.setSizePolicy( QSizePolicy.Fixed, QSizePolicy.Fixed )
-                self._abort.setText      ( 'Abort' )
-                self._abort.setDefault   ( True )
-                
-                traceFont    = QFont('Courier',10,QFont.Normal)
-                lineHeight   = QFontMetrics( traceFont ).height()
-                traceText    = helpers.textStackTrace( e.trace, False, e.scriptPath )
-                lineCount    = traceText.count( '\n' ) + 2
-                minimumWidth = 400
-                if Viewer.Graphics.isHighDpi(): minimumWidth = 2100
-                self._trace = QTextEdit()
-                self._trace.setReadOnly    ( True );
-                self._trace.setLineWrapMode( QTextEdit.NoWrap );
-                self._trace.setMinimumSize ( minimumWidth, lineCount*lineHeight );
-                self._trace.setFont        ( traceFont )
-                self._trace.setText        ( traceText )
-                
-                buttonLayout = QHBoxLayout()
-                buttonLayout.addStretch( 1 )
-                buttonLayout.addWidget ( self._tryCont )
-                buttonLayout.addStretch( 1 )
-                buttonLayout.addWidget ( self._abort )
-                buttonLayout.addStretch( 1 )
-                
-                vLayout = QVBoxLayout()
-                vLayout.addWidget ( error )
-                vLayout.addStretch( 1 )
-                vLayout.addWidget ( message )
-                vLayout.addStretch( 1 )
-                vLayout.addWidget ( self._trace )
-                vLayout.addStretch( 1 )
-                vLayout.addLayout ( buttonLayout )
-                
-                pixmapWidth = 150
-                if not Viewer.Graphics.isHighDpi(): pixmapWidth = 70
-                pixmap = QPixmap( ':/images/angry-birds-red.png' )
-                pixmap = pixmap.scaledToWidth( pixmapWidth )
-                icon = QLabel()
-                icon.setPixmap( pixmap )
-                
-                hLayout = QHBoxLayout()
-                hLayout.addWidget( icon )
-                hLayout.addLayout( vLayout )
-                self.setLayout( hLayout )
-                
-                self._tryCont.clicked.connect( self.accept )
-                self._abort  .clicked.connect( self.reject )
-                
-                self._exitAction = QAction( '&Exit', self )
-                self._exitAction.setStatusTip( 'Exit Coriolis' )
-                self._exitAction.setShortcut ( QKeySequence('CTRL+Q') )
-                self._exitAction.triggered.connect( self.reject )
-                self.addAction( self._exitAction )
-                
-                self._closeAction = QAction( '&Close', self )
-                self._closeAction.setStatusTip( 'Try to continue' )
-                self._closeAction.setShortcut ( QKeySequence('CTRL+W') )
-                self._closeAction.triggered.connect( self.reject )
-                self.addAction( self._closeAction )
-                
-                return  
-          
-            def closeEvent ( self, event ):
-                if not pyQtIsEnabled: return
-                self.setResult( QDialog.Rejected )
-                event.accept()
-                return
-
-    else:
-
-        ErrorWidget = None
-
-    return ErrorWidget
 
 
 # -------------------------------------------------------------------
@@ -247,10 +102,8 @@ class ErrorMessage ( Exception ):
         e = ErrorMessage( code, *arguments )
         if not Viewer.Graphics.get().isEnabled():
             raise e
-        classErrorWidget = getErrorWidget()
-        if not classErrorWidget:
-            raise e
-        tryCont = ErrorWidget( e ).exec_()
+        tryCont = Viewer.ErrorWidget.run( e.getLinesAsString()
+                                        , helpers.textStackTrace( e.trace, False, e.scriptPath ))
         if not tryCont: raise e 
         return
 
@@ -269,11 +122,10 @@ def catch ( errorObject ):
         em.trace      = traceback.extract_tb( sys.exc_info()[2] )
        #em.scriptPath = __file__
     print( em )
-    print( helpers.textStackTrace( em.trace, True, em.scriptPath ) )
+    print( helpers.textStackTrace( em.trace, True, em.scriptPath ))
     if Viewer.Graphics.get().isEnabled():
-        classErrorWidget = getErrorWidget()
-        if classErrorWidget:
-            tryCont = classErrorWidget( em ).exec_()
+        Viewer.ErrorWidget.run( em.getLinesAsString()
+                              , helpers.textStackTrace( em.trace, False, em.scriptPath ))
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return
 

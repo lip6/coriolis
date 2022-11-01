@@ -21,7 +21,9 @@
 #include "hurricane/viewer/PyDrawingGroup.h"
 #include "hurricane/viewer/PyDisplayStyle.h"
 #include "hurricane/viewer/PyHSVr.h"
+#include "hurricane/viewer/PyErrorWidget.h"
 #include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/viewer/PyAboutWindow.h"
 
 
 namespace Hurricane {
@@ -89,7 +91,9 @@ extern "C" {
     PyDisplayStyleVector_LinkPyType ();
     PyHApplication_LinkPyType ();
     PyGraphics_LinkPyType ();
+    PyErrorWidget_LinkPyType ();
     PyCellViewer_LinkPyType ();
+    PyAboutWindow_LinkPyType ();
     
     PYTYPE_READY ( HSVr );
     PYTYPE_READY ( RawDrawingStyle );
@@ -103,7 +107,9 @@ extern "C" {
     PYTYPE_READY ( DisplayStyleVectorIterator );
     PYTYPE_READY ( HApplication );
     PYTYPE_READY ( Graphics );
+    PYTYPE_READY ( ErrorWidget );
     PYTYPE_READY ( CellViewer );
+    PYTYPE_READY ( AboutWindow );
     
     // Identifier string can take up to 10 characters.
     __cs.addType ( "hsvr"      , &PyTypeHSVr        , "<HSVr>"        , false );
@@ -125,7 +131,11 @@ extern "C" {
     Py_INCREF ( &PyTypeGraphics );
     PyModule_AddObject ( module, "Graphics"    , (PyObject*)&PyTypeGraphics );
     Py_INCREF ( &PyTypeCellViewer );
+    PyModule_AddObject ( module, "ErrorWidget" , (PyObject*)&PyTypeErrorWidget );
+    Py_INCREF ( &PyTypeErrorWidget );
     PyModule_AddObject ( module, "CellViewer"  , (PyObject*)&PyTypeCellViewer );
+    Py_INCREF ( &PyTypeAboutWindow );
+    PyModule_AddObject ( module, "AboutWindow" , (PyObject*)&PyTypeAboutWindow );
     
     PyDisplayStyle_postModuleInit();
     PyCellViewer_postModuleInit();
