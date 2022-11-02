@@ -661,51 +661,7 @@ namespace Katana {
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
   //_pack( count, true );
-    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
-
-  //if (not _katana->isChannelMode() ) {
-      cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
-      cmess1 << "     o  Repair Stage." << endl;
-
-      cdebug_log(159,0) << "Loadind Repair queue." << endl;
-      _katana->setStage( StageRepair );
-      for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
-        RoutingEvent* event = _eventHistory.getNth(i);
-
-        if (not event->isCloned() and event->isUnimplemented()) {
-          event->reschedule( _eventQueue, 0 );
-        }
-      }
-      _eventQueue.commit();
-      cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
-             << _eventQueue.size() << ">" << setfill(' ') << endl;
-
-      count = 0;
-    //_eventQueue.prepareRepair();
-      while ( not _eventQueue.empty() and not isInterrupted() ) {
-        RoutingEvent* event = _eventQueue.pop();
-
-        if (tty::enabled()) {
-          cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
-                 << RoutingEvent::getProcesseds() << tty::reset
-                 << " remains:" << right << setw(8) << setfill('0')
-                 << _eventQueue.size() << ">"
-                 << setfill(' ') << tty::reset << tty::cr;
-          cmess2.flush();
-        } else {
-          cmess2 << "        <repair.event:" << setw(8) << setfill('0')
-                 << RoutingEvent::getProcesseds() << setfill(' ') << " "
-                 << event->getEventLevel() << ":" << event->getPriority() << "> "
-                 << event->getSegment()
-                 << endl;
-          cmess2.flush();
-        }
-
-        event->process( _eventQueue, _eventHistory, _eventLoop );
-
-        count++;
-        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
-      }
+      _negociateRepair();
 
       if (_katana->getConfiguration()->runRealignStage()) {
         cmess1 << "     o  Realign Stage." << endl;
@@ -742,6 +698,8 @@ namespace Katana {
           count++;
           if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
         }
+
+        _negociateRepair();
       }
 
       if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
@@ -761,6 +719,58 @@ namespace Katana {
     cdebug_tabw(159,-1);
 
     return eventsCount;
+  }
+
+
+  void  NegociateWindow::_negociateRepair ()
+  {
+    cdebug_log(159,1) << "NegociateWindow::_negociateRepair() - " << _segments.size() << endl;
+
+    uint64_t limit = _katana->getEventsLimit();
+    uint64_t count = 0;
+    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
+
+    cmess1 << "     o  Repair Stage." << endl;
+    cdebug_log(159,0) << "Loadind Repair queue." << endl;
+
+    _katana->setStage( StageRepair );
+    for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+      RoutingEvent* event = _eventHistory.getNth(i);
+      if (not event->isCloned() and (event->getState() >= DataNegociate::Unimplemented)) {
+        event->setState( DataNegociate::Repair );
+        event->reschedule( _eventQueue, 0 );
+      }
+    }
+    _eventQueue.commit();
+    cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
+           << _eventQueue.size() << ">" << setfill(' ') << endl;
+
+    while ( not _eventQueue.empty() and not isInterrupted() ) {
+      RoutingEvent* event = _eventQueue.pop();
+
+      if (tty::enabled()) {
+        cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << _eventQueue.size() << ">"
+               << setfill(' ') << tty::reset << tty::cr;
+        cmess2.flush();
+      } else {
+        cmess2 << "        <repair.event:" << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+               << endl;
+        cmess2.flush();
+      }
+
+      event->process( _eventQueue, _eventHistory, _eventLoop );
+
+      count++;
+      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+    }
+
+    cdebug_tabw(159,-1);
   }
 
 

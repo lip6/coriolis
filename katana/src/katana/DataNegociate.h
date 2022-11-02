@@ -47,19 +47,18 @@ namespace Katana {
 
   class DataNegociate {
     public:
-      enum SlackState { RipupPerpandiculars    =  1
-                      , Minimize               =  2
-                      , Dogleg                 =  3
-                      , Slacken                =  4
-                      , ConflictSolveByHistory =  5
-                      , ConflictSolveByPlaceds =  6
-                      , LocalVsGlobal          =  7
-                      , MoveUp                 =  8
-                      , MaximumSlack           =  9
-                      , Unimplemented          = 10
-                      , Repair                 = 11
-                      , RepairFailed           = 12
-                      };
+      static const uint32_t RipupPerpandiculars    =  1;
+      static const uint32_t Minimize               =  2;
+      static const uint32_t Dogleg                 =  3;
+      static const uint32_t Slacken                =  4;
+      static const uint32_t ConflictSolveByHistory =  5;
+      static const uint32_t ConflictSolveByPlaceds =  6;
+      static const uint32_t LocalVsGlobal          =  7;
+      static const uint32_t MoveUp                 =  8;
+      static const uint32_t MaximumSlack           =  9;
+      static const uint32_t Unimplemented          = 10;
+      static const uint32_t Repair                 = 11;
+      static const uint32_t RepairFailed           = 12;
     public:
                                           DataNegociate         ( TrackElement* );
                                          ~DataNegociate         ();

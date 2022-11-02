@@ -110,6 +110,7 @@ namespace Katana {
              void                          _associateSymmetrics ();
              void                          _pack                ( size_t& count, bool last );
              size_t                        _negociate           ();
+             void                          _negociateRepair     ();
              Hurricane::Record*            _getRecord           () const;
              std::string                   _getString           () const;
       inline std::string                   _getTypeName         () const;
