@@ -623,7 +623,7 @@ namespace Katana {
 
   bool  TrackSegment::canRealign () const
   {
-    if (isGlobal() or isNonPref() or isReduced()) return false;
+    if (isGlobal() or isNonPref() /*or isReduced()*/) return false;
     for ( TrackElement* perpandicular : const_cast<TrackSegment*>(this)->getPerpandiculars() ) {
       if (perpandicular->isReduced()) return false;
     }

@@ -1808,7 +1808,8 @@ namespace Anabatic {
       return false;
     }
 
-    if ((getDepth() == 1) and isSpinBottom()) return false;
+    if (not Session::getAnabatic()->isChannelMode()
+       and (getDepth() == 1) and isSpinBottom()) return false;
     if ((flags & Flags::WithPerpands) and _reduceds) return false;
 
     cdebug_log(159,0) << "  source:" << source->isHTee() << "+" << source->isVTee() << endl;
