@@ -21,7 +21,6 @@
  setup_boost(program_options)
  setup_qt()
 
- find_package(LibXml2            REQUIRED)
  find_package(BZip2              REQUIRED)
  find_package(BISON              REQUIRED)
  find_package(FLEX               REQUIRED)

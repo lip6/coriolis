@@ -15,7 +15,6 @@
 #setup_apple()
  setup_boost(program_options)
  
- find_package(LibXml2 REQUIRED)
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
  find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)

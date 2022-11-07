@@ -27,7 +27,6 @@
                                      Tree.cpp
                                      Elmore.cpp
 				     SeabreezeEngine.cpp
-                                     Delay.cpp
                                     #GraphicSeabreezeEngine.cpp
                       )
                    set( pyCpps       PySeabreeze.cpp

@@ -20,7 +20,6 @@
  setup_qt()
  
  find_package(Libexecinfo        REQUIRED)
- find_package(LibXml2            REQUIRED)
  find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)

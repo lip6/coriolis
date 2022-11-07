@@ -35,6 +35,7 @@ namespace Seabreeze {
   using std::endl;
   using std::ostream;
   using Hurricane::Error;
+  using Hurricane::Hook;
   using Hurricane::Component;
 
 
@@ -121,6 +122,12 @@ namespace Seabreeze {
                    , getString(rp).c_str()
                    ) << endl;
       return nullptr;
+    }
+
+    Hook* masterHook = sink->getAnchorHook()->getMasterHook();
+    if (masterHook) {
+      RoutingPad* myrp = dynamic_cast<RoutingPad*>( masterHook->getComponent() );
+      cdebug_log(199,0) << "  Look back=" << myrp << endl;
     }
     
     cdebug_log(199,1) << "Tree::computeDelay()" << endl;
