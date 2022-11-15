@@ -1,5 +1,0 @@
-<map id="VerticalRoutingTracks" name="VerticalRoutingTracks">
-<area shape="rect" id="node4" href="$classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor.html" title="Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. " alt="" coords="5,229,173,256"/>
-<area shape="rect" id="node2" href="$classpython_1_1CapacitorUnit_1_1CapacitorUnit.html" title="Draws a capacitor of type Poly&#45;Poly or Metal&#45;Metal in 350 nm AMS CMOS technology. ..." alt="" coords="34,5,144,32"/>
-<area shape="rect" id="node3" href="$classpython_1_1CapacitorMatrix_1_1CapacitorStack.html" title="Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors. " alt="" coords="79,80,199,107"/>
-</map>
