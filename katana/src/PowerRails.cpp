@@ -498,7 +498,7 @@ namespace {
           delta = plane->getLayerGauge()->getPitch();
         }
       }
-      if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
+      if (AllianceFramework::get()->getCellGauge()->getName()._getString().substr(0, 10) == "StdCellLib") {
         delta = plane->getLayerGauge()->getPitch();
       }
     }
