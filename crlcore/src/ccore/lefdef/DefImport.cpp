@@ -182,7 +182,11 @@ namespace {
     defrSetSNetCbk         ( _snetCbk );
     defrSetPathCbk         ( _pathCbk );
 
-    if (DataBase::getDB()->getTechnology()->getName() == "Sky130") _flags |= Sky130;
+    if ( (DataBase::getDB()->getTechnology()->getName() == "Sky130")
+         || (DataBase::getDB()->getTechnology()->getName() == "gf180mcu")
+    ) {
+      _flags |= Sky130;
+    }
   }
 
 
