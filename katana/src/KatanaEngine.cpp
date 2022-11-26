@@ -290,9 +290,8 @@ namespace Katana {
     cdebug_log(155,1) << "KatanaEngine::setupChannelMode()" << endl;
 
     RoutingGauge* rg = getConfiguration()->getRoutingGauge();
-    if (rg->isTwoMetals()) {
+    if (isChannelStyle()) {
       cmess1 << "     - Running in channel mode." << endl;
-      setRoutingMode( ChannelMode );
 
       size_t maxDepth = rg->getDepth();
       if (maxDepth < 2) {
