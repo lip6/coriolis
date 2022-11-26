@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.h<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -66,8 +66,11 @@ namespace Anabatic {
               bool               isGMetal             ( const Layer* ) const;
               bool               isGContact           ( const Layer* ) const;
               bool               isTwoMetals          () const;
+              bool               isHybrid             () const;
               bool               isHV                 () const;
               bool               isVH                 () const;
+      inline  std::string        getNetBuilderStyle   () const;
+      inline  StyleFlags         getRoutingStyle      () const;
               const Layer*       getGContactLayer     () const;
               const Layer*       getGHorizontalLayer  () const;
               const Layer*       getGVerticalLayer    () const;
@@ -132,6 +135,8 @@ namespace Anabatic {
               int                getGlobalIterations  () const;
               DbU::Unit          isOnRoutingGrid      ( RoutingPad* ) const;
               bool               selectRpComponent    ( RoutingPad* ) const;
+      inline  void               setRoutingStyle      ( StyleFlags );
+      inline  void               resetRoutingStyle    ( StyleFlags );
       virtual void               print                ( Cell* ) const;
       virtual Record*            _getRecord           () const;
       virtual string             _getString           () const;
@@ -146,6 +151,8 @@ namespace Anabatic {
       size_t                  _ddepthv;
       size_t                  _ddepthh;
       size_t                  _ddepthc;
+      std::string             _netBuilderStyle;
+      StyleFlags              _routingStyle;
       CellGauge*              _cg;
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
@@ -169,6 +176,8 @@ namespace Anabatic {
   };
 
 
+  inline  std::string  Configuration::getNetBuilderStyle   () const { return _netBuilderStyle; }
+  inline  StyleFlags   Configuration::getRoutingStyle      () const { return _routingStyle; }
   inline  bool         Configuration::isGLayer             ( const Layer* layer ) const { return isGMetal(layer) or isGContact(layer); }
   inline  size_t       Configuration::getGHorizontalDepth  () const { return _gdepthh; }
   inline  size_t       Configuration::getGVerticalDepth    () const { return _gdepthv; }
@@ -193,6 +202,8 @@ namespace Anabatic {
   inline  std::string  Configuration::getDiodeName         () const { return _diodeName; }
   inline  DbU::Unit    Configuration::getAntennaGateMaxWL  () const { return _antennaGateMaxWL; }
   inline  DbU::Unit    Configuration::getAntennaDiodeMaxWL () const { return _antennaDiodeMaxWL; }
+  inline  void         Configuration::setRoutingStyle      ( StyleFlags flags ) { _routingStyle  =  flags; }
+  inline  void         Configuration::resetRoutingStyle    ( StyleFlags flags ) { _routingStyle &= ~flags; }
 
 
 } // Anabatic namespace.

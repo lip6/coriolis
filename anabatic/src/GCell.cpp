@@ -285,7 +285,7 @@ namespace Anabatic {
     : Super(anabatic->getCell())
     , _observable    ()
     , _anabatic      (anabatic)
-    , _flags         (Flags::HChannelGCell|Flags::Invalidated)
+    , _flags         (Flags::Invalidated)
     , _westEdges     ()
     , _eastEdges     ()
     , _southEdges    ()
@@ -1557,7 +1557,8 @@ namespace Anabatic {
       int contiguousNonSaturated = 0;
       for ( size_t i=0 ; i<_depth ; i++ ) {
         uLengths2[i] += _blockages[i];
-        if (not i) continue;
+        if (Session::getLayerGauge(i)->getType() & Constant::PinOnly)
+          continue;
         if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)
           continue;
         if ((float)(_blockages[i] * Session::getPitch(i)) > 0.60*(float)(width*height))

@@ -406,8 +406,8 @@ namespace Anabatic {
     if (horizontals[1] != NULL) ++count;
     if (verticals  [0] != NULL) ++count;
     if (verticals  [1] != NULL) ++count;
-    if (count > 1) {
-      showTopologyError( "Terminal has more than one segment." );
+    if (count != 1) {
+      showTopologyError( "Terminal has not *exactly* one segment." );
     }
     if (horizontals[0] != NULL ) {
       _segment = Session::lookup( horizontals[0] );

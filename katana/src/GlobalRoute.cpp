@@ -389,7 +389,7 @@ namespace Katana {
 
     startMeasures();
 
-    if (isChannelMode()) createChannels();
+    if (isChannelStyle()) createChannels();
 
     if (getGCells().size() == 1) {
       cmess1 << "  o  Building regular grid..." << endl;
@@ -518,7 +518,7 @@ namespace Katana {
                                             , getConfiguration()->getEdgeHScaling() ));
     const vector<Edge*>& ovEdges = getOvEdges();
 
-    if (isChannelMode())
+    if (isChannelStyle())
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*10 );
     else
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
@@ -685,7 +685,7 @@ namespace Katana {
       addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
       addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
-      if (not Session::isChannelMode())
+      if (not Session::isChannelStyle())
         _buildBloatProfile();
 
       if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );
@@ -706,7 +706,7 @@ namespace Katana {
     delete dijkstra;
 
     Session::close();
-    if (isChannelMode()) {
+    if (isChannelStyle()) {
       setupRoutingPlanes();
       setupPowerRails();
       protectRoutingPads();

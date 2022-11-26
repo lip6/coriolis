@@ -768,7 +768,7 @@ class Block ( object ):
         self.katana.layerAssign      ( Anabatic.EngineNoNetLayerAssign )
         self.katana.runNegociate     ( Katana.Flags.NoFlags )
         success = self.katana.isDetailedRoutingSuccess()
-        Breakpoint.stop( 100, 'Block.route() done, success:{}.'.format(success) )
+        Breakpoint.stop( 99, 'Block.route() done, success:{}.'.format(success) )
         self.katana.finalizeLayout()
         if self.conf.cfg.katana.dumpMeasures is True:
             self.katana.dumpMeasures()

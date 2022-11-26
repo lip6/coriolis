@@ -126,7 +126,7 @@ namespace Katana {
         perpandicular = Session::lookup( basePerpand->getCanonical(interval)->base() );
       }
       if (not perpandicular) {
-        if (not (Session::isChannelMode()
+        if (not (Session::isChannelStyle()
                 and (basePerpand->isReduced() or basePerpand->isNonPref())))
           cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
                    //, getString((void*)basePerpand->getCanonical(interval)->base()).c_str()

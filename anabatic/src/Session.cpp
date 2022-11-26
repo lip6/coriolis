@@ -419,12 +419,16 @@ namespace Anabatic {
   }
 
 
+  StyleFlags  Session::getRoutingStyle ()
+  { return get("getRoutingStyle()")->_anabatic->getRoutingStyle(); }
+
+
   bool  Session::isInDemoMode ()
   { return get("isInDemoMode()")->_anabatic->isInDemoMode(); }
 
 
-  bool  Session::isChannelMode ()
-  { return get("isChannelMode()")->_anabatic->isChannelMode(); }
+  bool  Session::isChannelStyle ()
+  { return get("isChannelStyle()")->_anabatic->isChannelStyle(); }
 
 
   float  Session::getSaturateRatio ()

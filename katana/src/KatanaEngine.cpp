@@ -188,7 +188,6 @@ namespace Katana {
   KatanaEngine::KatanaEngine ( Cell* cell )
     : Super           (cell)
     , _viewer         (NULL)
-    , _configuration  (new Configuration())
     , _blocks         ()
     , _routingPlanes  ()
     , _negociateWindow(NULL)
@@ -197,22 +196,27 @@ namespace Katana {
     , _symmetrics     ()
     , _stage          (StageNegociate)
     , _successState   (0)
-  {
-  //Entity::setMemoryLimit( 1024 ); // 1Gb.
-    addMeasure<size_t>( "Gates"
-                      , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreNonLogic
-                                                                 |AllianceFramework::TerminalNetlist
-                                                                 |AllianceFramework::Recursive) );
-  }
+  { }
 
 
   void  KatanaEngine::_postCreate ()
   {
     Super::_postCreate();
 
+  //Entity::setMemoryLimit( 1024 ); // 1Gb.
+    addMeasure<size_t>( "Gates"
+                      , AllianceFramework::getInstancesCount(getCell()
+                                                            ,AllianceFramework::IgnoreNonLogic
+                                                            |AllianceFramework::TerminalNetlist
+                                                            |AllianceFramework::Recursive) );
+
   // Flute: load POWV9.dat & POST9.dat
     Flute::readLUT( System::getPath( "coriolis_top" ).toString() );
   }
+
+
+  Configuration* KatanaEngine::_createConfiguration ()
+  { return new Configuration(); }
 
 
   void  KatanaEngine::_runKatanaInit ()
@@ -246,7 +250,7 @@ namespace Katana {
 
     setupChannelMode();
     setupGlobalGraph( 0 );
-    if (not isChannelMode()) {
+    if (not isChannelStyle()) {
       setupRoutingPlanes();
     }
     setupSpecialNets();
@@ -254,7 +258,7 @@ namespace Katana {
       setState( Anabatic::EngineDriving );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
     } else {
-      if (not isChannelMode()) {
+      if (not isChannelStyle()) {
         setupPowerRails();
         protectRoutingPads();
       }
@@ -287,6 +291,7 @@ namespace Katana {
 
     RoutingGauge* rg = getConfiguration()->getRoutingGauge();
     if (rg->isTwoMetals()) {
+      cmess1 << "     - Running in channel mode." << endl;
       setRoutingMode( ChannelMode );
 
       size_t maxDepth = rg->getDepth();
@@ -361,7 +366,7 @@ namespace Katana {
 
 
   KatanaEngine::~KatanaEngine ()
-  { delete _configuration; }
+  { }
 
 
   const Name& KatanaEngine::getName () const
@@ -369,24 +374,28 @@ namespace Katana {
 
 
   Configuration* KatanaEngine::getConfiguration ()
-  { return _configuration; }
+  { return static_cast<Configuration*>( Super::getConfiguration() ); }
+
+
+  const Configuration* KatanaEngine::getConfiguration () const
+  { return static_cast<const Configuration*>( Super::getConfiguration() ); }
 
 
   uint32_t  KatanaEngine::getRipupLimit ( const TrackElement* segment ) const
   {
     if (segment->isBlockage()) return 0;
 
-    if (segment->isStrap      ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
-    if (segment->isUnbreakable()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
-    if (segment->isShortNet   ()) return _configuration->getRipupLimit( Configuration::ShortNetRipupLimit );
+    if (segment->isStrap      ()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isUnbreakable()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isShortNet   ()) return getConfiguration()->getRipupLimit( Configuration::ShortNetRipupLimit );
     if (segment->isGlobal     ()) {
       vector<GCell*> gcells;
       segment->getGCells( gcells );
       if (gcells.size() > 2)
-        return _configuration->getRipupLimit( Configuration::LongGlobalRipupLimit );
-      return _configuration->getRipupLimit( Configuration::GlobalRipupLimit );
+        return getConfiguration()->getRipupLimit( Configuration::LongGlobalRipupLimit );
+      return getConfiguration()->getRipupLimit( Configuration::GlobalRipupLimit );
     }
-    return _configuration->getRipupLimit( Configuration::LocalRipupLimit );
+    return getConfiguration()->getRipupLimit( Configuration::LocalRipupLimit );
   }
 
 
@@ -553,7 +562,7 @@ namespace Katana {
       }
     }
 
-    if (Session::isChannelMode()) {
+    if (Session::isChannelStyle()) {
       for ( GCell* gcell : getGCells() ) {
         if (not gcell->isStdCellRow()) continue;
       
@@ -852,7 +861,7 @@ namespace Katana {
 
         TrackElement* trackSegment = Session::lookup( segment );
         if (not trackSegment) {
-          if (   isChannelMode()
+          if (   isChannelStyle()
              and autoSegment->isFixed()
              and autoSegment->isHorizontal()
              and autoSegment->isNonPref())
@@ -998,7 +1007,6 @@ namespace Katana {
     Record* record = Super::_getRecord ();
                                      
     if (record) {
-      record->add( getSlot( "_configuration",  _configuration ) );
       record->add( getSlot( "_blocks"       , &_blocks ) );
       record->add( getSlot( "_routingPlanes", &_routingPlanes ) );
       record->add( getSlot( "_symmetrics"   , &_symmetrics    ) );

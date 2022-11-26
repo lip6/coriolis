@@ -343,7 +343,7 @@ namespace Katana {
   // Look for closest enclosing min & max GCells indexes.
     for ( igcell=0 ; igcell<gcells.size() ; igcell++ ) {
       uside = gcells[igcell]->getSide(_segment->getDirection());
-      cdebug_log(159,0) << "| " << setw(3) << igcell << " " << gcells[igcell] << " uside: " << uside << endl;
+      cdebug_log(159,0) << "| " << igcell << " " << gcells[igcell] << " uside: " << uside << endl;
 
       if (uside.contains(interval.getVMin())) {
         iminconflict = igcell;
@@ -437,6 +437,8 @@ namespace Katana {
           } else if (iminconflict == gcells.size()-1) {
             dogLegCount--;
             firstDoglegIsMin = true;
+          } else {
+            dogLegCount--;
           }
         }
         break;
@@ -724,7 +726,7 @@ namespace Katana {
       }
       if (   segment2->isBlockage()
          or (segment2->isFixed()
-            and not (segment2->isVertical() and Session::getKatanaEngine()->isChannelMode()))) {
+            and not (segment2->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
         cdebug_log(159,0) << "Overlap is blockage or fixed." << endl;
         success = false;
         continue;

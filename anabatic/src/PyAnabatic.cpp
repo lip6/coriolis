@@ -16,7 +16,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
-#include "anabatic/Constants.h"
+#include "anabatic/PyStyleFlags.h"
 
 
 namespace Anabatic {
@@ -76,12 +76,19 @@ extern "C" {
   {
     cdebug_log(32,0) << "PyInit_Anabatic()" << endl;
 
+    PyStyleFlags_LinkPyType();
+
+    PYTYPE_READY( StyleFlags );
+
     PyObject* module = PyModule_Create( &PyAnabatic_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Anabatic module." << endl;
       return NULL;
     }
+
+    Py_INCREF( &PyTypeStyleFlags );
+    PyModule_AddObject( module, "StyleFlags", (PyObject*)&PyTypeStyleFlags );
 
     PyObject* dictionnary = PyModule_GetDict(module);
     PyObject* constant;
@@ -93,6 +100,7 @@ extern "C" {
     LoadObjectConstant( dictionnary,EngineLayerAssignNoGlobalM2V,"EngineLayerAssignNoGlobalM2V" );
     LoadObjectConstant( dictionnary,EngineNoNetLayerAssign      ,"EngineNoNetLayerAssign"       );
 
+    PyStyleFlags_postModuleInit();
     return module;
   }
 

@@ -176,14 +176,15 @@ namespace Katana {
   bool           TrackSegment::isFixedAxis          () const { return _base->isFixedAxis(); }
   bool           TrackSegment::isHorizontal         () const { return _base->isHorizontal(); }
   bool           TrackSegment::isVertical           () const { return _base->isVertical(); }
-  bool           TrackSegment::isLocal              () const { return not _base->isWeakGlobal() and not _base->isGlobal(); }
+  bool           TrackSegment::isLocal              () const { return not _base->isGlobal() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
-  bool           TrackSegment::isUnbreakable        () const { return _base->isUnbreakable(); }
+  bool           TrackSegment::isWeakGlobal         () const { return _base->isWeakGlobal(); }
+  bool           TrackSegment::isUnbreakable        () const { return _base->isUnbreakable() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
   bool           TrackSegment::isDrag               () const { return _base->isDrag(); }
   bool           TrackSegment::isStrongTerminal     ( Flags flags ) const { return _base->isStrongTerminal(flags); }
-  bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
+  bool           TrackSegment::isStrap              () const { return _base->isStrap() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
   bool           TrackSegment::isShortDogleg        () const { return _flags & TElemShortDogleg; }

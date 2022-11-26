@@ -1207,7 +1207,7 @@ namespace Katana {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )
         continue;
-      if (_configuration->isGMetal(layer)) continue;
+      if (getConfiguration()->isGMetal(layer)) continue;
       if (not query.hasBasicLayer(layer)) continue;
 
       query.setBasicLayer( layer );

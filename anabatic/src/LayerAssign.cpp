@@ -218,9 +218,10 @@ namespace {
       cdebug_log(149,0) << "Slacken from: " << rp << endl;
 
       if (rp->getLayer()) {
-        if (_anabatic->getConfiguration()->getLayerDepth(rp->getLayer()) == 1)
+        if (_anabatic->getConfiguration()->getLayerDepth(rp->getLayer()) == 1) {
           cdebug_log(149,0) << "In METAL2, skiping" << endl;
           continue;
+        }
       }
          
       for ( Component* component : rp->getSlaveComponents() ) {

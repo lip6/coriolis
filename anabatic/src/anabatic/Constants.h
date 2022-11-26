@@ -20,6 +20,9 @@
 namespace Anabatic {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::Flags".
+
   class Flags : public Hurricane::BaseFlags {
     public:
       static const BaseFlags  NoFlags             ; // =  0;
@@ -119,6 +122,39 @@ namespace Anabatic {
 
   Flags::Flags (                  uint64_t   flags ) : BaseFlags(flags) { }
   Flags::Flags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::StyleFlags".
+
+  class StyleFlags : public Hurricane::BaseFlags {
+    public:
+      static const BaseFlags  NoStyle; // =  0;
+      static const BaseFlags  HV     ; // = (1 <<  0);
+      static const BaseFlags  VH     ; // = (1 <<  1);
+      static const BaseFlags  OTH    ; // = (1 <<  2);
+      static const BaseFlags  Channel; // = (1 <<  3);
+      static const BaseFlags  Hybrid ; // = (1 <<  4);
+    public:
+      inline               StyleFlags   ( std::string );
+      inline               StyleFlags   ( uint64_t flags = NoStyle );
+      inline               StyleFlags   ( const Hurricane::BaseFlags& );
+      virtual             ~StyleFlags   ();
+      static  StyleFlags   toFlag       ( std::string );
+              StyleFlags   from         ( std::string );
+      virtual std::string  asString     () const;
+      virtual std::string  _getTypeName () const;
+      virtual std::string  _getString   () const;
+  };
+
+
+  StyleFlags::StyleFlags (             std::string textFlags ) : BaseFlags(NoStyle) { from(textFlags); }
+  StyleFlags::StyleFlags (                  uint64_t   flags ) : BaseFlags(flags) { }
+  StyleFlags::StyleFlags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
+
+
+// -------------------------------------------------------------------
+// Misc. enums.
 
 
   enum FlagsMode       { FlagsFunction = 1

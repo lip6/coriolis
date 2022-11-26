@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -47,7 +47,7 @@ namespace Katana {
 
   class Row {
     public:
-      inline            Row                  ( Block*, DbU::Unit );
+                        Row                  ( Block*, DbU::Unit );
       inline Block*     getBlock             () const;
       inline Cell*      getCell              () const;
       inline DbU::Unit  getY                 () const;
@@ -62,15 +62,13 @@ namespace Katana {
              Record*    _getRecord           () const;
     private:
       Block*                     _block;
+      bool                       _isHybrid;
       DbU::Unit                  _y;
       map<DbU::Unit,Occurrence>  _occurrences;
       GCell*                     _southWest;
       uint32_t                   _channelHeight;
   };
 
-
-  inline Row::Row ( Block* block, DbU::Unit y )
-    : _block(block), _y(y), _occurrences(), _southWest(NULL), _channelHeight(1) { }
 
   inline DbU::Unit  Row::getY             () const { return _y; }
   inline Block*     Row::getBlock         () const { return _block; }
@@ -83,15 +81,16 @@ namespace Katana {
 
   class Block {
     public:
-                     Block          ( KatanaEngine*, Cell* );
-                    ~Block          ();
-      inline Cell*   getCell        () const;
-             Row*    getAt          ( DbU::Unit y ) const;
-             void    add            ( Occurrence );
-             void    createChannels ();
-             void    resizeChannels ();
-             string  _getString     () const;
-             Record* _getRecord     () const;
+                           Block          ( KatanaEngine*, Cell* );
+                          ~Block          ();
+      inline KatanaEngine* getKatana      () const;
+      inline Cell*         getCell        () const;
+             Row*          getAt          ( DbU::Unit y ) const;
+             void          add            ( Occurrence );
+             void          createChannels ();
+             void          resizeChannels ();
+             string        _getString     () const;
+             Record*       _getRecord     () const;
     private:
       KatanaEngine* _katana;
       Cell*         _cell;
@@ -99,7 +98,8 @@ namespace Katana {
   };
 
 
-  inline Cell* Block::getCell () const { return _cell; }
+  inline KatanaEngine* Block::getKatana () const { return _katana; }
+  inline Cell*         Block::getCell   () const { return _cell; }
 
 
 // Deferred Row functions.

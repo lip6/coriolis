@@ -166,17 +166,19 @@ namespace Etesian {
     Box ab ( cell->getAbutmentBox() );
     DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
+    int       extra  = 0;
+    float  termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
+    if (termRatio > 0.8) extra += 1;
+    if (termRatio > 0.5) {
+      return vpitch * (2*terminals + extra - xsize);
+    }
+    return 0;
 
-    // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
-    // if (termRatio > 0.5) {
-    //   return vpitch*6;
-    // }
-
-    // if (xsize < 4) return vpitch*4;
-    // if (xsize < 6) return vpitch*2;
-    // if (xsize < 8) return vpitch*1;
-    
-    return vpitch*3;
+ // if (xsize < 4) return vpitch*4;
+ // if (xsize < 6) return vpitch*2;
+ // if (xsize < 8) return vpitch*1;
+     
+ // return vpitch*3;
   }  
 
 

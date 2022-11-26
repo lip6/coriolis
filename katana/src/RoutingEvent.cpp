@@ -703,7 +703,8 @@ namespace Katana {
       } else if (  _segment->base()->getAutoSource()->isFixed()
                 or _segment->base()->getAutoTarget()->isFixed()) {
         cdebug_log(159,0) << "Not expanding on fixed segments:" << _constraints << endl;
-      } else if (   Session::getRoutingGauge()->isTwoMetals()
+      } else if (   (       Session::getKatanaEngine()->isChannelStyle()
+                    and not Session::getKatanaEngine()->isHybridStyle())
                 and _segment->base()->isHorizontal()) {
         cdebug_log(159,0) << "Not expanding on horizontal segments in channel mode:" << _constraints << endl;
       } else {

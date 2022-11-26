@@ -123,7 +123,7 @@ extern "C" {
     if (katana == NULL) {
       katana = KatanaEngine::create(cell);
       if (cmess1.enabled())
-        katana->getKatanaConfiguration()->print(cell);
+        katana->getConfiguration()->print(cell);
     } else
       cerr << Warning("%s already has a Katana engine.",getString(cell).c_str()) << endl;
     HCATCH

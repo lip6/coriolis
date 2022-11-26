@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -65,6 +65,10 @@ namespace Anabatic {
 
 
   NetBuilderHV::~NetBuilderHV () { }
+
+
+  string  NetBuilderHV::getStyle ()
+  { return "HV,3RL+"; }
 
   
   void  NetBuilderHV::doRp_AutoContacts ( GCell*        gcell
@@ -348,9 +352,9 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilderHV::doRp_AccessNorthPin ( GCell* gcell, RoutingPad* rp )
+  AutoContact* NetBuilderHV::doRp_AccessNorthSouthPin ( GCell* gcell, RoutingPad* rp )
   {
-    cdebug_log(145,1) << getTypeName() << "::doRp_AccessNorthPin() " << rp << endl;
+    cdebug_log(145,1) << getTypeName() << "::doRp_AccessNorthSouthPin() " << rp << endl;
 
     AutoContact* rpSourceContact = NULL;
     AutoContact* rpContactTarget = NULL;
@@ -389,7 +393,7 @@ namespace Anabatic {
 
   AutoContact* NetBuilderHV::doRp_AccessEastWestPin ( GCell* gcell, RoutingPad* rp )
   {
-    cdebug_log(145,1) << getTypeName() << "::doRp_AccessNorthPin() " << rp << endl;
+    cdebug_log(145,1) << getTypeName() << "::doRp_AccessEastWestPin() " << rp << endl;
 
     Net*         net             = rp->getNet();
     Pin*         pin             = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
@@ -942,9 +946,9 @@ namespace Anabatic {
 
     AutoContact* rpSourceContact = NULL;
 
-    rpSourceContact = doRp_AccessNorthPin( getGCell(), getRoutingPads()[0] );
+    rpSourceContact = doRp_AccessNorthSouthPin( getGCell(), getRoutingPads()[0] );
 
-    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(0) );
     AutoSegment::create( rpSourceContact, turn1, Flags::Vertical );
 
     if (north() or south()) {
@@ -1182,12 +1186,6 @@ namespace Anabatic {
 
       setBothCornerContacts( turn );
     }
-    
-    for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
-    }
 
     cdebug_tabw(145,-1);
     return true;
@@ -1271,7 +1269,7 @@ namespace Anabatic {
     AutoContact* htee     = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
     AutoSegment::create( contact1, htee, Flags::Horizontal );
 
-    rpSourceContact = doRp_AccessNorthPin( getGCell(), pinM3 );
+    rpSourceContact = doRp_AccessNorthSouthPin( getGCell(), pinM3 );
 
     if (north() or south()) {
       AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
@@ -2061,7 +2059,7 @@ namespace Anabatic {
       if (  (pinDir == Pin::AccessDirection::NORTH)
          or (pinDir == Pin::AccessDirection::SOUTH) ) {
         doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
-        target = doRp_AccessNorthPin( gcell1, rpPin );
+        target = doRp_AccessNorthSouthPin( gcell1, rpPin );
         turn1  = AutoContactTurn::create( gcell1, rpPin->getNet(), Session::getContactLayer(1) );
         AutoSegment::create( source, turn1 , Flags::Horizontal );
         AutoSegment::create( turn1 , target, Flags::Vertical );

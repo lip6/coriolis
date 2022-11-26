@@ -62,7 +62,7 @@ namespace {
 
     if (   segment->isBlockage()
        or (segment->isFixed()
-          and not (segment->isVertical() and Session::getKatanaEngine()->isChannelMode()))) {
+          and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
       cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
       cost.setInfinite   ();
       cost.setOverlap    ();
@@ -292,7 +292,7 @@ namespace Katana {
   {
     _gcells = gcells;
 
-    if (not Session::getKatanaEngine()->isChannelMode()) loadRoutingPads( this );
+    if (not Session::getKatanaEngine()->isChannelStyle()) loadRoutingPads( this );
     Session::revalidate();
 
     for ( auto element : Session::getKatanaEngine()->_getAutoSegmentLut() ) {
@@ -331,7 +331,7 @@ namespace Katana {
   // Special case: fixed AutoSegments must not interfere with blockages.
   // Ugly: uses of getExtensionCap().
     if (autoSegment->isFixed()) {
-      if (Session::isChannelMode() and autoSegment->isReduced()) {
+      if (Session::isChannelStyle() and autoSegment->isReduced()) {
         cdebug_log(159,0) << "* Fixed segment is reduced, ignore " << autoSegment << endl;
         cdebug_tabw(159,-1);
         return NULL;
@@ -342,7 +342,7 @@ namespace Katana {
       Interval      fixedSpan;
       Interval      blockageSpan;
 
-      if (Session::isChannelMode() and autoSegment->isNonPref()) {
+      if (Session::isChannelStyle() and autoSegment->isNonPref()) {
         cdebug_log(159,0) << "Fixed in non-preferred direction, do not attempt to set on track." << endl;
         cdebug_tabw(159,-1);
         DebugSession::close();

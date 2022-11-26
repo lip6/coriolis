@@ -136,6 +136,7 @@ namespace Katana {
   bool           TrackElement::isFixedAxis          () const { return false; }
   bool           TrackElement::isLocal              () const { return true; }
   bool           TrackElement::isGlobal             () const { return not isLocal(); }
+  bool           TrackElement::isWeakGlobal         () const { return false; }
   bool           TrackElement::isBipoint            () const { return false; }
   bool           TrackElement::isTerminal           () const { return false; }
   bool           TrackElement::isDrag               () const { return false; }

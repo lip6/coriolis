@@ -112,13 +112,13 @@ namespace Anabatic {
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
                          };
-      enum TopologyFlag  { Global_Vertical_End   = 0x00000001
-                         , Global_Horizontal_End = 0x00000002
-                         , Global_Horizontal     = 0x00000004
-                         , Global_Vertical       = 0x00000008
-                         , Global_Turn           = 0x00000010
-                         , Global_Fork           = 0x00000020
-                         , Global_Fixed          = 0x00000040
+      enum TopologyFlag  { Global_Vertical_End   = (1 << 0)
+                         , Global_Horizontal_End = (1 << 1)
+                         , Global_Horizontal     = (1 << 2)
+                         , Global_Vertical       = (1 << 3)
+                         , Global_Turn           = (1 << 4)
+                         , Global_Fork           = (1 << 5)
+                         , Global_Fixed          = (1 << 6)
                          , Global_End            = Global_Vertical_End | Global_Horizontal_End
                          , Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork
                          };
@@ -157,7 +157,7 @@ namespace Anabatic {
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
-      inline  bool                          isTwoMetals            () const;
+      inline  bool                          isStrictChannel        () const;
       inline  bool                          isUpperMetalRp         () const;
       inline  AnabaticEngine*               getAnabatic            () const;
       inline  unsigned int                  getDegree              () const;
@@ -386,13 +386,13 @@ namespace Anabatic {
              map<Component*,AutoSegment*> _routingPadAutoSegments;
              vector<AutoSegment*>         _toFixSegments;
              unsigned int                 _degree;
-             bool                         _isTwoMetals;
+             bool                         _isStrictChannel;
              uint64_t                     _sourceFlags;
              uint64_t                     _flags;
   };
 
 
-  inline bool                          NetBuilder::isTwoMetals            () const { return _isTwoMetals; }
+  inline bool                          NetBuilder::isStrictChannel        () const { return _isStrictChannel; }
   inline AnabaticEngine*               NetBuilder::getAnabatic            () const { return _anabatic; }
   inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }

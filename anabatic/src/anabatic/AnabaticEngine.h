@@ -45,6 +45,7 @@ namespace Anabatic {
   using Hurricane::NetRoutingState;
   using CRL::ToolEngine;
 
+  class NetBuilder;
   class AnabaticEngine;
 
 
@@ -194,7 +195,6 @@ namespace Anabatic {
       static const uint32_t  DigitalMode      = (1 <<  0);
       static const uint32_t  AnalogMode       = (1 <<  1);
       static const uint32_t  MixedMode        = (1 <<  2);
-      static const uint32_t  ChannelMode      = (1 <<  3);
       static const uint32_t  AverageHVDensity = 1;  // Average between all densities.
       static const uint32_t  AverageHDensity  = 2;  // Average between all H densities.
       static const uint32_t  AverageVDensity  = 3;  // Average between all V densities.
@@ -211,11 +211,14 @@ namespace Anabatic {
       inline        bool              isDigitalMode           () const;
       inline        bool              isAnalogMode            () const;
       inline        bool              isMixedMode             () const;
-      inline        bool              isChannelMode           () const;
+      inline        bool              isChannelStyle          () const;
+      inline        bool              isHybridStyle           () const;
       static  const Name&             staticGetName           ();
       virtual const Name&             getName                 () const;
       virtual       Configuration*    getConfiguration        ();
       virtual const Configuration*    getConfiguration        () const;
+      inline        std::string       getNetBuilderStyle      () const;
+      inline        StyleFlags        getRoutingStyle         () const;
       inline        uint64_t          getDensityMode          () const;
       inline        CellViewer*       getViewer               () const;
       inline        void              setViewer               ( CellViewer* );
@@ -276,6 +279,7 @@ namespace Anabatic {
                     void              invalidateRoutingPads   ();
                     void              updateDensity           ();
                     size_t            checkGCellDensities     ();
+                    void              setupNetBuilder         ();
       inline        void              setRoutingMode          ( uint32_t );
       inline        void              resetRoutingMode        ( uint32_t );
       inline        void              setGlobalThreshold      ( DbU::Unit );
@@ -343,12 +347,15 @@ namespace Anabatic {
       virtual       void              _postCreate             ();
       virtual       void              _preDestroy             ();
                     void              _gutAnabatic            ();
+      virtual       Configuration*    _createConfiguration    ();
     private:                                                   
                                       AnabaticEngine          ( const AnabaticEngine& );
                     AnabaticEngine&   operator=               ( const AnabaticEngine& );
     private:
       static Name                _toolName;
+    protected:
              Configuration*      _configuration;
+    private:
              ChipTools           _chipTools;
              EngineState         _state;
              Matrix              _matrix;
@@ -369,58 +376,61 @@ namespace Anabatic {
   };
 
 
-  inline       bool              AnabaticEngine::isDigitalMode         () const { return (_routingMode & DigitalMode); };
-  inline       bool              AnabaticEngine::isAnalogMode          () const { return (_routingMode & AnalogMode); };
-  inline       bool              AnabaticEngine::isMixedMode           () const { return (_routingMode & MixedMode); };
-  inline       bool              AnabaticEngine::isChannelMode         () const { return (_routingMode & ChannelMode); };
-  inline       void              AnabaticEngine::setRoutingMode        ( uint32_t mode ) { _routingMode |=  mode;  };
-  inline       void              AnabaticEngine::resetRoutingMode      ( uint32_t mode ) { _routingMode &= ~mode;  };
-  inline       EngineState       AnabaticEngine::getState              () const { return _state; }
-  inline       void              AnabaticEngine::setState              ( EngineState state ) { _state = state; }
-  inline       CellViewer*       AnabaticEngine::getViewer             () const { return _viewer; }
-  inline       void              AnabaticEngine::setViewer             ( CellViewer* viewer ) { _viewer=viewer; }
-  inline const Matrix*           AnabaticEngine::getMatrix             () const { return &_matrix; }
-  inline const vector<GCell*>&   AnabaticEngine::getGCells             () const { return _gcells; }
-  inline const vector<Edge*>&    AnabaticEngine::getOvEdges            () const { return _ovEdges; }
-  inline       GCell*            AnabaticEngine::getSouthWestGCell     () const { return _gcells[0]; }
-  inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
-  inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
-  inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
-  inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Point source, Point target ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,source,target) ); }
-  inline       Edges             AnabaticEngine::getEdgesUnderPath     ( GCell* source, GCell* target, Flags pathFlags ) const { return new Path_Edges(source,target,pathFlags); }
-  inline       uint64_t          AnabaticEngine::getDensityMode        () const { return _densityMode; }
-  inline       void              AnabaticEngine::setDensityMode        ( uint64_t mode ) { _densityMode=mode; }
-  inline       void              AnabaticEngine::setBlockageNet        ( Net* net ) { _blockageNet = net; }
-  inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut    () const { return _autoContactLut; }
-  inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut    () const { return _autoSegmentLut; }
-  inline const Flags&            AnabaticEngine::flags                 () const { return _flags; }
-  inline       Flags&            AnabaticEngine::flags                 () { return _flags; }
-  inline       bool              AnabaticEngine::doDestroyBaseContact  () const { return _flags & Flags::DestroyBaseContact; }
-  inline       bool              AnabaticEngine::doDestroyBaseSegment  () const { return _flags & Flags::DestroyBaseSegment; }
-  inline       bool              AnabaticEngine::doDestroyTool         () const { return _state >= EngineGutted; }
-  inline       bool              AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
-  inline       bool              AnabaticEngine::isCanonizeDisabled    () const { return _flags & Flags::DisableCanonize; }
-  inline       bool              AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
-  inline       bool              AnabaticEngine::isChip                () const { return _chipTools.isChip(); }
-  inline       DbU::Unit         AnabaticEngine::getAntennaGateMaxWL   () const { return getConfiguration()->getAntennaGateMaxWL(); }
-  inline       DbU::Unit         AnabaticEngine::getAntennaDiodeMaxWL  () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
-  inline       DbU::Unit         AnabaticEngine::getGlobalThreshold    () const { return _configuration->getGlobalThreshold(); }
-  inline       float             AnabaticEngine::getSaturateRatio      () const { return _configuration->getSaturateRatio(); }
-  inline       size_t            AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }
-  inline       void              AnabaticEngine::setSaturateRatio      ( float ratio ) { _configuration->setSaturateRatio(ratio); }
-  inline       void              AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
-  inline       Cell*             AnabaticEngine::getDiodeCell          () const { return _diodeCell; }
-  inline       Net*              AnabaticEngine::getBlockageNet        () const { return _blockageNet; }
-  inline const ChipTools&        AnabaticEngine::getChipTools          () const { return _chipTools; }
-  inline const vector<NetData*>& AnabaticEngine::getNetOrdering        () const { return _netOrdering; }
-  inline       void              AnabaticEngine::setGlobalThreshold    ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
-  inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
-  inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
-  inline       void              AnabaticEngine::_resizeMatrix         () { _matrix.resize( getCell(), getGCells() ); }
-  inline       void              AnabaticEngine::_updateGContacts      ( Flags flags ) { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(flags); }
-  inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
-  inline       void              AnabaticEngine::disableCanonize       () { _flags |= Flags::DisableCanonize; }
-  inline       void              AnabaticEngine::enableCanonize        () { _flags.reset( Flags::DisableCanonize ); }
+  inline       bool              AnabaticEngine::isDigitalMode            () const { return (_routingMode & DigitalMode); };
+  inline       bool              AnabaticEngine::isAnalogMode             () const { return (_routingMode & AnalogMode); };
+  inline       bool              AnabaticEngine::isMixedMode              () const { return (_routingMode & MixedMode); };
+  inline       bool              AnabaticEngine::isChannelStyle           () const { return (_configuration->getRoutingStyle() & StyleFlags::Channel); };
+  inline       bool              AnabaticEngine::isHybridStyle            () const { return (_configuration->getRoutingStyle() & StyleFlags::Hybrid); };
+  inline       void              AnabaticEngine::setRoutingMode           ( uint32_t mode ) { _routingMode |=  mode;  };
+  inline       void              AnabaticEngine::resetRoutingMode         ( uint32_t mode ) { _routingMode &= ~mode;  };
+  inline       EngineState       AnabaticEngine::getState                 () const { return _state; }
+  inline       void              AnabaticEngine::setState                 ( EngineState state ) { _state = state; }
+  inline       CellViewer*       AnabaticEngine::getViewer                () const { return _viewer; }
+  inline       void              AnabaticEngine::setViewer                ( CellViewer* viewer ) { _viewer=viewer; }
+  inline const Matrix*           AnabaticEngine::getMatrix                () const { return &_matrix; }
+  inline const vector<GCell*>&   AnabaticEngine::getGCells                () const { return _gcells; }
+  inline const vector<Edge*>&    AnabaticEngine::getOvEdges               () const { return _ovEdges; }
+  inline       GCell*            AnabaticEngine::getSouthWestGCell        () const { return _gcells[0]; }
+  inline       GCell*            AnabaticEngine::getGCellUnder            ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
+  inline       GCell*            AnabaticEngine::getGCellUnder            ( Point p ) const { return _matrix.getUnder(p); }
+  inline       GCellsUnder       AnabaticEngine::getGCellsUnder           ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
+  inline       GCellsUnder       AnabaticEngine::getGCellsUnder           ( Point source, Point target ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,source,target) ); }
+  inline       Edges             AnabaticEngine::getEdgesUnderPath        ( GCell* source, GCell* target, Flags pathFlags ) const { return new Path_Edges(source,target,pathFlags); }
+  inline       uint64_t          AnabaticEngine::getDensityMode           () const { return _densityMode; }
+  inline       void              AnabaticEngine::setDensityMode           ( uint64_t mode ) { _densityMode=mode; }
+  inline       void              AnabaticEngine::setBlockageNet           ( Net* net ) { _blockageNet = net; }
+  inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut       () const { return _autoContactLut; }
+  inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut       () const { return _autoSegmentLut; }
+  inline const Flags&            AnabaticEngine::flags                    () const { return _flags; }
+  inline       Flags&            AnabaticEngine::flags                    () { return _flags; }
+  inline       bool              AnabaticEngine::doDestroyBaseContact     () const { return _flags & Flags::DestroyBaseContact; }
+  inline       bool              AnabaticEngine::doDestroyBaseSegment     () const { return _flags & Flags::DestroyBaseSegment; }
+  inline       bool              AnabaticEngine::doDestroyTool            () const { return _state >= EngineGutted; }
+  inline       bool              AnabaticEngine::doWarnOnGCellOverload    () const { return _flags & Flags::WarnOnGCellOverload; }
+  inline       bool              AnabaticEngine::isCanonizeDisabled       () const { return _flags & Flags::DisableCanonize; }
+  inline       bool              AnabaticEngine::isInDemoMode             () const { return _flags & Flags::DemoMode; }
+  inline       bool              AnabaticEngine::isChip                   () const { return _chipTools.isChip(); }
+  inline       std::string       AnabaticEngine::getNetBuilderStyle       () const { return _configuration->getNetBuilderStyle(); }
+  inline       StyleFlags        AnabaticEngine::getRoutingStyle          () const { return _configuration->getRoutingStyle(); }
+  inline       DbU::Unit         AnabaticEngine::getAntennaGateMaxWL      () const { return _configuration->getAntennaGateMaxWL(); }
+  inline       DbU::Unit         AnabaticEngine::getAntennaDiodeMaxWL     () const { return _configuration->getAntennaDiodeMaxWL(); }
+  inline       DbU::Unit         AnabaticEngine::getGlobalThreshold       () const { return _configuration->getGlobalThreshold(); }
+  inline       float             AnabaticEngine::getSaturateRatio         () const { return _configuration->getSaturateRatio(); }
+  inline       size_t            AnabaticEngine::getSaturateRp            () const { return _configuration->getSaturateRp(); }
+  inline       void              AnabaticEngine::setSaturateRatio         ( float ratio ) { _configuration->setSaturateRatio(ratio); }
+  inline       void              AnabaticEngine::setSaturateRp            ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
+  inline       Cell*             AnabaticEngine::getDiodeCell             () const { return _diodeCell; }
+  inline       Net*              AnabaticEngine::getBlockageNet           () const { return _blockageNet; }
+  inline const ChipTools&        AnabaticEngine::getChipTools             () const { return _chipTools; }
+  inline const vector<NetData*>& AnabaticEngine::getNetOrdering           () const { return _netOrdering; }
+  inline       void              AnabaticEngine::setGlobalThreshold       ( DbU::Unit threshold ) { _configuration->setGlobalThreshold(threshold); }
+  inline const NetDatas&         AnabaticEngine::getNetDatas              () const { return _netDatas; }
+  inline       void              AnabaticEngine::_updateLookup            ( GCell* gcell ) { _matrix.updateLookup(gcell); }
+  inline       void              AnabaticEngine::_resizeMatrix            () { _matrix.resize( getCell(), getGCells() ); }
+  inline       void              AnabaticEngine::_updateGContacts         ( Flags flags ) { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(flags); }
+  inline       bool              AnabaticEngine::_inDestroy               () const { return _flags & Flags::DestroyMask; }
+  inline       void              AnabaticEngine::disableCanonize          () { _flags |= Flags::DisableCanonize; }
+  inline       void              AnabaticEngine::enableCanonize           () { _flags.reset( Flags::DisableCanonize ); }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
   {

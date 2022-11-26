@@ -1514,10 +1514,12 @@ namespace Katana {
       _data2->resetRipupCount();
     }
 
-    if   (  segment1->isStrap()
-         or segment1->isUnbreakable()) { success = _slackenStrap ( segment1, _data1, flags ); }
-    else if (segment1->isLocal())      { success = _slackenLocal ( segment1, _data1, flags ); }
-    else                               { success = _slackenGlobal( segment1, _data1, flags ); }
+    if (segment1->isStrap() or segment1->isUnbreakable())
+      success = _slackenStrap ( segment1, _data1, flags );
+    else if (segment1->isLocal())
+      success = _slackenLocal ( segment1, _data1, flags );
+    else
+      success = _slackenGlobal( segment1, _data1, flags );
 
     if (success) {
       actionFlags |= SegmentAction::ResetRipup;

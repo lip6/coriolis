@@ -154,7 +154,7 @@ class GaugeConf ( object ):
         if not self.topLayerDepth:
             print( WarningMessage( 'Gauge top layer not defined, using top of gauge ({}).' \
                                    .format(self._routingGauge.getDepth()) ))
-            self._topLayerDepth = self._routingGauge.getDepth() - 1
+            self.topLayerDepth = self._routingGauge.getDepth() - 1
 
         self.horizontalDepth     = -1
         self.verticalDepth       = -1

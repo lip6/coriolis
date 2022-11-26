@@ -36,9 +36,10 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/NetBuilderM2.h
                                      anabatic/NetBuilderHV.h
                                      anabatic/NetBuilderVH.h
+                                     anabatic/NetBuilderHybridVH.h
                                      anabatic/ChipTools.h
                       )
-                   set( pyIncludes   )
+                   set( pyIncludes   anabatic/PyStyleFlags.h )
                    set( cpps         Constants.cpp
                                      Configuration.cpp
                                      Matrix.cpp
@@ -62,13 +63,15 @@ endif ( CHECK_DETERMINISM )
                                      NetBuilderM2.cpp
                                      NetBuilderHV.cpp
                                      NetBuilderVH.cpp
+                                     NetBuilderHybridVH.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
                                      AntennaProtect.cpp
                                      PreRouteds.cpp
                                      AnabaticEngine.cpp
                       )
-                   set( pyCpps       PyAnabatic.cpp
+                   set( pyCpps       PyStyleFlags.cpp
+		                     PyAnabatic.cpp
                       )
 
                    set( depLibs      ${ETESIAN_LIBRARIES}

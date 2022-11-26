@@ -180,6 +180,8 @@ namespace Katana {
     if (not cmess1.enabled()) return;
 
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
+    cout << Dots::asString("     - Net builder style"                  ,getNetBuilderStyle()) << endl;
+    cout << Dots::asString("     - Routing style"                      ,getRoutingStyle().asString()) << endl;
     cout << Dots::asUInt  ("     - Dijkstra GR search halo"            ,getSearchHalo()) << endl;
     cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
     cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;

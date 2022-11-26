@@ -1808,7 +1808,7 @@ namespace Anabatic {
       return false;
     }
 
-    if (not Session::getAnabatic()->isChannelMode()
+    if (not Session::getAnabatic()->isChannelStyle()
        and (getDepth() == 1) and isSpinBottom()) return false;
     if ((flags & Flags::WithPerpands) and _reduceds) return false;
 
@@ -3284,7 +3284,7 @@ namespace Anabatic {
           Flags perpandFlags = (currentSegment->getAutoSource() == sourceContact)
             ? Flags::Source : Flags::Target;
           perpandiculars.push_back( make_tuple( currentSegment, perpandFlags ));
-          if (Session::getAnabatic()->isChannelMode()) {
+          if (Session::getAnabatic()->isChannelStyle()) {
             if (currentSegment->isNonPref() and currentSegment->isFixed()) {
               if (perpandFlags & Flags::Source) isSourceBoundToChannel = true;
               else                              isTargetBoundToChannel = true;

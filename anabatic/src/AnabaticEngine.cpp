@@ -34,6 +34,7 @@
 #include "crlcore/Histogram.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AutoContactTerminal.h"
+#include "anabatic/NetBuilderHybridVH.h"
 #include "anabatic/NetBuilderM2.h"
 #include "anabatic/NetBuilderHV.h"
 #include "anabatic/NetBuilderVH.h"
@@ -383,25 +384,27 @@ namespace Anabatic {
     , _edgeCapacitiesLut()
     , _blockageNet      (cell->getNet("blockagenet"))
     , _diodeCell        (NULL)
-  {
-    _matrix.setCell( cell, _configuration->getSliceHeight() );
-    Edge::unity = _configuration->getSliceHeight();
-
-    if (not _blockageNet) {
-      _blockageNet = Net::create( cell, "blockagenet" );
-      _blockageNet->setType( Net::Type::BLOCKAGE );
-    }
-  }
+  { }
 
 
   void  AnabaticEngine::_postCreate ()
   {
     Super::_postCreate();
 
-    _diodeCell = DataBase::getDB()->getCell( getConfiguration()->getDiodeName() );;
+    _configuration = _createConfiguration();
+    setupNetBuilder();
+    _matrix.setCell( getCell(), _configuration->getSliceHeight() );
+    Edge::unity = _configuration->getSliceHeight();
+
+    if (not _blockageNet) {
+      _blockageNet = Net::create( getCell(), "blockagenet" );
+      _blockageNet->setType( Net::Type::BLOCKAGE );
+    }
+
+    _diodeCell = DataBase::getDB()->getCell( _configuration->getDiodeName() );;
     if (not _diodeCell) {
       cerr << Warning( "AnabaticEngine::_postCreate() Unable to find \"%s\" diode cell."
-                     , getConfiguration()->getDiodeName().c_str()
+                     , _configuration->getDiodeName().c_str()
                      ) << endl;
     }
 
@@ -410,6 +413,10 @@ namespace Anabatic {
     UpdateSession::close();
     checkPlacement();
   }
+
+
+  Configuration* AnabaticEngine::_createConfiguration ()
+  { return new Configuration(); }
 
 
   AnabaticEngine* AnabaticEngine::create ( Cell* cell )
@@ -623,7 +630,7 @@ namespace Anabatic {
       }
     }
 
-    RoutingGauge* rg         = getConfiguration()->getRoutingGauge();
+    RoutingGauge* rg         = _configuration->getRoutingGauge();
     size_t        errorCount = 0;
     ostringstream errors;
     errors << "AnabaticEngine::checkPlacement():\n";
@@ -852,7 +859,7 @@ namespace Anabatic {
     if (horizontal) {
       splitted = Horizontal::create( breakContact
                                    , targetContact
-                                   , getConfiguration()->getGHorizontalLayer()
+                                   , _configuration->getGHorizontalLayer()
                                    , horizontal->getY()
                                    , DbU::fromLambda(2.0)
                                    );
@@ -861,7 +868,7 @@ namespace Anabatic {
       if (vertical) {
         splitted = Vertical::create( breakContact
                                    , targetContact
-                                   , getConfiguration()->getGVerticalLayer()
+                                   , _configuration->getGVerticalLayer()
                                    , vertical->getX()
                                    , DbU::fromLambda(2.0)
                                    );
@@ -1097,7 +1104,7 @@ namespace Anabatic {
 
     for ( Net* net : getCell()->getNets() ) {
       for ( Component* component : net->getComponents() ) {
-        if (getConfiguration()->isGLayer(component->getLayer())) {
+        if (_configuration->isGLayer(component->getLayer())) {
           cerr << Error( "AnabaticEngine::cleanupGlobal(): Remaining global routing,\n"
                          "        %s"
                        , getString(component).c_str()
@@ -1124,7 +1131,7 @@ namespace Anabatic {
     }
     cleanupGlobal();
 
-    if (not getConfiguration()->isTwoMetals()) relaxOverConstraineds();
+    if (not _configuration->isTwoMetals()) relaxOverConstraineds();
 
     _state = EngineActive;
   }
@@ -1241,6 +1248,64 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::setupNetBuilder ()
+  {
+    uint32_t gaugeKind = 4;
+    if      (NetBuilderHybridVH::getStyle() == getNetBuilderStyle()) gaugeKind = 0;
+    else if (NetBuilderM2      ::getStyle() == getNetBuilderStyle()) gaugeKind = 1;
+    else if (NetBuilderVH      ::getStyle() == getNetBuilderStyle()) gaugeKind = 2;
+    else if (NetBuilderHV      ::getStyle() == getNetBuilderStyle()) gaugeKind = 3;
+    
+    if (gaugeKind == 0) {
+      if (not _configuration->isVH())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::VH
+                                       | StyleFlags::Channel
+                                       | StyleFlags::Hybrid );
+      }
+    }
+    else if (gaugeKind == 1) {
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::Channel );
+      }
+    }
+    else if (gaugeKind == 2) {
+      if (not _configuration->isVH())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (_configuration->getRoutingGauge()->getUsableLayers() < 3)
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::VH
+                                       | StyleFlags::OTH );
+      }
+    }
+    else if (gaugeKind == 3) {
+      if (not _configuration->isHV())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (_configuration->getRoutingGauge()->getUsableLayers() < 3)
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::HV
+                                       | StyleFlags::OTH );
+      }
+    }
+    if (gaugeKind == 4) {
+      throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing auge style \"%s\"."
+                 , getNetBuilderStyle().c_str() );
+    }
+  }
+
   void  AnabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Building detailed routing from global. " << endl;
@@ -1250,12 +1315,13 @@ namespace Anabatic {
     startMeasures();
     openSession();
 
-    int gaugeKind = 3;
-    if (getConfiguration()->isTwoMetals()) gaugeKind = 0;
-    if (getConfiguration()->isHV       ()) gaugeKind = 1;
-    if (getConfiguration()->isVH       ()) gaugeKind = 2;
+    uint32_t gaugeKind = 4;
+    if      (NetBuilderHybridVH::getStyle() == getNetBuilderStyle()) gaugeKind = 0;
+    else if (NetBuilderM2      ::getStyle() == getNetBuilderStyle()) gaugeKind = 1;
+    else if (NetBuilderVH      ::getStyle() == getNetBuilderStyle()) gaugeKind = 2;
+    else if (NetBuilderHV      ::getStyle() == getNetBuilderStyle()) gaugeKind = 3;
 
-    if (gaugeKind < 3) {
+    if (gaugeKind < 4) {
       for ( Net* net : getCell()->getNets() ) {
         if (NetRoutingExtension::isShortNet(net)) {
         //AutoSegment::setShortNetMode( true );
@@ -1269,9 +1335,10 @@ namespace Anabatic {
           AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
 
           switch ( gaugeKind ) {
-            case 0: NetBuilder::load<NetBuilderM2>( this, net ); break;
-            case 1: NetBuilder::load<NetBuilderHV>( this, net ); break;
-            case 2: NetBuilder::load<NetBuilderVH>( this, net ); break;
+            case 0: NetBuilder::load<NetBuilderHybridVH>( this, net ); break;
+            case 1: NetBuilder::load<NetBuilderM2>      ( this, net ); break;
+            case 2: NetBuilder::load<NetBuilderVH>      ( this, net ); break;
+            case 3: NetBuilder::load<NetBuilderHV>      ( this, net ); break;
           }
 
           Session::revalidate();
@@ -1290,11 +1357,6 @@ namespace Anabatic {
     stopMeasures();
 
     cmess2 << Dots::asSizet("     - Short nets",shortNets) << endl;
-
-    if (gaugeKind > 2) {
-      throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing gauge \"%s\"."
-                 , getString(getConfiguration()->getRoutingGauge()->getName()).c_str() );
-    }
     
     printMeasures( "load" );
 
@@ -1626,7 +1688,7 @@ namespace Anabatic {
 
   EdgeCapacity* AnabaticEngine::_createCapacity ( Flags flags, Interval span )
   {
-    size_t        depth        = getConfiguration()->getAllowedDepth();
+    size_t        depth        = _configuration->getAllowedDepth();
     EdgeCapacity* edgeCapacity = NULL;
 
     flags &= Flags::EdgeCapacityMask;
@@ -1668,7 +1730,7 @@ namespace Anabatic {
     UpdateSession::open();
     
     for ( auto rp : rps ) {
-      if (not getConfiguration()->selectRpComponent(rp))
+      if (not _configuration->selectRpComponent(rp))
         cerr << Warning( "AnabaticEngine::computeEdgeCapacities(): %s has no components on grid.", getString(rp).c_str() ) << endl;
 
       Point  center = rp->getBoundingBox().getCenter();

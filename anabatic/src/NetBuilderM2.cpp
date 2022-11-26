@@ -61,6 +61,10 @@ namespace Anabatic {
 
   NetBuilderM2::~NetBuilderM2 () { }
 
+
+  string  NetBuilderM2::getStyle ()
+  { return "2RL-"; }
+
   
   void  NetBuilderM2::doRp_AutoContacts ( GCell*        gcell
                                         , Component*    rp

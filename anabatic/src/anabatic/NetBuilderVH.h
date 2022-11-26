@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -27,6 +27,7 @@ namespace Anabatic {
     public:
                             NetBuilderVH       ();
       virtual              ~NetBuilderVH       ();
+      static  std::string   getStyle           ();
       virtual void          doRp_AutoContacts  ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
       virtual AutoContact*  doRp_Access        ( GCell*, Component*, uint64_t  flags );
     private:                                     

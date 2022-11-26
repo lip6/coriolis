@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -140,6 +140,17 @@ namespace CRL {
         return _layerGauges[i];
     } while ( i > 0);
     return NULL;
+  }
+
+
+  RoutingLayerGauge* RoutingGauge::getFirstRoutingGauge () const
+  {
+    for ( RoutingLayerGauge* rlg : _layerGauges ) {
+      if (   (rlg->getType() != Constant::LayerGaugeType::PinOnly)
+         and (rlg->getType() != Constant::PowerSupply) )
+        return rlg;
+    }
+    return nullptr;
   }
 
 

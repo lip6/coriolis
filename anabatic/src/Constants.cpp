@@ -14,15 +14,21 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/Error.h"
 #include "anabatic/Constants.h"
 
 
 namespace Anabatic {
 
+  using std::hex;
   using std::string;
   using std::ostringstream;
   using Hurricane::BaseFlags;
+  using Hurricane::Error;
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::Flags".
 
   const BaseFlags  Flags::NoFlags             =  0;
 // Flags used for both objects states & functions arguments.
@@ -210,5 +216,70 @@ namespace Anabatic {
     return s;
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::StyleFlags".
+
+  
+  const BaseFlags  StyleFlags::NoStyle =  0;
+  const BaseFlags  StyleFlags::HV      = (1L <<  0);
+  const BaseFlags  StyleFlags::VH      = (1L <<  1);
+  const BaseFlags  StyleFlags::OTH     = (1L <<  2);
+  const BaseFlags  StyleFlags::Channel = (1L <<  3);
+  const BaseFlags  StyleFlags::Hybrid  = (1L <<  4);
+
+
+  StyleFlags::~StyleFlags ()
+  { }
+
+
+  StyleFlags  StyleFlags::toFlag ( std::string textFlag )
+  {
+    if (textFlag == "HV")      return HV;
+    if (textFlag == "VH")      return VH;
+    if (textFlag == "OTH")     return OTH;
+    if (textFlag == "Channel") return Channel;
+    if (textFlag == "Hybrid")  return Hybrid;
+    if (textFlag == "NoStyle") return NoStyle;
+    std::cerr << Error( "StyleFlags::toFlag(): Unknown flag value \"%s\"", textFlag.c_str() ) << std::endl;
+    return NoStyle;
+  }
+
+
+  StyleFlags  StyleFlags::from ( std::string textFlags )
+  {
+    size_t start = 0;
+    size_t stop  = textFlags.find( '|' );
+    while ( stop != string::npos ) {
+      *this |= toFlag( textFlags.substr( start, stop-start-1 ));
+      start = stop + 1;
+      stop  = textFlags.find( '|', start );
+    }
+    *this |= toFlag( textFlags.substr( stop+1 ));
+    return *this;
+  }
+
+
+  string  StyleFlags::asString () const
+  {
+    ostringstream s;
+
+    if (_flags & (uint64_t)HV)      { s << (s.tellp() ? "|" : "") << "HV"; }
+    if (_flags & (uint64_t)VH)      { s << (s.tellp() ? "|" : "") << "VH"; }
+    if (_flags & (uint64_t)OTH)     { s << (s.tellp() ? "|" : "") << "OTH"; }
+    if (_flags & (uint64_t)Channel) { s << (s.tellp() ? "|" : "") << "Channel"; }
+    if (_flags & (uint64_t)Hybrid ) { s << (s.tellp() ? "|" : "") << "Hybrid"; }
+    s << " (0x" << hex << _flags << ")";
+    return s.str();
+  }
+
+
+  string  StyleFlags::_getTypeName () const
+  { return "Anabatic::StyleFlags"; }
+
+
+  string StyleFlags::_getString () const
+  { return asString(); }
+  
 
 }  // Anabatic namespace.

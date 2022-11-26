@@ -1,7 +1,7 @@
 // -*- mode: C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -48,6 +48,16 @@ namespace Katana {
 
 // -------------------------------------------------------------------
 // Class  :  "Katana::Row".
+
+
+  Row::Row ( Block* block, DbU::Unit y )
+    : _block        (block)
+    , _isHybrid     (block->getKatana()->isHybridStyle())
+    , _y            (y)
+    , _occurrences  ()
+    , _southWest    (NULL)
+    , _channelHeight(1)
+  { }
 
 
   void  Row::add  ( DbU::Unit x, Occurrence occurrence )
@@ -137,17 +147,21 @@ namespace Katana {
       }
     }
 
-    southWest->setType( Anabatic::Flags::StdCellRow );
-    if (channel) channel->setType( Anabatic::Flags::ChannelRow );
+    if (not _isHybrid) {
+      southWest->setType( Anabatic::Flags::StdCellRow );
+      if (channel) channel->setType( Anabatic::Flags::ChannelRow );
+    }
 
     DbU::Unit xmax = getCell()->getAbutmentBox().getXMax() - sliceHeight;
     DbU::Unit xcut = _southWest->getXMin() + sliceHeight;
     for ( ; xcut < xmax ; xcut += sliceHeight ) {
       southWest = southWest->vcut( xcut );
-      southWest->setType( Anabatic::Flags::StdCellRow );
+      if (not _isHybrid)
+        southWest->setType( Anabatic::Flags::StdCellRow );
       if (channel) {
         channel = channel->vcut( xcut );
-        channel->setType( Anabatic::Flags::ChannelRow );
+        if (not _isHybrid)
+          channel->setType( Anabatic::Flags::ChannelRow );
         channel->getWestEdge()->setFlags( Flags::InfiniteCapacity );
       }
     }
@@ -196,17 +210,16 @@ namespace Katana {
 
   uint32_t  Row::computeChannelHeight ()
   {
-    _channelHeight = 2;
+    _channelHeight = 4;
 
     GCell* gcell = getSouthWest()->getNorth();
     while ( gcell ) {
-      _channelHeight = std::max( _channelHeight, (uint32_t)gcell->getNetCount() );
-      // Edge* east = gcell->getEastEdge();
-      // if (east)
-      //   _channelHeight = std::max( _channelHeight, east->getRealOccupancy() );
+    //_channelHeight = std::max( _channelHeight, (uint32_t)gcell->getNetCount() );
+      Edge* east = gcell->getEastEdge();
+      if (east)
+        _channelHeight = std::max( _channelHeight, east->getRealOccupancy() );
       gcell = gcell->getEast();
     }
-    _channelHeight += 2;
 
     return _channelHeight;
   }
@@ -233,7 +246,7 @@ namespace Katana {
     : _katana(katana)
     , _cell  (cell)
     , _rows  ()
-  { 
+  {
     for ( Occurrence occurrence : _cell->getTerminalNetlistInstanceOccurrences() ) {
       add( occurrence );
     }
@@ -312,7 +325,8 @@ namespace Katana {
     Session::close();
     _katana->openSession();
 
-    for ( Row* row : _rows ) row->routingPadsSubBreak();
+    if (not _katana->isHybridStyle())
+      for ( Row* row : _rows ) row->routingPadsSubBreak();
 
     if (not sessionReUse) Session::close();
   }
@@ -322,6 +336,8 @@ namespace Katana {
   {
     cmess1 << "  o  Sizing routing channels." << endl;
 
+    Breakpoint::stop( 1, "About to compute/resize channel heights." );
+    
     bool sessionReUse = Session::isOpen();
     if (not sessionReUse) _katana->openSession();
 

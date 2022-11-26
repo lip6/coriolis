@@ -66,6 +66,10 @@ namespace Anabatic {
 
   NetBuilderVH::~NetBuilderVH () { }
 
+
+  string  NetBuilderVH::getStyle ()
+  { return "VH,3RL+"; }
+
   
   void  NetBuilderVH::doRp_AutoContacts ( GCell*        gcell
                                         , Component*    rp

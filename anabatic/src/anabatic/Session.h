@@ -76,11 +76,12 @@ namespace Anabatic {
       static  inline bool                              doDestroyBaseSegment  ();
       static  inline bool                              doDestroyTool         ();
       static         bool                              isInDemoMode          ();
-      static         bool                              isChannelMode         ();
+      static         bool                              isChannelStyle        ();
       static         bool                              doWarnGCellOverload   ();
       static         Session*                          get                   ( const char* message=NULL );
       static  inline Technology*                       getTechnology         ();
       static  inline AnabaticEngine*                   getAnabatic           ();
+      static         StyleFlags                        getRoutingStyle       ();
       static  inline const Configuration*              getConfiguration      ();
       static         float                             getSaturateRatio      ();
       static         size_t                            getSaturateRp         ();

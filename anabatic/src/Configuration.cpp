@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -78,6 +78,8 @@ namespace Anabatic {
     , _ddepthv          (ndepth)
     , _ddepthh          (ndepth)
     , _ddepthc          (ndepth)
+    , _netBuilderStyle  (Cfg::getParamString("anabatic.netBuilderStyle","HV,3RL+")->asString() )
+    , _routingStyle     (Cfg::getParamInt   ("anabatic.routingStyle"   ,StyleFlags::NoStyle)->asInt() )
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    ()
@@ -187,6 +189,8 @@ namespace Anabatic {
     , _ddepthv          (other._ddepthv)
     , _ddepthh          (other._ddepthh)
     , _ddepthc          (other._ddepthc)
+    , _netBuilderStyle  (other._netBuilderStyle)
+    , _routingStyle     (other._routingStyle)
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    (other._extensionCaps)
@@ -223,6 +227,10 @@ namespace Anabatic {
 
   bool  Configuration::isTwoMetals () const
   { return _rg->isTwoMetals(); }
+
+
+  bool  Configuration::isHybrid () const
+  { return _routingStyle & StyleFlags::Hybrid; }
   
 
   bool  Configuration::isHV () const

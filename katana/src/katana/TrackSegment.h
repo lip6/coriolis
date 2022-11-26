@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_SEGMENT_H
-#define  KATANA_TRACK_SEGMENT_H
-
+#pragma  once
 #include <set>
 #include <functional>
 #include "katana/TrackElement.h"
@@ -68,6 +66,7 @@ namespace Katana {
       virtual bool                  isVertical             () const;
       virtual bool                  isLocal                () const;
       virtual bool                  isGlobal               () const;
+      virtual bool                  isWeakGlobal           () const;
       virtual bool                  isBipoint              () const;
       virtual bool                  isTerminal             () const;
       virtual bool                  isDrag                 () const;
@@ -192,5 +191,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackSegment);
-
-#endif  // KATANA_TRACK_SEGMENT_H

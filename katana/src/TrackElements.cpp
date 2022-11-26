@@ -47,7 +47,7 @@ namespace Katana {
       _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
       if (not _element) {
           AutoSegment* segment = _locator.getElement()->getCanonical(bounds);
-          if (Session::isChannelMode()
+          if (Session::isChannelStyle()
              and not ((segment->isReduced() or segment->isNonPref()) and segment->isFixed()))
             cerr << Bug( "Canonical segment without TrackElement on %s."
                        , getString(segment).c_str()) << endl;
@@ -73,7 +73,7 @@ namespace Katana {
         _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
         if (not _element ) {
           AutoSegment* segment = _locator.getElement()->getCanonical(bounds);
-          if (Session::isChannelMode()
+          if (Session::isChannelStyle()
              and not ((segment->isReduced() or segment->isNonPref()) and segment->isFixed()))
             cerr << Bug( "Canonical segment without TrackElement on %s."
                        , getString(segment).c_str() ) << endl;

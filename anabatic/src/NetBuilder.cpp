@@ -227,7 +227,7 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "NetBuilder".
 
-
+  
   void  NetBuilder::getPositions ( Component* anchor, Point& source, Point& target )
   {
     Segment* segment   = dynamic_cast<Segment*>( anchor );
@@ -368,7 +368,7 @@ namespace Anabatic {
     , _routingPadAutoSegments()
     , _toFixSegments         ()
     , _degree                (0)
-    , _isTwoMetals           (false)
+    , _isStrictChannel       (false)
     , _sourceFlags           (0)
     , _flags                 (0)
   { }
@@ -396,8 +396,8 @@ namespace Anabatic {
     _norths                .clear();
     _souths                .clear();
     _routingPads           .clear();
-    _toFixSegments         .clear();
     _routingPadAutoSegments.clear();
+    _toFixSegments         .clear();
   }
   
 
@@ -416,14 +416,15 @@ namespace Anabatic {
   {
     clear();
 
-    _isTwoMetals   = anbt->getConfiguration()->isTwoMetals();
-    _sourceFlags   = sourceFlags;
-    _sourceContact = sourceContact;
-    _fromHook      = fromHook;
+    _isStrictChannel = anbt->isChannelStyle() and not anbt->isHybridStyle();
+    _sourceFlags     = sourceFlags;
+    _sourceContact   = sourceContact;
+    _fromHook        = fromHook;
 
     cdebug_log(145,1) << "NetBuilder::setStartHook()" << endl;
     cdebug_log(145,0) << "* _fromHook:     " << fromHook << endl;
     cdebug_log(145,0) << "* _sourceContact:" << sourceContact << endl;
+    cdebug_log(145,0) << "_isStrictChannel:" << _isStrictChannel << endl;
 
     if (not _fromHook) {
       cdebug_tabw(145,-1);
@@ -573,7 +574,6 @@ namespace Anabatic {
                       << "+"  << (int)_connexity.fields.Pad
                       << "] " << _gcell
                       << endl;
-
     return *this;
   }
     
@@ -671,13 +671,16 @@ namespace Anabatic {
     cdebug_log(145,0) << "getSourceFlags():" << getSourceFlags()
                       << " getFlags():" << getFlags() << endl;
 
-    if (not isTwoMetals()) {
+    if (not isStrictChannel()) {
       _southWestContact = NULL;
       _northEastContact = NULL;
     }
 
     if (not _gcell->isAnalog()) {
-      if (isTwoMetals() and not _sourceContact) _fromHook = NULL;
+      if (isStrictChannel() and not _sourceContact) {
+        cdebug_log(145,0) << "No _sourceContact, resetting _fromHook" << endl;
+        _fromHook = NULL;
+      }
       
       switch ( _connexity.connexity ) {
         case Conn_1G_1Pad:
@@ -787,7 +790,7 @@ namespace Anabatic {
         case Conn_1G_1M1_1M3:     _do_1G_xM1       (); break;
         case Conn_2G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
         default:
-          if (not isTwoMetals())
+        //if (not isStrictChannel())
             throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
                      "      The global routing seems to be defective."
                      , _connexity.connexity
@@ -802,6 +805,9 @@ namespace Anabatic {
                      );
           _do_xG();
       }
+
+      cdebug_log(145,0) << "SouthWest: " << _southWestContact << endl;
+      cdebug_log(145,0) << "NorthEast: " << _northEastContact << endl;
 
       if (not _do_globalSegment()) {
         cdebug_log(145,0) << "No global generated, finish." << endl;
@@ -1143,7 +1149,9 @@ namespace Anabatic {
   
   bool  NetBuilder::_do_xG_1PinM2 ()
   {
-    throw Error ( "%s::_do_xG_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    throw Error( "%s::_do_xG_1PinM2() method *not* reimplemented from base class.\n"
+                 "        On %s"
+               , getTypeName().c_str(), getString(getNet()).c_str() );
     return false;
   }
 

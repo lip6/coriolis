@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./PyRoutingGauge.cpp"                          |
 // +-----------------------------------------------------------------+
