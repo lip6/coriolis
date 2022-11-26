@@ -1,5 +1,4 @@
-
-if(UNIX)
+if(UNIX AND NOT POETRY)
   if(NOT Python_FOUND)
     message(FATAL_ERROR "Python has not been found, maybe forgot to call find_package(Python). ")
   endif()
@@ -46,4 +45,4 @@ if(UNIX)
   else(FindPythonSitePackages_FOUND)
     message ( FATAL_ERROR "Python site packages directory was not found (pythonV.R/site-packages/)." )
   endif(FindPythonSitePackages_FOUND)
-endif(UNIX)
+endif(UNIX AND NOT POETRY)

@@ -1,14 +1,15 @@
 [tool.poetry]
-name = "coriolis"
+name = "Coriolis"
 version = "0.1.0"
 description = "Place and Route for semiconductors"
 authors = ["Your Name <you@example.com>"]
 build = "build.py"
-
+packages = [
+  { include = "Coriolis"}
+]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-PySide2 =  "^5.0"
+python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 ninja = ">=1.10"
