@@ -281,13 +281,29 @@ class CoreWire ( object ):
                                  , wwidthM5
                                  )
             else:
-                hChip = Horizontal.create( self.chipNet
-                                         , self.padSegment.getLayer()
-                                         , self.bbSegment.getCenter().getY()
-                                         , self.bbSegment.getHeight()
-                                         , xPadMin
-                                         , xPadMax
-                                         )
+                # hChip = Horizontal.create( self.chipNet
+                #                          , self.padSegment.getLayer()
+                #                          , self.bbSegment.getCenter().getY()
+                #                          , self.bbSegment.getHeight()
+                #                          , xPadMin
+                #                          , xPadMax
+                #                          )
+                if self.side == West:
+                    hChip = Horizontal.create( self.chipNet
+                                            , self.padSegment.getLayer()
+                                            , self.bbSegment.getCenter().getY()
+                                            , self.bbSegment.getHeight()
+                                            , xPadMin
+                                            , xPadMax
+                                            )
+                else:
+                    hChip = Horizontal.create( self.chipNet
+                                            , self.padSegment.getLayer()
+                                            , self.bbSegment.getCenter().getY()
+                                            , self.bbSegment.getHeight()
+                                            , xPadMin + 3*vPitch
+                                            , xPadMax
+                                            )
             trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
             if self.arraySize:
                 contacts = self.conf.coronaContactArray( self.chipNet
@@ -314,7 +330,7 @@ class CoreWire ( object ):
                 vStrapBb = contact.getBoundingBox( padLayer )
                 coronaTransf.applyOn( vStrapBb )
             if self.arraySize:
-                if self.side == West: xContact = min( xContact, vStrapBb.getXMin() )
+                if self.side == West: xContact = min( xContact, vStrapBb.getXMin() - vPitch )
                 else:                 xContact = max( xContact, vStrapBb.getXMax() )
             hCorona = self.conf.coronaHorizontal( self.chipNet
                                                 , self.symSegmentLayer
