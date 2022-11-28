@@ -234,7 +234,11 @@ class CoreToChip ( BaseCoreToChip ):
         the central P&R area so that I/O pins are fully outside of it.
         """
         self.harness = DefImport.load( self.conf.cfg.harness.path )
-        innerAb  = self.harness.getAbutmentBox()
+        # For gf180mcu the rings are drawn inside the AbutmentBox
+        Ab = self.harness.getAbutmentBox()
+        innerAb  = Box( Ab.getXMin(), Ab.getYMin()
+                      , Ab.getXMax() - u(20.0), Ab.getYMax() - u(20.0)
+                      )
         wholeBb  = self.harness.getBoundingBox()
         filterBb = Box( wholeBb.getXMin(), innerAb.getYMin()
                       , wholeBb.getXMax(), innerAb.getYMax() )
