@@ -74,6 +74,7 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/niolib.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/libresocio.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/sky130.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/gf180mcu.py
                   )
               set ( pyPluginAlphaChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/configuration.py
