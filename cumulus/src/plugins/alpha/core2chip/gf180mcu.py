@@ -87,11 +87,11 @@ class MatchHarnessIos ( object ):
             else:
                 print( WarningMessage('Unable to match "{}" into harness net.'.format( net.getName() )))
         if self.digitalVdd:
-            self.conf.chipConf.addIoPad( (None, None, 'power_0', 'vccd1', self.digitalVdd.getName()), 0 )
+            self.conf.chipConf.addIoPad( (None, None, 'power_0', 'vdd', self.digitalVdd.getName()), 0 )
         else:
             print( WarningMessage('Missing digital power net in "{}".'.format(self.conf.core.getName())) )
         if self.digitalVss:
-            self.conf.chipConf.addIoPad( (None, None, 'ground_0', 'vssd1', self.digitalVss.getName()), 0 )
+            self.conf.chipConf.addIoPad( (None, None, 'ground_0', 'vss', self.digitalVss.getName()), 0 )
         else:
             print( WarningMessage('Missing digital ground net in "{}".'.format(self.conf.core.getName())) )
         if self.clock:
@@ -140,14 +140,8 @@ class CoreToChip ( BaseCoreToChip ):
                           }
         BaseCoreToChip.__init__ ( self, core )
         self.conf.useHarness = True
-        self.ringNetNames = { 'vssa2' : None
-                            , 'vdda2' : None
-                            , 'vssa1' : None
-                            , 'vdda1' : None
-                            , 'vssd2' : None
-                            , 'vccd2' : None
-                            , 'vssd1' : None
-                            , 'vccd1' : None
+        self.ringNetNames = { 'vss' : None
+                            , 'vdd' : None
                             }
         self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.BIDIR
                                                       , self.ioPadNames['bidir']
