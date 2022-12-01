@@ -21,7 +21,7 @@ IF(Boost_FOUND)
                               OUTPUT_NAME "CIF"
                               PREFIX      ""
                        )
-  TARGET_LINK_LIBRARIES(pyCIF cif ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+  TARGET_LINK_LIBRARIES(pyCIF cif ${Boost_LIBRARIES} ${Python_LIBRARIES})
   INSTALL(TARGETS pyCIF DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 

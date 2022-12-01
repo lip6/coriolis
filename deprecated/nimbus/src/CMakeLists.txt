@@ -57,7 +57,7 @@
 #                                  ${QtX_LIBRARIES}
 #                                  ${Boost_LIBRARIES}
 #                                  ${LIBXML2_LIBRARIES}
-#                                  ${PYTHON_LIBRARIES} -lutil
+#                                  ${Python_LIBRARIES} -lutil
 #                      )
 
            add_library ( pyNimbus  MODULE ${pyCpps} )

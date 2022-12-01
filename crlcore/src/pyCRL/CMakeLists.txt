@@ -21,6 +21,17 @@
                         ${Boost_INCLUDE_DIR}
                         ${QtX_INCLUDE_DIRS}
                       )
+       set (LINK_LIBS ${HURRICANE_PYTHON_NEW_LIBRARIES}
+                      ${HURRICANE_PYTHON_LIBRARIES}
+                      ${HURRICANE_GRAPHICAL_LIBRARIES}
+                      ${HURRICANE_LIBRARIES}
+                      ${BOOKSHELF_LIBRARY}
+                      ${OA_LIBRARIES}
+                      ${Boost_LIBRARIES}
+                      ${LIBXML2_LIBRARIES}
+                      ${Python_LIBRARIES} -lutil
+                      )
+
 
        add_definitions( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                         -DSYS_CONF_DIR="${SYS_CONF_DIR}"
@@ -77,16 +88,7 @@
                                     crlcore/PyLefExport.h
                                     crlcore/PyDefExport.h
                       )	         
-#      target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
-#                                       ${HURRICANE_PYTHON_LIBRARIES}
-#                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-#                                       ${HURRICANE_LIBRARIES}
-#                                       ${BOOKSHELF_LIBRARY}
-#                                       ${OA_LIBRARIES}
-#                                       ${Boost_LIBRARIES}
-#                                       ${LIBXML2_LIBRARIES}
-#                                       ${PYTHON_LIBRARIES} -lutil
-#                            )
+	      target_link_libraries ( crlcore ${LINK_LIBS} )
 
                    set( depLibs     crlcore
                                     ${HURRICANE_GRAPHICAL_LIBRARIES}
@@ -94,7 +96,7 @@
                                     ${HURRICANE_PYTHON_LIBRARIES}
                                     ${HURRICANE_LIBRARIES}
                                     ${LEFDEF_LIBRARIES}
-                                    ${PYTHON_LIBRARIES}
+                                    ${Python_LIBRARIES}
                                     ${QtX_LIBRARIES}
                                     -lutil
                       )
@@ -106,6 +108,7 @@
                         "${depLibs}"
                         include/coriolis2/crlcore
                       )
+
      add_python_module( "${pyConstCpps}"
                         "crlcore/PyRoutingLayerGauge.h"
                         "pycrlconst;1.0;1"
@@ -113,3 +116,4 @@
                         "${depLibs}"
                         include/coriolis2/crlcore
                       )
+

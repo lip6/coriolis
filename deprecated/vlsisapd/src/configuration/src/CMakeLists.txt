@@ -43,7 +43,7 @@
  set_target_properties ( configuration   PROPERTIES VERSION 1.0 SOVERSION 1 )
 #target_link_libraries ( configuration   vlsisapdutils
 #                                        ${QtX_LIBRARIES}
-#                                        ${PYTHON_LIBRARIES}
+#                                        ${Python_LIBRARIES}
 #                                        ${LIBXML2_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
 #                      )
@@ -55,7 +55,7 @@
                                          PREFIX      ""
                        )
 #target_link_libraries ( pyConfiguration configuration
-#                                        ${PYTHON_LIBRARIES}
+#                                        ${Python_LIBRARIES}
 #                                        ${LIBXML2_LIBRARIES}
 #                                        ${Boost_LIBRARIES}
 #                      )

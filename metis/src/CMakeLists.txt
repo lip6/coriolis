@@ -44,7 +44,7 @@ endif ( HMETIS_FOUND )
 #                                      ${QT_LIBRARIES}
 #                                      ${Boost_LIBRARIES}
 #                                      ${LIBXML2_LIBRARIES}
-#                                      ${PYTHON_LIBRARIES} -lutil
+#                                      ${Python_LIBRARIES} -lutil
 #                      )
 
            add_library ( pyMetis       MODULE ${pyCpps} )

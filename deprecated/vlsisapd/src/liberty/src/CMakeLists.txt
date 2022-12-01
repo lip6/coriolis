@@ -66,6 +66,6 @@ if ( Boost_FOUND )
                                       OUTPUT_NAME "LIBERTY"
                                       PREFIX      ""
                           )
-#   target_link_libraries ( pyLIBERTY liberty ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} )
+#   target_link_libraries ( pyLIBERTY liberty ${Boost_LIBRARIES} ${Python_LIBRARIES} )
     install ( TARGETS pyLIBERTY DESTINATION ${PYTHON_SITE_PACKAGES} )
 endif ( Boost_FOUND )

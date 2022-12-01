@@ -1,5 +1,5 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/x2y> -*-
-  
+
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
@@ -26,6 +26,5 @@
                                      ${BZIP2_LIBRARIES}
                                      ${LIBEXECINFO_LIBRARIES}
                                      ${LIBBFD_LIBRARIES}
-                                     z
                        )
                install ( TARGETS     cx2y DESTINATION bin )
