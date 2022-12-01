@@ -24,7 +24,7 @@ IF(Boost_FOUND)
                                OUTPUT_NAME "AGDS"
                                PREFIX      ""
                        )
-  TARGET_LINK_LIBRARIES(pyAGDS agds ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+  TARGET_LINK_LIBRARIES(pyAGDS agds ${Boost_LIBRARIES} ${Python_LIBRARIES})
   INSTALL(TARGETS pyAGDS DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 
