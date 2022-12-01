@@ -168,7 +168,7 @@
 
                    set( depLibs    hurricane
                                    ${Boost_LIBRARIES}
-                                   ${PYTHON_LIBRARIES}
+                                   ${Python_LIBRARIES}
                       )
 
      add_python_module( "${pyCpps}"
