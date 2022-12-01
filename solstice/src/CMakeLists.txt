@@ -55,7 +55,7 @@
 #                                       ${QtX_LIBRARIES}
 #                                       ${Boost_LIBRARIES}
 #                                       ${LIBXML2_LIBRARIES}
-#                                       ${PYTHON_LIBRARIES} -lutil
+#                                       ${Python_LIBRARIES} -lutil
 #                      )
 
                install ( TARGETS        solstice DESTINATION lib${LIB_SUFFIX} )

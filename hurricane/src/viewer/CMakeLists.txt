@@ -150,6 +150,7 @@
                                     ${UTILITIES_LIBRARY}
                                     ${LIBXML2_LIBRARIES}
                                     ${QtX_LIBRARIES}
+				    ${Python_LIBRARIES}
                       )
 
            add_library( viewer      ${cpps} ${MOC_SRCS} ${RCC_SRCS} ${pyCpps} )

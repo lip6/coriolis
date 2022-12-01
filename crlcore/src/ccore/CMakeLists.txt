@@ -303,18 +303,18 @@
                                         ${openaccess_cpps}
                              )
        set_target_properties ( crlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
-#      target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
-#                                       ${HURRICANE_PYTHON_LIBRARIES}
-#                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-#                                       ${HURRICANE_LIBRARIES}
-#                                       ${BOOKSHELF_LIBRARY}
-#                                       ${LEFDEF_LIBRARIES}
-#                                       ${OA_LIBRARIES}
-#                                       ${QtX_LIBRARIES}
-#                                       ${Boost_LIBRARIES}
-#                                       ${LIBXML2_LIBRARIES}
-#                                       ${PYTHON_LIBRARIES} -lutil
-#                            )
+       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
+                                        ${HURRICANE_PYTHON_LIBRARIES}
+                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                        ${HURRICANE_LIBRARIES}
+                                        ${BOOKSHELF_LIBRARY}
+                                        ${LEFDEF_LIBRARIES}
+                                        ${OA_LIBRARIES}
+                                        ${QtX_LIBRARIES}
+                                        ${Boost_LIBRARIES}
+                                        ${LIBXML2_LIBRARIES}
+                                        ${Python_LIBRARIES} -lutil
+                            )
 
                      install ( TARGETS  crlcore DESTINATION lib${LIB_SUFFIX} )
                      install ( FILES    ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 
