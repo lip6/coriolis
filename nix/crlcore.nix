@@ -8,7 +8,6 @@ let pkg =
     propagatedBuildInputs = [ libxml2 qt4 coriolis-lefdef coriolis-hurricane python3Packages.pyqt4 ];
     nativeBuildInputs = [ bison flex doxygen python3Packages.pyqt4 ];
     postInstall = ''
-      ln -s crlcore/helpers $out/${python3Packages.python.sitePackages}/helpers
       ln -s -t $out/${python3Packages.python.sitePackages} $out/etc/coriolis2/*
 
       # for import check

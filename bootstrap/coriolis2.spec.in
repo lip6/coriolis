@@ -119,7 +119,7 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/%{_lib}
 %dir %{coriolisTop}/%{python_sitedir}
 %dir %{coriolisTop}/%{python_sitedir}/crlcore
-%dir %{coriolisTop}/%{python_sitedir}/crlcore/helpers
+%dir %{coriolisTop}/%{python_sitedir}/helpers
 %dir %{coriolisTop}/%{python_sitedir}/cumulus
 %dir %{coriolisTop}/%{python_sitedir}/stratus
 %{coriolisTop}/bin/*
@@ -130,7 +130,7 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/%{python_sitedir}/cumulus/plugins/*/*.py*
 %{coriolisTop}/%{python_sitedir}/stratus/*.py*
 %{coriolisTop}/%{python_sitedir}/crlcore/*.py*
-%{coriolisTop}/%{python_sitedir}/crlcore/helpers/*.py*
+%{coriolisTop}/%{python_sitedir}/helpers/*.py*
 %{coriolisTop}/%{python_sitedir}/kite/*.py*
 %{coriolisTop}/%{python_sitedir}/unicorn/*.py*
 %{_sysconfdir}/coriolis2/*.py
