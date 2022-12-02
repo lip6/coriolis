@@ -5,7 +5,7 @@ import subprocess
 import sys
 import sysconfig
 from distutils.version import LooseVersion
-from distutils.dir_util import copy_tree
+from distutils.dir_util import copy_tree, remove_tree
 from typing import Any, Dict
 
 from setuptools.command.build_ext import build_ext
@@ -90,7 +90,10 @@ class ExtensionBuilder(build_ext):
         subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_dir)
         subprocess.check_call(["cmake", "--install", ".", "--prefix", extdir] + install_args, cwd=build_dir)
-        copy_tree(os.path.join(extdir, "bin"), "Coriolis/data/bin")
+        if os.path.exists(os.path.join(extdir, "bin")):
+            copy_tree(os.path.join(extdir, "bin"), os.path.join(extdir,"data/bin"))
+            remove_tree(os.path.join(extdir, "bin"))
+
 
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
