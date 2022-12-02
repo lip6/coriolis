@@ -69,16 +69,17 @@ class ExtensionBuilder(build_ext):
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())
 
         build_dir = os.path.join(self.build_temp, ext.sourcedir_rel)
+        install_dir = os.path.join(extdir, 'Coriolis')
         os.makedirs(build_dir,exist_ok=True)
 
         cmake_args += [f"-DCMAKE_MODULE_PATH={os.path.abspath('bootstrap/cmake_modules')};"
-                       f"{os.path.join(extdir, 'share/cmake/Modules')}"]
-        cmake_args += [f"-DCMAKE_INSTALL_PREFIX={extdir}"]
-        cmake_args += [f"-DPython_CORIOLISLIB={extdir}"]
-        cmake_args += [f"-DPython_CORIOLISARCH={extdir}"]
-        cmake_args += [f"-DSYS_CONF_DIR={extdir}"]
-        cmake_args += [f"-DCORIOLIS_TOP={extdir}"]
-        cmake_args += [f"-DCORIOLIS_USER_TOP={extdir}"]
+                       f"{os.path.join(install_dir, 'share/cmake/Modules')}"]
+        cmake_args += [f"-DCMAKE_INSTALL_PREFIX={install_dir}"]
+        cmake_args += [f"-DPython_CORIOLISLIB={install_dir}"]
+        cmake_args += [f"-DPython_CORIOLISARCH={install_dir}"]
+        cmake_args += [f"-DSYS_CONF_DIR={install_dir}"]
+        cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
+        cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
         cmake_args += [f"-DPOETRY=1"]
         cmake_args += [f"-DWITH_QT5=1"]
         cmake_args += [f"-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
@@ -89,10 +90,10 @@ class ExtensionBuilder(build_ext):
 
         subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_dir)
-        subprocess.check_call(["cmake", "--install", ".", "--prefix", extdir] + install_args, cwd=build_dir)
-        if os.path.exists(os.path.join(extdir, "bin")):
-            copy_tree(os.path.join(extdir, "bin"), os.path.join(extdir,"data/bin"))
-            remove_tree(os.path.join(extdir, "bin"))
+        subprocess.check_call(["cmake", "--install", ".", "--prefix", install_dir] + install_args, cwd=build_dir)
+        if os.path.exists(os.path.join(install_dir, "bin")):
+            copy_tree(os.path.join(install_dir, "bin"), os.path.join(install_dir,"data/bin"))
+            remove_tree(os.path.join(install_dir, "bin"))
 
 
 def build(setup_kwargs: Dict[str, Any]) -> None:
