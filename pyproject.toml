@@ -15,6 +15,15 @@ python = "^3.8"
 ninja = ">=1.10"
 cmake = ">=3"
 
+[tool.poetry.scripts]
+
+blif2vst = 'Coriolis:blif2vst'
+cx2y = 'Coriolis:cx2y'
+cyclop = 'Corilis:cyclop'
+tutorial = 'Coriolis:tutorial'
+unittests = 'Coriolis:unittests'
+yosys_coriolis = 'Coriolis:yosys_coriolis'
+
 [build-system]
 requires = ["poetry-core", "setuptools", "cmake"]
 build-backend = "poetry.core.masonry.api"
