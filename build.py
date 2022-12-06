@@ -1,9 +1,12 @@
+import io
+import glob
 import os
 import platform
 import re
 import subprocess
 import sys
 import sysconfig
+
 from distutils.version import LooseVersion
 from distutils.dir_util import copy_tree, remove_tree
 from typing import Any, Dict
@@ -94,7 +97,12 @@ class ExtensionBuilder(build_ext):
         if os.path.exists(os.path.join(install_dir, "bin")):
             copy_tree(os.path.join(install_dir, "bin"), os.path.join(install_dir,"data/bin"))
             remove_tree(os.path.join(install_dir, "bin"))
-
+            proc = subprocess.Popen(['file'] + glob.glob(os.path.join(install_dir,"data/bin/*")), stdout=subprocess.PIPE)
+            for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):  
+                if 'ELF' in line: #TODO support other OSs
+                    f = line.split(':')[0]
+                    print(f"fixing up {f}")
+                    subprocess.check_call(["patchelf", "--set-rpath", '${ORIGIN}/../../lib', f])
 
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
