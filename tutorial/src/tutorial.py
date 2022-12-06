@@ -12,7 +12,7 @@ try:
    import CRL
    import Unicorn
    import Tutorial
-except ImportError, e:
+except ImportError as e:
    serror = str(e)
    if serror.startswith('No module named'):
       module = serror.split()[-1]
@@ -24,7 +24,7 @@ except ImportError, e:
       print( '        Under RHEL 6, you must be under devtoolset-2.' )
       print( '        (scl enable devtoolset-2 bash)' )
    sys.exit(1)
-except Exception, e:
+except Exception as e:
    print( '[ERROR] A strange exception occurred while loading the basic Coriolis/Python' )
    print( '        modules. Something may be wrong at Python/C API level.\n' )
    print( '        {}'.format(e) )
@@ -108,6 +108,6 @@ if __name__ == '__main__':
         if cell: unicorn.setCell(cell)
         unicorn.show()
         ha.qtExec()
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
     sys.exit(0)
