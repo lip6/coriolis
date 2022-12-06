@@ -9,7 +9,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.6"
 
 [tool.poetry.dev-dependencies]
 ninja = ">=1.10"
@@ -27,3 +27,5 @@ yosys_coriolis = 'Coriolis:yosys_coriolis'
 requires = ["poetry-core", "setuptools", "cmake", "patchelf"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.cibuildwheel.linux]
+before-all = "yum install -y qt5-qtbase-devel qt5-qtsvg-devel boost-devel rapidjson-devel bison flex doxygen bzip2-devel python-devel"
