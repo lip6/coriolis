@@ -9,11 +9,12 @@ import sysconfig
 
 from distutils.version import LooseVersion
 from distutils.dir_util import copy_tree, remove_tree
+from distutils.sysconfig import get_python_inc
+import distutils.sysconfig as sysconfig
 from typing import Any, Dict
 
 from setuptools.command.build_ext import build_ext
 from setuptools.extension import Extension
-
 
 class CMakeExtension(Extension):
     name: str  # exists, even though IDE doesn't find it
@@ -66,7 +67,6 @@ class ExtensionBuilder(build_ext):
         else:
             cmake_args += ["-DCMAKE_BUILD_TYPE=" + cfg]
             build_args += ["--", "-j4", "VERBOSE=1"]
-        cmake_args += ["-DPYTHON_INCLUDE_DIR={}".format(sysconfig.get_path("include"))]
 
         env = os.environ.copy()
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())
@@ -83,9 +83,14 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DSYS_CONF_DIR={install_dir}"]
         cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
-        cmake_args += [f"-DPOETRY=1"]
-        cmake_args += [f"-DWITH_QT5=1"]
-        cmake_args += [f"-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
+
+        cmake_args += [f"-DPYTHON_INCLUDE_DIR={get_python_inc()}"]
+        cmake_args += [f"-DPYTHON_LIBRARY={sysconfig.get_config_var('LIBDIR')}"]
+        cmake_args += [f"-DPYTHON_INTERPRETER={sys.executable}"]
+
+        cmake_args += ["-DPOETRY=1"]
+        cmake_args += ["-DWITH_QT5=1"]
+        cmake_args += ["-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
         cmake_args += ["-DCMAKE_SKIP_BUILD_RPATH=FALSE"]
         cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH=\${ORIGIN}/lib"]
