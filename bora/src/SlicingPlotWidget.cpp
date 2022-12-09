@@ -21,6 +21,13 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+//Work sround for older qwt releases
+#include <QtGlobal>
+#if QT_VERSION >= 0x050400
+ #define QT_STATIC_CONST static const
+#endif
+
+
 #include <qwt_scale_draw.h>
 #include <qwt_scale_map.h>
 #include <qwt_scale_widget.h>
