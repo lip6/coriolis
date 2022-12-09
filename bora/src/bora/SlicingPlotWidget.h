@@ -17,6 +17,12 @@
 #ifndef  BORA_SLICING_PLOT_WIDGET_H
 #define  BORA_SLICING_PLOT_WIDGET_H
 
+//Work sround for older qwt releases
+#include <QtGlobal>
+#if QT_VERSION >= 0x050400
+ #define QT_STATIC_CONST static const
+#endif
+
 #include <vector>
 #include <qwt_plot.h>
 #include <qwt_picker.h>
