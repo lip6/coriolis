@@ -12,7 +12,6 @@ packages = [
 python = "^3.6"
 
 [tool.poetry.dev-dependencies]
-ninja = ">=1.10"
 cmake = ">=3"
 
 [tool.poetry.scripts]
@@ -28,4 +27,13 @@ requires = ["poetry-core", "setuptools", "cmake", "patchelf"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.cibuildwheel.linux]
-before-all = "yum install -y qt5-qtbase-devel qt5-qtsvg-devel boost-devel rapidjson-devel bison flex doxygen bzip2-devel python-devel"
+before-all = '''
+ yum install -y \
+ qt5-qtbase-devel qt5-qtsvg-devel \
+ rapidjson-devel bison flex doxygen bzip2-devel flex-devel \
+ boost-devel \
+ boost-python boost-filesystem \
+ boost-regex  boost-wave \
+ python3-devel libxml2-devel \
+ qwt-devel
+'''

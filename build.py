@@ -84,9 +84,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
 
-        cmake_args += [f"-DPYTHON_INCLUDE_DIR={get_python_inc()}"]
-        cmake_args += [f"-DPYTHON_LIBRARY={sysconfig.get_config_var('LIBDIR')}"]
-        cmake_args += [f"-DPYTHON_INTERPRETER={sys.executable}"]
+        cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
 
         cmake_args += ["-DPOETRY=1"]
         cmake_args += ["-DWITH_QT5=1"]
