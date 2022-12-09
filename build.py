@@ -91,7 +91,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += ["-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
         cmake_args += ["-DCMAKE_SKIP_BUILD_RPATH=FALSE"]
         cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"]
-        cmake_args += ["-DCMAKE_INSTALL_RPATH=\${ORIGIN}/lib"]
+        cmake_args += ["-DCMAKE_INSTALL_RPATH=\${ORIGIN}/lib:\${ORIGIN}"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"]
 
         subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
