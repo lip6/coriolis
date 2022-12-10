@@ -46,7 +46,7 @@
 
            add_library( tutorial     ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( tutorial     PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( tutorial     ${depLibs} )
+ target_link_libraries( tutorial     ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

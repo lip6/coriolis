@@ -56,7 +56,7 @@
 
            add_library( Seabreeze     ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( Seabreeze     PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( Seabreeze     ${depLibs} )
+ target_link_libraries( Seabreeze     ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

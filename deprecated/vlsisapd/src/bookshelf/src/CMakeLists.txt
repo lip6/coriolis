@@ -24,7 +24,7 @@
                        )            
                    set ( testcpps       BookshelfTkMain.cpp )
            add_library ( bookshelf      ${cpps} )
-#target_link_libraries ( bookshelf      vlsisapdutils )
+ target_link_libraries ( bookshelf      vlsisapdutils )
  set_target_properties ( bookshelf      PROPERTIES VERSION 1.0 SOVERSION 1 )
         add_executable ( bookshelf-tk   ${testcpps} )
  target_link_libraries ( bookshelf-tk   bookshelf ${Boost_LIBRARIES} ${Python_LIBRARIES})

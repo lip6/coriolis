@@ -30,31 +30,31 @@ endif ( HMETIS_FOUND )
 
            add_library ( metis         ${cpps} ${pyCpps} )
  set_target_properties ( metis         PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries ( metis         ${HMETIS_LIBRARIES}
-#                                      ${NIMBUS_LIBRARIES}
-#                                      ${CORIOLIS_LIBRARIES}
-#                                      ${HURRICANE_PYTHON_LIBRARIES}
-#                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
-#                                      ${HURRICANE_LIBRARIES}
-#                                      ${CONFIGURATION_LIBRARY}
-#                                      ${CIF_LIBRARY}
-#                                      ${AGDS_LIBRARY}
-#                                      ${LEFDEF_LIBRARIES}
-#                                      ${OA_LIBRARIES}
-#                                      ${QT_LIBRARIES}
-#                                      ${Boost_LIBRARIES}
-#                                      ${LIBXML2_LIBRARIES}
-#                                      ${Python_LIBRARIES} -lutil
-#                      )
+ target_link_libraries ( metis         ${HMETIS_LIBRARIES}
+                                       ${NIMBUS_LIBRARIES}
+                                       ${CORIOLIS_LIBRARIES}
+                                       ${HURRICANE_PYTHON_LIBRARIES}
+                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${HURRICANE_LIBRARIES}
+                                       ${CONFIGURATION_LIBRARY}
+                                       ${CIF_LIBRARY}
+                                       ${AGDS_LIBRARY}
+                                       ${LEFDEF_LIBRARIES}
+                                       ${OA_LIBRARIES}
+                                       ${QT_LIBRARIES}
+                                       ${Boost_LIBRARIES}
+                                       ${LIBXML2_LIBRARIES}
+                                       ${Python_LIBRARIES} -lutil
+                       )
 
            add_library ( pyMetis       MODULE ${pyCpps} )
  set_target_properties ( pyMetis       PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                                   PREFIX        ""
                                                   OUTPUT_NAME   "Metis"
                        )
-#target_link_libraries ( pyMetis       metis 
-#                                      ${CORIOLIS_PYTHON_LIBRARIES}
-#                      )
+ target_link_libraries ( pyMetis       metis 
+                                       ${CORIOLIS_PYTHON_LIBRARIES}
+                       )
 
                install ( TARGETS       metis           DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       pyMetis         DESTINATION ${PYTHON_SITE_PACKAGES} )
