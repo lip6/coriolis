@@ -115,7 +115,7 @@
 
            add_library( katana       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( katana       PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( katana       ${depLibs} )
+ target_link_libraries( katana       ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

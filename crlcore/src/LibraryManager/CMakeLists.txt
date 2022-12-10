@@ -35,22 +35,22 @@
 				     
            add_library( libmanager   ${cpps} ${moccpps} )
  set_target_properties( libmanager   PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( libmanager   crlcore
-#                                    ${HURRICANE_PYTHON_LIBRARIES}
-#                                    ${HURRICANE_GRAPHICAL_LIBRARIES}
-#                                    ${HURRICANE_LIBRARIES}
-#                                    ${BOOKSHELF_LIBRARY}
-#                                    ${CONFIGURATION_LIBRARY}
-#                                    ${CIF_LIBRARY}
-#                                    ${AGDS_LIBRARY}
-#                                    ${UTILITIES_LIBRARY}
-#                                    ${LEFDEF_LIBRARIES}
-#                                    ${OA_LIBRARIES}
-#                                    ${QtX_LIBRARIES}
-#                                    ${Boost_LIBRARIES}
-#                                    ${LIBXML2_LIBRARIES}
-#                                    ${Python_LIBRARIES} -lutil
-#                     )
+ target_link_libraries( libmanager   crlcore
+                                     ${HURRICANE_PYTHON_LIBRARIES}
+                                     ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                     ${HURRICANE_LIBRARIES}
+                                     ${BOOKSHELF_LIBRARY}
+                                     ${CONFIGURATION_LIBRARY}
+                                     ${CIF_LIBRARY}
+                                     ${AGDS_LIBRARY}
+                                     ${UTILITIES_LIBRARY}
+                                     ${LEFDEF_LIBRARIES}
+                                     ${OA_LIBRARIES}
+                                     ${QtX_LIBRARIES}
+                                     ${Boost_LIBRARIES}
+                                     ${LIBXML2_LIBRARIES}
+                                     ${Python_LIBRARIES} -lutil
+                      )
 
                install( TARGETS      libmanager DESTINATION lib${LIB_SUFFIX} )
                install( FILES        ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 
