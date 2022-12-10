@@ -91,7 +91,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += ["-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
         cmake_args += ["-DCMAKE_SKIP_BUILD_RPATH=FALSE"]
         cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"]
-        cmake_args += ["-DCMAKE_INSTALL_RPATH=\${ORIGIN}/lib:\${ORIGIN}"]
+        cmake_args += ["-DCMAKE_INSTALL_RPATH='$ORIGIN/lib:$ORIGIN'"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"]
 
         subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
@@ -105,7 +105,7 @@ class ExtensionBuilder(build_ext):
                 if 'ELF' in line: #TODO support other OSs
                     f = line.split(':')[0]
                     print(f"fixing up {f}")
-                    subprocess.check_call(["patchelf", "--set-rpath", '${ORIGIN}/../../lib', f])
+                    subprocess.check_call(["patchelf", "--set-rpath", '$ORIGIN/../../lib', f])
 
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
