@@ -78,7 +78,7 @@ endif ( CHECK_DETERMINISM )
 
            add_library( katabatic    ${cpps} )
  set_target_properties( katabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( katabatic    ${depLibs} )
+ target_link_libraries( katabatic    ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

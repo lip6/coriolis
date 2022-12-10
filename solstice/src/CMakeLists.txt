@@ -42,21 +42,21 @@
 
            add_library ( solstice       ${cpps} ${mocCpps} )
  set_target_properties ( solstice       PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries ( solstice       ${EQUINOX_LIBRARIES}
-#                                       ${CORIOLIS_LIBRARIES}
-#                                       ${HURRICANE_PYTHON_LIBRARIES}
-#                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-#                                       ${HURRICANE_LIBRARIES}
-#                                       ${CONFIGURATION_LIBRARY}
-#                                       ${CIF_LIBRARY}
-#                                       ${AGDS_LIBRARY}
-#                                       ${LEFDEF_LIBRARIES}
-#                                       ${OA_LIBRARIES}
-#                                       ${QtX_LIBRARIES}
-#                                       ${Boost_LIBRARIES}
-#                                       ${LIBXML2_LIBRARIES}
-#                                       ${Python_LIBRARIES} -lutil
-#                      )
+ target_link_libraries ( solstice       ${EQUINOX_LIBRARIES}
+                                        ${CORIOLIS_LIBRARIES}
+                                        ${HURRICANE_PYTHON_LIBRARIES}
+                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                        ${HURRICANE_LIBRARIES}
+                                        ${CONFIGURATION_LIBRARY}
+                                        ${CIF_LIBRARY}
+                                        ${AGDS_LIBRARY}
+                                        ${LEFDEF_LIBRARIES}
+                                        ${OA_LIBRARIES}
+                                        ${QtX_LIBRARIES}
+                                        ${Boost_LIBRARIES}
+                                        ${LIBXML2_LIBRARIES}
+                                        ${Python_LIBRARIES} -lutil
+                       )
 
                install ( TARGETS        solstice DESTINATION lib${LIB_SUFFIX} )
                install ( FILES          ${includes}

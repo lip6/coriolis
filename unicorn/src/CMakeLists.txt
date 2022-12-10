@@ -86,7 +86,7 @@
 
            add_library( unicorn       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( unicorn       ${depLibs} )
+ target_link_libraries( unicorn       ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

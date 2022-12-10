@@ -54,8 +54,8 @@ add_library ( liberty  ${cpps}
                        ${liberty_parser_cpps}
             )
 set_target_properties ( liberty PROPERTIES VERSION 1.0 SOVERSION 1)
-#target_link_libraries ( liberty ${Boost_LIBRARIES}
-#                      )
+ target_link_libraries ( liberty ${Boost_LIBRARIES}
+                       )
 
 install ( TARGETS  liberty DESTINATION lib${LIB_SUFFIX} )
 install ( FILES    ${includes} DESTINATION include/vlsisapd/liberty ) 
@@ -66,6 +66,6 @@ if ( Boost_FOUND )
                                       OUTPUT_NAME "LIBERTY"
                                       PREFIX      ""
                           )
-#   target_link_libraries ( pyLIBERTY liberty ${Boost_LIBRARIES} ${Python_LIBRARIES} )
+    target_link_libraries ( pyLIBERTY liberty ${Boost_LIBRARIES} ${Python_LIBRARIES} )
     install ( TARGETS pyLIBERTY DESTINATION ${PYTHON_SITE_PACKAGES} )
 endif ( Boost_FOUND )
