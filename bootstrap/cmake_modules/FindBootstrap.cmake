@@ -10,6 +10,7 @@
      cmake_policy(SET CMP0079 NEW)
      cmake_policy(SET CMP0022 NEW)
      cmake_policy(SET CMP0060 NEW)
+     cmake_policy(SET CMP0095 NEW)
     #if(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
     #  cmake_policy(SET CMP0014 OLD)
     #endif()
