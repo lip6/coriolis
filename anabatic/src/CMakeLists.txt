@@ -95,7 +95,7 @@ endif ( CHECK_DETERMINISM )
 
            add_library( anabatic    ${cpps} )
  set_target_properties( anabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( anabatic    ${depLibs} )
+ target_link_libraries( anabatic    ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

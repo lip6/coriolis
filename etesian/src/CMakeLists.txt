@@ -64,7 +64,7 @@
 
            add_library( etesian       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( etesian       PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries( etesian       ${depLibs} )
+ target_link_libraries( etesian       ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

@@ -41,12 +41,12 @@
 				         
            add_library ( configuration   ${cpps} ${mocCpps} ${RCC_SRCS} )
  set_target_properties ( configuration   PROPERTIES VERSION 1.0 SOVERSION 1 )
-#target_link_libraries ( configuration   vlsisapdutils
-#                                        ${QtX_LIBRARIES}
-#                                        ${Python_LIBRARIES}
-#                                        ${LIBXML2_LIBRARIES}
-#                                        ${Boost_LIBRARIES}
-#                      )
+ target_link_libraries ( configuration   vlsisapdutils
+                                         ${QtX_LIBRARIES}
+                                         ${Python_LIBRARIES}
+                                         ${LIBXML2_LIBRARIES}
+                                         ${Boost_LIBRARIES}
+                       )
 
  if (Boost_FOUND)
            add_library ( pyConfiguration MODULE ${pycpps})
@@ -54,11 +54,11 @@
                                          OUTPUT_NAME "Cfg"
                                          PREFIX      ""
                        )
-#target_link_libraries ( pyConfiguration configuration
-#                                        ${Python_LIBRARIES}
-#                                        ${LIBXML2_LIBRARIES}
-#                                        ${Boost_LIBRARIES}
-#                      )
+ target_link_libraries ( pyConfiguration configuration
+                                         ${Python_LIBRARIES}
+                                         ${LIBXML2_LIBRARIES}
+                                         ${Boost_LIBRARIES}
+                       )
                install ( TARGETS         pyConfiguration DESTINATION ${PYTHON_SITE_PACKAGES} )
  endif(Boost_FOUND)
 
