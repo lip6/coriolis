@@ -29,7 +29,19 @@ files = [
 [package.extras]
 test = ["codecov (>=2.0.5)", "coverage (>=4.2)", "flake8 (>=3.0.4)", "path.py (>=11.5.0)", "pytest (>=3.0.3)", "pytest-cov (>=2.4.0)", "pytest-runner (>=2.9)", "pytest-virtualenv (>=1.7.0)", "scikit-build (>=0.10.0)", "setuptools (>=28.0.0)", "virtualenv (>=15.0.3)", "wheel"]
 
+[[package]]
+name = "find-libpython"
+version = "0.3.0"
+description = "Finds the libpython associated with your environment, wherever it may be hiding"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "find_libpython-0.3.0-py3-none-any.whl", hash = "sha256:93fa14c8d007a7f9e6b650a486e249b49f01fd8d45b83ecf080a78b1a7011214"},
+    {file = "find_libpython-0.3.0.tar.gz", hash = "sha256:6e7fe5d9af7fad6dc066cb5515a0e9c90a71f1feb2bb2f8e4cdbb4f83276e9e5"},
+]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.6"
-content-hash = "e956596d7118030ea1144df674d8a26686da31c79cd9c861e20f0dbf697353d0"
+content-hash = "3977d779a407995475d178890d20631837483f241de6836600bb92b3d211766b"
