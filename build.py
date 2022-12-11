@@ -11,6 +11,7 @@ from distutils.version import LooseVersion
 from distutils.dir_util import copy_tree, remove_tree
 from distutils.sysconfig import get_python_inc
 import distutils.sysconfig as sysconfig
+from find_libpython import find_libpython
 from typing import Any, Dict
 
 from setuptools.command.build_ext import build_ext
@@ -85,6 +86,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
 
         cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
+        cmake_args += [f"-DPython_LIBRARY={find_libpython()}"]
 
         cmake_args += ["-DPOETRY=1"]
         cmake_args += ["-DWITH_QT5=1"]

@@ -23,7 +23,7 @@ unittests = 'Coriolis:unittests'
 yosys_coriolis = 'Coriolis:yosys_coriolis'
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "patchelf"]
+requires = ["poetry-core", "setuptools", "cmake", "patchelf", "find_libpython"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.cibuildwheel.linux]
