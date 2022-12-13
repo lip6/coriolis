@@ -231,6 +231,7 @@ namespace Cfg {
 
   bool  Parameter::setInt ( int i, Priority priority )
   {
+    std::cout.flush();
     if ( not _updatePriority(priority) ) return false;
 
     if ( (_type != Int) and (_type != Enumerate)  )
@@ -353,10 +354,11 @@ namespace Cfg {
       }
     }
 
-  //cerr << " updated" << endl;
 
     _value = svalue.str();
     _onValueChanged();
+
+  //cerr << " updated _value=\"" << _value << "\"" << endl;
 
     return true;
   }

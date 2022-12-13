@@ -236,6 +236,7 @@ namespace Anabatic {
       virtual bool                          _do_xG_xM2             ();
       virtual bool                          _do_1G_1M3             ();
       virtual bool                          _do_xG_xM3             ();
+      virtual bool                          _do_1G_xM1_1PinM1      ();
       virtual bool                          _do_1G_xM1_1PinM2      ();
       virtual bool                          _do_2G_xM1_1PinM2      ();
       virtual bool                          _do_1G_1M1_1PinM3      ();
@@ -344,6 +345,8 @@ namespace Anabatic {
                          , Conn_1G_1PinM2     = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
                          , Conn_2G_1PinM2     = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
                          , Conn_3G_1PinM2     = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )
+                         , Conn_1G_1M1_1PinM1 = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
+                         , Conn_1G_2M1_1PinM1 = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 1 )
                          , Conn_1G_1M1_1PinM2 = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 1 )
                          , Conn_1G_2M1_1PinM2 = CONNEXITY_VALUE( 1, 2, 1, 0, 0 , 1 )
                          , Conn_1G_3M1_1PinM2 = CONNEXITY_VALUE( 1, 3, 1, 0, 0 , 1 )

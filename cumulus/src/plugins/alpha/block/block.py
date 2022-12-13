@@ -161,6 +161,7 @@ class Side ( object ):
         check for out of bounds coordinates.
         """
 
+        trace( 550, '\tSide.place() {}\n'.format(ioPin) )
         status = 0
         if self.side & (IoPin.NORTH | IoPin.SOUTH):
             gauge = self.conf.vDeepRG
@@ -298,6 +299,7 @@ class Block ( object ):
         Create a Block object. The only parameter ``conf`` must be a BlockConf
         object which contains the complete block configuration.
         """
+        conf._postInit()
         self.flags            = 0
         self.conf             = conf
         self.spares           = Spares( self )
@@ -617,6 +619,7 @@ class Block ( object ):
         Place the Pins on all the sides. Raise an exception in case of failure.
         (mainly due to Pins outside the side range)
         """
+        trace( 550, ',+', '\tBlock.placeIoPins().\n' )
         faileds = 0
         with UpdateSession():
             for ioPin in self.conf.ioPins:
@@ -625,6 +628,7 @@ class Block ( object ):
                 elif ioPin.flags & IoPin.EAST:  side = self.sides[IoPin.EAST ]
                 else:                           side = self.sides[IoPin.WEST ]
                 faileds += side.place( ioPin )
+        trace( 550, ',-' )
         if faileds:
             raise ErrorMessage( 3, 'Block.placeIoPins(): Cell "{}" has {} badly placed pins.' \
                                    .format(self.conf.cell.getName(),faileds) )
@@ -846,6 +850,8 @@ class Block ( object ):
             break
         self.splitHTrees()
         self.spares.removeUnusedBuffers()
+        for trackAvoid in self.conf.trackAvoids:
+            self.etesian.addTrackAvoid( trackAvoid )
         self.etesian.toHurricane()
         self.etesian.flattenPower()
         if self.conf.isCoreBlock: self.doConnectCore()

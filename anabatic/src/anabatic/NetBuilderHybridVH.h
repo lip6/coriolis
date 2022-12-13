@@ -51,6 +51,7 @@ namespace Anabatic {
       // virtual bool          _do_xG_xM3         ();
       // virtual bool          _do_xG_1M1_1M2     ();
       virtual bool          _do_xG_xM1_xM3     ();
+      virtual bool          _do_1G_xM1_1PinM1  ();
       virtual bool          _do_1G_xM1_1PinM2  ();
       // virtual bool          _do_4G_1M2         ();
       virtual bool          _do_2G             ();

@@ -266,11 +266,10 @@ namespace Anabatic {
         } else {
           currContact = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(0) );
         }
-        AutoSegment::create( currTerm, currContact, Flags::Vertical );
       } else {
         currContact = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(0) );
       }
-
+      AutoSegment::create( currTerm   , currContact, Flags::Vertical );
       AutoSegment::create( prevContact, currContact, Flags::Horizontal );
     }
 
@@ -379,6 +378,38 @@ namespace Anabatic {
     return true;
   }
   
+
+  bool  NetBuilderHybridVH::_do_1G_xM1_1PinM1 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_xM1_1PinM1() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
+
+    vector<RoutingPad*> rpsM1;
+    RoutingPad*         rpM2  = nullptr;
+    for ( RoutingPad* rp : getRoutingPads() ) {
+      if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) rpM2 = rp;
+      else rpsM1.push_back( rp );
+    }
+    if (rpsM1.size() > 1)
+      doRp_xG_xM1_xM3( rpsM1 );
+    else
+      doRp_xG_1M1( rpsM1[0] );
+
+    Pin*         pin            = dynamic_cast<Pin*>( rpM2->getOccurrence().getEntity() );
+    Pin::AccessDirection pinDir = pin->getAccessDirection();
+    AutoContact* rpContact      = doRp_AccessNorthSouthPin( getGCell(), rpM2 );
+    AutoContact* rpM1Contact    = doRp_Access( getGCell(), rpsM1.front(), NoFlags );
+    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(0) );
+    AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(0) );
+    AutoSegment::create( rpM1Contact, turn1, Flags::Vertical );
+    AutoSegment::create( rpContact  , turn2, Flags::Vertical );
+    AutoSegment::create( turn1      , turn2, Flags::Horizontal );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
 
   bool  NetBuilderHybridVH::doRp_1G_1PinM2 ( RoutingPad* rp )
   {

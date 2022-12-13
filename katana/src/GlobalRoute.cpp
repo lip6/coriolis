@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "GlobalRoute.cpp<katana>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |

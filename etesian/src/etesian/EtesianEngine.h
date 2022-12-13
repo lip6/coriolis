@@ -73,80 +73,82 @@ namespace Etesian {
       typedef std::map<Net*,size_t,DBo::CompareById>           NetsToIds;
       typedef std::set<std::string>                            NetNameSet;
     public:
-      static  const Name&            staticGetName             ();
-      static  EtesianEngine*         create                    ( Cell* );
-      static  EtesianEngine*         get                       ( const Cell* );
-    public:                                                    
-      inline  bool                   isExcluded                ( std::string ) const;
-      virtual Configuration*         getConfiguration          ();
-      virtual const Configuration*   getConfiguration          () const;
-      virtual const Name&            getName                   () const;
-      inline  RoutingGauge*          getGauge                  () const;
-      inline  CellGauge*             getCellGauge              () const;
-      inline  DbU::Unit              getHorizontalPitch        () const;
-      inline  DbU::Unit              getVerticalPitch          () const;
-      inline  DbU::Unit              getSliceHeight            () const;
-      inline  DbU::Unit              getSliceStep              () const;
-      inline  DbU::Unit              getFixedAbHeight          () const;
-      inline  DbU::Unit              getFixedAbWidth           () const;
-      inline  Effort                 getPlaceEffort            () const;
-      inline  GraphicUpdate          getUpdateConf             () const;
-      inline  Density                getSpreadingConf          () const;
-      inline  double                 getSpaceMargin            () const;
-      inline  double                 getAspectRatio            () const;
-      inline  double                 getAntennaInsertThreshold () const;
-      inline  DbU::Unit              getAntennaGateMaxWL       () const;
-      inline  DbU::Unit              getAntennaDiodeMaxWL      () const;
-      inline  DbU::Unit              getLatchUpDistance        () const;
-      inline  const FeedCells&       getFeedCells              () const;
-      inline  const BufferCells&     getBufferCells            () const;
-      inline  Cell*                  getDiodeCell              () const;
-              std::string            getUniqueDiodeName        ();
-      inline  const Box&             getPlaceArea              () const;
-      inline  Area*                  getArea                   () const;
-      inline  Hurricane::CellViewer* getViewer                 () const;
-      inline  void                   setViewer                 ( Hurricane::CellViewer* );
-      inline  Cell*                  getBlockCell              () const;
-      inline  Instance*              getBlockInstance          () const;
-      inline  const NetNameSet&      getExcludedNets           () const;
-      inline  void                   setBlock                  ( Instance* );
-      inline  void                   setFixedAbHeight          ( DbU::Unit );
-      inline  void                   setFixedAbWidth           ( DbU::Unit );
-      inline  void                   setSpaceMargin            ( double );
-      inline  void                   setAspectRatio            ( double );
-              void                   setDefaultAb              ();
-              void                   adjustSliceHeight         ();
-              void                   resetPlacement            ();
-              void                   clearColoquinte           ();
-              void                   loadLeafCellLayouts       ();
-      inline  DbU::Unit              toDbU                     ( int64_t ) const;
-      inline  Occurrence             toCell                    ( Occurrence ) const;
-      inline  Point                  toCell                    ( const Point& ) const;
-      inline  Box                    toCell                    ( const Box& ) const;
-      inline  Transformation         toCell                    ( Transformation ) const;
-      inline  Path                   toBlock                   ( Path ) const;
-      inline  Occurrence             toBlock                   ( Occurrence ) const;
-      inline  Point                  toBlock                   ( const Point& ) const;
-      inline  Transformation         toBlock                   ( const Transformation& ) const;
-              void                   setPlaceArea              ( const Box& );
-              size_t                 toColoquinte              ();
-              void                   preplace                  ();
-              void                   roughLegalize             ( float minDisruption, unsigned options );
-              void                   globalPlace               ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
-              void                   detailedPlace             ( int iterations, int effort, unsigned options=0 );
-              void                   antennaProtect            ();
-              void                   place                     ();
-              uint32_t               doHFNS                    ();
-      inline  void                   useFeed                   ( Cell* );
-              size_t                 findYSpin                 ();
-      inline  void                   exclude                   ( string netName );
-              void                   addFeeds                  ();
-              void                   toHurricane               ();
-              void                   flattenPower              ();
-      inline  void                   selectBloat               ( std::string );
-      virtual Record*                _getRecord                () const;
-      virtual std::string            _getString                () const;
-      virtual std::string            _getTypeName              () const;
+      static  const Name&             staticGetName             ();
+      static  EtesianEngine*          create                    ( Cell* );
+      static  EtesianEngine*          get                       ( const Cell* );
+    public:                                                     
+      inline  bool                    isExcluded                ( std::string ) const;
+      virtual Configuration*          getConfiguration          ();
+      virtual const Configuration*    getConfiguration          () const;
+      virtual const Name&             getName                   () const;
+      inline  RoutingGauge*           getGauge                  () const;
+      inline  CellGauge*              getCellGauge              () const;
+      inline  DbU::Unit               getHorizontalPitch        () const;
+      inline  DbU::Unit               getVerticalPitch          () const;
+      inline  DbU::Unit               getSliceHeight            () const;
+      inline  DbU::Unit               getSliceStep              () const;
+      inline  DbU::Unit               getFixedAbHeight          () const;
+      inline  DbU::Unit               getFixedAbWidth           () const;
+      inline  Effort                  getPlaceEffort            () const;
+      inline  GraphicUpdate           getUpdateConf             () const;
+      inline  Density                 getSpreadingConf          () const;
+      inline  double                  getSpaceMargin            () const;
+      inline  double                  getAspectRatio            () const;
+      inline  double                  getAntennaInsertThreshold () const;
+      inline  DbU::Unit               getAntennaGateMaxWL       () const;
+      inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
+      inline  DbU::Unit               getLatchUpDistance        () const;
+      inline  const FeedCells&        getFeedCells              () const;
+      inline  const BufferCells&      getBufferCells            () const;
+      inline  Cell*                   getDiodeCell              () const;
+              std::string             getUniqueDiodeName        ();
+      inline  const Box&              getPlaceArea              () const;
+      inline  Area*                   getArea                   () const;
+      inline  Hurricane::CellViewer*  getViewer                 () const;
+      inline  void                    setViewer                 ( Hurricane::CellViewer* );
+      inline  Cell*                   getBlockCell              () const;
+      inline  Instance*               getBlockInstance          () const;
+      inline  const NetNameSet&       getExcludedNets           () const;
+      inline  const std::vector<Box>& getTrackAvoids            () const;
+      inline  void                    setBlock                  ( Instance* );
+      inline  void                    setFixedAbHeight          ( DbU::Unit );
+      inline  void                    setFixedAbWidth           ( DbU::Unit );
+      inline  void                    setSpaceMargin            ( double );
+      inline  void                    setAspectRatio            ( double );
+              void                    setDefaultAb              ();
+              void                    adjustSliceHeight         ();
+              void                    resetPlacement            ();
+              void                    clearColoquinte           ();
+              void                    loadLeafCellLayouts       ();
+      inline  DbU::Unit               toDbU                     ( int64_t ) const;
+      inline  Occurrence              toCell                    ( Occurrence ) const;
+      inline  Point                   toCell                    ( const Point& ) const;
+      inline  Box                     toCell                    ( const Box& ) const;
+      inline  Transformation          toCell                    ( Transformation ) const;
+      inline  Path                    toBlock                   ( Path ) const;
+      inline  Occurrence              toBlock                   ( Occurrence ) const;
+      inline  Point                   toBlock                   ( const Point& ) const;
+      inline  Transformation          toBlock                   ( const Transformation& ) const;
+              void                    setPlaceArea              ( const Box& );
+              size_t                  toColoquinte              ();
+              void                    preplace                  ();
+              void                    roughLegalize             ( float minDisruption, unsigned options );
+              void                    globalPlace               ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
+              void                    detailedPlace             ( int iterations, int effort, unsigned options=0 );
+              void                    antennaProtect            ();
+              void                    place                     ();
+              uint32_t                doHFNS                    ();
+      inline  void                    useFeed                   ( Cell* );
+              size_t                  findYSpin                 ();
+      inline  void                    exclude                   ( string netName );
+              void                    addFeeds                  ();
+              void                    toHurricane               ();
+              void                    flattenPower              ();
+      inline  void                    selectBloat               ( std::string );
+      inline  void                    addTrackAvoid             ( const Box& );
+      virtual Record*                 _getRecord                () const;
+      virtual std::string             _getString                () const;
+      virtual std::string             _getTypeName              () const;
     private:
     // Attributes.
       static Name                                 _toolName;
@@ -157,6 +159,7 @@ namespace Etesian {
              bool                                 _ySpinSet;
              bool                                 _flatDesign;
              Box                                  _placeArea;
+             std::vector<Box>                     _trackAvoids;
              coloquinte::box<coloquinte::int_t>*  _surface;
              coloquinte::netlist*                 _circuit;
              coloquinte::placement_t*             _placementLB;
@@ -236,6 +239,14 @@ namespace Etesian {
   inline  Area*                  EtesianEngine::getArea                   () const { return _area; }
   inline  const EtesianEngine::NetNameSet&
                                  EtesianEngine::getExcludedNets           () const { return _excludedNets; }
+  inline  const std::vector<Box>&
+                                 EtesianEngine::getTrackAvoids            () const { return _trackAvoids; }
+
+  inline  void  EtesianEngine::addTrackAvoid ( const Box& box )
+  {
+    cdebug_log(121,0) << "EtesianEngine::trackAvoid() over " << box << std::endl;
+    _trackAvoids.push_back( box );
+  }
 
   inline  void  EtesianEngine::setBlock ( Instance* block )
   {

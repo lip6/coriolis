@@ -117,12 +117,13 @@ namespace Etesian {
 
   class BloatCells {
     public:
-      inline               BloatCells            ( EtesianEngine* );
-      inline              ~BloatCells            ();
-             bool          select                ( std::string );
-             Box           getAb                 ( Occurrence );
-      inline DbU::Unit     getDxSpace            () const;
-      inline void          resetDxSpace          ();
+      inline                     BloatCells            ( EtesianEngine* );
+      inline                    ~BloatCells            ();
+                   bool          select                ( std::string );
+                   Box           getAb                 ( Occurrence );
+      inline const BloatCell*    getSelected           () const;
+      inline       DbU::Unit     getDxSpace            () const;
+      inline       void          resetDxSpace          ();
     private:
       EtesianEngine*                           _etesian;
       BloatCell*                               _selected;
@@ -153,8 +154,9 @@ namespace Etesian {
   }
 
   
-  inline DbU::Unit  BloatCells::getDxSpace   () const { return _dxSpace; }
-  inline void       BloatCells::resetDxSpace () { _dxSpace = 0; }
+  inline       DbU::Unit  BloatCells::getDxSpace   () const { return _dxSpace; }
+  inline       void       BloatCells::resetDxSpace () { _dxSpace = 0; }
+  inline const BloatCell* BloatCells::getSelected  () const { return _selected; }
 
 
 } // Etesian namespace.

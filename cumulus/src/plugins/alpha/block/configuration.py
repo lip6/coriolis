@@ -135,8 +135,11 @@ class GaugeConf ( object ):
 
     def _loadRoutingGauge ( self ):
         trace( 550, ',+', '\tGaugeConf._loadRoutingGauge()\n' )
-        gaugeName = Cfg.getParamString('anabatic.routingGauge').asString()
-        self._cellGauge    = CRL.AllianceFramework.get().getCellGauge( gaugeName )
+        gaugeName     = Cfg.getParamString('anabatic.routingGauge').asString()
+        cellGaugeName = Cfg.getParamString('anabatic.cellGauge').asString()
+        if not cellGaugeName or cellGaugeName == '<undefined>':
+            cellGaugeName = gaugeName
+        self._cellGauge    = CRL.AllianceFramework.get().getCellGauge( cellGaugeName )
         self._routingGauge = CRL.AllianceFramework.get().getRoutingGauge( gaugeName )
 
         if not self._routingGauge:
@@ -882,8 +885,8 @@ class BufferConf ( object ):
         instance = Instance.create( cell, 'spare_buffer_{}'.format(self.count), self.masterCell )
         trace( 550, '\tBufferConf.createBuffer(): cell={}, instance={}\n' \
                     .format( cell, instance ))
-        trace( 550, '\tplug={}\n'.format( instance.getPlug( self.masterCell.getNet('q') ) ))
-        trace( 550, '\tplug.getCell()={}\n'.format( instance.getPlug( self.masterCell.getNet('q') ).getCell() ))
+        trace( 550, '\tplug={}\n'.format( instance.getPlug( self.masterCell.getNet(self.output) ) ))
+        trace( 550, '\tplug.getCell()={}\n'.format( instance.getPlug( self.masterCell.getNet(self.output) ).getCell() ))
         self.count += 1
         return instance
 
@@ -988,9 +991,11 @@ class FeedsConf ( object ):
         trace( 550, ',+', '\tFeedsConf.__init__()\n' )
         cfg.etesian.feedNames       = None
         cfg.etesian.latchUpDistance = None
+        cfg.etesian.defaultFeed     = None
         feeds = cfg.etesian.feedNames.split(',')
-        self.count = 0
-        self.feeds = []
+        self.count       = 0
+        self.feeds       = []
+        self.defaultFeed = 0
         for feedName in feeds:
             feedCell = framework.getCell( feedName, CRL.Catalog.State.Views )
             if not feedCell:
@@ -1006,16 +1011,20 @@ class FeedsConf ( object ):
         for i in range(len(self.feeds)):
             trace( 550, '\t[{:>2}] {:>10} {}\n' \
                         .format(i,DbU.getValueString(self.feeds[i][0]),self.feeds[i][1]) ) 
+            if self.feeds[i][1].getName() == cfg.etesian.defaultFeed:
+                self.defaultFeed = i
         trace( 550, '-' )
         return
 
     def tieWidth ( self ):
         """Returns the master cell abutment box width of the tie."""
-        if self.feeds: return self.feeds[0][0]
+        if self.feeds: return self.feeds[ self.defaultFeed ][0]
         return None
 
     def createFeed ( self, cell ):
-        instance = Instance.create( cell, 'spare_feed_{}'.format(self.count), self.feeds[0][1] )
+        instance = Instance.create( cell
+                                  , 'spare_feed_{}'.format(self.count)
+                                  , self.feeds[self.defaultFeed][1] )
         self.count += 1
         return instance
 
@@ -1150,6 +1159,14 @@ class IoPin ( object ):
             if value & constant:
                 if len(s): s += '|'
                 s += 'IoPin.'+name
+        return s
+
+    def __repr__ ( self ):
+        s = '<IoPin "{}" {} @({},{},{})>'.format( self.stem
+                                                , IoPin.toStr(self.flags)
+                                                , DbU.getValueString(self.upos)
+                                                , DbU.getValueString(self.ustep)
+                                                , self.count )
         return s
 
     def __init__ ( self, flags, stem, upos, ustep=0, count=1 ):
@@ -1304,13 +1321,14 @@ class BlockConf ( GaugeConf ):
         self.editor        = None
         self.framework     = CRL.AllianceFramework.get()
         self.cfg           = CfgCache('',Cfg.Parameter.Priority.Interactive)
-        self.bufferConf    = BufferConf( self.framework )
-        self.constantsConf = ConstantsConf( self.framework, self.cfg )
-        self.feedsConf     = FeedsConf( self.framework, self.cfg )
-        self.powersConf    = PowersConf( self.framework, self.cfg )
-        self.chipConf      = ChipConf( self )
+        self.bufferConf    = None
+        self.constantsConf = None
+        self.feedsConf     = None
+        self.powersConf    = None
+        self.chipConf      = None
         self.bColumns      = 2
         self.bRows         = 2
+        self.sparesTies    = True
         self.cloneds       = []
         self.cell          = cell
         self.icore         = None
@@ -1324,22 +1342,33 @@ class BlockConf ( GaugeConf ):
         self.hTreeDatas    = [ ]
         self.useHFNS       = False
         self.useSpares     = True
+        self.trackAvoids   = []
         self.isBuilt       = False
         self.useHarness    = False
         self.ioPins        = []
         self.ioPinsCounts  = {}
-        for ioPinSpec in ioPins:
-            self.ioPins.append( IoPin( *ioPinSpec ) )
-        for line in range(len(ioPads)):
-            self.chipConf.addIoPad( ioPads[line], line )
+        self.ioPinsArg     = ioPins
+        self.ioPadsArg     = ioPads
         self.cfg.etesian.aspectRatio     = None
         self.cfg.etesian.spaceMargin     = None
         self.cfg.etesian.latchUpDistance = None
         self.cfg.block.spareSide         = None
         self.cfg.block.vRailsPeriod      = None
         self.cfg.katana.dumpMeasures     = None
-        self.etesian = None
-        self.katana  = None
+        self.chipConf = ChipConf( self )
+        self.etesian  = None
+        self.katana   = None
+
+    def _postInit ( self ):
+        self.cfg.apply()
+        self.bufferConf    = BufferConf( self.framework )
+        self.constantsConf = ConstantsConf( self.framework, self.cfg )
+        self.feedsConf     = FeedsConf( self.framework, self.cfg )
+        self.powersConf    = PowersConf( self.framework, self.cfg )
+        for ioPinSpec in self.ioPinsArg:
+            self.ioPins.append( IoPin( *ioPinSpec ) )
+        for line in range(len(self.ioPadsArg)):
+            self.chipConf.addIoPad( self.ioPadsArg[line], line )
 
     @property
     def isCoreBlock ( self ): return self.chip is not None
@@ -1437,6 +1466,10 @@ class BlockConf ( GaugeConf ):
                                        .format(netName)) )
                 return
         self.hTreeDatas.append( [ netName, flags ] );
+
+    def addTrackAvoid ( self, trackAvoid ):
+        if self.cfg.anabatic.netBuilderStyle == 'VH,2RL':
+            self.trackAvoids.append( trackAvoid )
   
     def save ( self, flags ):
         """

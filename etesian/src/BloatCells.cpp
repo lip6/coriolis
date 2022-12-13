@@ -158,14 +158,18 @@ namespace Etesian {
 
   DbU::Unit  BloatChannel::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
   {
+    Box ab ( cell->getAbutmentBox() );
+    DbU::Unit vpitch = etesian->getSliceStep();;
+    int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
+#if THIS_IS_DISABLED
+    return (xsize < 5) ? ((5-xsize)*vpitch) : 0; 
+#endif
+
     int terminals = 0;
     for ( Net* net : cell->getNets() ) {
       if (net->isExternal() and not net->isPower()) ++terminals;
     }
 
-    Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getSliceStep();;
-    int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
     int       extra  = 0;
     float  termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
     if (termRatio > 0.8) extra += 1;

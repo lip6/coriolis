@@ -772,6 +772,7 @@ namespace Anabatic {
         case Conn_1G_1PinM3:      _do_1G_1PinM3    (); break;
         case Conn_2G_1PinM3:                       
         case Conn_3G_1PinM3:      _do_xG_1PinM3    (); break;
+        case Conn_1G_2M1_1PinM1:  _do_1G_xM1_1PinM1(); break;
         case Conn_1G_1M1_1PinM3:  _do_1G_1M1_1PinM3(); break;
         case Conn_1G_1M1_1PinM2:
         case Conn_1G_2M1_1PinM2:
@@ -1264,6 +1265,13 @@ namespace Anabatic {
   bool  NetBuilder::_do_2G_xM1_1PinM3 ()
   {
     throw Error ( "%s::_do_2G_xM1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_1G_xM1_1PinM1 ()
+  {
+    throw Error ( "%s::_do_1G_xM1_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 

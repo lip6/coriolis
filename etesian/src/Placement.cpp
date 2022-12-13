@@ -23,6 +23,8 @@
 #include "hurricane/DeepNet.h"
 #include "hurricane/Plug.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/Path.h"
 #include "hurricane/Library.h"
 #include "hurricane/viewer/CellWidget.h"
@@ -43,9 +45,12 @@ namespace Etesian {
   using Hurricane::Transformation;
   using Hurricane::DataBase;
   using Hurricane::Library;
+  using Hurricane::Component;
   using Hurricane::DeepNet;
   using Hurricane::Plug;
   using Hurricane::RoutingPad;
+  using Hurricane::Vertical;
+  using Hurricane::NetExternalComponents;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
   using CRL::AllianceFramework;
@@ -179,6 +184,20 @@ namespace Etesian {
     }
   }
 
+
+  void  Slice::trackAvoid ( DbU::Unit xTrack )
+  {
+    cdebug_log(121,1) << "Slice::trackAvoid() " << this << " @" << DbU::getValueString(xTrack) << endl;
+    for ( SubSlice& subSlice : _subSlices ) {
+      if (subSlice.getXMax() == xTrack) break;
+      if (subSlice.getXMax()  > xTrack) {
+        subSlice.trackAvoid( xTrack );
+        break;
+      }
+    }
+    cdebug_tabw(121,-1);
+  }
+  
 
   void  Slice::insertTies ( DbU::Unit latchUpMax )
   {
@@ -521,7 +540,6 @@ namespace Etesian {
 
     size_t ibegin = (flatAb.getYMin()-_placeArea.getYMin()) / _sliceHeight;
     size_t iend   = (flatAb.getYMax()-_placeArea.getYMin()) / _sliceHeight;
-
     for ( size_t islice=ibegin ; islice<iend ; ++islice ) {
       _slices[islice]->merge( occurrence, flatAb );
     }
@@ -542,6 +560,29 @@ namespace Etesian {
 
   void   Area::showSubSlices ()
   { for ( Slice* slice : _slices ) slice->showSubSlices(); }
+
+
+  void  Area::trackAvoid ( const Box& trackAvoid )
+  {
+    cdebug_log(121,1) << "Area::trackAvoid() over " << trackAvoid << endl;
+    Box areaTrackAvoid = _placeArea.getIntersection( trackAvoid );
+    if (areaTrackAvoid.isEmpty()) {
+      cerr << Warning( "Area::trackAvoid(): Track avoid area %s fully outside placement area %s."
+                     , getString(trackAvoid).c_str()
+                     , getString(_placeArea).c_str()
+                     ) << endl;
+      return;
+    }
+
+    DbU::Unit xTrack = areaTrackAvoid.getXCenter();
+    size_t    ibegin = (areaTrackAvoid.getYMin()-_placeArea.getYMin()) / _sliceHeight;
+    size_t    iend   = (areaTrackAvoid.getYMax()-_placeArea.getYMin()) / _sliceHeight + 1;
+    if (iend and (iend >= _slices.size())) --iend;
+    for ( size_t islice=ibegin ; islice<iend ; ++islice ) {
+      _slices[islice]->trackAvoid( xTrack );
+    }
+    cdebug_tabw(121,-1);
+  }
 
 
   void  Area::insertTies ( DbU::Unit latchUpMax )
@@ -577,6 +618,34 @@ namespace Etesian {
   }
 
 
+  size_t  SubSlice::getUsedVTracks ( const Tile& tile, set<DbU::Unit>& vtracks )
+  {
+    DbU::Unit vpitch = _slice->getArea()->getEtesian()->getSliceStep();
+    Cell* cell = tile.getMasterCell();
+    for ( Net* net : cell->getNets() ) {
+      if (not net->isExternal()) continue;
+      if (net->isPower() or net->isGround()) continue;
+      for ( Component* component : NetExternalComponents::get(net) ) {
+        Vertical* v = dynamic_cast<Vertical*>( component );
+        if (not v) continue;
+
+        Transformation transf = tile.getInstance()->getTransformation();
+        tile.getOccurrence().getPath().getTransformation().applyOn( transf );
+        Point center = transf.getPoint( v->getBoundingBox().getCenter() );
+        if (center.getX() % vpitch) {
+          cerr << Error( "Slice::getUsedVTracks(): Misaligned terminal %s.\n"
+                         "        (in %s)"
+                       , getString(v).c_str()
+                       , getString(tile.getOccurrence()).c_str()
+                       ) << endl;
+        }
+        vtracks.insert( center.getX() );
+      }
+    }
+    return vtracks.size();
+  }
+
+
   DbU::Unit  SubSlice::getAverageChunk ( size_t& count ) const
   {
     count = 0;
@@ -597,6 +666,80 @@ namespace Etesian {
     return (feedWidth * (xmax - xmin)) / (xmax - xmin - usedLength);
   }
 
+
+  void  SubSlice::trackAvoid ( DbU::Unit xTrack )
+  {
+    DbU::Unit xMin      = getXMin();
+    DbU::Unit xMax      = getXMax();
+    auto      beginTile = _beginTile;
+    auto      endTile   = _endTile;
+    if ((*beginTile).isFixed()) {
+      xMin += (*beginTile).getWidth();
+      ++beginTile;
+    }
+    if (endTile == _slice->getTiles().end()) {
+      --endTile;
+    } else if ((*endTile).isFixed()) {
+      xMax = (*endTile).getXMin();
+      --endTile;
+    }
+
+    auto iTile = _beginTile;
+    while ( true ) {
+      Instance* instance = (*iTile).getInstance();
+
+      if ((*iTile).getXMin() >= xTrack) break;
+      if ((*iTile).getXMax() == xTrack) break;
+      if ((*iTile).getXMax()  > xTrack) {
+        cdebug_log(121,0) << instance->getName() << " accross V-Track @" << DbU::getValueString(xTrack) << endl;
+        set<DbU::Unit> usedVTracks;
+        getUsedVTracks( *iTile, usedVTracks );
+        for ( DbU::Unit x : usedVTracks )
+          cdebug_log(121,0) << "| V-Track @" << DbU::getValueString(x) << endl;
+        if (not usedVTracks.count(xTrack)) break;
+
+        DbU::Unit vpitch     = _slice->getArea()->getEtesian()->getSliceStep();
+        DbU::Unit maxDxLeft  = 0;
+        DbU::Unit maxDxRight = 0;
+        if (iTile != beginTile) {
+          auto prevTile = iTile;
+          --prevTile;
+          maxDxLeft = (*prevTile).getXMax() - (*iTile).getXMin();
+        }
+        if (iTile != endTile) {
+          auto nextTile = iTile;
+          --nextTile;
+          maxDxRight = (*nextTile).getXMin() - (*iTile).getXMax();
+        }
+        DbU::Unit xShift = 0;
+        for ( ; xShift <= maxDxLeft ; xShift += vpitch ) {
+          cdebug_log(121,0) << "| try left shift " << DbU::getValueString(-xShift) << endl;
+          if (not usedVTracks.count( xTrack + xShift )) break;
+        }
+        if (xShift > maxDxLeft) {
+          xShift = - vpitch;
+          for ( ; xShift > maxDxRight ; xShift -= vpitch ) {
+            cdebug_log(121,0) << "| try right shift " << DbU::getValueString(-xShift) << endl;
+            if (not usedVTracks.count( xTrack + xShift )) break;
+          }
+        }
+        if (xShift < maxDxRight) {
+          cerr << Error( "SubSlice::trackAvoid(): Unable to put out of the way %s."
+                       , getString(*iTile).c_str()
+                       ) << endl;
+          break;
+        }
+        cdebug_log(121,0) << "Shifting " << (*iTile) << " by " << DbU::getValueString(-xShift) << endl;
+        (*iTile).translate( -xShift );
+        
+        break;
+      }
+    
+      if (iTile == endTile) break;
+      ++iTile;
+    }
+  }
+  
 
   void  SubSlice::insertTies ( DbU::Unit latchUpMax )
   {
@@ -838,6 +981,8 @@ namespace Etesian {
 
     _area->buildSubSlices();
     _area->showSubSlices();
+    for ( const Box& trackAvoid : _trackAvoids )
+      _area->trackAvoid( trackAvoid );
 #if DISABLED_TIE_INSERTION
     if (getConfiguration()->getLatchUpDistance()) {
       Cell*     feed       = getFeedCells().getBiggestFeed();

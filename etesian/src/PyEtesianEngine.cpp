@@ -188,8 +188,6 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyEtesianEngine_setPLaceArea ()"
 
   static PyObject* PyEtesianEngine_setPlaceArea ( PyEtesianEngine *self, PyObject* args )
   {
@@ -220,6 +218,22 @@ extern "C" {
     } else {
       etesian->place();
     }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyEtesianEngine_addTrackAvoid ( PyEtesianEngine *self, PyObject* args )
+  {
+    cdebug_log(34,0) << "EtesianEngine.addTrackAvoid()" << endl;
+    HTRY
+      METHOD_HEAD ( "EtesianEngine.addTrackAvoid()" )
+      PyBox* pyBox;
+      if (not PyArg_ParseTuple(args,"O!:EtesianEngine.addTrackAvoid", &PyTypeBox, &pyBox)) {
+        PyErr_SetString( ConstructorError, "EtesianEngine.addTrackAvoid(): Parameter is not an Box." );
+        return NULL;
+      }
+      etesian->addTrackAvoid( *PYBOX_O(pyBox) );
     HCATCH
     Py_RETURN_NONE;
   }
@@ -271,6 +285,8 @@ extern "C" {
                             , "Build abstract interface in top cell for supply & blockages." }
     , { "doHFNS"            , (PyCFunction)PyEtesianEngine_doHFNS            , METH_NOARGS
                             , "Perform the high fanout net synthesis." }
+    , { "addTrackAvoid"     , (PyCFunction)PyEtesianEngine_addTrackAvoid     , METH_VARARGS
+                            , "Mark a vertical track under which no terminal should be present." }
     , { "toHurricane"       , (PyCFunction)PyEtesianEngine_toHurricane       , METH_NOARGS
                             , "Build the Hurricane post-placement manipulation structure." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS

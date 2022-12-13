@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2014-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |   E t e s i a n  -  A n a l y t i c   P l a c e r               |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./EtesianEngine.cpp"                      |
 // +-----------------------------------------------------------------+
@@ -46,6 +46,7 @@
 #include "hurricane/viewer/CellViewer.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
+#include "crlcore/Histogram.h"
 #include "crlcore/AllianceFramework.h"
 #include "etesian/EtesianEngine.h"
 
@@ -302,6 +303,7 @@ namespace Etesian {
     , _ySpinSet     (false)
     , _flatDesign   (false)
     , _placeArea    (cell->getAbutmentBox())
+    , _trackAvoids  ()
     , _surface      (NULL)
     , _circuit      (NULL)
     , _placementLB  (NULL)
@@ -709,6 +711,14 @@ namespace Etesian {
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
+    CRL::Histogram  stdCellSizes ( 0.0, 1.0, 2 );
+    stdCellSizes.setTitle ( "Width"  , 0 );
+    stdCellSizes.setColor ( "green"  , 0 );
+    stdCellSizes.setIndent( "       ", 0 );
+    stdCellSizes.setTitle ( "Bloat"  , 1 );
+    stdCellSizes.setColor ( "red"    , 1 );
+    stdCellSizes.setIndent( "       ", 1 );
+
     cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
@@ -885,7 +895,9 @@ namespace Etesian {
         }
       }
 
+      stdCellSizes.addSample( (float)(masterCell->getAbutmentBox().getWidth() / vpitch), 0 );
       Box instanceAb = _bloatCells.getAb( occurrence );
+      stdCellSizes.addSample( (float)(instanceAb.getWidth() / vpitch), 1 );
 
       Transformation instanceTransf = instance->getTransformation();
       occurrence.getPath().getTransformation().applyOn( instanceTransf );
@@ -1066,6 +1078,11 @@ namespace Etesian {
       netId++;
     }
     dots.finish( Dots::Reset );
+
+    cmess1 << "     - Standard cells widths:" << endl;
+    cmess2 << stdCellSizes.toString(0) << endl;
+    if (_bloatCells.getSelected()->getName() != "disabled")
+      cmess2 << stdCellSizes.toString(1) << endl;
 
     _densityLimits = new coloquinte::density_restrictions ();
     _surface = new box<int_t>( (int_t)(topAb.getXMin() / vpitch)

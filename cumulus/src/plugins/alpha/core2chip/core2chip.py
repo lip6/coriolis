@@ -519,6 +519,7 @@ class CoreToChip ( object ):
                                          .format( core.getName() )
                                        ] )
             conf = block.state
+        conf._postInit()
         self.conf            = conf
         self.conf.useHarness = False
         self.ringNetNames    = []

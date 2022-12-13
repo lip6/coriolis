@@ -146,8 +146,10 @@ class BufferPool ( object ):
             yoffset = self.quadTree.spares.conf.icore.getTransformation().getTy()
         conf           = self.quadTree.spares.conf
         sliceHeight    = conf.sliceHeight 
-        poolHalfWidth  = (conf.bufferConf.width  * self.columns)//2 + conf.feedsConf.tieWidth()
+        poolHalfWidth  = (conf.bufferConf.width  * self.columns)//2
         poolHalfHeight = (conf.bufferConf.height * self.rows)//2
+        if conf.sparesTies:
+            poolHalfWidth += conf.feedsConf.tieWidth()
         x = self.quadTree.spares.toXPitch( self.quadTree.area.getXCenter() - poolHalfWidth  )
         y = self.quadTree.spares.toYSlice( self.quadTree.area.getYCenter() - poolHalfHeight )
         slice = (y - yoffset) // sliceHeight
@@ -159,11 +161,14 @@ class BufferPool ( object ):
             if (slice+row)%2:
                 orientation = Transformation.Orientation.MY
                 y          += sliceHeight
-            length = 0
-            for column in range(self.columns+2):
+            length  = 0
+            tieCols = 0
+            if conf.sparesTies:
+                tieCols = 2
+            for column in range(self.columns+tieCols):
                 transf = Transformation( x + length, y, orientation )
-                if (column > 0) and (column <= self.columns):
-                    index    = self.toIndex(column-1,row)
+                if (not conf.sparesTies) or ((column > 0) and (column <= self.columns)):
+                    index    = self.toIndex(column-tieCols//2,row)
                     instance = conf.createBuffer()
                     self.buffers[ index ][1] = instance 
                     trace( 540, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
@@ -845,6 +850,7 @@ class QuadTree ( object ):
             coreTransf = self.spares.conf.icore.getTransformation()
         maxSinks        = self.spares.conf.bufferConf.maxSinks
        #maxSinks        = 7
+        trace( 540, '\tconf.bufferConf.maxSinks={}\n'.format(maxSinks) )
         plugOccsByAngle = []
         areaCenter      = self.area.getCenter()
        #coreTransf.applyOn( areaCenter )
