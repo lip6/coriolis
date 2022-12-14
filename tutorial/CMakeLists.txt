@@ -19,7 +19,7 @@
  setup_qt()
  
  find_package(Libexecinfo        REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)

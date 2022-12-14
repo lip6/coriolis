@@ -5,17 +5,17 @@ import platform
 import re
 import subprocess
 import sys
-import sysconfig
 
 from distutils.version import LooseVersion
 from distutils.dir_util import copy_tree, remove_tree
 from distutils.sysconfig import get_python_inc
-import distutils.sysconfig as sysconfig
+from distutils import sysconfig
 from find_libpython import find_libpython
 from typing import Any, Dict
 
 from setuptools.command.build_ext import build_ext
 from setuptools.extension import Extension
+
 
 class CMakeExtension(Extension):
     name: str  # exists, even though IDE doesn't find it
@@ -86,7 +86,6 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
 
         cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
-        cmake_args += [f"-DPython_LIBRARY={find_libpython()}"]
 
         cmake_args += ["-DPOETRY=1"]
         cmake_args += ["-DWITH_QT5=1"]
@@ -96,6 +95,8 @@ class ExtensionBuilder(build_ext):
         cmake_args += ["-DCMAKE_INSTALL_RPATH='$ORIGIN/lib:$ORIGIN'"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"]
 
+
+        print(f"Using cmake args: {cmake_args}")
         subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_dir)
         subprocess.check_call(["cmake", "--install", ".", "--prefix", install_dir] + install_args, cwd=build_dir)
