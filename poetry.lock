@@ -33,7 +33,7 @@ test = ["codecov (>=2.0.5)", "coverage (>=4.2)", "flake8 (>=3.0.4)", "path.py (>
 name = "find-libpython"
 version = "0.3.0"
 description = "Finds the libpython associated with your environment, wherever it may be hiding"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 files = [
@@ -43,5 +43,5 @@ files = [
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.6"
-content-hash = "3977d779a407995475d178890d20631837483f241de6836600bb92b3d211766b"
+python-versions = "^3.8"
+content-hash = "abbc1ba1fde22ac8e6b5fc0fe7430c18cad5c97aea6a80ea9283c0b11099c71d"
