@@ -3,13 +3,14 @@ name = "Coriolis"
 version = "2.5.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
-build = "build.py"
+build = "builder.py"
 packages = [
   { include = "Coriolis"}
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.8"
+find-libpython = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 cmake = ">=3"
@@ -23,10 +24,12 @@ unittests = 'Coriolis:unittests'
 yosys_coriolis = 'Coriolis:yosys_coriolis'
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "patchelf", "find_libpython"]
+requires = ["poetry-core", "setuptools", "cmake", "patchelf", "find-libpython"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.cibuildwheel.linux]
+skip = ["cp36-*", "cp37-*", "pp*"]
+build-frontend = "build"
 before-all = '''
  yum install -y \
  qt5-qtbase-devel qt5-qtsvg-devel \
@@ -37,3 +40,4 @@ before-all = '''
  python3-devel libxml2-devel \
  qwt-devel
 '''
+build-verbosity=2

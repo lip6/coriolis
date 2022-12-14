@@ -28,7 +28,7 @@
    find_package(Libbfd)
  endif()
  find_package(BZip2              REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module)
  find_package(PythonSitePackages REQUIRED)
  find_package(BISON              REQUIRED)
  find_package(FLEX               REQUIRED)
