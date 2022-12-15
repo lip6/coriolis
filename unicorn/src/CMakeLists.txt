@@ -77,7 +77,7 @@
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
-                                      ${Python_LIBRARIES}
+                                      
                                       -lutil
                                       ${LIBXML2_LIBRARIES}
                                       ${BZIP2_LIBRARIES}

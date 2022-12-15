@@ -6,7 +6,7 @@
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
- cmake_minimum_required(VERSION 2.8.9)
+ cmake_minimum_required(VERSION 3.18)
 
  set(ignoreVariables "${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
 

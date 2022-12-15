@@ -5,7 +5,7 @@
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
 
- cmake_minimum_required(VERSION 2.8.9)
+ cmake_minimum_required(VERSION 3.18)
 
  OPTION(BUILD_DOC  "Build the documentation (latex+doxygen)"       OFF)
  option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)

@@ -101,7 +101,7 @@
                                      ${QWT_LIBRARY}
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
-                                     ${Python_LIBRARIES} -lutil
+                                      -lutil
                       )
 
            add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )

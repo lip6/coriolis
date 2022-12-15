@@ -50,7 +50,7 @@
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${Python_LIBRARIES} -lutil
+                                      -lutil
                                      ${LIBEXECINFO_LIBRARIES}
                       )
 

@@ -29,7 +29,7 @@
                       ${OA_LIBRARIES}
                       ${Boost_LIBRARIES}
                       ${LIBXML2_LIBRARIES}
-                      ${Python_LIBRARIES} -lutil
+                       -lutil
                       )
 
 
@@ -96,7 +96,6 @@
                                     ${HURRICANE_PYTHON_LIBRARIES}
                                     ${HURRICANE_LIBRARIES}
                                     ${LEFDEF_LIBRARIES}
-                                    ${Python_LIBRARIES}
                                     ${QtX_LIBRARIES}
                                     -lutil
                       )
