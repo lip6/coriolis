@@ -135,7 +135,7 @@
 # Build <PROJECT>_INCLUDE_DIR & <PROJECT>_LIBRARIES and sets up <PROJECT>_FOUND
 # Usage:  set_library_path(<PROJECT> <library>)
 #
-# May be used any number of time on the same <PROJECT> to create a list of
+#PYTHON_NEW  May be used any number of time on the same <PROJECT> to create a list of
 # <library>.
 #
  macro(set_libraries_path configname library)
@@ -152,7 +152,14 @@
      set(${configname}_FOUND "NOTFOUND")
    endif()
  endmacro()
-
+#
+# sets that a library is expected to have unresolved symbols
+# Usage:  set_library_unresolved_symbols(<PROJECT>)
+# 
+# Should be used before set_libraries_path.
+ macro(set_has_unresolved_symbols configname)
+	 set(${configname}_LIBRARIES "-Wl,--unresolved-symbols=ignore-in-shared-libs" ${${configname}_LIBRARIES})
+ endmacro()
 
 #
 # Checks if a set of libraries has been found, could be blocking or not.
@@ -400,9 +407,11 @@
      set( pyDeplibs ${clib} ${deplibs} )
 
              add_library( ${clib}      ${pyCpps} ) 
-   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion} )
+   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion})
+   #target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${clib}      ${deplibs} )
                  install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
+     target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-in-object-files")
    endif()
   
                      set( pytarget     "${pymodule}_target" )
@@ -413,6 +422,7 @@
                                        PREFIX        ""
                                        OUTPUT_NAME   ${pymodule}
                         )
+		#target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
 
                  install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
@@ -436,6 +446,7 @@
              add_library( ${pymodule}  MODULE ${pyCpps} ) 
    set_target_properties( ${pymodule}  PROPERTIES PREFIX "" )
    target_link_libraries( ${pymodule}  ${deplibs} )
+   # target_compile_definitions( ${pymodule} PUBLIC Py_LIMITED_API=1)
 
                  install( TARGETS      ${pymodule}    DESTINATION ${Python_CORIOLISARCH} )
    if( NOT ("${pyIncludes}" STREQUAL "None") )

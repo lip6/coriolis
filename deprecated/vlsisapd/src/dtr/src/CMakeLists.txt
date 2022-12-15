@@ -22,7 +22,7 @@ IF (Boost_FOUND)
                                 OUTPUT_NAME "DTR"
                                 PREFIX      ""
                           )
-    TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} ${Python_LIBRARIES})
+    TARGET_LINK_LIBRARIES(pyDTR dtr ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES} )
     INSTALL(TARGETS pyDTR   DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 
