@@ -32,7 +32,7 @@
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${UTILITIES_LIBRARY}
-                                      ${Python_LIBRARIES}
+                                      
                                       -lutil
                       )
 

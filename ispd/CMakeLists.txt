@@ -3,7 +3,7 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(ISPD)
  
- cmake_minimum_required(VERSION 2.4.0)
+ cmake_minimum_required(VERSION 3.18)
 
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
 

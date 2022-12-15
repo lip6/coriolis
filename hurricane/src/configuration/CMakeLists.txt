@@ -91,14 +91,14 @@
     add_python_module3( "${pyCfgCpps}"
                         "${pyCfgIncludes}"
                         Cfg
-                        "pytypemanager;configuration;hurricane;${QtX_LIBRARIES};${Python_LIBRARIES}"
+                        "pytypemanager;configuration;hurricane;${QtX_LIBRARIES};"
                         include/coriolis2/hurricane/configuration
                       )
 
     add_python_module3( "${pyHurricane3Cpps}"
                         "${pyHurricane3Includes}"
                         Hurricane3
-                        "pytypemanager;configuration;hurricane;${Python_LIBRARIES}"
+                        "pytypemanager;configuration;hurricane;"
                         include/coriolis2/hurricane/configuration
                       )
 
