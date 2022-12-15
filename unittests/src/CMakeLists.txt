@@ -33,7 +33,7 @@ endif()
                                        ${OA_LIBRARIES}
                                        ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
-                                       ${Python_LIBRARIES}
+                                       
                                        -lutil
                                        ${BZIP2_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}

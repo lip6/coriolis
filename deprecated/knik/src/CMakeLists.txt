@@ -60,7 +60,7 @@
                                        ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
-                                       ${Python_LIBRARIES} -lutil
+                                        -lutil
                        )	    
 				    
                install ( TARGETS       knik DESTINATION lib${LIB_SUFFIX} )

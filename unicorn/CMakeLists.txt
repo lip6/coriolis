@@ -5,7 +5,7 @@
 
  option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
  
- cmake_minimum_required(VERSION 2.8.9)
+ cmake_minimum_required(VERSION 3.18)
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)

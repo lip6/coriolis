@@ -33,7 +33,7 @@
                                      ${LEFDEF_LIBRARIES}
                                      ${QT_LIBRARIES}
                                      ${Boost_LIBRARIES}
-                                     ${Python_LIBRARIES}
+                                     
                                      -lutil
                                      ${LIBXML2_LIBRARIES}
                        )

@@ -37,7 +37,7 @@ before-all = '''
  boost-devel \
  boost-python boost-filesystem \
  boost-regex  boost-wave \
- python3-devel libxml2-devel \
+ python36-devel libxml2-devel \
  qwt-devel
 '''
 build-verbosity=2

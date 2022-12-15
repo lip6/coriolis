@@ -27,7 +27,7 @@ IF(Boost_FOUND)
                                   OUTPUT_NAME "SPICE"
                                   PREFIX      ""
                          )
-    TARGET_LINK_LIBRARIES(pySPICE spice ${Boost_LIBRARIES} ${Python_LIBRARIES})
+    TARGET_LINK_LIBRARIES(pySPICE spice ${Boost_LIBRARIES} )
     INSTALL(TARGETS pySPICE DESTINATION ${PYTHON_SITE_PACKAGES})
 ENDIF(Boost_FOUND)
 
