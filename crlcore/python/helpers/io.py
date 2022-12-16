@@ -160,7 +160,8 @@ def isVL ( level ):
     confLevel = 0
     if Cfg.getParamBool('misc.verboseLevel1').asBool(): confLevel = 1
     if Cfg.getParamBool('misc.verboseLevel2').asBool(): confLevel = 2
-    return confLevel >= level
+   #print( 'level {} <= confLevel {}'.format(level,confLevel))
+    return level <= confLevel
 
 
 def vprint ( level, message ):

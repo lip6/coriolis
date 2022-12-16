@@ -27,6 +27,7 @@ Contains:
 
 import Cfg
 import Hurricane
+from  .io import isVL
 
 
 class UpdateSession ( object ):
@@ -227,7 +228,7 @@ class CfgCache ( object ):
 
     def __exit__( self, *args ):
         self.apply()
-        self.display()
+        if isVL(2): self.display()
 
     def __init__ ( self, path='', priority=None ):
         """Create a new CfgCache with a ``path`` as parent path."""
