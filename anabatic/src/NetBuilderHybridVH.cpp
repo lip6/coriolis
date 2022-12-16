@@ -86,7 +86,7 @@ namespace Anabatic {
     cdebug_log(145,0) << rp << endl;
 
     const Layer* rpLayer   = rp->getLayer();
-    const Layer* viaLayer  = Session::getDContactLayer();
+  //const Layer* viaLayer  = Session::getDContactLayer();
     DbU::Unit    viaSide   = Session::getDContactWidth();
     Point        position  = rp->getCenter();
     AutoContact* rpContact = AutoContactTerminal::create( gcell, rp, rpLayer, position, viaSide, viaSide );
@@ -207,6 +207,17 @@ namespace Anabatic {
   bool  NetBuilderHybridVH::_do_xG_1M1 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1M1()" << endl;
+
+    doRp_xG_1M1( getRoutingPads()[0] );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHybridVH::_do_2G_1M1 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_2G_1M1()" << endl;
 
     doRp_xG_1M1( getRoutingPads()[0] );
 
@@ -396,8 +407,6 @@ namespace Anabatic {
     else
       doRp_xG_1M1( rpsM1[0] );
 
-    Pin*         pin            = dynamic_cast<Pin*>( rpM2->getOccurrence().getEntity() );
-    Pin::AccessDirection pinDir = pin->getAccessDirection();
     AutoContact* rpContact      = doRp_AccessNorthSouthPin( getGCell(), rpM2 );
     AutoContact* rpM1Contact    = doRp_Access( getGCell(), rpsM1.front(), NoFlags );
     AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(0) );
@@ -511,7 +520,6 @@ namespace Anabatic {
 
 
   bool  NetBuilderHybridVH::_do_1G_1M1     () { return false; }
-  bool  NetBuilderHybridVH::_do_2G_1M1     () { return false; }
   // bool  NetBuilderHybridVH::_do_xG_1Pad    () { return false; }
   // bool  NetBuilderHybridVH::_do_xG_xM2     () { return false; }
   // bool  NetBuilderHybridVH::_do_1G_1M3     () { return false; }

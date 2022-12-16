@@ -719,7 +719,7 @@ namespace Anabatic {
         case Conn_2G_6M1:
         case Conn_2G_7M1:
         case Conn_2G_8M1:
-        case Conn_2G_9M1:
+        case Conn_2G_9M1:  _do_xG_xM1_xM3(); break;
         case Conn_3G_1M1:  if (_do_xG_1M1()) break;
         case Conn_3G_2M1:
         case Conn_3G_3M1:
@@ -731,7 +731,7 @@ namespace Anabatic {
         case Conn_3G_9M1:
         case Conn_3G_2M3:
         case Conn_3G_3M3:
-        case Conn_3G_4M3:
+        case Conn_3G_4M3:  _do_xG_xM1_xM3(); break;
         case Conn_4G_1M1:  if (_do_xG_1M1()) break;
         case Conn_4G_2M1:
         case Conn_4G_3M1:
