@@ -1,7 +1,7 @@
 
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2022, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -30,14 +30,12 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_LAYER_H
-#define HURRICANE_LAYER_H
-
-#include  "hurricane/Mask.h"
-#include  "hurricane/DBo.h"
-#include  "hurricane/Layers.h"
-#include  "hurricane/DbU.h"
-#include  "hurricane/BasicLayers.h"
+#pragma  once
+#include "hurricane/Mask.h"
+#include "hurricane/DBo.h"
+#include "hurricane/Layers.h"
+#include "hurricane/DbU.h"
+#include "hurricane/BasicLayers.h"
 
 
 namespace Hurricane {
@@ -72,6 +70,7 @@ namespace Hurricane {
       inline  const DbU::Unit&  getMinimalSpacing            () const;
       virtual BasicLayers       getBasicLayers               () const = 0;
       virtual const Layer*      getBlockageLayer             () const;
+      virtual const Layer*      getRoutingLayer              () const;
       virtual const Layer*      getCut                       () const;
       virtual const Layer*      getTop                       () const;
       virtual const Layer*      getBottom                    () const;
@@ -185,6 +184,3 @@ namespace Hurricane {
 
 INSPECTOR_P_SUPPORT(Hurricane::Layer);
 INSPECTOR_PR_SUPPORT(Hurricane::Layer::Mask);
-
-
-#endif  // HURRICANE_LAYER_H

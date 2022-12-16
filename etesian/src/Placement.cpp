@@ -56,6 +56,7 @@ namespace Etesian {
   using CRL::AllianceFramework;
   using CRL::CatalogExtension;
   using CRL::getTransformation;
+  using CRL::RoutingLayerGauge;
   using Etesian::EtesianEngine;
 
 
@@ -620,10 +621,34 @@ namespace Etesian {
 
   size_t  SubSlice::getUsedVTracks ( const Tile& tile, set<DbU::Unit>& vtracks )
   {
-    DbU::Unit vpitch = _slice->getArea()->getEtesian()->getSliceStep();
+    RoutingGauge* rg     = _slice->getArea()->getEtesian()->getGauge();
+    DbU::Unit     vpitch = _slice->getArea()->getEtesian()->getSliceStep();
     Cell* cell = tile.getMasterCell();
     for ( Net* net : cell->getNets() ) {
-      if (not net->isExternal()) continue;
+      if (not net->isExternal()) {
+        for ( Component* component : net->getComponents() ) {
+          if (not component->getLayer()->isBlockage()) continue;
+          cdebug_log(121,0) << "Looking at " << component << endl;
+          Vertical* v = dynamic_cast<Vertical*>( component );
+          if (not v) continue;
+
+          RoutingLayerGauge* rlg = rg->getLayerGauge( v->getLayer()->getRoutingLayer() );
+          if (not rlg) continue;
+
+          Box bb = v->getBoundingBox();
+          bb.inflate( -rlg->getWireWidth()/2, 0 );
+          Transformation transf = tile.getInstance()->getTransformation();
+          tile.getOccurrence().getPath().getTransformation().applyOn( transf );
+          transf.applyOn( bb );
+          cdebug_log(121,0) << "Obstacle bb " << bb << endl;
+          DbU::Unit xtrack = bb.getXMin() - (bb.getXMin() % vpitch);
+          for ( ; xtrack <= bb.getXMax() ; xtrack += vpitch ) {
+            cdebug_log(121,0) << "| add vtrack @" << DbU::getValueString(xtrack) << endl;
+            vtracks.insert( xtrack );
+          }
+        }
+        continue;
+      }
       if (net->isPower() or net->isGround()) continue;
       for ( Component* component : NetExternalComponents::get(net) ) {
         Vertical* v = dynamic_cast<Vertical*>( component );
@@ -708,29 +733,31 @@ namespace Etesian {
         }
         if (iTile != endTile) {
           auto nextTile = iTile;
-          --nextTile;
+          ++nextTile;
           maxDxRight = (*nextTile).getXMin() - (*iTile).getXMax();
         }
+        cdebug_log(121,0) << "maxDxLeft =" << DbU::getValueString(maxDxLeft ) << endl;
+        cdebug_log(121,0) << "maxDxRight=" << DbU::getValueString(maxDxRight) << endl;
         DbU::Unit xShift = 0;
-        for ( ; xShift <= maxDxLeft ; xShift += vpitch ) {
-          cdebug_log(121,0) << "| try left shift " << DbU::getValueString(-xShift) << endl;
-          if (not usedVTracks.count( xTrack + xShift )) break;
+        for ( ; xShift >= maxDxLeft ; xShift -= vpitch ) {
+          cdebug_log(121,0) << "| try left shift " << DbU::getValueString(xShift) << endl;
+          if (not usedVTracks.count( xTrack - xShift )) break;
         }
-        if (xShift > maxDxLeft) {
-          xShift = - vpitch;
-          for ( ; xShift > maxDxRight ; xShift -= vpitch ) {
-            cdebug_log(121,0) << "| try right shift " << DbU::getValueString(-xShift) << endl;
-            if (not usedVTracks.count( xTrack + xShift )) break;
+        if (xShift < maxDxLeft) {
+          xShift = vpitch;
+          for ( ; xShift <= maxDxRight ; xShift += vpitch ) {
+            cdebug_log(121,0) << "| try right shift " << DbU::getValueString(xShift) << endl;
+            if (not usedVTracks.count( xTrack - xShift )) break;
           }
         }
-        if (xShift < maxDxRight) {
+        if (xShift > maxDxRight) {
           cerr << Error( "SubSlice::trackAvoid(): Unable to put out of the way %s."
                        , getString(*iTile).c_str()
                        ) << endl;
           break;
         }
         cdebug_log(121,0) << "Shifting " << (*iTile) << " by " << DbU::getValueString(-xShift) << endl;
-        (*iTile).translate( -xShift );
+        (*iTile).translate( xShift );
         
         break;
       }

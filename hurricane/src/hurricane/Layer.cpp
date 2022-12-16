@@ -75,6 +75,10 @@ namespace Hurricane {
   { return NULL; }
 
 
+  const Layer* Layer::getRoutingLayer () const
+  { return NULL; }
+
+
   const Layer* Layer::getCut () const
   { return NULL; } 
 

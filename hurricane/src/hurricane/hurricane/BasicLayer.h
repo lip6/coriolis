@@ -94,11 +94,13 @@ namespace Hurricane {
       inline  uint32_t        getGds2Datatype        () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getBlockageLayer       () const;
+      virtual BasicLayer*     getRoutingLayer        () const;
       virtual const Layer*    getTop                 () const;
       virtual const Layer*    getBottom              () const;
       inline  const Name&     getRealName            () const;
     // Updators                                      
       inline  void            setBlockageLayer       ( BasicLayer* layer);
+      inline  void            setRoutingLayer        ( BasicLayer* layer);
       inline  void            setGds2Layer           ( uint32_t );
       inline  void            setGds2Datatype        ( uint32_t );
       inline  void            setRealName            ( const char* realName);
@@ -115,6 +117,7 @@ namespace Hurricane {
               uint32_t        _gds2Layer;
               uint32_t        _gds2Datatype;
               BasicLayer*     _blockageLayer;
+              BasicLayer*     _routingLayer;
               Name            _realName;
               bool            _hasGds;
 
@@ -144,10 +147,17 @@ namespace Hurricane {
   inline uint32_t        BasicLayer::getGds2Layer                   () const { return _gds2Layer; }
   inline uint32_t        BasicLayer::getGds2Datatype                () const { return _gds2Datatype; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
-  inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; layer->setBlockage(true); }
+  inline void            BasicLayer::setRoutingLayer                ( BasicLayer* layer) { _routingLayer = layer; }
   inline void            BasicLayer::setGds2Layer                   ( uint32_t number ) { _gds2Layer=number; _hasGds=true; }
   inline void            BasicLayer::setGds2Datatype                ( uint32_t number ) { _gds2Datatype=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
+
+  inline void  BasicLayer::setBlockageLayer ( BasicLayer* layer)
+  {
+    _blockageLayer = layer;
+    layer->setBlockage( true );
+    layer->setRoutingLayer( this );
+  }
 
 
 // -------------------------------------------------------------------
