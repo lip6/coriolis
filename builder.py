@@ -97,7 +97,7 @@ class ExtensionBuilder(build_ext):
 
 
         print(f"Using cmake args: {cmake_args}")
-        subprocess.check_call(["cmake", "--debug-find", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
+        subprocess.check_call(["cmake", "--trace-redirect=build.cmake.trace", "--trace-expand",  ext.sourcedir] + cmake_args, cwd=build_dir, env=env)
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=build_dir)
         subprocess.check_call(["cmake", "--install", ".", "--prefix", install_dir] + install_args, cwd=build_dir)
         if os.path.exists(os.path.join(install_dir, "bin")):
