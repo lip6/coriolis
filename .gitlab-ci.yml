@@ -16,11 +16,8 @@ linux:
     - cibuildwheel --output-dir wheelhouse
   parallel:
     matrix:
-      - CIBW_BUILD:
-        - cp38-manylinux*
-        - cp39-manylinux*
-        - cp310-manylinux*
-        - cp311-manylinux*
+      - CIBW_BUILD: [cp38-manylinux*, cp39-manylinux*, cp310-manylinux*, cp311-manylinux*]
+        CIBW_ARCHS_LINUX: [auto64, aarch64]
   artifacts:
     paths:
       - wheelhouse/
