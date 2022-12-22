@@ -408,7 +408,7 @@
 
              add_library( ${clib}      ${pyCpps} ) 
    set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion})
-   #target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
+   target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${clib}      ${deplibs} )
                  install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
      target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-in-object-files")
@@ -422,7 +422,7 @@
                                        PREFIX        ""
                                        OUTPUT_NAME   ${pymodule}
                         )
-		#target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
+		target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
 
                  install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
@@ -446,10 +446,25 @@
              add_library( ${pymodule}  MODULE ${pyCpps} ) 
    set_target_properties( ${pymodule}  PROPERTIES PREFIX "" )
    target_link_libraries( ${pymodule}  ${deplibs} )
-   # target_compile_definitions( ${pymodule} PUBLIC Py_LIMITED_API=1)
+   target_compile_definitions( ${pymodule} PUBLIC Py_LIMITED_API=1)
 
                  install( TARGETS      ${pymodule}    DESTINATION ${Python_CORIOLISARCH} )
    if( NOT ("${pyIncludes}" STREQUAL "None") )
                  install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
    endif()
  endmacro( add_python_module3 )
+
+
+ macro(target_python_executable target)
+   get_target_property(target_type ${target} TYPE)
+   if (target_type STREQUAL "EXECUTABLE")
+      find_package(Python3 COMPONENTS Developer.Embed)
+      if (Python_Development.Embed_FOUND)
+        target_link_libraries(${target} Python::Python)
+      elseif (EXISTS /opt/_internal/static-libs-for-embedding-only.tar.xz
+	      AND NOT DEFINED Python3_PyPy_VERSION)
+	 # We're in manylinux environment, extract the embedding static library ans use it
+	 # Note, linking an executable that needs to embed python is the *ONLY* valid use for this!
+	set(_PYTHON_MANYLINUX_NAME "cpython-${Python3_VERSION}")
+	set(_PYTHON_MANYLINUX_STATIC_LIB "${_PYTHON_MANYLINUX_NAME}/lib/libpython-${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
+	file (ARCHIVE_EXTRACT INPUT /opt/_internal/static-libs-for-embedding-only.tar.xz 
