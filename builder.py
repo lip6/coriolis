@@ -1,5 +1,6 @@
 import io
 import glob
+import ninja
 import os
 import platform
 import re
@@ -10,7 +11,6 @@ from distutils.version import LooseVersion
 from distutils.dir_util import copy_tree, remove_tree
 from distutils.sysconfig import get_python_inc
 from distutils import sysconfig
-from find_libpython import find_libpython
 from typing import Any, Dict
 
 from setuptools.command.build_ext import build_ext
@@ -56,6 +56,9 @@ class ExtensionBuilder(build_ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = []
 
+        ninja_executable_path = os.path.join(ninja.BIN_DIR, "ninja")
+        cmake_args += ["-GNinja","-DCMAKE_MAKE_PROGRAM:FILEPATH=" + ninja_executable_path]
+
         cfg = "Debug" if self.debug else "Release"
         # cfg = 'Debug'
         build_args = ["--config", cfg]
@@ -65,9 +68,6 @@ class ExtensionBuilder(build_ext):
         if platform.system() == "Windows":
             if sys.maxsize > 2 ** 32:
                 cmake_args += ["-A", "x64"]
-            build_args += ["--", "/m"]
-        else:
-            build_args += ["--", "-j4", "VERBOSE=1"]
 
         env = os.environ.copy()
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())

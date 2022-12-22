@@ -14,6 +14,7 @@ find-libpython = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 cmake = ">=3"
+ninja = "^1.11.1"
 
 [tool.poetry.scripts]
 blif2vst =  'Coriolis:blif2vst'
@@ -22,7 +23,7 @@ unittests = 'Coriolis:unittests'
 yosys_coriolis = 'Coriolis:yosys_coriolis'
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "patchelf", "find-libpython"]
+requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.cibuildwheel.linux]
