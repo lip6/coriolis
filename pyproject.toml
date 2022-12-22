@@ -30,6 +30,8 @@ build-backend = "poetry.core.masonry.api"
 skip = ["cp36-*", "cp37-*", "pp*"]
 build-frontend = "build"
 before-all = '''
+ yum -y install epel-release
+ yum repolist
  yum install -y \
  qt5-qtbase-devel qt5-qtsvg-devel \
  rapidjson-devel bison flex doxygen bzip2-devel flex-devel \
