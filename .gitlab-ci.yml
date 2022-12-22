@@ -17,15 +17,10 @@ linux:
   parallel:
     matrix:
       - CIBW_BUILD:
-        - cp36-manylinux*
-        - cp37-manylinux*
         - cp38-manylinux*
         - cp39-manylinux*
         - cp310-manylinux*
         - cp311-manylinux*
-        - pp37-manylinux*
-        - pp38-manylinux*
-        - pp39-manylinux*
   artifacts:
     paths:
       - wheelhouse/
