@@ -99,6 +99,11 @@
 #set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
 
 
+if ( NOT CMAKE_BUILD_TYPE )
+    message( "Build Type not set, defaulting to Debug..." )
+    set( CMAKE_BUILD_TYPE Debug )
+endif()
+
 #
 # Adds to the CMAKE_MODULE_PATH directories guesseds from project
 # environment variables <PROJECT>_USER_TOP and <PROJECT>_TOP.
@@ -158,7 +163,7 @@
 # 
 # Should be used before set_libraries_path.
  macro(set_has_unresolved_symbols configname)
-	 set(${configname}_LIBRARIES "-Wl,--unresolved-symbols=ignore-in-shared-libs" ${${configname}_LIBRARIES})
+	 set(${configname}_LIBRARIES "-Wl,--unresolved-symbols=ignore-all" ${${configname}_LIBRARIES})
  endmacro()
 
 #
@@ -411,7 +416,7 @@
    #target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${clib}      ${deplibs} )
                  install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
-     target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-in-object-files")
+     target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
    endif()
   
                      set( pytarget     "${pymodule}_target" )
@@ -424,6 +429,7 @@
                         )
 		#target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
+   target_link_options( ${pytarget} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
 
                  install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
    if( NOT ("${pyIncludes}" STREQUAL "None") )
