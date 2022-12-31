@@ -381,7 +381,7 @@ def staticInitialization ():
   return
 
 
-helpers.staticInitialization()
+helpers.staticInitialization( quiet=True )
 staticInitialization()
 
 report = ReportLog( 'alliance' )

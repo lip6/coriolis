@@ -1,5 +1,30 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<cumulus/src>" -*-
 
+              set ( pyDesignFlow  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/task.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/copy.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/vasy.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/boom.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/boog.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/loon.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/genpat.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/asimut.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/flatph.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/cougar.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/s2r.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/lvx.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/druc.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/graal.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/dreal.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosys.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/blif2vst.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/pnr.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/clean.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/alias.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/technos.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/routecheck.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/pnrcheck.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/alliancesynth.py
+                  )		  
               set ( pySources     ${CMAKE_CURRENT_SOURCE_DIR}/placeandroute.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/ref.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/Alliance.py
@@ -90,6 +115,7 @@
                                          ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/harness/pads.py
                   )
          
+          install ( FILES    ${pyDesignFlow}         DESTINATION ${Python_CORIOLISLIB}/designflow )
           install ( FILES    ${pySources}            DESTINATION ${Python_CORIOLISLIB}/cumulus )
           install ( FILES    ${pyPlugins}            DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins )
           install ( FILES    ${pyPluginCTS}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/cts )

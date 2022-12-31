@@ -60,7 +60,6 @@
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
-.. |Blif|                           replace:: :sc:`blif`
 .. |TSMC|                           replace:: :sc:`tsmc`
 .. |AMS|                            replace:: :sc:`ams`
 .. |XFAB|                           replace:: :sc:`xfab`
@@ -139,6 +138,7 @@
 .. |pdf|                            replace:: :sc:`pdf`
 .. |UTF-8|                          replace:: :sc:`utf-8`
 .. |Python|                         replace:: :sc:`Python`
+.. |DoIt|                           replace:: :sc:`DoIt`
 .. |TCL|                            replace:: :sc:`tcl`
 .. |Linux|                          replace:: :sc:`Linux`
 .. |MacPorts|                       replace:: :sc:`MacPorts`
@@ -163,6 +163,8 @@
 .. |flex|                           replace:: :cb:`flex`
 .. |struct|                         replace:: :cb:`struct`
 .. |Makefile|                       replace:: :cb:`Makefile`
+.. |dodo|                           replace:: :cb:`dodo`
+.. |man|                            replace:: :cb:`man`
 
 
 .. |KeyUp|                          replace:: :fboxtt:`Up`
@@ -210,6 +212,7 @@
 .. _Yosys:                          http://www.clifford.at/yosys/
 .. _GHDL:                           https://github.com/ghdl/ghdl
 .. _Si2:                            http://www.si2.org/
+.. _DoIt:                           https://pydoit.org/contents.html
 
 .. _GPL:                            http://www.gnu.org/copyleft/gpl.txt
 .. _LGPL:                           https://www.gnu.org/licenses/lgpl-3.0.html
@@ -226,10 +229,14 @@
 .. |layout|                         replace:: *layout*
 .. |layouts|                        replace:: *layouts*
 .. |VLSI|                           replace:: :sc:`vlsi`
+.. |DRC|                            replace:: :sc:`drc`
+.. |LVX|                            replace:: :sc:`lvx`
+.. |CIF|                            replace:: :sc:`cif`
 .. |GDS|                            replace:: :sc:`gds`
 .. |GDSII|                          replace:: :sc:`gdsii`
 .. |CMOS|                           replace:: :sc:`cmos`
 .. |VHDL|                           replace:: :sc:`vhdl`
+.. |Verilog|                        replace:: :sc:`Verilog`
 .. |NWELL|                          replace:: :sc:`nwell`
 .. |POWER|                          replace:: :sc:`power`
 .. |GROUND|                         replace:: :sc:`ground`
@@ -251,5 +258,6 @@
 .. |Collections|                    replace:: *Collections*
 .. |ap|                             replace:: :cb:`ap`
 .. |vst|                            replace:: :cb:`vst`
+.. |blif|                           replace:: :cb:`blif`
 .. |kgr|                            replace:: :cb:`kgr`
 .. |dot_conf|                       replace:: :cb:`.conf`

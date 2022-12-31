@@ -32,3 +32,10 @@
          PERMISSIONS OWNER_WRITE
                      OWNER_READ    GROUP_READ    WORLD_READ
                      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE) 
+
+ install(FILES       crlenv.py
+         DESTINATION bin
+         RENAME      crlenv
+         PERMISSIONS OWNER_WRITE
+                     OWNER_READ    GROUP_READ    WORLD_READ
+                     OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE) 

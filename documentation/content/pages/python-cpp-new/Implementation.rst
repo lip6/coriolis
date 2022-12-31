@@ -4,7 +4,7 @@
 2. Implementation
 =================
 
-We do not try to provides an iterface as sleek as ``pybind11`` that completely
+We do not try to provides an interface as sleek as ``pybind11`` that completely
 hides the Python/C API. Instead we keep mostly visible the classic structure of
 the Python/C API but we provides templates to automate as much as possible the
 boring tasks (and code duplication). This way, if we need a very specific

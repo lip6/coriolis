@@ -54,6 +54,10 @@
                               content/pages/users-guide/ViewerTools.rst
                               content/pages/users-guide/ScriptsPlugins.rst )
 
+     set ( designFlowRst      content/pages/design-flow/DesignFlow_HTML.rst
+                              content/pages/design-flow/DesignFlow.rst
+                              content/pages/design-flow/QuickStart.rst )
+
      set ( rdsRst             content/pages/rds/RDS_HTML.rst
                               content/pages/rds/RDSpage.rst )
 
@@ -78,6 +82,7 @@
                                          ${usersGuideRst}
                                          ${pythonTutorialRst}
                                          ${pythonCppRst}
+                                         ${designFlowRst}
                                          ${rdsRst}
                                          ${stratusRst}
                        )

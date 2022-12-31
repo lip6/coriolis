@@ -51,6 +51,9 @@ Coriolis Documentation
       `Coriolis User's Guide <{filename}/pages/users-guide/UsersGuide_HTML.rst>`_ |br|
       Using the software
 
+      `Design Flow Quick Start <{filename}/pages/design-flow/DesignFlow_HTML.rst>`_ |br|
+      Tool to build your design 
+
       `Python Tutorial <{filename}/pages/python-tutorial/PythonTutorial_HTML.rst>`_ |br|
       A Tutorial to use Coriolis through Python
 
