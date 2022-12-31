@@ -322,7 +322,7 @@ def setNdaTopDir ( ndaTopDirArg ):
     return
 
 
-def staticInitialization ( quiet=False ):
+def staticInitialization ( quiet=True ):
     global sysConfDir
     global technoDir
     global tab
@@ -422,6 +422,9 @@ def unloadUserSettings ():
 
 
 def loadUserSettings ():
+    if Hurricane.DataBase.getDB() is not None:
+        print( '  o  DataBase already initialized, skip loading of "./coriolis2/settings.py".' )
+        return True
     rvalue        = False
     if os.path.isfile('./coriolis2/settings.py'):
         if os.path.isfile('./coriolis2/__init__.py'):

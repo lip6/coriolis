@@ -339,8 +339,8 @@ namespace CRL {
     Cfg::Configuration::get ();
 
     Cfg::getParamBool  ("misc.catchCore"      ,false )->registerCb ( this, catchCoreChanged );
-    Cfg::getParamBool  ("misc.verboseLevel1"  ,true  )->registerCb ( this, verboseLevel1Changed );
-    Cfg::getParamBool  ("misc.verboseLevel2"  ,true  )->registerCb ( this, verboseLevel2Changed );
+    Cfg::getParamBool  ("misc.verboseLevel1"  ,false )->registerCb ( this, verboseLevel1Changed );
+    Cfg::getParamBool  ("misc.verboseLevel2"  ,false )->registerCb ( this, verboseLevel2Changed );
     Cfg::getParamBool  ("misc.info"           ,false )->registerCb ( this, infoChanged );
     Cfg::getParamBool  ("misc.paranoid"       ,false )->registerCb ( this, paranoidChanged );
     Cfg::getParamBool  ("misc.bug"            ,false )->registerCb ( this, bugChanged );
