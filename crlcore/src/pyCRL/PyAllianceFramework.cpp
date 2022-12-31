@@ -54,6 +54,15 @@ namespace  CRL {
   using Isobar::PyCell_Link;
 
 
+  PyObject* AllianceLibsToList ( const AllianceLibraries& libs )
+  {
+    PyObject* pyList = PyList_New( libs.size() );
+    for ( size_t i=0 ; i<libs.size() ; ++i )
+      PyList_SetItem( pyList, i, PyAllianceLibrary_Link(libs[i]) );
+    return pyList;
+  }
+
+
 extern "C" {
 
 
@@ -191,6 +200,19 @@ extern "C" {
     HCATCH
 
     return PyAllianceLibrary_Link(alib);
+  }
+
+
+  static PyObject* PyAllianceFramework_getAllianceLibraries ( PyAllianceFramework* self )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_getAllianceLibraries()" << endl;
+    PyObject* pyList = NULL;
+    HTRY
+      METHOD_HEAD("AllianceFramework.getAllianceLibraries()")
+      __cs.init ("AllianceFramework.getAllianceLibraries");
+      pyList = AllianceLibsToList( af->getAllianceLibraries() );
+    HCATCH
+    return pyList;
   }
 
 
@@ -624,6 +646,8 @@ extern "C" {
                                , "Gets a Library, by index." }                         
     , { "getAllianceLibrary"   , (PyCFunction)PyAllianceFramework_getAllianceLibrary   , METH_VARARGS
                                , "Gets an AllianceLibrary, by index, name or Hurricane Library." }                         
+    , { "getAllianceLibraries" , (PyCFunction)PyAllianceFramework_getAllianceLibraries , METH_NOARGS
+                               , "Returns the AllianceLibraries vector as a list." }                         
     , { "getCell"              , (PyCFunction)PyAllianceFramework_getCell              , METH_VARARGS
                                , "Gets an Alliance Cell." }                            
     , { "saveCell"             , (PyCFunction)PyAllianceFramework_saveCell             , METH_VARARGS
