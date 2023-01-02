@@ -123,16 +123,19 @@ def setupPaths ( verbose ):
 
         print( '[WARNING] environment.setupPaths(): Unrecognized OS: "{}".'.format( line[:-1] ))
         print( '          (using: "{}")'.format( osDir ))
-    osDir     = Path( osDir )
-    homeDir   = Path( os.environ['HOME'] )
-    buildType = Path( 'Release.Debug' if useDebug else 'Release.Shared' )
-    topDirs   = []
+    osDir      = Path( osDir )
+    homeDir    = Path( os.environ['HOME'] )
+    buildType  = Path( 'Release.Debug' if useDebug else 'Release.Shared' )
+    scriptPath = Path( __file__ ).resolve()
+    topDirs    = []
     if 'CORIOLIS_TOP' in os.environ:
         topDirs += [ Path( os.environ['CORIOLIS_TOP'] ) ]
     topDirs  += [ homeDir / 'coriolis-2.x' / osDir / buildType / 'install'
                 , Path( '/soc/coriolis2' ) 
                 , Path( '/usr' ) 
                 ]
+    if scriptPath.match('nightly/coriolis-2.x'):
+        topDirs.append( homeDir / 'nightly' / 'coriolis-2.x' / osDir / buildType / 'install' )
     if verbose:
         print( '  o  Self locating Coriolis:' )
     coriolisTop = None
