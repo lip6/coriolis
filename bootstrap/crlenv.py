@@ -134,20 +134,20 @@ def setupPaths ( verbose ):
                 , Path( '/soc/coriolis2' ) 
                 , Path( '/usr' ) 
                 ]
-    if scriptPath.match('nightly/coriolis-2.x'):
-        topDirs.append( homeDir / 'nightly' / 'coriolis-2.x' / osDir / buildType / 'install' )
+    print( scriptPath )
+    for part in scriptPath.parts:
+        if part == 'nightly':
+            topDirs.append( homeDir / 'nightly' / 'coriolis-2.x' / osDir / buildType / 'install' )
+            break
     if verbose:
         print( '  o  Self locating Coriolis:' )
     coriolisTop = None
     for topDir in topDirs:
-        if not coriolisTop:
-            if (topDir / 'bin' / 'cgt').is_file():
-                if verbose:
-                    print( '     - {} *'.format(topDir) )
-                coriolisTop = topDir
-        else:
-            if verbose:
-                print( '     - {}'.format(topDir) )
+        if coriolisTop or not (topDir / 'bin' / 'cgt').is_file():
+            if verbose: print( '     - {}'.format(topDir) )
+            continue
+        if verbose: print( '     - {} *'.format(topDir) )
+        coriolisTop = topDir
     if not coriolisTop:
         print( '[ERROR] environment.setupPaths(): Unable to locate Coriolis.' )
         return False
