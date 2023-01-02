@@ -1,7 +1,12 @@
 #!/bin/bash
 
-      srcDir=${HOME}/coriolis-2.x/src/alliance/alliance/src
-  commonRoot=${HOME}/coriolis-2.x/Linux.el9/Release.Shared
+  nightly=""
+  if [[ "`pwd`" =~ /nightly/ ]]; then
+    nightly="/nightly"
+  fi
+
+      srcDir=${HOME}${nightly}/coriolis-2.x/src/alliance/alliance/src
+  commonRoot=${HOME}${nightly}/coriolis-2.x/Linux.el9/Release.Shared
     buildDir=${commonRoot}/build
   installDir=${commonRoot}/install
 
