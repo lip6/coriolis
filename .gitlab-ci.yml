@@ -17,10 +17,27 @@ linux:
   parallel:
     matrix:
       - CIBW_BUILD: [cp38-manylinux*, cp39-manylinux*, cp310-manylinux*, cp311-manylinux*]
-        CIBW_ARCHS_LINUX: [auto64, aarch64]
+        CIBW_ARCHS_LINUX: [auto64]
   artifacts:
     paths:
       - wheelhouse/
+
+dist:
+  image: python:3.8
+  needs:
+    - job: linux
+      artifacts: true
+  except:
+  - merge_requests
+  variables:
+    TWINE_PASSWORD: '${CI_JOB_TOKEN}'
+    TWINE_USERNAME: 'gitlab-ci-token'
+    TWINE_REPOSITORY_URL: 'https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi'
+  script:
+    - python -m pip install --upgrade build twine
+    - python -m twine check --strict wheelhouse/*
+    - python -m twine upload --verbose wheelhouse/*
+
 
 #windows:
 #  image: mcr.microsoft.com/windows/servercore:1809
