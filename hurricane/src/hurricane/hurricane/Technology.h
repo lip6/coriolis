@@ -79,6 +79,7 @@ namespace Hurricane {
       typedef std::set<PhysicalRule*           , RuleNameCompare>         PhysicalRules;
       typedef std::map<const Hurricane::Layer* , PhysicalRules>           OneLayerRules;
       typedef std::map<LayerPair               , PhysicalRules>           TwoLayersRules;
+      typedef std::map<const Name              , Hurricane::Layer*>       LayerAliases;
 
     public:
     // Sub-class : LayerMap.
@@ -100,11 +101,11 @@ namespace Hurricane {
       inline  bool                   isMetal                 ( const Layer* ) const;
       inline  DataBase*              getDataBase             () const;
       inline  const Name&            getName                 () const;
-      inline  Layer*                 getLayer                ( const Name& ) const;
+              Layer*                 getLayer                ( const Name& ) const;
               BasicLayer*            getBasicLayer           ( const Name& ) const;
               RegularLayer*          getRegularLayer         ( const Name& ) const;
               ViaLayer*              getViaLayer             ( const Name& ) const;
-      inline  Layers                 getLayers               () const;
+              Layers                 getLayers               () const;
               BasicLayers            getBasicLayers          () const;
               BasicLayers            getBasicLayers          ( const Layer::Mask& ) const;
               RegularLayers          getRegularLayers        () const;
@@ -137,6 +138,7 @@ namespace Hurricane {
               void                   setName                 ( const Name& );
               bool                   setSymbolicLayer        ( const Name& );
               bool                   setSymbolicLayer        ( const Layer* );
+              bool                   addLayerAlias           ( const Name& reference, const Name& alias );
               DeviceDescriptor*      addDeviceDescriptor     ( const Name& );
               ModelDescriptor*       addModelDescriptor      ( const Name& name
                                                              , const Name& simul
@@ -181,6 +183,7 @@ namespace Hurricane {
       LayerMaskMap       _layerMaskMap;
       Layer::Mask        _cutMask;
       Layer::Mask        _metalMask;
+      LayerAliases       _layerAliases;
       DeviceDescriptors  _deviceDescriptors;
       ModelDescriptors   _modelDescriptors;
       UnitRules          _unitRules;
@@ -200,7 +203,6 @@ namespace Hurricane {
   inline  bool                          Technology::isMetal             ( const Layer* layer ) const { return _metalMask.contains(layer->getMask()); }
   inline  DataBase*                     Technology::getDataBase         () const { return _dataBase; }
   inline  const Name&                   Technology::getName             () const { return _name; }
-  inline  Layer*                        Technology::getLayer            ( const Name& name ) const { return _layerMap.getElement(name); }
   inline  Layers                        Technology::getLayers           () const { return getCollection(&_layerMaskMap); }
   inline  Technology::ModelDescriptors& Technology::getModelDescriptors () { return _modelDescriptors; }
   inline  Technology::LayerMap&         Technology::_getLayerMap        () { return _layerMap; }

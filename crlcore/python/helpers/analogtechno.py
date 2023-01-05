@@ -22,9 +22,10 @@ import Hurricane
 from   Hurricane    import DbU
 from   Hurricane    import DataBase
 from   Hurricane    import Layer
-from   helpers.io   import ErrorMessage
+from   helpers.io   import catch, ErrorMessage, WarningMessage
 
 
+tech       = None
 technoFile = '<technoFile has not been set>'
 Length     = 0x0001
 Area       = 0x0002
@@ -135,8 +136,36 @@ def _loadAnalogTechno ( techno, ruleTable ):
 
 def loadAnalogTechno ( table, fromFile ):
     global technoFile
+    global tech
+    if not tech:
+        tech = DataBase.getDB().getTechnology() 
     technoFile = fromFile
-    techno     = DataBase.getDB().getTechnology()
-
-    _loadAnalogTechno( techno, table )
+    _loadAnalogTechno( tech, table )
     return
+
+
+def addDevice ( **kw ):
+    global tech
+    if not tech:
+        tech = DataBase.getDB().getTechnology() 
+    
+    try:
+        if 'name' in kw: 
+            devDesc = tech.addDeviceDescriptor( kw['name'] )
+            if 'spice' in kw: devDesc.setSpiceFilePath( kw['spice'] )
+            if 'connectors' in kw: 
+                for connector in kw['connectors']:
+                    devDesc.addConnector( connector )
+            else:
+                print( WarningMessage( 'common.addDevice(): Missing connectors on device "{}".' \
+                                       .format(kw['name'])))
+            if 'layouts' in kw: 
+                for layout in kw['layouts']:
+                    devDesc.addLayout( layout[0], layout[1] )
+            else:
+                print( WarningMessage( 'common.addDevice(): Missing layouts on device "{}".' \
+                                       .format( kw['name'] ))) 
+    except Exception as e:
+        catch( e ) 
+    return
+

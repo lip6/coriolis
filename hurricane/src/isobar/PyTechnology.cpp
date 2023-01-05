@@ -190,6 +190,28 @@ extern "C" {
   }
 
 
+  static PyObject* PyTechnology_addLayerAlias ( PyTechnology *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "Technology.addLayerAlias()" << endl;
+
+    METHOD_HEAD("Technology.addLayerAlias()")
+    bool rvalue = false;
+    HTRY
+      char* reference = NULL;
+      char* alias     = NULL;
+      if (PyArg_ParseTuple(args,"ss:Technology.addLayerAlias", &reference, &alias)) {
+        rvalue = techno->addLayerAlias( reference, alias );
+      } else {
+        PyErr_SetString( ConstructorError, "Hurricane.addLayerAlias(str,str): Bad parameter(s) type." );
+        return NULL;
+      }
+    HCATCH
+    
+    if (rvalue) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyTechnology_setSymbolicLayer ( PyTechnology *self, PyObject* args ) {
     cdebug_log(20,0) << "Technology.setSymbolicLayer()" << endl;
 
@@ -443,6 +465,8 @@ extern "C" {
                              , "Returns the collection of all RegularLayers." }
     , { "getViaLayers"       , (PyCFunction)PyTechnology_getViaLayers         , METH_NOARGS
                              , "Returns the collection of all BasicLayers." }
+    , { "addLayerAlias"      , (PyCFunction)PyTechnology_addLayerAlias        , METH_VARARGS
+                             , "Add an alias name to a layer." }
     , { "getMetalAbove"      , (PyCFunction)PyTechnology_getMetalAbove        , METH_VARARGS
                              , "Returns the metal layer immediatly above this one." }
     , { "getMetalBelow"      , (PyCFunction)PyTechnology_getMetalBelow        , METH_VARARGS

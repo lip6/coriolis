@@ -137,6 +137,7 @@ namespace Hurricane {
     , _name          (name)
     , _layerMap      ()
     , _layerMaskMap  ()
+    , _layerAliases  ()
     , _unitRules     ()
     , _noLayerRules  ()
     , _oneLayerRules ()
@@ -162,25 +163,41 @@ namespace Hurricane {
   }
 
 
-  BasicLayer* Technology::getBasicLayer ( const Name& name ) const
+  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useSymbolic ) const
   {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<BasicLayer*>(layer)) ? (BasicLayer*)layer : NULL;
+    Layer* layer = NULL;
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( mask );
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( mask );
+    for ( ; lb != ub ; lb++ ) {
+      layer = lb->second;
+      if (not useSymbolic or layer->isSymbolic()) return layer;
+    }
+    return layer;
   }
+
+
+  Layer* Technology::getLayer ( const Name& name ) const
+  {
+    Layer* layer = _layerMap.getElement(name);
+    if (layer) return layer;
+
+    auto ialias = _layerAliases.find( name );
+    if (ialias != _layerAliases.end()) return ialias->second;
+
+    return nullptr;
+  }
+
+
+  BasicLayer* Technology::getBasicLayer ( const Name& name ) const
+  { return dynamic_cast<BasicLayer*>(getLayer( name )); }
 
 
   RegularLayer* Technology::getRegularLayer ( const Name& name ) const
-  {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<RegularLayer*>(layer)) ? (RegularLayer*)layer : NULL;
-  }
+  { return dynamic_cast<RegularLayer*>(getLayer( name )); }
 
 
   ViaLayer* Technology::getViaLayer ( const Name& name ) const
-  {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<ViaLayer*>(layer)) ? (ViaLayer*)layer : NULL;
-  }
+  { return dynamic_cast<ViaLayer*>(getLayer( name )); }
 
 
   BasicLayers Technology::getBasicLayers () const
@@ -197,19 +214,6 @@ namespace Hurricane {
 
   ViaLayers Technology::getViaLayers () const
   { return SubTypeCollection<Layer*, ViaLayer*>(getLayers()); }
-
-
-  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useSymbolic ) const
-  {
-    Layer* layer = NULL;
-    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( mask );
-    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( mask );
-    for ( ; lb != ub ; lb++ ) {
-      layer = lb->second;
-      if (not useSymbolic or layer->isSymbolic()) return layer;
-    }
-    return layer;
-  }
 
 
   Layer* Technology::getMetalAbove ( const Layer* layer, bool useSymbolic ) const
@@ -335,6 +339,25 @@ namespace Hurricane {
         lb->second->setSymbolic( false );
     }
     return found;
+  }
+
+
+  bool  Technology::addLayerAlias ( const Name& reference, const Name& alias )
+  {
+    if (getLayer(alias)) {
+      cerr << Error( "Technology::addAlias(): Alias name \"%s\" already defined."
+                   , getString(alias).c_str() ) << endl;
+      return false;
+    }
+    Layer* referenceLayer = getLayer( reference );
+    if (not referenceLayer) {
+      cerr << Error( "Technology::addAlias(): Reference layer \"%s\" does not exists (yet?)."
+                   , getString(reference).c_str() ) << endl;
+      return false;
+    }
+
+    _layerAliases.insert( make_pair( alias, referenceLayer ));
+    return true;
   }
 
 
@@ -623,9 +646,10 @@ namespace Hurricane {
       PhysicalRules& rules  = ilayer->second;
       PhysicalRule   search ( rule->getName(), "" );
       if (rules.find(&search) != rules.end()) {
+        string ruleName = getString( rule->getName() );
         delete rule;
         throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\" for layer \"%s\"."
-                   , getString(rule->getName()).c_str(), layerStr.c_str() );
+                   , ruleName.c_str(), layerStr.c_str() );
       }
       rules.insert( rule );
     }
@@ -655,6 +679,15 @@ namespace Hurricane {
     const Layer* layer2    = getLayer(layer2Name);
     LayerPair    layerPair ( layer1, layer2 );
 
+    if (not layer1)
+        throw Error( "Technology::addPhysicalRule(): Unknown layer1 rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
+    if (not layer2)
+        throw Error( "Technology::addPhysicalRule(): Unknown layer2 rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
+
     PhysicalRule* rule = new PhysicalRule ( ruleName, reference );
     TwoLayersRules::iterator ilp  = _twoLayersRules.find( layerPair );
     if (ilp == _twoLayersRules.end()) {
@@ -667,7 +700,9 @@ namespace Hurricane {
       PhysicalRule   search ( ruleName, "" );
       if (rules.find(&search) != rules.end()) {
         delete rule;
-        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\"." , ruleNameStr.c_str() );
+        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
       }
       rules.insert( rule );
     }

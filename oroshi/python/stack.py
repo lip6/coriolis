@@ -19,6 +19,7 @@ from   helpers.io import ErrorMessage as Error
 from   helpers    import trace
 from   Analog     import Device
 import oroshi
+import oroshi.dtr
 
 #helpers.setTraceLevel( 100 )
 
@@ -212,13 +213,13 @@ class Bulk ( object ):
 
 
   def doLayout ( self ):
-    active    = DataBase.getDB().getTechnology().getLayer( 'active' )
-    metal1    = DataBase.getDB().getTechnology().getLayer( 'metal1' )
-    metal2    = DataBase.getDB().getTechnology().getLayer( 'metal2' )
-    metal3    = DataBase.getDB().getTechnology().getLayer( 'metal3' )
-    cut0      = DataBase.getDB().getTechnology().getLayer( 'cut0' )
-    cut1      = DataBase.getDB().getTechnology().getLayer( 'cut1' )
-    cut2      = DataBase.getDB().getTechnology().getLayer( 'cut2' )
+    active    = oroshi.rules.getRealLayer( 'active' )
+    metal1    = oroshi.rules.getRealLayer( 'metal1' )
+    metal2    = oroshi.rules.getRealLayer( 'metal2' )
+    metal3    = oroshi.rules.getRealLayer( 'metal3' )
+    cut0      = oroshi.rules.getRealLayer( 'cut0' )
+    cut1      = oroshi.rules.getRealLayer( 'cut1' )
+    cut2      = oroshi.rules.getRealLayer( 'cut2' )
     bulkNet   = self.stack.bulkNet
 
     self.computeContacts()
@@ -604,13 +605,13 @@ class Stack ( object ):
     if bulkType & 0x0008: self.flags |= Stack.WestBulk
 
     if self.isNmos():
-      self.tImplantLayer = DataBase.getDB().getTechnology().getLayer( 'nImplant' )
-      self.bImplantLayer = DataBase.getDB().getTechnology().getLayer( 'pImplant' )
+      self.tImplantLayer = oroshi.rules.getRealLayer( 'nImplant' )
+      self.bImplantLayer = oroshi.rules.getRealLayer( 'pImplant' )
       self.wellLayer     = None
     else:
-      self.tImplantLayer = DataBase.getDB().getTechnology().getLayer( 'pImplant' )
-      self.bImplantLayer = DataBase.getDB().getTechnology().getLayer( 'nImplant' )
-      self.wellLayer     = DataBase.getDB().getTechnology().getLayer( 'pWell' )
+      self.tImplantLayer = oroshi.rules.getRealLayer( 'pImplant' )
+      self.bImplantLayer = oroshi.rules.getRealLayer( 'nImplant' )
+      self.wellLayer     = oroshi.rules.getRealLayer( 'pWell' )
 
     return
 
@@ -1132,8 +1133,8 @@ class Stack ( object ):
       capSpacing = self.minSpacing_metal2 + self.minWidth_metal2//2
       capSpacing = max( capSpacing, self.minSpacing_metal3 + self.minWidth_metal3//2 )
       
-      metal2  = DataBase.getDB().getTechnology().getLayer( 'metal2' )
-      metal3  = DataBase.getDB().getTechnology().getLayer( 'metal3' )
+      metal2  = oroshi.rules.getRealLayer( 'metal2' )
+      metal3  = oroshi.rules.getRealLayer( 'metal3' )
       trackNb = 0
       if self.topTracks: trackNb = len(self.topTracks)
       for i in range(trackNb):
@@ -1193,7 +1194,7 @@ class Stack ( object ):
     if not tImplantNet: tImplantNet = Net.create( self.device, 'nImplant' )
     tImplantNet.setAutomatic( True )
 
-    active      = DataBase.getDB().getTechnology().getLayer( 'active' )
+    active      = oroshi.rules.getRealLayer( 'active' )
     width       = self.w
     length      = (self.NFs - 1) * self.gatePitch + 2*self.sideActiveWidth
     axis        = width // 2
@@ -1225,13 +1226,13 @@ class Stack ( object ):
   def drawGate ( self, axis, wiring ):
     trace( 100, '\tStack.drawGate(): %s\n' % wiring )
 
-    gate    = DataBase.getDB().getTechnology().getLayer( 'poly' )
-    cut0    = DataBase.getDB().getTechnology().getLayer( 'cut0' )
-    cut1    = DataBase.getDB().getTechnology().getLayer( 'cut1' )
-    cut2    = DataBase.getDB().getTechnology().getLayer( 'cut2' )
-    metal1  = DataBase.getDB().getTechnology().getLayer( 'metal1' )
-    metal2  = DataBase.getDB().getTechnology().getLayer( 'metal2' )
-    metal3  = DataBase.getDB().getTechnology().getLayer( 'metal3' )
+    gate    = oroshi.rules.getRealLayer( 'poly' )
+    cut0    = oroshi.rules.getRealLayer( 'cut0' )
+    cut1    = oroshi.rules.getRealLayer( 'cut1' )
+    cut2    = oroshi.rules.getRealLayer( 'cut2' )
+    metal1  = oroshi.rules.getRealLayer( 'metal1' )
+    metal2  = oroshi.rules.getRealLayer( 'metal2' )
+    metal3  = oroshi.rules.getRealLayer( 'metal3' )
     width   = self.L
 
     if wiring.isTop(): ytarget = self.getTopTrackY( wiring.topTrack )
@@ -1318,12 +1319,12 @@ class Stack ( object ):
     trace( 100, '\tStack.drawSourceDrain(): %s @%s width:%s NRC=%d\n' \
            % (wiring, DbU.getValueString(axis), DbU.getValueString(width), cols ) )
 
-    metal1  = DataBase.getDB().getTechnology().getLayer( 'metal1' )
-    metal2  = DataBase.getDB().getTechnology().getLayer( 'metal2' )
-    metal3  = DataBase.getDB().getTechnology().getLayer( 'metal3' )
-    cut0    = DataBase.getDB().getTechnology().getLayer( 'cut0' )
-    cut1    = DataBase.getDB().getTechnology().getLayer( 'cut1' )
-    cut2    = DataBase.getDB().getTechnology().getLayer( 'cut2' )
+    metal1  = oroshi.rules.getRealLayer( 'metal1' )
+    metal2  = oroshi.rules.getRealLayer( 'metal2' )
+    metal3  = oroshi.rules.getRealLayer( 'metal3' )
+    cut0    = oroshi.rules.getRealLayer( 'cut0' )
+    cut1    = oroshi.rules.getRealLayer( 'cut1' )
+    cut2    = oroshi.rules.getRealLayer( 'cut2' )
     rows    = max( 1, (self.w - 2*self.minEnclosure_active_cut0) // self.contactDiffPitch )
     ypitch  = self.w // rows
     yoffset = self.activeOffsetY + ypitch//2
@@ -1332,7 +1333,7 @@ class Stack ( object ):
     xoffset = axis - (self.contactDiffPitch * (cols - 1))//2
 
     if self.w < 2*self.minEnclosure_active_cut0 + self.minWidth_cut0:
-      active = DataBase.getDB().getTechnology().getLayer( 'active' )
+      active = oroshi.rules.getRealLayer( 'active' )
 
       box = Box( xoffset, yoffset, xoffset + (cols-1)*xpitch, yoffset )
       box.inflate( self.minWidth_cut0 + self.minEnclosure_active_cut0 )

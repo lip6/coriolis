@@ -1,10 +1,32 @@
 # -*- coding: utf-8 -*-
 
 from Hurricane  import DbU
+from Hurricane  import DataBase
 from helpers    import trace
-
+from helpers.io import ErrorMessage as Error
+            
 
 class Rules ( object ):
+    """
+    The Rules object provides an easier access to the design rules stored
+    in the Technology databse. Instead of having to perform a function call
+    like:
+
+    .. code:: Python
+
+       tech  = DataBase.getDB().getTechnology()
+       value = tech.getPhysicalRule( 'minEnclosure', 'pImplant', 'active' )
+
+    We can write access the rule as an attribute of the ``rule`` object.
+
+    .. code:: Python
+   
+       import oroshi
+
+       value = oroshi.rules.minEnclosure_pImplant_active
+
+    Only the rules defined in the Rules.ruleSet list will be loaded.
+    """
 
     ruleSet = [ 'minSpacing_nWell'
               , 'minWidth_pImplant'
@@ -91,18 +113,78 @@ class Rules ( object ):
               ]
 
     def __init__ ( self, dtr ):
+        """
+        Load the rule set from the technology into the Rules object.
+
+        .. note:: The ``dtr`` parameter is just aother name for the currently
+                  used Hurricane::Technology.
+        """
         trace( 100, '\tRules.__init__()\n' )
-        self.dtr   = dtr
+        self.dtr = dtr
         
         for rule in Rules.ruleSet: self.addAttr(rule)
         return
+
+    def getRealLayer ( self, stdName ):
+        """
+        Get a Layer object by it's name. The alias translation from generic
+        names is used to return the real technology name.
+
+        For example:
+
+        ==================  ===================
+        Generic Layer Name  SkyWater 130nm Name
+        ==================  ===================
+        nWell               nwm
+        active              difftap
+        pImplant            psdm
+        cut0                licon
+        metal1              li
+        cut1                via
+        metal2              metal1
+        ==================  ===================
+        """
+        return self.dtr.getLayer( stdName )
+
+    def attrTranslate ( self, attribute ):
+        """
+        Translate a rule complete name, given in ``attribute``, using the *generic*
+        layer names into another string, using the target technology layer names.
+
+        For example, for SkyWater 130nm: ::
+
+            minEnclosure_pImplant_active => minSpacing_psdm_difftap
+        """
+        words       = attribute.split( '_' )
+        translateds = [ words[0] ]
+        for word in words[1:]:
+            realLayer = self.getRealLayer( word )
+            if realLayer is None:
+                print( Error( 1, 'rules.attrTranslate(): Unable to translate generic layer "{}".' \
+                                 .format( word )))
+                realLayerName = word
+            else:
+                realLayerName = realLayer.getName()
+            translateds.append( realLayerName )
+        return '_'.join( translateds )
     
     def addAttr ( self, attribute ):
+        """
+        Add a new attribute into the dictionnary of rule set. The attribute fields,
+        separated by '_' are broken down to get the corresponding rule in the
+        technology and be set as value of said attribute.
+
+        The attribute is the concatenation of the rule name and the various layers
+        it applies on. For example: ::
+
+            (minEnclosure, pImplant, active) => 'minEnclosure_pImplant_active'
+        """
+        techAttribute = self.attrTranslate( attribute )
         if attribute in self.__dict__: return
         
-       #print( 'Rules.addAttr(): {}'.format(attribute) )
+       #print( 'Rules.addAttr(): {} -> {}'.format( attribute, techAttribute ))
         value = None
-        words = attribute.split( '_' )
+        words = techAttribute.split( '_' )
         try:
             if len(words) == 1:
                 if   words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()

@@ -846,8 +846,10 @@ namespace {
 
       placeNets(_cell);
     } catch ( Error& e ) {
-      if ( e.what() != "[ERROR] ApParser processed" )
+      if ( e.what() != "[ERROR] ApParser processed" ) {
         cerr << e.what() << endl;
+        cerr << "[ERROR] ApParser(): file " << _cellPath << ", line: " << _lineNumber << "." << endl;
+      }
     }
 
     Go::enableAutoMaterialization();

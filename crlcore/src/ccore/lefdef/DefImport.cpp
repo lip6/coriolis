@@ -182,7 +182,10 @@ namespace {
     defrSetSNetCbk         ( _snetCbk );
     defrSetPathCbk         ( _pathCbk );
 
-    if (DataBase::getDB()->getTechnology()->getName() == "Sky130") _flags |= Sky130;
+    if (DataBase::getDB()->getTechnology()->getName() == "Sky130") {
+      cmess1 << "     - Enabling SkyWater 130nm harness hacks." << endl;
+      _flags |= Sky130;
+    }
   }
 
 
