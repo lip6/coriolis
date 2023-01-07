@@ -437,6 +437,10 @@ class Side ( object ):
         startCorner += self.conf.ioPadHeight
         stopCorner  -= self.conf.ioPadHeight
         if len(self.pads) == 0:
+            for irail in range(len(self.corona.padRails)):
+                self._createSegment( self.corona.padRails[ irail ]
+                                   , startCorner
+                                   , stopCorner )
             return
         padAb = self.conf.getInstanceAb( self.pads[0][1] )
         for irail in range(len(self.corona.padRails)):
