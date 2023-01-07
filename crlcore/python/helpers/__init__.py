@@ -318,7 +318,6 @@ def setNdaTopDir ( ndaTopDirArg ):
         ndaTopDir = ndaTopDirArg
         sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
         sys.path.append( ndaTopDir )
-
     return
 
 

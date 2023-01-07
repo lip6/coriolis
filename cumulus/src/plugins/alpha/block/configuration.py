@@ -166,7 +166,11 @@ class GaugeConf ( object ):
         for depth in range(0,self.topLayerDepth+1):
             trace( 550, '\tdepth:{} {}\n'.format(depth,self._routingGauge.getLayerGauge(depth) ))
             
+            if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.Unusable:
+                continue
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
+                continue
+            if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.BottomPowerSupply:
                 continue
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PowerSupply:
                 continue

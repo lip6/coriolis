@@ -492,7 +492,7 @@ class CoreToChip ( object ):
         :param instance:   The instance to work on.
         :param netO:       The signal to connect to, could be either the net *name*
                            or the net object itself.
-        :param masterNetO: The master net (interal net) of the plug. Could be either
+        :param masterNetO: The master net (internal net) of the plug. Could be either
                            the net *name* or the net object. If not supplied,
                            ``_connect()`` will look for a master net of the same
                            name as ``netO``
@@ -503,7 +503,6 @@ class CoreToChip ( object ):
         if   not masterNetO:             masterNet = instance.getMasterCell().getNet( chipNet.getName() )
         elif isinstance(masterNetO,Net): masterNet = masterNetO
         else:                            masterNet = instance.getMasterCell().getNet( masterNetO )
-        
         instance.getPlug( masterNet ).setNet( chipNet )
         return
 

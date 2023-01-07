@@ -250,13 +250,14 @@ def staticInitialization ():
         
         if helpers.ndaTopDir:
             vprint( 1, '  o  Preload NDA protected plugins.' )
-            pythonDir  =os.path.join( helpers.ndaTopDir, 'python{}.{}'.format( sys.version_info.major
+            pythonDir = os.path.join( helpers.ndaTopDir, 'python{}.{}'.format( sys.version_info.major
                                                                              , sys.version_info.minor ))
             if os.path.isdir(pythonDir):
                 pluginsDir = os.path.join( pythonDir, 'site-packages/cumulus/plugins' )
                 loadPlugins( pluginsDir )
             else:
                 vprint( 1, '     - No NDA protected plugins directory.' )
+                vprint( 1, '       ({}).'.format( pythonDir ))
         else:
             vprint( 1, '     - No NDA protected plugins.' )
     except Exception as e:
