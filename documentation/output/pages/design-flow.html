@@ -368,7 +368,7 @@ cell library (works with <tt class="docutils literal">boom</tt> &amp; <tt class=
 <li><tt class="docutils literal">Boom</tt>, behavioral description optimizer (works with <tt class="docutils literal">boog</tt> &amp; <tt class="docutils literal">loon</tt>).</li>
 <li><tt class="docutils literal">Cougar</tt>, symbolic layout extractor.</li>
 <li><tt class="docutils literal">Dreal</tt>, real layout (<span class="sc">gds</span>, <span class="sc">cif</span>) editor.</li>
-<li><tt class="docutils literal">Druc</tt>, symbolic layout <span class="sc">DRC</span>.</li>
+<li><tt class="docutils literal">Druc</tt>, symbolic layout <span class="sc">drc</span>.</li>
 <li><tt class="docutils literal">Flatph</tt>, flatten a layout, fully or in part.</li>
 <li><tt class="docutils literal">Genpat</tt>, pattern generator (for use with <tt class="docutils literal">Asimut</tt>).</li>
 <li><tt class="docutils literal">Graal</tt>, symbolic layout editor.</li>
@@ -409,10 +409,22 @@ ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit clean_flow --extras
 </div>
 <div class="section" id="rule-sets">
 <h3><a class="toc-backref" href="#id13">3.4 Rule Sets</a></h3>
-<ol class="arabic simple">
-<li>alliancesynth</li>
-<li>pnrcheck</li>
-<li>routecheck</li>
+<p>For commonly used sequences of rules, some predefined sets are defined.</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal">alliancesynth</tt>, to apply the logical <span class="sc">Alliance</span> logical synthesis
+set of tools. From <span class="sc">vhdl</span> to optimized <span class="cb">vst</span>. The set is as follow:</p>
+<pre class="literal-block">
+x.vbe =&gt; boom =&gt; x_boom.vbe =&gt; boog =&gt; x_boog.vst =&gt; loon =&gt; x.vst
+</pre>
+<p>An additional rule using <tt class="docutils literal">vasy</tt> is triggered if the input format
+is standard <span class="sc">vhdl</span>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">pnrcheck</tt>, complete flow from <span class="sc">Verilog</span> to symbolic layout, with
+<span class="sc">drc</span> and <span class="sc">lvx</span> checks. Uses <span class="sc">Yosys</span> for synthesis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">routecheck</tt>, perform the routing, the <span class="sc">drc</span> and <span class="sc">lvx</span> check on an
+already placed design. Use symbolic layout.</p>
+</li>
 </ol>
 </div>
 </div>

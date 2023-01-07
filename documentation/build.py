@@ -348,6 +348,7 @@ if __name__ == '__main__':
     documents = [ Document( conf, 'content/pages/users-guide/UsersGuide' )
                 , Document( conf, 'content/pages/python-tutorial/PythonTutorial' )
                 , Document( conf, 'content/pages/python-cpp/PythonCpp' )
+                , Document( conf, 'content/pages/design-flow/DesignFlow' )
                 , Document( conf, 'content/pages/stratus/Stratus' )
                 , Document( conf, 'content/pages/check-toolkit/CheckToolkit' )
                 , Document( conf, 'content/pages/rds/RDS' )

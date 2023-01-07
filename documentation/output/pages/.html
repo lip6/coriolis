@@ -118,7 +118,7 @@
 <h2>1. Introduction</h2>
 <p>The  goal  of the  DesignFlow  Python  tool is  to  provide  a replacement  for
 Makefiles,  especially  the  complex  system   that  has  been  developped  for
-alliance-check-toolkit.  It is build upon <a href="#id1"><span class="problematic" id="id2">|DoIt|</span></a> (<a href="#id91"><span class="problematic" id="id92">DoIt_</span></a>).</p>
+alliance-check-toolkit.  It is build upon <a href="#id1"><span class="problematic" id="id2">|DoIt|</span></a> (<a href="#id111"><span class="problematic" id="id112">DoIt_</span></a>).</p>
 <div class="section" id="task-vs-rules">
 <h3>1.1 Task vs. Rules</h3>
 <p>Both as a tribute to <a href="#id3"><span class="problematic" id="id4">|Makefile|</span></a>, to avoid ambiguties with <a href="#id5"><span class="problematic" id="id6">|DoIt|</span></a> and to remember
@@ -373,10 +373,22 @@ ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit clean_flow --extras
 </div>
 <div class="section" id="rule-sets">
 <h3>3.4 Rule Sets</h3>
-<ol class="arabic simple">
-<li>alliancesynth</li>
-<li>pnrcheck</li>
-<li>routecheck</li>
+<p>For commonly used sequences of rules, some predefined sets are defined.</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal">alliancesynth</tt>, to apply the logical <a href="#id91"><span class="problematic" id="id92">|Alliance|</span></a> logical synthesis
+set of tools. From <a href="#id93"><span class="problematic" id="id94">|VHDL|</span></a> to optimized <a href="#id95"><span class="problematic" id="id96">|vst|</span></a>. The set is as follow:</p>
+<pre class="literal-block">
+x.vbe =&gt; boom =&gt; x_boom.vbe =&gt; boog =&gt; x_boog.vst =&gt; loon =&gt; x.vst
+</pre>
+<p>An additional rule using <tt class="docutils literal">vasy</tt> is triggered if the input format
+is standard <a href="#id97"><span class="problematic" id="id98">|VHDL|</span></a>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">pnrcheck</tt>, complete flow from <a href="#id99"><span class="problematic" id="id100">|Verilog|</span></a> to symbolic layout, with
+<a href="#id101"><span class="problematic" id="id102">|DRC|</span></a> and <a href="#id103"><span class="problematic" id="id104">|LVX|</span></a> checks. Uses <a href="#id105"><span class="problematic" id="id106">|Yosys|</span></a> for synthesis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">routecheck</tt>, perform the routing, the <a href="#id107"><span class="problematic" id="id108">|DRC|</span></a> and <a href="#id109"><span class="problematic" id="id110">|LVX|</span></a> check on an
+already placed design. Use symbolic layout.</p>
+</li>
 </ol>
 </div>
 </div>
@@ -518,7 +530,37 @@ Undefined substitution referenced: &quot;Coriolis&quot;.</div>
 <p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 272); <em><a href="#id90">backlink</a></em></p>
 Undefined substitution referenced: &quot;Yosys&quot;.</div>
 <div class="system-message" id="id91">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 7); <em><a href="#id92">backlink</a></em></p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 299); <em><a href="#id92">backlink</a></em></p>
+Undefined substitution referenced: &quot;Alliance&quot;.</div>
+<div class="system-message" id="id93">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 299); <em><a href="#id94">backlink</a></em></p>
+Undefined substitution referenced: &quot;VHDL&quot;.</div>
+<div class="system-message" id="id95">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 299); <em><a href="#id96">backlink</a></em></p>
+Undefined substitution referenced: &quot;vst&quot;.</div>
+<div class="system-message" id="id97">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 304); <em><a href="#id98">backlink</a></em></p>
+Undefined substitution referenced: &quot;VHDL&quot;.</div>
+<div class="system-message" id="id99">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 307); <em><a href="#id100">backlink</a></em></p>
+Undefined substitution referenced: &quot;Verilog&quot;.</div>
+<div class="system-message" id="id101">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 307); <em><a href="#id102">backlink</a></em></p>
+Undefined substitution referenced: &quot;DRC&quot;.</div>
+<div class="system-message" id="id103">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 307); <em><a href="#id104">backlink</a></em></p>
+Undefined substitution referenced: &quot;LVX&quot;.</div>
+<div class="system-message" id="id105">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 307); <em><a href="#id106">backlink</a></em></p>
+Undefined substitution referenced: &quot;Yosys&quot;.</div>
+<div class="system-message" id="id107">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 310); <em><a href="#id108">backlink</a></em></p>
+Undefined substitution referenced: &quot;DRC&quot;.</div>
+<div class="system-message" id="id109">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 310); <em><a href="#id110">backlink</a></em></p>
+Undefined substitution referenced: &quot;LVX&quot;.</div>
+<div class="system-message" id="id111">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/dsk/l1/jpc/coriolis-2.x/src/coriolis/documentation/content/pages/design-flow/QuickStart.rst</tt>, line 7); <em><a href="#id112">backlink</a></em></p>
 Unknown target name: &quot;doit&quot;.</div>
 </div>
 
