@@ -122,6 +122,8 @@ namespace Anabatic {
       static  inline size_t                            getLayerDepth         ( const Layer* layer );
       static  inline const Layer*                      getRoutingLayer       ( size_t );
       static  inline const Layer*                      getContactLayer       ( size_t );
+      static  inline const Layer*                      getBuildRoutingLayer  ( size_t );
+      static  inline const Layer*                      getBuildContactLayer  ( size_t );
       static         Flags                             getDirection          ( size_t depth );
       static  inline DbU::Unit                         getPitch              ( size_t depth, Flags flags );
       static  inline DbU::Unit                         getOffset             ( size_t depth );
@@ -269,6 +271,8 @@ namespace Anabatic {
   inline size_t                            Session::getLayerDepth        ( const Layer* layer ) { return getRoutingGauge()->getLayerDepth(layer); }
   inline const Layer*                      Session::getRoutingLayer      ( size_t depth )       { return getRoutingGauge()->getRoutingLayer(depth); }
   inline const Layer*                      Session::getContactLayer      ( size_t depth )       { return getRoutingGauge()->getContactLayer(depth); }
+  inline const Layer*                      Session::getBuildRoutingLayer ( size_t depth )       { return getRoutingGauge()->getRoutingLayer(depth+getRoutingGauge()->getFirstRoutingLayer()); }
+  inline const Layer*                      Session::getBuildContactLayer ( size_t depth )       { return getRoutingGauge()->getContactLayer(depth+getRoutingGauge()->getFirstRoutingLayer()); }
   inline DbU::Unit                         Session::getPitch             ( size_t depth, Flags flags=Flags::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
   inline DbU::Unit                         Session::getOffset            ( size_t depth )       { return getRoutingGauge()->getLayerOffset(depth); }
   inline DbU::Unit                         Session::getWireWidth         ( size_t depth )       { return getRoutingGauge()->getLayerWireWidth(depth); }

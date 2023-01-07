@@ -107,9 +107,11 @@ extern "C" {
           return NULL;
       }
       switch( type ) {
-        case Constant::Default:
+        case Constant::Unusable:
+        case Constant::BottomPowerSupply:
+        case Constant::PowerSupply:
         case Constant::PinOnly:
-        case Constant::PowerSupply: break;
+        case Constant::Default: break;
         default:
           PyErr_SetString ( ConstructorError, "Bad value for type argument of RoutingLayerGauge.create()." );
           return NULL;
@@ -351,15 +353,17 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Horizontal ,"Horizontal"  );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Vertical   ,"Vertical"    );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Default    ,"Default"     );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PinOnly    ,"PinOnly"     );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PowerSupply,"PowerSupply" );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Superior   ,"Superior"    );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Inferior   ,"Inferior"    );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Nearest    ,"Nearest"     );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Exact      ,"Exact"       );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Horizontal       ,"Horizontal"  );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Vertical         ,"Vertical"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Unusable         ,"Unusable"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PinOnly          ,"PinOnly"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PowerSupply      ,"PowerSupply" );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::BottomPowerSupply,"BottomPowerSupply" );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Default          ,"Default"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Superior         ,"Superior"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Inferior         ,"Inferior"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Nearest          ,"Nearest"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Exact            ,"Exact"       );
   }
 
 

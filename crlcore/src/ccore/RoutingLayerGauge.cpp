@@ -109,18 +109,19 @@ namespace CRL {
                                        , DbU::Unit                 pwireWidth
                                        , DbU::Unit                 viaWidth
                                        , DbU::Unit                 obsDw )
-      : _layer        (layer)
-      , _blockageLayer(layer->getBlockageLayer())
-      , _direction    (direction)
-      , _type         (type)
-      , _depth        (depth)
-      , _density      (density)
-      , _offset       (offset)
-      , _pitch        (pitch)
-      , _wireWidth    (wireWidth)
-      , _pwireWidth   (pwireWidth)
-      , _viaWidth     (viaWidth)
-      , _obstacleDw   (obsDw)
+    : _routingGauge (nullptr)
+    , _layer        (layer)
+    , _blockageLayer(layer->getBlockageLayer())
+    , _direction    (direction)
+    , _type         (type)
+    , _depth        (depth)
+    , _density      (density)
+    , _offset       (offset)
+    , _pitch        (pitch)
+    , _wireWidth    (wireWidth)
+    , _pwireWidth   (pwireWidth)
+    , _viaWidth     (viaWidth)
+    , _obstacleDw   (obsDw)
   { }
 
 
@@ -304,11 +305,12 @@ namespace CRL {
   {
     Record* record = new Record ( getString(this) );
 
-    record->add ( getSlot ( "_layer"    ,  _layer     ) );
-    record->add ( getSlot ( "_direction",  _direction ) );
-    record->add ( getSlot ( "_type"     ,  _type      ) );
-    record->add ( getSlot ( "_depth"    ,  _depth     ) );
-    record->add ( getSlot ( "_density"  ,  _density   ) );
+    record->add ( getSlot ( "_routingGauge",  _routingGauge ) );
+    record->add ( getSlot ( "_layer"       ,  _layer        ) );
+    record->add ( getSlot ( "_direction"   ,  _direction    ) );
+    record->add ( getSlot ( "_type"        ,  _type         ) );
+    record->add ( getSlot ( "_depth"       ,  _depth        ) );
+    record->add ( getSlot ( "_density"     ,  _density      ) );
 
     record->add ( DbU::getValueSlot ( "_offset"   , &_offset    ) );
     record->add ( DbU::getValueSlot ( "_pitch"    , &_pitch     ) );

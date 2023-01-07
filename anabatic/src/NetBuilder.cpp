@@ -514,6 +514,13 @@ namespace Anabatic {
                   break;
                 }
               }
+              if (rpDepth >= Session::getRoutingGauge()->getFirstRoutingLayer())
+                rpDepth -= Session::getRoutingGauge()->getFirstRoutingLayer();
+              else
+                cerr << Error( "Terminal layer \"%s\" of %s is below first usable routing layer."
+                               , getString(layer->getName()).c_str()
+                               , getString(anchor).c_str() )
+                     << endl;
               if ((rpDepth > 0) and not isPin
                                 and not Session::getRoutingGauge()->isSuperPitched()) {
                 _flags |= ToUpperRouting;
@@ -1297,11 +1304,12 @@ namespace Anabatic {
     vector<RoutingPad*>  rpM1s;
     Component*           rpM2 = NULL;
 
-    forEach ( RoutingPad*, irp, net->getRoutingPads() ) {
-      if (Session::getRoutingGauge()->getLayerDepth(irp->getLayer()) == 1)
-        rpM2 = *irp;
+    for ( RoutingPad* rp : net->getRoutingPads() ) {
+      if (      Session::getRoutingGauge()->getLayerDepth(rp->getLayer())
+         == 1 + Session::getRoutingGauge()->getFirstRoutingLayer())
+        rpM2 = rp;
       else
-        rpM1s.push_back( *irp );
+        rpM1s.push_back( rp );
     }
 
     if ((rpM1s.size() < 2) and not rpM2) {
