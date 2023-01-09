@@ -45,7 +45,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
                      , routedName+'.vst'
                      , routedName+'.spi' ]
     rtlDepends += extraRtlDepends
-    rulePnR   = PnR     .mkRule( 'pnr', pnrTargets, rtlDepends, scriptMain )
+    rulePnR    = PnR     .mkRule( 'pnr', pnrTargets, rtlDepends, scriptMain )
     ruleCougar = Cougar.mkRule( 'cougar', routedName+'_r_ext.vst', [rulePnR], flags=Cougar.Verbose )
     ruleLvx    = Lvx   .mkRule( 'lvx'
                               , [ rulePnR.file_target(1)
