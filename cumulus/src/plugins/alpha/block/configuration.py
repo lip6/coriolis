@@ -1398,8 +1398,8 @@ class BlockConf ( GaugeConf ):
     @property
     def coreAb ( self ):
         if not hasattr(self,'coreSize'): return Box()
-        #trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
-        #                                       , DbU.getValueString(self.coreSize[1]) ))
+        trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
+                                               , DbU.getValueString(self.coreSize[1]) ))
         return Box( 0, 0, self.coreSize[0], self.coreSize[1] )
 
     @property

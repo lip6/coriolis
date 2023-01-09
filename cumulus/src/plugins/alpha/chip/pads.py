@@ -774,6 +774,7 @@ class Corona ( object ):
         self.northSide.gap = self.southSide.gap
         self.eastSide.gap  = self.southSide.gap
         self.westSide.gap  = self.southSide.gap
+        trace( 550, '\tMinimum gap: {}\n'.format(DbU.getValueString( self.southSide.gap )))
         for coronaPlug in self.conf.icorona.getPlugs():
             chipIntNet = coronaPlug.getNet()
             if not chipIntNet:
@@ -802,6 +803,10 @@ class Corona ( object ):
                     raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "{}" is not connected to a pad.' \
                                            .format(chipIntNet.getName()) )
         self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )
+        trace( 550, '\tWest  side gap: {}\n'.format(DbU.getValueString( self.westSide.gap )))
+        trace( 550, '\tEast  side gap: {}\n'.format(DbU.getValueString( self.eastSide.gap )))
+        trace( 550, '\tSouth side gap: {}\n'.format(DbU.getValueString( self.southSide.gap )))
+        trace( 550, '\tNorth side gap: {}\n'.format(DbU.getValueString( self.northSide.gap )))
         self.coreSymBb = self.conf.getInstanceAb( self.conf.icorona )
         self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap //2, Superior )
                               , self.conf.toSymbolic( self.southSide.gap//2, Superior )

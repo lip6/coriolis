@@ -94,6 +94,8 @@ class Chip ( Block ):
             self.validate()
             minHCorona = self.conf.minHCorona
             minVCorona = self.conf.minVCorona
+            trace( 550, '\tminHCorona={}\n'.format(DbU.getValueString( minHCorona )))
+            trace( 550, '\tminVCorona={}\n'.format(DbU.getValueString( minVCorona )))
         else:
             self.padsCorona = plugins.alpha.harness.pads.Corona( self )
             self.padsCorona.doLayout()

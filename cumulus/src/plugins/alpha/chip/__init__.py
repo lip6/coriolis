@@ -141,8 +141,12 @@ class CoreWire ( object ):
         trace( 550, '\tbbSegment: {}\n'.format(self.bbSegment) )
         self.symSegmentLayer = None
         for layerGauge in rg.getLayerGauges():
+            trace( 550, '\tTrying: {}\n'.format(layerGauge) )
+            if layerGauge.getType() == RoutingLayerGauge.Unusable: continue
+            if layerGauge.getType() == RoutingLayerGauge.BottomPowerSupply: continue
             if layerGauge.getDepth() > self.conf.topLayerDepth: break
             if layerGauge.getLayer().getMask() == mask:
+                trace( 550, '\tUsing: {}\n'.format(layerGauge) )
                 self.symSegmentLayer = layerGauge.getLayer()
                 if self.preferredDir:
                     self.symContactLayer = self.symSegmentLayer
@@ -155,11 +159,15 @@ class CoreWire ( object ):
                                        , DbU.getValueString(self.symContactSize[1]) ))
                 else:
                     depth = layerGauge.getDepth()
+                    trace( 550, '\tChoosing PP layer, {}+1 > top={}\n' \
+                                .format(layerGauge.getDepth(),self.conf.topLayerDepth) )
                     if layerGauge.getDepth() + 1 > self.conf.topLayerDepth:
                         self.symSegmentLayer = rg.getLayerGauge( depth-1 ).getLayer()
                         depth -= 1
+                        trace( 550, '\tUsing below layer {}\n'.format( self.symSegmentLayer ))
                     else:
                         self.symSegmentLayer = rg.getLayerGauge( depth+1 ).getLayer()
+                        trace( 550, '\tUsing above layer {}\n'.format( self.symSegmentLayer ))
                     self.symContactLayer = rg.getContactLayer( depth )
                     if self.side & (West|East):
                         self.symContactSize  = ( self.bbSegment.getHeight(), self.bbSegment.getHeight() )
