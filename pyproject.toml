@@ -14,12 +14,7 @@ enable = true
 dirty = true
 vcs = "git"
 style = "pep440"
-pattern = '''
-  (?x)
-  ^coriolis-((?P<epoch>\d+)!)?(?P<base>\d+(\.\d+)*)
-  ([-._]?((?P<stage>[a-zA-Z]+)[-._]?(?P<revision>\d+)?))?
-  (\+(?P<tagged_metadata>.+))?$
-'''
+metadata = "true"
 
 [tool.poetry.dependencies]
 python = "^3.8"
