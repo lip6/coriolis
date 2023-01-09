@@ -3,6 +3,7 @@ name = "Coriolis"
 version = "2.5.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
+readme = "README.rst"
 build = "builder.py"
 packages = [
   { include = "Coriolis"}
