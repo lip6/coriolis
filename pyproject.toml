@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Coriolis"
-version = "2.5.0"
+version = "0.0.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
 readme = "README.rst"
@@ -8,6 +8,18 @@ build = "builder.py"
 packages = [
   { include = "Coriolis"}
 ]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+dirty = true
+vcs = "git"
+style = "pep440"
+pattern = '''
+  (?x)
+  ^coriolis-((?P<epoch>\d+)!)?(?P<base>\d+(\.\d+)*)
+  ([-._]?((?P<stage>[a-zA-Z]+)[-._]?(?P<revision>\d+)?))?
+  (\+(?P<tagged_metadata>.+))?$
+'''
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -24,8 +36,8 @@ unittests = 'Coriolis:unittests'
 yosys_coriolis = 'Coriolis:yosys_coriolis'
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.cibuildwheel.linux]
 skip = ["cp36-*", "cp37-*", "pp*"]

@@ -3,6 +3,8 @@ import os
 import sys
 import subprocess
 
+__version__ = "0.0.0"
+
 #TODO not PEP302 complient -probably a big porting job
 coriolis_package_dir = os.path.abspath(os.path.dirname(__file__))
 
