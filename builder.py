@@ -110,6 +110,10 @@ class ExtensionBuilder(build_ext):
                     print(f"fixing up {f}")
                     subprocess.check_call(["patchelf", "--set-rpath", '$ORIGIN/../../lib', f])
 
+        # Remove docs
+        if os.path.exists(os.path.join(install_dir, "share", "doc")):
+            remove_tree(os.path.join(install_dir, "share", "doc"))
+
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
                      CMakeExtension("coloquinte", sourcedir="coloquinte"),
