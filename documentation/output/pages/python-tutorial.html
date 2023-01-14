@@ -222,20 +222,20 @@ don't. Thus we summarize below the more important ones:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a></td>
+<tr><td><a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a></td>
 <td>The model. A Cell does not have terminals, only nets
 flagged as <em>external</em></td>
 </tr>
-<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a></td>
+<tr><td><a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a></td>
 <td>An instance of a model</td>
 </tr>
-<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a></td>
+<tr><td><a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a></td>
 <td>A grouping of electrically connected components</td>
 </tr>
-<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a></td>
+<tr><td><a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plug</a></td>
 <td>A terminal of an instance</td>
 </tr>
-<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></td>
+<tr><td><a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></td>
 <td>A physical connexion (<em>pin</em>) to an instance</td>
 </tr>
 </tbody>
@@ -329,7 +329,7 @@ they print the result of the C++ method <tt class="docutils literal">::getString
 <p>Regarding the memory allocation, the <span class="sc">Hurricane</span> database contains two kind of objects.</p>
 <ol class="arabic">
 <li><p class="first">Objects that are linked to others in the database and whose creation or deletion
-implies coherency operations. This is the case for <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> or <a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>.
+implies coherency operations. This is the case for <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a> or <a class="reference external" href="../doc/hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>.
 They must be created using the static <span class="cb">create()</span> method of their class
 and destroyed with their <span class="cb">destroy()</span> method.</p>
 <p>And, of course, they cannot be copied (the copy constructor has been disabled).</p>
@@ -339,7 +339,7 @@ and destroyed with their <span class="cb">destroy()</span> method.</p>
 <span class="n">net</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>                    <span class="c1"># Call the dynamic destroy() method.</span>
 </pre></div>
 </li>
-<li><p class="first">Objects that are <em>standalone</em>, like <a class="reference external" href="../../hurricane/classHurricane_1_1Point.html">Point</a> or <a class="reference external" href="../../hurricane/classHurricane_1_1Box.html">Box</a>, uses the usual construction
+<li><p class="first">Objects that are <em>standalone</em>, like <a class="reference external" href="../doc/hurricane/classHurricane_1_1Point.html">Point</a> or <a class="reference external" href="../doc/hurricane/classHurricane_1_1Box.html">Box</a>, uses the usual construction
 methods. They also use the <span class="sc">Python</span> garbage collector mechanism and do not need
 to be explicitly deleted.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="n">DbU</span><span class="p">,</span> <span class="n">Box</span>
@@ -356,7 +356,7 @@ to be explicitly deleted.</p>
 </div>
 <div class="section" id="collections-and-iterators">
 <h3>1.4 Collections and Iterators</h3>
-<p>Hurricane <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a> behave like containers under <span class="sc">Python</span> and provide
+<p>Hurricane <a class="reference external" href="../doc/hurricane/classHurricane_1_1Collection.html">Collection</a> behave like containers under <span class="sc">Python</span> and provide
 support for the <span class="cb">iterator</span> protocol.</p>
 <blockquote>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="n">Net</span><span class="p">,</span> <span class="n">Horizontal</span>
@@ -411,13 +411,13 @@ attributes. The syntax has been made as simple as possible.</p>
     <span class="k">del</span> <span class="n">cell</span><span class="o">.</span><span class="n">myAttribute0</span>
     <span class="n">PythonAttributes</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
 </pre></div>
-<p>Detailing the life cycle of Python attributes on a <a class="reference external" href="../../hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
+<p>Detailing the life cycle of Python attributes on a <a class="reference external" href="../doc/hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
 <ol class="arabic">
-<li><p class="first">Enabling the addition of Python attribute on a <a class="reference external" href="../../hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
+<li><p class="first">Enabling the addition of Python attribute on a <a class="reference external" href="../doc/hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
 <div class="highlight"><pre><span></span><span class="n">PythonAttributes</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
 </pre></div>
 </li>
-<li><p class="first">Adding/removing properties on the <a class="reference external" href="../../hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
+<li><p class="first">Adding/removing properties on the <a class="reference external" href="../doc/hurricane/classHurricane_1_1DBo.html">DBo</a>:</p>
 <div class="highlight"><pre><span></span><span class="n">cell</span><span class="o">.</span><span class="n">myAttribute0</span> <span class="o">=</span> <span class="n">MyAttribute</span><span class="p">()</span>
 <span class="n">cell</span><span class="o">.</span><span class="n">myAttribute1</span> <span class="o">=</span> <span class="n">MyAttribute</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;cell.myAttribute0 =&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">myAttribute0</span> <span class="p">)</span>
@@ -430,13 +430,13 @@ Any still attached Python attributes will be released.</p>
 </pre></div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">When the attributes of a <a class="reference external" href="../../hurricane/classHurricane_1_1DBo.html">DBo</a> are released it does not automatically
+<p class="last">When the attributes of a <a class="reference external" href="../doc/hurricane/classHurricane_1_1DBo.html">DBo</a> are released it does not automatically
 imply that they are removed. Their reference count is decreased, and
 if they are only referenced here, they will be deleted. But if other
 variables still holds reference onto them, they will stay allocateds.</p>
 </div>
 </li>
-<li><p class="first">There is no need to keep track of all the <a class="reference external" href="../../hurricane/classHurricane_1_1DBo.html">DBo</a> that have Python
+<li><p class="first">There is no need to keep track of all the <a class="reference external" href="../doc/hurricane/classHurricane_1_1DBo.html">DBo</a> that have Python
 attributes to disable them. One can directly call:</p>
 <div class="highlight"><pre><span></span><span class="n">PythonAttributes</span><span class="o">.</span><span class="n">disableAll</span><span class="p">()</span>
 </pre></div>
@@ -448,7 +448,7 @@ attributes to disable them. One can directly call:</p>
 <p>Sometimes, the use of a wrapped C++ feature would be counter intuitive regarding
 the <span class="sc">Python</span> feature. For those cases the <span class="cb">overlay</span> module provide an
 adaptation of the C++ API for a more <em>Python-like</em> code. A typical example is
-with the <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> mechanism.</p>
+with the <a class="reference external" href="../doc/hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> mechanism.</p>
 <p>Using directly the C++ wrapper, we would write a code like this:</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="n">UpdateSession</span><span class="p">,</span> <span class="n">Net</span><span class="p">,</span> <span class="n">Vertical</span>
 <span class="kn">from</span> <span class="nn">helpers</span>   <span class="kn">import</span> <span class="n">l</span>
@@ -567,11 +567,11 @@ in <a class="reference external" href="../UsersGuide/ViewerTools.html">CGT - The
 </div>
 <div class="section" id="making-a-standard-cell-layout">
 <h2><a class="toc-backref" href="#id12">3. Making a Standard Cell -- Layout</a></h2>
-<p>In this part, we will show how to create and save a terminal <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>,
+<p>In this part, we will show how to create and save a terminal <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a>,
 that is, a cell without instances (the end point of a hierarchical
 design). To illustrate the case we will draw the layout of a
 standard cell.</p>
-<p>We will introduce the following classes : <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>
+<p>We will introduce the following classes : <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a>, <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a>, <a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Component</a>
 and its derived classes.</p>
 <div class="section" id="the-allianceframework-crl-core">
 <h3>3.1 The AllianceFramework (CRL Core)</h3>
@@ -581,7 +581,7 @@ one is available : the Alliance framework. It allows <span class="sc">Coriolis</
 <span class="sc">Alliance</span> libraries and cells in the exact same way.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">To see how the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> is configured for your
+<p class="last">To see how the <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> is configured for your
 installation, please have a look to <tt class="docutils literal">alliance.conf</tt> in the
 <tt class="docutils literal">etc/coriolis2</tt> directory. It must contains the same settings
 as the various <tt class="docutils literal">MBK_</tt> variables used for <span class="sc">Alliance</span>.</p>
@@ -590,7 +590,7 @@ as the various <tt class="docutils literal">MBK_</tt> variables used for <span c
 <div class="section" id="session-mechanism-hurricane">
 <h3>3.2 Session Mechanism (Hurricane)</h3>
 <p>In the <span class="sc">Hurricane</span> database, all modifications must take place inside
-an <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. At the closing of a session, created or modificated
+an <a class="reference external" href="../doc/hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. At the closing of a session, created or modificated
 objects are fully inserted in the database. This is especially true for
 the visualisation, a created component will be visible <em>only</em> only after
 the session close.</p>
@@ -601,8 +601,8 @@ the session close.</p>
 </div>
 <div class="section" id="creating-a-new-cell-crl-core">
 <h3>3.3 Creating a new Cell (CRL Core)</h3>
-<p>The creation of a new <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> occurs through the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>,
-and, as stated above, inside a <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. The <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>
+<p>The creation of a new <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> occurs through the <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>,
+and, as stated above, inside a <a class="reference external" href="../doc/hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. The <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>
 environment is provided by the <span class="sc">crl</span> module.</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
@@ -614,15 +614,15 @@ environment is provided by the <span class="sc">crl</span> module.</p>
     <span class="c1"># Build then save the Cell.</span>
 </pre></div>
 <p>This is the simplest call to <tt class="docutils literal">createCell()</tt>, and in that case, the newly
-created <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> will be saved in the <em>working library</em> (usually, the current
+created <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> will be saved in the <em>working library</em> (usually, the current
 directory). You may supply a second argument telling into which library
-you want the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> to be created.</p>
-<p>In the <span class="sc">Hurricane</span> <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> object, there is no concept of <em>view</em>, it contains
+you want the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> to be created.</p>
+<p>In the <span class="sc">Hurricane</span> <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> object, there is no concept of <em>view</em>, it contains
 completly fused logical (netlist) and physical (layout) views.</p>
 </div>
 <div class="section" id="the-dbu-measurement-unit">
 <h3>3.4 The DbU Measurement Unit</h3>
-<p>All coordinates in the <span class="sc">Hurricane</span> database are expressed in <a class="reference external" href="../../hurricane/classHurricane_1_1DbU.html">DbU</a>
+<p>All coordinates in the <span class="sc">Hurricane</span> database are expressed in <a class="reference external" href="../doc/hurricane/classHurricane_1_1DbU.html">DbU</a>
 (for <em>Database Unit</em>) which are integer numbers of foundry grid.
 To be more precise, they are fixed points numbers expressed in
 hundredth of foundry grid (to allow transient non-integer
@@ -637,7 +637,7 @@ two conversion functions are provided:</p>
 is <em>integer</em>.</p>
 <p>In order to reduce the number of characters one has to code, the <span class="cb">helpers</span>
 module provides three very short function to perform conversion <em>towards</em>
-<a class="reference external" href="../../hurricane/classHurricane_1_1DbU.html">DbU</a> :</p>
+<a class="reference external" href="../doc/hurricane/classHurricane_1_1DbU.html">DbU</a> :</p>
 <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">l</span> <span class="p">(</span> <span class="n">value</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a lambda into a DbU.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="n">value</span> <span class="p">)</span>
@@ -653,7 +653,7 @@ module provides three very short function to perform conversion <em>towards</em>
 </div>
 <div class="section" id="setting-up-the-abutment-box">
 <h3>3.5 Setting up the Abutment Box</h3>
-<p>To setup the abutment box, we use a <a class="reference external" href="../../hurricane/classHurricane_1_1Box.html">Box</a> which defines a box from
+<p>To setup the abutment box, we use a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Box.html">Box</a> which defines a box from
 the coordinates of the lower left corner <tt class="docutils literal">(x1,y1)</tt> and upper left
 corner <tt class="docutils literal">(x2,y2)</tt>.</p>
 <div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span> <span class="n">l</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>    <span class="c1"># x1</span>
@@ -671,20 +671,20 @@ corner <tt class="docutils literal">(x2,y2)</tt>.</p>
 <p>In the <span class="sc">Hurricane</span> terminology, a <strong>component</strong> is any kind of physical object
 among:</p>
 <ul class="simple">
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1Contact.html">Contact</a></li>
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1Pad.html">Pad</a></li>
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></li>
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a></li>
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a></li>
-<li><a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> is the only exception and will be detailed later (see ??).</li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1Contact.html">Contact</a></li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1Pad.html">Pad</a></li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1Horizontal.html">Horizontal</a></li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1Vertical.html">Vertical</a></li>
+<li><a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plug</a> is the only exception and will be detailed later (see ??).</li>
 </ul>
-<p><a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> cannot be created <em>alone</em>. They must be part of a <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a>.</p>
+<p><a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Components</a> cannot be created <em>alone</em>. They must be part of a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a>.</p>
 <div class="section" id="getting-a-layer">
 <h4>3.6.1 Getting a Layer</h4>
-<p>As physical elements, <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> are created using a <a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layer</a>. So prior to
-their creation, we must get one from the database. <a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layers</a> are stored in the
-<a class="reference external" href="../../hurricane/classHurricane_1_1Technology.html">Technology</a>, which in turn, is stored in the <a class="reference external" href="../../hurricane/classHurricane_1_1DataBase.html">DataBase</a>. So, to get a
-<a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layer</a>:</p>
+<p>As physical elements, <a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Components</a> are created using a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Layer.html">Layer</a>. So prior to
+their creation, we must get one from the database. <a class="reference external" href="../doc/hurricane/classHurricane_1_1Layer.html">Layers</a> are stored in the
+<a class="reference external" href="../doc/hurricane/classHurricane_1_1Technology.html">Technology</a>, which in turn, is stored in the <a class="reference external" href="../doc/hurricane/classHurricane_1_1DataBase.html">DataBase</a>. So, to get a
+<a class="reference external" href="../doc/hurricane/classHurricane_1_1Layer.html">Layer</a>:</p>
 <div class="highlight"><pre><span></span><span class="n">layer</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s1">&#39;METAL1&#39;</span> <span class="p">)</span>
 </pre></div>
 <div class="admonition note">
@@ -699,10 +699,10 @@ and symbolic ones we adopt the following convention:</p>
 </div>
 <div class="section" id="creating-a-net">
 <h4>3.6.2 Creating a Net</h4>
-<p>As said above, prior to creating any <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>, we must create the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> it
+<p>As said above, prior to creating any <a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Component</a>, we must create the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a> it
 will belong to. In that example we also make it an <em>external</em> net, that is,
 a part of the interface. Do not mistake the name of the net given as a string
-argument <span class="cb">'i'</span> and the name of the <em>variable</em> <span class="cb">i</span> holding the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> object.
+argument <span class="cb">'i'</span> and the name of the <em>variable</em> <span class="cb">i</span> holding the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a> object.
 For the sake of clarity we try to give the variable a close name, but this is
 not mandatory.</p>
 <div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span> <span class="p">)</span>
@@ -718,7 +718,7 @@ external net, see <a class="reference external" href="./Netlist.html#id1">6.2 Cr
 </div>
 <div class="section" id="id2">
 <h4>3.6.3 Creating a Component</h4>
-<p>Finally, we get ready to create a <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>, we will make a <a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a> segment
+<p>Finally, we get ready to create a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Component</a>, we will make a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Vertical.html">Vertical</a> segment
 of <tt class="docutils literal">METAL1</tt>.</p>
 <div class="highlight"><pre><span></span><span class="n">segment</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span>            <span class="c1"># The owner Net.</span>
                          <span class="p">,</span> <span class="n">layer</span>        <span class="c1"># The layer.</span>
@@ -732,7 +732,7 @@ absolute position. There is a second overload for creating a relatively placed
 segment, see <em>articulated layout</em>.</p>
 <p>If the net is external, that is, part of the interface of the cell, you may have
 to declare some of its components as physical connectors usable by the router.
-This is done by calling the <a class="reference external" href="../../hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class:</p>
+This is done by calling the <a class="reference external" href="../doc/hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class:</p>
 <div class="highlight"><pre><span></span><span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">segment</span> <span class="p">)</span>
 </pre></div>
 </div>
@@ -740,7 +740,7 @@ This is done by calling the <a class="reference external" href="../../hurricane/
 <div class="section" id="saving-to-disk-crl-core">
 <h3>3.7 Saving to Disk (CRL Core)</h3>
 <p>Once you have finished to build your cell, you have to save it on disk.
-Using the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> you can save it as a pair of file:</p>
+Using the <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> you can save it as a pair of file:</p>
 <table class="table">
 <colgroup>
 <col width="30%" />
@@ -880,12 +880,12 @@ explanation of that part of the code, refer to <a class="reference external" hre
 </div>
 <div class="section" id="manipulating-cells-nets-and-components">
 <h2><a class="toc-backref" href="#id13">4. Manipulating Cells, Nets and Components</a></h2>
-<p>In this part, we will show how to navigate through the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Nets</a> and <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> of a <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>.</p>
+<p>In this part, we will show how to navigate through the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Nets</a> and <a class="reference external" href="../doc/hurricane/classHurricane_1_1Component.html">Components</a> of a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a>.</p>
 <div class="section" id="hurricane-collections">
 <h3>4.1 Hurricane Collections</h3>
 <p>In <span class="sc">Hurricane</span> all kind of set of objects, whether organized in a real container
 like a <tt class="docutils literal">map&lt;&gt;</tt> (dictionary / <tt class="docutils literal">dict</tt>) or a <tt class="docutils literal">vector&lt;&gt;</tt> (table / <tt class="docutils literal">list</tt>) or
-an algorithmic walkthrough of the database can be accessed through a <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a>.</p>
+an algorithmic walkthrough of the database can be accessed through a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Collection.html">Collection</a>.</p>
 <p>C++ Collections objects are exposed in <span class="sc">Python</span> through the <em>iterable</em> protocol,
 allowing to simply write:</p>
 <div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">getNets</span><span class="p">():</span>
@@ -905,7 +905,7 @@ allowing to simply write:</p>
 <h4>4.1.1 Restrictions about using Collections</h4>
 <p><strong>Never delete or create an element while you are iterating over a Collection.</strong></p>
 <p>Results can be unpredictable, you may just end up with a core dump, but more
-subtly, some element of the <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a> may be skipped or processed twice.
+subtly, some element of the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Collection.html">Collection</a> may be skipped or processed twice.
 If you want to create or delete an element, do it outside the collection
 loop. For example:</p>
 <div class="highlight"><pre><span></span><span class="n">cellNets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -922,18 +922,18 @@ loop. For example:</p>
 </div>
 <div class="section" id="loading-a-cell-with-allianceframework">
 <h3>4.2 Loading a Cell with AllianceFramework</h3>
-<p>As presented in <a class="reference external" href="./CellNetComponent.html#the-allianceframework-crl-core">2.1 The Alliance Framework</a>, the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> that will be returned by
+<p>As presented in <a class="reference external" href="./CellNetComponent.html#the-allianceframework-crl-core">2.1 The Alliance Framework</a>, the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> that will be returned by
 the <tt class="docutils literal">getCell()</tt> call wil be:</p>
 <ol class="arabic">
-<li><p class="first">If a <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> of that name is already loaded into memory, it will be returned.</p>
+<li><p class="first">If a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> of that name is already loaded into memory, it will be returned.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">It means that it shadows any modifications that could have been on
-disk since it was first loaded.  Conversely, if the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> has been
+disk since it was first loaded.  Conversely, if the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> has been
 modified in memory, you will get those modifications.</p>
 </div>
 </li>
-<li><p class="first">Search, in the ordered list of libraries, the first <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> that matches the
+<li><p class="first">Search, in the ordered list of libraries, the first <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> that matches the
 requested name.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -957,7 +957,7 @@ interactive layout viewer <span class="cb">cgt</span>.</p>
 <p>For <span class="cb">cgt</span> to be able to run your script, you must add to your script
 file a function named <span class="cb">scriptMain()</span>, which takes a dictionary
 as sole argument (<span class="cb">**kw</span>). The <tt class="docutils literal">kw</tt> dictionary contains, in
-particular, the <a class="reference external" href="../../viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
+particular, the <a class="reference external" href="../doc/viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
 keyword <tt class="docutils literal">editor</tt>. You can then load your cell into the viewer
 using the menu:</p>
 <ul class="simple">
@@ -1001,7 +1001,7 @@ you will only see the end result of your script.</p>
 <h3>5.1 Using Breakpoints</h3>
 <p>It is possible to add breakpoints inside a script by calling the <tt class="docutils literal">Breakpoint.stop()</tt>
 function. To be able to see exactly what has just been modified, be sure to have
-closed any <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> before calling breakpoints.
+closed any <a class="reference external" href="../doc/hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> before calling breakpoints.
 The <tt class="docutils literal">Breakpoint.stop()</tt> function takes two arguments:</p>
 <ol class="arabic simple">
 <li>The <tt class="docutils literal">level</tt> above which it will be active.</li>
@@ -1020,13 +1020,13 @@ The <tt class="docutils literal">Breakpoint.stop()</tt> function takes two argum
 standard cell.</p>
 <p><img alt="The fulladder netlist" class="align-middle" src="../pages/images/fulladder-1.png" style="width: 80%;" /></p>
 <div class="section" id="creating-an-instance">
-<h3>6.1 Creating an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a></h3>
-<p>Creating an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> is straigthforward, the constructor needs only three
+<h3>6.1 Creating an <a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a></h3>
+<p>Creating an <a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a> is straigthforward, the constructor needs only three
 parameters:</p>
 <ol class="arabic simple">
-<li>The <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> <strong>into which</strong> the instance is to be created.</li>
+<li>The <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> <strong>into which</strong> the instance is to be created.</li>
 <li>The name of the instance.</li>
-<li>The <strong>master cell</strong>, the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> model it refers to. The master cell
+<li>The <strong>master cell</strong>, the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Cell.html">Cell</a> model it refers to. The master cell
 will be part of the hierarchical level just below the <tt class="docutils literal">fulladder</tt>
 cell.</li>
 </ol>
@@ -1044,9 +1044,9 @@ and the cells it refers to (the <em>master cell</em> <tt class="docutils literal
 </div>
 <div class="section" id="id4">
 <h3>6.2 Creating Nets and connecting to Instances</h3>
-<p>An <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> has one <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for each external net of the <em>master cell</em>.
-The plug allows to create a <strong>logical</strong> connection bewteen a <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> of
-<tt class="docutils literal">fulladder</tt> and a net from an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> <em>master cell</em>.</p>
+<p>An <a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a> has one <a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plug</a> for each external net of the <em>master cell</em>.
+The plug allows to create a <strong>logical</strong> connection bewteen a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Net.html">Net</a> of
+<tt class="docutils literal">fulladder</tt> and a net from an <a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a> <em>master cell</em>.</p>
 <p>A plug is somewhat equivalent to an <em>instance terminal</em> in other
 well known databases.</p>
 <p>Therefore, a plug is related to two nets:</p>
@@ -1080,12 +1080,12 @@ terminals (sometimes referred as <em>weekly connected</em>
 terminals). There is a strict bijection between external
 nets and plugs.</p>
 <p class="last">While it may be restrictive, it enforces cleaner designs
-and make it possible for the <a class="reference external" href="../../hurricane/classHurricane_1_1HyperNet.html">HyperNet</a> concept/class.</p>
+and make it possible for the <a class="reference external" href="../doc/hurricane/classHurricane_1_1HyperNet.html">HyperNet</a> concept/class.</p>
 </div>
 </div>
 <div class="section" id="power-supplies-special-case">
 <h3>6.3 Power supplies special case</h3>
-<p>For supplies, it may  be tedious to connect the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> of each  cell one by one
+<p>For supplies, it may  be tedious to connect the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plugs</a> of each  cell one by one
 (and  create a  lot of  unneeded objects).  To avoid  that, we  may use  <strong>Named
 connections</strong>.  If a  signal in <tt class="docutils literal">fulladder</tt> is set to  <em>global</em>, then it will
 be considered as connected  to any signal with the <em>same  name</em> and <em>global</em> in
@@ -1101,15 +1101,15 @@ the master cell of the instances.</p>
 until it is placed.</p>
 <div class="section" id="id5">
 <h4>6.4.1 Transformation</h4>
-<p>To place an Instance, we apply a <a class="reference external" href="../../hurricane/classHurricane_1_1Transformation.html">Transformation</a> to the coordinate system
+<p>To place an Instance, we apply a <a class="reference external" href="../doc/hurricane/classHurricane_1_1Transformation.html">Transformation</a> to the coordinate system
 of the <em>master cell</em>. A transformation is composed of two operations:</p>
 <ol class="arabic simple">
-<li>An <a class="reference external" href="../../hurricane/classHurricane_1_1Orientation.html">Orientation</a>, which can be a symmetry or a rotation (or a combination
+<li>An <a class="reference external" href="../doc/hurricane/classHurricane_1_1Orientation.html">Orientation</a>, which can be a symmetry or a rotation (or a combination
 of those two). The Orientation <strong>is applied first</strong> to the coordinate
 system of the <em>master cell</em>. The complete list of Orientation and their
 codes are given on the Orientation documentation page.</li>
 <li>A <strong>Translation</strong>, applied in second. Translation are represented by
-<a class="reference external" href="../../hurricane/classHurricane_1_1Point.html">Points</a>.</li>
+<a class="reference external" href="../doc/hurricane/classHurricane_1_1Point.html">Points</a>.</li>
 </ol>
 <p>The transformation is a change of coordinate system, be aware that if the
 abutment box lower left corner of the <em>master</em> cell is <strong>not</strong> at <tt class="docutils literal">(0,0)</tt>
@@ -1123,7 +1123,7 @@ lower left corner of the abutment box at <tt class="docutils literal">(0,0)</tt>
 that the abutment box lower left corner is at <tt class="docutils literal">(0,0)</tt> (same for the
 <tt class="docutils literal">xr2_x2</tt> <em>master cell</em> layout). Here is the code to place the <tt class="docutils literal">xr2_1</tt>
 instance to left of the second row.</p>
-<p>Setting the translation on an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> is not enough to make it be displayed,
+<p>Setting the translation on an <a class="reference external" href="../doc/hurricane/classHurricane_1_1Instance.html">Instance</a> is not enough to make it be displayed,
 we also must set its <em>placement status</em> to <tt class="docutils literal">Instance.PlacementStatus.PLACED</tt>.</p>
 <div class="highlight"><pre><span></span><span class="n">xr2_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">l</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">l</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">MY</span> <span class="p">)</span> <span class="p">)</span>
 <span class="n">xr2_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
@@ -1131,39 +1131,39 @@ we also must set its <em>placement status</em> to <tt class="docutils literal">I
 </div>
 <div class="section" id="nets-from-plugs-to-routingpads">
 <h4>6.4.3 Nets -- From Plugs to RoutingPads</h4>
-<p>As was stated before, <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> represent a logical connection between two
+<p>As was stated before, <a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plugs</a> represent a logical connection between two
 levels of hierarchy. To make the physical connection to the <em>master net</em>
 in the instance, we now must create, in the <tt class="docutils literal">fulladder</tt>, a special
 component which is a kind of <em>reference</em> to a component of the
 <em>master net</em> (in the master cell).</p>
-<p>The so called <em>special component</em> is a <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>.</p>
+<p>The so called <em>special component</em> is a <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>.</p>
 <p>The <tt class="docutils literal">RoutingPad</tt> can be considered as an equivalent to <tt class="docutils literal">pin</tt> in other
 well known databases.</p>
 <div class="highlight"><pre><span></span><span class="n">rp</span> <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
                       <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span> <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
                       <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
 </pre></div>
-<p>For the second parameter, we must pass an <a class="reference external" href="../../hurricane/classHurricane_1_1Occurrence.html">Occurrence</a>. Occurrence objects will
+<p>For the second parameter, we must pass an <a class="reference external" href="../doc/hurricane/classHurricane_1_1Occurrence.html">Occurrence</a>. Occurrence objects will
 be explained in detail later, for now, let say that we must construct the
-Occurrence object with one parameter : the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for which we want to create a
+Occurrence object with one parameter : the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plug</a> for which we want to create a
 physical connection.</p>
-<p>The <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> <tt class="docutils literal">rp</tt> will be a component of the <tt class="docutils literal">a</tt> net.</p>
-<p>The third argument ask the constructor of the <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> to select in the
+<p>The <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> <tt class="docutils literal">rp</tt> will be a component of the <tt class="docutils literal">a</tt> net.</p>
+<p>The third argument ask the constructor of the <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> to select in the
 master net, the component which has the biggest area.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Component selection.</strong> Not all the components of a net can be
-selected for connection through a <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>. The candidates must
-have been flagged with the <a class="reference external" href="../../hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class.</p>
+selected for connection through a <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>. The candidates must
+have been flagged with the <a class="reference external" href="../doc/hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class.</p>
 <p class="last">See <a class="reference external" href="./CellNetComponent.html#id1">3.6.3 Creating a Component</a>.</p>
 </div>
 </div>
 <div class="section" id="nets-regular-wiring">
 <h4>6.4.4 Nets -- Regular wiring</h4>
-<p>After the creation of the <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a>, the wiring is to be created with
-ordinary layout components (<a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a> and <a class="reference external" href="../../hurricane/classHurricane_1_1Contact.html">Contact</a> possibly
+<p>After the creation of the <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a>, the wiring is to be created with
+ordinary layout components (<a class="reference external" href="../doc/hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>, <a class="reference external" href="../doc/hurricane/classHurricane_1_1Vertical.html">Vertical</a> and <a class="reference external" href="../doc/hurricane/classHurricane_1_1Contact.html">Contact</a> possibly
 articulated). Here is the complete code for net <tt class="docutils literal">a</tt>. We made an articulated
-layout where contacts are created over <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> then segments over
+layout where contacts are created over <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> then segments over
 contacts.</p>
 <div class="highlight"><pre><span></span><span class="c1"># Build wiring for a.</span>
 <span class="c1"># Create RoutingPads first.</span>
@@ -1372,7 +1372,7 @@ directory (under the the root of the <span class="sc">Coriolis</span> installati
 </div>
 <div class="section" id="working-in-real-mode">
 <h2><a class="toc-backref" href="#id16">7. Working in real mode</a></h2>
-<p>The <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> only manages <em>symbolic</em> layout as <span class="sc">Alliance</span> does.
+<p>The <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> only manages <em>symbolic</em> layout as <span class="sc">Alliance</span> does.
 But <span class="sc">Coriolis</span> is also able to work directly in <em>real</em> mode, meaning
 that distances will be expressed in microns instead of lambdas.</p>
 <p>The <em>real</em> mode will be illustrated by working with the <a class="reference external" href="https://www.eda.ncsu.edu/wiki/FreePDK45:Contents">FreePDK45</a>.</p>
@@ -1402,7 +1402,7 @@ for any discrepencies.</p>
 <h3>7.2 Loading a <span class="cb">blif</span> file -- <span class="sc">Yosys</span></h3>
 <p>The <span class="cb">blif</span> format is generated by the <a class="reference external" href="http://www.clifford.at/yosys/">Yosys</a> logic synthetizer. Here again, it is
 pretty straightforward: call the static function <tt class="docutils literal">Blif.load()</tt>. If you made
-your synthesis on a cell library not managed by <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>, for example
+your synthesis on a cell library not managed by <a class="reference external" href="../doc/crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>, for example
 the one of the FreePDK45, you must load it prior to calling the <span class="cb">blif</span> loader.</p>
 <div class="highlight"><pre><span></span><span class="n">cell</span> <span class="o">=</span> <span class="n">Blif</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="s1">&#39;snx&#39;</span> <span class="p">)</span> <span class="c1"># load &quot;snx.blif&quot; in the working directory.</span>
 </pre></div>
@@ -1411,7 +1411,7 @@ the one of the FreePDK45, you must load it prior to calling the <span class="cb"
 </div>
 <div class="section" id="tool-engines-crl-core">
 <h2><a class="toc-backref" href="#id17">8. Tool Engines (CRL Core)</a></h2>
-<p>The <a class="reference external" href="../../crlcore/classCRL_1_1ToolEngine.html">ToolEngine</a> class is the base class for all tools developped in
+<p>The <a class="reference external" href="../doc/crlcore/classCRL_1_1ToolEngine.html">ToolEngine</a> class is the base class for all tools developped in
 <span class="sc">Coriolis</span>. In the rest of the tutorial we will use the names <tt class="docutils literal">tool</tt>
 or <tt class="docutils literal">engine</tt> as synonyms.</p>
 <div class="section" id="placer-etesian">
@@ -1474,13 +1474,13 @@ Until <span class="sc">Katana</span> is fully implemented we keep both of them.<
 <p>The example file <tt class="docutils literal">toolengines.py</tt> can be found in the <tt class="docutils literal">share/doc/coriolis2/examples/scripts/</tt>
 directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
 <p>This script automatically places and routes the <tt class="docutils literal">fulladder</tt> netlist as seen
-previously. The call to the <a class="reference external" href="../../crlcore/classCRL_1_1ToolEngine.html">ToolEngines</a> is made inside the new function
+previously. The call to the <a class="reference external" href="../doc/crlcore/classCRL_1_1ToolEngine.html">ToolEngines</a> is made inside the new function
 <tt class="docutils literal">placeAndRoute()</tt>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">As the <tt class="docutils literal">ToolEngine</tt> take care of opening and closing <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>, we
+<p class="last">As the <tt class="docutils literal">ToolEngine</tt> take care of opening and closing <a class="reference external" href="../doc/hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>, we
 do not need the wrapper function <tt class="docutils literal">doBreak()</tt> around the breakpoints.
-We directly call <a class="reference external" href="../../hurricane/classHurricane_1_1Breakpoint.html">Breakpoint</a>.</p>
+We directly call <a class="reference external" href="../doc/hurricane/classHurricane_1_1Breakpoint.html">Breakpoint</a>.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -1607,8 +1607,8 @@ the documentation.</p>
 </div>
 <div class="section" id="id8">
 <h3>9.2 RoutingPads</h3>
-<p>Unlike the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> that only make connections between two <strong>adjacent</strong>
-hierarchical levels, <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> can refer to a deeply buried terminal.</p>
+<p>Unlike the <a class="reference external" href="../doc/hurricane/classHurricane_1_1Plug.html">Plugs</a> that only make connections between two <strong>adjacent</strong>
+hierarchical levels, <a class="reference external" href="../doc/hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> can refer to a deeply buried terminal.</p>
 </div>
 <div class="section" id="hypernets">
 <h3>9.3 HyperNets</h3>
