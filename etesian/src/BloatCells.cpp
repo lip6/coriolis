@@ -176,7 +176,7 @@ namespace Etesian {
     if (termRatio > 0.5) {
       return vpitch * (2*terminals + extra - xsize);
     }
-    return 0;
+    return 1;
 
  // if (xsize < 4) return vpitch*4;
  // if (xsize < 6) return vpitch*2;
