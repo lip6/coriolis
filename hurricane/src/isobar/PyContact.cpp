@@ -138,6 +138,28 @@ extern "C" {
   }
 
 
+  static PyObject* PyContact_setLayer ( PyContact* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyContact_setLayer()" << endl;
+    HTRY
+      METHOD_HEAD("Contact.setLayer()")
+      PyObject* pyLayer = NULL;
+      if (PyArg_ParseTuple( args, "O:Contact.setLayer", &pyLayer)) {
+        if (IsPyDerivedLayer(pyLayer)) {
+          contact->setLayer( PYDERIVEDLAYER_O( pyLayer ));
+        } else {
+          PyErr_SetString ( ConstructorError, "invalid parameter type for Contact.setLayer()." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to Contact.setLayer()." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   PyMethodDef PyContact_Methods[] =
     { { "create"          , (PyCFunction)PyContact_create         , METH_VARARGS|METH_STATIC
                           , "Create a new Contact." }
@@ -158,6 +180,7 @@ extern "C" {
     , { "setDy"           , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
     , { "setWidth"        , (PyCFunction)PyContact_setWidth       , METH_VARARGS, "Sets the contact width." }
     , { "setHeight"       , (PyCFunction)PyContact_setHeight      , METH_VARARGS, "Sets the contact height." }
+    , { "setLayer"        , (PyCFunction)PyContact_setLayer       , METH_VARARGS, "Sets the contact layer." }
     , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
