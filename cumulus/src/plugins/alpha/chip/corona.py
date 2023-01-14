@@ -138,9 +138,12 @@ class HorizontalRail ( Rail ):
     def connect ( self, contact ):
         viaWidth  = contact.getWidth()
         viaHeight = self.side.hRailWidth
+        viaFlags  = BigVia.AllowAllExpand
         if self.conf.routingGauge.isSymbolic():
             viaWidth  -= DbU.fromLambda( 1.0 )
             viaHeight -= DbU.fromLambda( 1.0 )
+        if self.conf.cfg.katana.disableStackedVias:
+            viaFlags |= BigVia.StackVias
         self.vias[ contact.getX() ] = [ contact.getX()
                                       , BigVia( self.net
                                               , self.side.getLayerDepth(self.side.getHLayer())
@@ -148,7 +151,7 @@ class HorizontalRail ( Rail ):
                                               , self.axis
                                               , viaWidth
                                               , viaHeight
-                                              , flags=BigVia.AllowAllExpand )
+                                              , flags=viaFlags )
                                       , contact ]
         trace( 550, '\tADD "{}" contact "{}" @ [{} {}]\n' \
                .format( contact.getNet().getName()
@@ -286,9 +289,12 @@ class VerticalRail ( Rail ):
             return False
         viaWidth  = self.side.vRailWidth
         viaHeight = contact.getHeight()
+        viaFlags  = BigVia.AllowAllExpand
         if self.conf.routingGauge.isSymbolic():
             viaWidth  -= DbU.fromLambda( 1.0 )
             viaHeight -= DbU.fromLambda( 1.0 )
+        if self.conf.cfg.katana.disableStackedVias:
+            viaFlags |= BigVia.StackVias
         self.vias[ contact.getY() ] = [ contact.getY()
                                       , BigVia( self.net
                                               , self.side.getLayerDepth(self.side.getVLayer())
@@ -296,7 +302,7 @@ class VerticalRail ( Rail ):
                                               , contact.getY()
                                               , self.side.vRailWidth - DbU.fromLambda(1.0)
                                               , contact.getHeight()  - DbU.fromLambda(1.0)
-                                              , flags=BigVia.AllowAllExpand )
+                                              , flags=viaFlags )
                                       , contact ]
         self.vias[ contact.getY() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
         trace( 550, '\t-> BigVIA {}\n'.format(self.vias[ contact.getY() ][1]) )

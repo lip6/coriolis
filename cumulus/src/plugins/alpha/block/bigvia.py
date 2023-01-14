@@ -41,6 +41,7 @@ class BigVia ( object ):
     AllowBotMetalExpand   = 0x0002
     AllowHorizontalExpand = 0x0004
     AllowVerticalExpand   = 0x0008
+    StackVias             = 0x0010
     AllowAllExpand        = AllowTopMetalExpand   \
                           | AllowBotMetalExpand   \
                           | AllowHorizontalExpand \
@@ -162,11 +163,22 @@ class BigVia ( object ):
                               , self.widths [depth] - DbU.fromLambda( 1.0 )
                               , self.heights[depth] - DbU.fromLambda( 1.0 ) )
         else:
+            cutMatrixes = []
             for depth in range(self.bottomDepth,self.topDepth):
-                self._doCutMatrix( depth )
+                cutMatrixes.append( self._computeCutMatrix( depth ))
+            if self.flags & BigVia.StackVias:
+                maxCutMatrix = cutMatrixes[0]
+                for cutMatrix in cutMatrixes:
+                    if maxCutMatrix[0] + maxCutMatrix[1] < cutMatrix[0] + cutMatrix[1]:
+                        maxCutMatrix = cutMatrix
+                for cutMatrix in cutMatrixes:
+                    cutMatrix[1] = maxCutMatrix[0] + maxCutMatrix[1] - cutMatrix[0]
+                    cutMatrix[2] = maxCutMatrix[2]
+            for depth in range(self.bottomDepth,self.topDepth):
+                self._doCutMatrix( depth, cutMatrixes[ depth - self.bottomDepth ] )
         self.hasLayout = True
 
-    def _doCutMatrix ( self, depth ):
+    def _computeCutMatrix ( self, depth ):
         viaLayer     = rg.getContactLayer( depth )
         cutLayer     = viaLayer.getCut()
         cutSide      = cutLayer.getMinimalSize()
@@ -207,9 +219,18 @@ class BigVia ( object ):
                                          .format( cutLayer.getName(), self )
                                        , 'Height is too small to fit a single VIA cut.' 
                                        ] )
-        cutArea.inflate( -hEnclosure, -vEnclosure )
-        xoffset = (cutArea.getWidth () % (cutSide+cutSpacing)) // 2
-        yoffset = (cutArea.getHeight() % (cutSide+cutSpacing)) // 2
+        return [cutSide, cutSpacing, hEnclosure]
+
+    def _doCutMatrix ( self, depth, cutMatrix ):
+        cutSide    = cutMatrix[0]
+        cutSpacing = cutMatrix[1]
+        hEnclosure = cutMatrix[2]
+        viaLayer   = rg.getContactLayer( depth )
+        cutLayer   = viaLayer.getCut()
+        cutArea    = self.plates[ depth ].getBoundingBox()
+        cutArea.inflate( -hEnclosure, -hEnclosure )
+        xoffset    = (cutArea.getWidth () % (cutSide+cutSpacing)) // 2
+        yoffset    = (cutArea.getHeight() % (cutSide+cutSpacing)) // 2
         cutArea.translate( xoffset, yoffset )
         self.vias[ depth ] = []
         y = cutArea.getYMin()
