@@ -57,6 +57,7 @@ namespace Katana {
     , _flags               (0)
     , _profileEventCosts   (Cfg::getParamBool  ("katana.profileEventCosts"    ,false  )->asBool())
     , _runRealignStage     (Cfg::getParamBool  ("katana.runRealignStage"      ,true   )->asBool())
+    , _disableStackedVias  (Cfg::getParamBool  ("katana.disableStackedVias"   ,false  )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
@@ -108,6 +109,7 @@ namespace Katana {
     , _flags               (other._flags)
     , _profileEventCosts   (other._profileEventCosts)
     , _runRealignStage     (other._runRealignStage)
+    , _disableStackedVias  (other._disableStackedVias)
   {
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];

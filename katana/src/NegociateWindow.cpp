@@ -181,13 +181,15 @@ namespace {
       if (af->isBLOCKAGE(net->getName())) continue;
 
       for( RoutingPad* rp : net->getRoutingPads() ) {
-        size_t depth = rg->getLayerDepth(rp->getLayer());
-        if (depth == 0) {
-          TrackMarker::create( rp, 1 );
-        //if (isVH) TrackMarker::create( rp, 2 );
+        size_t depth   = rg->getLayerDepth(rp->getLayer());
+        size_t rlDepth = depth - rg->getFirstRoutingLayer();
+        if (rlDepth == 0) {
+          TrackMarker::create( rp, depth+1 );
+        //if (isVH) TrackMarker::create( rp, depth+2 );
         }
-        if (depth == 1) {
-          TrackMarker::create( rp, 1 );
+        if (rlDepth == 1) {
+          if (depth+1 < rg->getDepth())
+            TrackMarker::create( rp, depth+1 );
         }
       }
     }

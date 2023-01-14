@@ -66,6 +66,7 @@ namespace Katana {
              static Session*            get                  ( const char* message=NULL );
       inline static Super*              base                 ();
       inline static bool                isEmpty              ();
+      inline static bool                disableStackedVias   ();
              static uint32_t            getStage             ();
       inline static KatanaEngine*       getKatanaEngine      ();
              static Configuration*      getConfiguration     ();
@@ -102,6 +103,7 @@ namespace Katana {
                     void                _doRemovalEvents     ( bool reschedule=false );
       virtual       size_t              _revalidate          ();
                     bool                _isEmpty             () const;
+                    bool                _disableStackedVias  ();
                     NegociateWindow*    _getNegociateWindow  ();
       inline        const std::vector<TrackElement*>&
                                         _getIndirectInvalids ();
@@ -211,6 +213,9 @@ namespace Katana {
 
   inline bool  Session::isEmpty ()
   { return get("isEmpty()")->_isEmpty(); }
+
+  inline bool  Session::disableStackedVias ()
+  { return get("disableStackedVias()")->_disableStackedVias(); }
 
   inline const std::vector<TrackElement*>& Session::_getIndirectInvalids ()
   { return _indirectInvalids; }

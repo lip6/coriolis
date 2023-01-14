@@ -401,6 +401,10 @@ namespace Katana {
   }
 
 
+  bool  Session::_disableStackedVias ()
+  { return _getKatanaEngine()->getConfiguration()->disableStackedVias(); }
+
+
   void  Session::_addInsertEvent ( TrackMarker* marker, Track* track )
   {
     _insertEvents.push_back( Event(marker,track) );

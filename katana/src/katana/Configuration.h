@@ -66,6 +66,7 @@ namespace Katana {
       inline        bool                       useStaticBloatProfile   () const;
       inline        bool                       profileEventCosts       () const;
       inline        bool                       runRealignStage         () const;
+      inline        bool                       disableStackedVias      () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
       inline  const Anabatic::Configuration*   base                    () const;
@@ -121,6 +122,7 @@ namespace Katana {
              unsigned int   _flags;
              bool           _profileEventCosts;
              bool           _runRealignStage;
+             bool           _disableStackedVias;
     private:
                      Configuration ( const Configuration& other );
       Configuration& operator=     ( const Configuration& );
@@ -153,6 +155,7 @@ namespace Katana {
   inline       bool                          Configuration::useStaticBloatProfile   () const { return _flags & UseStaticBloatProfile; }
   inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline       bool                          Configuration::runRealignStage         () const { return _runRealignStage; }
+  inline       bool                          Configuration::disableStackedVias      () const { return _disableStackedVias; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
   inline       void                          Configuration::setProfileEventCosts    ( bool state ) { _profileEventCosts = state; }

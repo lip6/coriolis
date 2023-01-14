@@ -543,6 +543,12 @@ namespace Katana {
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+      if (Session::disableStackedVias()
+         and (_markers[mbegin]->getNet() == cost.getNet()) ) {
+        cost.setInfinite();
+        cdebug_tabw(155,-1);
+        return cost;
+      }
       if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
