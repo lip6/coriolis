@@ -116,6 +116,7 @@ namespace Hurricane {
                                                               , QString             beforePath="" );
       inline  void                  setEnableRedrawInterrupt  ( bool );
       inline  void                  setApplicationName        ( const QString& );
+      inline  void                  setPixelThreshold         ( int );
       inline  void                  setDbuMode                ( int );
       inline  Observer<CellViewer>* getCellObserver           ();
               Cell*                 getCell                   () const;
@@ -215,6 +216,9 @@ namespace Hurricane {
   inline void                  CellViewer::emitCellChanged         () { _flags &= ~InCellChange; emit cellPostModificated(); }
   inline void                  CellViewer::emitCellPreModificated  () { emit cellPreModificated(); }
   inline void                  CellViewer::emitCellPostModificated () { emit cellPostModificated(); }
+
+  inline  void  CellViewer::setPixelThreshold ( int threshold )
+  { _cellWidget->setPixelThreshold( threshold ); }
 
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }

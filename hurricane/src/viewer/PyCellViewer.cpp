@@ -173,6 +173,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyCellViewer_setPixelThreshold ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_setPixelThreshold ()" << endl;
+    HTRY
+      METHOD_HEAD( "CellViewer.setPixelThreshold()" )
+      int threshold = 20;
+      if (not PyArg_ParseTuple(args,"i:CellViewer.setPixelThreshold()", &threshold)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.setPixelThreshold(): Takes exactly one argument." );
+        return NULL;
+      }
+      cw->setPixelThreshold ( threshold );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyCellViewer_setDbuMode ( PyCellViewer* self, PyObject* args )
   {
     cdebug_log(20,0) << "PyCellViewer_setDbuMode ()" << endl;
@@ -386,6 +402,8 @@ extern "C" {
                                 , "Load a Cell into the viewer." }
     , { "setApplicationName"    , (PyCFunction)PyCellViewer_setApplicationName    , METH_VARARGS
                                 , "Sets the application (binary) name." }
+    , { "setPixelThreshold"     , (PyCFunction)PyCellViewer_setPixelThreshold     , METH_VARARGS
+                                , "Sets the size under which graphical shapes are *not* displayeds." }
     , { "setDbuMode"            , (PyCFunction)PyCellViewer_setDbuMode            , METH_VARARGS
                                 , "Sets how the length will be displayed (lambda,physical,grid)." }
     , { "setAnonNetSelectable"  , (PyCFunction)PyCellViewer_setAnonNetSelectable  , METH_VARARGS
