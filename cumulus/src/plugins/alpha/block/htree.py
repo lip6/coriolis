@@ -154,12 +154,13 @@ class HTree ( object ):
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
             driverY       = driverContact.getY()
+            trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )
             blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
             trace( 550, ',-', '\tblContact={}\n'.format(blContact) )
         if qt.br:
-            trace( 550, '+,', '\trlContact\n' )
+            trace( 550, '+,', '\tbrContact\n' )
             brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
             trace( 550, ',-', '\tbrContact={}\n'.format(brContact) )
         if qt.tl:

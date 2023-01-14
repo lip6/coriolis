@@ -89,6 +89,12 @@ class BigVia ( object ):
 
     def getNet ( self ): return self.net
 
+    def getBoundingBox ( self, depth ):
+        bb = Box( self.x, self.y )
+        bb.inflate( self.widths[depth] // 2, self.heights[depth] // 2 )
+        return bb
+        
+
     def getPlate ( self, metal ):
         if not self.hasLayout: return None
         for plate in self.plates.values():

@@ -319,21 +319,60 @@ class GaugeConf ( object ):
         if flags & GaugeConf.OffsetTop2:    yoffset = -2
         trace( 550, '\tyoffset:{}\n'.format(yoffset) )
         if startDepth == 0:
-            contact1 = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
-            ytrack   = self.getTrack( contact1.getY(), self.horizontalDeepDepth, yoffset )
-            dy       = ytrack - contact1.getY()
-            trace( 550, '\tPut on Y-tracks:{}\n'.format(DbU.getValueString(ytrack)) )
-            contact1.setDy( dy )
+            rg        = self.routingGauge.getLayerGauge( 0 )
+            rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
+            ytrack    = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
+            contact1  = Contact.create( rp.getNet()
+                                      , self._routingGauge.getContactLayer( 0 )
+                                      , rpContact.getX()
+                                      , ytrack
+                                      , rg.getViaWidth()
+                                      , rg.getViaWidth()
+                                      )
+            segment = Vertical.create( rpContact
+                                     , contact1
+                                     , rpContact.getLayer()
+                                     , rpContact.getX()
+                                     , rg.getWireWidth()
+                                     )
+            #dy       = ytrack - contact1.getY()
+            #trace( 550, '\tPut on Y-tracks:{}\n'.format(DbU.getValueString(ytrack)) )
+            #contact1.setDy( dy )
         else:
-            contact1 = Contact.create( rp, self._routingGauge.getContactLayer(startDepth), 0, 0 )
-            ytrack   = self.getTrack( contact1.getY(), startDepth, 0 )
-            dy       = ytrack - contact1.getY()
+            rg        = self.routingGauge.getLayerGauge( startDepth )
+            rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
+            ytrack    = self.getTrack( rpContact.getY(), startDepth, 0 )
+            #dy        = ytrack - contact1.getY()
+            contact1  = Contact.create( rp.getNet()
+                                      , self._routingGauge.getContactLayer( startDepth )
+                                      , rpContact.getX()
+                                      , ytrack
+                                      , rg.getViaWidth()
+                                      , rg.getViaWidth()
+                                      )
+            segment = Vertical.create( rpContact
+                                     , contact1
+                                     , rpContact.getLayer()
+                                     , rpContact.getX()
+                                     , rg.getWireWidth()
+                                     )
+            trace( 550, '\trpContact:{}\n'.format( rpContact ))
+            trace( 550, '\tcontact1: {}\n'.format( contact1 ))
+            trace( 550, '\tsegment:  {}\n'.format( segment ))
         startDepth += 1
-        trace( 550, contact1 )
+        trace( 550, '\tcontact1={}\n'.format( contact1 ))
     
         if flags & GaugeConf.HAccess: stopDepth = hdepth
         else:                         stopDepth = vdepth
-        trace( 550, '\tstopDepth:%d\n' % stopDepth )
+        trace( 550, '\trange(startDepth={},stopDepth={})={}\n' \
+                    .format( startDepth, stopDepth, list(range(startDepth,stopDepth)) ))
+
+        if startDepth >= stopDepth:
+            if not flags & GaugeConf.HAccess:
+                contact1.setLayer( rpContact.getLayer() )
+            self._rpToAccess[rp] = contact1
+            trace( 550, '-' )
+            return contact1
   
         for depth in range(startDepth,stopDepth):
             rg      = self.routingGauge.getLayerGauge(depth)

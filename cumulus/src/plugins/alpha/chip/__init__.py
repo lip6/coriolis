@@ -203,9 +203,11 @@ class CoreWire ( object ):
         coronaAb     = self.conf.getInstanceAb( self.conf.icorona )
         coronaTransf = self.conf.icorona.getTransformation()
         self._computeCoreLayers()
+        trace( 550, '\tbbSegment: {}\n'.format(self.bbSegment) )
         padLayer = self.padSegment.getLayer()
         if not isinstance(padLayer,BasicLayer):
             padLayer = padLayer.getBasicLayer()
+            trace( 550, '\tpadLayer={}\n'.format( padLayer ))
         if self.side == West or self.side == East:
             flags  = OnHorizontalPitch
             hPitch = self.conf.getPitch( self.symSegmentLayer )
@@ -222,18 +224,20 @@ class CoreWire ( object ):
                 xContact        = self.corona.coreSymBb.getXMin() - self.offset * 2*vPitch
                 xPadMax         = xContact
                 xCore           = coronaAb.getXMin()
-                if not self.preferredDir:
-                   #xPadMax += self.bbSegment.getHeight()//2
-                    xPadMin += 3*vPitch
+                trace( 550, '\txPadMin: {}\n'.format(DbU.getValueString( xPadMin )))
+               #if not self.preferredDir:
+               #   #xPadMax += self.bbSegment.getHeight()//2
+               #    xPadMin += 3*vPitch
+               #    trace( 550, '\txPadMin: {}\n'.format(DbU.getValueString( xPadMin )))
             else:
                 accessDirection = Pin.Direction.EAST
                 xPadMax         = self.bbSegment.getXMax()
                 xContact        = self.corona.coreSymBb.getXMax() + self.offset * 2*vPitch
                 xPadMin         = xContact
                 xCore           = coronaAb.getXMax() - vPitch
-                if not self.preferredDir:
-                   #xPadMin -= self.bbSegment.getHeight()//2
-                    xPadMin -= 3*vPitch
+               #if not self.preferredDir:
+               #   #xPadMin -= self.bbSegment.getHeight()//2
+               #    xPadMin -= 3*vPitch
             if self.addJumper:
                 rg        = self.conf.routingGauge
                 gaugeM5   = rg.getLayerGauge( 4 )
@@ -296,6 +300,7 @@ class CoreWire ( object ):
                                          , xPadMin
                                          , xPadMax
                                          )
+                trace( 550, '\thChip={}\n'.format( hChip ))
             trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
             if self.arraySize:
                 contacts = self.conf.coronaContactArray( self.chipNet
@@ -331,6 +336,7 @@ class CoreWire ( object ):
                                                 , xContact
                                                 , xCore
                                                 )
+            trace( 550, '\thCorona={}\n'.format( hCorona ))
             trace( 550, '\tCORONA PIN: {} {}\n'.format(self.chipNet, self.count) )
             pin = self.conf.coronaPin( self.chipNet
                                      , self.count
@@ -342,22 +348,26 @@ class CoreWire ( object ):
                                      , self.bbSegment.getHeight()
                                      )
             hChipBb = hChip.getBoundingBox( padLayer )
+            trace( 550, '\thChipBb={}\n'.format( hChipBb ))
             vStrapBb.merge( vStrapBb.getXMin(), hChipBb.getYMin() )
             vStrapBb.merge( vStrapBb.getXMin(), hChipBb.getYMax() )
-            hCoronaBb = hCorona.getBoundingBox( padLayer )
+           #hCoronaBb = hCorona.getBoundingBox( padLayer )
+            hCoronaBb = hCorona.getBoundingBox()
             self.conf.icorona.getTransformation().applyOn( hCoronaBb )
+            trace( 550, '\thCoronaBb={}\n'.format( hCoronaBb ))
             vStrapBb.merge( vStrapBb.getXMin(), hCoronaBb.getYMin() )
             vStrapBb.merge( vStrapBb.getXMin(), hCoronaBb.getYMax() )
             if self.padSegment.getLayer().isSymbolic():
                 vStrapBb.inflate( 0, -self.padSegment.getLayer().getExtentionCap()
                                 , 0, -self.padSegment.getLayer().getExtentionCap() )
-            Vertical.create( self.chipNet
-                           , self.padSegment.getLayer()
-                           , vStrapBb.getCenter().getX()
-                           , vStrapBb.getWidth()
-                           , vStrapBb.getYMin()
-                           , vStrapBb.getYMax()
-                           )
+            v = Vertical.create( self.chipNet
+                               , self.padSegment.getLayer()
+                               , vStrapBb.getCenter().getX()
+                               , vStrapBb.getWidth()
+                               , vStrapBb.getYMin()
+                               , vStrapBb.getYMax()
+                               )
+            trace( 550, '\tvChip={}\n'.format( v ))
         else:
             flags  = OnVerticalPitch
             hPitch = self.conf.getPitch( self.padSegment.getLayer() )

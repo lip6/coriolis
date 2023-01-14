@@ -150,7 +150,7 @@ class Corner ( object ):
 
     def _instanciateCorner ( self ):
         name, transformation = self._getTransformation()
-        corner = Instance.create( self.conf.cell
+        corner = Instance.create( self.conf.chip
                                 , name, self.corona.padCorner
                                 , transformation
                                 , Instance.PlacementStatus.FIXED
@@ -278,7 +278,7 @@ class Side ( object ):
         iPadSpacer = _nextSpacer( iPadSpacer )
         while iPadSpacer < len(self.corona.padSpacers) and gapWidth > 0:
             gapWidth -= _getWidth( self.corona.padSpacers[iPadSpacer] )
-            spacer    = Instance.create( self.conf.cell
+            spacer    = Instance.create( self.conf.chip
                                        , self.spacerNames % self.spacerCount
                                        , self.corona.padSpacers[iPadSpacer])
             self.spacerCount += 1
@@ -286,13 +286,14 @@ class Side ( object ):
             if gapWidth < _getWidth(self.corona.padSpacers[iPadSpacer]):
                 iPadSpacer = _nextSpacer( iPadSpacer )
         if gapWidth != 0:
-            raise ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on {} side, {} remains.' \
-                                   .format(self.sideName,DbU.getValueString(gapWidth)) )
+            print( ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on {} side, {} remains.' \
+                                    .format(self.sideName,DbU.getValueString(gapWidth)) ))
         self.u += gapWidth
 
     def _placePad ( self, padInstance ):
+        padAb = padInstance.getMasterCell().getAbutmentBox()
         if self.type == North:
-            x = self.conf.chipAb.getXMin() + self.u
+            x = self.conf.chipAb.getXMin() + self.u - padAb.getXMin()
             y = self.conf.chipAb.getYMax()
             if self.corona.padOrient == Transformation.Orientation.ID:
                 orientation = Transformation.Orientation.MY
@@ -301,7 +302,7 @@ class Side ( object ):
                 y          -= self.conf.ioPadHeight
             x = self.toGrid( x )
         elif self.type == South:
-            x = self.conf.chipAb.getXMin() + self.u
+            x = self.conf.chipAb.getXMin() + self.u - padAb.getXMin()
             y = self.conf.chipAb.getYMin()
             if self.corona.padOrient == Transformation.Orientation.ID:
                 orientation = Transformation.Orientation.ID
@@ -311,27 +312,29 @@ class Side ( object ):
             x = self.toGrid( x )
         elif self.type == West:
             x = self.conf.chipAb.getXMin()
-            y = self.conf.chipAb.getYMin() + self.u
+            y = self.conf.chipAb.getYMin() + self.u + padAb.getXMin()
             if self.corona.padOrient == Transformation.Orientation.ID:
                 orientation = Transformation.Orientation.R3
-                y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
+                y          += padAb.getWidth()
             else:
                 orientation = Transformation.Orientation.R1
-                x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
+                x          += padAb.getHeight()
             y = self.toGrid( y )
         elif self.type == East:
             x = self.conf.chipAb.getXMax()
             y = self.conf.chipAb.getYMin() + self.u
+            if padAb.getXMin():
+               y += padAb.getXMin() + padAb.getWidth()
             if self.corona.padOrient == Transformation.Orientation.ID:
                 orientation = Transformation.Orientation.R1
             else:
                 orientation = Transformation.Orientation.R3
-                x          -= padInstance.getMasterCell().getAbutmentBox().getHeight()
-                y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
+                x          -= padAb.getHeight()
+                y          += padAb.getWidth()
             y = self.toGrid( y )
         padInstance.setTransformation ( Transformation( x, y, orientation ) )
         padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
-        self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
+        self.u += padAb.getWidth()
         p = None
         if self.conf.ioPadGauge.getName() == 'pxlib':
             p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
@@ -510,12 +513,15 @@ class Corona ( object ):
 
     def __init__ ( self, chip ):
 
-        def _cmpPad ( pad1, pad2):
-            width1 = pad1.getAbutmentBox().getWidth()
-            width2 = pad2.getAbutmentBox().getWidth()
-            if width1 == width2: return 0
-            if width1 >  width2: return  -1
-            return 1
+        def _cmpPad ( pad ):
+            return pad.getAbutmentBox().getWidth()
+
+        #def _cmpPad ( pad1, pad2):
+        #    width1 = pad1.getAbutmentBox().getWidth()
+        #    width2 = pad2.getAbutmentBox().getWidth()
+        #    if width1 == width2: return 0
+        #    if width1 >  width2: return  -1
+        #    return 1
 
         def _dupPads ( padsConf ):
             duplicateds = []
@@ -560,7 +566,7 @@ class Corona ( object ):
                 if spacerCell: self.padSpacers.append( spacerCell )
                 else:
                     raise ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "{}"'.format(spacerName) )
-                self.padSpacers.sort( _cmpPad )
+                self.padSpacers = sorted( self.padSpacers, key=_cmpPad, reverse=True )
         if self.conf.cfg.chip.padCorner is not None:
             self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
         if self.conf.cfg.chip.minPadSpacing is None:

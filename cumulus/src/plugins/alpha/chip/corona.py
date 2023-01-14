@@ -13,8 +13,9 @@
 # +-----------------------------------------------------------------+
 
 
+import sys
 import bisect
-from   operator   import methodcaller  
+from   operator   import methodcaller, xor
 import Cfg        
 from   Hurricane  import DbU, Point, Interval, Box, Transformation,   \
                          Path, Occurrence, Net, Contact, Horizontal,  \
@@ -100,8 +101,7 @@ class HorizontalRail ( Rail ):
         return '<HorizontalRail "{}" ({}) @{}>'.format( self.side.getRailNet(self.order).getName()
                                                       , self.order
                                                       , DbU.getValueString(self.axis) )
-
-    def connect ( self, contact ):
+    def isReachable ( self, contact ):
         trace( 550, ',+', '\tTry to connect to: {}\n'.format(self) )
         trace( 550, '\tContact {}\n'.format(contact) )
         contactBb = contact.getBoundingBox()
@@ -132,6 +132,10 @@ class HorizontalRail ( Rail ):
                     trace( 550, ',-', '\tFailed: overlap with existing contact @{}.\n' \
                                       .format(self.vias[keys[insertIndex-1]][2]) )
                     return False
+        trace( 550, ',-' )
+        return True
+
+    def connect ( self, contact ):
         viaWidth  = contact.getWidth()
         viaHeight = self.side.hRailWidth
         if self.conf.routingGauge.isSymbolic():
@@ -152,7 +156,6 @@ class HorizontalRail ( Rail ):
                       , DbU.getValueString(contact.getX())
                       , DbU.getValueString(self.axis)) )
         self.vias[ contact.getX() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
-        trace( 550, '-' )
         return True
 
     def doLayout ( self ):
@@ -218,8 +221,11 @@ class VerticalRail ( Rail ):
                            , self.side.vRailWidth
                            )
 
-    def connect ( self, contact ):
-        contactBb = contact.getBoundingBox()
+    def isReachable ( self, contact ):
+        railDepth    = self.conf.routingGauge.getLayerDepth( self.side.getVLayer() )
+        contactDepth = self.conf.routingGauge.getLayerDepth( contact.getLayer() )
+        contactBb    = contact.getBoundingBox()
+        contactAbove = True if contactDepth > railDepth else False
         if    contactBb.getYMin() < self.side.innerBb.getYMin() \
            or contactBb.getYMax() > self.side.innerBb.getYMax():
             # XXX turn this into a non-fatal case. ERROR is still printed,
@@ -228,7 +234,7 @@ class VerticalRail ( Rail ):
                                    , 'power pad is likely to be to far off north or south.'
                                    , '(core:{})'.format(self.side.innerBb) ] ) )
         if contact.getY() in self.vias: return False
-        trace( 550, ',+', '\tVerticalRail.connect() [{}] @{}\n'.format(self.order,DbU.getValueString(self.axis)) )
+        trace( 550, ',+', '\tVerticalRail.isReachable() [{}] @{}\n'.format(self.order,DbU.getValueString(self.axis)) )
         trace( 550, '\t{}\n'.format(contact) )
         keys = list( self.vias.keys() )
         keys.sort()
@@ -241,20 +247,43 @@ class VerticalRail ( Rail ):
         if len(keys) > 0:
             if insertIndex < len(keys):
                 insertPosition = keys[ insertIndex ]
-                trace( 550, '\tinsertIndex:{}'.format(insertIndex) )
+                trace( 550, '\tinsertIndex:{}\n'.format(insertIndex) )
                 trace( 550, '\tCheck NEXT contactBb:{} via:{}\n' \
                             .format( contactBb
-                                   , self.vias[insertPosition][2].getBoundingBox()) )
-                if contactBb.getYMax() >= self.vias[insertPosition][2].getBoundingBox().getYMin():
+                                   , self.vias[insertPosition][1].getBoundingBox(railDepth)) )
+                if   self.vias[insertPosition][1].bottomDepth < railDepth: bigviaAbove = False
+                elif self.vias[insertPosition][1].topDepth    > railDepth: bigviaAbove = True
+                else:
+                    print( ErrorMessage( 1, [ '{} neither above nor below' \
+                                              .format( self.vias[insertPosition][1] ) ] ))
+                trace( 550, '\tcontactAbove={} bigviaAbove={}\n'.format( contactAbove, bigviaAbove ))
+                if contactBb.getYMax() >= self.vias[insertPosition][1].getBoundingBox(railDepth).getYMin() \
+                   and not xor(contactAbove,bigviaAbove):
                     trace( 550, ',--', '\tReject {} intersect NEXT\n'.format(contact) )
                     return False
             if insertIndex > 0:
+                insertPosition = keys[ insertIndex-1 ]
                 trace( 550, '\tcheck PREVIOUS contactBb:{} via:{}\n' \
                             .format( contactBb
-                                   , self.vias[keys[insertIndex-1]][2].getBoundingBox()) )
-                if self.vias[keys[insertIndex-1]][2].getBoundingBox().getYMax() >= contactBb.getYMin():
+                                   , self.vias[insertPosition][1].getBoundingBox(railDepth)) )
+                if   self.vias[insertPosition][1].bottomDepth < railDepth: bigviaAbove = False
+                elif self.vias[insertPosition][1].topDepth    > railDepth: bigviaAbove = True
+                else:
+                    print( ErrorMessage( 1, [ '{} neither above nor below' \
+                                              .format( self.vias[insertPosition][1] ) ] ))
+                trace( 550, '\tcontactAbove={} bigviaAbove={}\n'.format( contactAbove, bigviaAbove ))
+                if self.vias[insertPosition][1].getBoundingBox(railDepth).getYMax() >= contactBb.getYMin() \
+                   and not xor(contactAbove,bigviaAbove):
                     trace( 550, ',--', '\tReject {} intersect PREVIOUS\n'.format(contact) )
                     return False
+        trace( 550, ',--' )
+        return True
+
+    def connect ( self, contact ):
+        trace( 550, '\tVerticalRail.connect() {}\n'.format(contact) )
+        if self.net != contact.getNet():
+            trace( 550, '\tReject {} vs. {}\n'.format( self.net, contact.getNet() ))
+            return False
         viaWidth  = self.side.vRailWidth
         viaHeight = contact.getHeight()
         if self.conf.routingGauge.isSymbolic():
@@ -269,8 +298,8 @@ class VerticalRail ( Rail ):
                                               , contact.getHeight()  - DbU.fromLambda(1.0)
                                               , flags=BigVia.AllowAllExpand )
                                       , contact ]
-        trace(550, ',--' '\tADD {}\n'.format(contact) )
         self.vias[ contact.getY() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
+        trace( 550, '\t-> BigVIA {}\n'.format(self.vias[ contact.getY() ][1]) )
         return True
 
 
@@ -348,15 +377,18 @@ class Side ( object ):
         for terminal in blockSide.terminals:
             trace( 550, '\tterminal:{}\n'.format(terminal) )
             for rail in self.rails:
+                if not rail.isReachable( terminal[1] ):
+                    break
                 rail.connect( terminal[1] )
 
     def getRailRange ( self, net ):
         if net.isClock(): return range(len(self.rails))
         if not net.isSupply(): return []
         if self.side & HORIZONTAL:
-            trace( 550, '\tHORIZONTAL rail.\n' )
+            trace( 550, '\tHorizontal rail.\n' )
             return range( len(self.coronaCks), len(self.rails) )
         else:
+            trace( 550, '\tVertical rail.\n' )
             trace( 550, '\t{} > {}\n'.format(self.horizontalDepth,self.verticalDepth) )
             if self.horizontalDepth > self.verticalDepth:
                 return range( len(self.coronaCks), len(self.rails) )
