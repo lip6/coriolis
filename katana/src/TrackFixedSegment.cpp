@@ -198,7 +198,8 @@ namespace Katana {
   Net* TrackFixedSegment::getNet () const
   {
     Net* realNet = _segment->getNet();
-    if (realNet->isSupply() or realNet->isClock())
+  //if (realNet->isSupply() or realNet->isClock())
+    if (realNet->isSupply())
       return Session::getBlockageNet();
     return realNet;
   }

@@ -48,6 +48,7 @@ namespace Katana {
       static const Hurricane::BaseFlags  ShowOverloadedEdges;
       static const Hurricane::BaseFlags  ShowOverloadedGCells;
       static const Hurricane::BaseFlags  ShowBloatedInstances;
+      static const Hurricane::BaseFlags  ProtectSelf;
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );

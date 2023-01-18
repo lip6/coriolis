@@ -243,6 +243,7 @@ namespace Katana {
   void  KatanaEngine::digitalInit ()
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
+    _runKatanaInit();
 
     setRoutingMode( DigitalMode );
 
@@ -260,10 +261,11 @@ namespace Katana {
     } else {
       if (not isChannelStyle()) {
         setupPowerRails();
-        protectRoutingPads();
+        Flags flags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+                      ? Flags::ProtectSelf : Flags::NoFlags;
+        protectRoutingPads( flags );
       }
     }
-    _runKatanaInit();
 
     cdebug_tabw(155,-1);
   }

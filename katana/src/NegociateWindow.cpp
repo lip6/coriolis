@@ -55,20 +55,27 @@ namespace {
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
   {
-    cdebug_log(9000,0) << "Deter| NegociateOverlapCost() " << segment << endl;
+    cdebug_log(159,1) << "NegociateOverlapCost() " << segment << endl;
     Interval intersect = segment->getCanonicalInterval();
 
-    if (not intersect.intersect(cost.getInterval())) return;
-
-    if (   segment->isBlockage()
-       or (segment->isFixed()
-          and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
-      cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
-      cost.setInfinite   ();
-      cost.setOverlap    ();
-      cost.setHardOverlap();
-      cost.setBlockage   ();
+    if (not intersect.intersect(cost.getInterval())) {
+      cdebug_tabw(159,-1);
       return;
+    }
+
+    if (segment->getNet() != cost.getNet()) {
+      cdebug_log(159,0) << segment->getNet() << " vs. " << cost.getNet() << endl;
+      if (   segment->isBlockage()
+         or (segment->isFixed()
+            and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
+        cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
+        cost.setInfinite   ();
+        cost.setOverlap    ();
+        cost.setHardOverlap();
+        cost.setBlockage   ();
+        cdebug_tabw(159,-1);
+        return;
+      }
     }
 
     if (cost.getInterval().getVMax() > intersect.getVMax()) cost.setLeftOverlap();
@@ -85,7 +92,10 @@ namespace {
     }
 
     DataNegociate* data = segment->getDataNegociate();
-    if (not data) return;
+    if (not data) {
+      cdebug_tabw(159,-1);
+      return;
+    }
 
     TrackElement*  refSegment = cost.getRefElement();
     DataNegociate* refData    = refSegment->getDataNegociate();
@@ -129,6 +139,7 @@ namespace {
         cost.setInfinite   ();
         cost.setOverlap    ();
         cost.setHardOverlap();
+        cdebug_tabw(159,-1);
         return;
       }
     }
@@ -165,6 +176,7 @@ namespace {
       cdebug_log(159,0) << "Infinite cost from (RP access)" << segment << endl;
     }
       
+    cdebug_tabw(159,-1);
   }
 
 

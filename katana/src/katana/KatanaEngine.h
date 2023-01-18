@@ -121,7 +121,7 @@ namespace Katana {
               DataSymmetric*           addDataSymmetric           ( Net* );
               void                     setupChannelMode           ();
               void                     setupPowerRails            ();
-              void                     protectRoutingPads         ();
+              void                     protectRoutingPads         ( Flags flags=Flags::NoFlags );
               void                     preProcess                 ();
               void                     setInterrupt               ( bool );
               void                     createChannels             ();
