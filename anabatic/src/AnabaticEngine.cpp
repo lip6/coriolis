@@ -244,7 +244,6 @@ namespace Anabatic {
       cerr << Error( "RawGCellsUnder::commonCtor(): Points are neither horizontally nor vertically aligneds (ignored)."
                    ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
@@ -262,7 +261,6 @@ namespace Anabatic {
                      , DbU::getValueString(target.getY()).c_str()
                      ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
@@ -281,21 +279,18 @@ namespace Anabatic {
       cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Source not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
     if (not gtarget) {
       cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Target not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
     if (gsource == gtarget) {
       _elements.push_back( Element(gsource,NULL) );
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
