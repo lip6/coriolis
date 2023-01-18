@@ -875,7 +875,7 @@ namespace Anabatic {
     bool    upLayer = true;
 
     if (Session::getRoutingGauge()->isTwoMetals()) {
-      upLayer = (depth == 0);
+      upLayer = (not Session::getRoutingGauge()->isVH());
     } else if (Session::getRoutingGauge()->isVH()) {
       upLayer = (depth < 2);
     } else {
