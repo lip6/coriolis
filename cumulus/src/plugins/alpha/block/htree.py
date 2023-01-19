@@ -143,6 +143,7 @@ class HTree ( object ):
         hLeafDepth = gaugeConf.horizontalDepth
         if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
             hLeafDepth = gaugeConf.horizontalDepth - 2
+        leafFlags    = GaugeConf.OffsetLeft1
         blContact    = None
         brContact    = None
         tlContact    = None
@@ -150,6 +151,11 @@ class HTree ( object ):
         leftContact  = None
         rigthContact = None
         driverY      = None
+        if    (qt.bl and len(qt.bl.buffers) > 1) \
+           or (qt.tl and len(qt.tl.buffers) > 1) \
+           or (qt.br and len(qt.br.buffers) > 1) \
+           or (qt.tr and len(qt.tr.buffers) > 1):
+           leafFlags |= GaugeConf.HAccess
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
@@ -157,19 +163,19 @@ class HTree ( object ):
             trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )
-            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, leafFlags )
             trace( 550, ',-', '\tblContact={}\n'.format(blContact) )
         if qt.br:
             trace( 550, '+,', '\tbrContact\n' )
-            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, leafFlags )
             trace( 550, ',-', '\tbrContact={}\n'.format(brContact) )
         if qt.tl:
             trace( 550, '+,', '\ttlContact\n' )
-            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input, ckNet, leafFlags )
             trace( 550, ',-', '\ttlContact={}\n'.format(tlContact) )
         if qt.tr:
             trace( 550, '+,', '\ttrContact\n' )
-            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, leafFlags )
             trace( 550, ',-', '\ttrContact={}\n'.format(trContact) )
         flags   = GaugeConf.OffsetTop2
         yoffset = -2
@@ -203,14 +209,14 @@ class HTree ( object ):
         if qt.br or qt.tr:
             gaugeConf.createHorizontal( rightSourceContact, rightContact, rightSourceY, 0 )
         if tlContact:
-            tlY = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, 0 )
+            tlY = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, -1 )
         elif trContact:
-            tlY = gaugeConf.getTrack( trContact.getY(), hLeafDepth, 0 )
+            tlY = gaugeConf.getTrack( trContact.getY(), hLeafDepth, -1 )
         if blContact:
-            blY = gaugeConf.getTrack( blContact.getY(), hLeafDepth, 0 )
+            blY = gaugeConf.getTrack( blContact.getY(), hLeafDepth, 2 )
             trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
         elif brContact:
-            blY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, 0 )
+            blY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, 2 )
             trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
         if qt.tl:
             self._connectLeaf( qt.tl, ckNet, leftContact, tlContact, leftX, tlY )
