@@ -492,6 +492,7 @@ extern "C" {
   accessorVectorFromVoid(getLayerGauges,PyRoutingGauge,RoutingGauge,RoutingLayerGauge)
   DirectGetBoolAttribute(PyRoutingGauge_isSymbolic    ,isSymbolic    ,PyRoutingGauge,RoutingGauge)
   DirectGetBoolAttribute(PyRoutingGauge_isSuperPitched,isSuperPitched,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isTwoMetals   ,isTwoMetals   ,PyRoutingGauge,RoutingGauge)
   DirectSetBoolAttribute(PyRoutingGauge_setSymbolic   ,setSymbolic   ,PyRoutingGauge,RoutingGauge)
   DirectGetBoolAttribute(PyRoutingGauge_isHV          ,isHV          ,PyRoutingGauge,RoutingGauge)
   DirectGetBoolAttribute(PyRoutingGauge_isVH          ,isVH          ,PyRoutingGauge,RoutingGauge)
@@ -508,6 +509,8 @@ extern "C" {
                                 , "The RoutingGauge is for symbolic technology." }
     , { "isSuperPitched"        , (PyCFunction)PyRoutingGauge_isSuperPitched    , METH_NOARGS
                                 , "The RoutingGauge is super-pitched." }
+    , { "isTwoMetals"           , (PyCFunction)PyRoutingGauge_isTwoMetals       , METH_NOARGS
+                                , "The RoutingGauge has only two routing metal layers." }
     , { "isHV"                  , (PyCFunction)PyRoutingGauge_isHV              , METH_NOARGS
                                 , "The first routing layer (metal2) is horizontal." }
     , { "isVH"                  , (PyCFunction)PyRoutingGauge_isVH              , METH_NOARGS

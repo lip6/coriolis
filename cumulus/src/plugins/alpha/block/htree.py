@@ -151,11 +151,12 @@ class HTree ( object ):
         leftContact  = None
         rigthContact = None
         driverY      = None
-        if    (qt.bl and len(qt.bl.buffers) > 1) \
-           or (qt.tl and len(qt.tl.buffers) > 1) \
-           or (qt.br and len(qt.br.buffers) > 1) \
-           or (qt.tr and len(qt.tr.buffers) > 1):
-           leafFlags |= GaugeConf.HAccess
+        if gaugeConf.isTwoMetals():
+            if    (qt.bl and len(qt.bl.buffers) > 1) \
+               or (qt.tl and len(qt.tl.buffers) > 1) \
+               or (qt.br and len(qt.br.buffers) > 1) \
+               or (qt.tr and len(qt.tr.buffers) > 1):
+               leafFlags |= GaugeConf.HAccess
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )

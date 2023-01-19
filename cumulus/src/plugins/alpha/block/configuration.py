@@ -119,6 +119,8 @@ class GaugeConf ( object ):
     @property
     def routingBb     ( self ): return self._routingBb
 
+    def isTwoMetals   ( self ): return self._routingGauge.isTwoMetals()
+
     def getRoutingLayer ( self, depth ):
         return self._routingGauge.getRoutingLayer( depth )
 
