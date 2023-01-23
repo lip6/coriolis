@@ -157,10 +157,13 @@ class HTree ( object ):
                or (qt.br and len(qt.br.buffers) > 1) \
                or (qt.tr and len(qt.tr.buffers) > 1):
                leafFlags |= GaugeConf.HAccess
+        bufferTransf = qt.buffers[0].getTransformation()
+        yoffset = 3
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
             driverY       = driverContact.getY()
+            yoffset       = 2
             trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )
@@ -178,14 +181,17 @@ class HTree ( object ):
             trace( 550, '+,', '\ttrContact\n' )
             trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, leafFlags )
             trace( 550, ',-', '\ttrContact={}\n'.format(trContact) )
-        flags   = GaugeConf.OffsetTop2
-        yoffset = -2
+        flags = GaugeConf.OffsetTop2
+        bufferTransf = qt.buffers[0].getTransformation()
+        if bufferTransf == Transformation.Orientation.ID:
+            yoffset = -yoffset
         if qt.bl or qt.tl:
             trace( 550, '\tLeft branch\n' )
             leafContact       = blContact if brContact else tlContact
             leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
             leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0 )
-            if driverY is None: driverY = leftSourceContact.getY()
+            if driverY is None:
+                driverY = leftSourceContact.getY()
             leftSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
             leftContact       = gaugeConf.createContact( ckNet, leafContact.getX(),  leftSourceContact.getY(), 0 )
             leftX             = gaugeConf.getNearestVerticalTrack( leftContact.getX(), 0 )
@@ -197,7 +203,8 @@ class HTree ( object ):
             trace( 550, '\tRight branch\n' )
             leafContact        = brContact if brContact else trContact
             rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
-            if driverY is None: driverY = rightSourceContact.getY()
+            if driverY is None:
+                driverY = rightSourceContact.getY()
             rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0 )
             rightSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
             rightContact       = gaugeConf.createContact( ckNet, leafContact.getX(), rightSourceContact.getY(), 0 )
