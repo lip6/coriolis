@@ -1705,6 +1705,49 @@ namespace Katana {
   }
 
 
+  void  Manipulator::avoidStackedVias ( DbU::Unit axis )
+  {
+    cdebug_log(159,1) << "Manipulator::avoidStackedVias()" << endl;
+
+    uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+
+    const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
+    for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
+      TrackElement*  perpandicular = perpandiculars[iperpand];
+      DataNegociate* data          = perpandicular->getDataNegociate();
+
+      if (perpandicular->isFixed ()) continue;
+      if (not data) continue;
+      if (data->getState() >= DataNegociate::RepairFailed) continue;
+      if (not perpandicular->getTrack()) continue;
+      if (perpandicular->getDepth() <= _segment->getDepth()) continue;
+
+      cdebug_log(159,0) << "P: " << perpandicular << endl;
+      if (perpandicular->getSourceAxis() == _segment->getAxis()) {
+        if (not perpandicular->getTrack()->hasViaMarker(perpandicular->getNet(),Interval(axis)))
+          continue;
+      } else if (perpandicular->getTargetAxis() == _segment->getAxis()) { 
+        if (not perpandicular->getTrack()->hasViaMarker(perpandicular->getNet(),Interval(axis)))
+          continue;
+      } else
+        continue;
+
+      if (RoutingEvent::getStage() == StageRepair) {
+        if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
+          _segment->getDataNegociate()->resetRipupCount();
+
+        data->setState( DataNegociate::Repair );
+        if (data->getStateCount() > 1) data->resetStateCount();
+      }
+
+      cdebug_log(159,0) << "Stacked VIA ripup: " << perpandicular << endl;
+      _fsm.addAction( perpandicular, perpandicularActionFlags );
+    }
+
+    cdebug_tabw(159,-1);
+  }
+
+
   bool  Manipulator::avoidBlockage ()
   {
     cdebug_log(159,1) << "Manipulator::avoidBlockage()" << endl;

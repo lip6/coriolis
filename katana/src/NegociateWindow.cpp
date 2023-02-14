@@ -189,7 +189,7 @@ namespace {
     for( Net* net : nw->getCell()->getNets() ) {
       if (net->getType() == Net::Type::POWER ) continue;
       if (net->getType() == Net::Type::GROUND) continue;
-      if (net->getType() == Net::Type::CLOCK ) continue;
+    //if (net->getType() == Net::Type::CLOCK ) continue;
       if (af->isBLOCKAGE(net->getName())) continue;
 
       for( RoutingPad* rp : net->getRoutingPads() ) {

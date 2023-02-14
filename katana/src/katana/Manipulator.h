@@ -66,6 +66,7 @@ namespace Katana {
              void                 repackPerpandiculars    ( uint32_t flags );
              void                 reprocessPerpandiculars ();
              void                 reprocessParallels      ();
+             void                 avoidStackedVias        ( DbU::Unit axis );
              bool                 avoidBlockage           ();
              bool                 ripple                  ();
              bool                 minimize                ();

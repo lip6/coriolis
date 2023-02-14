@@ -418,6 +418,23 @@ namespace Katana {
   }
 
 
+  bool  Track::hasViaMarker ( Net* net, Interval span )
+  {
+    vector<TrackMarker*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), span.getVMin(), TrackMarker::Compare() );
+    size_t mbegin = lowerBound - _markers.begin();
+
+    for ( ;     (mbegin < _markers.size())
+            and (_markers[mbegin]->getSourceU() <= span.getVMax()) ; mbegin++ ) {
+      if (Session::disableStackedVias()
+         and (_markers[mbegin]->getNet() == net) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
     cdebug_log(155,0) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
@@ -486,7 +503,7 @@ namespace Katana {
           state = OutsideElement;
     }
   }
-
+  
 
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {

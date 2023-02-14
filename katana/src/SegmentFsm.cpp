@@ -759,13 +759,16 @@ namespace Katana {
     useEvent1();
     if (_event2) _event2->setInsertState( _event1->getInsertState() );
 
+    if (success and Session::disableStackedVias())
+      Manipulator( _event1->getSegment(), useEvent1() ).avoidStackedVias( getCandidateAxis1(i) );
+
     return success;
   }
 
 
   void  SegmentFsm::bindToTrack ( size_t i )
   {
-    cdebug_log(159,0) << "SegmentFsm::bindToTrack() :" << " track:" << i << endl;
+    cdebug_log(159,0) << "SegmentFsm::bindToTrack() track:" << i << endl;
 
     _event1->resetInsertState();
     _event1->updateAxisHistory();
@@ -785,6 +788,9 @@ namespace Katana {
     }
 
     setState( SegmentFsm::SelfInserted );
+
+    if (Session::disableStackedVias())
+      Manipulator( _event1->getSegment(), useEvent1() ).avoidStackedVias( getCandidateAxis1(i) );
   }
 
 
@@ -800,6 +806,9 @@ namespace Katana {
     }
 
     setState( SegmentFsm::SelfInserted );
+
+    if (Session::disableStackedVias())
+      Manipulator( _event1->getSegment(), useEvent1() ).avoidStackedVias( getCandidateAxis1(i) );
   }
 
 
