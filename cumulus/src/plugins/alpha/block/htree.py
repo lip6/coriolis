@@ -157,13 +157,12 @@ class HTree ( object ):
                or (qt.br and len(qt.br.buffers) > 1) \
                or (qt.tr and len(qt.tr.buffers) > 1):
                leafFlags |= GaugeConf.HAccess
-        bufferTransf = qt.buffers[0].getTransformation()
         yoffset = 3
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
             driverY       = driverContact.getY()
-            yoffset       = 2
+            yoffset       = 5
             trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )
