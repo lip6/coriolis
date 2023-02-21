@@ -35,9 +35,9 @@
  find_package(KATANA             REQUIRED)
  #find_package(BORA               REQUIRED) # FIXME: make FindBORA.cmake
  find_package(ETESIAN            REQUIRED)
- find_package(KNIK               REQUIRED)
- find_package(KATABATIC          REQUIRED)
- find_package(KITE               REQUIRED)
+ #find_package(KNIK               REQUIRED)
+ #find_package(KATABATIC          REQUIRED)
+ #find_package(KITE               REQUIRED)
  find_package(EQUINOX            REQUIRED)
  find_package(SOLSTICE           REQUIRED)
  #find_package(TUTORIAL           REQUIRED) # FIXME: make FindTUTORIAL.cmake

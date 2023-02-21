@@ -67,8 +67,6 @@ class PnR ( FlowTask ):
         import Etesian
         import Anabatic
         import Katana
-        import Katabatic
-        import Kite
         import Bora
         import Tutorial
         import Viewer
