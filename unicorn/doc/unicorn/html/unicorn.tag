@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="class">
     <name>Unicorn::UnicornGui</name>
     <filename>classUnicorn_1_1UnicornGui.html</filename>

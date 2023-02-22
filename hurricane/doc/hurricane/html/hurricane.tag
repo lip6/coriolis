@@ -42,8 +42,8 @@
       <type>static BasicLayer *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1BasicLayer.html</anchorfile>
-      <anchor>aecdcb9bef9b3c1c2bcb6d4513e1ca657</anchor>
-      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, unsigned gds2Layer=0, unsigned gds2Datatype=0, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
+      <anchor>adff716f670e03c59ff970cd4fee298b6</anchor>
+      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, uint32_t gds2Layer=0, uint32_t gds2Datatype=0, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -5746,43 +5746,6 @@
     <name>Hurricane::RoutingPad</name>
     <filename>classHurricane_1_1RoutingPad.html</filename>
     <base>Hurricane::Component</base>
-    <member kind="enumeration">
-      <type></type>
-      <name>Flags</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>BiggestArea</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HighestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>LowestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ComponentSelection</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ShowWarning</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>Component</type>
       <name>Inherit</name>
@@ -5790,42 +5753,12 @@
       <anchor>a53bed3713fe846a351621d2022bc6b68</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumvalue">
-      <name>BiggestArea</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HighestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>LowestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ComponentSelection</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ShowWarning</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="function">
       <type>bool</type>
       <name>isPlacedOccurrence</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a3e94730dded06e5953087755f0551b73</anchor>
-      <arglist>(unsigned int flags) const</arglist>
+      <anchor>a7a85faad00cd522aac35026af43c8b98</anchor>
+      <arglist>(uint32_t flags) const</arglist>
     </member>
     <member kind="function">
       <type>Occurrence</type>
@@ -5936,8 +5869,8 @@
       <type>Component *</type>
       <name>setOnBestComponent</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a410992ef75c40f9a898c36f39a7d1a1a</anchor>
-      <arglist>(unsigned int flags)</arglist>
+      <anchor>af842dc50d4271214514c1fd43ffb1adb</anchor>
+      <arglist>(uint32_t flags)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5950,15 +5883,43 @@
       <type>static RoutingPad *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a87c3a286477f81b9c791dc24104a3e51</anchor>
-      <arglist>(Net *, Occurrence, unsigned int flags=0)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static RoutingPad *</type>
-      <name>create</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
       <anchor>a1883e5711b5700cd7d1024f1cff6abb0</anchor>
       <arglist>(Pin *)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>BiggestArea</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>add72642d150e901835fa7d66d40e327d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>HighestLayer</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a8f7993760a105713a97abdfb05eee852</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>LowestLayer</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>ShowWarning</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a8fd74358022a29aab828700c8f7347ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>ComponentSelection</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>aa2db526191b29a7e094bff309e27ef4c</anchor>
+      <arglist></arglist>
     </member>
     <docanchor file="classHurricane_1_1RoutingPad.html" title="Introduction">secRoutingPadIntro</docanchor>
   </compound>

@@ -1,4 +1,4 @@
-.TH "RoutMatchedCapacitor" 3 "Sun Nov 21 2021" "Version 1.0" "Oroshi - Analog Devices Layout" \" -*- nroff -*-
+.TH "RoutMatchedCapacitor" 3 "Tue Feb 21 2023" "Version 1.0" "Oroshi - Analog Devices Layout" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,7 @@ RoutMatchedCapacitor \- Routs two matched capacitors, C1 and C2, drawn in a capa
 .br
 .PP
 .PP
-Inherits \fBCapacitorUnit\fP, \fBCapacitorStack\fP, and \fBVerticalRoutingTracks\fP\&.
+Inherits \fBVerticalRoutingTracks\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
@@ -96,7 +96,7 @@ the attributes related to the capacitor matrix are copied from the \fCCapacitorS
 .PP
 Position and dimensions attributes, also refered by layout variables, in Figure 2, are defined below : 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIdevice\fP The \fBHurricane\fP AMS device onto which the layout is drawn\&. 
 .br
@@ -123,12 +123,12 @@ Position and dimensions attributes, also refered by layout variables, in Figure 
 \fIminSpacing_hRoutingTrack\fP Minimum spacing between horizontal routing tracks\&. Wide metal 2 specifications are considered since metal 2 dimensions may exceed 10 $ m$\&.
 .RE
 .PP
-\fBRemark: For more information about wide metal specifications, refer to ENG-183_rev8\&.pdf technology manual\&. \fP
+\fBRemark:\\n For more information about wide metal specifications, refer to ENG-183_rev8\&.pdf technology manual\&. \fP
 .RS 4
 
 .RE
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIminimumPosition\fP The ordinate of the top plate's routing layer's bottom extremity after stretching\&. 
 .br
@@ -147,7 +147,7 @@ Position and dimensions attributes, also refered by layout variables, in Figure 
 .PP
 
 .PP
-References RoutMatchedCapacitor\&.capacitor, CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRingCapacitor, RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, RoutMatchedCapacitor\&.minimumPosition, RoutMatchedCapacitor\&.minSpacing_hRoutingTrack, RoutMatchedCapacitor\&.topPlateStretching, and RoutMatchedCapacitor\&.vRTInstance\&.
+References RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitor, CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRing, VerticalRoutingTracks\&.dummyRing, RoutMatchedCapacitor\&.dummyRingCapacitor, RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingTrack_width, VerticalRoutingTracks\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, VerticalRoutingTracks\&.maximumPosition, RoutMatchedCapacitor\&.minimumPosition, VerticalRoutingTracks\&.minimumPosition, RoutMatchedCapacitor\&.minSpacing_hRoutingTrack, VerticalRoutingTracks\&.minSpacing_hRoutingTrack, RoutMatchedCapacitor\&.topPlateStretching, and RoutMatchedCapacitor\&.vRTInstance\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "def route ( self,  bbMode = \fCFalse\fP)"
@@ -174,38 +174,42 @@ The \fCUpdateSession\fP is closed\&.
 .PP
 Meanwhile, an exception is raised when the entered \fCcapacitor\fP is not a capacitor matrix or if the capacitor type is unsupported\&. 
 .PP
-References CapacitorStack\&.__isUnitCap__(), RoutMatchedCapacitor\&.__stretchTopPlates__(), CapacitorUnit\&.abutmentBox, RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitorInstance, CapacitorUnit\&.computeDimensions(), Stack\&.computeDimensions(), CapacitorUnit\&.device, Stack\&.device, RoutMatchedCapacitor\&.drawCuts(), RoutMatchedCapacitor\&.drawDummyRing_hRTracks_Cuts(), RoutMatchedCapacitor\&.drawHRLayers(), RoutMatchedCapacitor\&.drawHRoutingTracks(), CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRingCapacitor, CapacitorUnit\&.getBotPlateLeftRLayerXCenter(), CapacitorUnit\&.getBotPlateRightRLayerXCenter(), CapacitorUnit\&.getBotPlateRLayerWidth(), CapacitorUnit\&.getBotPlateRLayerYMin(), CapacitorUnit\&.getTopPlateRLayerWidth(), CapacitorUnit\&.getTopPlateRLayerYMin(), VerticalRoutingTracks\&.getVTrackYMax(), VerticalRoutingTracks\&.getVTrackYMin(), CapacitorUnit\&.hpitch, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, CapacitorUnit\&.metal3Width, RoutMatchedCapacitor\&.minimumPosition, CapacitorStack\&.nets, RoutMatchedCapacitor\&.routeDummyRing(), RoutMatchedCapacitor\&.routeLeftAndRightSides(), RoutMatchedCapacitor\&.routeTopOrBottomSide(), RoutMatchedCapacitor\&.setLayers(), CapacitorUnit\&.setRules(), CapacitorUnit\&.vpitch, CapacitorStack\&.vRoutingTrack_width, and RoutMatchedCapacitor\&.vRoutingTrackXCenter\&.
+References CapacitorStack\&.__isUnitCap__(), RoutMatchedCapacitor\&.__stretchTopPlates__(), CapacitorStack\&.abutmentBox, CapacitorUnit\&.abutmentBox, VerticalRoutingTracks\&.abutmentBox, RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitor, VerticalRoutingTracks\&.capacitorInstance, Stack\&.computeDimensions(), RoutMatchedCapacitor\&.computeDimensions(), CapacitorUnit\&.computeDimensions(), CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, RoutMatchedCapacitor\&.drawCuts(), RoutMatchedCapacitor\&.drawDummyRing_hRTracks_Cuts(), RoutMatchedCapacitor\&.drawHRLayers(), RoutMatchedCapacitor\&.drawHRoutingTracks(), CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRing, VerticalRoutingTracks\&.dummyRing, RoutMatchedCapacitor\&.dummyRingCapacitor, CapacitorUnit\&.getBotPlateLeftRLayerXCenter(), CapacitorUnit\&.getBotPlateRightRLayerXCenter(), CapacitorUnit\&.getBotPlateRLayerWidth(), CapacitorUnit\&.getBotPlateRLayerYMin(), CapacitorUnit\&.getTopPlateRLayerWidth(), CapacitorUnit\&.getTopPlateRLayerYMin(), VerticalRoutingTracks\&.getVTrackYMax(), VerticalRoutingTracks\&.getVTrackYMin(), CapacitorUnit\&.hpitch, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, VerticalRoutingTracks\&.maximumPosition, CapacitorUnit\&.metal3Width, RoutMatchedCapacitor\&.minimumPosition, VerticalRoutingTracks\&.minimumPosition, CapacitorStack\&.nets, VerticalRoutingTracks\&.nets, RoutMatchedCapacitor\&.routeDummyRing(), RoutMatchedCapacitor\&.routeLeftAndRightSides(), RoutMatchedCapacitor\&.routeTopOrBottomSide(), RoutMatchedCapacitor\&.setLayers(), CapacitorStack\&.setRules(), RoutMatchedCapacitor\&.setRules(), CapacitorUnit\&.setRules(), VerticalRoutingTracks\&.setRules(), CapacitorUnit\&.vpitch, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and VerticalRoutingTracks\&.vRoutingTrackXCenter\&.
 .SS "def setRules ( self)"
 
 .PP
 Defines technology rules used to draw the layout\&. Some of the rules, namely those describing routing layers and tracks are applicable for both MIM and PIP capacitors\&. However, cuts rules are different\&.
 .PP
-\fBRemark: All \fCCapacitorStack\fP class rules are also reloaded in this class\&.\fP
+\fBRemark:\\n All \fCCapacitorStack\fP class rules are also reloaded in this class\&.\fP
 .RS 4
 An exception is raised if the entered capacitor type is unsupported\&.
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 a dictionary with rules labels as keys and rules content as values\&. 
 .RE
 .PP
 
 .PP
-References CapacitorUnit\&.capacitorType, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, and CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut\&.
+Reimplemented from \fBVerticalRoutingTracks\fP\&.
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minEnclosure_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_vRoutingTrackCut, CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut, and RoutMatchedCapacitor\&.minWidth_hRoutingLayer_topPlate_cut\&.
+.PP
+Referenced by CapacitorStack\&.create(), CapacitorUnit\&.create(), RoutMatchedCapacitor\&.route(), and VerticalRoutingTracks\&.setRules()\&.
 .SS "def setLayers ( self)"
 
 .PP
 Defines all physical layers used to draw the layout\&. Layers are loaded using \fCDataBase\fP API\&. The same routing layers are used for both capacitor types except cuts layers that connect top plates to vertical routing tracks\&. Basicaly, metal 2, meta 3, cut 1 and cut 2 are the ones defined\&. 
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
 a dictionary composed of layers labels as keys and layers as values\&. 
 .RE
 .PP
 
 .PP
-References CapacitorUnit\&.capacitorType, and CapacitorStack\&.dummyRing\&.
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRing, and VerticalRoutingTracks\&.dummyRing\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.route()\&.
 .SS "def computeDimensions ( self,  bbMode)"
@@ -213,13 +217,15 @@ Referenced by RoutMatchedCapacitor\&.route()\&.
 .PP
 Computes, through simple instructions and functions calls, layout variables detailed in Figure 2\&. 
 .PP
-References CapacitorStack\&.abutmentBox_spacing, VerticalRoutingTracks\&.capacitorInstance, CapacitorStack\&.capacitorsNumber, RoutMatchedCapacitor\&.computeBondingBoxDimInbbMode(), RoutMatchedCapacitor\&.computeHRLayerYCenter(), RoutMatchedCapacitor\&.computeHRoutingTrackYCenter(), RoutMatchedCapacitor\&.hRoutingLayer_width, CapacitorStack\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minEnclosure_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.minimumPosition, VerticalRoutingTracks\&.minWidth_hRoutingLayer, CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minWidth_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.vRoutingTrack_spacing, CapacitorStack\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackDict, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and RoutMatchedCapacitor\&.vRTInstance\&.
+References CapacitorStack\&.abutmentBox_spacing, RoutMatchedCapacitor\&.abutmentBox_spacing, VerticalRoutingTracks\&.abutmentBox_spacing, VerticalRoutingTracks\&.capacitorInstance, CapacitorStack\&.capacitorsNumber, VerticalRoutingTracks\&.capacitorsNumber, RoutMatchedCapacitor\&.computeBondingBoxDimInbbMode(), RoutMatchedCapacitor\&.computeHRLayerYCenter(), RoutMatchedCapacitor\&.computeHRoutingTrackYCenter(), RoutMatchedCapacitor\&.hRoutingLayer_width, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, RoutMatchedCapacitor\&.maximumPosition, VerticalRoutingTracks\&.maximumPosition, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minEnclosure_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minEnclosure_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.minimumPosition, VerticalRoutingTracks\&.minimumPosition, VerticalRoutingTracks\&.minWidth_hRoutingLayer, CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minWidth_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minWidth_hRoutingLayer_vRoutingTrack_cut, RoutMatchedCapacitor\&.vRoutingTrack_spacing, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackDict, VerticalRoutingTracks\&.vRoutingTrackDict, RoutMatchedCapacitor\&.vRoutingTrackXCenter, VerticalRoutingTracks\&.vRoutingTrackXCenter, and RoutMatchedCapacitor\&.vRTInstance\&.
+.PP
+Referenced by CapacitorUnit\&.create(), Stack\&.doLayout(), RoutMatchedCapacitor\&.route(), and Stack\&.setWirings()\&.
 .SS "def computeHRoutingTrackYCenter ( self)"
 
 .PP
 Computes centers' ordinates of the eight horizontal routing tracks\&. The tracks include four on top and four on bottom of the matrix\&. To do the computations, fist, center of the first bottom or top track, given in Figure 2, is computed\&. Then, all adjacent three centers are deduced by simples translation of the first one\&. Translation quantity is equal to the sum of distance between adjacent routing tracks, self\&.hRoutingTracks_spacing, and half width of the routing track itself, \fCself\&.hRoutingTrack_width\fP\&. 
 .PP
-References RoutMatchedCapacitor\&.__setPlatesIds__(), CapacitorUnit\&.hpitch, RoutMatchedCapacitor\&.hRoutingtrackYCenter, RoutMatchedCapacitor\&.maximumPosition, and RoutMatchedCapacitor\&.minimumPosition\&.
+References RoutMatchedCapacitor\&.__setPlatesIds__(), CapacitorUnit\&.hpitch, RoutMatchedCapacitor\&.hRoutingtrackYCenter, RoutMatchedCapacitor\&.maximumPosition, VerticalRoutingTracks\&.maximumPosition, RoutMatchedCapacitor\&.minimumPosition, and VerticalRoutingTracks\&.minimumPosition\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.computeDimensions()\&.
 .SS "def computeHRLayerYCenter ( self)"
@@ -227,7 +233,7 @@ Referenced by RoutMatchedCapacitor\&.computeDimensions()\&.
 .PP
 Sets the stretching value of top plates\&. Then iteratively computes the centers of horizontal routing layer regarding top and bottom plates\&. 
 .PP
-References RoutMatchedCapacitor\&.__findPossibleShortCircuits__(), VerticalRoutingTracks\&.__setStretching__(), RoutMatchedCapacitor\&.__setStretchingDySourceDyTarget__(), RoutMatchedCapacitor\&.bondingBox, RoutMatchedCapacitor\&.capacitor, CapacitorUnit\&.getBottomPlateRightCutYMax(), CapacitorUnit\&.getBottomPlateRightCutYMin(), RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matrixDim, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer, RoutMatchedCapacitor\&.topPlateStretching, CapacitorStack\&.vRoutingTrack_width, and RoutMatchedCapacitor\&.vRoutingTrackXCenter\&.
+References RoutMatchedCapacitor\&.__findPossibleShortCircuits__(), VerticalRoutingTracks\&.__setStretching__(), RoutMatchedCapacitor\&.__setStretchingDySourceDyTarget__(), RoutMatchedCapacitor\&.bondingBox, RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitor, CapacitorUnit\&.getBottomPlateRightCutYMax(), CapacitorUnit\&.getBottomPlateRightCutYMin(), RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingTrack_width, VerticalRoutingTracks\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer, RoutMatchedCapacitor\&.topPlateStretching, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and VerticalRoutingTracks\&.vRoutingTrackXCenter\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.computeDimensions()\&.
 .SS "def drawHRoutingTracks ( self,  routingTracksLayer)"
@@ -235,7 +241,7 @@ Referenced by RoutMatchedCapacitor\&.computeDimensions()\&.
 .PP
 Iteratively draws horizontal routing tracks on top and bottom positions of the matrix using physical layer \fCroutingTracksLayer\fP\&. 
 .PP
-References CapacitorUnit\&.device, Stack\&.device, RoutMatchedCapacitor\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.nets, and RoutMatchedCapacitor\&.vRoutingTrackXCenter\&.
+References CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, RoutMatchedCapacitor\&.hRoutingTrack_width, VerticalRoutingTracks\&.hRoutingTrack_width, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.nets, VerticalRoutingTracks\&.nets, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and VerticalRoutingTracks\&.vRoutingTrackXCenter\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.route()\&.
 .SS "def drawHRLayers ( self,  xPlateRLayer)"
@@ -243,7 +249,7 @@ Referenced by RoutMatchedCapacitor\&.route()\&.
 .PP
 Iteratively draws the horizontal routing layers starting with bottom left elementary capacitor $ C_{00} $\&. 
 .PP
-References RoutMatchedCapacitor\&.__computeConnections__(), RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, and CapacitorStack\&.nets\&.
+References RoutMatchedCapacitor\&.__computeConnections__(), RoutMatchedCapacitor\&.hRoutingLayer_width, RoutMatchedCapacitor\&.hRoutingLayerYCenter, CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, CapacitorStack\&.nets, and VerticalRoutingTracks\&.nets\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.route()\&.
 .SS "def drawCuts ( self,  layer_hRTrack_hRLayer,  layer_tracksCut,  layer_topPlateCut)"
@@ -259,7 +265,7 @@ Draws all required cuts using physical layers :
 .PP
 
 .PP
-References RoutMatchedCapacitor\&.__setPlatesLabels__(), VerticalRoutingTracks\&.capacitorIds, CapacitorStack\&.capacitorsNumber, RoutMatchedCapacitor\&.drawCuts_stretchedTopPlate(), RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_HRLayer(), RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack(), RoutMatchedCapacitor\&.drawOneCut_vRoutingTrack_HRLayer(), RoutMatchedCapacitor\&.hRoutingLayerYCenter, CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, CapacitorStack\&.minEnclosure_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, VerticalRoutingTracks\&.minWidth_hRoutingTrackCut, CapacitorStack\&.minWidth_vRoutingTrackCut, CapacitorStack\&.nets, CapacitorStack\&.vRoutingTrack_width, and RoutMatchedCapacitor\&.vRoutingTrackXCenter\&.
+References RoutMatchedCapacitor\&.__setPlatesLabels__(), VerticalRoutingTracks\&.capacitorIds, CapacitorStack\&.capacitorsNumber, VerticalRoutingTracks\&.capacitorsNumber, RoutMatchedCapacitor\&.drawCuts_stretchedTopPlate(), RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_HRLayer(), RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack(), RoutMatchedCapacitor\&.drawOneCut_vRoutingTrack_HRLayer(), RoutMatchedCapacitor\&.hRoutingLayerYCenter, CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, CapacitorStack\&.minEnclosure_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_vRoutingTrackCut, VerticalRoutingTracks\&.minWidth_hRoutingTrackCut, CapacitorStack\&.minWidth_vRoutingTrackCut, CapacitorStack\&.nets, VerticalRoutingTracks\&.nets, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and VerticalRoutingTracks\&.vRoutingTrackXCenter\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.route()\&.
 .SS "def drawOneCut_vRoutingTrack_HRLayer ( self,  net,  cutLayer,  cutXMin,  cutYMin,  cutNumber)"
@@ -275,7 +281,7 @@ Referenced by RoutMatchedCapacitor\&.drawCuts()\&.
 .PP
 Draws cuts to connect vertical routing tracks in metal 2 and horizontal routing tracks in metal 3\&. 
 .PP
-References RoutMatchedCapacitor\&.__setPlatesIds__(), RoutMatchedCapacitor\&.capacitor, RoutMatchedCapacitor\&.dummyRingCapacitor, CapacitorUnit\&.getBotPlateRLayerWidth(), CapacitorUnit\&.getBottomPlateLeftCutXMin(), CapacitorUnit\&.getBottomPlateRightCutXMin(), CapacitorUnit\&.getTopPlateRLayerWidth(), CapacitorUnit\&.getTopPlateRLayerXMin(), RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, CapacitorStack\&.minEnclosure_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minWidth_hRoutingTrackCut, CapacitorStack\&.minWidth_vRoutingTrackCut, CapacitorStack\&.nets, CapacitorStack\&.vRoutingTrack_width, and RoutMatchedCapacitor\&.vRoutingTrackXCenter\&.
+References RoutMatchedCapacitor\&.__setPlatesIds__(), RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitor, RoutMatchedCapacitor\&.dummyRingCapacitor, CapacitorUnit\&.getBotPlateRLayerWidth(), CapacitorUnit\&.getBottomPlateLeftCutXMin(), CapacitorUnit\&.getBottomPlateRightCutXMin(), CapacitorUnit\&.getTopPlateRLayerWidth(), CapacitorUnit\&.getTopPlateRLayerXMin(), RoutMatchedCapacitor\&.hRoutingLayerYCenter, RoutMatchedCapacitor\&.hRoutingtrackYCenter, CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, CapacitorStack\&.minEnclosure_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minEnclosure_hRoutingLayer_topPlate_cut, CapacitorStack\&.minEnclosure_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minSpacing_hRoutingTrackCut, CapacitorStack\&.minSpacing_vRoutingTrackCut, RoutMatchedCapacitor\&.minSpacing_vRoutingTrackCut, CapacitorStack\&.minWidth_hRoutingLayer_topPlate_cut, RoutMatchedCapacitor\&.minWidth_hRoutingLayer_topPlate_cut, VerticalRoutingTracks\&.minWidth_hRoutingTrackCut, CapacitorStack\&.minWidth_vRoutingTrackCut, CapacitorStack\&.nets, VerticalRoutingTracks\&.nets, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, and VerticalRoutingTracks\&.vRoutingTrackXCenter\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.drawCuts()\&.
 .SS "def __stretchTopPlates__ ( self,  capacitor,  rlayer)"
@@ -283,7 +289,7 @@ Referenced by RoutMatchedCapacitor\&.drawCuts()\&.
 .PP
 Iteratively performs top plates stretching for the capacitor matrix\&. Vertical segments are connected to top plate routing layer\&. 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIcapacitor\fP Capacitor matrix\&. 
 .br
@@ -292,7 +298,7 @@ Iteratively performs top plates stretching for the capacitor matrix\&. Vertical 
 .PP
 
 .PP
-References RoutMatchedCapacitor\&.__stretchTopPlateCompactCap__(), CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, and CapacitorStack\&.nets\&.
+References RoutMatchedCapacitor\&.__stretchTopPlateCompactCap__(), CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, CapacitorStack\&.nets, and VerticalRoutingTracks\&.nets\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.route()\&.
 .SS "def __stretchTopPlateCompactCap__ ( self,  net,  capacitor,  routingLayer,  j = \fC0\fP)"
@@ -308,16 +314,16 @@ Referenced by RoutMatchedCapacitor\&.__stretchTopPlates__()\&.
 .PP
 Sets the abcissas of the extremities of the vertical stretching to be applied to capacitor's top plates for a given elementary capacitor in the matrix\&. 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIcapacitor\fP \&.values() Elementary unit capacitor\&. 
 .br
 \fIdeltay\fP Stretching value\&. 
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
-A list that contains \fCdySource\fP and  as top extremity and bottom extermity, respectively\&. 
+A list that contains \fCdySource\fP and \\dyTarget as top extremity and bottom extermity, respectively\&. 
 .RE
 .PP
 
@@ -328,26 +334,26 @@ Referenced by RoutMatchedCapacitor\&.__stretchTopPlateCompactCap__(), and RoutMa
 .PP
 Computes horizontal routing layers source and target abcissas for top and bottom plates connections to its associated routing track\&. 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fI(i,j)\fP row and column indexes, respectively, in the matrix which describe the elementary capacitor position in the matrix\&. 
 .br
 \fIcapacitorIdentifier\fP equal to '1' if C1 and '2' if C2\&. 
 .RE
 .PP
-\fBReturns:\fP
+\fBReturns\fP
 .RS 4
-A nested dicitionary\&. The overal dictionary is composed of keys equal to \fCtopPlate\fP and  bottomPlate and values equal to sub-dictionaries\&. The sub-dictionaries, are in their turn composed of two keys standing for the abcissa of the source and the abcissa of the target\&. 
+A nested dicitionary\&. The overal dictionary is composed of keys equal to \fCtopPlate\fP and \\d bottomPlate and values equal to sub-dictionaries\&. The sub-dictionaries, are in their turn composed of two keys standing for the abcissa of the source and the abcissa of the target\&. 
 .RE
 .PP
-\fBRemark: Naturally, an exception is raised if an unsupported capacitor identifier is given\&. \fP
+\fBRemark:\\n Naturally, an exception is raised if an unsupported capacitor identifier is given\&. \fP
 .RS 4
 
 .RE
 .PP
 
 .PP
-References RoutMatchedCapacitor\&.__findHRLDyTrarget__(), RoutMatchedCapacitor\&.__isCapacitorAdummy__(), RoutMatchedCapacitor\&.__setPlatesLabels__(), RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitorIds, CapacitorStack\&.capacitorsNumber, CapacitorStack\&.dummyElement, CapacitorStack\&.dummyRing, CapacitorUnit\&.getTopPlateRLayerXMin(), CapacitorStack\&.matchingScheme, CapacitorStack\&.matrixDim, CapacitorStack\&.nets, CapacitorStack\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, RoutMatchedCapacitor\&.vRTInstance, and RoutMatchedCapacitor\&.vRTsDistribution\&.
+References RoutMatchedCapacitor\&.__findHRLDyTrarget__(), RoutMatchedCapacitor\&.__isCapacitorAdummy__(), RoutMatchedCapacitor\&.__setPlatesLabels__(), RoutMatchedCapacitor\&.capacitor, VerticalRoutingTracks\&.capacitor, VerticalRoutingTracks\&.capacitorIds, CapacitorStack\&.capacitorsNumber, VerticalRoutingTracks\&.capacitorsNumber, CapacitorStack\&.dummyElement, RoutMatchedCapacitor\&.dummyElement, VerticalRoutingTracks\&.dummyElement, CapacitorStack\&.dummyRing, RoutMatchedCapacitor\&.dummyRing, VerticalRoutingTracks\&.dummyRing, CapacitorUnit\&.getTopPlateRLayerXMin(), CapacitorStack\&.matchingScheme, VerticalRoutingTracks\&.matchingScheme, CapacitorStack\&.matrixDim, VerticalRoutingTracks\&.matrixDim, CapacitorStack\&.nets, VerticalRoutingTracks\&.nets, CapacitorStack\&.vRoutingTrack_width, VerticalRoutingTracks\&.vRoutingTrack_width, RoutMatchedCapacitor\&.vRoutingTrackXCenter, VerticalRoutingTracks\&.vRoutingTrackXCenter, RoutMatchedCapacitor\&.vRTInstance, RoutMatchedCapacitor\&.vRTsDistribution, and VerticalRoutingTracks\&.vRTsDistribution\&.
 .PP
 Referenced by RoutMatchedCapacitor\&.drawHRLayers()\&.
 

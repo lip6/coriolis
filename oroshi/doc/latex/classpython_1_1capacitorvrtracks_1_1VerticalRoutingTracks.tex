@@ -1,5 +1,5 @@
-\hypertarget{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks}{}\section{Vertical\+Routing\+Tracks Class Reference}
-\label{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks}\index{Vertical\+Routing\+Tracks@{Vertical\+Routing\+Tracks}}
+\hypertarget{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks}{}\doxysection{Vertical\+Routing\+Tracks Class Reference}
+\label{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks}\index{VerticalRoutingTracks@{VerticalRoutingTracks}}
 
 
 Route two matched capacitors, C1 and C2, drawn in a capacitor matrix.  
@@ -7,38 +7,39 @@ Route two matched capacitors, C1 and C2, drawn in a capacitor matrix.
 
 
 
-Inheritance diagram for Vertical\+Routing\+Tracks\+:\nopagebreak
+Inheritance diagram for Vertical\+Routing\+Tracks\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=225pt]{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks__inherit__graph}
+\includegraphics[width=196pt]{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 def \mbox{\hyperlink{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a0196828def1b7ed08eb1bfe027cf4692}{\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+}} (self)
 \begin{DoxyCompactList}\small\item\em Sets vertical stretching value considering spacing between elementary capacitors in the matrix. \end{DoxyCompactList}\item 
 def \mbox{\hyperlink{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a458149b1404a0e797668330beb75b640}{set\+Rules}} (self)
 \begin{DoxyCompactList}\small\item\em Defines technology rules used to draw the layout. \end{DoxyCompactList}\item 
-def \mbox{\hyperlink{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_ade479990eba75cc3c94fba25082a4b28}{draw\+V\+Routing\+Tracks}} (self, v\+Routing\+Tracks\+Layer)
+def \mbox{\hyperlink{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_ade479990eba75cc3c94fba25082a4b28}{draw\+VRouting\+Tracks}} (self, v\+Routing\+Tracks\+Layer)
 \begin{DoxyCompactList}\small\item\em Iteratively draws vertical routing tracks given the physical layer {\ttfamily v\+Routing\+Tracks\+Layer}. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 Route two matched capacitors, C1 and C2, drawn in a capacitor matrix. 
 
-Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routing tracks that represent top plates and bottom plates nets of C1 and C2. Supported types of capacitors are Poly-\/\+Poly and Metal-\/\+Metal. Technologycal rules are provided by 350 nm A\+MS C\+M\+OS technology with three-\/four metal layers. Metal layers that are used for routeing are placed similarly to horziontal-\/vertical (HV) symbolic Alliance C\+AD tool router, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions $ R*C $, the total number of vertical tracks is $ 2C+2 $ equivalent to $ C+1 $ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
+Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routing tracks that represent top plates and bottom plates nets of C1 and C2. Supported types of capacitors are Poly-\/\+Poly and Metal-\/\+Metal. Technologycal rules are provided by 350 nm AMS CMOS technology with three-\/four metal layers. Metal layers that are used for routeing are placed similarly to horziontal-\/vertical (HV) symbolic Alliance CAD tool router, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions $ R*C $, the total number of vertical tracks is $ 2C+2 $ equivalent to $ C+1 $ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
 
 
 
 An elementary capacitor unit can be a part of C1 or C2 according to the matching scheme. However, to respect common-\/centroid layout specifications, for C1 and C2 to be equal, the matrix number of colums and number of rows must be both even. Addionnally, the number of elementary capacitors dedicated to C1 must be equal to those dedicated to C2. These two conditions are tested in one of the class methods. An exception is raised if at least one of the two is not respected. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a0196828def1b7ed08eb1bfe027cf4692}\label{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a0196828def1b7ed08eb1bfe027cf4692}} 
-\index{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}!\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+@{\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+}}
-\index{\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+@{\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+}!python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}}
-\subsubsection{\texorpdfstring{\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+()}{\_\_setStretching\_\_()}}
+\index{VerticalRoutingTracks@{VerticalRoutingTracks}!\_\_setStretching\_\_@{\_\_setStretching\_\_}}
+\index{\_\_setStretching\_\_@{\_\_setStretching\_\_}!VerticalRoutingTracks@{VerticalRoutingTracks}}
+\doxysubsubsection{\texorpdfstring{\_\_setStretching\_\_()}{\_\_setStretching\_\_()}}
 {\footnotesize\ttfamily def \+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
 
 
@@ -50,23 +51,23 @@ stratching value.
 \end{DoxyReturn}
 
 
-References Capacitor\+Stack.\+abutment\+Box\+\_\+spacing.
+References Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Rout\+Matched\+Capacitor.\+abutment\+Box\+\_\+spacing, and Vertical\+Routing\+Tracks.\+abutment\+Box\+\_\+spacing.
 
 
 
-Referenced by Rout\+Matched\+Capacitor.\+compute\+H\+R\+Layer\+Y\+Center(), and Vertical\+Routing\+Tracks.\+draw\+V\+Routing\+Tracks().
+Referenced by Rout\+Matched\+Capacitor.\+compute\+HRLayer\+YCenter(), and Vertical\+Routing\+Tracks.\+draw\+VRouting\+Tracks().
 
 \mbox{\Hypertarget{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a458149b1404a0e797668330beb75b640}\label{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_a458149b1404a0e797668330beb75b640}} 
-\index{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}!set\+Rules@{set\+Rules}}
-\index{set\+Rules@{set\+Rules}!python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}}
-\subsubsection{\texorpdfstring{set\+Rules()}{setRules()}}
+\index{VerticalRoutingTracks@{VerticalRoutingTracks}!setRules@{setRules}}
+\index{setRules@{setRules}!VerticalRoutingTracks@{VerticalRoutingTracks}}
+\doxysubsubsection{\texorpdfstring{setRules()}{setRules()}}
 {\footnotesize\ttfamily def set\+Rules (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
 
 
 
 Defines technology rules used to draw the layout. 
 
-Some of the rules, namely those describing routeing layers and tracks are applicable for both M\+IM and P\+IP capacitors. However, cuts rules are different. \begin{DoxyParagraph}{Remark\+: All {\ttfamily Capacitor\+Stack} class rules are also reloaded in this class. An exception is raised if the entered capacitor type is unsupported. }
+Some of the rules, namely those describing routeing layers and tracks are applicable for both MIM and PIP capacitors. However, cuts rules are different. \begin{DoxyParagraph}{Remark\+:\textbackslash{}n All {\ttfamily Capacitor\+Stack} class rules are also reloaded in this class. An exception is raised if the entered capacitor type is unsupported. }
 
 \end{DoxyParagraph}
 \begin{DoxyReturn}{Returns}
@@ -74,13 +75,25 @@ a dictionary with rules labels as keys and rules content as values.
 \end{DoxyReturn}
 
 
-References Vertical\+Routing\+Tracks.\+capacitor\+Instance, Capacitor\+Stack.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+compute\+V\+R\+T\+Dimensions(), Vertical\+Routing\+Tracks.\+draw\+V\+Routing\+Tracks(), Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Layer\+\_\+v\+Routing\+Track\+\_\+cut, Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Track\+Cut, Vertical\+Routing\+Tracks.\+minimize\+V\+R\+Ts(), Vertical\+Routing\+Tracks.\+min\+Spacing\+\_\+h\+Routing\+Track, Rout\+Matched\+Capacitor.\+min\+Spacing\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Layer, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Layer\+\_\+v\+Routing\+Track\+\_\+cut, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track\+Cut, and Capacitor\+Unit.\+set\+Rules().
+Reimplemented from \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a458149b1404a0e797668330beb75b640}{Capacitor\+Stack}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{classpython_1_1capacitorrouted_1_1RoutMatchedCapacitor_a458149b1404a0e797668330beb75b640}{Rout\+Matched\+Capacitor}}.
+
+
+
+References Vertical\+Routing\+Tracks.\+capacitor\+Instance, Capacitor\+Stack.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+compute\+VRTDimensions(), Vertical\+Routing\+Tracks.\+draw\+VRouting\+Tracks(), Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Layer\+\_\+v\+Routing\+Track\+\_\+cut, Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Track\+Cut, Vertical\+Routing\+Tracks.\+minimize\+VRTs(), Rout\+Matched\+Capacitor.\+min\+Spacing\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Spacing\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Layer, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Layer\+\_\+v\+Routing\+Track\+\_\+cut, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track\+Cut, Capacitor\+Stack.\+set\+Rules(), Rout\+Matched\+Capacitor.\+set\+Rules(), Capacitor\+Unit.\+set\+Rules(), and Vertical\+Routing\+Tracks.\+set\+Rules().
+
+
+
+Referenced by Capacitor\+Stack.\+create(), Capacitor\+Unit.\+create(), Rout\+Matched\+Capacitor.\+route(), and Vertical\+Routing\+Tracks.\+set\+Rules().
 
 \mbox{\Hypertarget{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_ade479990eba75cc3c94fba25082a4b28}\label{classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks_ade479990eba75cc3c94fba25082a4b28}} 
-\index{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}!draw\+V\+Routing\+Tracks@{draw\+V\+Routing\+Tracks}}
-\index{draw\+V\+Routing\+Tracks@{draw\+V\+Routing\+Tracks}!python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks@{python\+::capacitorvrtracks\+::\+Vertical\+Routing\+Tracks}}
-\subsubsection{\texorpdfstring{draw\+V\+Routing\+Tracks()}{drawVRoutingTracks()}}
-{\footnotesize\ttfamily def draw\+V\+Routing\+Tracks (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{v\+Routing\+Tracks\+Layer }\end{DoxyParamCaption})}
+\index{VerticalRoutingTracks@{VerticalRoutingTracks}!drawVRoutingTracks@{drawVRoutingTracks}}
+\index{drawVRoutingTracks@{drawVRoutingTracks}!VerticalRoutingTracks@{VerticalRoutingTracks}}
+\doxysubsubsection{\texorpdfstring{drawVRoutingTracks()}{drawVRoutingTracks()}}
+{\footnotesize\ttfamily def draw\+VRouting\+Tracks (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{v\+Routing\+Tracks\+Layer }\end{DoxyParamCaption})}
 
 
 
@@ -88,7 +101,7 @@ Iteratively draws vertical routing tracks given the physical layer {\ttfamily v\
 
 Every elementary capacitor is consequently positioned between four routing tracks, two from each side. Each couple of adjacent routeing tracks represent top plate and bottom plate nets of Ci, where i is in \mbox{[}1,2\mbox{]}. As given in Figure 2, capacitor $ C_{ij} $ with an even j value situated in even columns have and inversely for odd columns numbers. 
 
-References Vertical\+Routing\+Tracks.\+\_\+\+\_\+compute\+V\+R\+Ts\+Number\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Cap\+Ids\+To\+Eliminate\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Cap\+Ids\+To\+Eliminate\+Per\+Column\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Used\+Cap\+Ids\+Per\+Column\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+V\+R\+Ts\+To\+Eliminate\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Nets\+Distribution\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Plates\+Distribution\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+V\+R\+Ts\+Distribution\+\_\+\+\_\+(), Capacitor\+Unit.\+abutment\+Box, Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Vertical\+Routing\+Tracks.\+capacitor\+Ids, Vertical\+Routing\+Tracks.\+capacitor\+Instance, Capacitor\+Stack.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+compute\+X\+Centers(), Capacitor\+Stack.\+dummy\+Element, Capacitor\+Stack.\+dummy\+Ring, Vertical\+Routing\+Tracks.\+get\+V\+Track\+Y\+Max(), Vertical\+Routing\+Tracks.\+get\+V\+Track\+Y\+Min(), Capacitor\+Unit.\+hpitch, Rout\+Matched\+Capacitor.\+h\+Routing\+Track\+\_\+width, Vertical\+Routing\+Tracks.\+h\+Routing\+Track\+\_\+width, Capacitor\+Stack.\+matching\+Scheme, Capacitor\+Stack.\+matrix\+Dim, Rout\+Matched\+Capacitor.\+maximum\+Position, Vertical\+Routing\+Tracks.\+maximum\+Position, Capacitor\+Unit.\+metal2\+Width, Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Track\+Cut, Vertical\+Routing\+Tracks.\+minimize\+V\+RT, Rout\+Matched\+Capacitor.\+minimum\+Position, Vertical\+Routing\+Tracks.\+minimum\+Position, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track\+Cut, Capacitor\+Stack.\+nets, Vertical\+Routing\+Tracks.\+plates\+Distribution, Capacitor\+Stack.\+v\+Routing\+Track\+\_\+width, Vertical\+Routing\+Tracks.\+v\+Routing\+Track\+Dict, Rout\+Matched\+Capacitor.\+v\+Routing\+Track\+Dict, Vertical\+Routing\+Tracks.\+v\+Routing\+Track\+X\+Center, Rout\+Matched\+Capacitor.\+v\+Routing\+Track\+X\+Center, Vertical\+Routing\+Tracks.\+v\+R\+Ts\+Distribution, Rout\+Matched\+Capacitor.\+v\+R\+Ts\+Distribution, and Vertical\+Routing\+Tracks.\+v\+R\+Ts\+To\+Eliminate.
+References Vertical\+Routing\+Tracks.\+\_\+\+\_\+compute\+VRTs\+Number\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Cap\+Ids\+To\+Eliminate\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Cap\+Ids\+To\+Eliminate\+Per\+Column\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+Used\+Cap\+Ids\+Per\+Column\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+find\+VRTs\+To\+Eliminate\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Nets\+Distribution\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Plates\+Distribution\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+Stretching\+\_\+\+\_\+(), Vertical\+Routing\+Tracks.\+\_\+\+\_\+set\+VRTs\+Distribution\+\_\+\+\_\+(), Capacitor\+Stack.\+abutment\+Box, Capacitor\+Unit.\+abutment\+Box, Vertical\+Routing\+Tracks.\+abutment\+Box, Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Rout\+Matched\+Capacitor.\+abutment\+Box\+\_\+spacing, Vertical\+Routing\+Tracks.\+abutment\+Box\+\_\+spacing, Vertical\+Routing\+Tracks.\+capacitor\+Ids, Vertical\+Routing\+Tracks.\+capacitor\+Instance, Capacitor\+Stack.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+capacitors\+Number, Vertical\+Routing\+Tracks.\+compute\+XCenters(), Capacitor\+Stack.\+dummy\+Element, Rout\+Matched\+Capacitor.\+dummy\+Element, Vertical\+Routing\+Tracks.\+dummy\+Element, Capacitor\+Stack.\+dummy\+Ring, Rout\+Matched\+Capacitor.\+dummy\+Ring, Vertical\+Routing\+Tracks.\+dummy\+Ring, Vertical\+Routing\+Tracks.\+get\+VTrack\+YMax(), Vertical\+Routing\+Tracks.\+get\+VTrack\+YMin(), Capacitor\+Unit.\+hpitch, Rout\+Matched\+Capacitor.\+h\+Routing\+Track\+\_\+width, Vertical\+Routing\+Tracks.\+h\+Routing\+Track\+\_\+width, Capacitor\+Stack.\+matching\+Scheme, Vertical\+Routing\+Tracks.\+matching\+Scheme, Capacitor\+Stack.\+matrix\+Dim, Vertical\+Routing\+Tracks.\+matrix\+Dim, Rout\+Matched\+Capacitor.\+maximum\+Position, Vertical\+Routing\+Tracks.\+maximum\+Position, Capacitor\+Unit.\+metal2\+Width, Vertical\+Routing\+Tracks.\+min\+Enclosure\+\_\+h\+Routing\+Track\+Cut, Vertical\+Routing\+Tracks.\+minimize\+VRT, Rout\+Matched\+Capacitor.\+minimum\+Position, Vertical\+Routing\+Tracks.\+minimum\+Position, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track, Vertical\+Routing\+Tracks.\+min\+Width\+\_\+h\+Routing\+Track\+Cut, Capacitor\+Stack.\+nets, Vertical\+Routing\+Tracks.\+nets, Vertical\+Routing\+Tracks.\+plates\+Distribution, Capacitor\+Stack.\+v\+Routing\+Track\+\_\+width, Vertical\+Routing\+Tracks.\+v\+Routing\+Track\+\_\+width, Rout\+Matched\+Capacitor.\+v\+Routing\+Track\+Dict, Vertical\+Routing\+Tracks.\+v\+Routing\+Track\+Dict, Rout\+Matched\+Capacitor.\+v\+Routing\+Track\+XCenter, Vertical\+Routing\+Tracks.\+v\+Routing\+Track\+XCenter, Rout\+Matched\+Capacitor.\+v\+RTs\+Distribution, Vertical\+Routing\+Tracks.\+v\+RTs\+Distribution, and Vertical\+Routing\+Tracks.\+v\+RTs\+To\+Eliminate.
 
 
 

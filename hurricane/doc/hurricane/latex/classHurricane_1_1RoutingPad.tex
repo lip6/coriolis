@@ -17,24 +17,12 @@ Inheritance diagram for Hurricane\+::Routing\+Pad\+:\nopagebreak
 \doxysubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4}{Flags}} \{ \newline
-\mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d}{Biggest\+Area}} = (1 $<$$<$ 0)
-, \newline
-\mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852}{Highest\+Layer}} = (1 $<$$<$ 1)
-, \newline
-\mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6}{Lowest\+Layer}} = (1 $<$$<$ 2)
-, \newline
-\mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c}{Component\+Selection}} = Biggest\+Area$\vert$\+Highest\+Layer$\vert$\+Lowest\+Layer
-, \newline
-\mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba}{Show\+Warning}} = (1 $<$$<$ 4)
- \}
-\item 
 typedef \mbox{\hyperlink{classHurricane_1_1Component}{Component}} \mbox{\hyperlink{classHurricane_1_1RoutingPad_a53bed3713fe846a351621d2022bc6b68}{Inherit}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \mbox{\hyperlink{classHurricane_1_1RoutingPad_a3e94730dded06e5953087755f0551b73}{is\+Placed\+Occurrence}} (unsigned int flags) const
+bool \mbox{\hyperlink{classHurricane_1_1RoutingPad_a7a85faad00cd522aac35026af43c8b98}{is\+Placed\+Occurrence}} (uint32\+\_\+t flags) const
 \item 
 \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \mbox{\hyperlink{classHurricane_1_1RoutingPad_a2767550364ef01c772f3270850ec052f}{get\+Occurrence}} () const
 \item 
@@ -66,16 +54,27 @@ virtual void \mbox{\hyperlink{classHurricane_1_1RoutingPad_a41bf66ffda0c0ceaaebc
 \item 
 void \mbox{\hyperlink{classHurricane_1_1RoutingPad_a9f448ad4f05f6995edc4a5ab50501586}{set\+External\+Component}} (\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$)
 \item 
-\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$ \mbox{\hyperlink{classHurricane_1_1RoutingPad_a410992ef75c40f9a898c36f39a7d1a1a}{set\+On\+Best\+Component}} (unsigned int flags)
+\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$ \mbox{\hyperlink{classHurricane_1_1RoutingPad_af842dc50d4271214514c1fd43ffb1adb}{set\+On\+Best\+Component}} (uint32\+\_\+t flags)
 \item 
 void \mbox{\hyperlink{classHurricane_1_1RoutingPad_a1fcb0951f5f9505c6978bf498f78fce9}{restore\+Plug\+Occurrence}} ()
 \end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} $\ast$ \mbox{\hyperlink{classHurricane_1_1RoutingPad_a87c3a286477f81b9c791dc24104a3e51}{create}} (\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$, \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}, unsigned int flags=0)
-\item 
 static \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} $\ast$ \mbox{\hyperlink{classHurricane_1_1RoutingPad_a1883e5711b5700cd7d1024f1cff6abb0}{create}} (\mbox{\hyperlink{classHurricane_1_1Pin}{Pin}} $\ast$)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{classHurricane_1_1RoutingPad_add72642d150e901835fa7d66d40e327d}{Biggest\+Area}} = (1 $<$$<$ 0)
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{classHurricane_1_1RoutingPad_a8f7993760a105713a97abdfb05eee852}{Highest\+Layer}} = (1 $<$$<$ 1)
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{classHurricane_1_1RoutingPad_a14c89f0c4ca6f4108b7f2ac30ab885a6}{Lowest\+Layer}} = (1 $<$$<$ 2)
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{classHurricane_1_1RoutingPad_a8fd74358022a29aab828700c8f7347ba}{Show\+Warning}} = (1 $<$$<$ 3)
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{classHurricane_1_1RoutingPad_aa2db526191b29a7e094bff309e27ef4c}{Component\+Selection}} = \mbox{\hyperlink{classHurricane_1_1RoutingPad_add72642d150e901835fa7d66d40e327d}{Biggest\+Area}}$\vert$\mbox{\hyperlink{classHurricane_1_1RoutingPad_a8f7993760a105713a97abdfb05eee852}{Highest\+Layer}}$\vert$\mbox{\hyperlink{classHurricane_1_1RoutingPad_a14c89f0c4ca6f4108b7f2ac30ab885a6}{Lowest\+Layer}}
 \end{DoxyCompactItemize}
 
 
@@ -85,7 +84,7 @@ static \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} $\ast$ \mbo
 \hypertarget{classHurricane_1_1RoutingPad_secRoutingPadIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1RoutingPad_secRoutingPadIntro}
 The \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} is a part of the trans-\/hierarchical mechanism. It allows to connect a \mbox{\hyperlink{classHurricane_1_1Net}{Net}} from the top-\/level netlist to a plug in an \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} at any level inside the hierarchy, through a \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}. \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} can also be created from \mbox{\hyperlink{classHurricane_1_1Pin}{Pin}} or \mbox{\hyperlink{classHurricane_1_1Contact}{Contact}} Occurrences.
 
-When the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} is created using a \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}, it can be set afterward to any of master net external \mbox{\hyperlink{classHurricane_1_1Component}{Component}}. A utility method \mbox{\hyperlink{classHurricane_1_1RoutingPad_a410992ef75c40f9a898c36f39a7d1a1a}{Routing\+Pad\+::set\+On\+Best\+Component()}} is also provided to automatically set the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} on a \mbox{\hyperlink{classHurricane_1_1Component}{Component}} matching criteria of surface or layer level.
+When the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} is created using a \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}, it can be set afterward to any of master net external \mbox{\hyperlink{classHurricane_1_1Component}{Component}}. A utility method \mbox{\hyperlink{classHurricane_1_1RoutingPad_af842dc50d4271214514c1fd43ffb1adb}{Routing\+Pad\+::set\+On\+Best\+Component()}} is also provided to automatically set the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} on a \mbox{\hyperlink{classHurricane_1_1Component}{Component}} matching criteria of surface or layer level.
 
 The position of the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} is fixed relatively from the instances in it\textquotesingle{}s occurrence path and the entity it refers. The reference point used on the entity is it\textquotesingle{}s center whether it is a segment, a pin or a plug. In the later case, it is the center of the cell. 
 
@@ -98,69 +97,20 @@ The position of the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}
 
 Useful for calling upon methods of the base class without knowing it. 
 
-\doxysubsection{Member Enumeration Documentation}
-\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4}} 
-\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!Flags@{Flags}}
-\index{Flags@{Flags}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
-\doxysubsubsection{\texorpdfstring{Flags}{Flags}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4}{Hurricane\+::\+Routing\+Pad\+::\+Flags}}}
-
-Set of flags to choose how to select the external component of a \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} to be anchored on. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{BiggestArea@{BiggestArea}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!BiggestArea@{BiggestArea}}}\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d}} 
-Biggest\+Area&Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of biggest area. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{HighestLayer@{HighestLayer}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!HighestLayer@{HighestLayer}}}\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852}} 
-Highest\+Layer&Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of in the highest layer. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{LowestLayer@{LowestLayer}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!LowestLayer@{LowestLayer}}}\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6}} 
-Lowest\+Layer&Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of in the lowest layer. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ComponentSelection@{ComponentSelection}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!ComponentSelection@{ComponentSelection}}}\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c}} 
-Component\+Selection&A mask to filter bit parts of a flag belonging to component selection. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{ShowWarning@{ShowWarning}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!ShowWarning@{ShowWarning}}}\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba}\label{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba}} 
-Show\+Warning&Whether to display a warning or not while checking the instances placement. \\
-\hline
-
-\end{DoxyEnumFields}
-
-
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a87c3a286477f81b9c791dc24104a3e51}\label{classHurricane_1_1RoutingPad_a87c3a286477f81b9c791dc24104a3e51}} 
-\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!create@{create}}
-\index{create@{create}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
-\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} $\ast$ Hurricane\+::\+Routing\+Pad\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$}]{net,  }\item[{\mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}}]{occurrence,  }\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-
-\begin{DoxyParams}{Parameters}
-{\em net} & The \mbox{\hyperlink{classHurricane_1_1Net}{Net}} of the top-\/level netlist connected to this \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}}. \\
-\hline
-{\em occurrence} & The \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} of \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}, \mbox{\hyperlink{classHurricane_1_1Pin}{Pin}} or \mbox{\hyperlink{classHurricane_1_1Pad}{Pad}} to connect to. \\
-\hline
-{\em flags} & In the case of a \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}, the way to select the external component of the \mbox{\hyperlink{classHurricane_1_1Net}{Net}}. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-The newly created \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}}. 
-\end{DoxyReturn}
 \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a1883e5711b5700cd7d1024f1cff6abb0}\label{classHurricane_1_1RoutingPad_a1883e5711b5700cd7d1024f1cff6abb0}} 
 \index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!create@{create}}
 \index{create@{create}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
-\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} $\ast$ Hurricane\+::\+Routing\+Pad\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Pin}{Pin}} $\ast$}]{pin }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-Special variant to create a \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} from a top-\/level \mbox{\hyperlink{classHurricane_1_1Pin}{Pin}}. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a3e94730dded06e5953087755f0551b73}\label{classHurricane_1_1RoutingPad_a3e94730dded06e5953087755f0551b73}} 
+Special variant to create a \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} from a top-\/level \mbox{\hyperlink{classHurricane_1_1Pin}{Pin}}. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a7a85faad00cd522aac35026af43c8b98}\label{classHurricane_1_1RoutingPad_a7a85faad00cd522aac35026af43c8b98}} 
 \index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!isPlacedOccurrence@{isPlacedOccurrence}}
 \index{isPlacedOccurrence@{isPlacedOccurrence}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
 \doxysubsubsection{\texorpdfstring{isPlacedOccurrence()}{isPlacedOccurrence()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Routing\+Pad\+::is\+Placed\+Occurrence (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily bool Hurricane\+::\+Routing\+Pad\+::is\+Placed\+Occurrence (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{flags }\end{DoxyParamCaption}) const}
 
-Check wether all the instances in the occurrence path are placed. If at least, one is not and {\ttfamily flags} contains \mbox{\hyperlink{classHurricane_1_1RoutingPad_a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba}{Routing\+Pad\+::\+Show\+Warning}}, display a warning.
+Check wether all the instances in the occurrence path are placed. If at least, one is not and {\ttfamily flags} contains \mbox{\hyperlink{classHurricane_1_1RoutingPad_a8fd74358022a29aab828700c8f7347ba}{Routing\+Pad\+::\+Show\+Warning}}, display a warning.
 
 When using a \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} as a reference/anchor for other physical components (that is, the occurence entity is no longer a \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}), it is critical that it is in a truly meaningful position. And this is true {\itshape only} if all the instances in the occurrence\textquotesingle{}s \mbox{\hyperlink{classHurricane_1_1Path}{Path}} have a physical position (i.\+e. are placed). \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a2767550364ef01c772f3270850ec052f}\label{classHurricane_1_1RoutingPad_a2767550364ef01c772f3270850ec052f}} 
 \index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!getOccurrence@{getOccurrence}}
@@ -320,11 +270,11 @@ When the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} is anchor
 \begin{DoxyRemark}{Remarks}
 {\ttfamily component} must be tagged as \mbox{\hyperlink{classHurricane_1_1Net}{Net}} external. 
 \end{DoxyRemark}
-\mbox{\Hypertarget{classHurricane_1_1RoutingPad_a410992ef75c40f9a898c36f39a7d1a1a}\label{classHurricane_1_1RoutingPad_a410992ef75c40f9a898c36f39a7d1a1a}} 
+\mbox{\Hypertarget{classHurricane_1_1RoutingPad_af842dc50d4271214514c1fd43ffb1adb}\label{classHurricane_1_1RoutingPad_af842dc50d4271214514c1fd43ffb1adb}} 
 \index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!setOnBestComponent@{setOnBestComponent}}
 \index{setOnBestComponent@{setOnBestComponent}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
 \doxysubsubsection{\texorpdfstring{setOnBestComponent()}{setOnBestComponent()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Routing\+Pad\+::set\+On\+Best\+Component (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void Hurricane\+::\+Routing\+Pad\+::set\+On\+Best\+Component (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{flags }\end{DoxyParamCaption})}
 
 Automatically select the best component to anchor on, according to the criteria givens on {\ttfamily flags} (selection occurs in net external components). \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a1fcb0951f5f9505c6978bf498f78fce9}\label{classHurricane_1_1RoutingPad_a1fcb0951f5f9505c6978bf498f78fce9}} 
 \index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!restorePlugOccurrence@{restorePlugOccurrence}}
@@ -333,6 +283,39 @@ Automatically select the best component to anchor on, according to the criteria 
 {\footnotesize\ttfamily void Hurricane\+::\+Routing\+Pad\+::restore\+Plug\+Occurrence (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 If the \mbox{\hyperlink{classHurricane_1_1RoutingPad}{Routing\+Pad}} has been anchored on a \mbox{\hyperlink{classHurricane_1_1Component}{Component}}, detach from it and revert to the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}. 
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{classHurricane_1_1RoutingPad_add72642d150e901835fa7d66d40e327d}\label{classHurricane_1_1RoutingPad_add72642d150e901835fa7d66d40e327d}} 
+\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!BiggestArea@{BiggestArea}}
+\index{BiggestArea@{BiggestArea}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
+\doxysubsubsection{\texorpdfstring{BiggestArea}{BiggestArea}}
+{\footnotesize\ttfamily Hurricane\+::\+Routing\+Pad\+::\+Biggest\+Area = (1 $<$$<$ 0)\hspace{0.3cm}{\ttfamily [static]}}
+
+Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of biggest area. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a8f7993760a105713a97abdfb05eee852}\label{classHurricane_1_1RoutingPad_a8f7993760a105713a97abdfb05eee852}} 
+\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!HighestLayer@{HighestLayer}}
+\index{HighestLayer@{HighestLayer}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
+\doxysubsubsection{\texorpdfstring{HighestLayer}{HighestLayer}}
+{\footnotesize\ttfamily Hurricane\+::\+Routing\+Pad\+::\+Highest\+Layer = (1 $<$$<$ 1)\hspace{0.3cm}{\ttfamily [static]}}
+
+Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of in the highest layer. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a14c89f0c4ca6f4108b7f2ac30ab885a6}\label{classHurricane_1_1RoutingPad_a14c89f0c4ca6f4108b7f2ac30ab885a6}} 
+\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!LowestLayer@{LowestLayer}}
+\index{LowestLayer@{LowestLayer}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
+\doxysubsubsection{\texorpdfstring{LowestLayer}{LowestLayer}}
+{\footnotesize\ttfamily Hurricane\+::\+Routing\+Pad\+::\+Lowest\+Layer = (1 $<$$<$ 2)\hspace{0.3cm}{\ttfamily [static]}}
+
+Select the external \mbox{\hyperlink{classHurricane_1_1Component}{Component}} of in the lowest layer. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_a8fd74358022a29aab828700c8f7347ba}\label{classHurricane_1_1RoutingPad_a8fd74358022a29aab828700c8f7347ba}} 
+\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!ShowWarning@{ShowWarning}}
+\index{ShowWarning@{ShowWarning}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
+\doxysubsubsection{\texorpdfstring{ShowWarning}{ShowWarning}}
+{\footnotesize\ttfamily Hurricane\+::\+Routing\+Pad\+::\+Show\+Warning = (1 $<$$<$ 3)\hspace{0.3cm}{\ttfamily [static]}}
+
+Whether to display a warning or not while checking the instances placement. \mbox{\Hypertarget{classHurricane_1_1RoutingPad_aa2db526191b29a7e094bff309e27ef4c}\label{classHurricane_1_1RoutingPad_aa2db526191b29a7e094bff309e27ef4c}} 
+\index{Hurricane::RoutingPad@{Hurricane::RoutingPad}!ComponentSelection@{ComponentSelection}}
+\index{ComponentSelection@{ComponentSelection}!Hurricane::RoutingPad@{Hurricane::RoutingPad}}
+\doxysubsubsection{\texorpdfstring{ComponentSelection}{ComponentSelection}}
+{\footnotesize\ttfamily Hurricane\+::\+Routing\+Pad\+::\+Component\+Selection = \mbox{\hyperlink{classHurricane_1_1RoutingPad_add72642d150e901835fa7d66d40e327d}{Biggest\+Area}}$\vert$\mbox{\hyperlink{classHurricane_1_1RoutingPad_a8f7993760a105713a97abdfb05eee852}{Highest\+Layer}}$\vert$\mbox{\hyperlink{classHurricane_1_1RoutingPad_a14c89f0c4ca6f4108b7f2ac30ab885a6}{Lowest\+Layer}}\hspace{0.3cm}{\ttfamily [static]}}
+
+A mask to filter bit parts of a flag belonging to component selection. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="class">
     <name>python::capacitormatrix::CapacitorStack</name>
     <filename>classpython_1_1capacitormatrix_1_1CapacitorStack.html</filename>
@@ -8,8 +8,15 @@
       <type>def</type>
       <name>__init__</name>
       <anchorfile>classpython_1_1capacitormatrix_1_1CapacitorStack.html</anchorfile>
-      <anchor>a7e9bfbe8f722de7d3472f6971e235328</anchor>
-      <arglist>(self, device, capacitance, capacitorType, abutmentBoxPosition, nets, unitCap=0, matrixDim=[1, matchingMode=False, matchingScheme=[], dummyRing=False, dummyElement=False)</arglist>
+      <anchor>a26feb9f1bbe649dba4a43922df17fe7d</anchor>
+      <arglist>(self, device, capacitance, capacitorType, abutmentBoxPosition, nets, unitCap=0, matrixDim=[1, 1], matchingMode=False, matchingScheme=[], dummyRing=False, dummyElement=False)</arglist>
+    </member>
+    <member kind="function">
+      <type>def</type>
+      <name>setRules</name>
+      <anchorfile>classpython_1_1capacitormatrix_1_1CapacitorStack.html</anchorfile>
+      <anchor>a458149b1404a0e797668330beb75b640</anchor>
+      <arglist>(self)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
@@ -397,8 +404,6 @@
   <compound kind="class">
     <name>python::capacitorrouted::RoutMatchedCapacitor</name>
     <filename>classpython_1_1capacitorrouted_1_1RoutMatchedCapacitor.html</filename>
-    <base>python::capacitorunit::CapacitorUnit</base>
-    <base>python::capacitormatrix::CapacitorStack</base>
     <base>python::capacitorvrtracks::VerticalRoutingTracks</base>
     <member kind="function">
       <type>def</type>
@@ -544,19 +549,18 @@
       <anchor>a2b936db85a32775dd3739ccfdfef636d</anchor>
       <arglist>(self, bbMode)</arglist>
     </member>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Stack Layout">secStackLayout</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Gate pitch">secGatePitch</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Active Side Width">secActiveSideWidth</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="H-Track Distance">secHTrackDistance</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="BoundingBox &amp; Overall Variables">secOverallVariables</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Wiring Specifications">secWiringSpecs</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Atomic Wiring Specification">secAtomicWiring</docanchor>
-    <docanchor file="classpython_1_1stack_1_1Stack" title="Stack Implementation Details">secStackImplDetails</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Stack Layout">secStackLayout</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Gate pitch">secGatePitch</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Active Side Width">secActiveSideWidth</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="H-Track Distance">secHTrackDistance</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="BoundingBox &amp; Overall Variables">secOverallVariables</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Wiring Specifications">secWiringSpecs</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Atomic Wiring Specification">secAtomicWiring</docanchor>
+    <docanchor file="classpython_1_1stack_1_1Stack.html" title="Stack Implementation Details">secStackImplDetails</docanchor>
   </compound>
   <compound kind="class">
     <name>python::capacitorvrtracks::VerticalRoutingTracks</name>
     <filename>classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks.html</filename>
-    <base>python::capacitorunit::CapacitorUnit</base>
     <base>python::capacitormatrix::CapacitorStack</base>
     <member kind="function">
       <type>def</type>

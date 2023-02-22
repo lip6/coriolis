@@ -1,4 +1,4 @@
-.TH "Stack" 3 "Sun Nov 21 2021" "Version 1.0" "Oroshi - Analog Devices Layout" \" -*- nroff -*-
+.TH "Stack" 3 "Tue Feb 21 2023" "Version 1.0" "Oroshi - Analog Devices Layout" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -110,7 +110,7 @@ The \fC__setattr__()\fP and \fC__getattr__\fP functions have been redefined so t
 .PP
 \fB[API]\fP Constructor param rules The physical rule set\&. 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIdevice\fP The \fBHurricane\fP AMS device into which the layout will be drawn\&. 
 .br
@@ -121,7 +121,7 @@ The \fC__setattr__()\fP and \fC__getattr__\fP functions have been redefined so t
 .PP
 
 .PP
-References Stack\&.bImplantLayer, Stack\&.botTracks, Stack\&.botWTracks, Stack\&.bulkNet, Stack\&.bulks, Stack\&.device, Stack\&.dimensioned, Bulk\&.flags, Stack\&.flags, Stack\&.isNmos(), Stack\&.L, Stack\&.metaTnb(), Stack\&.metaTransistors, Stack\&.NDs, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.tImplantLayer, Stack\&.topTracks, Stack\&.topWTracks, Stack\&.w, Stack\&.wellLayer, and Stack\&.wirings\&.
+References Stack\&.bImplantLayer, Stack\&.botTracks, Stack\&.botWTracks, Stack\&.bulkNet, Stack\&.bulks, CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, Stack\&.dimensioned, Bulk\&.flags, Stack\&.flags, Stack\&.isNmos(), Stack\&.L, Stack\&.metaTnb(), Stack\&.metaTransistors, Stack\&.NDs, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.tImplantLayer, Stack\&.topTracks, Stack\&.topWTracks, Stack\&.w, Stack\&.wellLayer, and Stack\&.wirings\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "def setWirings ( self,  wiringSpec)"
@@ -129,14 +129,14 @@ References Stack\&.bImplantLayer, Stack\&.botTracks, Stack\&.botWTracks, Stack\&
 .PP
 \fB[API]\fP Set the \fBStack\fP wiring specification\&. 
 .PP
-\fBParameters:\fP
+\fBParameters\fP
 .RS 4
 \fIwiringSpec\fP A string defining the connections for the gates and diffusion areas\&.
 .RE
 .PP
 For a comprehensive explanation of the wiring specification, refers to \fBWiring Specifications\fP \&. 
 .PP
-References Stack\&.botTracks, Stack\&.botTracksNb(), Stack\&.botWTracks, Stack\&.bulkNet, Stack\&.computeDimensions(), Stack\&.device, Stack\&.dimensioned, Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalWidth(), Stack\&.horPitch, Stack\&.L, Stack\&.metal1ToGate, Stack\&.metaTransistors, Stack\&.sideActiveWidth, Stack\&.topTracks, Stack\&.topTracksNb(), Stack\&.topWTracks, Stack\&.wirings, and Stack\&.ypitches\&.
+References Stack\&.botTracks, Stack\&.botTracksNb(), Stack\&.botWTracks, Stack\&.bulkNet, Stack\&.computeDimensions(), RoutMatchedCapacitor\&.computeDimensions(), CapacitorUnit\&.computeDimensions(), CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, Stack\&.dimensioned, Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalWidth(), Stack\&.horPitch, Stack\&.L, Stack\&.metal1ToGate, Stack\&.metaTransistors, Stack\&.sideActiveWidth, Stack\&.topTracks, Stack\&.topTracksNb(), Stack\&.topWTracks, Stack\&.wirings, and Stack\&.ypitches\&.
 .SS "def computeDimensions ( self)"
 
 .PP
@@ -168,7 +168,7 @@ References Stack\&.botTracks, Stack\&.botTracksNb(), Stack\&.botWTracks, Stack\&
 .PP
 
 .PP
-References Stack\&.activeBox, Stack\&.activeOffsetX, Stack\&.activeOffsetY, Stack\&.bbHeight, Stack\&.bbWidth, Stack\&.botWTracks, Stack\&.boundingBox, Stack\&.bulks, Stack\&.bulkWidth, Stack\&.computeLayoutParasitics(), Stack\&.computeStressEffect(), Stack\&.contactDiffPitch, Stack\&.contactDiffSide, Stack\&.DGG, Stack\&.DGI, Stack\&.dimensioned, Stack\&.DMCG, Stack\&.DMCGT, Stack\&.DMCI, Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.gateVia1Pitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalWidth(), Stack\&.getLastTopTrackY(), Stack\&.horPitch, Stack\&.hTrackDistance, Stack\&.iDiffMetal1Width, Stack\&.isVH, Stack\&.L, Stack\&.metal1ToGate, Stack\&.metal2Pitch, Stack\&.metal2TechnoPitch, Stack\&.metal3Pitch, Stack\&.metaTransistors, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.sideActiveWidth, Stack\&.tracksNbPitch(), Stack\&.vBulkDistance, Stack\&.verPitch, Stack\&.w, Stack\&.wire1Width, Stack\&.wire2Width, Stack\&.wire3Width, Stack\&.wirings, Stack\&.xpitches, and Stack\&.ypitches\&.
+References Stack\&.activeBox, Stack\&.activeOffsetX, Stack\&.activeOffsetY, Stack\&.bbHeight, Stack\&.bbWidth, Stack\&.botWTracks, Stack\&.boundingBox, Stack\&.bulks, Stack\&.bulkWidth, Stack\&.computeLayoutParasitics(), Stack\&.computeStressEffect(), Stack\&.contactDiffPitch, Stack\&.contactDiffSide, Stack\&.DGG, Stack\&.DGI, Stack\&.dimensioned, Stack\&.DMCG, Stack\&.DMCGT, Stack\&.DMCI, Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.gateVia1Pitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalWidth(), Stack\&.getLastTopTrackY(), Stack\&.horPitch, Stack\&.hTrackDistance, Stack\&.iDiffMetal1Width, CapacitorUnit\&.isVH, Stack\&.isVH, Stack\&.L, Stack\&.metal1ToGate, Stack\&.metal2Pitch, Stack\&.metal2TechnoPitch, Stack\&.metal3Pitch, Stack\&.metaTransistors, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.sideActiveWidth, Stack\&.tracksNbPitch(), Stack\&.vBulkDistance, Stack\&.verPitch, Stack\&.w, Stack\&.wire1Width, Stack\&.wire2Width, Stack\&.wire3Width, Stack\&.wirings, Stack\&.xpitches, and Stack\&.ypitches\&.
 .PP
 Referenced by CapacitorUnit\&.create(), Stack\&.doLayout(), RoutMatchedCapacitor\&.route(), and Stack\&.setWirings()\&.
 .SS "def doLayout ( self,  bbMode)"
@@ -176,7 +176,7 @@ Referenced by CapacitorUnit\&.create(), Stack\&.doLayout(), RoutMatchedCapacitor
 .PP
 \fB[API]\fP Draw the complete layout\&. Draw the commplete layout of the \fBStack\fP\&. 
 .PP
-References Stack\&.activeOffsetX, Stack\&.activeOffsetY, Stack\&.bbWidth, Stack\&.botTracks, Stack\&.botWTracks, Stack\&.boundingBox, Stack\&.bulkNet, Stack\&.bulks, Stack\&.bulkWidth, Stack\&.computeDimensions(), Stack\&.contactDiffPitch, Stack\&.device, Stack\&.DGG, Stack\&.DGI, Stack\&.DMCG, Stack\&.DMCGT, Stack\&.DMCI, Stack\&.drawActive(), Stack\&.drawGate(), Stack\&.drawSourceDrain(), Stack\&.drawWell(), Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.gateVia1Pitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalAxis(), Stack\&.getHorizontalWidth(), Stack\&.getTopTrackY(), Stack\&.getWiringWidth(), Stack\&.horPitch, Stack\&.iDiffMetal1Width, Stack\&.isBotTrack(), Stack\&.isVH, Stack\&.L, Stack\&.metal1ToGate, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.sideActiveWidth, Stack\&.tImplantLayer, Stack\&.topTracks, Stack\&.topWTracks, Stack\&.w, Stack\&.wellLayer, Stack\&.wire1Width, Stack\&.wire2Width, Stack\&.wire3Width, and Stack\&.wirings\&.
+References Stack\&.activeOffsetX, Stack\&.activeOffsetY, Stack\&.bbWidth, Stack\&.botTracks, Stack\&.botWTracks, Stack\&.boundingBox, Stack\&.bulkNet, Stack\&.bulks, Stack\&.bulkWidth, Stack\&.computeDimensions(), RoutMatchedCapacitor\&.computeDimensions(), CapacitorUnit\&.computeDimensions(), Stack\&.contactDiffPitch, CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, Stack\&.DGG, Stack\&.DGI, Stack\&.DMCG, Stack\&.DMCGT, Stack\&.DMCI, Stack\&.drawActive(), Stack\&.drawGate(), Stack\&.drawSourceDrain(), Stack\&.drawWell(), Stack\&.eDiffMetal1Width, Bulk\&.flags, Stack\&.flags, Stack\&.gatePitch, Stack\&.gateVia1Pitch, Stack\&.getBotTrackY(), Stack\&.getHorizontalAxis(), Stack\&.getHorizontalWidth(), Stack\&.getTopTrackY(), Stack\&.getWiringWidth(), Stack\&.horPitch, Stack\&.iDiffMetal1Width, Stack\&.isBotTrack(), CapacitorUnit\&.isVH, Stack\&.isVH, Stack\&.L, Stack\&.metal1ToGate, Stack\&.NERC, Stack\&.NFs, Stack\&.NIRC, Stack\&.sideActiveWidth, Stack\&.tImplantLayer, Stack\&.topTracks, Stack\&.topWTracks, Stack\&.w, Stack\&.wellLayer, Stack\&.wire1Width, Stack\&.wire2Width, Stack\&.wire3Width, and Stack\&.wirings\&.
 
 .SH "Author"
 .PP 
