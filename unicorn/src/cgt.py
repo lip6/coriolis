@@ -17,22 +17,12 @@ try:
     import sys
     import os.path
     import optparse
-    import helpers
+    from coriolis import helpers
     helpers.loadUserSettings()
-    import Cfg
-    import Hurricane
-    import Viewer
-    import CRL
-    import Etesian
-    import Anabatic
-    import Katana
-    import Katabatic
-    import Kite
-    import Bora
-    import Tutorial
-    import Unicorn
+    from coriolis import Cfg, Hurricane, Viewer, CRL, Etesian, Anabatic, \
+                         Katana, Bora, Tutorial, Unicorn
 except Exception as e:
-    helpers.showPythonTrace( sys.argv[0], e )
+    helpers.io.showPythonTrace( sys.argv[0], e )
     sys.exit(2)
 
 
@@ -192,7 +182,7 @@ if __name__ == '__main__':
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
-          unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
+         #unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
           unicorn.registerTool        (Katana.GraphicKatanaEngine.grab())
           unicorn.registerTool        (Bora.GraphicBoraEngine.grab())
           unicorn.registerTool        (Tutorial.GraphicTutorialEngine.grab())
@@ -240,27 +230,6 @@ if __name__ == '__main__':
            #katana.finalizeLayout()
             katana.destroy()
 
-          if runKiteTool:
-              if loadGlobal: globalFlags = Kite.KtLoadGlobalRouting
-              else:          globalFlags = Kite.KtBuildGlobalRouting
-
-              routingNets = []
-              kite = Kite.KiteEngine.create(cell)
-              if options.showConf: kite.printConfiguration()
-    
-              kite.runGlobalRouter(globalFlags)
-              if saveGlobal: kite.saveGlobalSolution()
-    
-              if detailRoute:
-                  kite.loadGlobalRouting( Katabatic.EngineLoadGrByNet, routingNets )
-                  kite.layerAssign      ( Katabatic.EngineNoNetLayerAssign )
-                  kite.runNegociate     ()
-                  kiteSuccess = kite.getToolSuccess()
-                  kite.finalizeLayout()
-                  if options.dumpMeasures:
-                      kite.dumpMeasures()
-                  kite.destroy()
-    
           if options.saveDesign:
               views = CRL.Catalog.State.Physical
               if options.vstUseConcat: views |= CRL.Catalog.State.VstUseConcat
@@ -272,6 +241,6 @@ if __name__ == '__main__':
           sys.exit(not kiteSuccess)
 
     except Exception as e:
-      helpers.showPythonTrace( sys.argv[0], e )
+        helpers.io.showPythonTrace( sys.argv[0], e )
 
     sys.exit(0)

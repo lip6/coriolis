@@ -62,7 +62,7 @@ class Yosys ( FlowTask ):
         yosys.run_pass( command, self.tool )
 
     def _loadDesign ( self, design ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
         if self.success is not True: return
         if not os.path.isfile(design):
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Can\'t find design file "{}".'.format( design ))
@@ -87,7 +87,7 @@ class Yosys ( FlowTask ):
         self._run_pass( 'hierarchy -top {}\n'.format( self.top ))
 
     def doTask ( self ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
         if self.liberty is None:
             e = ErrorMessage( 1, [ 'Yosys.doTask(): "liberty" has not been set' ] )
             return TaskFailed( e )

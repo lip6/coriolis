@@ -52,7 +52,7 @@ class ShellEnv ( object ):
         Get the default values of the environment variables from the
         Coriolis configuration.
         """
-        import CRL
+        from .. import CRL
 
         af      = CRL.AllianceFramework.get()
         env     = af.getEnvironment()
@@ -172,7 +172,7 @@ class FlowTask ( object ):
         Checks that all the the target files have been generated, stop on
         error. This is a helper for derived classes.
         """
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
         for target in self.targets:
             path = Path( target )
             if not path.is_file():

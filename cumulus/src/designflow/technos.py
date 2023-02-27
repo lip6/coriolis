@@ -43,12 +43,12 @@ class Where ( object ):
 
 
 def setupCMOS ():
-    import Cfg 
-    import Viewer
-    import CRL 
-    import symbolic.cmos
-    from   helpers          import overlay, l, u, n
-    from   designflow.yosys import Yosys
+    from ..         import Cfg 
+    from ..         import Viewer
+    from ..         import CRL 
+    from ..helpers  import overlay, l, u, n
+    from .yosys     import Yosys
+    import coriolis.technos.symbolic.cmos
 
     Where()
     
@@ -82,12 +82,12 @@ def setupCMOS ():
 
 
 def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
-    import Cfg 
-    import Viewer
-    import CRL 
-    import symbolic.cmos45
-    from   helpers          import overlay, l, u, n
-    from   designflow.yosys import Yosys
+    from   ..        import Cfg 
+    from   ..        import Viewer
+    from   ..        import CRL 
+    from   ..helpers import overlay, l, u, n
+    from   .yosys    import Yosys
+    import coriolis.technos.symbolic.cmos45
 
     Where( checkToolkit )
     if cellsTop is None:
@@ -144,12 +144,11 @@ def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
 
 
 def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
-    import Cfg 
-    import Viewer
-    import CRL 
-    import helpers
-    from   helpers          import overlay, l, u, n
-    from   designflow.yosys import Yosys
+    from ..        import Cfg 
+    from ..        import Viewer
+    from ..        import CRL 
+    from ..helpers import setNdaTopDir, overlay, l, u, n
+    from .yosys    import Yosys
 
     if isinstance(pdkMasterTop,str):
         pdkMasterTop = Path( pdkMasterTop )
@@ -165,7 +164,7 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
         else:
             ndaDirectory = Path( '/users/soft/techno/techno' )
         pdkMasterTop = ndaDirectory
-    helpers.setNdaTopDir( ndaDirectory.as_posix() )
+    setNdaTopDir( ndaDirectory.as_posix() )
     if not pdkMasterTop.is_dir():
         print( '[ERROR] technos.setupSky130_c4m(): pdkMasterTop directory do *not* exists:' )
         print( '        "{}"'.format(pdkMasterTop.as_posix()) )
@@ -204,12 +203,11 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
 
 
 def setupFreePDK45_c4m ( checkToolkit=None, pdkMasterTop=None ):
-    import Cfg 
-    import Viewer
-    import CRL 
-    import helpers
-    from   helpers          import overlay, l, u, n
-    from   designflow.yosys import Yosys
+    from ..        import Cfg 
+    from ..        import Viewer
+    from ..        import CRL 
+    from ..helpers import setNdaTopDir, overlay, l, u, n
+    from .yosys    import Yosys
 
     if isinstance(pdkMasterTop,str):
         pdkMasterTop = Path( pdkMasterTop )
@@ -252,12 +250,11 @@ def setupFreePDK45_c4m ( checkToolkit=None, pdkMasterTop=None ):
 
 
 def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
-    import Cfg 
-    import Viewer
-    import CRL 
-    import helpers
-    from   helpers          import overlay, l, u, n
-    from   designflow.yosys import Yosys
+    from ..        import Cfg 
+    from ..        import Viewer
+    from ..        import CRL 
+    from ..helpers import setNdaTopDir, overlay, l, u, n
+    from .yosys    import Yosys
 
     ndaDirectory = None
     if ndaTop is not None:
@@ -273,7 +270,7 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
                 print( '[ERROR] You forgot to mount the NDA encrypted directory, stupid!' )
         else:
             ndaDirectory = '/users/soft/techno/techno'
-    helpers.setNdaTopDir( ndaDirectory )
+    setNdaTopDir( ndaDirectory )
 
     Where( checkToolkit )
 

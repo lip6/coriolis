@@ -21,7 +21,7 @@ class Lvx ( FlowTask ):
         return Lvx( rule, depends, flags )
 
     def __init__ ( self, rule, depends, flags ):
-        import CRL
+        from .. import CRL
 
         super().__init__( rule, [], depends )
         self.flags         = flags
@@ -46,8 +46,8 @@ class Lvx ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from CRL        import AllianceFramework
-        from helpers.io import ErrorMessage
+        from ..CRL        import AllianceFramework
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv.export()

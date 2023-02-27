@@ -1,15 +1,13 @@
 #!/usr/bin/python
 
 import sys		
-from   Hurricane        import *
-from   CRL              import *
-from   math             import sqrt, ceil
-import helpers
-from   helpers.io       import ErrorMessage as Error
-from   helpers          import trace
-import oroshi
-
-from capacitorunit import CapacitorUnit
+from   math           import sqrt, ceil
+from   ..Hurricane    import *
+from   ..CRL          import *
+from   ..helpers.io   import ErrorMessage as Error
+from   ..helpers      import staticInitialization, trace
+from   .              import getRules
+from   .capacitorunit import CapacitorUnit
 
 def toDbU    ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
 def toPhy    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
@@ -19,7 +17,7 @@ def doBreak( level, message ):
     Breakpoint.stop( level, message )
     UpdateSession.open()
 
-helpers.staticInitialization( True )
+staticInitialization( True )
 
 
 
@@ -27,7 +25,7 @@ helpers.staticInitialization( True )
 class NonUnitCapacitor(CapacitorUnit):
 
 
-    rules = oroshi.getRules()
+    rules = getRules()
 
 
 

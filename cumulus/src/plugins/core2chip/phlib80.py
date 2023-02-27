@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2018-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,19 +16,11 @@
 
 
 import re
-from   Hurricane                    import DbU
-from   Hurricane                    import DataBase
-from   Hurricane                    import UpdateSession
-from   Hurricane                    import Breakpoint
-from   Hurricane                    import Transformation
-from   Hurricane                    import Instance
-from   Hurricane                    import Net
-import Viewer                       
-from   CRL                          import Catalog
-from   CRL                          import AllianceFramework
-from   helpers.io                   import ErrorMessage
-from   plugins.core2chip.core2chip  import IoPad
-from   plugins.core2chip.core2chip  import CoreToChip
+from   ...Hurricane  import DbU, DataBase, UpdateSession, Breakpoint, \
+                            Transformation, Instance, Net
+from   ...CRL        import Catalog, AllianceFramework
+from   ...helpers.io import ErrorMessage
+from   .core2chip    import IoPad, CoreToChip
 
 
 class phlib80 ( CoreToChip ):

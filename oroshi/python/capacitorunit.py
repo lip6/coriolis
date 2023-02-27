@@ -2,14 +2,13 @@
 
 import sys                
 import numpy
-from   Hurricane    import *
-from   CRL          import *
-import Constant
 from   math         import sqrt, ceil
-import helpers
-from   helpers.io   import ErrorMessage as Error
-from   helpers      import trace
-import oroshi
+from   ..Hurricane  import *
+from   ..CRL        import *
+from   ..           import Constant
+from   ..helpers.io import ErrorMessage as Error
+from   ..helpers    import trace
+from   .            import getRules
 
 def toDbU ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
 def toPhY ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
@@ -28,7 +27,7 @@ def doBreak( level, message ):
 
 class CapacitorUnit():
     
-    rules = oroshi.getRules()
+    rules = getRules()
 
 
     ## This is the class constructor. Few of the class attributes final values are computed in this level. Most of attributes are only initialized to zero or empty values. Then, it is computed in dedicated class method. Input parameters are :

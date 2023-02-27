@@ -5,13 +5,13 @@ try:
    import sys
    import os.path
    import optparse
-   import Cfg
-   import Hurricane
-   import Viewer
-   import helpers.io
-   import CRL
-   import Unicorn
-   import Tutorial
+   from coriolis import Cfg
+   from coriolis import Hurricane
+   from coriolis import Viewer
+   from coriolis import helpers.io
+   from coriolis import CRL
+   from coriolis import Unicorn
+   from coriolis import Tutorial
 except ImportError as e:
    serror = str(e)
    if serror.startswith('No module named'):

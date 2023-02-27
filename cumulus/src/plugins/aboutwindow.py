@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,10 +16,8 @@
 import sys
 import traceback
 import Viewer
-import helpers
-from   helpers.io   import ErrorMessage
-from   helpers.io   import WarningMessage
-import plugins
+from   ..helpers.io import ErrorMessage, WarningMessage, catch
+from   ..           import plugins
 
 
 # --------------------------------------------------------------------
@@ -39,7 +37,7 @@ def scriptMain ( **kw ):
     try:
         Viewer.AboutWindow.show()
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
     sys.stdout.flush()
     sys.stderr.flush()
     return True

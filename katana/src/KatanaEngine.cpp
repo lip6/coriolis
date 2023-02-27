@@ -221,18 +221,18 @@ namespace Katana {
 
   void  KatanaEngine::_runKatanaInit ()
   {
-    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
-    Utilities::Path systemConfDir      = pythonSitePackages / "katana";
-    Utilities::Path systemConfFile     = systemConfDir      / "katanaInit.py";
+    Utilities::Path pythonSitePackages = System::getPath( "pythonSitePackages" );
+    Utilities::Path confFile           = "coriolis/katana/initHook.py";
+    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
 
     if (systemConfFile.exists()) {
-      Isobar::Script::addPath( systemConfDir.toString() );
+    //Isobar::Script::addPath( systemConfDir.toString() );
 
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().toString() );
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
       script->addKwArgument( "katana"    , (PyObject*)PyKatanaEngine_Link(this) );
       script->runFunction  ( "katanaHook", getCell() );
 
-      Isobar::Script::removePath( systemConfDir.toString() );
+    //Isobar::Script::removePath( systemConfDir.toString() );
     } else {
       cerr << Warning( "Katana system configuration file:\n  <%s> not found."
                      , systemConfFile.toString().c_str() ) << endl;

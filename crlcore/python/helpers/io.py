@@ -19,10 +19,70 @@ import os
 import os.path
 import re
 import traceback
-import Cfg
-import helpers
-from   Hurricane import UpdateSession
-import Viewer
+from   ..          import Cfg
+from   ..Hurricane import UpdateSession
+from   ..Viewer    import Graphics, ErrorWidget
+
+
+def textStackTrace ( trace, showIndent=True, scriptPath=None ):
+    indent = ''
+    if showIndent: indent = '        '
+    s = ''
+    if scriptPath:
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+      
+        if showIndent: s += '[ERROR] '
+        s += 'An exception occured while loading the Python script module:\n'
+        s += indent + '\"{}\"\n' % (filename)
+        s += indent + 'You should check for simple python errors in this module.\n\n'
+
+    s += indent + 'Python stack trace:\n'
+    maxdepth = len( trace )
+    for depth in range( maxdepth ):
+        filename, line, function, code = trace[ maxdepth-depth-1 ]
+        if len(filename) > 58:
+            filename = filename[-58:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+       #s += indent + '[%02d] %45s:%-5d in \"{}()\"' % ( maxdepth-depth-1, filename, line, function )
+        s += indent + '#{} in {:>25}() at {}:{}\n'.format( depth, function, filename, line )
+    return s
+
+
+def showStackTrace ( trace ):
+    print( textStackTrace( trace, True ))
+    return
+
+
+def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    s = ''
+    if scriptPath:
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+        else:
+            filename = scriptPath
+        s += '[ERROR] An exception occured while loading the Python script module:\n'
+        s += '        \"{}\"\n'.format(filename)
+        s += '        You should check for simple python errors in this module.\n'
+    if isinstance(e,ErrorMessage):
+        trace = e.trace
+        s += textStackTrace( trace )
+        if e:
+            s += '        Error was:\n'
+            s += '          {}\n'.format(e)
+    else:
+        #trace = traceback.extract_tb( sys.exc_info()[2] )
+        print( traceback.format_exc() )
+    if tryContinue:
+        s += '        Trying to continue anyway...'
+    return s
+
+
+def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    print( textPythonTrace( scriptPath, e, tryContinue ))
+    return
 
 
 # -------------------------------------------------------------------
@@ -100,10 +160,10 @@ class ErrorMessage ( Exception ):
     @staticmethod
     def show ( code, *arguments ):
         e = ErrorMessage( code, *arguments )
-        if not Viewer.Graphics.get().isEnabled():
+        if not Graphics.get().isEnabled():
             raise e
-        tryCont = Viewer.ErrorWidget.run( e.getLinesAsString()
-                                        , helpers.textStackTrace( e.trace, False, e.scriptPath ))
+        tryCont = ErrorWidget.run( e.getLinesAsString()
+                                 , textStackTrace( e.trace, False, e.scriptPath ))
         if not tryCont: raise e 
         return
 
@@ -122,10 +182,10 @@ def catch ( errorObject ):
         em.trace      = traceback.extract_tb( sys.exc_info()[2] )
        #em.scriptPath = __file__
     print( em )
-    print( helpers.textStackTrace( em.trace, True, em.scriptPath ))
-    if Viewer.Graphics.get().isEnabled():
-        Viewer.ErrorWidget.run( em.getLinesAsString()
-                              , helpers.textStackTrace( em.trace, False, em.scriptPath ))
+    print( textStackTrace( em.trace, True, em.scriptPath ))
+    if Graphics.get().isEnabled():
+        ErrorWidget.run( em.getLinesAsString()
+                       , textStackTrace( em.trace, False, em.scriptPath ))
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return
 

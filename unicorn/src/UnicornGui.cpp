@@ -119,17 +119,17 @@ namespace Unicorn {
   void  UnicornGui::_runUnicornInit ()
   {
     Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
-    Utilities::Path systemConfDir      = pythonSitePackages / "unicorn";
-    Utilities::Path systemConfFile     = systemConfDir      / "unicornInit.py";
+    Utilities::Path confFile           = "coriolis/unicorn/initHook.py";
+    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
 
     if (systemConfFile.exists()) {
-      Isobar::Script::addPath( systemConfDir.toString() );
+    //Isobar::Script::addPath( systemConfDir.toString() );
 
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().toString() );
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
       script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
       script->runFunction  ( "unicornConfigure", getCell() );
 
-      Isobar::Script::removePath( systemConfDir.toString() );
+    //Isobar::Script::removePath( systemConfDir.toString() );
     } else {
       cerr << Warning("Unicorn system configuration file:\n  <%s> not found."
                      ,systemConfFile.toString().c_str()) << endl;

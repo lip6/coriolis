@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -20,221 +20,131 @@ import optparse
 import math
 import cProfile
 import pstats
-import Cfg
-import Hurricane
-from   Hurricane  import DataBase
-from   Hurricane  import DbU
-from   Hurricane  import Point
-from   Hurricane  import Transformation
-from   Hurricane  import Box
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import UpdateSession
-from   Hurricane  import Breakpoint
-from   Hurricane  import Net
-from   Hurricane  import RoutingPad
-from   Hurricane  import Contact
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Instance
-from   Hurricane  import HyperNet
-from   Hurricane  import Query
-import Viewer
-import CRL
-from   CRL        import RoutingLayerGauge
-import helpers
-from   helpers.io import ErrorMessage
-from   helpers.io import WarningMessage
-import Etesian
-import Anabatic
-import Katana
-import Unicorn
-import plugins
-import plugins.cts.clocktree
-import plugins.chip
-import plugins.chip.padscorona
-import plugins.chip.blockpower
-import plugins.chip.blockcorona
+from   ...                import Cfg
+from   ...Hurricane       import DataBase, DbU ,Point, Transformation, Box,      \
+                                 Path, Occurrence, UpdateSession, Breakpoint,    \
+                                 Net, RoutingPad, Contact, Horizontal, Vertical, \
+                                 Instance, HyperNet, Query
+from   ...CRL             import Catalog, RoutingLayerGauge
+from   ...helpers         import trace
+from   ...helpers.io      import ErrorMessage, WarningMessage
+from   ...helpers.overlay import UpdateSession
+from   ...                import Etesian, Anabatic, Katana, Unicorn
+from   ..block.block      import Block
+from   .                  import pads        as chipPads
+from   .                  import power       as chipPower
+from   .                  import powerplane  as chipPowerplane
+from   .                  import corona      as chipCorona
+from   ..harness          import pads        as harnessPads
 
 
 # --------------------------------------------------------------------
-# PlaceRoute class
+# Class  :  "chip.Chip"
 
+class Chip ( Block ):
 
-class PlaceRoute ( object ):
+    def __init__ ( self, conf ):
+        super(Chip,self).__init__( conf )
+  
+    def validate ( self ):
+        self.conf.validated = True
+        coreAb = self.conf.core.getAbutmentBox()
+        if (not coreAb.isEmpty()):
+            if     coreAb.getWidth () <= self.conf.coreAb.getWidth() \
+               and coreAb.getHeight() <= self.conf.coreAb.getHeight():
+                self.conf.coreSize = (coreAb.getWidth(), coreAb.getHeight())
+            else:
+                raise ErrorMessage( 1, [ 'Core "{}" already have an abutment box, bigger than the requested one:' \
+                                         .format(self.conf.core.getName())
+                                      , "       Cell abutment box: {}".format(coreAb)
+                                      , "    Maximum abutment box: {}".format(self.conf.coreAb) ] )
+                self.conf.validated = False
+        return self.conf.validated
+  
+    def doChipFloorplan ( self ):
+        self.padsCorona = None
+        minHCorona = self.conf.minHCorona
+        minVCorona = self.conf.minVCorona
+        self.conf.chipValidate()
+        if not self.conf.useHarness:
+            print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
+            print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
+            print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
+            print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
+            self.conf.computeCoronaBorder()
+            if not self.conf.validated:
+                raise ErrorMessage( 1, 'chip.doChipFloorplan(): Chip is not valid, aborting.' )
+            self.conf.chip.setAbutmentBox( self.conf.chipAb )
+            trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
+            trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
+            self.padsCorona = chipPads.Corona( self )
+            self.conf.validated =  self.padsCorona.validate()
+            if not self.conf.validated:
+                return False
+            self.padsCorona.doLayout()
+            self.validate()
+            minHCorona = self.conf.minHCorona
+            minVCorona = self.conf.minVCorona
+            trace( 550, '\tminHCorona={}\n'.format(DbU.getValueString( minHCorona )))
+            trace( 550, '\tminVCorona={}\n'.format(DbU.getValueString( minVCorona )))
+        else:
+            self.padsCorona = harnessPads.Corona( self )
+            self.padsCorona.doLayout()
+        innerBb = Box( self.conf.coreAb )
+        innerBb.inflate( minHCorona, minVCorona )
+        coronaAb = self.conf.corona.getAbutmentBox()
+        if innerBb.getWidth() > coronaAb.getWidth():
+            raise ErrorMessage( 1, 'Core is too wide to fit into the corona, needs {} but only has {}.' \
+                                   .format( DbU.getValueString(innerBb .getWidth())
+                                          , DbU.getValueString(coronaAb.getWidth()) ) )
+        if innerBb.getHeight() > coronaAb.getHeight():
+            raise ErrorMessage( 1, 'Core is too tall to fit into the corona, needs {} but only has {}.' \
+                                   .format( DbU.getValueString(innerBb .getHeight())
+                                          , DbU.getValueString(coronaAb.getHeight()) ) )
+        with UpdateSession():
+            self.conf.core.setAbutmentBox( self.conf.coreAb )
+            x = (coronaAb.getWidth () - self.conf.coreAb.getWidth ()) // 2
+            y = (coronaAb.getHeight() - self.conf.coreAb.getHeight()) // 2
+            trace( 550, '\tCore X, {} '.format(DbU.getValueString(x)) )
+            x = x - (x % self.conf.sliceHeight)
+            trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.conf.sliceHeight)
+                                                      , DbU.getValueString(x)) )
+            y = y - (y % self.conf.sliceHeight)
+            self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
+            self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.conf.refresh()
 
-  def __init__ ( self, conf ):
-    self.conf      = conf
-    self.validated = True
-    return
-
-
-  def _refresh ( self ):
-    if self.conf.viewer: self.conf.viewer.fit()
-    return
-
-
-  def validate ( self ):
-    self.validated = True
-    if len(self.conf.cores) < 1: self.validated = False
-
-    coreAb = self.conf.core.getAbutmentBox()
-    if (not coreAb.isEmpty()):
-      if     coreAb.getWidth () <= self.conf.coreSize.getWidth() \
-         and coreAb.getHeight() <= self.conf.coreSize.getHeight():
-        self.conf.coreSize = coreAb
-      else:
-        raise ErrorMessage( 1, [ 'Core %s already have an abutment box, bigger than the requested one:'
-                                 % self.conf.cores[0].getName()
-                              , "       Cell abutment box: %s" % str(coreAb)
-                              , "    Maximum abutment box: %s" % str(self.conf.coreSize) ] )
-        self.validated = False
-
-    return self.validated
-
-
-  def doCoronaFloorplan ( self ):
-    if not self.validated:
-      raise ErrorMessage( 1, 'chip.doCoronaFloorplan(): Chip is not valid, aborting.' )
-      return
-
-    self.railsNb    = Cfg.getParamInt('chip.block.rails.count'   ).asInt()
-    self.hRailWidth = Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt()
-    self.vRailWidth = Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt()
-    self.hRailSpace = Cfg.getParamInt('chip.block.rails.hSpacing').asInt()
-    self.vRailSpace = Cfg.getParamInt('chip.block.rails.vSpacing').asInt()
-
-    if not self.conf.useClockTree: self.railsNb -= 1
-
-    innerBb = Box( self.conf.coreSize )
-    innerBb.inflate( self.railsNb * self.vRailWidth + (self.railsNb+1) * self.vRailSpace
-                   , self.railsNb * self.hRailWidth + (self.railsNb+1) * self.hRailSpace )
-        
-    coronaAb = self.conf.corona.getAbutmentBox()
-    if innerBb.getWidth() > coronaAb.getWidth():
-      raise ErrorMessage( 1, 'Core is too wide to fit into the corona, needs %s but only has %s.'
-                          % ( DbU.getValueString(innerBb .getWidth())
-                            , DbU.getValueString(coronaAb.getWidth()) ) )
-
-    if innerBb.getHeight() > coronaAb.getHeight():
-      raise ErrorMessage( 1, 'Core is too tall to fit into the corona, needs %s but only has %s.'
-                          % ( DbU.getValueString(innerBb .getHeight())
-                            , DbU.getValueString(coronaAb.getHeight()) ) )
-
-    UpdateSession.open()
-    self.conf.core.setAbutmentBox( self.conf.coreSize )
-    x = (coronaAb.getWidth () - self.conf.coreSize.getWidth ()) // 2
-    y = (coronaAb.getHeight() - self.conf.coreSize.getHeight()) // 2
-    x = x - (x % self.conf.getSliceHeight())
-    y = y - (y % self.conf.getSliceHeight())
-    self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
-    self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
-    UpdateSession.close()
-    return
-
-
-  def doCorePlacement ( self ):
-    if not self.validated:
-      raise ErrorMessage( 1, 'chip.doCorePlacement(): Chip is not valid, aborting.' )
-      return
-
-    coreCell = self.conf.core
-
-    checkUnplaced = plugins.CheckUnplaced( coreCell, plugins.NoFlags )
-    if not checkUnplaced.check(): return
-
-    coreCk = None
-    if self.conf.coronaCk:
-      for plug in self.conf.coronaCk.getPlugs():
-        if plug.getInstance() == self.conf.icore:
-          coreCk = plug.getMasterNet()
-      if not coreCk:
-        print( WarningMessage( 'Core "{}" is not connected to chip clock.'.format(self.conf.icore.getName()) ))
-
-    if self.conf.useClockTree and coreCk:
-      ht = plugins.cts.clocktree.HTree.create( self.conf, coreCell, coreCk, coreCell.getAbutmentBox() )
-      ht.addCloned( self.conf.cell )
-      ht.addCloned( self.conf.corona )
-      etesian = Etesian.EtesianEngine.create( self.conf.corona )
-      etesian.setBlock(  self.conf.icore )
-      etesian.setViewer( self.conf.viewer )
-      etesian.place()
-      etesian.toHurricane()
-      etesian.flattenPower()
-      etesian.destroy()
-
-      ht.connectLeaf()
-      ht.route()
-      ht.save( self.conf.cell )
-    else:
-      etesian = Etesian.EtesianEngine.create( self.conf.corona )
-      etesian.setBlock( self.conf.icore )
-      etesian.place()
-      etesian.toHurricane()
-      etesian.flattenPower()
-      etesian.destroy()
-    return
-
-
-  def doChipPlacement ( self ):
-    if not self.validated:
-      raise ErrorMessage( 1, 'chip.doChipPlacement(): Chip is not valid, aborting.' )
-      return
-
-    padsCorona = plugins.chip.padscorona.Corona( self.conf )
-    self.validated = padsCorona.validate()
-    if not self.validated: return False
-
-    padsCorona.doLayout()
-    self.validate()
-    self.doCoronaFloorplan()
-    self._refresh()
-
-    self.doCorePlacement()
-    self._refresh()
-
-    coreBlock = plugins.chip.blockpower.Block( self.conf )
-    coreBlock.connectPower()
-    coreBlock.connectClock()
-    coreBlock.doLayout()
-    self._refresh()
-
-    coreCorona = plugins.chip.blockcorona.Corona( coreBlock )
-    coreCorona.connectPads ( padsCorona )
-    coreCorona.connectBlock()
-    coreCorona.doLayout()
-    self._refresh()
-
-    return
-
-
-  def doChipRouting ( self ):
-    if not self.validated:
-      raise ErrorMessage( 1, 'chip.doChipRouting(): Chip is not valid, aborting.' )
-      return
-
-    self.conf.corona.setName( self.conf.corona.getName()+"_r" )
-    katana = Katana.KatanaEngine.create( self.conf.corona )
-   #katana.printConfiguration   ()
-    katana.digitalInit          ()
-   #katana.runNegociatePreRouted()
-    katana.runGlobalRouter      ( Katana.Flags.NoFlags )
-    katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
-    katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
-    katana.runNegociate         ( Katana.Flags.NoFlags )
-    success = katana.getSuccessState()
-    katana.finalizeLayout()
-    katana.destroy()
-
-    return
-
-
-  def save ( self ):
-    if not self.validated:
-      raise ErrorMessage( 1, 'chip.save(): Chip is not valid, aborting.' )
-      return
-
-    af = CRL.AllianceFramework.get()
-    af.saveCell( self.conf.cell  , CRL.Catalog.State.Views )
-    af.saveCell( self.conf.corona, CRL.Catalog.State.Views )
-    return
+    def doConnectCore ( self ):
+        if self.padsCorona:
+            self.padsCorona.doPowerLayout()
+        if self.conf.routingGauge.hasPowerSupply():
+            power = chipPowerplane.Builder( self.conf )
+            power.connectPower()
+           #power.connectHTrees( self.hTrees )
+            power.doLayout()
+        else:
+            if self.conf.useHarness:
+                return
+            power = chipPower.Builder( self.conf )
+            power.connectPower()
+            power.connectClocks()
+            power.doLayout()
+            self.conf.refresh()
+            corona = chipCorona.Builder( power )
+            corona.connectPads( self.padsCorona )
+            corona.connectCore()
+            corona.doLayout()
+        self.conf.refresh()
+  
+    def doPnR ( self ):
+        status = super(Chip,self).doPnR()
+        self.conf.refresh( self.conf.chip )
+        return self.conf.validated and status
+  
+    def save ( self, flags=0 ):
+        if not self.conf.validated:
+            raise ErrorMessage( 1, 'chip.save(): Chip is not valid, aborting.' )
+        views = Catalog.State.Logical
+        if self.conf.routingGauge.isSymbolic():
+            views = views | Catalog.State.Physical
+        super(Chip,self).save( flags )

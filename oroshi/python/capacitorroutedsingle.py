@@ -2,15 +2,14 @@
 
 import sys                
 import numpy
-from   Hurricane        import  *
-from   CRL              import  *
-from   math             import  sqrt, ceil
-import helpers
-from   helpers.io       import  ErrorMessage as Error
-from   helpers          import  trace
-import oroshi
-from   capacitorunit    import  CapacitorUnit
-from   capacitormatrix  import  CapacitorStack
+from   math             import sqrt, ceil
+from   ..Hurricane      import *
+from   ..CRL            import *
+from   ..helpers.io     import ErrorMessage as Error
+from   ..helpers        import trace
+from   .                import getRules
+from   .capacitorunit   import CapacitorUnit
+from   .capacitormatrix import CapacitorStack
 
 
 ## Route a compact or a matrix of capacitors by connecting it to routing tracks.
@@ -31,7 +30,7 @@ def doBreak( level, message ):
 
 class RouteCapacitorSingle ( CapacitorUnit ):
 
-    rules = oroshi.getRules()
+    rules = getRules()
 
     ## The constructor computes some of the class attributes and initialises others which
     #  will be computed later inside some of the class methods. 

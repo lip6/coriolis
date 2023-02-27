@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,44 +14,45 @@
 # |  Python      :       "./plugins/core2chip/cmos.py"              |
 # +-----------------------------------------------------------------+
 
+"""
+Core2Chip configuration for the SxLib/PxLib Alliance historical
+standard cell library.
+"""
+
 import sys
 import re
-from   Hurricane                    import DbU
-from   Hurricane                    import DataBase
-from   Hurricane                    import UpdateSession
-from   Hurricane                    import Breakpoint
-from   Hurricane                    import Transformation
-from   Hurricane                    import Instance
-from   Hurricane                    import Net
-import Viewer                       
-from   CRL                          import Catalog
-from   CRL                          import AllianceFramework
-from   helpers.io                   import ErrorMessage
-from   plugins.core2chip.core2chip  import IoPad
-from   plugins.core2chip.core2chip  import CoreToChip
+from   ...Hurricane  import DbU, DataBase, UpdateSession, Breakpoint, \
+                            Transformation, Instance, Net
+from   ...CRL        import Catalog, AllianceFramework
+from   ...helpers    import trace
+from   ...helpers.io import ErrorMessage
+from   .core2chip    import CoreToChip as BaseCoreToChip
+from   .core2chip    import IoNet, IoPad
 
 
-class cmos ( CoreToChip ):
+class CoreToChip ( BaseCoreToChip ):
 
     def __init__ ( self, core ):
-        CoreToChip.__init__ ( self, core )
-        self.ringNetNames = [ 'vsse', 'vssi', 'vdde', 'vddi', ('cki', 'ck') ]
-        self.ioPadInfos   = { IoPad.IN      : CoreToChip.IoPadInfo( 'pi_px'  , 'pad', ['t',] )
-                            , IoPad.OUT     : CoreToChip.IoPadInfo( 'po_px'  , 'pad', ['i',] )
-                            , IoPad.TRI_OUT : CoreToChip.IoPadInfo( 'pot_px' , 'pad', ['i', 'b' ] )
-                            , IoPad.BIDIR   : CoreToChip.IoPadInfo( 'piot_px', 'pad', ['i', 't', 'b' ] )
+        BaseCoreToChip.__init__ ( self, core )
+        self.ringNetNames = { 'vsse' : None
+                            , 'vssi' : None
+                            , 'vdde' : None
+                            , 'vddi' : None
+                            , 'ck'   : None  # Go through the pads from pck_px.
                             }
+        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.IN     , 'pi_px'  , 'pad', ['t',] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.OUT    , 'po_px'  , 'pad', ['i',] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.TRI_OUT, 'pot_px' , 'pad', ['i', 'b'] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.BIDIR  , 'piot_px', 'pad', ['i', 't', 'b'] )
+                            ]
         self._getPadLib()
         return
 
     def _getPadLib ( self ):
         self.padLib = AllianceFramework.get().getLibrary( "pxlib" )
-
         if not self.padLib:
-          message = [ 'CoreToChip.cmos._getPadLib(): Unable to find Alliance "pxlib" library' ]
-          raise ErrorMessage( 1, message )
-
-        return 
+            message = [ 'CoreToChip.cmos._getPadLib(): Unable to find Alliance "pxlib" library' ]
+            raise ErrorMessage( 1, message )
 
     def getNetType ( self, netName ):
         if netName.startswith('vss'): return Net.Type.GROUND
@@ -67,89 +68,109 @@ class cmos ( CoreToChip ):
        #cell = self.padLib.getCell( masterCellName )
         cell = AllianceFramework.get().getCell( masterCellName, Catalog.State.Views )
         if not cell:
-          raise ErrorMessage( 1, 'cmos.getCell(): I/O pad library "%s" does not contain cell named "%s"' \
-                                 % (self.padLib.getName(),masterCellName) )
+            raise ErrorMessage( 1, 'cmos.getCell(): I/O pad library "%s" does not contain cell named "%s"' \
+                                   % (self.padLib.getName(),masterCellName) )
         return cell
 
-    def _buildGroundPads ( self, ioNet ):
-        ioNet.buildNets()
-        vssi = self.chip.getNet( 'vssi' )
-        vssi.setExternal( True )
-        vssi.setGlobal  ( True )
-        vssi.setType    ( Net.Type.GROUND )
-        vssi.merge( ioNet.chipIntNet )
-        ioNet.chipIntNet = vssi
-
-        vsse = self.chip.getNet( 'vsse' )
-        vsse.setExternal( True )
-        vsse.setGlobal  ( True )
-        vsse.setType    ( Net.Type.GROUND )
-        vsse.merge( ioNet.chipExtNet )
-        ioNet.chipExtNet = vsse
-
-        pads = []
-        pads.append( Instance.create( self.chip
-                                    , 'p_' + ioNet.padInstanceName + 'ick_%d' % self.groundPadCount
-                                    , self.getCell('pvssick_px') ) )
-        pads.append( Instance.create( self.chip
-                                    , 'p_' + ioNet.padInstanceName + 'eck_%d' % self.groundPadCount
-                                    , self.getCell('pvsseck_px') ) )
-
-        CoreToChip._connect( pads[0], ioNet.chipIntNet, 'vssi' )
-        CoreToChip._connect( pads[1], ioNet.chipExtNet, 'vsse' )
-
-        for pad in pads: self._connectRing( pad )
+    def _buildAllGroundPads ( self, ioPadConf ):
+        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
+        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
+        if not coronaNet:
+            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
+            coronaNet.setExternal( True )
+            coronaNet.setGlobal  ( True )
+            coronaNet.setType    ( Net.Type.GROUND )
+            self.icore.getPlug( coreNet ).setNet( coronaNet  )
+        if not chipNet:
+            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
+            chipNet.setExternal( True )
+            chipNet.setType    ( Net.Type.GROUND )
+            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
+            self.ringNetNames['vssi'] = chipNet
+        if not padNet:
+            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
+            padNet.setExternal( True )
+            padNet.setType    ( Net.Type.GROUND )
+            self.ringNetNames['vsse'] = padNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vssick_{}'.format(ioPadConf.index)
+                                              , self.getCell('pvssick_px') ) )
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vsseck_{}'.format(ioPadConf.index)
+                                              , self.getCell('pvsseck_px') ) )
+        self._connect( ioPadConf.pads[0], chipNet, 'vssi' )
+        self._connect( ioPadConf.pads[1], padNet , 'vsse' )
         self.groundPadCount += 1
-        self.chipPads       += pads
-        return
+        self.chipPads       += ioPadConf.pads
 
-    def _buildPowerPads ( self, ioNet ):
-        ioNet.buildNets()
-        vddi = self.chip.getNet( 'vddi' )
-        vddi.setExternal( True )
-        vddi.setGlobal  ( True )
-        vddi.setType    ( Net.Type.POWER )
-        vddi.merge( ioNet.chipIntNet )
-        ioNet.chipIntNet = vddi
-
-        vdde = self.chip.getNet( 'vdde' )
-        vdde.setExternal( True )
-        vdde.setGlobal  ( True )
-        vdde.setType    ( Net.Type.POWER )
-        vdde.merge( ioNet.chipExtNet )
-        ioNet.chipExtNet = vdde
-
-        pads = [ ]
-        pads.append( Instance.create( self.chip
-                                    , 'p_' + ioNet.padInstanceName + 'ick_%d' % self.powerPadCount
-                                    , self.getCell('pvddick_px') ) )
-        pads.append( Instance.create( self.chip
-                                    , 'p_' + ioNet.padInstanceName + 'eck_%d' % self.powerPadCount
-                                    , self.getCell('pvddeck_px') ) )
-
-        CoreToChip._connect( pads[0], ioNet.chipIntNet, 'vddi' )
-        CoreToChip._connect( pads[1], ioNet.chipExtNet, 'vdde' )
-
-        for pad in pads: self._connectRing( pad )
+    def _buildAllPowerPads ( self, ioPadConf ):
+        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
+        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
+        if not coronaNet:
+            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
+            coronaNet.setExternal( True )
+            coronaNet.setGlobal  ( True )
+            coronaNet.setType    ( Net.Type.POWER )
+            self.icore.getPlug( coreNet ).setNet( coronaNet  )
+        if not chipNet:
+            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
+            chipNet.setExternal( True )
+            chipNet.setType    ( Net.Type.POWER )
+            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
+            self.ringNetNames['vddi'] = chipNet
+        if not padNet:
+            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
+            padNet.setExternal( True )
+            padNet.setType    ( Net.Type.POWER )
+            self.ringNetNames['vdde'] = padNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vddick_{}'.format(ioPadConf.index)
+                                              , self.getCell('pvddick_px') ) )
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vddeck_{}'.format(ioPadConf.index)
+                                              , self.getCell('pvddeck_px') ) )
+        self._connect( ioPadConf.pads[0], chipNet, 'vddi' )
+        self._connect( ioPadConf.pads[1], padNet , 'vdde' )
         self.powerPadCount += 1
-        self.chipPads      += pads
-        return
+        self.chipPads      += ioPadConf.pads
 
-    def _buildClockPads ( self, ioNet ):
-        ioNet.buildNets()
-        pads = [ ]
-        pads.append( Instance.create( self.chip
-                                    , 'p_' + ioNet.padInstanceName + '_%d' % self.clockPadCount
-                                    , self.getCell('pck_px') ) )
-
-        CoreToChip._connect( pads[0], ioNet.chipExtNet, 'pad' )
-
-        for pad in pads: self._connectRing( pad )
+    def _buildClockPads ( self, ioPadConf ):
+        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
+        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName+'_core' )
+        ringNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName+'_ring' )
+        padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
+        if not coronaNet:
+            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
+            coronaNet.setExternal( True )
+            coronaNet.setType( Net.Type.CLOCK )
+            self.icore.getPlug( coreNet ).setNet( coronaNet  )
+        if not chipNet:
+            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName+'_core' )
+            chipNet.setType    ( Net.Type.CLOCK )
+            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
+            self.coreClock = chipNet
+        if not ringNet:
+            ringNet = Net.create( self.chip, ioPadConf.coreSupplyNetName+'_ring' )
+            ringNet.setType( Net.Type.CLOCK )
+            self.ringNetNames['ck'] = ringNet
+        if not padNet:
+            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
+            padNet.setExternal( True )
+            padNet.setType    ( Net.Type.CLOCK )
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_ck_{}'.format(ioPadConf.index)
+                                              , self.getCell('pck_px') ) )
+        self._connect( ioPadConf.pads[0], padNet, 'pad' )
         self.clockPadCount += 1
-        self.chipPads      += pads
+        self.chipPads      += ioPadConf.pads
 
+    def _connectClocks ( self ):
         p = re.compile( r'pv[ds]{2}[ei]ck_px' )
         for pad in self.chipPads: 
-          if p.match( pad.getMasterCell().getName() ): 
-            CoreToChip._connect( pad, ioNet.chipIntNet, 'cko' )
-        return
+            if p.match( pad.getMasterCell().getName() ): 
+                self._connect( pad, self.coreClock, 'cko' )

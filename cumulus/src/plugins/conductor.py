@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -18,23 +18,13 @@ import traceback
 import os.path
 import math
 try:
-    import Cfg
-    import Hurricane
-    from   Hurricane  import DbU
-    from   Hurricane  import Breakpoint
-    from   Hurricane  import UpdateSession
-    import Viewer
-    import CRL
-    from   CRL        import RoutingLayerGauge
-    import helpers
-    from   helpers    import trace
-    from   helpers.io import ErrorMessage, catch
-    from   helpers    import l, u, n
-    import Anabatic
-    import Etesian
-    import Katana
-    import Unicorn
-    import plugins
+    from ..           import Cfg
+    from ..Hurricane  import DbU, Breakpoint, UpdateSession
+    from ..           import Viewer
+    from ..CRL        import RoutingLayerGauge
+    from ..helpers    import setTraceLevel, trace, l, u, n
+    from ..helpers.io import ErrorMessage, catch
+    from ..           import Anabatic, Etesian, Katana, Unicorn, plugins
 except Exception as e:
     catch( e )
     sys.exit(2)
@@ -58,7 +48,7 @@ def unicornHook ( **kw ):
 
 def scriptMain ( **kw ):
     try:
-       #helpers.setTraceLevel( 550 )
+       #setTraceLevel( 550 )
         errorCode = 0
       
         stopLevel = 1

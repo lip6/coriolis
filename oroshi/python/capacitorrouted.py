@@ -1,17 +1,14 @@
 #!/usr/bin/python
 
 import sys                
-from   Hurricane         import  *
-from   CRL               import  *
-import helpers
-from   helpers.io        import  ErrorMessage as Error
-from   helpers           import  trace
-import oroshi
-from   capacitorunit     import  CapacitorUnit
-from   capacitormatrix   import  CapacitorStack
-from   capacitorvrtracks import  VerticalRoutingTracks
-
-
+from   ..Hurricane        import *
+from   ..CRL              import *
+from   ..helpers.io       import ErrorMessage as Error
+from   ..helpers          import staticInitialization, trace
+from   .                  import getRules
+from   .capacitorunit     import CapacitorUnit
+from   .capacitormatrix   import CapacitorStack
+from   .capacitorvrtracks import VerticalRoutingTracks
 
 
 def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
@@ -21,7 +18,7 @@ def doBreak( level, message ):
     Breakpoint.stop( level, message )
     UpdateSession.open()
 
-helpers.staticInitialization( True )
+staticInitialization( True )
 
 
 ## Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routing tracks that represent top plates and bottom plates nets of C1 and C2 . Supported types of capacitors are Poly-Poly and Metal-Metal. Technologycal rules are provided by 350 nm AMS CMOS technology with three-four metal layers. Metal layers that are used for routing are placed similarly to horziontal-vertical (HV) symbolic Alliance CAD tool router, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions \f$ R*C \f$, the total number of vertical tracks is \f$ 2C+2 \f$ equivalent to \f$ C+1 \f$ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
@@ -31,7 +28,7 @@ helpers.staticInitialization( True )
 
 class RoutMatchedCapacitor( VerticalRoutingTracks ):
 
-    rules = oroshi.getRules()
+    rules = getRules()
 
 
     ## A special method used to customize the class instance to an initial state in which :

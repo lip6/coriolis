@@ -1,2 +1,2 @@
 
- install ( FILES  boraInit.py  DESTINATION ${Python_CORIOLISLIB}/bora )
+ install ( FILES  initHook.py  DESTINATION ${Python_CORIOLISLIB}/bora )

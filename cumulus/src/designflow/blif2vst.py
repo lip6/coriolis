@@ -52,11 +52,11 @@ class Blif2Vst ( FlowTask ):
         return None
 
     def doTask ( self ):
-        from   Hurricane import Cell
-        import CRL
-        import Viewer
-        from   helpers.io import ErrorMessage
-        import plugins.rsave
+        from ..Hurricane  import Cell
+        from ..           import CRL
+        from ..           import Viewer
+        from ..helpers.io import ErrorMessage
+        from ..plugins    import rsave
 
         print( 'Blif2Vst.doTask() on "{}"'.format( self.design ))
         views = CRL.Catalog.State.Logical | self.flags
@@ -69,7 +69,7 @@ class Blif2Vst ( FlowTask ):
         kw          = {}
         kw['views'] = views
         kw['cell' ] = cell
-        plugins.rsave.scriptMain( **kw )
+        rsave.scriptMain( **kw )
 
         return self.checkTargets( 'Blif2Vst.doTask' )
 

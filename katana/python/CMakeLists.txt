@@ -1,2 +1,2 @@
 
- install ( FILES  katanaInit.py  DESTINATION ${Python_CORIOLISLIB}/katana )
+ install ( FILES  initHook.py  DESTINATION ${Python_CORIOLISLIB}/katana )

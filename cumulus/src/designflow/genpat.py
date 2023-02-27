@@ -27,8 +27,8 @@ class Genpat ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from CRL        import AllianceFramework
-        from helpers.io import ErrorMessage
+        from coriolis.CRL        import AllianceFramework
+        from coriolis.helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv.export()

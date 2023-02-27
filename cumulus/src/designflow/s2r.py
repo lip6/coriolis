@@ -39,8 +39,8 @@ class S2R ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from CRL        import AllianceFramework
-        from helpers.io import ErrorMessage
+        from ..CRL        import AllianceFramework
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv[ 'RDS_OUT'   ] = self.outputFile.suffix[1:]

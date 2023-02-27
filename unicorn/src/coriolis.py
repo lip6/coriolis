@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2022, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |

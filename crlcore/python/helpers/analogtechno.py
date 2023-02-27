@@ -2,7 +2,7 @@
 # -*- Mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -18,11 +18,8 @@
 import os
 import os.path
 import sys
-import Hurricane
-from   Hurricane    import DbU
-from   Hurricane    import DataBase
-from   Hurricane    import Layer
-from   helpers.io   import catch, ErrorMessage, WarningMessage
+from   ..Hurricane import DbU, DataBase, Layer
+from   .io         import catch, ErrorMessage, WarningMessage
 
 
 tech       = None

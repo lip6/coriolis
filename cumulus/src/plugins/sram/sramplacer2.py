@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2022-2022, All Rights Reserved
+# Copyright (c) Sorbonne Université 2022-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -9,22 +9,21 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/sramplacer.py"                  |
+# |  Python      :       "./plugins/sram/sramplacer.py"             |
 # +-----------------------------------------------------------------+
 
 
 import sys
 import re
 import traceback
-import helpers
-from   helpers.io      import ErrorMessage, WarningMessage
-from   helpers.overlay import UpdateSession
-from   helpers         import trace, l, u, n
-import plugins
-from   Hurricane import Breakpoint, DbU, Box, Net, Cell, Instance, \
-                        Transformation, PythonAttributes
-from   Foehn     import FoehnEngine, DagExtension
-from   plugins.chip.configuration import GaugeConf
+from   ...helpers.io        import ErrorMessage, WarningMessage, catch
+from   ...helpers.overlay   import UpdateSession
+from   ...helpers           import setTraceLevel, trace, l, u, n
+import ...cumulus           import plugins
+from   ...Hurricane         import Breakpoint, DbU, Box, Net, Cell, Instance, \
+                                   Transformation, PythonAttributes
+from   ...Foehn             import FoehnEngine, DagExtension
+from   ..chip.configuration import GaugeConf
 
 
 """
@@ -849,7 +848,7 @@ def scriptMain ( **kw ):
     rvalue = True
     try:
         DbU.setStringMode( DbU.StringModeReal, DbU.UnitPowerMicro )
-       #helpers.setTraceLevel( 500 )
+       #setTraceLevel( 500 )
         cell, editor = plugins.kwParseMain( **kw )
         placer = SRAMPlacer( cell )
         placer.findMemBits()
@@ -858,7 +857,7 @@ def scriptMain ( **kw ):
         if editor: editor.fit()
         return True
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
         rvalue = False
     sys.stdout.flush()
     sys.stderr.flush()

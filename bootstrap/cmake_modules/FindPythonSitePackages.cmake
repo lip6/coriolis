@@ -9,7 +9,7 @@ if(UNIX AND NOT POETRY)
  
   execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${SCRIPT}"
                   RESULT_VARIABLE RETURN_CODE
-                  OUTPUT_VARIABLE Python_CORIOLISARCH
+                  OUTPUT_VARIABLE Python_SITEARCH
                   OUTPUT_STRIP_TRAILING_WHITESPACE
                  )
 
@@ -19,7 +19,7 @@ if(UNIX AND NOT POETRY)
  
   execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${SCRIPT}"
                   RESULT_VARIABLE RETURN_CODE
-                  OUTPUT_VARIABLE Python_CORIOLISLIB
+                  OUTPUT_VARIABLE Python_SITELIB
                   OUTPUT_STRIP_TRAILING_WHITESPACE
                  )
  
@@ -29,12 +29,15 @@ if(UNIX AND NOT POETRY)
     set(FindPythonSitePackages_FOUND FALSE)
   endif(RETURN_CODE EQUAL 0)
 
-  set(Python_CORIOLISARCH "lib${LIB_SUFFIX}/${Python_CORIOLISARCH}"
-      CACHE STRING         "Python platform dependent install directory." FORCE)
-  set(Python_CORIOLISLIB  "lib${LIB_SUFFIX}/${Python_CORIOLISLIB}"
-      CACHE STRING         "Python platform independent install directory." FORCE)
+  set(Python_CORIOLISARCH "lib${LIB_SUFFIX}/${Python_SITEARCH}/coriolis"
+      CACHE STRING        "Python platform dependent install directory (Coriolis modules)." FORCE)
+  set(Python_SITELIB      "lib${LIB_SUFFIX}/${Python_SITELIB}"
+      CACHE STRING        "Python platform independent install directory." FORCE)
+  set(Python_CORIOLISLIB  "${Python_SITELIB}/coriolis"
+      CACHE STRING        "Python platform independent install directory (Coriolis modules)." FORCE)
   mark_as_advanced(Python_CORIOLISARCH)
   mark_as_advanced(Python_CORIOLISLIB)
+  mark_as_advanced(Python_SITELIB)
 
   if(FindPythonSitePackages_FOUND)
     if(NOT FindPythonSitePackages_FIND_QUIETLY)

@@ -319,21 +319,21 @@ namespace CRL {
     Utilities::Path pythonSitePackages ( PYTHON_SITE_PACKAGES );
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
     _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.toString()) );
-    Utilities::Path crlcoreDir  = pythonSitePackages / "crlcore";
-    Utilities::Path stratusDir  = pythonSitePackages / "stratus";
-    Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
-    Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
-    Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
+    // Utilities::Path crlcoreDir  = pythonSitePackages / "crlcore";
+    // Utilities::Path stratusDir  = pythonSitePackages / "stratus";
+    // Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
+    // Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
+    // Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
     Utilities::Path etcDir      = _pathes["etc"];
 
     Isobar::Script::addPath ( etcDir.toString() );
     Isobar::Script::addPath ( sysConfDir.toString() );
     Isobar::Script::addPath ( pythonSitePackages.toString() );
-    Isobar::Script::addPath ( crlcoreDir.toString() );
-    Isobar::Script::addPath ( stratusDir.toString() );
-    Isobar::Script::addPath ( cumulusDir.toString() );
-    Isobar::Script::addPath ( oroshiDir.toString() );
-    Isobar::Script::addPath ( karakazeDir.toString() );
+    // Isobar::Script::addPath ( crlcoreDir.toString() );
+    // Isobar::Script::addPath ( stratusDir.toString() );
+    // Isobar::Script::addPath ( cumulusDir.toString() );
+    // Isobar::Script::addPath ( oroshiDir.toString() );
+    // Isobar::Script::addPath ( karakazeDir.toString() );
 
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();

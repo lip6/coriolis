@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from   Hurricane import DataBase
-from   Hurricane import UpdateSession
-from   Hurricane import DbU
-from   Hurricane import Box
-import helpers
-from   helpers   import trace
+from ..Hurricane  import DataBase, UpdateSession, DbU, Box
+from ..helpers.io import catch
+from ..helpers    import setTraceLevel, trace
 
-#helpers.setTraceLevel( 1000 )
+#setTraceLevel( 1000 )
 
 try:
-    import Analog
-    import oroshi
-    import oroshi.paramsmatrix
-    import oroshi.stack
+    from ..     import Analog
+    from .      import getRules, toUnity
+    from .      import paramsmatrix
+    from .stack import Stack
 except Exception as e:
     helpers.io.catch( e )
 
@@ -22,7 +19,7 @@ def checkCoherency ( device, bbMode ):
     message = '[ERROR] CommonSourcePair.checkCoherency():\n'
     
     techno = DataBase.getDB().getTechnology()
-    rules  = oroshi.getRules()
+    rules  = getRules()
 
     W    = device.getParameter( 'W' ).getValue()
     M    = device.getParameter( 'M' ).getValue()
@@ -48,7 +45,7 @@ def layout ( device, bbMode ):
     nerc = device.getParameter( 'NERC' ).getValue()
     nirc = device.getParameter( 'NIRC' ).getValue()
 
-    stack = oroshi.stack.Stack( device, nerc, nirc )
+    stack = Stack( device, nerc, nirc )
 
     bw  = str(device.getParameter( 'B.w'  ).getValue())
     d1w = str(device.getParameter( 'D1.w' ).getValue())
@@ -85,9 +82,9 @@ def layout ( device, bbMode ):
     stack.setWirings( wirings.format( **diffMap ) )
     stack.doLayout  ( bbMode )
 
-    paramsMatrix = oroshi.paramsmatrix.ParamsMatrix()
-    paramsMatrix.setGlobalTransistorParams( oroshi.toUnity(stack.w)
-                                          , oroshi.toUnity(stack.L)
+    paramsMatrix = paramsmatrix.ParamsMatrix()
+    paramsMatrix.setGlobalTransistorParams( toUnity(stack.w)
+                                          , toUnity(stack.L)
                                           , device.getM()
                                           , stack.boundingBox
                                           )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
+# Copyright (c) Sorbonne Université 2017-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -17,16 +17,15 @@
 try:
     import sys
     import os.path
-    import Cfg
-    import Viewer
-    import CRL
-    import helpers
-    from   helpers         import showPythonTrace, trace, l, u, n
-    from   helpers.io      import ErrorMessage, WarningMessage
-    from   helpers.overlay import UpdateSession
-    import plugins
-    from   Hurricane  import DataBase, Breakpoint, DbU, Box, Contact, \
-                             Vertical, Horizontal, Net, Cell
+    from   coriolis.Hurricane       import DataBase, Breakpoint, DbU, Box, Contact, \
+                                           Vertical, Horizontal, Net, Cell
+    from   coriolis                 import Cfg
+    from   coriolis                 import Viewer
+    from   coriolis                 import CRL
+    from   coriolis.helpers         import trace, l, u, n
+    from   coriolis.helpers.io      import showPythonTrace, ErrorMessage, WarningMessage
+    from   coriolis.helpers.overlay import UpdateSession
+    import coriolis.cumulus.plugins as plugins
 except ImportError as e:
     serror = str(e)
     if serror.startswith('No module named'):

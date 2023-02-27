@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,18 +16,12 @@
 import os
 import sys
 import traceback
-import Cfg
-import helpers
-from   helpers.io import vprint
-from   helpers.io import ErrorMessage
-from   helpers.io import WarningMessage
-from   Hurricane  import Contact
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import Instance
-import Viewer
-import CRL
-from   CRL        import RoutingLayerGauge
+from   ..           import Cfg
+from   ..           import helpers
+from   ..helpers.io import vprint, ErrorMessage, WarningMessage
+from   ..Hurricane  import Contact, Path, Occurrence, Instance
+from   ..           import Viewer
+from   ..CRL        import AllianceFramework, RoutingLayerGauge
 
 
 NoFlags           = 0
@@ -140,13 +134,13 @@ class StackedVia ( object ):
 
     def getLayer ( self, fromTop ):
         if self._topDepth-fromTop >= self._bottomDepth:
-            routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+            routingGauge = AllianceFramework.get().getRoutingGauge()
             return routingGauge.getRoutingLayer(self._topDepth-fromTop)
         return None
 
     def getBlockageLayer ( self, fromTop ):
         if self._topDepth-fromTop >= self._bottomDepth:
-            routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+            routingGauge = AllianceFramework.get().getRoutingGauge()
             return routingGauge.getRoutingLayer(self._topDepth-fromTop).getBlockageLayer()
         return None
 
@@ -160,7 +154,7 @@ class StackedVia ( object ):
         if self._hasLayout: return
         self._hasLayout = True
 
-        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        routingGauge = AllianceFramework.get().getRoutingGauge()
         
         if self._bottomDepth == self._topDepth:
             self._vias.append( Contact.create( self._net
@@ -203,39 +197,39 @@ def loadPlugins ( pluginsDir ):
     .. note:: Those modules will be searched later (in ``unicornInit.py``) for any
               potential ``unicornHook()`` function.
     """
-    sys.path.append( pluginsDir )
-    sys.modules['plugins'].__path__.append( pluginsDir )
+    sys.modules['coriolis.plugins'].__path__.append( pluginsDir )
     if not os.path.isdir(pluginsDir):
-        print( ErrorMessage( 3, 'cumulus.__init__.py: Cannot find <cumulus/plugins> directory:' \
+        print( ErrorMessage( 3, 'plugins.__init__.py: Cannot find <plugins> directory:' \
                               , '"{}"'.format(pluginsDir) ))
         return
 
     moduleNames = []
     for entry in os.listdir( pluginsDir ):
-        if entry == "__init__.py": continue
+        if entry == '__init__.py': continue
+        if entry == '__pycache__': continue
+        packageName = 'coriolis.plugins.' + entry
         if not entry.endswith('.py'):
             path = os.path.join(pluginsDir,entry)
             if os.path.isdir(path):
-                packageName = "plugins." + entry
                 if not packageName in sys.modules:
+                    vprint( 2, '     - "{}" (module)'.format( packageName ))
                     module = __import__( packageName, globals(), locals() )
                 else:
                     module = sys.modules[packageName]
-                module.__path__.append( path )
             continue
-        moduleNames.append( entry[:-3] )
+        moduleNames.append( packageName[:-3] )
 
     moduleNames.sort()
     for moduleName in moduleNames:
         try:
-            vprint( 2, '     - "{}"'.format(moduleName) )
+            vprint( 2, '     - "{}.py"'.format( moduleName ))
             module = __import__( moduleName, globals(), locals() )
         except ErrorMessage as e:
             print( e )
-            helpers.showStackTrace( e.trace )
+            helpers.io.showStackTrace( e.trace )
         except Exception as e:
             print( e )
-            helpers.showPythonTrace( __file__, e )
+            helpers.io.showPythonTrace( __file__, e )
 
     return
 
@@ -253,7 +247,7 @@ def staticInitialization ():
             pythonDir = os.path.join( helpers.ndaTopDir, 'python{}.{}'.format( sys.version_info.major
                                                                              , sys.version_info.minor ))
             if os.path.isdir(pythonDir):
-                pluginsDir = os.path.join( pythonDir, 'site-packages/cumulus/plugins' )
+                pluginsDir = os.path.join( pythonDir, 'site-packages/plugins' )
                 loadPlugins( pluginsDir )
             else:
                 vprint( 1, '     - No NDA protected plugins directory.' )
@@ -261,7 +255,7 @@ def staticInitialization ():
         else:
             vprint( 1, '     - No NDA protected plugins.' )
     except Exception as e:
-        helpers.showPythonTrace( __file__, e )
+        helpers.io.showPythonTrace( __file__, e )
     loaded = True
     return
 

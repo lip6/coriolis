@@ -1,15 +1,14 @@
 #!/usr/bin/python
 import sys                
-from   Hurricane       import *
-from   CRL             import *
-import helpers
-from   helpers.io      import ErrorMessage as Error
-from   helpers         import trace
-import oroshi
-from   capacitorunit   import CapacitorUnit
-from   capacitormatrix import CapacitorStack
-from   collections     import OrderedDict
+from   collections      import OrderedDict
 import numpy
+from   ..Hurricane      import *
+from   ..CRL            import *
+from   ..helpers.io     import ErrorMessage as Error
+from   ..helpers        import trace
+from   .                import getRules
+from   .capacitorunit   import CapacitorUnit
+from   .capacitormatrix import CapacitorStack
 
 
 ## Route two matched capacitors, C1 and C2, drawn in a capacitor matrix.
@@ -40,7 +39,7 @@ import numpy
 
 class VerticalRoutingTracks ( CapacitorStack ):
 
-    rules = oroshi.getRules()
+    rules = getRules()
 
     def __init__( self, capacitorInstance, capacitor, minimizeVRT = False ) :
 

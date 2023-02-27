@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2022-2022, All Rights Reserved
+# Copyright (c) Sorbonne Université 2022-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -21,15 +21,13 @@ The ``sram`` module provide base classes for SRAM assemby.
 import sys
 import re
 import traceback
-import helpers
-from   helpers.io      import ErrorMessage, WarningMessage
-from   helpers.overlay import UpdateSession
-from   helpers         import trace, l, u, n
-import plugins
-from   Hurricane import DataBase, Breakpoint, DbU, Box, Net, Cell, \
-                        Instance, Transformation, PythonAttributes
-import CRL
-from   plugins.chip.configuration import GaugeConf
+from   ..helpers.io        import ErrorMessage, WarningMessage
+from   ..helpers.overlay   import UpdateSession
+from   ..helpers           import trace, l, u, n
+from   ..Hurricane         import DataBase, Breakpoint, DbU, Box, Net, Cell, \
+                                  Instance, Transformation, PythonAttributes
+from   ..                  import CRL
+from   .chip.configuration import GaugeConf
 
 
 af = CRL.AllianceFramework.get()

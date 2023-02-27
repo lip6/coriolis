@@ -25,9 +25,9 @@ Contains:
 * ``overlay.CfgCache``      : A cache for Cfg parameters.
 """
 
-import Cfg
-import Hurricane
-from  .io import isVL
+from ..  import Cfg
+from ..  import Hurricane
+from .io import isVL
 
 
 class UpdateSession ( object ):

@@ -1,7 +1,7 @@
 # -*- Mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2016-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2016-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -14,30 +14,27 @@
 # +-----------------------------------------------------------------+
 
 
-from   Hurricane  import *
-from   Hurricane  import DataBase
-import CRL
-import helpers
-from   helpers    import isderived, trace
-from   helpers.io import ErrorMessage as Error
-from   Analog     import Device, TransistorFamily, Transistor,             \
-                         CommonDrain, CommonGatePair, CommonSourcePair,    \
-                         CrossCoupledPair, DifferentialPair, LevelShifter, \
-                         SimpleCurrentMirror, CapacitorFamily,             \
-                         MultiCapacitor, CapacitorFamily, MultiCapacitor,  \
-                         ResistorFamily, Resistor, LayoutGenerator,        \
-                         Matrix
-from   Bora       import ParameterRange, StepParameterRange,               \
-                         MatrixParameterRange, SlicingNode, HSlicingNode,  \
-                         VSlicingNode, DSlicingNode, RHSlicingNode,        \
-                         RVSlicingNode
-import karakaze.oceane
-import Anabatic
-import Katana
-import Bora
+from   ..Hurricane  import *
+from   ..Hurricane  import DataBase
+from   ..           import CRL
+from   ..helpers    import isderived, setTraceLevel, trace
+from   ..helpers.io import ErrorMessage as Error
+from   ..Analog     import Device, TransistorFamily, Transistor,             \
+                           CommonDrain, CommonGatePair, CommonSourcePair,    \
+                           CrossCoupledPair, DifferentialPair, LevelShifter, \
+                           SimpleCurrentMirror, CapacitorFamily,             \
+                           MultiCapacitor, CapacitorFamily, MultiCapacitor,  \
+                           ResistorFamily, Resistor, LayoutGenerator,        \
+                           Matrix
+from   ..Bora       import ParameterRange, StepParameterRange,               \
+                           MatrixParameterRange, SlicingNode, HSlicingNode,  \
+                           VSlicingNode, DSlicingNode, RHSlicingNode,        \
+                           RVSlicingNode
+from .              import oceane
+from ..             import Anabatic, Katana, Bora
 
 
-#helpers.setTraceLevel( 100 )
+#setTraceLevel( 100 )
 
 
 NMOS     = Transistor.NMOS
@@ -103,7 +100,7 @@ class AnalogDesign ( object ):
         self.toleranceRatioW = 0
         self.toleranceBandH  = 0
         self.toleranceBandW  = 0
-        self.parameters      = karakaze.oceane.Parameters()
+        self.parameters      = oceane.Parameters()
         return
 
     def setCellName ( self, name ):

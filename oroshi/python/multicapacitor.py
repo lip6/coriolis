@@ -1,25 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from   Hurricane import DataBase
-from   Hurricane import UpdateSession
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Net
-import helpers
-import helpers.io
-from   helpers   import trace
+from ..Hurricane  import DataBase, UpdateSession, DbU, Box, Net
+from ..Analog     import Device
+from ..helpers.io import catch
+from ..helpers    import setTraceLevel, trace
 
-#helpers.setTraceLevel( 100 )
+#setTraceLevel( 100 )
 
-import Analog
-from   Analog import Device
-import oroshi
-import oroshi.paramsmatrix
-from   oroshi.capacitorunit         import CapacitorUnit
-from   oroshi.capacitormatrix       import CapacitorStack
-from   oroshi.capacitorvrtracks     import VerticalRoutingTracks
-from   oroshi.capacitorrouted       import RoutMatchedCapacitor
-from   oroshi.capacitorroutedsingle import RouteCapacitorSingle
+from .                      import getRules, paramsmatrix
+from .capacitorunit         import CapacitorUnit
+from .capacitormatrix       import CapacitorStack
+from .capacitorvrtracks     import VerticalRoutingTracks
+from .capacitorrouted       import RoutMatchedCapacitor
+from .capacitorroutedsingle import RouteCapacitorSingle
 
 
 def toMatrixArgs ( matrix ):
@@ -41,7 +34,7 @@ def checkCoherency ( device, bbMode ):
     message = 'CapacitorMatrix.checkCoherency(): device "%s".\n' % device.getName()
     
     techno = DataBase.getDB().getTechnology()
-    rules  = oroshi.getRules()
+    rules  = getRules()
 
     capacities = device.getParameter( 'capacities' )
     if capacities is None:
@@ -98,7 +91,7 @@ def layout ( device, bbMode ):
 
     trace( 100, ',+', '\tMultiCapacitor.layout() called for "%s".\n' % device.getName())
 
-    paramsMatrix = oroshi.paramsmatrix.ParamsMatrix()
+    paramsMatrix = paramsmatrix.ParamsMatrix()
 
     try:
         capacities    = device.getParameter( 'capacities' )
@@ -167,7 +160,7 @@ def layout ( device, bbMode ):
        #paramsMatrix.trace()
 
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
 
     trace( 100, '---' )
     

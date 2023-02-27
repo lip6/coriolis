@@ -80,7 +80,8 @@ namespace Analog {
     DeviceDescriptor*         dd        = tech->getDeviceDescriptor( deviceName );
     DeviceDescriptor::Layouts ddLayouts = dd->getLayouts();
 
-    for ( auto ddLayout : ddLayouts ) _layouts.insert( ddLayout );
+    for ( auto ddLayout : ddLayouts )
+      _layouts.insert( ddLayout );
   
     Choices layouts;
     for ( auto layout : _layouts ) layouts << getString(layout.first);

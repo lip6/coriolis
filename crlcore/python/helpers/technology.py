@@ -17,7 +17,7 @@
 Some helpers to create or load a technology and it's libraries.
 """
 
-from Hurricane  import DataBase, Library, BasicLayer, Layer, ViaLayer
+from ..Hurricane  import DataBase, Library, BasicLayer, Layer, ViaLayer
 
 
 __all__ = [ 'safeGetLibrary', 'createBL', 'setEnclosures' ]

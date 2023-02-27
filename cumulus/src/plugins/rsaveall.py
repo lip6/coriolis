@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -17,14 +17,12 @@ try:
     import sys
     import traceback
     import os.path
-    import Cfg
-    import CRL
-    import helpers
-    from   helpers.io import ErrorMessage
-    from   helpers.io import WarningMessage
-    import plugins
+    from   ..           import Cfg, CRL
+    from   ..helpers    import setTraceLevel
+    from   ..helpers.io import ErrorMessage, WarningMessage, catch
+    from   ..           import plugins
 except Exception as e:
-    helpers.io.catch( e )
+    catch( e )
     sys.exit(2)
 
 
@@ -65,7 +63,7 @@ def unicornHook ( **kw ):
 
 def scriptMain ( **kw ):
     try:
-       #helpers.setTraceLevel( 550 )
+       #setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
         if not cell:
             print( WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' ))
@@ -73,7 +71,7 @@ def scriptMain ( **kw ):
         rsave( cell )
         CRL.destroyAllVHDL()
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
     sys.stdout.flush()
     sys.stderr.flush()
     return 0

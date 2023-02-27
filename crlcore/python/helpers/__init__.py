@@ -39,11 +39,10 @@ if not sysModules:
     for moduleName in sys.modules.keys():
         sysModules.add( moduleName )
 
-import Hurricane
-import Viewer
-import CRL
-import helpers.io
-from helpers.io import ErrorMessage
+from ..Hurricane import DbU, DataBase, Net
+from ..Viewer    import Graphics
+from ..CRL       import AllianceFramework
+from .io         import ErrorMessage, WarningMessage
 
 
 def irange ( value ):
@@ -75,67 +74,6 @@ def truncPath ( path, maxlength=80 ):
         if not len(trunc): trunc = components[i]
         else:              trunc = os.path.join( components[i], trunc ) 
     return '...' + os.sep + trunc
-
-
-def textStackTrace ( trace, showIndent=True, scriptPath=None ):
-    indent = ''
-    if showIndent: indent = '        '
-    s = ''
-    if scriptPath:
-        if len(scriptPath) > 100:
-            filename = scriptPath[-100:]
-            filename = '.../' + filename[ filename.find('/')+1 : ]
-      
-        if showIndent: s += '[ERROR] '
-        s += 'An exception occured while loading the Python script module:\n'
-        s += indent + '\"{}\"\n' % (filename)
-        s += indent + 'You should check for simple python errors in this module.\n\n'
-
-    s += indent + 'Python stack trace:\n'
-    maxdepth = len( trace )
-    for depth in range( maxdepth ):
-        filename, line, function, code = trace[ maxdepth-depth-1 ]
-        if len(filename) > 58:
-            filename = filename[-58:]
-            filename = '.../' + filename[ filename.find('/')+1 : ]
-       #s += indent + '[%02d] %45s:%-5d in \"{}()\"' % ( maxdepth-depth-1, filename, line, function )
-        s += indent + '#{} in {:>25}() at {}:{}\n'.format( depth, function, filename, line )
-    return s
-
-
-def showStackTrace ( trace ):
-    print( textStackTrace( trace, True ))
-    return
-
-
-def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
-    s = ''
-    if scriptPath:
-        if len(scriptPath) > 100:
-            filename = scriptPath[-100:]
-            filename = '.../' + filename[ filename.find('/')+1 : ]
-        else:
-            filename = scriptPath
-        s += '[ERROR] An exception occured while loading the Python script module:\n'
-        s += '        \"{}\"\n'.format(filename)
-        s += '        You should check for simple python errors in this module.\n'
-    if isinstance(e,helpers.io.ErrorMessage):
-        trace = e.trace
-        s += textStackTrace( trace )
-        if e:
-            s += '        Error was:\n'
-            s += '          {}\n'.format(e)
-    else:
-        #trace = traceback.extract_tb( sys.exc_info()[2] )
-        print( traceback.format_exc() )
-    if tryContinue:
-        s += '        Trying to continue anyway...'
-    return s
-
-
-def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
-    print( textPythonTrace( scriptPath, e, tryContinue ))
-    return
 
 
 class Dots ( object ):
@@ -260,13 +198,13 @@ def overload ( defaultParameters, parameters ):
     return tuple(overloadParameters)
 
 
-def l ( value ): return Hurricane.DbU.fromLambda( value )
-def u ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerMicro )
-def n ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerNano  )
+def l ( value ): return DbU.fromLambda( value )
+def u ( value ): return DbU.fromPhysical( value, DbU.UnitPowerMicro )
+def n ( value ): return DbU.fromPhysical( value, DbU.UnitPowerNano  )
 
 
 def onFGrid ( u ):
-    oneGrid = Hurricane.DbU.fromGrid( 1.0 )
+    oneGrid = DbU.fromGrid( 1.0 )
     if u % oneGrid:
         u -= (u % oneGrid)
     return u
@@ -313,7 +251,7 @@ def setNdaTopDir ( ndaTopDirArg ):
     global ndaTopDir
 
     if not os.path.isdir(ndaTopDirArg):
-        print( helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "{}" does not exists.'.format( ndaTopDirArg )))
+        print( WarningMessage( 'helpers.setNdaTopDir(): Directory "{}" does not exists.'.format( ndaTopDirArg )))
     else:
         ndaTopDir = ndaTopDirArg
         sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
@@ -379,20 +317,20 @@ def setSysConfDir ( quiet=False ):
 
 def netDirectionToStr ( netDir ):
     flags = [ '-', '-', '-', '-', '-' ]
-    if netDir & Hurricane.Net.Direction.DirIn:        flags[0] = 'i'
-    if netDir & Hurricane.Net.Direction.DirOut:       flags[1] = 'o'
-    if netDir & Hurricane.Net.Direction.ConnTristate: flags[2] = 't'
-    if netDir & Hurricane.Net.Direction.ConnWiredOr:  flags[3] = 'w'
+    if netDir & Net.Direction.DirIn:        flags[0] = 'i'
+    if netDir & Net.Direction.DirOut:       flags[1] = 'o'
+    if netDir & Net.Direction.ConnTristate: flags[2] = 't'
+    if netDir & Net.Direction.ConnWiredOr:  flags[3] = 'w'
     
     s = flags[0]+flags[1]+flags[2]+flags[3]+' '
-    if   netDir == Hurricane.Net.Direction.UNDEFINED: s += '(UNDEFINED)'
-    elif netDir == Hurricane.Net.Direction.IN:        s += '(IN)'
-    elif netDir == Hurricane.Net.Direction.OUT:       s += '(OUT)'
-    elif netDir == Hurricane.Net.Direction.INOUT:     s += '(INOUT)'
-    elif netDir == Hurricane.Net.Direction.TRISTATE:  s += '(TRISTATE)'
-    elif netDir == Hurricane.Net.Direction.TRANSCV:   s += '(TRANSCV)'
-    elif netDir == Hurricane.Net.Direction.WOR_OUT:   s += '(WOR_OUT)'
-    elif netDir == Hurricane.Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
+    if   netDir == Net.Direction.UNDEFINED: s += '(UNDEFINED)'
+    elif netDir == Net.Direction.IN:        s += '(IN)'
+    elif netDir == Net.Direction.OUT:       s += '(OUT)'
+    elif netDir == Net.Direction.INOUT:     s += '(INOUT)'
+    elif netDir == Net.Direction.TRISTATE:  s += '(TRISTATE)'
+    elif netDir == Net.Direction.TRANSCV:   s += '(TRANSCV)'
+    elif netDir == Net.Direction.WOR_OUT:   s += '(WOR_OUT)'
+    elif netDir == Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
     else: s += '(UNKNOWN)'
     return s
 
@@ -410,10 +348,10 @@ def unloadUserSettings ():
         warning  = ''
         if refcount > 3:
             warning = '(NOTE: More than 3 refcount %d)' % refcount
-           #print( helpers.io.WarningMessage( [ 'Configuration module "{}" has more than 3 references ({})".' \
-           #                                    .format(moduleName,refcount)
-           #                                  , 'May be unable to unload it from the Python process.'
-           #                                  ] ))
+           #print( WarningMessage( [ 'Configuration module "{}" has more than 3 references ({})".' \
+           #                       .format(moduleName,refcount)
+           #                       , 'May be unable to unload it from the Python process.'
+           #                       ] ))
         print( '     - {:-34} {:-35}'.format( '"{}".'.format(moduleName), warning ))
         del sys.modules[ moduleName ]
     confModules = set()
@@ -421,7 +359,7 @@ def unloadUserSettings ():
 
 
 def loadUserSettings ():
-    if Hurricane.DataBase.getDB() is not None:
+    if DataBase.getDB() is not None:
         print( '  o  DataBase already initialized, skip loading of "./coriolis2/settings.py".' )
         return True
     rvalue        = False
@@ -431,9 +369,9 @@ def loadUserSettings ():
             import coriolis2.settings
             rvalue = True
         else:
-            print( helpers.io.WarningMessage( [ 'User\'s settings directory "{}" exists, but do not contains "__init__.py".'.format( './coriolis2/' )
-                                             , '(path:"{}")'.format( os.path.abspath(os.getcwd()) )
-                                             ] ))
+            print( WarningMessage( [ 'User\'s settings directory "{}" exists, but do not contains "__init__.py".'.format( './coriolis2/' )
+                                   , '(path:"{}")'.format( os.path.abspath(os.getcwd()) )
+                                   ] ))
     else:
       import symbolic.cmos
     tagConfModules()
@@ -452,8 +390,8 @@ def tagConfModules ():
 
 def resetCoriolis ():
     print( '  o  Full reset of Coriolis/Hurricane databases.' )
-    CRL.AllianceFramework.get().destroy()
-    Viewer.Graphics.get().clear()
-    Hurricane.DataBase.getDB().destroy()
+    AllianceFramework.get().destroy()
+    Graphics.get().clear()
+    DataBase.getDB().destroy()
     unloadUserSettings()
     return

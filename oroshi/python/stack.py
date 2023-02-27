@@ -2,26 +2,17 @@
 
 import copy
 import datetime
-from   Hurricane  import DataBase
-from   Hurricane  import UpdateSession
-from   Hurricane  import DbU
-from   Hurricane  import Box
-from   Hurricane  import Net
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Contact
-from   Hurricane  import Pad
-from   Hurricane  import NetExternalComponents
-from   CRL        import AllianceFramework
-import Constant
-import helpers
-from   helpers.io import ErrorMessage as Error
-from   helpers    import trace
-from   Analog     import Device
-import oroshi
-import oroshi.dtr
+from   ..Hurricane  import DataBase, UpdateSession, DbU, Box, Net, \
+                           Horizontal, Vertical, Contact, Pad,     \
+                           NetExternalComponents
+from   ..CRL        import AllianceFramework
+from   ..           import Constant
+from   ..helpers.io import ErrorMessage as Error
+from   ..helpers    import setTraceLevel, trace
+from   ..Analog     import Device
+from   .            import getRules, rules, dtr, toUnity, adjustOnGrid
 
-#helpers.setTraceLevel( 100 )
+#setTraceLevel( 100 )
 
 def traceMT ( mt ):
   trace( 100, '+', '\tMeta-Transistor Topological Datas\n' )
@@ -213,13 +204,13 @@ class Bulk ( object ):
 
 
   def doLayout ( self ):
-    active    = oroshi.rules.getRealLayer( 'active' )
-    metal1    = oroshi.rules.getRealLayer( 'metal1' )
-    metal2    = oroshi.rules.getRealLayer( 'metal2' )
-    metal3    = oroshi.rules.getRealLayer( 'metal3' )
-    cut0      = oroshi.rules.getRealLayer( 'cut0' )
-    cut1      = oroshi.rules.getRealLayer( 'cut1' )
-    cut2      = oroshi.rules.getRealLayer( 'cut2' )
+    active    = rules.getRealLayer( 'active' )
+    metal1    = rules.getRealLayer( 'metal1' )
+    metal2    = rules.getRealLayer( 'metal2' )
+    metal3    = rules.getRealLayer( 'metal3' )
+    cut0      = rules.getRealLayer( 'cut0' )
+    cut1      = rules.getRealLayer( 'cut1' )
+    cut2      = rules.getRealLayer( 'cut2' )
     bulkNet   = self.stack.bulkNet
 
     self.computeContacts()
@@ -476,7 +467,7 @@ class Stack ( object ):
   DrainShared     = 0x0400
   DrainMerged     = 0x0800
 
-  rules = oroshi.getRules()
+  rules = getRules()
 
 
   def __setattr__ ( self, attribute, value ):
@@ -579,8 +570,8 @@ class Stack ( object ):
   def __init__ ( self, device, NERC, NIRC ):
     self.dimensioned     = False
     self.device          = device
-    self.w               = oroshi.adjustOnGrid(device.getW() // device.getM())
-    self.L               = oroshi.adjustOnGrid(device.getL())
+    self.w               = adjustOnGrid(device.getW() // device.getM())
+    self.L               = adjustOnGrid(device.getL())
     self.NDs             = device.getExternalDummy()                    # Number of Dummies at each end of the stack.
     self.NFs             = device.getM() * self.metaTnb() + self.NDs*2  # Total number of Fingers (including dummies).
     self.NERC            = NERC
@@ -605,13 +596,13 @@ class Stack ( object ):
     if bulkType & 0x0008: self.flags |= Stack.WestBulk
 
     if self.isNmos():
-      self.tImplantLayer = oroshi.rules.getRealLayer( 'nImplant' )
-      self.bImplantLayer = oroshi.rules.getRealLayer( 'pImplant' )
+      self.tImplantLayer = rules.getRealLayer( 'nImplant' )
+      self.bImplantLayer = rules.getRealLayer( 'pImplant' )
       self.wellLayer     = None
     else:
-      self.tImplantLayer = oroshi.rules.getRealLayer( 'pImplant' )
-      self.bImplantLayer = oroshi.rules.getRealLayer( 'nImplant' )
-      self.wellLayer     = oroshi.rules.getRealLayer( 'pWell' )
+      self.tImplantLayer = rules.getRealLayer( 'pImplant' )
+      self.bImplantLayer = rules.getRealLayer( 'nImplant' )
+      self.wellLayer     = rules.getRealLayer( 'pWell' )
 
     return
 
@@ -1043,14 +1034,14 @@ class Stack ( object ):
     if self.flags & Stack.SouthBulk:
       self.bulks[1] = Bulk( self, southBulkY, westBulkX, eastBulkX, Stack.SouthBulk )
 
-    self.DMCI  = oroshi.toUnity(   self.sideActiveWidth 
-                                 - self.L//2
-                                 - self.metal1ToGate
-                                 - self.eDiffMetal1Width//2 )
-    self.DMCG  = oroshi.toUnity( (self.gatePitch - self.L)//2 )
+    self.DMCI  = toUnity(   self.sideActiveWidth 
+                          - self.L//2
+                          - self.metal1ToGate
+                          - self.eDiffMetal1Width//2 )
+    self.DMCG  = toUnity( (self.gatePitch - self.L)//2 )
     self.DMCGT = 0
-    self.DGG   = oroshi.toUnity(  self.gatePitch - self.L )
-    self.DGI   = oroshi.toUnity( self.sideActiveWidth - self.L//2 )
+    self.DGG   = toUnity(  self.gatePitch - self.L )
+    self.DGI   = toUnity( self.sideActiveWidth - self.L//2 )
 
     trace( 100, '+' )
     trace( 100, '\t  +----------------------------------+\n' )
@@ -1133,8 +1124,8 @@ class Stack ( object ):
       capSpacing = self.minSpacing_metal2 + self.minWidth_metal2//2
       capSpacing = max( capSpacing, self.minSpacing_metal3 + self.minWidth_metal3//2 )
       
-      metal2  = oroshi.rules.getRealLayer( 'metal2' )
-      metal3  = oroshi.rules.getRealLayer( 'metal3' )
+      metal2  = rules.getRealLayer( 'metal2' )
+      metal3  = rules.getRealLayer( 'metal3' )
       trackNb = 0
       if self.topTracks: trackNb = len(self.topTracks)
       for i in range(trackNb):
@@ -1194,7 +1185,7 @@ class Stack ( object ):
     if not tImplantNet: tImplantNet = Net.create( self.device, 'nImplant' )
     tImplantNet.setAutomatic( True )
 
-    active      = oroshi.rules.getRealLayer( 'active' )
+    active      = rules.getRealLayer( 'active' )
     width       = self.w
     length      = (self.NFs - 1) * self.gatePitch + 2*self.sideActiveWidth
     axis        = width // 2
@@ -1226,13 +1217,13 @@ class Stack ( object ):
   def drawGate ( self, axis, wiring ):
     trace( 100, '\tStack.drawGate(): %s\n' % wiring )
 
-    gate    = oroshi.rules.getRealLayer( 'poly' )
-    cut0    = oroshi.rules.getRealLayer( 'cut0' )
-    cut1    = oroshi.rules.getRealLayer( 'cut1' )
-    cut2    = oroshi.rules.getRealLayer( 'cut2' )
-    metal1  = oroshi.rules.getRealLayer( 'metal1' )
-    metal2  = oroshi.rules.getRealLayer( 'metal2' )
-    metal3  = oroshi.rules.getRealLayer( 'metal3' )
+    gate    = rules.getRealLayer( 'poly' )
+    cut0    = rules.getRealLayer( 'cut0' )
+    cut1    = rules.getRealLayer( 'cut1' )
+    cut2    = rules.getRealLayer( 'cut2' )
+    metal1  = rules.getRealLayer( 'metal1' )
+    metal2  = rules.getRealLayer( 'metal2' )
+    metal3  = rules.getRealLayer( 'metal3' )
     width   = self.L
 
     if wiring.isTop(): ytarget = self.getTopTrackY( wiring.topTrack )
@@ -1319,12 +1310,12 @@ class Stack ( object ):
     trace( 100, '\tStack.drawSourceDrain(): %s @%s width:%s NRC=%d\n' \
            % (wiring, DbU.getValueString(axis), DbU.getValueString(width), cols ) )
 
-    metal1  = oroshi.rules.getRealLayer( 'metal1' )
-    metal2  = oroshi.rules.getRealLayer( 'metal2' )
-    metal3  = oroshi.rules.getRealLayer( 'metal3' )
-    cut0    = oroshi.rules.getRealLayer( 'cut0' )
-    cut1    = oroshi.rules.getRealLayer( 'cut1' )
-    cut2    = oroshi.rules.getRealLayer( 'cut2' )
+    metal1  = rules.getRealLayer( 'metal1' )
+    metal2  = rules.getRealLayer( 'metal2' )
+    metal3  = rules.getRealLayer( 'metal3' )
+    cut0    = rules.getRealLayer( 'cut0' )
+    cut1    = rules.getRealLayer( 'cut1' )
+    cut2    = rules.getRealLayer( 'cut2' )
     rows    = max( 1, (self.w - 2*self.minEnclosure_active_cut0) // self.contactDiffPitch )
     ypitch  = self.w // rows
     yoffset = self.activeOffsetY + ypitch//2
@@ -1333,7 +1324,7 @@ class Stack ( object ):
     xoffset = axis - (self.contactDiffPitch * (cols - 1))//2
 
     if self.w < 2*self.minEnclosure_active_cut0 + self.minWidth_cut0:
-      active = oroshi.rules.getRealLayer( 'active' )
+      active = rules.getRealLayer( 'active' )
 
       box = Box( xoffset, yoffset, xoffset + (cols-1)*xpitch, yoffset )
       box.inflate( self.minWidth_cut0 + self.minEnclosure_active_cut0 )
@@ -1451,7 +1442,7 @@ class Stack ( object ):
     if self.flags & Stack.WestBulk: westBulkWidth = self.bulkWidth
     if self.flags & Stack.EastBulk: eastBulkWidth = self.bulkWidth
 
-    L            = oroshi.toUnity( self.L )
+    L            = toUnity( self.L )
     sumA_Bsim4   = 0.0
     sumB_Bsim4   = 0.0
     sumA_Crolles = 0.0
@@ -1498,7 +1489,7 @@ class Stack ( object ):
     NSint = mt['style.NSint']
     NDint = mt['style.NDint']
     NF    = mt['NF']
-    Weff  = oroshi.toUnity( self.w )
+    Weff  = toUnity( self.w )
     DMCI  = self.DMCI
     DMCG  = self.DMCG
     DMCGT = self.DMCGT

@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from   Hurricane import DataBase
-from   Hurricane import UpdateSession
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Net
-import helpers
-import helpers.io
-from   helpers   import trace, l, u, n
+from ..Hurricane    import DataBase, UpdateSession, DbU, Box, Net
+from ..Analog       import Device
+from ..helpers      import trace, l, u, n
+from ..helpers.io   import catch
+from .              import getRules, paramsmatrix
+from .resistorsnake import Resistor
 
 #helpers.setTraceLevel( 100 )
-
-import Analog
-from   Analog import Device
-import oroshi
-import oroshi.paramsmatrix
-from   oroshi.resistorsnake import Resistor
 
 
 
@@ -23,7 +15,7 @@ def checkCoherency ( device, bbMode ):
     message = 'Resistor.checkCoherency(): device "%s".\n' % device.getName()
     
     techno = DataBase.getDB().getTechnology()
-    rules  = oroshi.getRules()
+    rules  = getRules()
 
     resistance = device.getParameter( 'R' )
     if resistance is None:
@@ -37,7 +29,7 @@ def layout ( device, bbMode ):
 
     trace( 100, ',+', '\tResistor.layout() called for "%s".\n' % device.getName())
 
-    paramsMatrix = oroshi.paramsmatrix.ParamsMatrix()
+    paramsMatrix = paramsmatrix.ParamsMatrix()
 
     try:
         resistance = device.getParameter( 'R' ).getValue()
@@ -78,7 +70,7 @@ def layout ( device, bbMode ):
        #paramsMatrix.trace()
 
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
 
     trace( 100, '---' )
     

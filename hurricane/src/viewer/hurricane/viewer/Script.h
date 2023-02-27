@@ -103,7 +103,7 @@ namespace Isobar {
   }
 
   inline PyObject* Script::_importHurricane ( unsigned int flags )
-  { return _hurricaneModule = _importModule("Hurricane",flags); }
+  { return _hurricaneModule = _importModule("coriolis.Hurricane",flags); }
 
   inline PyObject* Script::_importUser ( unsigned int flags )
   { return _userModule = _importModule(_moduleName,flags); }

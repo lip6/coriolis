@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
 import sys                
-from   Hurricane     import *
-from   CRL           import *
-from   math          import sqrt, ceil
-from   helpers.io    import ErrorMessage as Error
-from   helpers       import trace
-from   capacitorunit import CapacitorUnit
-import helpers
-import oroshi
+from   math           import sqrt, ceil
 import numpy
+from   ..Hurricane    import *
+from   ..CRL          import *
+from   ..helpers.io   import ErrorMessage as Error
+from   ..helpers      import trace
+from   .capacitorunit import CapacitorUnit
+from   .              import getRules
 
 def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
 
@@ -21,7 +20,7 @@ def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
 
 class CapacitorStack( CapacitorUnit ):
     
-    rules = oroshi.getRules()
+    rules = getRules()
 
 
     ## This is the class constructor. Basically, the class there are three categories of attributes. There are the ones related to the capacitor caracteristics, its type, dimensions. Also, there are attributes to parametrize the class into matching mode or not and there are other attributes realted to the layout varibales. The class has defaut input values, thus, in this constructor, there are two "sub-constructors" according to the entered input parameters. The class attributes are :

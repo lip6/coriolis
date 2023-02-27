@@ -58,19 +58,13 @@ class PnR ( FlowTask ):
         return banner
 
     def doTask ( self ):
-        from   helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
         if self.design:
             print( 'PnR.doTask() on "{}"'.format( self.design ))
         else:
             print( 'PnR.doTask() run in interactive CGT mode.' )
             PnR.textMode = False
-        import Etesian
-        import Anabatic
-        import Katana
-        import Bora
-        import Tutorial
-        import Viewer
-        import Unicorn
+        from .. import Etesian, Anabatic, Katana, Bora, Tutorial, Viewer, Unicorn
 
         ShellEnv().export()
         if self.script and not callable(self.script):

@@ -49,8 +49,8 @@ class Vasy ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from CRL        import AllianceFramework
-        from helpers.io import ErrorMessage
+        from ..CRL        import AllianceFramework
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv.export()

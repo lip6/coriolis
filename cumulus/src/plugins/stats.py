@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -20,19 +20,12 @@ Compute some statistics on a hierarchical block.
 
 import sys
 import traceback
-import helpers
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
-from   helpers.overlay import UpdateSession
-from   helpers         import trace
-import plugins
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Net
-from   Hurricane import Cell
-from   Hurricane import Instance
-from   Hurricane import Transformation
+from   ..helpers.io      import ErrorMessage, WarningMessage, catch
+from   ..helpers.overlay import UpdateSession
+from   ..helpers         import setTraceLevel, trace
+from   ..cumulus         import plugins
+from   ..Hurricane       import Breakpoint, DbU, Box, Net, Cell, Instance, \
+                                Transformation
 
 
 class Stats ( object ):
@@ -144,13 +137,13 @@ def scriptMain ( **kw ):
     """The mandatory function that Coriolis CGT/Unicorn will look for."""
     rvalue = True
     try:
-        helpers.setTraceLevel( 550 )
+        setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
 
         stats = Stats( cell, 0 )
         stats.display()
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
         rvalue = False
 
     sys.stdout.flush()

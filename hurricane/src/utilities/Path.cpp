@@ -181,6 +181,21 @@ namespace Utilities {
     }
     return _pathcache;
   }
+
+
+  string  Path::toPyModPath () const
+  {
+    string pyPath;
+    for ( size_t i=0 ; i<_elements.size() ; ++i ) {
+      if (i) pyPath += ".";
+      if (i+1 == _elements.size()) {
+        if (ext() == "py")
+          pyPath += _elements[i].substr( 0, _elements[i].size()-3 );
+      } else
+        pyPath += _elements[i];
+    }
+    return pyPath;
+  }
   
   
   Path  Path::subpath ( size_t begin, size_t end ) const

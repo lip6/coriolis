@@ -45,8 +45,8 @@ class Boog ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from CRL        import AllianceFramework
-        from helpers.io import ErrorMessage
+        from ..CRL        import AllianceFramework
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv[ 'MBK_OUT_LO' ] = self.outputFile.suffix[1:]

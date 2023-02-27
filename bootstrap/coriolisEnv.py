@@ -288,12 +288,12 @@ if __name__ == "__main__":
           if os.path.isdir(pyPackageDir):
             sitePackagesDir = pyPackageDir
             break
-      strippedPythonPath = "%s:"                 % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/crlcore:"         % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/cumulus:"         % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/cumulus/plugins:" % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s/stratus:"         % (sitePackagesDir) + strippedPythonPath
-      strippedPythonPath = "%s:"                 % (sysconfDir)      + strippedPythonPath
+      strippedPythonPath = "%s"                  % (sitePackagesDir) + strippedPythonPath
+     #strippedPythonPath = "%s/crlcore:"         % (sitePackagesDir) + strippedPythonPath
+     #strippedPythonPath = "%s/cumulus:"         % (sitePackagesDir) + strippedPythonPath
+     #strippedPythonPath = "%s/cumulus/plugins:" % (sitePackagesDir) + strippedPythonPath
+     #strippedPythonPath = "%s/stratus:"         % (sitePackagesDir) + strippedPythonPath
+     #strippedPythonPath = "%s:"                 % (sysconfDir)      + strippedPythonPath
       shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";' \
                         'export PYTHONPATH;'
       shellScriptCsh += 'setenv PYTHONPATH "%(PYTHONPATH)s";'

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from Hurricane  import DbU
-from Hurricane  import DataBase
-from helpers    import trace
-from helpers.io import ErrorMessage as Error
+from ..Hurricane  import DbU, DataBase
+from ..helpers    import trace
+from ..helpers.io import ErrorMessage as Error
             
 
 class Rules ( object ):
@@ -112,18 +111,31 @@ class Rules ( object ):
               , 'minRpolyhSquares'
               ]
 
-    def __init__ ( self, dtr ):
+    def __init__ ( self ):
+        """
+        Create an empty rule set. The rules must be loaded afterwards by calling
+        ``Rules.load()``.
+        """
+        trace( 100, '\tRules.__init__()\n' )
+        self.dtr = None
+
+    def isLoaded ( self ):
+        """Tells if the rules have already been loaded."""
+        return self.dtr is not None
+
+    def load ( self, dtr ):
         """
         Load the rule set from the technology into the Rules object.
 
-        .. note:: The ``dtr`` parameter is just aother name for the currently
+        .. note:: The ``dtr`` parameter is just another name for the currently
                   used Hurricane::Technology.
         """
-        trace( 100, '\tRules.__init__()\n' )
+        trace( 100, '\tRules.load()\n' )
+        if self.dtr:
+            print( Error( 1, 'Rules.load(): Attempt to load rules from DTR a second time (ignored).' ))
+            return
         self.dtr = dtr
-        
         for rule in Rules.ruleSet: self.addAttr(rule)
-        return
 
     def getRealLayer ( self, stdName ):
         """

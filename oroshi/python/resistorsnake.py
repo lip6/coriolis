@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
 import sys        
-from   Hurricane        import *
-from   CRL              import *
-import Constant
-from   math             import sqrt, ceil
-import helpers
-from   helpers.io       import ErrorMessage as Error
-from   helpers          import trace, u
-import oroshi
+from   math         import sqrt, ceil
+from   ..Hurricane  import *
+from   ..CRL        import *
+from   ..           import Constant
+from   ..helpers.io import ErrorMessage as Error
+from   ..helpers    import trace, u
+from   .            import getRules
 
 
 def doBreak( level, message ):
@@ -28,7 +27,7 @@ def isNearNorth ( y, ab ): return ab.getYMax() - y < y - ab.getYMin()
 
 class Resistor ( object ):
 
-    rules = oroshi.getRules()
+    rules = getRules()
 
     def __init__( self, device, nets, resistorType, resistance = 0, resDim = { "width" : 10, "length" : 0 }, direction = "horizontal", bends = 0, shape = 90 ):
 

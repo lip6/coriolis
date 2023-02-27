@@ -25,7 +25,7 @@ class Copy ( FlowTask ):
         return '<cp {} {}>'.format( self.sourceFile.as_posix(), self.targetFile.as_posix() )
 
     def doTask ( self ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
         try:
             shutil.copyfile( self.sourceFile, self.targetFile )
         except Exception as e:

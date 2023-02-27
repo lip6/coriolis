@@ -1,11 +1,10 @@
 
-from   Hurricane import DbU
-from   Hurricane import DataBase
-import oroshi.dtr
+from ..Hurricane import DbU, DataBase
+from .           import dtr
 
 if not DataBase.getDB(): DataBase.create()
 
-rules = None
+rules = dtr.Rules()
 
 
 class Flag ( object ):
@@ -17,8 +16,8 @@ class Flag ( object ):
 
 def getRules ():
     global rules
-    if not rules:
-      rules = oroshi.dtr.Rules( DataBase.getDB().getTechnology() )
+    if not rules.isLoaded():
+        rules.load( DataBase.getDB().getTechnology() )
     return rules
 
 
@@ -32,6 +31,6 @@ def adjustOnGrid ( unit, mode='upper' ):
     elif mode == 'lower': return DbU.getOnPhysicalGrid(unit, DbU.SnapModeInferior)
     elif mode == 'near' : return DbU.getOnPhysicalGrid(unit, DbU.SnapModeNearest )
     else:
-      print( '[ERROR] oroshi.adjustOnGrid(): "{}" is not a valid mode.'.format(mode) )
-      print( '        ("upper", "lower" or "near")' )
-      return 0
+        print( '[ERROR] oroshi.adjustOnGrid(): "{}" is not a valid mode.'.format(mode) )
+        print( '        ("upper", "lower" or "near")' )
+        return 0

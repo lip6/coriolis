@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -18,16 +18,14 @@ try:
     import sys
     import traceback
     import subprocess
-    import Viewer
-    import helpers
-    from   helpers.io import ErrorMessage
-    from   helpers.io import WarningMessage
-    from   Hurricane  import DataBase
-    from   Hurricane  import Library
-    from   CRL        import Gds
-    import plugins
+    from   ..           import Viewer
+    from   ..helpers    import setTraceLevel
+    from   ..helpers.io import ErrorMessage, WarningMessage, catch
+    from   ..Hurricane  import DataBase, Library
+    from   ..CRL        import Gds
+    from   ..           import plugins
 except Exception as e:
-    helpers.io.catch( e )
+    catch( e )
     sys.exit(2)
 
   
@@ -84,14 +82,14 @@ def unicornHook ( **kw ):
 def scriptMain ( **kw ):
     rvalue = True
     try:
-       #helpers.setTraceLevel( 550 )
+       #setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
         s2r = S2R()
         gdsCell = s2r.convert( cell )
         print( gdsCell )
         if editor: editor.setCell( gdsCell )
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
         if     'editor' in locals() and editor \
            and 'cell'   in locals() and cell:
             editor.fit()

@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from Hurricane  import DataBase
-from Hurricane  import DbU
-from Hurricane  import Box
-from Hurricane  import Net
-from helpers.io import ErrorMessage as Error
-from helpers    import trace
+from ..Hurricane  import DataBase, DbU, Box, Net
+from ..helpers.io import ErrorMessage as Error
+from ..helpers    import trace
 
 
 # Rows are stacks.
