@@ -2,12 +2,10 @@
 try:
     import sys
     import os.path
-    import helpers.io
-    from   helpers.io import ErrorMessage
-    from   helpers.io import WarningMessage
-    import Viewer
+    from   coriolis.helpers.io import ErrorMessage, WarningMessage, catch
+    import coriolis.Viewer
 except Exception as e:
-    helpers.io.catch( e )
+    catch( e )
     sys.exit( 1 )
 
 
@@ -23,5 +21,5 @@ def boraHook ( **kw ):
         if (os.path.exists(userInit)):
             exec( open(userInit).read() )
     except Exception as e:
-        helpers.io.catch( e )
+        catch( e )
     return

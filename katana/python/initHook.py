@@ -18,7 +18,6 @@ def katanaHook ( **kw ):
         print( ErrorMessage( 3, 'katana.initHook(): Must be run from a KatanaEngine.' ))
         return
     try:
-        print( 'KATANA INIT' )
         userInit = os.path.join( os.getcwd(), 'coriolis2/katana.py' )
         if (os.path.exists(userInit)):
             exec( open(userInit).read() )
