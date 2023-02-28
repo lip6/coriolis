@@ -16,10 +16,13 @@
 import os
 import sys
 import traceback
+from   pathlib      import Path
 from   ..           import Cfg
 from   ..           import helpers
-from   ..helpers.io import vprint, ErrorMessage, WarningMessage
-from   ..Hurricane  import Contact, Path, Occurrence, Instance
+from   ..helpers.io import vprint, ErrorMessage, WarningMessage, \
+                           showStackTrace, showPythonTrace
+from   ..           import Hurricane
+from   ..Hurricane  import Contact, Occurrence, Instance
 from   ..           import Viewer
 from   ..CRL        import AllianceFramework, RoutingLayerGauge
 
@@ -83,13 +86,13 @@ class CheckUnplaced ( object ):
             if instance.getPlacementStatus() == Instance.PlacementStatus.UNPLACED:
                 self.unplaceds.append( Occurrence(instance,path) )
             
-            rpath = Path( path, instance )
+            rpath = Hurricane.Path( path, instance )
             self._rcheckUnplaced( rpath, instance.getMasterCell() )
         return
 
 
     def check ( self ):
-        self._rcheckUnplaced( Path(), self.cell )
+        self._rcheckUnplaced( Hurricane.Path(), self.cell )
           
         if self.unplaceds:
             if self.flags & (ShowWarnings | WarningsAreErrors):
@@ -180,7 +183,7 @@ class StackedVia ( object ):
         return
 
 
-def loadPlugins ( pluginsDir ):
+def loadPlugins ( pluginsDir, prefix=None ):
     """
     Forced import of all the modules that resides in the directory ``pluginsDir``.
     Works in three stages:
@@ -197,20 +200,21 @@ def loadPlugins ( pluginsDir ):
     .. note:: Those modules will be searched later (in ``unicornInit.py``) for any
               potential ``unicornHook()`` function.
     """
-    sys.modules['coriolis.plugins'].__path__.append( pluginsDir )
-    if not os.path.isdir(pluginsDir):
+    sys.modules['coriolis.plugins'].__path__.append( str(pluginsDir) )
+    if not pluginsDir.is_dir():
         print( ErrorMessage( 3, 'plugins.__init__.py: Cannot find <plugins> directory:' \
                               , '"{}"'.format(pluginsDir) ))
         return
 
     moduleNames = []
-    for entry in os.listdir( pluginsDir ):
-        if entry == '__init__.py': continue
-        if entry == '__pycache__': continue
-        packageName = 'coriolis.plugins.' + entry
-        if not entry.endswith('.py'):
-            path = os.path.join(pluginsDir,entry)
-            if os.path.isdir(path):
+    for entry in pluginsDir.glob('*'):
+        if entry.name == '__init__.py': continue
+        if entry.name == '__pycache__': continue
+        packageName = 'coriolis.plugins.' + entry.name
+        if prefix is not None:
+            packageName = prefix + '.' + packageName
+        if not entry.suffix == '.py':
+            if entry.is_dir():
                 if not packageName in sys.modules:
                     vprint( 2, '     - "{}" (module)'.format( packageName ))
                     module = __import__( packageName, globals(), locals() )
@@ -226,10 +230,10 @@ def loadPlugins ( pluginsDir ):
             module = __import__( moduleName, globals(), locals() )
         except ErrorMessage as e:
             print( e )
-            helpers.io.showStackTrace( e.trace )
+            showStackTrace( e.trace )
         except Exception as e:
             print( e )
-            helpers.io.showPythonTrace( __file__, e )
+            showPythonTrace( __file__, e )
 
     return
 
@@ -239,23 +243,25 @@ def staticInitialization ():
     if loaded: return
     try:
         vprint( 1, '  o  Preload standard plugins.' )
-        pluginsDir = os.path.dirname(__file__)
+        pluginsDir = Path( __file__ ).parent.resolve()
         loadPlugins( pluginsDir )
         
         if helpers.ndaTopDir:
-            vprint( 1, '  o  Preload NDA protected plugins.' )
-            pythonDir = os.path.join( helpers.ndaTopDir, 'python{}.{}'.format( sys.version_info.major
-                                                                             , sys.version_info.minor ))
-            if os.path.isdir(pythonDir):
-                pluginsDir = os.path.join( pythonDir, 'site-packages/plugins' )
-                loadPlugins( pluginsDir )
+            vprint( 1, '  o  Preload NDA/addons protected plugins.' )
+            pythonDir = Path(helpers.ndaTopDir) / Path('python{}.{}'.format( sys.version_info.major
+                                                                           , sys.version_info.minor ))
+            if pythonDir.is_dir():
+                coriolisDir = pythonDir / 'site-packages'
+                pluginsDir  = coriolisDir / 'addons' / 'coriolis' / 'plugins'
+                sys.path.append( str(coriolisDir) ) 
+                loadPlugins( pluginsDir, prefix='addons' )
             else:
-                vprint( 1, '     - No NDA protected plugins directory.' )
+                vprint( 1, '     - No NDA/addons protected plugins directory.' )
                 vprint( 1, '       ({}).'.format( pythonDir ))
         else:
             vprint( 1, '     - No NDA protected plugins.' )
     except Exception as e:
-        helpers.io.showPythonTrace( __file__, e )
+        showPythonTrace( __file__, e )
     loaded = True
     return
 
