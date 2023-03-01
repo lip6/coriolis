@@ -129,18 +129,16 @@ def setupPaths ( verbose, debug=False ):
     buildType  = Path( 'Debug.Shared' if debug else 'Release.Shared' )
     scriptPath = Path( __file__ ).resolve()
     topDirs    = []
-    if debug:
-        topDirs.append( homeDir / 'coriolis-2.x' / osDir / buildType / 'install' )
-    if 'CORIOLIS_TOP' in os.environ:
-        topDirs.append( Path( os.environ['CORIOLIS_TOP'] ))
-    if not debug:
-        topDirs.append( homeDir / 'coriolis-2.x' / osDir / buildType / 'install' )
-    topDirs  += [ Path( '/soc/coriolis2' ) 
+
+    topDirs  += [ homeDir / 'coriolis-2.x' / osDir / buildType / 'install'
+                , Path( '/soc/coriolis2' ) 
                 , Path( '/usr' ) 
                 ]
+    if not debug and 'CORIOLIS_TOP' in os.environ:
+        topDirs.insert( 0, Path( os.environ['CORIOLIS_TOP'] ))
     for part in scriptPath.parts:
         if part == 'nightly':
-            topDirs.append( homeDir / 'nightly' / 'coriolis-2.x' / osDir / buildType / 'install' )
+            topDirs.insert( 0, homeDir / 'nightly' / 'coriolis-2.x' / osDir / buildType / 'install' )
             break
     if verbose:
         print( '  o  Self locating Coriolis:' )
@@ -156,8 +154,10 @@ def setupPaths ( verbose, debug=False ):
         return False
 
     os.environ[ 'CORIOLIS_TOP' ] = coriolisTop.as_posix()
-    if coriolisTop == '/usr': sysconfDir = Path( 'etc', 'coriolis2' )
-    else:                     sysconfDir = coriolisTop / 'etc' / 'coriolis2'
+    #if coriolisTop == '/usr': sysconfDir = Path( 'etc', 'coriolis2' )
+    #else:                     sysconfDir = coriolisTop / 'etc' / 'coriolis2'
+    if coriolisTop == '/usr': sysconfDir = Path( 'etc' )
+    else:                     sysconfDir = coriolisTop / 'etc'
 
     # Setup PATH.
     binPath = envWriteBack( 'PATH', (coriolisTop/'bin').as_posix() )
@@ -205,11 +205,11 @@ def setupPaths ( verbose, debug=False ):
         return False
     pythonPath = ''
     for packageDir in [ sitePackagesDir
-                      , sitePackagesDir / 'crlcore'
-                      , sitePackagesDir / 'cumulus'
-                      , sitePackagesDir / 'cumulus/plugins'
-                      , sitePackagesDir / 'status'
-                      , sysconfDir
+                     #, sitePackagesDir / 'crlcore'
+                     #, sitePackagesDir / 'cumulus'
+                     #, sitePackagesDir / 'cumulus/plugins'
+                     #, sitePackagesDir / 'status'
+                     #, sysconfDir
                       ]:
         sys.path.append( str(packageDir) )
         if len(pythonPath): pythonPath += ':'
@@ -220,7 +220,7 @@ def setupPaths ( verbose, debug=False ):
 
 def printVariable ( name ):
     if not name in os.environ:
-        print( '{:<16}:'.format( name ))
+        print( '{}:'.format( name ))
         print( '- variable_not_set' )
         return
     values = os.environ[ name ].split( ':' )
