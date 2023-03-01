@@ -25,8 +25,8 @@ class Lvx ( FlowTask ):
 
         super().__init__( rule, [], depends )
         self.flags         = flags
-        self.referenceFile = Path( self.file_depend(0) )
-        self.checkedFile   = Path( self.file_depend(1) )
+        self.referenceFile = self.file_depend(0)
+        self.checkedFile   = self.file_depend(1)
         self.command       = [ 'lvx'
                              , self.referenceFile.suffix[1:]
                              , self.checkedFile.suffix[1:]
@@ -39,7 +39,7 @@ class Lvx ( FlowTask ):
 
         if self.flags & Lvx.SaveReorder:
             env = CRL.AllianceFramework.get().getEnvironment()
-            self.targets = [ self.checkedFile.stem + '.' + env.getOUT_LO() ]
+            self.targets = [ self.checkedFile.with_suffix('.' + env.getOUT_LO()) ]
         self.addClean( self.targets )
 
     def __repr__ ( self ):

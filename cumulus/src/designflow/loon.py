@@ -27,8 +27,8 @@ class Loon ( FlowTask ):
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
         self.flags      = flags
-        self.inputFile  = Path( self.file_depend(0) )
-        self.outputFile = Path( self.targets[0] )
+        self.inputFile  = self.file_depend(0)
+        self.outputFile = self.targets[0]
         self.command    = [ 'loon' ]
         #print( 'flags=0x{:08x}'.format( flags ))
         if flags & Loon.XschModeCritical:  self.command += [ '-x', '0' ]
@@ -39,7 +39,7 @@ class Loon ( FlowTask ):
         if flags & Loon.OptimDelaysMostly: self.command += [ '-m', '3' ]
         if flags & Loon.OptimDelays:       self.command += [ '-m', '4' ]
         self.command   += [ self.inputFile.stem, self.outputFile.stem ]
-        self.targets.append( self.outputFile.stem + '.xsc' )
+        self.targets.append( self.outputFile.with_suffix('.xsc') )
         self.addClean( self.targets )
 
     def __repr__ ( self ):

@@ -45,7 +45,7 @@ class PnR ( FlowTask ):
 
     def __repr__ ( self ):
         return '<pnr {} depends=[{}]>' \
-               .format( self.design, ','.join(self.file_dep) )
+               .format( self.design, ','.join([f.as_posix() for f in self.file_dep]) )
 
     @property
     def design ( self ):

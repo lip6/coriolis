@@ -24,8 +24,8 @@ class S2R ( FlowTask ):
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
         self.flags      = flags
-        self.inputFile  = Path( self.file_depend(0) )
-        self.outputFile = Path( self.targets[0] )
+        self.inputFile  = self.file_depend(0)
+        self.outputFile = self.targets[0]
         self.command    = [ 's2r' ]
         if flags & S2R.NoDenotch:           self.command.append( '-t' )
         if flags & S2R.DeleteNames:         self.command.append( '-c' )

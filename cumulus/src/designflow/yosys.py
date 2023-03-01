@@ -38,11 +38,8 @@ class Yosys ( FlowTask ):
         if top is not None:
             self.top = top
         else:
-            if self.main.find('.') == -1:
-                self.top = self.main
-            else:
-                self.top = '.'.join( self.main.split('.')[0:-1] )
-        self.targets = [ self.top + '.blif' ]
+            self.top = self.main.stem
+        self.targets = [ Path( self.top + '.blif') ]
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -68,8 +65,8 @@ class Yosys ( FlowTask ):
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Can\'t find design file "{}".'.format( design ))
             self.success = TaskFailed( e )
             return
-        if   design.endswith('.v' ): self._run_pass( 'read_verilog {}'.format( design ))
-        elif design.endswith('.il'): self._run_pass( 'read_ilang   {}'.format( design ))
+        if   design.suffix == '.v' : self._run_pass( 'read_verilog {}'.format( design.as_posix() ))
+        elif design.suffix == '.il': self._run_pass( 'read_ilang   {}'.format( design.as_posix() ))
         else:
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Unsupported input format for "{}".'.format( design ))
             self.success = TaskFailed( e )

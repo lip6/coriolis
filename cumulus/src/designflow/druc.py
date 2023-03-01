@@ -20,10 +20,10 @@ class Druc ( FlowTask ):
     def __init__ ( self, rule, depends, flags ):
         super().__init__( rule, [], depends )
         self.flags         = flags
-        self.referenceFile = Path( self.file_depend(0) )
-        self.targets       = [ self.referenceFile.stem + '.drc'
-                             , self.referenceFile.stem + '_drc.gds'
-                             , self.referenceFile.stem + '_rng.gds' ]
+        self.referenceFile = self.file_depend(0)
+        self.targets       = [ self.referenceFile.with_suffix('.drc')
+                             , Path(self.referenceFile.stem + '_drc.gds')
+                             , Path(self.referenceFile.stem + '_rng.gds') ]
         self.command       = [ 'druc', self.referenceFile.stem ]
         if flags & Druc.Verbose: self.command.append( '-v' )
         self.addClean( self.targets )

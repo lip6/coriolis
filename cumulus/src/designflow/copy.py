@@ -17,8 +17,8 @@ class Copy ( FlowTask ):
 
     def __init__ ( self, rule, targets, depends ):
         super().__init__( rule, targets, depends )
-        self.sourceFile = Path( self.file_depend(0) )
-        self.targetFile = Path( self.targets[0] )
+        self.sourceFile = self.file_depend(0)
+        self.targetFile = self.targets[0]
         self.addClean( self.targets )
 
     def __repr__ ( self ):

@@ -37,18 +37,20 @@ class Blif2Vst ( FlowTask ):
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
         self.flags   = flags
-        if not self.targets[0].endswith('.vst'):
+        if not self.targets[0].suffix == '.vst':
             raise TargetNotVst( 'Blif2Vst.__init__(): First target *must* "{}" be a vst file.' \
                                 .format( self.targets[0] ))
         self.addClean( self.targets )
 
     def __repr__ ( self ):
+        for d in self.file_dep:
+            print( d )
         return '<blif2vst {} depends=[{}]>' \
-               .format( self.design, ','.join(self.file_dep) )
+               .format( self.design, ','.join([f.as_posix() for f in self.file_dep]) )
 
     @property
     def design ( self ):
-        if len(self.targets): return self.targets[0][:-4]
+        if len(self.targets): return self.targets[0].stem
         return None
 
     def doTask ( self ):
@@ -60,7 +62,7 @@ class Blif2Vst ( FlowTask ):
 
         print( 'Blif2Vst.doTask() on "{}"'.format( self.design ))
         views = CRL.Catalog.State.Logical | self.flags
-        cell  = CRL.Blif.load( self.file_depend() )
+        cell  = CRL.Blif.load( self.file_depend().as_posix() )
         if cell.getName() == 'top':
             print( '  o  Renaming RTLIL anonymous top cell "top" into "{}".'.format(self.design) )
             cell.setName( self.design )

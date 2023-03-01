@@ -7,12 +7,16 @@ class BadAliasDepend ( Exception ): pass
 
 
 class Alias ( FlowTask ):
+    """
+    Create an alias for a rule. Takes only two arguments, the aliased name
+    of the rule and the original rule itself.
+    """
 
     @staticmethod
     def mkRule ( rule, depends=[] ):
         return Alias( rule, depends )
 
-    def __init__ ( self, rule, depends, ):
+    def __init__ ( self, rule, depends ):
         if len(depends) != 1:
             raise BadAliasDepend( 'Alias.__init__(): There must be exactly *one* dependency ({})' \
                                   .format( depends ))

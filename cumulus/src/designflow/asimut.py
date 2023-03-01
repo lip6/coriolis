@@ -21,9 +21,9 @@ class Asimut ( FlowTask ):
 
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
-        self.vhdlFile   = Path( self.file_depend(0) )
-        self.patFile    = Path( self.file_depend(1) )
-        self.simFile    = Path( self.targets[0] )
+        self.vhdlFile   = self.file_depend(0)
+        self.patFile    = self.file_depend(1)
+        self.simFile    = self.targets[0]
         self.command    = [ 'asimut' ]
         if flags & Asimut.RootIsBehavioral: self.command.append( '-b' )
         if flags & Asimut.UseBdd:           self.command.append( '-bdd' )

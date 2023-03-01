@@ -24,8 +24,8 @@ class Boom ( FlowTask ):
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
         self.flags      = flags
-        self.inputFile  = Path( self.file_depend(0) )
-        self.outputFile = Path( self.targets[0] )
+        self.inputFile  = self.file_depend(0)
+        self.outputFile = self.targets[0]
         self.command    = [ 'boom' ]
         if flags & Boom.Verbose:           self.command.append( '-V' )
         if flags & Boom.TraceOn:           self.command.append( '-T' )

@@ -3,8 +3,9 @@ import os
 from   pathlib import Path
 from   doit.exceptions import TaskFailed
 
-class BadDependency  ( Exception ): pass
-class DuplicatedRule ( Exception ): pass
+class BadDependency       ( Exception ): pass
+class DuplicatedRule      ( Exception ): pass
+class UnsupportedFileType ( Exception ): pass
 
 
 class ShellEnv ( object ):
@@ -90,11 +91,13 @@ class FlowTask ( object ):
     ``create_doit_tasks()`` method. It alows task to be chained directly
     between them instead of only through dependency/target files.
 
-    1. Targets management: targets are always file name, stored as strings.
+    1. Targets management: targets can be passed as plain files (string)
+       or pathlib.Path, but are all internally converted into Path.
 
     2. Dependencies management: they can be plain files, pathlib.Path objects
        or other tasks. In the later case, the dependencies are the *targets*
-       of said task, which sould be files, as stated on 1.
+       of said task, which sould be pathlib.Path, as stated on 1.
+       plain files are converted into pathlib.Path.
 
     3. Perform an early check for homonymous tasks.
 
@@ -105,6 +108,19 @@ class FlowTask ( object ):
     rules        = {}
     cleanTargets = []
 
+    @staticmethod
+    def _normFile ( depend ):
+        if isinstance(depend,FlowTask) or isinstance(depend,Path): return depend
+        if isinstance(depend,str): return Path(depend)
+        raise UnsupportedFileType( 'FlowTask._normFile(): Unsupported type for "{}"'.format(depend) )
+
+    @staticmethod
+    def _normFileList ( depends ):
+        if not depends: return [];
+        if isinstance(depends,list):
+            return [ FlowTask._normFile(d) for d in depends ]
+        return [ FlowTask._normFile(depends) ]
+
     def __init__ ( self, basename, targets, depends ):
         """
         Promote ``targets`` and ``depends`` arguments to list if needed.
@@ -113,12 +129,8 @@ class FlowTask ( object ):
         if FlowTask.hasRule(basename):
             raise DuplicatedRule( 'FlowTask.__init__(): Duplicated rule "{}"'.format(basename) )
         self.basename = basename
-        if   depends is None:              self.depends = []
-        elif not isinstance(depends,list): self.depends = [ depends ]
-        else:                              self.depends =   depends
-        if   targets is None:              self.targets = []
-        elif not isinstance(targets,list): self.targets = [ targets ]
-        else:                              self.targets =   targets
+        self.depends  = FlowTask._normFileList( depends )
+        self.targets  = FlowTask._normFileList( targets )
         FlowTask.rules[ self.basename ] = self
 
     @staticmethod
@@ -130,19 +142,13 @@ class FlowTask ( object ):
     def file_dep ( self ):
         """
         Build the list of dependencies to be passed on to doit (file_dep task dict).
-        Convert back pathlib.Path object to string. If the dependency is another
-        FlowTask, pass on it's own targets.
+        If the dependency is another FlowTask, pass on it's own targets.
+        All files are pathlib.Path.
         """
         files = []
         for depend in self.depends:
-            if isinstance(depend,str):
-                files += [ depend ]
-            elif isinstance(depend,Path):
-                files += [ depend.as_posix() ]
-            elif isinstance(depend,FlowTask):
-                files += depend.targets
-            else:
-                raise BadDependency( 'FlowTask.file_dep(): Unsupported kind of dependency {}.'.format(depend) )
+            if isinstance(depend,FlowTask): files += depend.targets
+            else:                           files += [ depend ]
         return files
 
     def file_target ( self, tindex=0 ):
@@ -174,8 +180,7 @@ class FlowTask ( object ):
         """
         from ..helpers.io import ErrorMessage
         for target in self.targets:
-            path = Path( target )
-            if not path.is_file():
+            if not target.is_file():
                 e = ErrorMessage( 1, '{}(): The rule "{}" did *not* generate target "{}".' \
                                      .format( methodName, self.basename, target ))
                 return TaskFailed( e )
@@ -186,6 +191,6 @@ class FlowTask ( object ):
         Add the targets list to the global list. This is a helper method
         that has to be explicitely called in derived classes.
         """
-        FlowTask.cleanTargets += targets
+        FlowTask.cleanTargets += FlowTask._normFileList( targets )
         
         

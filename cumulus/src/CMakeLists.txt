@@ -16,8 +16,11 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/graal.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/dreal.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosys.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosysnp.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/pnr.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/klayout.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/command.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/clean.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/alias.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/technos.py

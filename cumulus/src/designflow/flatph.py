@@ -22,14 +22,14 @@ class Flatph ( FlowTask ):
         super().__init__( rule, targets, depends )
         self.flags    = flags
         self.instFile = None
-        self.hierFile = Path( self.file_depend(0) )
-        self.flatFile = Path( self.targets[0] )
+        self.hierFile = self.file_depend(0)
+        self.flatFile = self.targets[0]
         self.command  = [ 'flatph' ]
         if flags & Flatph.Transistor: self.command.append( '-t' )
         if flags & Flatph.Catalog:    self.command.append( '-r' )
         self.command.append( self.hierFile.stem )
         if len(self.targets) > 1:
-            self.instFile = Path( self.targets[1] )
+            self.instFile = self.targets[1]
             self.command.append( self.instFile.stem )
         self.command.append( self.flatFile.stem )
         self.addClean( self.targets )

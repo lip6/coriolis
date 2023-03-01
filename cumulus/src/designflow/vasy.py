@@ -23,11 +23,11 @@ class Vasy ( FlowTask ):
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
         self.flags      = flags
-        self.vhdlFile   = Path( self.file_depend(0) )
+        self.vhdlFile   = self.file_depend(0)
         if len(self.targets) > 1:
-            self.outputFile = Path( self.targets[1].stem+'.vbe' )
+            self.outputFile = self.targets[1].with_suffix('.vbe')
         else:
-            self.outputFile = Path( self.targets[0] )
+            self.outputFile = self.targets[0]
         self.command = [ 'vasy' ]
         if flags & Vasy.Verbose:          self.command.append( '-V' )
         if flags & Vasy.UseStdLogic:      self.command.append( '-S' )

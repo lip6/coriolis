@@ -23,7 +23,7 @@ class Graal ( FlowTask ):
     def __init__ ( self, rule, depends, flags ):
         super().__init__( rule, [], depends )
         self.flags         = flags
-        self.layoutFile    = Path( self.file_depend(0) )
+        self.layoutFile    = self.file_depend(0)
         self.command       = [ 'graal', '-l', self.layoutFile.stem ]
         if flags & Graal.Debug:   self.command.append( '-debug' )
         if flags & Graal.Xor:     self.command.append( '-xor' )

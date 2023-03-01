@@ -9,40 +9,33 @@ from   .task import FlowTask, ShellEnv
 class MissingTarget ( Exception ): pass
 
 
-class Genpat ( FlowTask ):
+class Command ( FlowTask ):
 
     @staticmethod
-    def mkRule ( rule, targets, depends=[], flags=0 ):
-        return Genpat( rule, targets, depends, flags )
+    def mkRule ( rule, targets=[], depends=[], command=None ):
+        return Command( rule, targets, depends, command )
 
-    def __init__ ( self, rule, targets, depends, flags ):
+    def __init__ ( self, rule, targets, depends, command ):
         super().__init__( rule, targets, depends )
-        self.inputFile  = self.file_depend(0)
-        self.outputFile = self.targets[0]
-        self.command    = [ 'genpat' ]
-        self.command   += [ self.inputFile.stem ]
+        self.command  = command
         self.addClean( self.targets )
 
     def __repr__ ( self ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from coriolis.CRL        import AllianceFramework
-        from coriolis.helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
 
-        shellEnv = ShellEnv()
-        shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
-            e = ErrorMessage( 1, 'Genpat.doTask(): UNIX command failed ({}).' \
+            e = ErrorMessage( 1, 'Command.doTask(): UNIX command failed ({}).' \
                                  .format( state.returncode ))
             return TaskFailed( e )
-        return self.checkTargets( 'Genpat.doTask' )
+        return self.checkTargets( 'Command.doTask' )
 
     def create_doit_tasks ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )
-               , 'targets'  : self.targets
                , 'file_dep' : self.file_dep
                }
