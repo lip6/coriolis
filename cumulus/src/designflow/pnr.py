@@ -80,7 +80,7 @@ class PnR ( FlowTask ):
             unicorn = Unicorn.UnicornGui.create()
             unicorn.setApplicationName  ( 'cgt')
             unicorn.registerTool        ( Etesian.GraphicEtesianEngine.grab() )
-            unicorn.registerTool        ( Kite.GraphicKiteEngine.grab() )
+           #unicorn.registerTool        ( Kite.GraphicKiteEngine.grab() )
             unicorn.registerTool        ( Katana.GraphicKatanaEngine.grab() )
             unicorn.registerTool        ( Bora.GraphicBoraEngine.grab() )
             unicorn.registerTool        ( Tutorial.GraphicTutorialEngine.grab() )
