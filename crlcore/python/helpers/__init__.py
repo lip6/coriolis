@@ -373,7 +373,7 @@ def loadUserSettings ():
                                    , '(path:"{}")'.format( os.path.abspath(os.getcwd()) )
                                    ] ))
     else:
-      import symbolic.cmos
+      import coriolis.technos.symbolic.cmos
     tagConfModules()
     return rvalue
 
