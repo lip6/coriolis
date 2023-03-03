@@ -36,6 +36,24 @@ def scrubPath ( pathName ):
     return scrubbedEnv
 
 
+def readLdconfig ():
+    ldpath = ''
+    uname  = subprocess.Popen ( ["ldconfig", "-vXN"]
+                              , stdout=subprocess.PIPE
+                              , stderr=subprocess.PIPE )
+    lines  = uname.stdout.readlines()
+    for rawline in lines:
+        line = rawline.decode('ascii')
+        if line[0] != '/': continue
+        if len(ldpath) > 0: ldpath += ':'
+        ldpath += line.split(':')[0]
+    return ldpath
+        
+
+
+    
+
+
 def guessOs ():
     useDevtoolset     = False
     osEL9             = re.compile (".*Linux.*el9.*x86_64.*")
@@ -273,7 +291,7 @@ if __name__ == "__main__":
       sys.exit( 1 )
 
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
-  strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
+  strippedLibraryPath = "%s:%s:%s"  % ( absLibDir  , strippedLibraryPath, readLdconfig() )
   if not options.nopython:
       pyVersion = sys.version_info
       version   = "%d.%d" % (pyVersion[0],pyVersion[1])
