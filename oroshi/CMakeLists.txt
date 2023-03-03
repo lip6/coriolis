@@ -2,7 +2,7 @@
 
  project(OROSHI)
  
- cmake_minimum_required(VERSION 3.18)
+ cmake_minimum_required(VERSION 3.16)
  option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
@@ -18,7 +18,7 @@
  if (USE_LIBBFD)
    find_package(Libbfd)
  endif()
- find_package(Python 3             REQUIRED COMPONENTS Interpreter Development.Module)
+ find_package(Python 3             REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages   REQUIRED)
  find_package(HURRICANE            REQUIRED)
  find_package(CORIOLIS             REQUIRED)

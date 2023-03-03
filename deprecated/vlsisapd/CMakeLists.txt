@@ -3,7 +3,7 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(VLSISAPD)
 
- cmake_minimum_required(VERSION 3.18)
+ cmake_minimum_required(VERSION 3.16)
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
@@ -18,7 +18,7 @@
  setup_boost(program_options python)
 
  find_package(LibXml2 REQUIRED)
- find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
+ find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(BISON REQUIRED)
  find_package(FLEX REQUIRED)

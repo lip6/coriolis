@@ -3,7 +3,7 @@
  set( CMAKE_LEGACY_CYGWIN_WIN32 0 )
  project( FLUTE )
 
- cmake_minimum_required(VERSION 3.18)
+ cmake_minimum_required(VERSION 3.16)
 
  set( ignoreVariables "${BUILD_DOC} ${CMAKE_INSTALL_DIR}" )
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
@@ -17,7 +17,7 @@
  check_distribution()
  setup_sysconfdir( "${CMAKE_INSTALL_PREFIX}" )
 
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)

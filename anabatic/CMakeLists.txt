@@ -9,7 +9,7 @@
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
- cmake_minimum_required(VERSION 3.18)
+ cmake_minimum_required(VERSION 3.16)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
@@ -19,7 +19,7 @@
  setup_boost()
  setup_qt()
  
- find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
+ find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(FLUTE REQUIRED)
  find_package(HURRICANE REQUIRED)

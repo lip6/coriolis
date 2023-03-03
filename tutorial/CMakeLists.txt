@@ -5,7 +5,7 @@
 
  option(BUILD_DOC "Build the documentation (doxygen)" OFF)
  
- cmake_minimum_required(VERSION 3.18)
+ cmake_minimum_required(VERSION 3.16)
 
  set(ignoreVariables "${LIB_SUFFIX} ${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
@@ -19,7 +19,7 @@
  setup_qt()
  
  find_package(Libexecinfo        REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
