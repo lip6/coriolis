@@ -1,7 +1,6 @@
 
 import os.path
 from   pathlib import Path
-from   pyosys          import libyosys as yosys
 from   doit.exceptions import TaskFailed
 from   .task           import FlowTask
 
@@ -55,6 +54,7 @@ class Yosys ( FlowTask ):
         return self.file_depend( 0 )
 
     def _run_pass ( self, command ):
+        from pyosys import libyosys as yosys
         if self.success is not True: return
         yosys.run_pass( command, self.tool )
 
@@ -84,6 +84,7 @@ class Yosys ( FlowTask ):
         self._run_pass( 'hierarchy -top {}\n'.format( self.top ))
 
     def doTask ( self ):
+        from pyosys       import libyosys as yosys
         from ..helpers.io import ErrorMessage
         if self.liberty is None:
             e = ErrorMessage( 1, [ 'Yosys.doTask(): "liberty" has not been set' ] )
