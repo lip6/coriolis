@@ -17,6 +17,10 @@ reDebugStaticPattern   = re.compile( r".*Debug\.Static.*" )
 
 
 def scrubPath ( pathName ):
+    """
+    Remove any previous path elements pointing to Coriolis,
+    so we don't get multiple installed versions tangled together.
+    """
     pathEnv = os.getenv( pathName )
     if not pathEnv: return ""
     pathList     = pathEnv.split( ':' )
@@ -37,6 +41,12 @@ def scrubPath ( pathName ):
 
 
 def readLdconfig ():
+    """
+    Read the default paths setup by ldconfig.
+
+    .. note:: Disabled now, as it was not the root cause of the
+              linking problem. Keep as a code example...
+    """
     ldpath = ''
     uname  = subprocess.Popen ( ["ldconfig", "-vXN"]
                               , stdout=subprocess.PIPE
@@ -48,13 +58,13 @@ def readLdconfig ():
         if len(ldpath) > 0: ldpath += ':'
         ldpath += line.split(':')[0]
     return ldpath
-        
-
-
-    
 
 
 def guessOs ():
+    """
+    Try to guess under which OS we are running by calling uname.
+    Also guess if we are using software collections *devtoolset*.
+    """
     useDevtoolset     = False
     osEL9             = re.compile (".*Linux.*el9.*x86_64.*")
     osSlsoc7x_64      = re.compile (".*Linux.*el7.*x86_64.*")
@@ -121,6 +131,17 @@ def guessOs ():
 
 
 def guessShell ( forcedShell ):
+    """
+    Try to guess the kind shell we are running under, Bourne-like shells
+    (sh, bash, ksh, zsh) or C-shell likes (csh, tcsh).
+
+    Identifies the parent process we are running into, which should be
+    the shell, and compares to know ones.
+
+    .. note:: The SHELL nvironment variable cannot be trusted, it seems
+              to be set once the user logs in, and if it change afterwards,
+              it's not updated.
+    """
    # This environement variable cannot be trusted as it is set once when
    # the user logs in. If aftewards it changes it that variable is *not*
    # affected :-(.
@@ -152,7 +173,6 @@ def guessShell ( forcedShell ):
 
 
 if __name__ == "__main__":
-
   osType,useDevtoolset    = guessOs()
   buildType               = "Release"
   linkType                = "Shared"
@@ -291,7 +311,7 @@ if __name__ == "__main__":
       sys.exit( 1 )
 
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
-  strippedLibraryPath = "%s:%s:%s"  % ( absLibDir  , strippedLibraryPath, readLdconfig() )
+  strippedLibraryPath = "%s:%s"  % ( absLibDir  , strippedLibraryPath )
   if not options.nopython:
       pyVersion = sys.version_info
       version   = "%d.%d" % (pyVersion[0],pyVersion[1])
