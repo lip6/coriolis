@@ -45,6 +45,7 @@ class Klayout ( FlowTask ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )
+               , 'targets'  : self.targets
                , 'file_dep' : self.file_dep
                }
         
