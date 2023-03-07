@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2023, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_DIAGONAL_H
-#define HURRICANE_DIAGONAL_H
-
+#pragma  once
 #include "hurricane/Component.h"
 
 
@@ -85,7 +83,7 @@ namespace Hurricane {
             Point      _source;
             Point      _target;
             DbU::Unit  _width;
-            DbU::Unit  _B;  // octagon half Y.
+            DbU::Unit  _dWidth;  // octagon half Y.
   };
 
 
@@ -105,5 +103,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Diagonal);
-
-#endif // HURRICANE_DIAGONAL_H

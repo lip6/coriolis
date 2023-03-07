@@ -50,7 +50,7 @@ namespace Hurricane {
     , _source(source)
     , _target(target)
     , _width (width)
-    , _B     (0)
+    , _dWidth(0)
   {
     _updateB();
   }
@@ -175,16 +175,16 @@ namespace Hurricane {
 
   void  Diagonal::_updateB ()
   {
-    _B = (DbU::Unit)( (float)(_width)/sqrt(2) ) - _width/2;
-    if (_B % DbU::getPolygonStep()) {
-      _B += DbU::getPolygonStep() - (_B % DbU::getPolygonStep());
+    _dWidth = (DbU::Unit)( (float)(_width)/sqrt(2) ) - _width/2;
+    if (_dWidth % DbU::getPolygonStep()) {
+      _dWidth += DbU::getPolygonStep() - (_dWidth % DbU::getPolygonStep());
     }
 
-    if (_B > _width/2) {
+    if (_dWidth > _width/2) {
       cerr << Error( "Diagonal::_updateB(): Width is too small invalid polygon on,\n"
                      "        %s"
                    , getString(this).c_str() ) << endl;
-      _B = _width/2;
+      _dWidth = _width/2;
     }
   }
 
@@ -206,30 +206,30 @@ namespace Hurricane {
       Point t = (dx > 0) ? _target : _source;
 
       switch ( i ) {
-        case 0: return Point( s.getX()- A, s.getY()-_B );
-        case 1: return Point( s.getX()-_B, s.getY()- A );
-        case 2: return Point( s.getX()+_B, s.getY()- A );
-        case 3: return Point( t.getX()+ A, t.getY()-_B );
-        case 4: return Point( t.getX()+ A, t.getY()+_B );
-        case 5: return Point( t.getX()+_B, t.getY()+ A );
-        case 6: return Point( t.getX()-_B, t.getY()+ A );
+        case 0: return Point( s.getX()- A, s.getY()-_dWidth );
+        case 1: return Point( s.getX()-_dWidth, s.getY()- A );
+        case 2: return Point( s.getX()+_dWidth, s.getY()- A );
+        case 3: return Point( t.getX()+ A, t.getY()-_dWidth );
+        case 4: return Point( t.getX()+ A, t.getY()+_dWidth );
+        case 5: return Point( t.getX()+_dWidth, t.getY()+ A );
+        case 6: return Point( t.getX()-_dWidth, t.getY()+ A );
         default:
-        case 7: return Point( s.getX()- A, s.getY()+_B );
+        case 7: return Point( s.getX()- A, s.getY()+_dWidth );
       }
     } else {
       Point s = (dx > 0) ? _source : _target;
       Point t = (dx > 0) ? _target : _source;
 
       switch ( i ) {
-        case 0: return Point( s.getX()- A, s.getY()-_B );
-        case 1: return Point( t.getX()-_B, t.getY()- A );
-        case 2: return Point( t.getX()+_B, t.getY()- A );
-        case 3: return Point( t.getX()+ A, t.getY()-_B );
-        case 4: return Point( t.getX()+ A, t.getY()+_B );
-        case 5: return Point( s.getX()+_B, s.getY()+ A );
-        case 6: return Point( s.getX()-_B, s.getY()+ A );
+        case 0: return Point( s.getX()- A, s.getY()-_dWidth );
+        case 1: return Point( t.getX()-_dWidth, t.getY()- A );
+        case 2: return Point( t.getX()+_dWidth, t.getY()- A );
+        case 3: return Point( t.getX()+ A, t.getY()-_dWidth );
+        case 4: return Point( t.getX()+ A, t.getY()+_dWidth );
+        case 5: return Point( s.getX()+_dWidth, s.getY()+ A );
+        case 6: return Point( s.getX()-_dWidth, s.getY()+ A );
         default:
-        case 7: return Point( s.getX()- A, s.getY()+_B );
+        case 7: return Point( s.getX()- A, s.getY()+_dWidth );
       }
     }
   }
