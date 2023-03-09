@@ -157,10 +157,14 @@ def guessShell ( forcedShell ):
                     , u'/usr/local/bin/csh'
                     ]
     if shellName is None:
-        psCommand    = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
-        shell        = psCommand.stdout.readlines()[1].decode('utf8')[:-1].split()[3].lstrip('-')
-        whichCommand = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
-        shellPath    = whichCommand.stdout.readlines()[0][:-1].decode('utf8')
+        try:
+            psResult     = subprocess.run( ['ps', '-p', str(os.getppid()) ], capture_output=True, check=True )
+            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[3].lstrip('-')
+            whichCommand = subprocess.run( ['which', shell ], capture_output=True, check=True )
+            shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
+        except Exception:
+            shellPath = u'/bin/bash'
+            print( 'echo "Shell *NOT* guessed, using {}";'.format(shellPath) )
        #print( 'GUESSED shellPath={}'.format(shellPath) )
     else:
         shellPath = forcedShell
