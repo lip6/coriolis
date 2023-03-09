@@ -31,6 +31,7 @@
                    set( depLibs       flute
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}
+                                      ${HURRICANE_LIBRARIES}
                                       ${UTILITIES_LIBRARY}
                                       
                                       -lutil
