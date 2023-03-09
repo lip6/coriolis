@@ -32,6 +32,7 @@
                        -lutil
                       )
 
+    find_package (Python3 COMPONENTS Interpreter Development)
 
        add_definitions( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                         -DSYS_CONF_DIR="${SYS_CONF_DIR}"
@@ -97,6 +98,7 @@
                                     ${HURRICANE_LIBRARIES}
                                     ${LEFDEF_LIBRARIES}
                                     ${QtX_LIBRARIES}
+                                    ${Python3_LIBRARIES}
                                     -lutil
                       )
 

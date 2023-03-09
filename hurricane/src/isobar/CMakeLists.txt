@@ -8,6 +8,7 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
+    find_package (Python3 COMPONENTS Interpreter Development)
                    set( pyCpps     ProxyProperty.cpp
                                    PythonAttributes.cpp
                                    PyBreakpoint.cpp
@@ -167,6 +168,7 @@
                       )
 
                    set( depLibs    hurricane
+                                   ${Python3_LIBRARIES}
                                    ${Boost_LIBRARIES}
                                    
                       )

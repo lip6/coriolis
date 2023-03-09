@@ -12,6 +12,7 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
+      find_package (Python3 COMPONENTS Interpreter Development)
                    set( includes     katana/Constants.h
                                      katana/Block.h
                                      katana/TrackCost.h
@@ -109,6 +110,7 @@
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
+                                     ${Python3_LIBRARIES}
                                       -lutil
                                      ${LIBEXECINFO_LIBRARIES}
                       )
