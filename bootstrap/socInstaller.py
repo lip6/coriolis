@@ -232,6 +232,13 @@ class BenchsCommand ( CommandArg ):
     def __init__ ( self, benchsDir, fdLog=None ):
         CommandArg.__init__ ( self, [ '../bin/go.sh' ], wd=benchsDir, fdLog=fdLog )
         return
+
+
+class PyBenchsCommand ( CommandArg ):
+
+    def __init__ ( self, benchsDir, fdLog=None ):
+        CommandArg.__init__ ( self, [ '../bin/gopy.sh' ], wd=benchsDir, fdLog=fdLog )
+        return
         
 
 
@@ -286,7 +293,7 @@ class Configuration ( object ):
         , 'homeDir'     , 'masterHost'
         , 'debugArg'    , 'nightlyMode', 'dockerMode', 'chrootMode'
         , 'rmSource'    , 'rmBuild'
-        , 'doGit'       , 'doAlliance' , 'doCoriolis', 'doBenchs', 'doSendReport'
+        , 'doGit'       , 'doAlliance' , 'doCoriolis', 'doBenchs', 'doPyBenchs', 'doSendReport'
         , 'success'     , 'rcode'
         ]
     SecondaryNames = \
@@ -309,6 +316,7 @@ class Configuration ( object ):
         self._doAlliance   = False
         self._doCoriolis   = False
         self._doBenchs     = False
+        self._doPyBenchs   = False
         self._doSendReport = False
         self._nightlyMode  = False
         self._dockerMode   = False
@@ -435,7 +443,7 @@ class Configuration ( object ):
             otherArgs = [ '--qt5' ]
             if self.debugArg: otherArgs.append( self.debugArg )
             if target == 'EL9':
-                otherArgs.append( '--project=support' )
+               #otherArgs.append( '--project=support' )
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
                #commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
             if target == 'SL7_64':
@@ -451,6 +459,8 @@ class Configuration ( object ):
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
         if self.doBenchs:
             commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
+        if self.doPyBenchs:
+            commands.append( PyBenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
         return commands
 
 
@@ -532,7 +542,8 @@ parser.add_option ( "--do-report"   , action="store_true" ,                dest=
 parser.add_option ( "--nightly"     , action="store_true" ,                dest="nightly"      , help="Perform a nighly build." )
 parser.add_option ( "--docker"      , action="store_true" ,                dest="docker"       , help="Perform a build inside a docker container." )
 parser.add_option ( "--chroot"      , action="store_true" ,                dest="chroot"       , help="Perform a build inside a chrooted environment." )
-parser.add_option ( "--benchs"      , action="store_true" ,                dest="benchs"       , help="Run the <alliance-checker-toolkit> sanity benchs." )
+parser.add_option ( "--benchs"      , action="store_true" ,                dest="benchs"       , help="Run the <alliance-checker-toolkit> sanity benchs (make)." )
+parser.add_option ( "--pybenchs"    , action="store_true" ,                dest="pybenchs"     , help="Run the <alliance-checker-toolkit> sanity benchs (doit)." )
 parser.add_option ( "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove the build/install directories." )
 parser.add_option ( "--rm-source"   , action="store_true" ,                dest="rmSource"     , help="Remove the Git source repositories." )
 parser.add_option ( "--rm-all"      , action="store_true" ,                dest="rmAll"        , help="Remove everything (source+build+install)." )
@@ -553,6 +564,7 @@ try:
     if options.doAlliance:                conf.doAlliance   = True
     if options.doCoriolis:                conf.doCoriolis   = True
     if options.benchs:                    conf.doBenchs     = True
+    if options.pybenchs:                  conf.doPyBenchs   = True
     if options.doReport:                  conf.doSendReport = True
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
@@ -562,6 +574,7 @@ try:
     if conf.doAlliance: conf.openLog( 'alliance' )
     if conf.doCoriolis: conf.openLog( 'coriolis' )
     if conf.doBenchs:   conf.openLog( 'benchs'   )
+    if conf.doPyBenchs: conf.openLog( 'benchs'   )
     if conf.dockerMode: os.environ['USER'] = 'root'
 
     gitSupports = []
