@@ -94,7 +94,9 @@ namespace Hurricane {
     _trace->setLineWrapMode         ( QTextEdit::FixedColumnWidth );
     _trace->setLineWrapColumnOrWidth( 140 );
     _trace->setSizePolicy           ( QSizePolicy::Expanding, QSizePolicy::Expanding );
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
     _trace->setSizeAdjustPolicy     ( QAbstractScrollArea::AdjustToContents );
+#endif
     _trace->hide                    ();
 
     QCheckBox* showTrace = new QCheckBox ();

@@ -853,7 +853,11 @@ namespace Hurricane {
     QPrinter printer ( QPrinter::ScreenResolution );
     printer.setOutputFileName ( "unicorn-snapshot.pdf" );
     printer.setPageSize       ( (QPrinter::PaperSize  )Cfg::getParamEnumerate("viewer.printer.paper"      ,0)->asInt() );
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    printer.setOrientation( (QPrinter::Orientation)Cfg::getParamEnumerate("viewer.printer.orientation",0)->asInt() );
+#else
     printer.setPageOrientation( (QPageLayout::Orientation)Cfg::getParamEnumerate("viewer.printer.orientation",0)->asInt() );
+#endif
 
     QPrintDialog  dialog ( &printer );
     if ( dialog.exec() == QDialog::Accepted )
