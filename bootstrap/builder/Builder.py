@@ -40,7 +40,7 @@ class Builder:
         self._devtoolset       = 0
         self._llvmtoolset      = 0
         self._bfd              = "OFF"
-        self._qt5              = False
+        self._qt4              = False
         self._openmp           = False
         self._enableShared     = "ON"
         self._enableDoc        = "OFF"
@@ -71,7 +71,7 @@ class Builder:
         elif attribute == "llvmtoolset":
             self._llvmtoolset = value
         elif attribute == "bfd":              self._bfd              = value
-        elif attribute == "qt5":              self._qt5              = value
+        elif attribute == "qt4":              self._qt4              = value
         elif attribute == "openmp":           self._openmp           = value
         elif attribute == "enableDoc":        self._enableDoc        = value
         elif attribute == "enableShared":     self._enableShared     = value
@@ -175,7 +175,7 @@ class Builder:
                                           #, "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib64/boost169"
                                            ]
         if self._bfd:           command += [ "-D", "USE_LIBBFD:STRING=%s" % self._bfd ]
-        if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
+        if self._qt4:           command += [ "-D", "WITH_QT4:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
         command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"     % self.buildMode
                   #, "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared

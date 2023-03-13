@@ -227,7 +227,17 @@ endif()
 # Find Qt, the union of all the modules we need for the whole project.
 #
  macro(setup_qt)
-   if(WITH_QT5)
+   if(WITH_QT4)
+     message(STATUS "Attempt to find Qt 4...")
+    # For Qt4.
+    #set(QT_USE_QTXML "true")
+     set(QT_USE_QTSVG "true")
+     find_package(Qt4 REQUIRED)
+     include(${QT_USE_FILE})
+    # ${QT_QTSVG_LIBRARY}
+     set(QtX_INCLUDE_DIRS ${QT_INCLUDE_DIR})
+     set(QtX_LIBRARIES    ${QT_LIBRARIES})
+   else()
      message(STATUS "Attempt to find Qt 5...")
     # For Qt5
      find_package(Qt5Core         REQUIRED)
@@ -247,32 +257,22 @@ endif()
                           ${Qt5Core_LIBRARIES} )
     #message(STATUS "QtX_INCLUDE_DIRS: ${QtX_INCLUDE_DIRS}")
     #message(STATUS "QtX_LIBRARIES: ${QtX_LIBRARIES}")
-   else()
-     message(STATUS "Attempt to find Qt 4...")
-    # For Qt4.
-    #set(QT_USE_QTXML "true")
-     set(QT_USE_QTSVG "true")
-     find_package(Qt4 REQUIRED)
-     include(${QT_USE_FILE})
-    # ${QT_QTSVG_LIBRARY}
-     set(QtX_INCLUDE_DIRS ${QT_INCLUDE_DIR})
-     set(QtX_LIBRARIES    ${QT_LIBRARIES})
    endif()
  endmacro()
 
  macro(qtX_wrap_cpp variable)
-   if (WITH_QT5)
-     qt5_wrap_cpp(${variable} ${ARGN})
-   else()
+   if (WITH_QT4)
      qt4_wrap_cpp(${variable} ${ARGN})
+   else()
+     qt5_wrap_cpp(${variable} ${ARGN})
    endif()
  endmacro()
 
  macro(qtX_add_resources variable)
-   if (WITH_QT5)
-     qt5_add_resources(${variable} ${ARGN})
-   else()
+   if (WITH_QT4)
      qt4_add_resources(${variable} ${ARGN})
+   else()
+     qt5_add_resources(${variable} ${ARGN})
    endif()
  endmacro()
 
@@ -281,15 +281,7 @@ endif()
 # Find Qwt, correlated to the Qt version.
 #
  macro(setup_qwt)
-   if(WITH_QT5)
-     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
-                               PATHS         /usr/include/qt5
-                                             /usr/include
-                               PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
-                              PATHS /usr/lib64
-			            /usr/lib )
-   else()
+   if(WITH_QT4)
      find_path(QWT_INCLUDE_DIR NAMES         qwt.h
                                PATHS         /usr/include/qwt-qt4
                                              /opt/local/libexec/qt4/include
@@ -300,6 +292,14 @@ endif()
                               PATHS /opt/local/libexec/qt4/lib
                                     /usr/lib64
 				    /usr/lib )
+   else()
+     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
+                               PATHS         /usr/include/qt5
+                                             /usr/include
+                               PATH_SUFFIXES qwt )
+     find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
+                              PATHS /usr/lib64
+			            /usr/lib )
    endif()
 
    if( QWT_INCLUDE_DIR AND QWT_LIBRARY)

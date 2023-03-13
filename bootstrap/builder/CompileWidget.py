@@ -2,7 +2,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2023, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -122,7 +122,7 @@ class CompileWidget ( QWidget ):
        #if self.options.svnStatus:  command += [ '--svn-update' ]
         if self.options.enableDoc:  command += [ '--doc' ]
         if self.options.devtoolset: command += [ '--devtoolset-8' ]
-        if self.options.qt5:        command += [ '--qt5' ]
+        if self.options.qt4:        command += [ '--qt4' ]
         if self.options.noCache:    command += [ '--no-cache' ]
         if self.options.rmBuild:    command += [ '--rm-build' ]
         if self.options.verbose:    command += [ '--verbose' ]
