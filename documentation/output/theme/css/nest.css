@@ -85,9 +85,9 @@ a.more{
 
 pre, code {
     background: #f8f7fa;
-    padding: 10px;
-    font-size: 14px;
-    line-height: 24px;
+    padding: 5px 10px;
+    font-size: 12px;
+  /*line-height: 24px;*/
     font-family: Consolas, monaco, monospace;
     border-radius: 0px;
     color: #4b505a;
