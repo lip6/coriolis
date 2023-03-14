@@ -1,5 +1,6 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<bora/src>" -*-
 
+   find_package (Qwt REQUIRED)
    include_directories( ${BORA_SOURCE_DIR}/src
                         ${ANABATIC_INCLUDE_DIR}
                         ${KATANA_INCLUDE_DIR}
@@ -83,6 +84,7 @@
                                      PyBora.cpp
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
+	  find_package (Python3 COMPONENTS Interpreter Development)
 
                    set( depLibs      ${KATANA_LIBRARIES}
                                      ${ANABATIC_LIBRARIES}
@@ -99,7 +101,9 @@
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QWT_LIBRARY}
+                                     ${QT_LIBRARIES}
                                      ${QtX_LIBRARIES}
+				     ${Python3_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                       -lutil
                       )

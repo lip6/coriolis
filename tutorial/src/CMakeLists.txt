@@ -24,6 +24,7 @@
                                      PyGraphicTutorialEngine.cpp
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
+	  find_package (Python3 COMPONENTS Interpreter Development)
 
                    set( depLibs      ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
@@ -40,6 +41,7 @@
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
+				     ${Python3_LIBRARIES}
                                       -lutil
                                      ${LIBEXECINFO_LIBRARIES}
                       )

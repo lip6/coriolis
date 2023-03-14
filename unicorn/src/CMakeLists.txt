@@ -44,6 +44,7 @@
  
           qtX_wrap_cpp( mocCpps       ${mocincludes} )
      qtX_add_resources( RCC_SRCS      Unicorn.qrc )
+	  find_package (Python3 COMPONENTS Interpreter Development)
 
                    set( depLibs       ${SOLSTICE_GRAPHICAL_LIBRARIES}
                                       ${SOLSTICE_LIBRARIES}
@@ -76,6 +77,7 @@
                                       ${LEFDEF_LIBRARIES}
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}
+				      ${Python3_LIBRARIES}
                                       ${Boost_LIBRARIES}
                                       
                                       -lutil

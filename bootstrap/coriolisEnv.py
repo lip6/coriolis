@@ -159,7 +159,14 @@ def guessShell ( forcedShell ):
     if shellName is None:
         try:
             psResult     = subprocess.run( ['ps', '-p', str(os.getppid()) ], capture_output=True, check=True )
-            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[3].lstrip('-')
+            cmdnom        = psResult.stdout.splitlines()[0].decode('utf8').split()
+            if "CMD" in cmdnom:
+                cmdidx = cmdnom.index("CMD")
+            elif "COMMAND" in cmdnom:
+                cmdidx = cmdnom.index("COMMAND")
+            else:
+                cmdidx = 3
+            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[cmdidx].lstrip('-')
             whichCommand = subprocess.run( ['which', shell ], capture_output=True, check=True )
             shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
         except Exception:
