@@ -158,14 +158,15 @@ def guessShell ( forcedShell ):
                     ]
     if shellName is None:
         try:
-            psResult     = subprocess.run( ['ps', '-p', str(os.getppid()) ], capture_output=True, check=True )
-            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[3].lstrip('-')
+            psResult     = subprocess.run( ['ps', '-o', 'comm', '-p', str(os.getppid()) ]
+                                         , capture_output=True, check=True )
+            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[0].lstrip('-')
             whichCommand = subprocess.run( ['which', shell ], capture_output=True, check=True )
             shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
         except Exception:
             shellPath = u'/bin/bash'
             print( 'echo "Shell *NOT* guessed, using {}";'.format(shellPath) )
-       #print( 'GUESSED shellPath={}'.format(shellPath) )
+        print( 'echo "GUESSED shellPath={}";'.format(shellPath) )
     else:
         shellPath = forcedShell
        #print( 'FORCED shellPath={}'.format(shellPath) )
@@ -301,7 +302,7 @@ if __name__ == "__main__":
                   shellMessage = "Using script location Coriolis 2 (%s)" % rootDir
 
   if osType.startswith("Cygwin"):
-      strippedPath = "%s/lib:%s" % ( coriolisTop, libDir, strippedPath )
+      strippedPath = "%s/lib:%s" % ( coriolisTop, strippedPath )
   if not os.path.exists(coriolisTop):
       print( 'echo "[ERROR] coriolisEnv.py, top directory "{}" do not exists."'.format( coriolisTop ))
       sys.exit( 1 )
