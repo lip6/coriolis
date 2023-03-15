@@ -130,7 +130,7 @@ def guessOs ():
     return ( osType, useDevtoolset )
 
 
-def guessShell ( forcedShell ):
+def guessShell ( defaultShell, osType ):
     """
     Try to guess the kind shell we are running under, Bourne-like shells
     (sh, bash, ksh, zsh) or C-shell likes (csh, tcsh).
@@ -157,19 +157,26 @@ def guessShell ( forcedShell ):
                     , u'/usr/local/bin/csh'
                     ]
     if shellName is None:
+        psCommand = ['ps', '-o', 'comm', '-p', str(os.getppid()) ]
+        cmdField  = 0
+        if osType.startswith('Cygwin'):
+            psCommand = ['ps', '-p', str(os.getppid()) ]
+            cmdField  = 7
         try:
-            psResult     = subprocess.run( ['ps', '-o', 'comm', '-p', str(os.getppid()) ]
-                                         , capture_output=True, check=True )
-            shell        = psResult.stdout.splitlines()[1].decode('utf8').split()[0].lstrip('-')
-            whichCommand = subprocess.run( ['which', shell ], capture_output=True, check=True )
-            shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
+            psResult = subprocess.run( psCommand, capture_output=True, check=True )
+            shell    = psResult.stdout.splitlines()[1].decode('utf8').split()[cmdField].lstrip('-')
+            if shell[0] != '/':
+                whichCommand = subprocess.run( ['which', shell ], capture_output=True, check=True )
+                shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
+            else:
+                shellPath = shell
+            print( 'echo "[GUESSED] shellPath={}";'.format(shellPath) )
         except Exception:
             shellPath = u'/bin/bash'
-            print( 'echo "Shell *NOT* guessed, using {}";'.format(shellPath) )
-        print( 'echo "GUESSED shellPath={}";'.format(shellPath) )
+            print( 'echo "[ERROR] \\"ps\\" command failure, using {}";'.format(shellPath) )
     else:
-        shellPath = forcedShell
-       #print( 'FORCED shellPath={}'.format(shellPath) )
+        shellPath = defaultShell
+        print( 'echo "Defaulting to shell {}";'.format(shellPath) )
     if shellPath in cshBins:
        #print( 'Matched C-Shell' )
         isBourneShell = False
@@ -206,7 +213,7 @@ if __name__ == "__main__":
   if options.shared:     linkType  = "Shared"
   if options.rootDir:    rootDir   = options.rootDir
   if options.shell:      shellName = options.shell
-  shellBin, isBourneShell = guessShell( shellName )
+  shellBin, isBourneShell = guessShell( shellName, osType )
 
   scriptPath = os.path.abspath( os.path.dirname( sys.argv[0] ))
   if 'Debug.' in scriptPath: buildType = 'Debug'
