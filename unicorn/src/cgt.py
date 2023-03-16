@@ -20,7 +20,7 @@ try:
     from coriolis import helpers
     helpers.loadUserSettings()
     from coriolis import Cfg, Hurricane, Viewer, CRL, Etesian, Anabatic, \
-                         Katana, Bora, Tutorial, Unicorn
+                         Katana, Tramontana, Bora, Tutorial, Unicorn
 except Exception as e:
     helpers.io.showPythonTrace( sys.argv[0], e )
     sys.exit(2)
@@ -182,8 +182,8 @@ if __name__ == '__main__':
           unicorn = Unicorn.UnicornGui.create()
           unicorn.setApplicationName  ('cgt')
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
-         #unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
           unicorn.registerTool        (Katana.GraphicKatanaEngine.grab())
+          unicorn.registerTool        (Tramontana.GraphicTramontanaEngine.grab())
           unicorn.registerTool        (Bora.GraphicBoraEngine.grab())
           unicorn.registerTool        (Tutorial.GraphicTutorialEngine.grab())
          #unicorn.setAnonNetSelectable(False)
