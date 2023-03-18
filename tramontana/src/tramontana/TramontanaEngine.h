@@ -27,6 +27,7 @@ namespace Hurricane {
   class CellViewer;
 }
 #include "crlcore/ToolEngine.h"
+#include "tramontana/Equipotential.h"
 
 
 namespace Tramontana {
@@ -53,15 +54,19 @@ namespace Tramontana {
     public:                                                      
               const Name&              getName                    () const;
       inline        void               setViewer                  ( CellViewer* );
+      inline        CellViewer*        getViewer                  ();
               void                     extract                    ();
+              void                     showEquipotentials         () const;
+              void                     add                        ( Equipotential* );
       virtual Record*                  _getRecord                 () const;
       virtual std::string              _getString                 () const;
       virtual std::string              _getTypeName               () const;
     private:                          
     // Attributes.                    
       static  Name                     _toolName;
-    protected:                         
+    private:                         
               CellViewer*              _viewer;
+              std::set<Equipotential*,DBo::CompareById>  _equipotentials;
     protected:
     // Constructors & Destructors.
                                 TramontanaEngine ( Cell* );
@@ -74,7 +79,8 @@ namespace Tramontana {
   };
 
   
-  inline void  TramontanaEngine::setViewer ( CellViewer* viewer ) { _viewer=viewer; }
+  inline void        TramontanaEngine::setViewer ( CellViewer* viewer ) { _viewer=viewer; }
+  inline CellViewer* TramontanaEngine::getViewer () { return _viewer; }
 
 
 }  // Tramontana namespace.

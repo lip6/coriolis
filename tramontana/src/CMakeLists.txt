@@ -9,14 +9,20 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
-                   set( includes     tramontana/TramontanaEngine.h
+                   set( includes     tramontana/Tile.h
+                                     tramontana/SweepLine.h
+                                     tramontana/Equipotential.h
+                                     tramontana/TramontanaEngine.h
                                      tramontana/GraphicTramontanaEngine.h
                       )
                    set( pyIncludes   tramontana/PyTramontanaEngine.h
                                      tramontana/PyGraphicTramontanaEngine.h
                       )
                    set( mocIncludes  tramontana/GraphicTramontanaEngine.h )
-                   set( cpps         TramontanaEngine.cpp
+                   set( cpps         Tile.cpp
+                                     SweepLine.cpp
+                                     Equipotential.cpp
+                                     TramontanaEngine.cpp
                                      GraphicTramontanaEngine.cpp
                       )
                    set( pyCpps       PyTramontana.cpp

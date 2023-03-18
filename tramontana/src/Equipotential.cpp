@@ -12,13 +12,10 @@
 // |  Second impl. :                   Jean-Paul CHAPUT              |
 // |  E-mail       :           Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module   :  "./TramontanaEngine.cpp"                       |
+// |  C++ Module   :  "./Equipotential.cpp"                          |
 // +-----------------------------------------------------------------+
 
 
-#include <Python.h>
-#include <sstream>
-#include <fstream>
 #include <iomanip>
 #include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
@@ -37,11 +34,8 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
-#include "hurricane/viewer/Script.h"
-#include "crlcore/Measures.h"
 #include "crlcore/Utilities.h"
-#include "crlcore/AllianceFramework.h"
-#include "tramontana/SweepLine.h"
+#include "tramontana/Equipotential.h"
 #include "tramontana/TramontanaEngine.h"
 
 
@@ -65,12 +59,10 @@ namespace Tramontana {
   using Hurricane::UpdateSession;
   using Hurricane::DebugSession;
   using Hurricane::tab;
-  using Hurricane::ForEachIterator;
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
-  using Hurricane::Timer;
   using Hurricane::Box;
   using Hurricane::Layer;
   using Hurricane::Entity;
@@ -79,114 +71,116 @@ namespace Tramontana {
   using Hurricane::RoutingPad;
   using Hurricane::Cell;
   using Hurricane::Instance;
-  using CRL::Catalog;
-  using CRL::AllianceFramework;
-  using CRL::addMeasure;
-  using CRL::Measures;
-  using CRL::MeasuresSet;
 
 
 // -------------------------------------------------------------------
-// Class  :  "Tramontana::TramontanaEngine".
-
-  Name  TramontanaEngine::_toolName = "Tramontana";
+// Class  :  "Tramontana::Equipotential".
 
 
-  const Name& TramontanaEngine::staticGetName ()
-  { return _toolName; }
-
-
-  TramontanaEngine* TramontanaEngine::get ( const Cell* cell )
-  { return static_cast<TramontanaEngine*>(ToolEngine::get(cell,staticGetName())); }
-
-
-  TramontanaEngine::TramontanaEngine ( Cell* cell )
-    : Super          (cell)
-    , _viewer        (NULL)
-    , _equipotentials()
+  Equipotential::Equipotential ( Cell* owner )
+    : _owner      (owner)
+    , _boundingBox()
+    , _components ()
+    , _childs     ()
   { }
 
 
-  void  TramontanaEngine::_postCreate ()
+  void  Equipotential::_postCreate ()
   {
     Super::_postCreate();
+    TramontanaEngine* tramontana = TramontanaEngine::get( _owner );
+    tramontana->add( this );
   }
 
 
-  TramontanaEngine* TramontanaEngine::create ( Cell* cell )
+  Equipotential* Equipotential::create ( Cell* owner )
   {
-    TramontanaEngine* tramontana = new TramontanaEngine ( cell );
-
-    tramontana->_postCreate();
-
-    return tramontana;
+    Equipotential* equi = new Equipotential ( owner );
+    equi->_postCreate();
+    return equi;
   }
 
 
-  void  TramontanaEngine::_preDestroy ()
+  void  Equipotential::_preDestroy ()
   {
-    cdebug_log(160,1) << "TramontanaEngine::_preDestroy()" << endl;
-
-    cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
-           << _cell->getName() << ">" << endl;
     Super::_preDestroy();
-
-    cdebug_tabw(160,-1);
   }
 
 
-  TramontanaEngine::~TramontanaEngine ()
+  Equipotential::~Equipotential ()
   { }
 
 
-  const Name& TramontanaEngine::getName () const
-  { return _toolName; }
+  Cell* Equipotential::getCell () const
+  { return _owner; }
 
 
-  void  TramontanaEngine::extract ()
+  Box  Equipotential::getBoundingBox () const
+  { return _boundingBox; }
+
+
+  void  Equipotential::add ( Component* component )
   {
-    cerr << "TramontanaEngine::extract() called on " << getCell() << endl;
-    SweepLine sweepLine ( this );
-    sweepLine.run();
-    showEquipotentials();
+    _components.insert( component );
   }
 
-
-  void  TramontanaEngine::showEquipotentials () const
-  {
-    cerr << "Equipotentials:" << endl;
-    for ( Equipotential* equi : _equipotentials ) {
-      cerr << equi << endl;
-      for ( Component* component : equi->getComponents() ) {
-        cerr << "| " << component << endl;
-      }
-    }
-  }
-
-  void   TramontanaEngine::add ( Equipotential* equi )
-  {
-    _equipotentials.insert( equi );
-  }
   
+  void  Equipotential::add ( Occurrence child )
+  {
+    if (child.getPath().isEmpty())
+      add( dynamic_cast<Component*>( child.getEntity() ));
+    else
+      _childs.push_back( child );
+  }
 
-  string  TramontanaEngine::_getTypeName () const
-  { return "Tramontana::TramontanaEngine"; }
+  
+  void  Equipotential::merge ( Equipotential* other )
+  {
+    if (this == other) {
+      cerr << Warning( "Equipotential::merge(): Attempt to merge itself (ignored).\n"
+                       "        (on: %s)"
+                     , getString(this).c_str()
+                     ) << endl;
+      return;
+    }
+    
+    for ( Component* component : other->getComponents() ) {
+      add( component );
+    }
+    for ( Occurrence child : other->getChilds() ) {
+      add( child );
+    }
+    other->clear();
+  }
+
+  
+  void  Equipotential::clear ()
+  {
+    _components.clear();
+    _childs    .clear();
+  }
 
 
-  string  TramontanaEngine::_getString () const
+  string  Equipotential::_getTypeName () const
+  { return "Tramontana::Equipotential"; }
+
+
+  string  Equipotential::_getString () const
   {
     ostringstream  os;
-    os << "<TramontanaEngine " << _cell->getName () << ">";
+    os << "<Equipotential id:" << getId() << " " << _owner->getName() << ">";
     return os.str();
   }
 
 
-  Record* TramontanaEngine::_getRecord () const
+  Record* Equipotential::_getRecord () const
   {
-    Record* record = Super::_getRecord ();
-                                     
+    Record* record = new Record ( _getString() );
     if (record) {
-    //record->add( getSlot( "_blocks"       , &_blocks ) );
+      record->add( getSlot( "_owner"      , &_owner       ) );
+      record->add( getSlot( "_boundingBox", &_boundingBox ) );
+      record->add( getSlot( "_components" , &_components  ) );
+      record->add( getSlot( "_childs"     , &_childs      ) );
     }
     return record;
   }

@@ -140,6 +140,24 @@ extern "C" {
   }
 
 
+  static PyObject* PyTramontanaEngine_extract ( PyTramontanaEngine* self )
+  {
+    cdebug_log(40,0) << "PyTramontanaEngine_extract()" << endl;
+    HTRY
+    METHOD_HEAD("TramontanaEngine.extract()")
+    if (tramontana->getViewer()) {
+      if (ExceptionWidget::catchAllWrapper( std::bind(&TramontanaEngine::extract,tramontana) )) {
+        PyErr_SetString( HurricaneError, "TramontanaEngine::extract() has thrown an exception (C++)." );
+        return NULL;
+      }
+    } else {
+      tramontana->extract();
+    }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Accessors (Attributes).
 
   // Standart Destroy (Attribute).
@@ -151,8 +169,12 @@ extern "C" {
                                    , "Returns the Tramontana engine attached to the Cell, None if there isnt't." }
     , { "create"                   , (PyCFunction)PyTramontanaEngine_create                  , METH_VARARGS|METH_STATIC
                                    , "Create a Tramontana engine on this cell." }
+    , { "destroy"                  , (PyCFunction)PyTramontanaEngine_destroy                 , METH_NOARGS
+                                   , "Destroy a Tramontana engine." }
     , { "setViewer"                , (PyCFunction)PyTramontanaEngine_setViewer               , METH_VARARGS
                                    , "Associate a Viewer to this TramontanaEngine." }
+    , { "extract"                  , (PyCFunction)PyTramontanaEngine_extract                 , METH_NOARGS
+                                   , "Perform the layout extraction." }
     , {NULL, NULL, 0, NULL}        /* sentinel */
     };
 
