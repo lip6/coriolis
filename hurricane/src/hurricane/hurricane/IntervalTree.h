@@ -186,8 +186,9 @@ namespace Hurricane {
   template< typename Data >
   typename IntervalTree<Data>::overlap_iterator& IntervalTree<Data>::overlap_iterator::operator++ ()
   {
-    while (this->isValid()) {
+    while ( true ) {
       Super::iterator::operator++();
+      if (not this->isValid()) break;
 
       cdebug_log(0,0) << "IntervalTree::overlap_iterator::operator++() "
                       << ::getString(this->getNode()) << std::endl;
