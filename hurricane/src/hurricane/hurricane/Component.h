@@ -21,6 +21,7 @@
 #ifndef HURRICANE_COMPONENT_H
 #define HURRICANE_COMPONENT_H
 
+#include  <set>
 #include "hurricane/Points.h"
 #include "hurricane/Go.h"
 #include "hurricane/Components.h"
@@ -168,6 +169,9 @@ namespace Hurricane {
     public:
       JsonComponent ( unsigned long flags );
   };
+
+
+  typedef  std::set<Component*,DBo::CompareById>  ComponentSet;
 
 
 } // Hurricane namespace.

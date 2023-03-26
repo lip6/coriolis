@@ -1625,31 +1625,31 @@ extern "C" {
     catch ( const Warning& w ) {                                    \
       std::string message = getString(w);                           \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
     }                                                               \
     catch ( const Error& e ) {                                      \
       std::string message = getString(e);                           \
       if (not e.where().empty()) message += "\n" + e.where();       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
       return NULL;                                                  \
     }                                                               \
     catch ( const Bug& e ) {                                        \
       std::string message = getString(e);                           \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
       return NULL;                                                  \
     }                                                               \
     catch ( const Exception& e ) {                                  \
       std::string message = "Unknown Hurricane::Exception";         \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
       return NULL;                                                  \
     }                                                               \
     catch ( const std::exception& e )  {                            \
       std::string message = std::string(e.what());                  \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
       return NULL;                                                  \
     }                                                               \
     catch ( ... ) {                                                 \
@@ -1657,7 +1657,7 @@ extern "C" {
         "Unmanaged exception, neither a Hurricane::Error nor"       \
         " a std::exception.";                                       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
-      std::cerr << message << std::endl; \
+      std::cerr << message << std::endl;                            \
       return NULL;                                                  \
     }                                                               \
 
