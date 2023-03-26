@@ -53,9 +53,12 @@ namespace Tramontana {
       static  TramontanaEngine*        get                        ( const Cell* );
     public:                                                      
               const Name&              getName                    () const;
+      inline  const std::set<Equipotential*,DBo::CompareById>
+                                       getEquipotentials () const;
       inline        void               setViewer                  ( CellViewer* );
       inline        CellViewer*        getViewer                  ();
               void                     extract                    ();
+              void                     consolidate                ();
               void                     showEquipotentials         () const;
               void                     add                        ( Equipotential* );
       virtual Record*                  _getRecord                 () const;
@@ -81,6 +84,8 @@ namespace Tramontana {
   
   inline void        TramontanaEngine::setViewer ( CellViewer* viewer ) { _viewer=viewer; }
   inline CellViewer* TramontanaEngine::getViewer () { return _viewer; }
+  inline const std::set<Equipotential*,DBo::CompareById>
+                     TramontanaEngine::getEquipotentials () const { return _equipotentials; }
 
 
 }  // Tramontana namespace.

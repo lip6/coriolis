@@ -17,6 +17,7 @@
 
 
 #include <iomanip>
+#include <set>
 #include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
@@ -39,6 +40,32 @@
 #include "tramontana/TramontanaEngine.h"
 
 
+namespace {
+
+  using Hurricane::Net;
+
+
+  class NetCompareByName {
+    public:
+      bool operator() ( const Net* lhs, const Net* rhs ) const;
+  };
+
+
+  bool NetCompareByName::operator() ( const Net* lhs, const Net* rhs ) const
+  {
+    if (lhs->isFused    () != rhs->isFused    ()) return rhs->isFused();
+    if (lhs->isAutomatic() != rhs->isAutomatic()) return rhs->isAutomatic();
+    if (lhs->isGlobal   () != rhs->isGlobal   ()) return rhs->isGlobal();
+
+    if (lhs->getName().size() != rhs->getName().size())
+       return lhs->getName().size() < rhs->getName().size();
+    return lhs->getName() < rhs->getName();
+  }
+
+
+}  // Anonymous namespace.
+
+
 namespace Tramontana {
 
   using std::cout;
@@ -54,6 +81,7 @@ namespace Tramontana {
   using std::ostringstream;
   using std::setprecision;
   using std::vector;
+  using std::set;
   using std::make_pair;
   using Hurricane::dbo_ptr;
   using Hurricane::UpdateSession;
@@ -66,6 +94,7 @@ namespace Tramontana {
   using Hurricane::Box;
   using Hurricane::Layer;
   using Hurricane::Entity;
+  using Hurricane::Net;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
@@ -77,11 +106,20 @@ namespace Tramontana {
 // Class  :  "Tramontana::Equipotential".
 
 
+  const char* defaultName = "Unamed (please call consolidate())";
+
+
   Equipotential::Equipotential ( Cell* owner )
     : _owner      (owner)
     , _boundingBox()
     , _components ()
     , _childs     ()
+    , _name       (defaultName)
+    , _type       (Net::Type::UNDEFINED)
+    , _direction  (Net::Direction::DirUndefined)
+    , _isExternal (false)
+    , _isGlobal   (false)
+    , _isAutomatic(false)
   { }
 
 
@@ -154,6 +192,34 @@ namespace Tramontana {
   }
 
   
+  void  Equipotential::consolidate ()
+  {
+    int containsFused = 0;
+    set<Net*,NetCompareByName> nets;
+    for ( Component* component : getComponents() ) {
+      Net* net = component->getNet();
+      if (net->isFused    ()) containsFused = 1;
+      if (net->isExternal ()) _isExternal   = true;
+      if (net->isGlobal   ()) _isGlobal     = true;
+      if (net->isAutomatic()) _isAutomatic  = true;
+      _type       = net->getType();
+      _direction |= net->getDirection();
+      nets.insert( component->getNet() );
+    }
+    _name = getString( (*nets.begin())->getName() );
+    _name += " [" + getString(nets.size() - containsFused);
+    if (containsFused)
+      _name += "+fused";
+    _name += "] ";
+    _name += ((_isExternal ) ? "e" : "-");
+    _name += ((_isGlobal   ) ? "g" : "-");
+    _name += ((_isAutomatic) ? "a" : "-");
+    _name += " ";
+    _name += getString(_type     ) + " ";
+    _name += getString(_direction);
+  }
+
+  
   void  Equipotential::clear ()
   {
     _components.clear();
@@ -168,7 +234,9 @@ namespace Tramontana {
   string  Equipotential::_getString () const
   {
     ostringstream  os;
-    os << "<Equipotential id:" << getId() << " " << _owner->getName() << ">";
+    os << "<Equipotential id:" << getId()
+    //<< " " << getName()
+       << " " << _owner->getName() << ">";
     return os.str();
   }
 
@@ -181,6 +249,7 @@ namespace Tramontana {
       record->add( getSlot( "_boundingBox", &_boundingBox ) );
       record->add( getSlot( "_components" , &_components  ) );
       record->add( getSlot( "_childs"     , &_childs      ) );
+    //record->add( getSlot( "_name"       , &_name        ) );
     }
     return record;
   }

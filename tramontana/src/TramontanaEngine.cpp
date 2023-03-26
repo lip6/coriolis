@@ -148,6 +148,7 @@ namespace Tramontana {
     cerr << "TramontanaEngine::extract() called on " << getCell() << endl;
     SweepLine sweepLine ( this );
     sweepLine.run();
+    consolidate();
     showEquipotentials();
   }
 
@@ -162,6 +163,15 @@ namespace Tramontana {
       }
     }
   }
+
+
+  void  TramontanaEngine::consolidate ()
+  {
+    cerr << "Tramontana::consolidate()" << endl;
+    for ( Equipotential* equi : _equipotentials )
+      equi->consolidate();
+  }
+
 
   void   TramontanaEngine::add ( Equipotential* equi )
   {

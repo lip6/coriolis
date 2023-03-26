@@ -36,6 +36,7 @@
 #include <crlcore/Utilities.h>
 #include <crlcore/AllianceFramework.h>
 #include <anabatic/GCell.h>
+#include <tramontana/TabEquipotentials.h>
 #include <tramontana/GraphicTramontanaEngine.h>
 
 
@@ -100,7 +101,6 @@ namespace Tramontana {
         fontScale   = -5;
         halfHeight  =  9;
         halfWidth   = 39;
-        
       }
       
       painter.setPen  ( pen );
@@ -188,6 +188,14 @@ namespace Tramontana {
                       , "Run the extractor"
                       , std::bind(&GraphicTramontanaEngine::_extract,this)
                       );
+
+    ControllerWidget* controller = viewer->getControllerWidget();
+    if (controller) {
+      TabEquipotentials* tabEqui = new TabEquipotentials ();
+      tabEqui->setObjectName( "controller.tabEquipotentials" );
+      tabEqui->setCellWidget( viewer->getCellWidget() );
+      controller->insertTabAfter( "controller.tabNetlist", tabEqui, "Equipotentials" );
+    }
   }
 
 

@@ -133,6 +133,7 @@ namespace Tramontana {
 
   void  SweepLine::mergeEquipotentials ()
   {
+    cerr << "Tramontana::mergeEquipotentials()" << endl;
     Tile::timeTick();
     for ( Tile* tile : Tile::getAllTiles() ) {
       tile->getRoot( Tile::MergeEqui );

@@ -18,12 +18,19 @@
                    set( pyIncludes   tramontana/PyTramontanaEngine.h
                                      tramontana/PyGraphicTramontanaEngine.h
                       )
-                   set( mocIncludes  tramontana/GraphicTramontanaEngine.h )
+                   set( mocIncludes  tramontana/GraphicTramontanaEngine.h
+                                     tramontana/EquipotentialsModel.h
+                                     tramontana/EquipotentialsWidget.h
+                                     tramontana/TabEquipotentials.h
+		      )
                    set( cpps         Tile.cpp
                                      SweepLine.cpp
                                      Equipotential.cpp
                                      TramontanaEngine.cpp
                                      GraphicTramontanaEngine.cpp
+                                     EquipotentialsModel.cpp
+                                     EquipotentialsWidget.cpp
+                                     TabEquipotentials.cpp
                       )
                    set( pyCpps       PyTramontana.cpp
                                      PyTramontanaEngine.cpp

@@ -38,6 +38,7 @@ namespace Tramontana {
   using Hurricane::Net;
   using Hurricane::Cell;
   using Hurricane::Component;
+  using Hurricane::ComponentSet;
   using Hurricane::Occurrence;
 
 
@@ -47,16 +48,17 @@ namespace Tramontana {
   class Equipotential : public Entity {
     public:
       typedef  Entity  Super;
-      typedef  std::set<Component*,DBo::CompareById>  ComponentSet;
     public:
       static        Equipotential*           create         ( Cell* );
       inline        bool                     isEmpty        () const;
       virtual       Cell*                    getCell        () const;
       virtual       Box                      getBoundingBox () const;
+      inline        std::string              getName        () const;
       inline        bool                     hasComponent   ( Component* ) const;
                     void                     add            ( Component* );
                     void                     add            ( Occurrence );
                     void                     merge          ( Equipotential* );
+                    void                     consolidate    ();
                     void                     clear          ();
       inline  const ComponentSet&            getComponents  () const;
       inline  const std::vector<Occurrence>& getChilds      () const;
@@ -77,13 +79,20 @@ namespace Tramontana {
       Box                      _boundingBox;
       ComponentSet             _components;
       std::vector<Occurrence>  _childs;
+      std::string              _name;
+      Net::Type                _type;
+      Net::Direction           _direction;
+      bool                     _isExternal;
+      bool                     _isGlobal;
+      bool                     _isAutomatic;
   };
 
 
   
-  inline bool                               Equipotential::isEmpty       () const { return _components.empty() and _childs.empty(); }
-  inline const Equipotential::ComponentSet& Equipotential::getComponents () const { return _components; }
-  inline const std::vector<Occurrence>&     Equipotential::getChilds     () const { return _childs; }
+  inline bool                           Equipotential::isEmpty       () const { return _components.empty() and _childs.empty(); }
+  inline const ComponentSet&            Equipotential::getComponents () const { return _components; }
+  inline       std::string              Equipotential::getName       () const { return _name; }
+  inline const std::vector<Occurrence>& Equipotential::getChilds     () const { return _childs; }
 
   inline bool  Equipotential::hasComponent ( Component* component ) const
   { return _components.find( component ) != _components.end(); }

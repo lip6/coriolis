@@ -157,15 +157,17 @@ namespace Tramontana {
 
     if (flags & MergeEqui) {
       Equipotential* rootEqui = root->getEquipotential();
-      if (not rootEqui)
+      if (not rootEqui) {
         rootEqui = root->newEquipotential();
+      }
 
       Tile* current = this;
       while ( current ) {
         if (current->isUpToDate()) break;
         if (current->getEquipotential()) {
-          if (current->getEquipotential() != rootEqui)
+          if (current->getEquipotential() != rootEqui) {
             rootEqui->merge( current->getEquipotential() );
+          }
         } else {
           rootEqui->add( current->getOccurrence() );
         }
