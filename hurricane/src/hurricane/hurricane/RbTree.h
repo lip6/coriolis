@@ -557,10 +557,10 @@ namespace Hurricane {
   
     Node* current = root_;
     while ( current ) {
-      cdebug_log(0,0) << "| " << current << std::endl;
+      cdebug_log(0,0) << "| " << current->getValue() << std::endl;
   
       if (current->getValue() == value) {
-        cdebug_log(0,-1) << "> Value found: " << current <<std::endl;
+        cdebug_log(0,-1) << "> Value found: " << current->getValue() <<std::endl;
         return iterator(current);
       }
   

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2018-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2018-2023, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -34,9 +34,7 @@
 //       Third edition, MIT press, 2011, p. 348.
 
 
-#ifndef  HURRICANE_INTERVAL_TREE_H
-#define  HURRICANE_INTERVAL_TREE_H
-
+#pragma  once
 #include "hurricane/Interval.h"
 #include "hurricane/RbTree.h"
 
@@ -117,14 +115,14 @@ namespace Hurricane {
     return record;
   }
 
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::IntervalTree".
 
-
   template< typename Data >
-  class IntervalTree : public RbTree< IntervalData<Data>, Interval::CompareByMin > {
+  class IntervalTree : public RbTree< IntervalData<Data>, Interval::CompareByMinMax > {
     public:
-      typedef  RbTree< IntervalData<Data>, Interval::CompareByMin >  Super;
+      typedef  RbTree< IntervalData<Data>, Interval::CompareByMinMax >  Super;
     public:
       class overlap_iterator : public Super::iterator {
         public:
@@ -414,5 +412,3 @@ namespace Hurricane {
 
 
 }  // HUrricane namespace.
-
-#endif  // HURRICANE_INTERVAL_TREE_H
