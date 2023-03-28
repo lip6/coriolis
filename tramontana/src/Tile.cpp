@@ -108,7 +108,7 @@ namespace Tramontana {
     if (not component->getLayer()->contains(layer)) {
       cerr << Error( "Tile::create(): Component layer does not contains \"%s\".\n"
                      "        (%s)"
-                   , getString(layer->getName()).c_str()
+                   , getString(layer).c_str()
                    , getString(occurrence).c_str()
                    ) << endl;
       return nullptr;

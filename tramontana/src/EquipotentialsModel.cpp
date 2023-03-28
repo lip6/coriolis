@@ -43,7 +43,6 @@ namespace Tramontana {
     static QFont valueFont = Graphics::getFixedFont ( QFont::Normal, true );
 
     if (role == Qt::FontRole) {
-      if (index.row() == 0) return QVariant();
       switch (index.column()) {
         case 0:  return nameFont;
         default: return valueFont;
@@ -54,8 +53,13 @@ namespace Tramontana {
     if (not index.isValid()) return QVariant ();
 
     if (role == Qt::DisplayRole) {
-      int row = index.row ();
-      return QString::fromStdString( _equipotentials[row]->getName() );
+      Equipotential* equi = _equipotentials[ index.row() ];
+      switch ( index.column() ) {
+        case 0: return QString::fromStdString(            equi->getName() );
+        case 1: return QString::fromStdString(            equi->getFlagsAsString() );
+        case 2: return QString::fromStdString( getString( equi->getType() ));
+        case 3: return QString::fromStdString( getString( equi->getDirection() ));
+      }
     }
     return QVariant();
   }
@@ -71,26 +75,20 @@ namespace Tramontana {
 
     if (role == Qt::FontRole   ) return headerFont;
     if (role != Qt::DisplayRole) return QVariant();
-
-    if (section == 0) return QVariant("Equipotential");
-    // if (section < _equipotentials->getColumnCount())
-    //   return _equipotentials->getColumnName( section );
-
+    if (section == 0) return QVariant( "Name" );
+    if (section == 1) return QVariant( "Flags" );
+    if (section == 2) return QVariant( "Type" );
+    if (section == 3) return QVariant( "Direction" );
     return QVariant();
   }
 
 
   int  EquipotentialsModel::rowCount ( const QModelIndex& parent ) const
-  {
-    return _equipotentials.size();
-  }
+  { return _equipotentials.size(); }
 
 
   int  EquipotentialsModel::columnCount ( const QModelIndex& parent ) const
-  {
-    return 1;
-  //return (_equipotentials) ? _equipotentials->getColumnCount() : 1;
-  }
+  { return 4; }
 
 
   const Equipotential* EquipotentialsModel::getEqui ( int row )

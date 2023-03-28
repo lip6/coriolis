@@ -68,7 +68,8 @@ namespace Tramontana {
                           Tile*               getRoot          ( uint32_t flags=Compress );
              inline       Component*          getComponent     () const;
              inline       Occurrence          getOccurrence    () const;
-             inline const BasicLayer*         getLayer         () const;
+             inline       Layer::Mask         getMask          () const;
+             inline const BasicLayer*         getLayer          () const;
              inline const Box&                getBoundingBox   () const;
              inline       Equipotential*      getEquipotential () const;
              inline       DbU::Unit           getLeftEdge      () const;
@@ -110,6 +111,7 @@ namespace Tramontana {
   inline       unsigned int        Tile::getId            () const { return getComponent()->getId(); }
   inline       Component*          Tile::getComponent     () const { return dynamic_cast<Component*>( _occurrence.getEntity() ); }
   inline       Occurrence          Tile::getOccurrence    () const { return _occurrence; }
+  inline       Layer::Mask         Tile::getMask          () const { return _layer->getMask(); }
   inline const BasicLayer*         Tile::getLayer         () const { return _layer; }
   inline const Box&                Tile::getBoundingBox   () const { return _boundingBox; }
   inline       Equipotential*      Tile::getEquipotential () const { return _equipotential; }

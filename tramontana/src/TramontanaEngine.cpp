@@ -145,11 +145,14 @@ namespace Tramontana {
 
   void  TramontanaEngine::extract ()
   {
-    cerr << "TramontanaEngine::extract() called on " << getCell() << endl;
+    cmess1 << "  o  Extracting " << getCell() << endl;
+    startMeasures();
     SweepLine sweepLine ( this );
     sweepLine.run();
     consolidate();
-    showEquipotentials();
+  //showEquipotentials();
+    stopMeasures();
+    printMeasures();
   }
 
 
@@ -167,7 +170,7 @@ namespace Tramontana {
 
   void  TramontanaEngine::consolidate ()
   {
-    cerr << "Tramontana::consolidate()" << endl;
+  //cerr << "Tramontana::consolidate()" << endl;
     for ( Equipotential* equi : _equipotentials )
       equi->consolidate();
   }

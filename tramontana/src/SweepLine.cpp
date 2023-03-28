@@ -83,9 +83,9 @@ namespace Tramontana {
 
 
   SweepLine::SweepLine ( TramontanaEngine* tramontana  )
-    : _tramontana  (tramontana) 
-    , _tiles       ()
-    , _intervalTree()
+    : _tramontana   (tramontana) 
+    , _tiles        ()
+    , _intervalTrees()
   { }
 
 
@@ -95,37 +95,79 @@ namespace Tramontana {
 
   void  SweepLine::run ()
   {
-    BasicLayer* layer = DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" );
-    loadTiles( layer );
+  //cerr << "SweepLine::run()" << endl;
+  //DebugSession::open( 0, 2 );
+    loadTiles();
     for ( Element& element : _tiles ) {
       Tile*     tile     = element.getTile();
       TileIntv  tileIntv ( tile, tile->getYMin(), tile->getYMax() );
-      cerr << right << setw(10) << DbU::getValueString(element.getX()) << " > " << tile << endl;
+    //cerr << right << setw(10) << DbU::getValueString(element.getX()) << " > " << tile << endl;
+      auto  intvTree = _intervalTrees.find( element.getMask() );
+      if (intvTree == _intervalTrees.end()) {
+        cerr << Error( "SweepLine::run(): Missing interval tree for layer(mask) %s."
+                       "        (for tile: %s)"
+                     , getString(element.getMask()).c_str()
+                     , getString(element.getTile()).c_str()
+                     ) << endl;
+        continue;
+      }
       if (element.isLeftEdge()) {
-        for ( const TileIntv& overlap : _intervalTree.getOverlaps(
+        for ( const TileIntv& overlap : intvTree->second.getOverlaps(
                                            Interval(tile->getYMin(), tile->getYMax() ))) {
-          cerr << "           | intersect " << overlap.getData() << endl;
+        //cerr << "           | intersect " << overlap.getData() << endl;
           tile->merge( overlap.getData() );
         }
-        _intervalTree.insert( tileIntv );
+      //cerr << "           | insert tile" << endl;
+        intvTree->second.insert( tileIntv );
       } else {
-        _intervalTree.remove( tileIntv );
+      //cerr << "           | remove tile" << endl;
+        intvTree->second.remove( tileIntv );
+        // if (tile->getId() == 46055) {
+        //   intvTree->second.write( "we_at_remove.gv" );
+        //   for ( auto tile : intvTree->second.getElements() ) {
+        //     cerr << "| in tree:" << tile << endl;
+        //   }
+        // }
       }
     }
+  //DebugSession::close();
     mergeEquipotentials();
   }
 
 
-  void  SweepLine::loadTiles ( const BasicLayer* layer )
+  void  SweepLine::loadTiles ()
   {
-    cerr << "SweepLine::run()" << endl;
+  //cerr << "SweepLine::loadTiles()" << endl;
+    vector<const BasicLayer*>  extracteds;
+    for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
+      if (bl->getMaterial() == BasicLayer::Material::metal)
+        extracteds.push_back( bl );
+    }
+    
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal3" ));
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal2" ));
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" ));
+    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "poly"   ));
+
+    for ( const BasicLayer* layer : extracteds ) {
+      _intervalTrees.insert( make_pair( layer->getMask(), TileIntvTree() ));
+    }
+
     for ( Occurrence occurrence : getCell()->getOccurrencesUnder( getCell()->getBoundingBox() ) ) {
+      vector<Tile*> tiles;
       Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
       if (not component) continue;
-      if (not component->getLayer()->contains(layer)) continue;
-      Tile* tile = Tile::create( occurrence, layer );
-      _tiles.push_back( Element( tile, Tile::LeftEdge ) );
-      _tiles.push_back( Element( tile, Tile::RightEdge ) );
+      for ( const BasicLayer* layer : extracteds ) {
+        if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
+        tiles.push_back( Tile::create( occurrence, layer ));
+        _tiles.push_back( Element( tiles.back(), Tile::LeftEdge ) );
+        _tiles.push_back( Element( tiles.back(), Tile::RightEdge ) );
+        if (tiles.size() > 1)
+          tiles.back()->setParent( tiles[0] );
+      }
+      tiles.clear();
     }
     sort( _tiles.begin(), _tiles.end() );
   }
@@ -133,7 +175,7 @@ namespace Tramontana {
 
   void  SweepLine::mergeEquipotentials ()
   {
-    cerr << "Tramontana::mergeEquipotentials()" << endl;
+  //cerr << "SweepLine::mergeEquipotentials()" << endl;
     Tile::timeTick();
     for ( Tile* tile : Tile::getAllTiles() ) {
       tile->getRoot( Tile::MergeEqui );

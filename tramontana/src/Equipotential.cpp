@@ -117,9 +117,11 @@ namespace Tramontana {
     , _name       (defaultName)
     , _type       (Net::Type::UNDEFINED)
     , _direction  (Net::Direction::DirUndefined)
+    , _netCount   (0)
     , _isExternal (false)
     , _isGlobal   (false)
     , _isAutomatic(false)
+    , _hasFused   (false)
   { }
 
 
@@ -194,29 +196,21 @@ namespace Tramontana {
   
   void  Equipotential::consolidate ()
   {
-    int containsFused = 0;
     set<Net*,NetCompareByName> nets;
     for ( Component* component : getComponents() ) {
       Net* net = component->getNet();
-      if (net->isFused    ()) containsFused = 1;
-      if (net->isExternal ()) _isExternal   = true;
-      if (net->isGlobal   ()) _isGlobal     = true;
-      if (net->isAutomatic()) _isAutomatic  = true;
-      _type       = net->getType();
-      _direction |= net->getDirection();
+      if (net->isFused()) _hasFused = true;
+      else {
+        if (net->isExternal ()) _isExternal  = true;
+        if (net->isGlobal   ()) _isGlobal    = true;
+        if (net->isAutomatic()) _isAutomatic = true;
+        _type       = net->getType();
+        _direction |= net->getDirection();
+      }
       nets.insert( component->getNet() );
     }
     _name = getString( (*nets.begin())->getName() );
-    _name += " [" + getString(nets.size() - containsFused);
-    if (containsFused)
-      _name += "+fused";
-    _name += "] ";
-    _name += ((_isExternal ) ? "e" : "-");
-    _name += ((_isGlobal   ) ? "g" : "-");
-    _name += ((_isAutomatic) ? "a" : "-");
-    _name += " ";
-    _name += getString(_type     ) + " ";
-    _name += getString(_direction);
+    _netCount = nets.size();
   }
 
   
@@ -227,6 +221,20 @@ namespace Tramontana {
   }
 
 
+  string  Equipotential::getFlagsAsString () const
+  {
+    string sflags;
+    sflags += ((_isExternal ) ? "e" : "-");
+    sflags += ((_isGlobal   ) ? "g" : "-");
+    sflags += ((_isAutomatic) ? "a" : "-");
+    sflags += " [" + getString( _netCount - ((_hasFused) ? 1 : 0) );
+    if (_hasFused)
+      sflags += "+fused";
+    sflags += "] ";
+    return sflags;
+  }
+
+
   string  Equipotential::_getTypeName () const
   { return "Tramontana::Equipotential"; }
 
@@ -234,9 +242,12 @@ namespace Tramontana {
   string  Equipotential::_getString () const
   {
     ostringstream  os;
-    os << "<Equipotential id:" << getId()
-    //<< " " << getName()
-       << " " << _owner->getName() << ">";
+    os << "<Equipotential id:" << getId() << " "
+       << getFlagsAsString()
+       << " " << getName()
+       << " " << getType()
+       << " " << getDirection()
+       << ">";
     return os.str();
   }
 
