@@ -178,12 +178,12 @@ namespace Tramontana {
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.extract")) {
+    if (_viewer->hasMenuAction("tools.extract")) {
       cerr << Warning( "GraphicTramontanaEngine::addToMenu() - Tramontana extractor already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addToMenu( "placeAndRoute.extract"
+    _viewer->addToMenu( "tools.extract"
                       , "E&xtract  .  .  .  .  . [Tramontana]"
                       , "Run the extractor"
                       , std::bind(&GraphicTramontanaEngine::_extract,this)
