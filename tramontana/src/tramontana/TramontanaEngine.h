@@ -49,15 +49,17 @@ namespace Tramontana {
       typedef  ToolEngine  Super;
     public:
       static  const Name&              staticGetName              ();
-      static  TramontanaEngine*        create                     ( Cell* );
+      static  TramontanaEngine*        create                     ( Cell*, uint32_t depth=0 );
       static  TramontanaEngine*        get                        ( const Cell* );
     public:                                                      
               const Name&              getName                    () const;
+      inline        uint32_t           getDepth                   () const;
       inline  const std::set<Equipotential*,DBo::CompareById>
                                        getEquipotentials () const;
       inline        void               setViewer                  ( CellViewer* );
       inline        CellViewer*        getViewer                  ();
               void                     extract                    ();
+              void                     _extract                   ();
               void                     consolidate                ();
               void                     showEquipotentials         () const;
               void                     add                        ( Equipotential* );
@@ -69,10 +71,11 @@ namespace Tramontana {
       static  Name                     _toolName;
     private:                         
               CellViewer*              _viewer;
+              uint32_t                 _depth;
               std::set<Equipotential*,DBo::CompareById>  _equipotentials;
     protected:
     // Constructors & Destructors.
-                                TramontanaEngine ( Cell* );
+                                TramontanaEngine ( Cell*, uint32_t depth );
       virtual                  ~TramontanaEngine ();
       virtual void              _postCreate      ();
       virtual void              _preDestroy      ();
@@ -84,6 +87,7 @@ namespace Tramontana {
   
   inline void        TramontanaEngine::setViewer ( CellViewer* viewer ) { _viewer=viewer; }
   inline CellViewer* TramontanaEngine::getViewer () { return _viewer; }
+  inline uint32_t    TramontanaEngine::getDepth  () const { return _depth; }
   inline const std::set<Equipotential*,DBo::CompareById>
                      TramontanaEngine::getEquipotentials () const { return _equipotentials; }
 

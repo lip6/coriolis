@@ -100,9 +100,10 @@ namespace Tramontana {
   { return static_cast<TramontanaEngine*>(ToolEngine::get(cell,staticGetName())); }
 
 
-  TramontanaEngine::TramontanaEngine ( Cell* cell )
-    : Super          (cell)
+  TramontanaEngine::TramontanaEngine ( Cell* cell, uint32_t depth )
+    : Super          (cell, (depth==0))
     , _viewer        (NULL)
+    , _depth         (depth)
     , _equipotentials()
   { }
 
@@ -113,9 +114,9 @@ namespace Tramontana {
   }
 
 
-  TramontanaEngine* TramontanaEngine::create ( Cell* cell )
+  TramontanaEngine* TramontanaEngine::create ( Cell* cell, uint32_t depth )
   {
-    TramontanaEngine* tramontana = new TramontanaEngine ( cell );
+    TramontanaEngine* tramontana = new TramontanaEngine ( cell, depth );
 
     tramontana->_postCreate();
 
@@ -145,14 +146,52 @@ namespace Tramontana {
 
   void  TramontanaEngine::extract ()
   {
-    cmess1 << "  o  Extracting " << getCell() << endl;
-    startMeasures();
+    if (getDepth() == 0) {
+      cmess1 << "  o  Extracting " << getCell() << endl;
+      startMeasures();
+    }
+
+    for ( Instance* instance : getCell()->getInstances() ) {
+      Cell*             master    = instance->getMasterCell();
+      TramontanaEngine* extractor = TramontanaEngine::get( master );
+      if (not extractor) {
+        extractor = TramontanaEngine::create( master, getDepth()+1 );
+        extractor->extract();
+      }
+    }
+    _extract();
+
+    if (getDepth() == 0) {
+      stopMeasures();
+      printMeasures();
+    }
+  }
+
+
+  void  TramontanaEngine::_extract ()
+  {
+    if (getDepth()) {
+      startMeasures();
+    }
+
     SweepLine sweepLine ( this );
     sweepLine.run();
     consolidate();
   //showEquipotentials();
-    stopMeasures();
-    printMeasures();
+
+    if (getDepth()) {
+      stopMeasures();
+
+      ostringstream header;
+      ostringstream result;
+
+      header << "   ";
+      for ( size_t i=0 ; i<getDepth() ; ++i ) header << "  ";
+      header << "- " << getString( getCell()->getName() );
+      result <<         Timer::getStringTime  (getTimer().getCombTime()) 
+             << ", " << Timer::getStringMemory(getTimer().getIncrease());
+      cmess1 << Dots::asString( header.str(), result.str() ) << endl;
+    }
   }
 
 
