@@ -36,7 +36,7 @@ namespace Hurricane {
 #ifdef  HAVE_CXA_DEMANGLE
 
 string  demangle ( const char* symbol )
-{  
+{
   int          status;
   size_t       length = 4096;
   char         demangled[length];
@@ -49,11 +49,23 @@ string  demangle ( const char* symbol )
 #else
 
 string  demangle ( const char* symbol )
-{  
-  return symbol;
-}
+{ return symbol; }
 
 #endif
+
+
+  string& split ( string& s )
+  {
+    size_t i = s.find( "<" );
+    while ( i != string::npos ) {
+      if (i+3 > s.size()) break;
+    //if (s[i+2] != '>') {
+        s.insert( i, "\\n" );
+    //}
+      i = s.find( "<", i+3 );
+    }
+    return s;
+  }
 
 
 } // End of Hurricane namespace.

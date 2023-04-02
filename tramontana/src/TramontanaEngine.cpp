@@ -199,10 +199,7 @@ namespace Tramontana {
   {
     cerr << "Equipotentials:" << endl;
     for ( Equipotential* equi : _equipotentials ) {
-      cerr << equi << endl;
-      for ( Component* component : equi->getComponents() ) {
-        cerr << "| " << component << endl;
-      }
+      equi->show();
     }
   }
 

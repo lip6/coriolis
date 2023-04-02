@@ -34,9 +34,7 @@
 //       Third edition, MIT press, 2011, p. 308.
 
 
-#ifndef  HURRICANE_RBTREE_H
-#define  HURRICANE_RBTREE_H
-
+#pragma  once
 #include <functional>
 #include <fstream>
 #include <sstream>
@@ -90,7 +88,7 @@ namespace Hurricane {
           inline  void         copyColor      ( Node* );
                   void         updateEdge     ( Node* oldChild, Node* newChild );
                   void         clear          ();
-          inline  void         copy           ( const Node* );
+          inline  void         swap           ( Node* );
           virtual std::string  _getString     () const;
           virtual Record*      _getRecord     () const;
         private:
@@ -284,8 +282,15 @@ namespace Hurricane {
   
   
   template< typename Data, typename Compare >
-  inline void  RbTree<Data,Compare>::Node::copy ( const Node* other )
-  { value_  = other->value_; }
+  inline void  RbTree<Data,Compare>::Node::swap ( Node* other )
+  {
+    cdebug_log(0,0) << "Node::swap()" << endl;
+    cdebug_log(0,0) << "| " << value_ << endl;
+    cdebug_log(0,0) << "| " << other->value_ << endl;
+    Data tmp = value_; value_ = other->value_; other->value_ = tmp;
+    cdebug_log(0,0) << "| " << value_ << endl;
+    cdebug_log(0,0) << "| " << other->value_ << endl;
+  }
   
   
   template< typename Data, typename Compare >
@@ -515,7 +520,7 @@ namespace Hurricane {
   template< typename Data, typename Compare >
   void  RbTree<Data,Compare>::rotateLeft ( typename RbTree<Data,Compare>::Node* node )
   {
-    cdebug_log(0,0) << "RbTree::rotateLeft() " << node << std::endl;
+    cdebug_log(0,0) << "RbTree::rotateLeft() " << node->getValue() << std::endl;
     
     Node* rchild = node->getRight();
   
@@ -534,7 +539,7 @@ namespace Hurricane {
   template< typename Data, typename Compare >
   void  RbTree<Data,Compare>::rotateRight ( typename RbTree<Data,Compare>::Node* node )
   {
-    cdebug_log(0,0) << "RbTree::rotateRight() " << node << std::endl;
+    cdebug_log(0,0) << "RbTree::rotateRight() " << node->getValue() << std::endl;
     
     Node* lchild = node->getLeft();
   
@@ -560,12 +565,18 @@ namespace Hurricane {
       cdebug_log(0,0) << "| " << current->getValue() << std::endl;
   
       if (current->getValue() == value) {
-        cdebug_log(0,-1) << "> Value found: " << current->getValue() <<std::endl;
+        cdebug_log(0,-1) << "> Value found: " << current->getValue() << std::endl;
         return iterator(current);
       }
   
-      if (compare_(value,current->getValue())) current = current->getLeft ();
-      else                                     current = current->getRight();
+      if (compare_(value,current->getValue())) {
+        current = current->getLeft ();
+        cdebug_log(0,0) << "| Go left " << ((current) ? ::getString(current->getValue()) : "NULL")  << std::endl;
+      }
+      else {
+        current = current->getRight();
+        cdebug_log(0,0) << "| Go right " << ((current) ? ::getString(current->getValue()) : "NULL")  << std::endl;
+      }
     }
   
     cdebug_log(0,-1) << "Value not found." << std::endl;
@@ -630,21 +641,22 @@ namespace Hurricane {
   
     Node* rmNode = const_cast<Node*>( find( value ).getNode() );
     if (not rmNode) {
-      cdebug_log(0,1) << "No node of value=" << value << std::endl;
+      cdebug_log(0,-1) << "No node of value=" << value << std::endl;
       return;
     }
   
+    Node* rmLeaf = nullptr;
     if (rmNode->getLeft() and rmNode->getRight()) {
-      Node* rmLeaf = rmNode->getLeft();
-      Node* rmMax  = rmLeaf->getMax();
+      rmLeaf = rmNode->getLeft();
+      Node* rmMax = rmLeaf->getMax();
       if (rmMax) rmLeaf = rmMax;
       
-      rmNode->copy( rmLeaf );
-      rmNode = rmLeaf;
+      rmNode->swap( rmLeaf );
+      std::swap( rmNode, rmLeaf );
     }
-    
-    postRemove  ( rmNode );
+
     removeRepair( rmNode, 0 );
+    postRemove  ( rmNode );
   
     Node* parent = rmNode->getParent();
     Node* child  = (rmNode->getLeft()) ? rmNode->getLeft() : rmNode->getRight();
@@ -660,8 +672,9 @@ namespace Hurricane {
       }    
     }
   
-    cdebug_log(0,0) << "delete " << rmNode << std::endl;
+    cdebug_log(0,0) << "delete " << rmNode->getValue() << std::endl;
     delete rmNode;
+    
     --count_;
   
     cdebug_tabw(0,-1);
@@ -671,8 +684,13 @@ namespace Hurricane {
   template< typename Data, typename Compare >
   void  RbTree<Data,Compare>::removeRepair ( typename RbTree<Data,Compare>::Node* rmNode, size_t depth )
   {
-    cdebug_log(0,1) << "RbTree::removeRepair() rmNode:" << rmNode
+    cdebug_log(0,1) << "RbTree::removeRepair() rmNode:" << rmNode->getValue()
                     << " depth:" << depth << std::endl;
+
+    if (not rmNode) {
+      cdebug_tabw(0,-1);
+      return ;
+    }
   
     if (rmNode->isBlack()) {
       Node* parent = rmNode->getParent();
@@ -979,6 +997,7 @@ namespace Hurricane {
   void  RbTreeToDot<Data,Compare,RbTree>::write ( std::ostream& o ) const
   {
     o << "digraph RbTree {\n";
+    o << "  ratio=\"1.0\";\n";
     toDot( o, tree_->getRoot() );
     o << "}";
   }
@@ -989,8 +1008,9 @@ namespace Hurricane {
   {
     if (not node) return;
     
+    string svalue = ::getString( node->getValue() );
     o << "  id_" << getId(node) << "  "
-      << "[label=\"id:" << getId(node) << "\\n" << ::getString(node->getValue())
+      << "[label=\"id:" << getId(node) << "\\n" << split( svalue )
       << "\""
       << ",color="     << (node->isRed() ? "red" : "black")
       << ",fontcolor=" << (node->isRed() ? "red" : "black")
@@ -1031,6 +1051,3 @@ namespace Hurricane {
 
 
 }  // Hurricane namespace.
-
-
-#endif  // HURRICANE_RBTREE_H

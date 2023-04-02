@@ -265,12 +265,14 @@ namespace Hurricane {
       inline  DrawingPlanes&            getDrawingPlanes           ();
            // void                      select                     ( const Net* );
               void                      select                     ( Occurrence );
+              void                      selectSet                  ( const OccurrenceSet& );
               void                      selectSet                  ( const ComponentSet& );
               bool                      isSelected                 ( Occurrence );
               void                      selectOccurrencesUnder     ( Box selectArea );
            // void                      unselect                   ( const Net* );
               void                      unselect                   ( Occurrence );
               void                      unselectSet                ( const ComponentSet& );
+              void                      unselectSet                ( const OccurrenceSet& );
               void                      unselectAll                ();
               void                      toggleSelection            ( Occurrence );
               void                      setShowSelection           ( bool state );

@@ -104,7 +104,7 @@ namespace Tramontana {
            , this                   , SLOT  (textFilterChanged()) );                       
     connect( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
            , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
-  //connect( fitAction, SIGNAL(triggered()), this, SLOT(fitToEqui()) );
+    connect( fitAction, SIGNAL(triggered()), this, SLOT(fitToEqui()) );
 
     resize( 300, 300 );
   }
@@ -180,11 +180,11 @@ namespace Tramontana {
   }
 
 
-  // void  EquipotentialsWidget::fitToNet ()
-  // {
-  //   const Equipotential* equi = _baseModel->getEqui( _sortModel->mapToSource(_view->currentIndex()).row() );
-  //   if (equi) emit netFitted ( equi );
-  // }
+  void  EquipotentialsWidget::fitToEqui ()
+  {
+    const Equipotential* equi = _baseModel->getEqui( _sortModel->mapToSource(_view->currentIndex()).row() );
+    if (equi) emit reframe ( equi->getBoundingBox() );
+  }
 
 
   void  EquipotentialsWidget::setCellWidget ( CellWidget* cw )
@@ -196,7 +196,7 @@ namespace Tramontana {
     _cellWidget = cw;
     if (_cellWidget) {
       setCell( _cellWidget->getCell() );
-    //connect( this, SIGNAL(netFitted(const Equi*)), _cellWidget, SLOT(fitToEqui (const Equi*)) );
+      connect( this, SIGNAL( reframe(const Box&) ), _cellWidget, SLOT( reframe(const Box&) ));
     } else
       setCell( nullptr );
   }

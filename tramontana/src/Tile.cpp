@@ -133,9 +133,14 @@ namespace Tramontana {
   { }
 
 
+  Net* Tile::getNet () const
+  { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
+
+
   Tile* Tile::getRoot ( uint32_t flags )
   {
     if (not getParent() and (not (flags & MergeEqui))) return this;
+    cdebug_log(160,1) << "Tile::getRoot()" << endl;
     
     Tile* root = this;
     while ( root->getParent() ) {
@@ -145,6 +150,7 @@ namespace Tramontana {
       }
       root = root->getParent();
     }
+    cdebug_log(160,0) << "> root " << root->getId() << endl;
 
     if (flags & Compress) {
       Tile* current = this;
@@ -166,16 +172,18 @@ namespace Tramontana {
         if (current->isUpToDate()) break;
         if (current->getEquipotential()) {
           if (current->getEquipotential() != rootEqui) {
+            cdebug_log(160,0) << "| merge " << current->getId() << " => " << root->getId() << endl;
             rootEqui->merge( current->getEquipotential() );
           }
         } else {
-          rootEqui->add( current->getOccurrence() );
+          rootEqui->add( current->getOccurrence(), _boundingBox );
         }
         current->syncTime();
         current = current->getParent();
       }
     }
 
+    cdebug_tabw(160,-1);
     return root;
   }
 
@@ -208,7 +216,9 @@ namespace Tramontana {
     }
 
     _equipotential = Equipotential::create( _occurrence.getOwnerCell() );
-    _equipotential->add( _occurrence );
+    _equipotential->add( _occurrence, _boundingBox );
+  //cerr << "new " << _equipotential << endl;
+  //cerr << "| " << _occurrence << endl;
     return _equipotential;
   }
 

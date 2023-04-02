@@ -68,8 +68,9 @@ namespace Tramontana {
                           Tile*               getRoot          ( uint32_t flags=Compress );
              inline       Component*          getComponent     () const;
              inline       Occurrence          getOccurrence    () const;
+                          Net*                getNet           () const;
              inline       Layer::Mask         getMask          () const;
-             inline const BasicLayer*         getLayer          () const;
+             inline const BasicLayer*         getLayer         () const;
              inline const Box&                getBoundingBox   () const;
              inline       Equipotential*      getEquipotential () const;
              inline       DbU::Unit           getLeftEdge      () const;
@@ -128,12 +129,22 @@ namespace Tramontana {
   inline       void                Tile::setEquipotential ( Equipotential* equi ) { _equipotential=equi; }
 
 
+  class TileCompare {
+    public:
+      inline bool  operator() ( const Tile* lhs, const Tile* rhs ) const
+      {
+        cdebug_log(0,0) << "TileCompare::operator()" << std::endl;
+        return lhs->getOccurrence() < rhs->getOccurrence();
+      }
+  };
+
+
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::TileIntvTree".
 
 
-  typedef  IntervalData<Tile*>  TileIntv;
-  typedef  IntervalTree<Tile*>  TileIntvTree;
+  typedef  IntervalData<Tile*>              TileIntv;
+  typedef  IntervalTree<Tile*,TileCompare>  TileIntvTree;
 
 
 }  // Tramontana namespace.

@@ -96,16 +96,27 @@ bool Occurrence::operator!=(const Occurrence& occurrence) const
 bool Occurrence::operator<(const Occurrence& occurrence) const
 // ********************************************************
 {
-  if (not _entity and not occurrence._entity) return false;
-  if (not _entity) return true;
-  if (not occurrence._entity) return false;
+  cdebug_log(0,0) << "Occurrence::operator<()" << endl;
+  cdebug_log(0,0) << "| lhs=" << *this << endl;
+  cdebug_log(0,0) << "| rhs=" << occurrence << endl;
+  if ((not _sharedPath) xor (not occurrence._sharedPath)) return not _sharedPath;
+  if ((not _entity    ) xor (not occurrence._entity    )) return not _entity;
+  if (_entity and (_entity->getId() != occurrence._entity->getId()))
+    return _entity->getId() < occurrence._entity->getId();
+  if (not _sharedPath) return false;
 
-  if (_entity->getId() < occurrence._entity->getId()) return true;
-  if (_entity->getId() > occurrence._entity->getId()) return false;
+  // if (not _sharedPath) return true;
+  // if (not occurrence._sharedPath) return false;
+  // if (not _sharedPath and not occurrence._sharedPath) return false;
+  // if (not _sharedPath) return true;
+  // if (not occurrence._sharedPath) return false;
 
-  if (not _sharedPath and not occurrence._sharedPath) return false;
-  if (not _sharedPath) return true;
-  if (not occurrence._sharedPath) return false;
+  // if (not _entity and not occurrence._entity) return false;
+  // if (not _entity) return true;
+  // if (not occurrence._entity) return false;
+
+  // if (_entity->getId() < occurrence._entity->getId()) return true;
+  // if (_entity->getId() > occurrence._entity->getId()) return false;
 
   return _sharedPath->getHash() < occurrence._sharedPath->getHash();
   
@@ -274,7 +285,7 @@ string Occurrence::_getString() const
 string Occurrence::getCompactString() const
 // ****************************************
 {
-  string s = "<";
+  string s;
   if (_entity) {
     s += getString(getOwnerCell()->getName());
     s += ":";
@@ -291,7 +302,6 @@ string Occurrence::getCompactString() const
       }
     }
   }
-  s += ">";
   return s;
 }
 

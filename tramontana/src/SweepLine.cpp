@@ -38,6 +38,7 @@
 #include "hurricane/RoutingPad.h"
 #include "crlcore/Utilities.h"
 #include "tramontana/SweepLine.h"
+#include "tramontana/QueryTiles.h"
 
 
 namespace Tramontana {
@@ -84,9 +85,24 @@ namespace Tramontana {
 
   SweepLine::SweepLine ( TramontanaEngine* tramontana  )
     : _tramontana   (tramontana) 
+    , _extracteds   ()
     , _tiles        ()
     , _intervalTrees()
-  { }
+  {
+    for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
+    // HARDCODED. Should read the gauge.
+      if (getString(bl->getName()).substr(0,6) == "gmetal") continue;
+      if (bl->getMaterial() == BasicLayer::Material::metal)
+        _extracteds.push_back( bl );
+    }
+    
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal3" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal2" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "poly"   ));
+  }
 
 
   SweepLine::~SweepLine ()
@@ -95,13 +111,26 @@ namespace Tramontana {
 
   void  SweepLine::run ()
   {
-  //cerr << "SweepLine::run()" << endl;
-  //DebugSession::open( 0, 2 );
+  //DebugSession::open( 160, 169 );
+    cdebug_log(160,1) << "SweepLine::run()" << endl;
     loadTiles();
+  //bool debugOn = false;
+    bool written = false;
     for ( Element& element : _tiles ) {
       Tile*     tile     = element.getTile();
       TileIntv  tileIntv ( tile, tile->getYMin(), tile->getYMax() );
-    //cerr << right << setw(10) << DbU::getValueString(element.getX()) << " > " << tile << endl;
+      // if (getString(tile->getNet()->getName()) == "a(13)") {
+      //   cerr << tile << endl;
+      // }
+      // if (not debugOn and (element.getX() == DbU::fromLambda(1724.0))) {
+      //   debugOn = true;
+      //   DebugSession::open( 0, 169 );
+      // }
+      // if (debugOn and (element.getX() > DbU::fromLambda(1726.0))) {
+      //   debugOn = false;
+      //   DebugSession::close();
+      // }
+      cdebug_log(160,1) << "X@ + " << DbU::getValueString(element.getX()) << " " << tile << endl;
       auto  intvTree = _intervalTrees.find( element.getMask() );
       if (intvTree == _intervalTrees.end()) {
         cerr << Error( "SweepLine::run(): Missing interval tree for layer(mask) %s."
@@ -109,19 +138,77 @@ namespace Tramontana {
                      , getString(element.getMask()).c_str()
                      , getString(element.getTile()).c_str()
                      ) << endl;
+        cdebug_tabw(160,-1);
         continue;
       }
       if (element.isLeftEdge()) {
+        // if (tile->getId() == 60117) {
+        //   DebugSession::open( 0, 169 );
+        //   if (not written) intvTree->second.write( "tree-before.gv" );
+        //   cdebug_log(160,0) << " Interval tree *before* insertion." << endl;
+        //   for ( auto elt : intvTree->second.getElements() ) {
+        //     cdebug_log(160,0) << " | in tree:" << elt << endl;
+        //     if (elt.getData()->getBoundingBox().getXMax() < tile->getLeftEdge())
+        //       cdebug_log(160,0) << " * Should have been removed !" << endl;
+        //   }
+        // }
         for ( const TileIntv& overlap : intvTree->second.getOverlaps(
                                            Interval(tile->getYMin(), tile->getYMax() ))) {
-        //cerr << "           | intersect " << overlap.getData() << endl;
+          cdebug_log(160,0) << " | intersect " << overlap.getData() << endl;
           tile->merge( overlap.getData() );
         }
-      //cerr << "           | insert tile" << endl;
+        cdebug_log(160,0) << " | insert tile" << endl;
+        // if (tile->getId() == 60117) {
+        //   cerr << " | insert in " << element.getMask() << endl;
+        //   cerr << " | " << tile << endl;
+        // }
+        // if (tile->getId() == 46373) {
+        //   cerr << "   | insert " << tile << endl;
+        // }
         intvTree->second.insert( tileIntv );
+        // if (tile->getId() == 60117) {
+        //   if (not written) intvTree->second.write( "tree-after.gv" );
+        //   written = true;
+        //   DebugSession::close();
+        // }
       } else {
-      //cerr << "           | remove tile" << endl;
+        // if (tile->getId() == 289) {
+        //   DebugSession::open( 0, 169 );
+        // }
+        // cdebug_log(160,0) << "   | remove tile from " << element.getMask() << endl;
+        // cdebug_log(160,0) << "   | " << tile << endl;
+        // if ((tile->getId() == 289) and not written) {
+        //   cerr << "(before) written is " << written << endl; 
+        //   DebugSession::open( 0, 169 );
+        //   intvTree->second.write( "tree-before.gv" );
+        // //DebugSession::close();
+        //   for ( auto elt : intvTree->second.getElements() ) {
+        //     cerr << "   | in tree:" << elt << endl;
+        //   }
+        // }
+        cdebug_log(160,0) << " | remove tile" << endl;
         intvTree->second.remove( tileIntv );
+      //DebugSession::open( 0, 169 );
+        intvTree->second.checkVMax();
+      //DebugSession::close();
+        // if ((tile->getId() == 289) and not written) {
+        // //DebugSession::open( 0, 169 );
+        //   written = true;
+        //   cerr << "(after) written is " << written << endl; 
+        //   intvTree->second.write( "tree-after.gv" );
+        //   DebugSession::close();
+        // }
+        // if (intvTree->second.find( tileIntv ) != intvTree->second.end()) {
+        //   cerr << "NOT Removed " << tileIntv << endl;
+        // }
+        // if (tile->getId() == 289) {
+        //   cerr << "   | removed " << tile << endl;
+        //   intvTree->second.write( "tree.gv" );
+        //   for ( auto elt : intvTree->second.getElements() ) {
+        //     cerr << "   | in tree:" << elt << endl;
+        //   }
+        //   DebugSession::close();
+        // }
         // if (tile->getId() == 46055) {
         //   intvTree->second.write( "we_at_remove.gv" );
         //   for ( auto tile : intvTree->second.getElements() ) {
@@ -129,7 +216,11 @@ namespace Tramontana {
         //   }
         // }
       }
+      intvTree->second.checkVMax();
+      cdebug_tabw(160,-1);
     }
+  //if (debugOn) DebugSession::close();
+    cdebug_tabw(160,-1);
   //DebugSession::close();
     mergeEquipotentials();
   }
@@ -138,37 +229,35 @@ namespace Tramontana {
   void  SweepLine::loadTiles ()
   {
   //cerr << "SweepLine::loadTiles()" << endl;
-    vector<const BasicLayer*>  extracteds;
-    for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-      if (bl->getMaterial() == BasicLayer::Material::metal)
-        extracteds.push_back( bl );
-    }
-    
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal3" ));
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal2" ));
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" ));
-    // extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "poly"   ));
 
-    for ( const BasicLayer* layer : extracteds ) {
+    for ( const BasicLayer* layer : _extracteds ) {
       _intervalTrees.insert( make_pair( layer->getMask(), TileIntvTree() ));
     }
 
-    for ( Occurrence occurrence : getCell()->getOccurrencesUnder( getCell()->getBoundingBox() ) ) {
-      vector<Tile*> tiles;
-      Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
-      if (not component) continue;
-      for ( const BasicLayer* layer : extracteds ) {
-        if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
-        tiles.push_back( Tile::create( occurrence, layer ));
-        _tiles.push_back( Element( tiles.back(), Tile::LeftEdge ) );
-        _tiles.push_back( Element( tiles.back(), Tile::RightEdge ) );
-        if (tiles.size() > 1)
-          tiles.back()->setParent( tiles[0] );
-      }
-      tiles.clear();
+    QueryTiles query ( this );
+    for ( const BasicLayer* layer : _extracteds ) {
+      query.setBasicLayer( layer );
+      query.doQuery();
     }
+    cmess2 << "     - Loaded " << query.getGoMatchCount() << " tiles." << endl;
+
+    // for ( Occurrence occurrence : getCell()->getOccurrencesUnder( getCell()->getBoundingBox() ) ) {
+    //   vector<Tile*> tiles;
+    //   Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
+    //   if (occurrence.getPath().getInstances().getSize() > 0) {
+    //     cerr << occurrence << endl;
+    //   }
+    //   if (not component) continue;
+    //   for ( const BasicLayer* layer : extracteds ) {
+    //     if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
+    //     tiles.push_back( Tile::create( occurrence, layer ));
+    //     _tiles.push_back( Element( tiles.back(), Tile::LeftEdge ) );
+    //     _tiles.push_back( Element( tiles.back(), Tile::RightEdge ) );
+    //     if (tiles.size() > 1)
+    //       tiles.back()->setParent( tiles[0] );
+    //   }
+    //   tiles.clear();
+    // }
     sort( _tiles.begin(), _tiles.end() );
   }
 

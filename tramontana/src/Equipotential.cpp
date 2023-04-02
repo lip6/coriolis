@@ -37,12 +37,14 @@
 #include "hurricane/RoutingPad.h"
 #include "crlcore/Utilities.h"
 #include "tramontana/Equipotential.h"
+#include "tramontana/EquipotentialRelation.h"
 #include "tramontana/TramontanaEngine.h"
 
 
 namespace {
 
   using Hurricane::Net;
+  using Hurricane::Occurrence;
 
 
   class NetCompareByName {
@@ -60,6 +62,24 @@ namespace {
     if (lhs->getName().size() != rhs->getName().size())
        return lhs->getName().size() < rhs->getName().size();
     return lhs->getName() < rhs->getName();
+  }
+
+
+  class OccNetCompareByName {
+    public:
+      bool operator() ( const Occurrence& lhs, const Occurrence& rhs ) const;
+  };
+
+
+  bool OccNetCompareByName::operator() ( const Occurrence& lhs, const Occurrence& rhs ) const
+  {
+    static NetCompareByName compareByName;
+    
+    size_t lhsLength = lhs.getPath().getInstances().getSize();
+    size_t rhsLength = rhs.getPath().getInstances().getSize();
+
+    if (lhsLength != rhsLength) return lhsLength < rhsLength;
+    return compareByName( static_cast<Net*>(lhs.getEntity()), static_cast<Net*>(rhs.getEntity()) );
   }
 
 
@@ -158,19 +178,11 @@ namespace Tramontana {
   Box  Equipotential::getBoundingBox () const
   { return _boundingBox; }
 
-
-  void  Equipotential::add ( Component* component )
+  
+  void  Equipotential::add ( Occurrence component, const Box& boundingBox )
   {
     _components.insert( component );
-  }
-
-  
-  void  Equipotential::add ( Occurrence child )
-  {
-    if (child.getPath().isEmpty())
-      add( dynamic_cast<Component*>( child.getEntity() ));
-    else
-      _childs.push_back( child );
+    _boundingBox.merge( boundingBox );
   }
 
   
@@ -184,20 +196,26 @@ namespace Tramontana {
       return;
     }
     
-    for ( Component* component : other->getComponents() ) {
-      add( component );
-    }
-    for ( Occurrence child : other->getChilds() ) {
-      add( child );
-    }
+    for ( const Occurrence& component : other->getComponents() ) add( component );
+    for ( const Occurrence& child     : other->getChilds    () ) add( child );
+    _boundingBox.merge( other->_boundingBox );
     other->clear();
   }
 
   
   void  Equipotential::consolidate ()
   {
-    set<Net*,NetCompareByName> nets;
-    for ( Component* component : getComponents() ) {
+    EquipotentialRelation*              relation = EquipotentialRelation::create( this );
+    set<Net*,NetCompareByName>          nets;
+    set<Occurrence,OccNetCompareByName> deepNets;
+    for ( const Occurrence& occurrence : getComponents() ) {
+      Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
+      if (not component) continue;
+      if (not occurrence.getPath().isEmpty()) {
+        deepNets.insert( Occurrence( component->getNet(), occurrence.getPath() ));
+        continue;
+      }
+      component->put( relation );
       Net* net = component->getNet();
       if (net->isFused()) _hasFused = true;
       else {
@@ -209,8 +227,17 @@ namespace Tramontana {
       }
       nets.insert( component->getNet() );
     }
-    _name = getString( (*nets.begin())->getName() );
+    if (not nets.empty()) {
+      _name = getString( (*nets.begin())->getName() );
+    } else {
+      if (not deepNets.empty()) {
+        _name = (*deepNets.begin()).getCompactString();
+      }
+    }
     _netCount = nets.size();
+
+    // if (_name == "abc_11873_auto_rtlil_cc_2560_muxgate_11612")
+    //   show();
   }
 
   
@@ -218,6 +245,20 @@ namespace Tramontana {
   {
     _components.clear();
     _childs    .clear();
+  }
+
+
+  void  Equipotential::show () const
+  {
+    cerr << this << endl;
+    cerr << "+ Components:" << endl;
+    for ( const Occurrence& component : _components ) {
+      cerr << "| " << component << endl;
+    }
+    cerr << "+ Occurrences:" << endl;
+    for ( Occurrence occ : _childs ) {
+      cerr << "| " << occ << endl;
+    }
   }
 
 

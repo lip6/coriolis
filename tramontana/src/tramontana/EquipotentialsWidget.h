@@ -44,6 +44,7 @@ namespace Tramontana {
   using std::set;
   using Hurricane::Cell;
   using Hurricane::CellWidget;
+  using Hurricane::OccurrenceSet;
 
 
 // -------------------------------------------------------------------
@@ -136,13 +137,13 @@ namespace Tramontana {
               void  goTo                  ( int );
               void  updateSelecteds       ();
     signals:                              
-              void  equipotentialSelect   ( const ComponentSet& );
-              void  equipotentialUnselect ( const ComponentSet& );
-              void  netFitted             ( const Equipotential* );
+              void  equipotentialSelect   ( const OccurrenceSet& );
+              void  equipotentialUnselect ( const OccurrenceSet& );
+              void  reframe               ( const Box& );
     private slots:                        
               void  textFilterChanged     ();
               void  updateSelecteds       ( const QItemSelection& , const QItemSelection& );
-    //        void  fitToEqui             ();
+              void  fitToEqui             ();
 
     private:
               CellWidget*            _cellWidget;

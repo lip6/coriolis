@@ -49,6 +49,7 @@ namespace Tramontana {
         public:
           inline              Element    ( Tile*, uint32_t flags );
           inline bool         operator<  ( const Element& ) const;
+          inline bool         operator== ( const Element& ) const;
           inline bool         isLeftEdge () const;
           inline Tile*        getTile    () const;
           inline DbU::Unit    getX       () const;
@@ -63,8 +64,11 @@ namespace Tramontana {
                                 SweepLine           ( TramontanaEngine* );
                                ~SweepLine           ();
       inline  Cell*             getCell             ();
+      inline  const std::vector<const BasicLayer*>&
+                                getExtracteds       () const;
               void              run                 ();
               void              loadTiles           ();
+      inline  void              add                 ( Tile* );
               void              mergeEquipotentials ();
               Record*           _getRecord          () const;
               std::string       _getString          () const;
@@ -73,9 +77,10 @@ namespace Tramontana {
                                 SweepLine           ( const SweepLine& ) = delete;
               SweepLine&        operator=           ( const SweepLine& ) = delete;
     private:
-      TramontanaEngine*     _tramontana;
-      std::vector<Element>  _tiles;
-      IntervalTrees         _intervalTrees;
+      TramontanaEngine*               _tramontana;
+      std::vector<const BasicLayer*>  _extracteds;
+      std::vector<Element>            _tiles;
+      IntervalTrees                   _intervalTrees;
   };
 
 
@@ -91,14 +96,26 @@ namespace Tramontana {
   inline bool  SweepLine::Element::operator< ( const Element& rhs ) const
   {
     if (getX() != rhs.getX()) return (getX() < rhs.getX());
+    if (isLeftEdge() xor rhs.isLeftEdge()) return isLeftEdge();
     if (getY() != rhs.getY()) return (getY() < rhs.getY());
     if (getMask() != rhs.getMask()) return (getMask() < rhs.getMask());
-    return getId() < rhs.getId();
+    return TileCompare() ( getTile(), rhs.getTile() );
   }
+
+
+  inline bool  SweepLine::Element::operator== ( const Element& rhs ) const
+  { return getTile() == rhs.getTile(); }
 
   
 // SweepLine.  
   inline  Cell* SweepLine::getCell () { return _tramontana->getCell(); }
+  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds () const { return _extracteds; }
+
+  inline  void  SweepLine::add ( Tile* tile )
+  {
+    _tiles.push_back( Element( tile, Tile::LeftEdge ) );
+    _tiles.push_back( Element( tile, Tile::RightEdge ) );
+  }
 
 
   

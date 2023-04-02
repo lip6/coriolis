@@ -10,8 +10,10 @@
                         ${Python_INCLUDE_DIRS}
                       )
                    set( includes     tramontana/Tile.h
+                                     tramontana/QueryTiles.h
                                      tramontana/SweepLine.h
                                      tramontana/Equipotential.h
+                                     tramontana/EquipotentialRelation.h
                                      tramontana/TramontanaEngine.h
                                      tramontana/GraphicTramontanaEngine.h
                       )
@@ -24,8 +26,10 @@
                                      tramontana/TabEquipotentials.h
 		      )
                    set( cpps         Tile.cpp
+                                     QueryTiles.cpp
                                      SweepLine.cpp
                                      Equipotential.cpp
+                                     EquipotentialRelation.cpp
                                      TramontanaEngine.cpp
                                      GraphicTramontanaEngine.cpp
                                      EquipotentialsModel.cpp
