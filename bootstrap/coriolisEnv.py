@@ -319,8 +319,9 @@ if __name__ == "__main__":
       if os.path.isdir(absLibDir): break
       libDir    = None
   if libDir is None:
-      print( 'echo "[ERROR] coriolisEnv.py, library directory not found."' )
-      sys.exit( 1 )
+      if not options.queryISysRoot and not options.queryInstRoot:
+          print( 'echo "[ERROR] coriolisEnv.py, library directory not found."' )
+          sys.exit( 1 )
 
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
   strippedLibraryPath = "%s:%s"  % ( absLibDir  , strippedLibraryPath )
