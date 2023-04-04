@@ -170,7 +170,8 @@ def guessShell ( defaultShell, osType ):
                 shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
             else:
                 shellPath = shell
-            print( 'echo "[GUESSED] shellPath={}";'.format(shellPath) )
+            if not options.queryISysRoot and not options.queryInstRoot:
+                print( 'echo "[GUESSED] shellPath={}";'.format(shellPath) )
         except Exception:
             shellPath = u'/bin/bash'
             print( 'echo "[ERROR] \\"ps\\" command failure, using {}";'.format(shellPath) )
