@@ -40,23 +40,20 @@ Building Coriolis
 
 To build Coriolis, ensure the following prerequisites are met:
 
-* Python 3.
-* cmake.
-* boost.
-* bison & flex.
-* Qt 4 or 5.
-* libxml2.
-* RapidJSON
+* Python 3,
+* cmake,
+* boost,
+* bison & flex,
+* Qt 4 or 5,
+* libxml2,
+* RapidJSON,
 * A C++11 compliant compiler.
 
 The build system relies on a fixed directory tree from the root
 of the user currently building it. Thus first step is to get a clone of
 the repository in the right place. Proceed as follow: ::
 
-   ego@home:~$ mkdir -p ~/coriolis-2.x/src/support
-   ego@home:~$ cd ~/coriolis-2.x/src/support
-   ego@home:~$ git clone http://github.com/miloyip/rapidjson
-   ego@home:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
+   ego@home:~$ mkdir -p ~/coriolis-2.x/src/
    ego@home:~$ cd ~/coriolis-2.x/src
    ego@home:src$ git clone https://gitlab.lip6.fr/vlsi-eda/coriolis.git
    ego@home:src$ cd coriolis
@@ -85,7 +82,7 @@ The ``coriolis`` script detects its location and setups the UNIX
 environment appropriately, then lauches ``cgt`` (or *any* command, with the
 ``--run=<COMMAND>`` option).
 
-Conversely, you can setup the current shell environement for Coriolis by 
+Conversely, you can setup the current shell environment for Coriolis by
 using the helper ``coriolisEnv.py``, then run any Coriolis tool: ::
 
     ego@home:~$ eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
