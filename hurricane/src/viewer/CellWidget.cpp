@@ -2737,6 +2737,31 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::select ( Occurrences occurrences )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        select( occurrence );
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+  }
+
+
   void  CellWidget::select ( Occurrence occurrence )
   {
     if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
@@ -2849,6 +2874,18 @@ namespace Hurricane {
 
 
   void  CellWidget::unselectSet ( const OccurrenceSet& occurrences )
+  {
+    ++_delaySelectionChanged;
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        unselect( occurrence );
+      }
+    }
+    if ( --_delaySelectionChanged == 0 ) emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselect ( Occurrences occurrences )
   {
     ++_delaySelectionChanged;
     for ( const Occurrence& occurrence : occurrences ) {
