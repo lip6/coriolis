@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_NET
-#define HURRICANE_NET
-
+#pragma  once
 #include <functional>
 #include "hurricane/Entity.h"
 #include "hurricane/Nets.h"
@@ -445,9 +443,10 @@ namespace Hurricane {
 // Because sometimes it didn't happens (?).
   const SlotTemplate<Net*> dummyNetSlot ( string("dummyNetSlot"), NULL );
 
-}
 
-#endif // HURRICANE_NET
+  typedef  std::set<Net*,DBo::CompareById>  NetSet;
+
+}
 
 
 // ****************************************************************************************************

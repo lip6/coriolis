@@ -99,11 +99,11 @@ namespace Hurricane {
     childsVMax_ = std::max( getVMax(), std::max( lvmax, rvmax ) ); return childsVMax_;
   }
 
-
   
   template< typename Data >
   inline bool  IntervalData<Data>::operator== (  const IntervalData<Data>& other ) const
   { return Interval::operator==(*this) and (data_ == other.data_); }
+
 
   template< typename Data >
   std::string  IntervalData<Data>::_getString () const
