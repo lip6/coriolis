@@ -157,8 +157,9 @@ namespace Hurricane {
 
   //int  scale = 80 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
     int  scale = (Graphics::isHighDpi()) ? 4 : 2;
-    _drawingWidth  = _cellWidget->width () * scale;
-    _drawingHeight = _cellWidget->height() * scale;
+    _drawingWidth  = _screenCellWidget->geometry().width () * scale;
+    _drawingHeight = _screenCellWidget->geometry().height() * scale;
+    _cellWidget->resize( _drawingWidth, _drawingHeight );
 
     _image = new QImage( _drawingWidth
                        , _drawingHeight + ((_flags&ShowScale) ? 60 : 0)
@@ -188,7 +189,7 @@ namespace Hurricane {
       setFitOnAbutmentBox( true );
       _cellWidget->fitToContents();
     } else {
-    //_cellWidget->reframe( _screenCellWidget->getVisibleArea() );
+      _cellWidget->reframe( _screenCellWidget->getVisibleArea() );
     }
 
     cerr << "  After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
