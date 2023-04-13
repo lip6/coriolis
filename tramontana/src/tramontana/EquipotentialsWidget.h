@@ -48,6 +48,25 @@ namespace Tramontana {
 
 
 // -------------------------------------------------------------------
+// Class  :  EquiFilterProxyModel".
+
+
+  class EquiFilterProxyModel : public QSortFilterProxyModel {
+      Q_OBJECT;
+    public:
+      typedef QSortFilterProxyModel Super;
+      static const uint32_t  NoFilter   =  0;
+      static const uint32_t  ShowBuried = (1<<0);
+    public:
+                    EquiFilterProxyModel ( QObject* );
+              void  setFilter            ( uint32_t );
+      virtual bool  filterAcceptsRow     ( int row, const QModelIndex& ) const; 
+    private:
+      uint32_t  _filter;
+  };
+
+
+// -------------------------------------------------------------------
 // Class  :  "SelectedEqui".
 
 
@@ -130,31 +149,34 @@ namespace Tramontana {
       Q_OBJECT;
 
     public:
-                    EquipotentialsWidget  ( QWidget* parent=nullptr );
-      inline  Cell* getCell               ();
-              void  setCellWidget         ( CellWidget* );
-              void  setCell               ( Cell* );
-              void  goTo                  ( int );
-              void  updateSelecteds       ();
+                           EquipotentialsWidget  ( QWidget* parent=nullptr );
+      inline  Cell*        getCell               ();
+              void         setShowBuried         ( bool );
+              void         setCellWidget         ( CellWidget* );
+              void         setCell               ( Cell* );
+              void         goTo                  ( int );
+              void         updateSelecteds       ();
+              QModelIndex  mapToSource           ( QModelIndex ) const;
     signals:                              
-              void  equipotentialSelect   ( Occurrences );
-              void  equipotentialUnselect ( Occurrences );
-              void  reframe               ( const Box& );
+              void         equipotentialSelect   ( Occurrences );
+              void         equipotentialUnselect ( Occurrences );
+              void         reframe               ( const Box& );
     private slots:                        
-              void  textFilterChanged     ();
-              void  updateSelecteds       ( const QItemSelection& , const QItemSelection& );
-              void  fitToEqui             ();
+              void         textFilterChanged     ();
+              void         updateSelecteds       ( const QItemSelection& , const QItemSelection& );
+              void         fitToEqui             ();
 
     private:
-              CellWidget*            _cellWidget;
-              Cell*                  _cell;
-              EquipotentialsModel*   _baseModel;
-              QSortFilterProxyModel* _sortModel;
-              QTableView*            _view;
-              QLineEdit*             _filterPatternLineEdit;
-              int                    _rowHeight;
-              SelectedEquiSet        _selecteds;
-              bool                   _forceReselect;
+              CellWidget*             _cellWidget;
+              Cell*                   _cell;
+              EquipotentialsModel*    _baseModel;
+              QSortFilterProxyModel*  _sortModel;
+              EquiFilterProxyModel*   _filterModel;
+              QTableView*             _view;
+              QLineEdit*              _filterPatternLineEdit;
+              int                     _rowHeight;
+              SelectedEquiSet         _selecteds;
+              bool                    _forceReselect;
   };
 
 

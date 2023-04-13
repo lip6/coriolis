@@ -35,8 +35,6 @@ namespace Tramontana {
 
     public:
                                     TabEquipotentials     ( QWidget* parent=NULL );
-      inline  QCheckBox*            getSyncEquipotentials ();
-      inline  QCheckBox*            getSyncSelection      ();
       inline  EquipotentialsWidget* getBrowser            ();
       virtual void                  cellPreModificate     ();
       virtual void                  cellPostModificate    ();
@@ -45,18 +43,18 @@ namespace Tramontana {
       virtual void                  setCellWidget         ( CellWidget* );
       virtual void                  setSyncEquipotentials ( bool );
       virtual void                  setSyncSelection      ( bool );
+      virtual void                  setShowBuried         ( bool );
 
     protected:
       EquipotentialsWidget* _browser;
       QCheckBox*            _syncEquipotentials;
       QCheckBox*            _syncSelection;
+      QCheckBox*            _showBuried;
       bool                  _cwCumulativeSelection;
   };
 
 
-  inline EquipotentialsWidget* TabEquipotentials::getBrowser            () { return _browser; }
-  inline QCheckBox*            TabEquipotentials::getSyncEquipotentials () { return _syncEquipotentials; }
-  inline QCheckBox*            TabEquipotentials::getSyncSelection      () { return _syncSelection; }
+  inline EquipotentialsWidget* TabEquipotentials::getBrowser () { return _browser; }
 
 
 }

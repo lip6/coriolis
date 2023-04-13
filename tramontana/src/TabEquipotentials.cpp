@@ -27,6 +27,8 @@
 
 namespace Tramontana {
 
+  using std::cerr;
+  using std::endl;
   using Hurricane::Graphics;
 
 
@@ -39,6 +41,7 @@ namespace Tramontana {
     , _browser              (new EquipotentialsWidget())
     , _syncEquipotentials   (new QCheckBox())
     , _syncSelection        (new QCheckBox())
+    , _showBuried           (new QCheckBox())
     , _cwCumulativeSelection(false)
   {
     _browser->setObjectName ( "controller.tabEquipotentials.browser" );
@@ -57,10 +60,17 @@ namespace Tramontana {
     _syncSelection->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
     connect( _syncSelection, SIGNAL(toggled(bool)), this, SLOT(setSyncSelection(bool)) );
 
+    _showBuried->setText   ( tr("Show Buried") );
+    _showBuried->setChecked( false );
+    _showBuried->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
+    connect( _showBuried, SIGNAL(toggled(bool)), this, SLOT(setShowBuried(bool)) );
+
     QHBoxLayout* commands = new QHBoxLayout ();
     commands->setContentsMargins( 0, 0, 0, 0 );
     commands->addStretch();
     commands->addWidget ( _syncEquipotentials );
+    commands->addStretch();
+    commands->addWidget ( _showBuried );
     commands->addStretch();
     commands->addWidget ( _syncSelection );
     commands->addStretch();
@@ -105,6 +115,13 @@ namespace Tramontana {
       _browser->disconnect( getCellWidget(), SLOT(select  (Occurrences)) );
       _browser->disconnect( getCellWidget(), SLOT(unselect(Occurrences)) );
     }
+  }
+
+
+  void  TabEquipotentials::setShowBuried ( bool state )
+  {
+    if (not getCellWidget()) return;
+    _browser->setShowBuried( state );
   }
 
 

@@ -57,6 +57,7 @@ namespace Tramontana {
     public:
       static        Equipotential* create            ( Cell* );
       inline        bool           isEmpty           () const;
+      inline        bool           isBuried          () const;
       virtual       Cell*          getCell           () const;
       virtual       Box            getBoundingBox    () const;
       inline        std::string    getName           () const;
@@ -95,6 +96,7 @@ namespace Tramontana {
       Net::Type       _type;
       Net::Direction  _direction;
       uint32_t        _netCount;
+      bool            _isBuried;
       bool            _isExternal;
       bool            _isGlobal;
       bool            _isAutomatic;
@@ -103,7 +105,8 @@ namespace Tramontana {
 
 
   
-  inline bool                  Equipotential::isEmpty       () const { return _components.empty() and _childs.empty(); }
+  inline       bool            Equipotential::isEmpty       () const { return _components.empty() and _childs.empty(); }
+  inline       bool            Equipotential::isBuried      () const { return _isBuried; }
   inline const OccurrenceSet&  Equipotential::getComponents () const { return _components; }
   inline const OccurrenceSet&  Equipotential::getChilds     () const { return _childs; }
   inline const NetSet&         Equipotential::getNets       () const { return _nets; }

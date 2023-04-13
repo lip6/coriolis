@@ -39,12 +39,42 @@ namespace Tramontana {
   using Hurricane::Graphics;
 
 
+// -------------------------------------------------------------------
+// Class  :  "BuriedFilterProxymodel".
+
+
+  EquiFilterProxyModel::EquiFilterProxyModel ( QObject* parent )
+    : Super  (parent)
+    , _filter(NoFilter)
+  { }
+
+
+  void  EquiFilterProxyModel::setFilter ( uint32_t filter )
+  { _filter = filter; invalidateFilter(); }
+
+  
+  bool  EquiFilterProxyModel::filterAcceptsRow ( int row, const QModelIndex& index ) const
+  {
+    EquipotentialsModel* model = dynamic_cast<EquipotentialsModel*>( sourceModel() );
+    if (not model) return true;
+    
+    const Equipotential* equi = model->getEqui( row );
+    if (not (_filter & ShowBuried) and equi->isBuried()) return false;
+    return true;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "EquipotentialsWidget".
+
+
   EquipotentialsWidget::EquipotentialsWidget ( QWidget* parent )
     : QWidget       (parent)
     , _cellWidget   (NULL)
     , _cell         (NULL)
     , _baseModel    (new EquipotentialsModel(this))
     , _sortModel    (new QSortFilterProxyModel(this))
+    , _filterModel  (new EquiFilterProxyModel(this))
     , _view         (new QTableView(this))
     , _rowHeight    (20)
     , _selecteds    ()
@@ -56,7 +86,9 @@ namespace Tramontana {
 
     _rowHeight = QFontMetrics( Graphics::getFixedFont() ).height() + 4;
 
-    _sortModel->setSourceModel      ( _baseModel );
+    _filterModel->setSourceModel    ( _baseModel );
+  //_filterModel->setFilter         ( EquiFilterProxyModel::ShowBuried );
+    _sortModel->setSourceModel      ( _filterModel );
     _sortModel->setDynamicSortFilter( true );
     _sortModel->setFilterKeyColumn  ( 0 );
 
@@ -110,6 +142,17 @@ namespace Tramontana {
   }
 
 
+  QModelIndex  EquipotentialsWidget::mapToSource ( QModelIndex viewIndex ) const
+  { return _filterModel->mapToSource( _sortModel->mapToSource( viewIndex )); }
+
+
+  void  EquipotentialsWidget::setShowBuried ( bool state )
+  {
+    _filterModel->setFilter( (state) ? EquiFilterProxyModel::ShowBuried
+                                     : EquiFilterProxyModel::NoFilter );
+  }
+
+
   void  EquipotentialsWidget::goTo ( int delta )
   {
     if ( delta == 0 ) return;
@@ -138,7 +181,7 @@ namespace Tramontana {
     const Equipotential* equi  = nullptr;
     QModelIndexList      iList = _view->selectionModel()->selectedRows();
     for ( int i=0 ; i<iList.size() ; i++ ) {
-      equi = _baseModel->getEqui( _sortModel->mapToSource(iList[i]).row() );
+      equi = _baseModel->getEqui( mapToSource(iList[i]).row() );
       if ( equi )
         _selecteds.insert( equi );
     }
@@ -182,7 +225,7 @@ namespace Tramontana {
 
   void  EquipotentialsWidget::fitToEqui ()
   {
-    const Equipotential* equi = _baseModel->getEqui( _sortModel->mapToSource(_view->currentIndex()).row() );
+    const Equipotential* equi = _baseModel->getEqui( mapToSource(_view->currentIndex()).row() );
     if (equi) emit reframe ( equi->getBoundingBox() );
   }
 

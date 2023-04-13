@@ -202,6 +202,7 @@ namespace Tramontana {
     , _type       (Net::Type::UNDEFINED)
     , _direction  (Net::Direction::DirUndefined)
     , _netCount   (0)
+    , _isBuried   (false)
     , _isExternal (false)
     , _isGlobal   (false)
     , _isAutomatic(false)
@@ -354,6 +355,7 @@ namespace Tramontana {
     for ( Occurrence childEqui : _childs ) {
       childEqui.put( relation );
     }
+    if (_components.empty() and _nets.empty()) _isBuried = true;
 
     // if (_name == "abc_11873_auto_rtlil_cc_2560_muxgate_11612")
     //   show();
@@ -388,6 +390,7 @@ namespace Tramontana {
     sflags += ((_isExternal ) ? "e" : "-");
     sflags += ((_isGlobal   ) ? "g" : "-");
     sflags += ((_isAutomatic) ? "a" : "-");
+    sflags += ((_isBuried   ) ? "B" : "-");
     sflags += " [N:" + getString( _netCount - ((_hasFused) ? 1 : 0) );
     sflags +=  "+E:" + getString( _childs.size() );
     if (_hasFused)
