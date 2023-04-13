@@ -154,10 +154,10 @@ namespace Tramontana {
       switch ( isel->getAccesses() ) {
         case 1:  break;
         case 64:
-          emit equipotentialSelect ( isel->getEqui()->getComponents() );
+          emit equipotentialSelect ( isel->getEqui()->getFlatComponents() );
           break;
         case 0:
-          emit equipotentialUnselect ( isel->getEqui()->getComponents() );
+          emit equipotentialUnselect ( isel->getEqui()->getFlatComponents() );
           remove = isel;
           ++isel;
           _selecteds.erase( remove );

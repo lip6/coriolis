@@ -77,12 +77,14 @@ namespace Tramontana {
 // Class  :  "Tramontana::Tile".
 
 
-  uint32_t       Tile::_time = 0;
+  uint32_t       Tile::_idCounter = 0;
+  uint32_t       Tile::_time      = 0;
   vector<Tile*>  Tile::_allocateds;
 
 
   Tile::Tile ( Occurrence occurrence, const BasicLayer* layer, const Box& boundingBox )
-    : _occurrence   (occurrence) 
+    : _id           (_idCounter++)
+    , _occurrence   (occurrence) 
     , _layer        (layer)
     , _boundingBox  (boundingBox)
     , _equipotential(nullptr)
@@ -116,6 +118,9 @@ namespace Tramontana {
 
     Box bb = component->getBoundingBox( layer );
     occurrence.getPath().getTransformation().applyOn( bb );
+
+    if (not occurrence.getPath().isEmpty())
+      occurrence = Equipotential::getChildEqui( occurrence );
     Tile* tile = new Tile ( occurrence, layer, bb );
 
     return tile;
@@ -133,8 +138,8 @@ namespace Tramontana {
   { }
 
 
-  Net* Tile::getNet () const
-  { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
+  // Net* Tile::getNet () const
+  // { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
 
 
   Tile* Tile::getRoot ( uint32_t flags )
@@ -150,7 +155,8 @@ namespace Tramontana {
       }
       root = root->getParent();
     }
-    cdebug_log(160,0) << "> root " << root->getId() << endl;
+    cdebug_log(160,0) << "> root " << root->getId() << " "
+                      << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
 
     if (flags & Compress) {
       Tile* current = this;
@@ -173,9 +179,11 @@ namespace Tramontana {
         if (current->getEquipotential()) {
           if (current->getEquipotential() != rootEqui) {
             cdebug_log(160,0) << "| merge " << current->getId() << " => " << root->getId() << endl;
+            cdebug_log(160,0) << "|       " << current->getEquipotential() << endl;
             rootEqui->merge( current->getEquipotential() );
           }
         } else {
+          cdebug_log(160,0) << "| add " << current->getOccurrence() << endl;
           rootEqui->add( current->getOccurrence(), _boundingBox );
         }
         current->syncTime();
@@ -217,8 +225,8 @@ namespace Tramontana {
 
     _equipotential = Equipotential::create( _occurrence.getOwnerCell() );
     _equipotential->add( _occurrence, _boundingBox );
-  //cerr << "new " << _equipotential << endl;
-  //cerr << "| " << _occurrence << endl;
+    cdebug_log(160,0) << "new " << _equipotential << endl;
+    cdebug_log(160,0) << "| " << _occurrence << endl;
     return _equipotential;
   }
 

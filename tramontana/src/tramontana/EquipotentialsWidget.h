@@ -137,8 +137,8 @@ namespace Tramontana {
               void  goTo                  ( int );
               void  updateSelecteds       ();
     signals:                              
-              void  equipotentialSelect   ( const OccurrenceSet& );
-              void  equipotentialUnselect ( const OccurrenceSet& );
+              void  equipotentialSelect   ( Occurrences );
+              void  equipotentialUnselect ( Occurrences );
               void  reframe               ( const Box& );
     private slots:                        
               void  textFilterChanged     ();

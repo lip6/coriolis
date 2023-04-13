@@ -92,7 +92,8 @@ namespace Tramontana {
     for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
     // HARDCODED. Should read the gauge.
       if (getString(bl->getName()).substr(0,6) == "gmetal") continue;
-      if (bl->getMaterial() == BasicLayer::Material::metal)
+      if (  (bl->getMaterial() == BasicLayer::Material::metal)
+         or (bl->getMaterial() == BasicLayer::Material::poly))
         _extracteds.push_back( bl );
     }
     
@@ -142,7 +143,7 @@ namespace Tramontana {
         continue;
       }
       if (element.isLeftEdge()) {
-        // if (tile->getId() == 60117) {
+        // if (tile->getId() == 46055) {
         //   DebugSession::open( 0, 169 );
         //   if (not written) intvTree->second.write( "tree-before.gv" );
         //   cdebug_log(160,0) << " Interval tree *before* insertion." << endl;
@@ -166,7 +167,7 @@ namespace Tramontana {
         //   cerr << "   | insert " << tile << endl;
         // }
         intvTree->second.insert( tileIntv );
-        // if (tile->getId() == 60117) {
+        // if (tile->getId() == 46055) {
         //   if (not written) intvTree->second.write( "tree-after.gv" );
         //   written = true;
         //   DebugSession::close();
@@ -188,9 +189,9 @@ namespace Tramontana {
         // }
         cdebug_log(160,0) << " | remove tile" << endl;
         intvTree->second.remove( tileIntv );
-      //DebugSession::open( 0, 169 );
-        intvTree->second.checkVMax();
-      //DebugSession::close();
+        // DebugSession::open( 0, 169 );
+        // intvTree->second.checkVMax();
+        // DebugSession::close();
         // if ((tile->getId() == 289) and not written) {
         // //DebugSession::open( 0, 169 );
         //   written = true;
@@ -216,7 +217,7 @@ namespace Tramontana {
         //   }
         // }
       }
-      intvTree->second.checkVMax();
+    //intvTree->second.checkVMax();
       cdebug_tabw(160,-1);
     }
   //if (debugOn) DebugSession::close();
@@ -264,11 +265,15 @@ namespace Tramontana {
 
   void  SweepLine::mergeEquipotentials ()
   {
+  //DebugSession::open( 160, 169 );
+    cdebug_log(160,1) << "SweepLine::mergeEquipotentials()" << endl;
   //cerr << "SweepLine::mergeEquipotentials()" << endl;
     Tile::timeTick();
     for ( Tile* tile : Tile::getAllTiles() ) {
       tile->getRoot( Tile::MergeEqui );
     }
+    cdebug_tabw(160,-1);
+  //DebugSession::close();
   }
 
 

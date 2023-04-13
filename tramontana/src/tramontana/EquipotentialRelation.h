@@ -18,7 +18,6 @@
 
 #pragma  once
 #include "hurricane/Relation.h"
-#include "tramontana/TramontanaEngine.h"
 
 
 namespace Tramontana {
@@ -26,6 +25,8 @@ namespace Tramontana {
   using Hurricane::Name;
   using Hurricane::Record;
   using Hurricane::Relation;
+  using Hurricane::Component;
+  class Equipotential;
     
 
 // -------------------------------------------------------------------
@@ -37,6 +38,7 @@ namespace Tramontana {
     public:
       static  EquipotentialRelation* get                   ( const Component* );
       static  EquipotentialRelation* create                ( Equipotential* );
+      static  Name                   staticGetName         ();
     public:
       virtual Name                   getName               () const;
       virtual std::string            _getTypeName          () const;

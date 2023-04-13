@@ -235,7 +235,7 @@ namespace Tramontana {
     Record* record = Super::_getRecord ();
                                      
     if (record) {
-    //record->add( getSlot( "_blocks"       , &_blocks ) );
+      record->add( getSlot( "_equipotentials", &_equipotentials ) );
     }
     return record;
   }

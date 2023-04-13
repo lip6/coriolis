@@ -66,9 +66,9 @@ namespace Tramontana {
              inline       uint32_t            getRank          () const;
              inline       Tile*               getParent        () const;
                           Tile*               getRoot          ( uint32_t flags=Compress );
-             inline       Component*          getComponent     () const;
+           //inline       Component*          getComponent     () const;
              inline       Occurrence          getOccurrence    () const;
-                          Net*                getNet           () const;
+           //             Net*                getNet           () const;
              inline       Layer::Mask         getMask          () const;
              inline const BasicLayer*         getLayer         () const;
              inline const Box&                getBoundingBox   () const;
@@ -94,8 +94,10 @@ namespace Tramontana {
                       Tile      ( const Tile& ) = delete;
               Tile&   operator= ( const Tile& ) = delete;
     private:
+      static       uint32_t           _idCounter;
       static       uint32_t           _time;
       static       std::vector<Tile*> _allocateds;
+                   uint32_t           _id;
                    Occurrence         _occurrence;
              const BasicLayer*        _layer;
                    Box                _boundingBox;
@@ -109,8 +111,8 @@ namespace Tramontana {
   inline const std::vector<Tile*>  Tile::getAllTiles      () { return _allocateds; }
   inline       void                Tile::timeTick         () { _time++; }
   inline       bool                Tile::isUpToDate       () const { return _timeStamp >= _time; }
-  inline       unsigned int        Tile::getId            () const { return getComponent()->getId(); }
-  inline       Component*          Tile::getComponent     () const { return dynamic_cast<Component*>( _occurrence.getEntity() ); }
+  inline       unsigned int        Tile::getId            () const { return _id; }
+//inline       Component*          Tile::getComponent     () const { return dynamic_cast<Component*>( _occurrence.getEntity() ); }
   inline       Occurrence          Tile::getOccurrence    () const { return _occurrence; }
   inline       Layer::Mask         Tile::getMask          () const { return _layer->getMask(); }
   inline const BasicLayer*         Tile::getLayer         () const { return _layer; }
@@ -134,7 +136,7 @@ namespace Tramontana {
       inline bool  operator() ( const Tile* lhs, const Tile* rhs ) const
       {
         cdebug_log(0,0) << "TileCompare::operator()" << std::endl;
-        return lhs->getOccurrence() < rhs->getOccurrence();
+        return lhs->getId() < rhs->getId();
       }
   };
 

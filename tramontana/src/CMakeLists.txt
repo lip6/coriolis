@@ -14,6 +14,7 @@
                                      tramontana/SweepLine.h
                                      tramontana/Equipotential.h
                                      tramontana/EquipotentialRelation.h
+                                     tramontana/EquipotentialComponents.h
                                      tramontana/TramontanaEngine.h
                                      tramontana/GraphicTramontanaEngine.h
                       )
@@ -30,6 +31,7 @@
                                      SweepLine.cpp
                                      Equipotential.cpp
                                      EquipotentialRelation.cpp
+                                     EquipotentialComponents.cpp
                                      TramontanaEngine.cpp
                                      GraphicTramontanaEngine.cpp
                                      EquipotentialsModel.cpp

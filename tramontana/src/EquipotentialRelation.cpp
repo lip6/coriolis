@@ -17,6 +17,7 @@
 
 
 #include "tramontana/EquipotentialRelation.h"
+#include "tramontana/TramontanaEngine.h"
 
 
 namespace Tramontana {
@@ -46,6 +47,10 @@ namespace Tramontana {
 
   void  EquipotentialRelation::_preDestroy ()
   { Super::_preDestroy(); }
+
+
+  Name  EquipotentialRelation::staticGetName ()
+  { return EquipotentialRelationName; }
 
 
   Name  EquipotentialRelation::getName () const

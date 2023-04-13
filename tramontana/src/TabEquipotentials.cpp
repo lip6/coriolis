@@ -96,14 +96,14 @@ namespace Tramontana {
         getCellWidget()->closeRefreshSession ();
       }
       getCellWidget()->setShowSelection( true );
-      connect( _browser, SIGNAL(equipotentialSelect  (const OccurrenceSet&)), getCellWidget(), SLOT(selectSet  (const OccurrenceSet&)) );
-      connect( _browser, SIGNAL(equipotentialUnselect(const OccurrenceSet&)), getCellWidget(), SLOT(unselectSet(const OccurrenceSet&)) );
+      connect( _browser, SIGNAL(equipotentialSelect  (Occurrences)), getCellWidget(), SLOT(select  (Occurrences)) );
+      connect( _browser, SIGNAL(equipotentialUnselect(Occurrences)), getCellWidget(), SLOT(unselect(Occurrences)) );
       _browser->updateSelecteds();
     } else {
       getCellWidget()->setShowSelection( false );
       getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
-      _browser->disconnect( getCellWidget(), SLOT(selectSet  (const OccurrenceSet&)) );
-      _browser->disconnect( getCellWidget(), SLOT(unselectSet(const OccurrenceSet&)) );
+      _browser->disconnect( getCellWidget(), SLOT(select  (Occurrences)) );
+      _browser->disconnect( getCellWidget(), SLOT(unselect(Occurrences)) );
     }
   }
 
