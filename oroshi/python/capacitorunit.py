@@ -736,6 +736,7 @@ class CapacitorUnit():
 
     def cutMatrix( self, net, layer, firstCutXCenter, firstCutYCenter, width_cut, height_cut, spacing_cut, cutColumnNumber, cutRowNumber ):
 
+        Breakpoint.stop( 200, "CapacitorUnit.cutMatrix() cutRowNumber={}".format(cutRowNumber) )
         for i in range( cutRowNumber):
             matrix = self.cutLine( net, layer, firstCutXCenter, firstCutYCenter + i*(spacing_cut + width_cut), width_cut, height_cut, spacing_cut, cutColumnNumber, 'horizontal' )
 

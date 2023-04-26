@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..Hurricane  import DataBase, UpdateSession, DbU, Box, Net
+from ..Hurricane  import Breakpoint, DataBase, UpdateSession, DbU, Box, Net
 from ..Analog     import Device
 from ..helpers.io import catch
 from ..helpers    import setTraceLevel, trace
@@ -134,6 +134,7 @@ def layout ( device, bbMode ):
             capaSingle.route()
         else:
            # Two capa, multiple units.
+            Breakpoint.setStopLevel( 200 )
             capaGenerator = CapacitorStack( device
                                           , capaValuesArg # [ 240, 720 ]  # capaValuesArg (fF).
                                           , typeArg

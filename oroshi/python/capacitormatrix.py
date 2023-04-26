@@ -238,10 +238,10 @@ class CapacitorStack( CapacitorUnit ):
         for k in range(0, self.capacitorsNumber):
             unitCapList.append( capacitance[k]/self.capacitorIdOccurence(k) )
 
-       #print self.capacitorsNumber
-       #print 'capacitance', capacitance
-       #print 'unitCapList', unitCapList
-       #print '============='
+        print( self.capacitorsNumber )
+        print( 'capacitance', capacitance )
+        print( 'unitCapList', unitCapList )
+        print( '=============' )
         return unitCapList
 
 
@@ -407,7 +407,6 @@ class CapacitorStack( CapacitorUnit ):
         if self.matchingMode == False :
            capacitorList[capListIndex].create( self.nets[0][0], self.nets[0][1] )
         else :
-
             if self.dummyRing == True:
                 if (matchingSchemeRowIndex == 0 or matchingSchemeRowIndex == self.matrixDim["rows"] + 1 or capListIndex == 0 or capListIndex == self.matrixDim["columns"] + 1)  : 
                     [ t , b ] = [ self.nets[-1][0] , self.nets[-1][1] ]
