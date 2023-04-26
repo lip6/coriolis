@@ -21,13 +21,13 @@ The ``sram`` module provide base classes for SRAM assemby.
 import sys
 import re
 import traceback
-from   ..helpers.io        import ErrorMessage, WarningMessage
-from   ..helpers.overlay   import UpdateSession
-from   ..helpers           import trace, l, u, n
-from   ..Hurricane         import DataBase, Breakpoint, DbU, Box, Net, Cell, \
-                                  Instance, Transformation, PythonAttributes
-from   ..                  import CRL
-from   .chip.configuration import GaugeConf
+from   ...helpers.io         import ErrorMessage, WarningMessage
+from   ...helpers.overlay    import UpdateSession
+from   ...helpers            import trace, l, u, n
+from   ...Hurricane          import DataBase, Breakpoint, DbU, Box, Net, Cell, \
+                                    Instance, Transformation, PythonAttributes
+from   ...                   import CRL
+from   ..block.configuration import GaugeConf
 
 
 af = CRL.AllianceFramework.get()

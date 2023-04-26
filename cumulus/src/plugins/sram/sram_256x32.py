@@ -176,15 +176,15 @@ Conclusion for the nand2+nor2 implementation:
 import sys
 import re
 import traceback
-from   ...helpers.io        import ErrorMessage, WarningMessage
-from   ...helpers.overlay   import UpdateSession
-from   ...helpers           import trace, l, u, n
-from   ...Hurricane         import Breakpoint, DbU, Box, Net, Cell, Instance, \
-                                   Transformation, PythonAttributes
-from   ...                  import CRL
-from   ..chip.configuration import GaugeConf
-from   .sram                import Bus, Column, ColBlock, ColGroup, \
-                                   HeaderRow, BaseSRAM 
+from   ...helpers.io         import ErrorMessage, WarningMessage
+from   ...helpers.overlay    import UpdateSession
+from   ...helpers            import trace, l, u, n
+from   ...Hurricane          import Breakpoint, DbU, Box, Net, Cell, Instance, \
+                                    Transformation, PythonAttributes
+from   ...                   import CRL
+from   ..block.configuration import GaugeConf
+from   .sram                 import Bus, Column, ColBlock, ColGroup, \
+                                    HeaderRow, BaseSRAM 
 
 
 """
