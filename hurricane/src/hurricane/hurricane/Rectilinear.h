@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2018-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2018-2023, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -28,10 +28,7 @@
 // |  C++ Header  :  "./hurricane/Rectilinear.h"                     |
 // +-----------------------------------------------------------------+
 
-
-#ifndef HURRICANE_RECTILINEAR_H
-#define HURRICANE_RECTILINEAR_H
-
+#pragma  once
 #include "hurricane/Component.h"
 
 
@@ -46,11 +43,13 @@ namespace Hurricane {
   class Rectilinear : public Component {
     public:
       typedef Component Super;
+      static const uint32_t IsRectilinear = (1<<0);
   
     public:
       static        Rectilinear*   create            ( Net*, const Layer*, const vector<Point>& );
     // Accessors.                  
       virtual       bool           isNonRectangle    () const;
+      inline        bool           isRectilinear     () const;
       virtual       DbU::Unit      getX              () const;
       virtual       DbU::Unit      getY              () const;
       virtual       Box            getBoundingBox    () const;
@@ -59,6 +58,7 @@ namespace Hurricane {
       virtual       Point          getPoint          ( size_t i ) const;
       virtual const Layer*         getLayer          () const;
       inline        Points         getContour        () const;
+                    bool           getAsRectangles   ( std::vector<Box>& ) const;
       inline  const vector<Point>& getPoints         () const;
     // Mutators.
                     void           setLayer          ( const Layer* );
@@ -75,11 +75,13 @@ namespace Hurricane {
     private:
       const Layer*         _layer;
             vector<Point>  _points;
+            uint32_t       _flags;
   };
 
   
-  inline        Points         Rectilinear::getContour () const { return new VectorCollection<Point>(_points); }
-  inline  const vector<Point>& Rectilinear::getPoints  () const { return _points; }
+  inline        bool           Rectilinear::isRectilinear () const { return _flags & IsRectilinear; }
+  inline        Points         Rectilinear::getContour    () const { return new VectorCollection<Point>(_points); }
+  inline  const vector<Point>& Rectilinear::getPoints     () const { return _points; }
 
 
 // -------------------------------------------------------------------
@@ -99,5 +101,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Rectilinear);
-
-#endif // HURRICANE_RECTILINEAR_H
