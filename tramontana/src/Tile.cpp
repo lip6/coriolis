@@ -33,10 +33,14 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Diagonal.h"
+#include "hurricane/Rectilinear.h"
+#include "hurricane/Polygon.h"
 #include "hurricane/RoutingPad.h"
 #include "crlcore/Utilities.h"
 #include "tramontana/Tile.h"
 #include "tramontana/Equipotential.h"
+#include "tramontana/SweepLine.h"
 
 
 namespace Tramontana {
@@ -68,7 +72,10 @@ namespace Tramontana {
   using Hurricane::Entity;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
-  using Hurricane::RoutingPad;
+  using Hurricane::Vertical;
+  using Hurricane::Diagonal;
+  using Hurricane::Rectilinear;
+  using Hurricane::Polygon;
   using Hurricane::Cell;
   using Hurricane::Instance;
 
@@ -82,14 +89,14 @@ namespace Tramontana {
   vector<Tile*>  Tile::_allocateds;
 
 
-  Tile::Tile ( Occurrence occurrence, const BasicLayer* layer, const Box& boundingBox )
+  Tile::Tile ( Occurrence occurrence, const BasicLayer* layer, const Box& boundingBox, Tile* parent )
     : _id           (_idCounter++)
     , _occurrence   (occurrence) 
     , _layer        (layer)
     , _boundingBox  (boundingBox)
     , _equipotential(nullptr)
     , _flags        (0)
-    , _parent       (nullptr)
+    , _parent       (parent)
     , _rank         (0)
     , _timeStamp    (0)
   {
@@ -97,7 +104,11 @@ namespace Tramontana {
   }
 
 
-  Tile* Tile::create ( Occurrence occurrence, const BasicLayer* layer )
+  Tile* Tile::create (       Occurrence  occurrence
+                     , const BasicLayer* layer
+                     ,       Tile*       rootTile
+                     ,       SweepLine*  sweepLine
+                     ,       uint32_t    flags )
   {
     Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
     if (not component) {
@@ -107,22 +118,72 @@ namespace Tramontana {
                    ) << endl;
       return nullptr;
     }
-    if (not component->getLayer()->contains(layer)) {
-      cerr << Error( "Tile::create(): Component layer does not contains \"%s\".\n"
+    if (not (flags & ForceLayer) and not component->getLayer()->contains(layer)) {
+      cerr << "Intersect:" << component->getLayer()->getMask().intersect(layer->getMask()) << endl;
+      cerr << Error( "Tile::create(): Component layer \"%s\" does not contains \"%s\".\n"
+                     "        (%s)\n"
+                     "        component :%s\n"
+                     "        basicLayer:%s"
+                   , getString(component->getLayer()->getName()).c_str()
+                   , getString(layer->getName()).c_str()
+                   , getString(occurrence).c_str()
+                   , getString(component->getLayer()->getMask()).c_str()
+                   , getString(layer->getMask()).c_str()
+                   ) << endl;
+      return nullptr;
+    }
+    if (dynamic_cast<Polygon*>(component)) {
+      cerr << Error( "Tile::create(): Polygon are not supported for extraction.\n"
                      "        (%s)"
-                   , getString(layer).c_str()
+                   , getString(occurrence).c_str()
+                   ) << endl;
+      return nullptr;
+    }
+    if (dynamic_cast<Diagonal*>(component)) {
+      cerr << Error( "Tile::create(): Diagonal are not supported for extraction.\n"
+                     "        (%s)"
                    , getString(occurrence).c_str()
                    ) << endl;
       return nullptr;
     }
 
+    Occurrence childEqui = occurrence;
+    if (not childEqui.getPath().isEmpty())
+      childEqui = Equipotential::getChildEqui( occurrence );
+    
+    Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+    if (rectilinear) {
+      if (not rectilinear->isRectilinear()) {
+        cerr << Error( "Tile::create(): Rectilinear with 45/135 edges are not supported for extraction.\n"
+                       "        (%s)"
+                     , getString(occurrence).c_str()
+                     ) << endl;
+        return nullptr;
+      }
+      if (rectilinear->getId() == 3367) {
+        DebugSession::open( 160, 169 );
+        cdebug_log(160,0) << "Tiling: " << rectilinear << endl;
+      }
+      vector<Box> boxes;
+      rectilinear->getAsRectangles( boxes );
+      for ( Box bb : boxes ) {
+        occurrence.getPath().getTransformation().applyOn( bb );
+        Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+        sweepLine->add( tile );
+        cdebug_log(160,0) << "| " << tile << endl;
+        if (not rootTile) rootTile = tile;
+      }
+      if (rectilinear->getId() == 3367) {
+        DebugSession::close();
+      }
+      return rootTile;
+    }
+
     Box bb = component->getBoundingBox( layer );
     occurrence.getPath().getTransformation().applyOn( bb );
 
-    if (not occurrence.getPath().isEmpty())
-      occurrence = Equipotential::getChildEqui( occurrence );
-    Tile* tile = new Tile ( occurrence, layer, bb );
-
+    Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+    sweepLine->add( tile );
     return tile;
   }
 
@@ -238,7 +299,8 @@ namespace Tramontana {
   string  Tile::_getString () const
   {
     ostringstream  os;
-    os << "<Tile " << _boundingBox << " " << _layer->getName() << " " << _occurrence << ">";
+    os << "<Tile tid:" << _id
+       << " " << _boundingBox << " " << _layer->getName() << " " << _occurrence << ">";
     return os.str();
   }
 

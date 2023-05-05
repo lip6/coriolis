@@ -44,6 +44,7 @@ namespace Tramontana {
   using Hurricane::IntervalData;
   using Hurricane::IntervalTree;
   class Equipotential;
+  class SweepLine;
 
 
 // -------------------------------------------------------------------
@@ -51,15 +52,20 @@ namespace Tramontana {
 
   class Tile {
     public:
-      static const uint32_t  NoFlags   =  0;
-      static const uint32_t  LeftEdge  = (1<<0);
-      static const uint32_t  RightEdge = (1<<1);
-      static const uint32_t  Compress  = (1<<2);
-      static const uint32_t  MergeEqui = (1<<3);
+      static const uint32_t  NoFlags    =  0;
+      static const uint32_t  LeftEdge   = (1<<0);
+      static const uint32_t  RightEdge  = (1<<1);
+      static const uint32_t  Compress   = (1<<2);
+      static const uint32_t  MergeEqui  = (1<<3);
+      static const uint32_t  ForceLayer = (1<<4);
     public:
       static inline const std::vector<Tile*>  getAllTiles      ();
       static inline       void                timeTick         ();
-      static              Tile*               create           ( Occurrence, const BasicLayer* );
+      static              Tile*               create           ( Occurrence
+                                                               , const BasicLayer*
+                                                               , Tile* rootTile
+                                                               , SweepLine*
+                                                               , uint32_t flags=NoFlags );
                           void                destroy          ();
              inline       bool                isUpToDate       () const;
              inline       unsigned int        getId            () const;
@@ -88,7 +94,7 @@ namespace Tramontana {
                           std::string         _getString       () const;
                           std::string         _getTypeName     () const;
     private:
-                      Tile      ( Occurrence, const BasicLayer*, const Box& );
+                      Tile      ( Occurrence, const BasicLayer*, const Box&, Tile* parent );
                      ~Tile      ();
     private:
                       Tile      ( const Tile& ) = delete;

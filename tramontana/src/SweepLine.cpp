@@ -28,6 +28,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Layer.h"
+#include "hurricane/ViaLayer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Plug.h"
@@ -71,6 +72,7 @@ namespace Tramontana {
   using Hurricane::DataBase;
   using Hurricane::Technology;
   using Hurricane::Layer;
+  using Hurricane::ViaLayer;
   using Hurricane::Entity;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
@@ -84,18 +86,24 @@ namespace Tramontana {
 
 
   SweepLine::SweepLine ( TramontanaEngine* tramontana  )
-    : _tramontana   (tramontana) 
-    , _extracteds   ()
-    , _tiles        ()
-    , _intervalTrees()
+    : _tramontana    (tramontana) 
+    , _extracteds    ()
+    , _extractedsMask()
+    , _connexityMap  ()
+    , _tiles         ()
+    , _intervalTrees ()
   {
     for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
     // HARDCODED. Should read the gauge.
       if (getString(bl->getName()).substr(0,6) == "gmetal") continue;
       if (  (bl->getMaterial() == BasicLayer::Material::metal)
-         or (bl->getMaterial() == BasicLayer::Material::poly))
+         or (bl->getMaterial() == BasicLayer::Material::poly)
+         or (bl->getMaterial() == BasicLayer::Material::cut)) {
         _extracteds.push_back( bl );
+        _extractedsMask |= bl->getMask();
+      }
     }
+    _buildCutConnexMap();
     
     // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
     // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
@@ -110,16 +118,66 @@ namespace Tramontana {
   { }
 
 
+  void  SweepLine::_buildCutConnexMap ()
+  {
+    for ( const ViaLayer* viaLayer : DataBase::getDB()->getTechnology()->getViaLayers() ) {
+      const BasicLayer* cutLayer = nullptr;
+      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
+        if (layer->getMaterial() == BasicLayer::Material::cut) {
+          cutLayer = layer;
+          break;
+        }
+      }
+      if (not cutLayer) {
+        cerr << Error( "SweepLine::_buildConnexityMap(): ViaLayer \"%s\" does not contains any *cut* (ignored)."
+                     , getString(viaLayer->getName()).c_str()
+                     ) << endl;
+        continue;
+      }
+      auto iCutMap = _connexityMap.find( cutLayer );
+      if (iCutMap == _connexityMap.end()) {
+        _connexityMap.insert( make_pair( cutLayer, LayerSet() ));
+        iCutMap = _connexityMap.find( cutLayer );
+      }
+      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
+        if (   (layer->getMaterial() != BasicLayer::Material::cut)
+           and (_extractedsMask.intersect(layer->getMask())) ) {
+          iCutMap->second.insert( layer );
+        }
+      }
+    }
+    // for ( auto item : _connexityMap ) {
+    //   cerr << "BasicLayers connex to cut: " << item.first << endl;
+    //   for ( const BasicLayer* bl : item.second ) {
+    //     cerr << "| " << bl << endl;
+    //   }
+    // }
+  }
+
+  
+  const SweepLine::LayerSet&  SweepLine::getCutConnexLayers ( const BasicLayer* cutLayer ) const
+  {
+    static LayerSet emptySet;
+    auto iCutMap = _connexityMap.find( cutLayer );
+    if (iCutMap == _connexityMap.end())
+      return emptySet;
+    return iCutMap->second;
+  }
+  
+
   void  SweepLine::run ()
   {
   //DebugSession::open( 160, 169 );
     cdebug_log(160,1) << "SweepLine::run()" << endl;
     loadTiles();
   //bool debugOn = false;
-    bool written = false;
+  //bool written = false;
     for ( Element& element : _tiles ) {
       Tile*     tile     = element.getTile();
       TileIntv  tileIntv ( tile, tile->getYMin(), tile->getYMax() );
+      // if (tile->getOccurrence().getEntity()->getId() == 3348) {
+      //   DebugSession::open( 160, 169 );
+      // }
       // if (getString(tile->getNet()->getName()) == "a(13)") {
       //   cerr << tile << endl;
       // }
@@ -143,9 +201,8 @@ namespace Tramontana {
         continue;
       }
       if (element.isLeftEdge()) {
-        // if (tile->getId() == 46055) {
-        //   DebugSession::open( 0, 169 );
-        //   if (not written) intvTree->second.write( "tree-before.gv" );
+        // if (tile->getOccurrence().getEntity()->getId() == 3348) {
+        // //if (not written) intvTree->second.write( "tree-before.gv" );
         //   cdebug_log(160,0) << " Interval tree *before* insertion." << endl;
         //   for ( auto elt : intvTree->second.getElements() ) {
         //     cdebug_log(160,0) << " | in tree:" << elt << endl;
@@ -167,11 +224,10 @@ namespace Tramontana {
         //   cerr << "   | insert " << tile << endl;
         // }
         intvTree->second.insert( tileIntv );
-        // if (tile->getId() == 46055) {
-        //   if (not written) intvTree->second.write( "tree-after.gv" );
-        //   written = true;
-        //   DebugSession::close();
-        // }
+        if (tile->getOccurrence().getEntity()->getId() == 3348) {
+        //if (not written) intvTree->second.write( "tree-after.gv" );
+        //written = true;
+        }
       } else {
         // if (tile->getId() == 289) {
         //   DebugSession::open( 0, 169 );
@@ -218,7 +274,10 @@ namespace Tramontana {
         // }
       }
     //intvTree->second.checkVMax();
-      cdebug_tabw(160,-1);
+      // cdebug_tabw(160,-1);
+      // if (tile->getOccurrence().getEntity()->getId() == 3348) {
+      //   DebugSession::close();
+      // }
     }
   //if (debugOn) DebugSession::close();
     cdebug_tabw(160,-1);

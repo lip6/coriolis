@@ -72,18 +72,32 @@ namespace Tramontana {
 
   void  QueryTiles::goCallback ( Go* go )
   {
-    vector<Tile*> tiles;
+    Tile*      rootTile  = nullptr;
     Component* component = dynamic_cast<Component*>( go );
     if (not component) return;
     if (isProcessed(component)) return;
     Occurrence occurrence = Occurrence( go, getPath() );
     for ( const BasicLayer* layer : _sweepLine->getExtracteds() ) {
       if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
-      tiles.push_back( Tile::create( occurrence, layer ));
-      _sweepLine->add( tiles.back() );
-      if (tiles.size() > 1)
-        tiles.back()->setParent( tiles[0] );
+      Tile* tile = Tile::create( occurrence
+                               , layer
+                               , rootTile
+                               , _sweepLine );
+      if (not rootTile) rootTile = tile;
     }
+
+    BasicLayer* cutLayer = component->getLayer()->getBasicLayers().getFirst();
+    if (cutLayer->getMaterial() == BasicLayer::Material::cut) {
+      const SweepLine::LayerSet& connexSet = _sweepLine->getCutConnexLayers( cutLayer );
+      for ( const BasicLayer* connexLayer : connexSet ) {
+        Tile::create( occurrence
+                    , connexLayer
+                    , rootTile
+                    , _sweepLine
+                    , Tile::ForceLayer );
+      }
+    }
+    
     _goMatchCount++;
   }
 

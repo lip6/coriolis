@@ -19,6 +19,7 @@
 #pragma  once
 #include <iostream>
 #include <vector>
+#include <list>
 #include <map>
 #include "hurricane/BasicLayer.h"
 namespace Hurricane {
@@ -33,6 +34,7 @@ namespace Tramontana {
   using Hurricane::Record;
   using Hurricane::Box;
   using Hurricane::DbU;
+  using Hurricane::DBo;
   using Hurricane::Cell;
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
@@ -43,7 +45,10 @@ namespace Tramontana {
 
   class SweepLine {
     private:
-      typedef  std::map<Layer::Mask,TileIntvTree>  IntervalTrees;
+      typedef  std::map<Layer::Mask, TileIntvTree>            IntervalTrees;
+    public:
+      typedef  std::set<const BasicLayer*,           DBo::CompareById>  LayerSet;
+      typedef  std::map<const BasicLayer*, LayerSet, DBo::CompareById>  ConnexityMap;
     private:
       class Element {
         public:
@@ -66,6 +71,8 @@ namespace Tramontana {
       inline  Cell*             getCell             ();
       inline  const std::vector<const BasicLayer*>&
                                 getExtracteds       () const;
+      inline  Layer::Mask       getExtractedMask    () const;
+              const LayerSet&   getCutConnexLayers  ( const BasicLayer* ) const;
               void              run                 ();
               void              loadTiles           ();
       inline  void              add                 ( Tile* );
@@ -76,9 +83,12 @@ namespace Tramontana {
     private:                                        
                                 SweepLine           ( const SweepLine& ) = delete;
               SweepLine&        operator=           ( const SweepLine& ) = delete;
+              void              _buildCutConnexMap  ();
     private:
       TramontanaEngine*               _tramontana;
       std::vector<const BasicLayer*>  _extracteds;
+      Layer::Mask                     _extractedsMask;
+      ConnexityMap                    _connexityMap;
       std::vector<Element>            _tiles;
       IntervalTrees                   _intervalTrees;
   };
@@ -109,7 +119,8 @@ namespace Tramontana {
   
 // SweepLine.  
   inline  Cell* SweepLine::getCell () { return _tramontana->getCell(); }
-  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds () const { return _extracteds; }
+  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds    () const { return _extracteds; }
+  inline  Layer::Mask                           SweepLine::getExtractedMask () const { return _extractedsMask; }
 
   inline  void  SweepLine::add ( Tile* tile )
   {

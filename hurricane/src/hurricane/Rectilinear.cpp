@@ -182,7 +182,7 @@ namespace {
   void  SweepLine::loadVEdges ()
   {
     const vector<Point>& points = _rectilinear->getPoints();
-    for ( size_t i=0 ; i<points.size() ; ++i ) {
+    for ( size_t i=0 ; i<points.size()-1 ; ++i ) {
       const Point& source = points[  i ];
       const Point& target = points[ (i+1) % points.size() ];
       DbU::Unit dx = target.getX() - source.getX();
@@ -337,8 +337,19 @@ namespace Hurricane {
     if (not layer)
       throw Error( "Rectilinear::create(): Can't create, NULL layer" );
 
+    if (points.size() < 4)
+      throw Error( "Rectilinear::create(): Rectilinear polygons must at least contains 3 vertexes." );
+
     if (points.size() > 1000)
-      throw Error( "Rectilinear::create(): Rectlinear polygons must not exceed 1000 vertexes." );
+      throw Error( "Rectilinear::create(): Rectilinear polygons must not exceed 1000 vertexes." );
+
+    if (points[0] != points[points.size()-1])
+      throw Error( "Rectilinear::create(): First and last point must be the same.\n"
+                   "0:%s %d:%s"
+                 , getString(points[0]).c_str()
+                 , points.size()-1
+                 , getString(points[points.size()-1]).c_str()
+                 );
 
     bool       isRect  = true;
     DbU::Unit  oneGrid = DbU::fromGrid( 1.0 );
