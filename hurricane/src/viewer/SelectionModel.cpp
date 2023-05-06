@@ -91,8 +91,8 @@ namespace Hurricane {
   {
     if (not _cellWidget) return;
     
+    if (not isCumulative()) clear ();
     beginResetModel();
-    if (not isCumulative()) _selection.clear ();
 
     for ( Selector* selector : selection ) {
       if (not selector->isInModel(_cellWidget)) {

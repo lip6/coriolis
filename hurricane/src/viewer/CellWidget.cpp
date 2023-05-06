@@ -2683,7 +2683,8 @@ namespace Hurricane {
     } else
       selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2708,7 +2709,8 @@ namespace Hurricane {
     // } else
     //   selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2733,7 +2735,8 @@ namespace Hurricane {
     // } else
     //   selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2758,7 +2761,8 @@ namespace Hurricane {
     // } else
     //   selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2819,7 +2823,7 @@ namespace Hurricane {
 
     if ( (--_delaySelectionChanged == 0) and selected ) {
       if ( _state->showSelection() ) _redrawManager.refresh ();
-      emit selectionChanged(_selectors);
+        emit selectionChanged(_selectors);
     }
   }
 
@@ -2857,7 +2861,8 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( (_delaySelectionChanged == 0) and unselected ) emit selectionChanged( _selectors );
+    if ( (_delaySelectionChanged == 0) and unselected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2869,7 +2874,8 @@ namespace Hurricane {
         unselect( Occurrence( component ));
       }
     }
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged( _selectors );
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2881,7 +2887,8 @@ namespace Hurricane {
         unselect( occurrence );
       }
     }
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged( _selectors );
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2893,7 +2900,8 @@ namespace Hurricane {
         unselect( occurrence );
       }
     }
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged( _selectors );
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2904,7 +2912,8 @@ namespace Hurricane {
     _state->getSelection().clear ();
     _unselectAll ();
 
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged(_selectors);
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged(_selectors);
   }
 
 

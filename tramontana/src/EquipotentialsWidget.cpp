@@ -191,26 +191,22 @@ namespace Tramontana {
       _forceReselect = false;
     }
 
-    SelectedEquiSet::iterator remove;
-    SelectedEquiSet::iterator isel  = _selecteds.begin ();
+    SelectedEquiSet::iterator isel = _selecteds.begin ();
     while ( isel != _selecteds.end() ) {
-      switch ( isel->getAccesses() ) {
-        case 1:  break;
-        case 64:
-          emit equipotentialSelect ( isel->getEqui()->getFlatComponents() );
-          break;
-        case 0:
-          emit equipotentialUnselect ( isel->getEqui()->getFlatComponents() );
-          remove = isel;
-          ++isel;
-          _selecteds.erase( remove );
-          continue;
-        default:
-          cerr << Bug( "EquipotentialsWidget::updateSelecteds(): invalid code %d"
-                     , isel->getAccesses()) << endl;
+      SelectedEquiSet::iterator remove = isel++;
+      if (remove->getAccesses() == 0) {
+        emit equipotentialUnselect ( remove->getEqui()->getFlatComponents() );
+        _selecteds.erase( remove );
+      }
+    }
+    isel = _selecteds.begin ();
+    while ( isel != _selecteds.end() ) {
+      if (isel->getAccesses() == 64) {
+        emit equipotentialSelect ( isel->getEqui()->getFlatComponents() );
       }
       ++isel;
     }
+    isel = _selecteds.begin ();
 
     if (_cellWidget) _cellWidget->closeRefreshSession ();
   }
