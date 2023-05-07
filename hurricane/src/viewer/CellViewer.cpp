@@ -584,7 +584,7 @@ namespace Hurricane {
 
   void  CellViewer::refreshTitle ()
   {
-    QString  cellName = "None";
+    QString  cellName = "empty";
     if ( getCell() )
       cellName = getString(getCell()->getName()).c_str();
 

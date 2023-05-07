@@ -87,6 +87,7 @@ namespace Hurricane {
                                     CellViewer                ( QWidget* parent=NULL );
       virtual                      ~CellViewer                ();
       inline  bool                  isToolInterrupted         () const;
+              void                  refreshTitle              ();
               QMenu*                createDebugMenu           ();
               bool                  hasMenu                   ( const QString& path ) const;
               bool                  hasMenuAction             ( const QString& path ) const;
@@ -166,7 +167,6 @@ namespace Hurricane {
               void                  cellPostModificated       ();
     protected:                      
               void                  createMenus               ();
-              void                  refreshTitle              ();
               void                  refreshHistory            ();
               void                  rebuildHistory            ();
     private:                        
