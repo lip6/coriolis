@@ -100,7 +100,7 @@ namespace Tramontana {
 
     QHeaderView* horizontalHeader = _view->horizontalHeader();
     horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
-    horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 300 : 150 );
+    horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 150 : 75 );
     horizontalHeader->setStretchLastSection( true );
 
     QHeaderView* verticalHeader = _view->verticalHeader();

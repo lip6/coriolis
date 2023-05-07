@@ -251,6 +251,7 @@ class Net : public Entity {
     public: virtual void _toJsonSignature(JsonWriter*) const;
     public: virtual void _toJsonCollections(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Net");};
+    public: string _getFlagsAsString() const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
     public: NetMainName& _getMainName() { return _mainName; }
