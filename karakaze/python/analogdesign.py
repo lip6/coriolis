@@ -83,8 +83,23 @@ def readMatrix ( rows ):
     return matrix      
 
 
-
 class AnalogDesign ( object ):
+
+    SPEC_CLASS           =  0
+    SPEC_INSTANCE        =  1
+    SPEC_STYLE           =  2
+    SPEC_TYPE            =  3
+    SPEC_TRANS_W         =  4
+    SPEC_TRANS_L         =  5
+    SPEC_TRANS_M         =  6
+    SPEC_TRANS_MINT      =  7
+    SPEC_TRANS_DUMMY     =  8
+    SPEC_TRANS_SFIRST    =  9
+    SPEC_TRANS_BULK      = 10
+    SPEC_TRANS_BULK_CONN = 11
+    SPEC_CAPA_C          =  4
+    SPEC_CAPA_MATRIX     =  5
+    SPEC_CAPA_DUMMY      =  6
 
     def __init__ ( self ):
         self.cellName        = None
@@ -312,6 +327,98 @@ class AnalogDesign ( object ):
            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [1] (model name) is *not* a string.' % count
                            , '%s' % str(dspec) ])
         return
+
+    def getCommonDSpec ( self, instanceName, specIndex ):
+        for dspec in self.devicesSpecs:
+            if dspec[AnalogDesign.SPEC_INSTANCE] == instanceName:
+                if specIndex < len(dspec):
+                    return dspec[specIndex]
+                raise Error( 3, [ 'AnalogDesign.getDSpec(): Instance "{}" has not entry index {}' \
+                                  .format( instanceName, specIndex )
+                                , '%s' % str(dspec) ])
+        raise Error( 3, [ 'AnalogDesign.getDSpec(): No instance "{}"'.format( instanceName ) ])
+
+    def getTransDSpec ( self, instanceName, specIndex ):
+        for dspec in self.devicesSpecs:
+            if dspec[AnalogDesign.SPEC_INSTANCE] == instanceName:
+                if not isderived(dspec[0],TransistorFamily): 
+                    raise Error( 3, [ 'AnalogDesign.getTransDSpec(): Instance "{}" is *not* a transistor ({})' \
+                                      .format( instanceName, type(dspec[0]).__name__ ) ])
+                if specIndex < len(dspec):
+                    return dspec[specIndex]
+                raise Error( 3, [ 'AnalogDesign.getTransDSpec(): Instance "{}" has not entry index {}' \
+                                  .format( instanceName, specIndex )
+                                , '%s' % str(dspec) ])
+        raise Error( 3, [ 'AnalogDesign.getTransDSpec(): No instance "{}"'.format( instanceName ) ])
+
+    def getCapasDSpec ( self, instanceName, specIndex ):
+        for dspec in self.devicesSpecs:
+            if dspec[AnalogDesign.SPEC_INSTANCE] == instanceName:
+                if not isderived(dspec[0],CapacitorFamily): 
+                    raise Error( 3, [ 'AnalogDesign.getCapaDSpec(): Instance "{}" is *not* a capacitor ({})' \
+                                      .format( instanceName, type(dspec[0]).__name__ ) ])
+                if specIndex < len(dspec):
+                    return dspec[specIndex]
+                raise Error( 3, [ 'AnalogDesign.getCapaDSpec(): Instance "{}" has not entry index {}' \
+                                  .format( instanceName, specIndex )
+                                , '%s' % str(dspec) ])
+        raise Error( 3, [ 'AnalogDesign.getCapaDSpec(): No instance "{}"'.format( instanceName ) ])
+
+    def getClass          ( self, instName ): return self.getCommonDSpec( instName, AnalogDesign.SPEC_CLASS )
+    def getInstance       ( self, instName ): return self.getCommonDSpec( instName, AnalogDesign.SPEC_INSTANCE )
+    def getStyle          ( self, instName ): return self.getCommonDSpec( instName, AnalogDesign.SPEC_STYLE )
+    def getType           ( self, instName ): return self.getCommonDSpec( instName, AnalogDesign.SPEC_TYPE )
+    def getTransW         ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_W )
+    def getTransL         ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_L )
+    def getTransM         ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_M )
+    def getTransMInt      ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_MINT )
+    def getTransDummy     ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_DUMMY )
+    def getTransSFirst    ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_SFIRST )
+    def getTransBulk      ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_BULK )
+    def getTransBulk_Conn ( self, instName ): return self.getTransDSpec ( instName, AnalogDesign.SPEC_TRANS_BULK_CONN )
+    def getCapaC          ( self, instName ): return self.getCapaDSpec  ( instName, AnalogDesign.SPEC_CAPA_C )
+    def getCapaMatrix     ( self, instName ): return self.getCapaDSpec  ( instName, AnalogDesign.SPEC_CAPA_MATRIX )
+    def getCapaDummy      ( self, instName ): return self.getCapaDSpec  ( instName, AnalogDesign.SPEC_CAPA_DUMMY )
+
+    def getDTransParam ( self, instName, paramName ):
+        inst = self.cell.getInstance( instName )
+        if not inst:
+            raise Error( 3, [ 'AnalogDesign.getDTransParam(): No device "{}"'.format( instName ) ])
+        device = inst.getMasterCell()
+        if not issubclass(type(device),TransistorFamily): 
+            raise Error( 3, [ 'AnalogDesign.getDTransParam(): Device "{}" is *not* a transistor ({})' \
+                              .format( instName, type(device).__name__ ) ])
+        param = device.getParameter( paramName )
+        if not param:
+            raise Error( 3, [ 'AnalogDesign.getDTransParam(): Device "{}" has no parameter "{}"' \
+                              .format( instName, paramName ) ])
+        return param
+
+    def getDCapaParam ( self, instName, paramName ):
+        inst = self.cell.getInstance( instName )
+        if not inst:
+            raise Error( 3, [ 'AnalogDesign.getDCapaParam(): No device "{}"'.format( instName ) ])
+        device = inst.getMasterCell()
+        if not issubclass(type(device),CapacitorFamily): 
+            raise Error( 3, [ 'AnalogDesign.getDCapaParam(): Device "{}" is *not* a capaitor ({})' \
+                              .format( instName, type(device).__name__ ) ])
+        param = device.getParameter( paramName )
+        if not param:
+            raise Error( 3, [ 'AnalogDesign.getDCapaParam(): Device "{}" has no parameter "{}"' \
+                              .format( instName, paramName ) ])
+        return param
+
+    def getDTransW     ( self, instName ): return self.getDTransParam( instName, 'W' )
+    def getDTransL     ( self, instName ): return self.getDTransParam( instName, 'L' )
+    def getDTransM     ( self, instName ): return self.getDTransParam( instName, 'M' )
+    def getDCapaC      ( self, instName ): return self.getDCapaParam( instName, 'capacities' )
+    def getDCapaMatrix ( self, instName ): return self.getDCapaParam( instName, 'matrix' )
+
+    def getDevice ( self, instanceName ):
+        inst = self.cell.getInstance( instanceName )
+        if not inst:
+            raise Error( 3, [ 'AnalogDesign.getDevice(): No instance "{}"'.format( instanceName ) ])
+        return inst.getMasterCell()
 
     def readParameters ( self, path ):
         trace( 110, ',+', '\tReading Oceane parameters from \"%s\"\n' % path )

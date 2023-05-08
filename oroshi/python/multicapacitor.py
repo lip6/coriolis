@@ -134,7 +134,7 @@ def layout ( device, bbMode ):
             capaSingle.route()
         else:
            # Two capa, multiple units.
-            Breakpoint.setStopLevel( 200 )
+           #Breakpoint.setStopLevel( 200 )
             capaGenerator = CapacitorStack( device
                                           , capaValuesArg # [ 240, 720 ]  # capaValuesArg (fF).
                                           , typeArg
