@@ -36,6 +36,7 @@ namespace Analog {
                               Transistor        ( Hurricane::Library* , const Hurricane::Name& , const Type& );
       virtual void            _postCreate       ( const Hurricane::Name& deviceName );
       virtual void            createConnections ( bool bulkConnected );
+      virtual std::string     _getTypeName      () const;
     private:
       static const Hurricane::Name  _transistorBulkConnectedName;
       static const Hurricane::Name  _transistorBulkUnconnectedName;
@@ -44,3 +45,6 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_P_SUPPORT(Analog::Transistor);

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2009-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2009-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_COMMON_SOURCE_PAIR_H
-#define ANALOG_COMMON_SOURCE_PAIR_H
-
+#pragma  once
 #include "hurricane/analog/TransistorPair.h"
 
 namespace Analog {
@@ -34,6 +32,8 @@ namespace Analog {
               unsigned int     getRestriction    ( Hurricane::Net* net ) const;
                                                  
               bool             isSame            ( CommonSourcePair* );
+      virtual std::string     _getTypeName       () const;
+      virtual Record*         _getRecord         () const;
     protected:                                   
                                CommonSourcePair  ( Hurricane::Library*, const Hurricane::Name&, const Type& );
     private:
@@ -46,4 +46,5 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif  // ANALOG_COMMON_SOURCE_PAIR_H
+
+INSPECTOR_P_SUPPORT(Analog::CommonSourcePair);

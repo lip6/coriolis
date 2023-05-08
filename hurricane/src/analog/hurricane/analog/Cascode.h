@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2009-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2009-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_CASCODE_H
-#define ANALOG_CASCODE_H
-
+#pragma  once
 #include "hurricane/analog/TransistorPair.h"
 
 namespace Analog {
@@ -31,6 +29,8 @@ namespace Analog {
                                                  , const Type&
                                                  , bool bulkConnected );
       virtual Hurricane::Name  getDeviceName     () const;
+      virtual std::string     _getTypeName       () const;
+      virtual Record*         _getRecord         () const;
     protected:                                   
                                Cascode           ( Hurricane::Library*, const Hurricane::Name&, const Type& );
     private:
@@ -43,4 +43,6 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif  // ANALOG_CASCODE_H
+
+INSPECTOR_P_SUPPORT(Analog::Cascode);
+

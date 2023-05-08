@@ -264,4 +264,17 @@ namespace Analog {
   }
 
 
+  string  DifferentialPair::_getTypeName () const
+  { return "DifferentialPair"; }
+  
+
+  Record*  DifferentialPair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_dpBulkConnectedName"  ,  _dpBulkConnectedName   ) );
+    record->add( getSlot("_dpBulkUnconnectedName",  _dpBulkUnconnectedName ) );
+    return record;
+  }
+
+
 }  // Analog namespace.

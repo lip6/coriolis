@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_METATRANSISTOR_H
-#define ANALOG_METATRANSISTOR_H
-
+#pragma  once
 #include "hurricane/Cell.h"
 
 
@@ -29,46 +27,48 @@ namespace Analog {
     public:
       typedef Cell Super;
     public:
-      static MetaTransistor* create      ( Library* , const Name& );
-      inline Net*            getSource   () const;
-      inline Net*            getDrain    () const;
-      inline Net*            getGate     () const;
-      inline Net*            getBulk     () const;
-      inline float           getWE       () const;
-      inline float           getLE       () const;
-      inline float           getIDS      () const;
-      inline float           getVGS      () const;
-      inline float           getVDS      () const;
-      inline float           getVBS      () const;
-      inline float           getVG       () const;
-      inline float           getVD       () const;
-      inline float           getVS       () const;
-      inline float           getVB       () const;
-      inline float           getVEG      () const;
-      inline float           getVTH      () const;
-      inline float           getWmin     () const;
-      inline float           getWmax     () const;
-      inline int             getNfing    () const;
-      inline void            setM        ( unsigned int m );
-      inline void            setWE       ( float we );
-      inline void            setLE       ( float le );
-      inline void            setIDS      ( float ids );
-      inline void            setVGS      ( float vgs );
-      inline void            setVDS      ( float vds );
-      inline void            setVBS      ( float vbs );
-      inline void            setVG       ( float vg );
-      inline void            setVD       ( float vd );
-      inline void            setVS       ( float vs );
-      inline void            setVB       ( float vb );
-      inline void            setVEG      ( float veg );
-      inline void            setVTH      ( float vth );
-      inline void            setWmin     ( float wmin );
-      inline void            setWmax     ( float wmax );
-      inline void            setNfing    ( int nfing );
+      static  MetaTransistor* create       ( Library* , const Name& );
+      inline  Net*            getSource    () const;
+      inline  Net*            getDrain     () const;
+      inline  Net*            getGate      () const;
+      inline  Net*            getBulk      () const;
+      inline  float           getWE        () const;
+      inline  float           getLE        () const;
+      inline  float           getIDS       () const;
+      inline  float           getVGS       () const;
+      inline  float           getVDS       () const;
+      inline  float           getVBS       () const;
+      inline  float           getVG        () const;
+      inline  float           getVD        () const;
+      inline  float           getVS        () const;
+      inline  float           getVB        () const;
+      inline  float           getVEG       () const;
+      inline  float           getVTH       () const;
+      inline  float           getWmin      () const;
+      inline  float           getWmax      () const;
+      inline  int             getNfing     () const;
+      inline  void            setM         ( unsigned int m );
+      inline  void            setWE        ( float we );
+      inline  void            setLE        ( float le );
+      inline  void            setIDS       ( float ids );
+      inline  void            setVGS       ( float vgs );
+      inline  void            setVDS       ( float vds );
+      inline  void            setVBS       ( float vbs );
+      inline  void            setVG        ( float vg );
+      inline  void            setVD        ( float vd );
+      inline  void            setVS        ( float vs );
+      inline  void            setVB        ( float vb );
+      inline  void            setVEG       ( float veg );
+      inline  void            setVTH       ( float vth );
+      inline  void            setWmin      ( float wmin );
+      inline  void            setWmax      ( float wmax );
+      inline  void            setNfing     ( int nfing );
+      virtual std::string     _getTypeName () const;
+      virtual Record*         _getRecord   () const;
     protected:                          
-             void            _postCreate ();
+             void             _postCreate  ();
     private:
-                             MetaTransistor ( Library* , const Name& );
+                              MetaTransistor ( Library* , const Name& );
     private:
       Net*          _drain;
       Net*          _source;
@@ -127,4 +127,5 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif  // ANALOG_METATRANSISTOR_H
+
+INSPECTOR_P_SUPPORT(Analog::MetaTransistor);

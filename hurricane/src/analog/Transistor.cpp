@@ -233,4 +233,8 @@ namespace Analog {
   }
 
 
+  string  Transistor::_getTypeName () const
+  { return "Transistor"; }
+  
+
 }  // Analog namespace.

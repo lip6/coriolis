@@ -20,6 +20,7 @@
                                     FloatParameter.cpp
                                     MatrixParameter.cpp
                                     MCheckBoxParameter.cpp
+                                    SpinBoxParameter.cpp
                                     StepParameter.cpp
                                     StringParameter.cpp
                                     BJT.cpp

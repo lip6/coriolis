@@ -103,4 +103,16 @@ namespace Analog {
   { return (isBulkConnected()) ? _cgBulkConnectedName : _cgBulkUnconnectedName; }
 
 
+  string  CommonGatePair::_getTypeName () const
+  { return "CommonGatePair"; }
+  
+
+  Record*  CommonGatePair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cgBulkConnectedName"  , _cgBulkConnectedName   ) );
+    record->add( getSlot("_cgBulkUnconnectedName", _cgBulkUnconnectedName ) );
+    return record;
+  }
+
 }  // Analog namespace.

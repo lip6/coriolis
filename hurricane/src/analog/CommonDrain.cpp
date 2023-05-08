@@ -109,4 +109,17 @@ namespace Analog {
   }
 
 
+  string  CommonDrain::_getTypeName () const
+  { return "CommonDrain"; }
+  
+
+  Record*  CommonDrain::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cdBulkConnectedName"  ,  _cdBulkConnectedName   ) );
+    record->add( getSlot("_cdBulkUnconnectedName",  _cdBulkUnconnectedName ) );
+    return record;
+  }
+
+
 }  // Analog namespace.

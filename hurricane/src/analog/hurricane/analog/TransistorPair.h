@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_TRANSISTOR_PAIR_H
-#define ANALOG_TRANSISTOR_PAIR_H
-
+#pragma  once
 #include "hurricane/analog/TransistorFamily.h"
 
 namespace Analog {
@@ -28,6 +26,7 @@ namespace Analog {
     public:
       inline  long       getMint        () const;
       inline  void       setMint        ( long );
+      virtual Record*    _getRecord     () const;
     protected:
                          TransistorPair ( Hurricane::Library*, const Hurricane::Name&, const Type& );
       virtual void       _postCreate    ( const Hurricane::Name& deviceName );
@@ -43,5 +42,3 @@ namespace Analog {
 
 
 }  // Analog namespace.
-
-#endif  // ANALOG_TRANSISTOR_PAIR_H

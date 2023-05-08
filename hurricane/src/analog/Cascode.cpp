@@ -107,4 +107,17 @@ namespace Analog {
   }
 
 
+  string  Cascode::_getTypeName () const
+  { return "Cascode"; }
+  
+
+  Record*  Cascode::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cBulkConnectedName"  ,  _cBulkConnectedName   ) );
+    record->add( getSlot("_cBulkUnconnectedName",  _cBulkUnconnectedName ) );
+    return record;
+  }
+
+
 }  // Analog namespace.

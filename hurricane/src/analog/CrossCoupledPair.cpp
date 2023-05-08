@@ -98,4 +98,17 @@ namespace Analog {
   { return (isBulkConnected()) ? _ccpBulkConnectedName : _ccpBulkUnconnectedName; }
 
 
+  string  CrossCoupledPair::_getTypeName () const
+  { return "CrossCoupledPair"; }
+  
+
+  Record*  CrossCoupledPair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_ccpBulkConnectedName"  ,  _ccpBulkConnectedName   ) );
+    record->add( getSlot("_ccpBulkUnconnectedName",  _ccpBulkUnconnectedName ) );
+    return record;
+  }
+
+
 }  // Analog namespace.

@@ -84,6 +84,7 @@ namespace Analog {
     // Sizing parameters commons to all MOS transistors.
       inline        int             getOperatorIndex           () const;
       inline        void            setOperatorIndex           ( int );
+      virtual       Record*         _getRecord                 () const;
   
     protected:
                                     TransistorFamily           ( Hurricane::Library*
@@ -173,3 +174,30 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  Net::Type::Code*".
+
+template<>
+inline std::string  getString<const Analog::TransistorFamily::Type*>
+                             ( const Analog::TransistorFamily::Type* object )
+                             {
+                               switch ( *object ) {
+                                 case Analog::TransistorFamily::NMOS: return "NMOS";
+                                 case Analog::TransistorFamily::PMOS: return "PMOS";
+                               }
+                               return "Unknow (error)";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<const Analog::TransistorFamily::Type*>
+                                   ( const  Analog::TransistorFamily::Type* object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Type", (unsigned int*)object));
+                                     return record;
+                                   }
+
+IOSTREAM_POINTER_SUPPORT(Analog::TransistorFamily::Type);
+IOSTREAM_VALUE_SUPPORT(Analog::TransistorFamily::Type);

@@ -33,7 +33,7 @@ namespace Analog {
     , _m                  (NULL)
     , _externalDummy      (NULL)
     , _sourceFirst        (NULL)
-    , _bulkType           (NULL)
+    , _bulkType           (NULL)  
   { }
   
   
@@ -64,7 +64,23 @@ namespace Analog {
     addStepParameter( "NIRC" , 1, 1, 1 );
   }
   
-  
+
+  Record*  TransistorFamily::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_type"               , &_type               ) );
+    record->add( getSlot("_referenceTransistor",  _referenceTransistor) );
+    record->add( getSlot("_operatorIndex"      ,  _operatorIndex      ) );
+    record->add( getSlot("_w"                  ,  _w                  ) );
+    record->add( getSlot("_l"                  ,  _l                  ) );
+    record->add( getSlot("_m"                  ,  _m                  ) );
+    record->add( getSlot("_externalDummy"      ,  _externalDummy      ) );
+    record->add( getSlot("_sourceFirst"        ,  _sourceFirst        ) );
+    record->add( getSlot("_bulkType"           ,  _bulkType           ) );
+    return record;
+  }
+
+
 #ifdef DISABLED
   void  TransistorFamily::setReferenceTransistor ( const Name& referenceTransistorName ) {
     Instance* instance = getInstance(referenceTransistorName);

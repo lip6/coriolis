@@ -40,4 +40,13 @@ namespace Analog {
   }
 
 
+  Record*  TransistorPair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_m1"  ,  _m1   ) );
+    record->add( getSlot("_m2"  ,  _m2   ) );
+    record->add( getSlot("_mInt",  _mInt ) );
+    return record;
+  }
+
 }  // Analog namespace.

@@ -244,4 +244,17 @@ namespace Analog {
   }
 
 
+  string  CommonSourcePair::_getTypeName () const
+  { return "CommonSourcePair"; }
+  
+
+  Record*  CommonSourcePair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cspBulkConnectedName"  ,  _cspBulkConnectedName   ) );
+    record->add( getSlot("_cspBulkUnconnectedName",  _cspBulkUnconnectedName ) );
+    return record;
+  }
+
+
 }  // Analog namespace.

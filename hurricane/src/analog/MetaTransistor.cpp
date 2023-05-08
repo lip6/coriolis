@@ -72,4 +72,36 @@ namespace Analog {
   }
 
 
+  string  MetaTransistor::_getTypeName () const
+  { return "MetaTransistor"; }
+
+
+  Record*  MetaTransistor::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_drain"    , _drain     ) );
+    record->add( getSlot("_source"   , _source    ) );
+    record->add( getSlot("_gate"     , _gate      ) );
+    record->add( getSlot("_bulk"     , _bulk      ) );
+    record->add( getSlot("_anonymous", _anonymous ) );
+    record->add( getSlot("_m"        , _m         ) );
+    record->add( getSlot("_we"       , _we        ) );
+    record->add( getSlot("_le"       , _le        ) );
+    record->add( getSlot("_ids"      , _ids       ) );
+    record->add( getSlot("_vgs"      , _vgs       ) );
+    record->add( getSlot("_vds"      , _vds       ) );
+    record->add( getSlot("_vbs"      , _vds       ) );
+    record->add( getSlot("_vg"       , _vg        ) );
+    record->add( getSlot("_vd"       , _vd        ) );
+    record->add( getSlot("_vb"       , _vb        ) );
+    record->add( getSlot("_vs"       , _vs        ) );
+    record->add( getSlot("_veg"      , _veg       ) );
+    record->add( getSlot("_vth"      , _vth       ) );
+    record->add( getSlot("_wmin"     , _wmin      ) );
+    record->add( getSlot("_wmax"     , _wmax      ) );
+    record->add( getSlot("_nfing"    , _nfing     ) );
+    return record;
+  }
+
+
 }  // Analog namespace.
