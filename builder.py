@@ -117,6 +117,7 @@ class ExtensionBuilder(build_ext):
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
                      CMakeExtension("coloquinte", sourcedir="coloquinte"),
+                     CMakeExtension("coloquinte2", sourcedir="coloquinte2"),
                      CMakeExtension("Hurricane", sourcedir="hurricane"),
                      CMakeExtension("crlcore", sourcedir="crlcore"),
                      CMakeExtension("flute", sourcedir="flute"),
