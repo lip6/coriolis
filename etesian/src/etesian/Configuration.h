@@ -40,9 +40,9 @@ namespace Etesian {
 // Class  :  "Etesian::Configuration".
 
   enum Effort        { Fast    =1
-                     , Standard=2
-                     , High    =3
-                     , Extreme =4
+                     , Standard=3
+                     , High    =6
+                     , Extreme =9
                      };
   enum GraphicUpdate { UpdateAll =1 
                      , LowerBound=2 
