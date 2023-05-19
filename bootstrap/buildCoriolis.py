@@ -11,8 +11,8 @@ if __name__ == "__main__":
 
     try:
         scriptPath = os.path.abspath( os.path.dirname(sys.argv[0]) )
-        print 'buildCoriolis.py is run from:'
-        print '  <%s>' % scriptPath
+        print('buildCoriolis.py is run from:')
+        print('  <%s>' % scriptPath)
 
         parser = optparse.OptionParser ()  
       # Build relateds.
@@ -80,11 +80,11 @@ if __name__ == "__main__":
         elif options.doRpm:       builder.doRpm       ()
         elif options.doDeb:       builder.doDeb       ()
         else:                     builder.build       ( tools=options.tools, projects=options.projects )
-    except ErrorMessage, e:
-        print e
+    except ErrorMessage as e:
+        print(e)
         sys.exit(e.code)
-   #except Exception, e:
-   #    print e
+   #except Exception as e:
+   #    print(e)
    #    sys.exit(1)
 
     sys.exit ( 0 )

@@ -587,9 +587,9 @@ def computeAbutmentBox ( cell, spaceMargin, aspectRatio, cellGauge ):
   #  if math.trunc(columns) != columns: columns = math.trunc(columns) + 1
   #  else:                              columns = math.trunc(columns)
   #
-  #  print '  o  Creating abutment box (margin:%.1f%%, aspect ratio:%.1f%%, g-length:%.1fl)' \
-  #      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength//sliceHeight))
-  #  print '     - GCell grid: [%dx%d]' % (columns,rows)
+  #  print('  o  Creating abutment box (margin:%.1f%%, aspect ratio:%.1f%%, g-length:%.1fl)' \
+  #      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength//sliceHeight)))
+  #  print('     - GCell grid: [%dx%d]' % (columns,rows))
 
   UpdateSession.open()
   etesian = Etesian.EtesianEngine.create( cell )

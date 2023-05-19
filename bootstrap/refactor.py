@@ -57,7 +57,7 @@ class Refactor:
           
             m = refactorPattern.match( line )
             if m:
-              print "o:\"%s\" r:\"%s\"" % ( m.group("orig"), m.group("replace") )
+              print("o:\"%s\" r:\"%s\"" % ( m.group("orig"), m.group("replace") ))
               self._addRefactor( m.group("orig"), m.group("replace") )
           fd.close ()
         return 
@@ -92,7 +92,7 @@ if __name__ == '__main__' :
     allFiles += rfiles
 
     for file in allFiles:
-      print file
+      print(file)
       refactor.doFileRefactor( file )
 
     sys.exit( 0 )

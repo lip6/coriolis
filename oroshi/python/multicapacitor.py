@@ -52,16 +52,16 @@ def checkCoherency ( device, bbMode ):
       columns = pmatrix.getColumns()
 
       for row in range(rows):
-       #print '    [',
+       #print('    [')
         for column in range(columns):
           capaIndex =  pmatrix.getValue(row,column)
-         #print '%2d' % capaIndex,
+         #print('%2d' % capaIndex)
 
           if capaIndex >= capacities.getCount():
             valid    = False
             message += '        element [%d,%d] == %d is out of range, must be in [0..%d]\n' \
                        % (row,column,capaIndex,capacities.getCount()-1)
-       #print ']'
+       #print(']')
 
     if not valid: return (False, message)
     

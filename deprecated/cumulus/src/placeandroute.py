@@ -219,8 +219,8 @@ def pyAlimVerticalRail ( cell, xcoord ) :
   else :
     raise ErrorMessage(2,"AlimVerticalRail : Strawberry.")
     
-#  print "Placement of vertical rail" 
-#  print "Reference  ", reference
+#  print("Placement of vertical rail")
+#  print("Reference  ", reference)
   
   power_cell = CRL.AllianceFramework.get().getCell ( "powmid_x0", CRL.Catalog.State.Views )
   
@@ -1977,16 +1977,16 @@ def affichePad ( cell ) :
   global pad_north, pad_south, pad_east, pad_west
   
   print( "Pads in the north are :" )
-  for pad in pad_north : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
+  for pad in pad_north : print(cell.getInstance ( pad.getName() ).getMasterCell().getName())
 
   print( "Pads in the south are :" )
-  for pad in pad_south : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
+  for pad in pad_south : print(cell.getInstance ( pad.getName() ).getMasterCell().getName())
 
   print( "Pads in the east are :" )
-  for pad in pad_east  : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
+  for pad in pad_east  : print(cell.getInstance ( pad.getName() ).getMasterCell().getName())
 
   print( "Pads in the west are :" )
-  for pad in pad_west  : print cell.getInstance ( pad.getName() ).getMasterCell().getName()
+  for pad in pad_west  : print(cell.getInstance ( pad.getName() ).getMasterCell().getName())
 
 ############
 def searchVddVss ( cell, *args ) :
@@ -2108,7 +2108,7 @@ def createGrid ( my_tuple ) :
   #_Xmax = None
   #_Ymax = None    
   coreBox = cell.getInstance('core').getAbutmentBox()
-  #print coreBox
+  #print(coreBox)
   _Xmin = coreBox.getXMin()
   _Ymin = coreBox.getYMin()
   _Xmax = coreBox.getXMax()
@@ -2350,7 +2350,7 @@ def getNetInstances ( cell, net, transformation) :
               _x = ins_transformation.getX ( segment.getSourceX(), segment.getSourceY() )
               _y = ins_transformation.getY ( segment.getSourceX(), segment.getSourceY() )
                
-              #print ins, ":", segment, ",", nbSeg, ",", _x, ",", _y
+              #print(ins, ":", segment, ",", nbSeg, ",", _x, ",", _y)
               nbSeg += 1
               ck_contact_list_to_create.append (  (_x, _y) ) 
               
@@ -2363,9 +2363,9 @@ def getNetInstances ( cell, net, transformation) :
               Ymin   = newbox.getYMin()
               Xmax   = newbox.getXMax()
               Ymax   = newbox.getYMax()
-              #print " placer contact in ", _x, " ",  _y  , " in the net ", plug.getMasterNet().getName() ,
-              #print " of instance ", plug.getInstance().getName() , " in ", Xmin , " ", Ymin , 
-              #print " of model ", plug.getInstance().getMasterCell().getName(), "\n"
+              #print(" placer contact in ", _x, " ",  _y  , " in the net ", plug.getMasterNet().getName())
+              #print(" of instance ", plug.getInstance().getName() , " in ", Xmin , " ", Ymin)
+              #print(" of model ", plug.getInstance().getMasterCell().getName(), "\n")
 
               # Positionner la grille
               if ( Xmin < _Xmin ) or ( _Xmin == None ) : _Xmin = Xmin

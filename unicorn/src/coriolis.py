@@ -52,7 +52,7 @@ class Pathes ( object ):
     def __init__ ( self, name ):
         self.name       = name
         self.components = []
-        if os.environ.has_key(name):
+        if name in os.environ:
             self.components = os.environ[name].split(':')
         return
 
@@ -72,9 +72,9 @@ class Pathes ( object ):
         return
 
     def show ( self ):
-        print '     %s:' % self.name
+        print('     %s:' % self.name)
         for component in self.components:
-          print '       %s' % component
+          print('       %s' % component)
         return
 
 
@@ -86,38 +86,38 @@ if arch == 'x86_64' and os.path.exists('/usr/lib64'): libDir = '/lib64'
 
 pythonSitePackages = os.path.join( *(distutils.sysconfig.get_python_lib(1).split('/')[-3:]) )
 
-print '     ========================================'
-print '     OS:\n       %s' % osType
+print('     ========================================')
+print('     OS:\n       %s' % osType)
 
 scriptBinPath = os.path.abspath(os.path.dirname(sys.argv[0]))
-print '     Script location:\n       %s' % scriptBinPath
+print('     Script location:\n       %s' % scriptBinPath)
 if scriptBinPath == '/usr/bin':
     location    = Location.BaseSystem
     coriolisTop = '/usr'
-    print '     Using standard system installation scheme.'
+    print('     Using standard system installation scheme.')
 elif scriptBinPath == '/soc/coriolis2/bin':
     location    = Location.Devtoolset2
     coriolisTop = '/soc/coriolis2'
-    print '     Using RHEL6 installation scheme.'
+    print('     Using RHEL6 installation scheme.')
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
     if not 'devtoolset' in ldLibraryPath:
-        print '[ERROR] You must enable the devtoolset-2 before running Coriolis:'
-        print '        > scl enable devtoolset-2 bash'
+        print('[ERROR] You must enable the devtoolset-2 before running Coriolis:')
+        print('        > scl enable devtoolset-2 bash')
         sys.exit( 1 )
 else:
     location    = Location.UserDefined
     coriolisTop = truncPath( scriptBinPath, 0, -1 ) 
-    print '     Using User installation scheme.'
+    print('     Using User installation scheme.')
 
 if location & Location.SetCoriolisTop:
     os.environ['CORIOLIS_TOP'] = coriolisTop
-    print '     CORIOLIS_TOP:\n       %s' % coriolisTop
+    print('     CORIOLIS_TOP:\n       %s' % coriolisTop)
 
 if location & Location.BaseSysconfDir:
     sysConfDir = truncPath( coriolisTop, 0, -1 ) + '/etc/coriolis2'
 else:
     sysConfDir = coriolisTop + '/etc/coriolis2'
-print '     Configuration directory:\n       %s' % sysConfDir
+print('     Configuration directory:\n       %s' % sysConfDir)
 
 os.environ['STRATUS_MAPPING_NAME'] = sysConfDir+'/stratus2sxlib.xml'
 
@@ -153,14 +153,14 @@ if len(sys.argv) > 1 and sys.argv[1].startswith('--run='):
     argvStart   = 1
     slaveScript = sys.argv[1][6:]
 
-print '     Script:\n       %s' % slaveScript
-print '     ========================================'
+print('     Script:\n       %s' % slaveScript)
+print('     ========================================')
 
 try:
     os.execvp( slaveScript, sys.argv[argvStart:] )
-except Exception, e:
-    print '[ERROR] An exception occured while lauching <%s>\n' % slaveScript
-    print e
+except Exception as e:
+    print('[ERROR] An exception occured while lauching <%s>\n' % slaveScript)
+    print(e)
     sys.exit( 3 )
 
 sys.exit( 0 )

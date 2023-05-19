@@ -39,7 +39,7 @@ try:
   from email.mime.text        import MIMEText
   from email.mime.multipart   import MIMEMultipart
   from email.mime.application import MIMEApplication
-except ImportError, e:
+except ImportError as e:
   module = str(e).split()[-1]
 
 
@@ -94,7 +94,7 @@ class ErrorMessage ( Exception ):
         return
 
     def terminate ( self ):
-        print self
+        print(self)
         sys.exit(self._code)
 
     @property
@@ -122,7 +122,7 @@ class Command ( object ):
         self.fdLog     = fdLog
         
         if self.fdLog != None and not isinstance(self.fdLog,file):
-          print '[WARNING] Command.__init__(): <fdLog> is neither None or a file.'
+          print('[WARNING] Command.__init__(): <fdLog> is neither None or a file.')
         return
 
     def _argumentsToStr ( self, arguments ):
@@ -133,7 +133,7 @@ class Command ( object ):
         return s
 
     def log ( self, text ):
-        print text[:-1]
+        print(text[:-1])
         sys.stdout.flush()
         sys.stderr.flush()
         if isinstance(self.fdLog,file):
@@ -151,12 +151,12 @@ class Command ( object ):
         if homeDir.startswith(homeDir):
            workDir = '~' + workDir[ len(homeDir) : ]
         user = 'root'
-        if os.environ.has_key('USER'): user = os.environ['USER']
+        if 'USER' in os.environ: user = os.environ['USER']
         prompt = '%s@%s:%s$' % (user,conf.masterHost,workDir)
         
         try:
           self.log( '%s%s\n' % (prompt,self._argumentsToStr(self.arguments)) )
-          print self.arguments
+          print(self.arguments)
           child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
         
           while True:
@@ -164,7 +164,7 @@ class Command ( object ):
             if not line: break
         
             self.log( line )
-        except OSError, e:
+        except OSError as e:
           raise BadBinary( self.arguments[0] )
         
         (pid,status) = os.waitpid( child.pid, 0 )
@@ -251,12 +251,12 @@ class GitRepository ( object ):
 
     def removeLocalRepo ( self ):
         if os.path.isdir(self.localRepoDir):
-          print 'Removing Git local repository: <%s>' % self.localRepoDir
+          print('Removing Git local repository: <%s>' % self.localRepoDir)
           shutil.rmtree( self.localRepoDir )
         return
 
     def clone ( self ):
-        print 'Clone/pull from:', self.url
+        print('Clone/pull from:', self.url)
         if not os.path.isdir(self.cloneDir):
           os.makedirs( self.cloneDir )
         
@@ -321,12 +321,12 @@ class Configuration ( object ):
 
     def __setattr__ ( self, attribute, value ):
         if attribute in Configuration.SecondaryNames:
-          print ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute )
+          print(ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute ))
           return
         
         if attribute == 'masterHost' or attribute == '_masterHost':
           if value == 'lepka':
-            print 'Never touch the Git tree when running on <lepka>.'
+            print('Never touch the Git tree when running on <lepka>.')
             self._rmSource     = False
             self._rmBuild      = False
             self._doGit        = False
@@ -384,7 +384,7 @@ class Configuration ( object ):
         while True:
             logFile = os.path.join(self._logDir,"%s-%s-%02d.log" % (stem,timeTag,index))
             if not os.path.isfile(logFile):
-                print "Report log: <%s>" % logFile
+                print("Report log: <%s>" % logFile)
                 break
             index += 1
         fd = open( logFile, "w" )
@@ -490,7 +490,7 @@ class Report ( object ):
         fd = open( logFile, 'rb' )
         try:
           fd.seek( -1024*100, os.SEEK_END )
-        except IOError, e:
+        except IOError as e:
           pass
         tailLines = ''
         for line in fd.readlines()[1:]:
@@ -509,8 +509,8 @@ class Report ( object ):
         for attachement in self.attachements:
           self.message.attach( attachement )
         
-        print "Sending mail report to:"
-        for receiver in self.conf.receivers: print '  <%s>' % receiver
+        print("Sending mail report to:")
+        for receiver in self.conf.receivers: print('  <%s>' % receiver)
         session = smtplib.SMTP( 'localhost' )
         session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
         session.quit()
@@ -594,29 +594,29 @@ try:
       for entry in os.listdir(conf.rootDir):
         if entry.startswith('Linux.'):
           buildDir = conf.rootDir+'/'+entry
-          print 'Removing OS build directory: <%s>' % buildDir
+          print('Removing OS build directory: <%s>' % buildDir)
           shutil.rmtree( buildDir )
 
     commands = conf.getCommands( options.profile )
     for command in commands:
       if command.host:
-        print 'Executing command on remote host <%s>:' % host
+        print('Executing command on remote host <%s>:' % host)
       else:
-        print 'Executing command on *local* host:'
-      print '  %s' % str(command)
+        print('Executing command on *local* host:')
+      print('  %s' % str(command))
       command.execute()
 
     conf.closeLogs()
 
     conf.success = True
 
-except ErrorMessage, e:
-  print e
+except ErrorMessage as e:
+  print(e)
   conf.closeLogs()
   conf.success = False
 
   if showTrace:
-    print '\nPython stack trace:'
+    print('\nPython stack trace:')
     traceback.print_tb( sys.exc_info()[2] )
   conf.rcode = e.code
 

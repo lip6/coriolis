@@ -3,104 +3,104 @@ import sys
 from SPICE import *
 
 def printContents(circuit):
-  print "+", circuit.title
+  print("+", circuit.title)
 
   if len(circuit.getIncludes()):
-    print "| + includes"
+    print("| + includes")
     for include in circuit.getIncludes():
-      print "| |", include
+      print("| |", include)
 
   if len(circuit.getLibraries()):
-    print "| + libraries"
+    print("| + libraries")
     for (lib, typ) in circuit.getLibraries():
-      print "| |", lib, typ
+      print("| |", lib, typ)
 
   if len(circuit.getParameters()):
-    print "| + parameters"
+    print("| + parameters")
     for (name, value) in circuit.getParameters().items():
-      print "| | %s=%s"%(name, value)
+      print("| | %s=%s"%(name, value))
 
   if len(circuit.getOptions()):
-    print "| + options"
+    print("| + options")
     for (name, value) in circuit.getOptions().items():
-      print "| | %s=%s"%(name, value)
+      print("| | %s=%s"%(name, value))
 
   if len(circuit.getSources()):
-    print "| + sources"
+    print("| + sources")
     for source in circuit.getSources():
-      print "| |", source.getName(), source.getPositive(), source.getNegative(), source.getValue()
+      print("| |", source.getName(), source.getPositive(), source.getNegative(), source.getValue())
 
   if len(circuit.getSubckts()):
-    print "| + subckts"
+    print("| + subckts")
     for sub in circuit.getSubckts():
-      print "| | +", sub.getName(),
+      print("| | +", sub.getName())
       for interf in sub.getInterfaces():
-        print interf,
+        print(interf)
       if len(sub.getParameters()):
-          print "param:",
+          print("param:")
           for (name, value) in sub.getParameters().items():
-            print "%s=%s"%(name,value),
-      print
+            print("%s=%s"%(name,value))
+      print()
       for inst in sub.getInstances():
-          print "| | | +", inst.getName(),
+          print("| | | +", inst.getName())
           if isinstance(inst, Mosfet):
-            print inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
+            print(inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel())
             i = 0
             for (name, value) in inst.getParameters().items():
               if i%6 == 0:
-                print 
-                print "| | | | +",
-              print "%s=%s"%(name, value),
+                print()
+                print("| | | | +")
+              print("%s=%s"%(name, value))
               i += 1
           elif isinstance(inst, Resistor):
-            print inst.getFirst(), inst.getSecond(), inst.getValue(),
+            print(inst.getFirst(), inst.getSecond(), inst.getValue())
           elif isinstance(inst, Capacitor):
-            print inst.getPositive(), inst.getNegative(), inst.getValue(),
+            print(inst.getPositive(), inst.getNegative(), inst.getValue())
           else:
             for conn in inst.getConnectors():
-              print conn,
-            print inst.getModel(),
+              print(conn)
+            print(inst.getModel())
             i = 0
             for (name, value) in inst.getParameters().items():
               if i%6 == 0:
-                print 
-                print "| | | | +",
-              print "%s=%s"%(name, value),
+                print()
+                print("| | | | +")
+              print("%s=%s"%(name, value))
               i += 1
-          print
+          print()
 
   if len(circuit.getInstances()):
-    print "| + instances"
+    print("| + instances")
     for inst in circuit.getInstances():
-      print "| | | +", inst.getName(),
+      print("| | | +", inst.getName())
       if isinstance(inst, Mosfet):
-        print inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
+        print(inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel())
         i = 0
         for (name, value) in inst.getParameters().items():
           if i%6 == 0:
-            print 
-            print "| | | | +",
-          print "%s=%s"%(name, value),
+            print()
+            print("| | | | +")
+          print("%s=%s"%(name, value))
           i += 1
       elif isinstance(inst, Resistor):
-        print inst.getFirst(), inst.getSecond(), inst.getValue(),
+        print(inst.getFirst(), inst.getSecond(), inst.getValue())
       elif isinstance(inst, Capacitor):
-        print inst.getPositive(), inst.getNegative(), inst.getValue(),
+        print(inst.getPositive(), inst.getNegative(), inst.getValue())
       else:
         for conn in inst.getConnectors():
-          print conn,
-        print inst.getModel(),
+          print(conn)
+        print(inst.getModel())
         i = 0
         for (name, value) in inst.getParameters().items():
           if i%6 == 0:
-            print 
-            print "| | | | +",
-          print "%s=%s"%(name, value),
+            print()
+            print("| | | | +")
+          print("%s=%s"%(name, value))
           i += 1
-      print
+      print()
 
 def usage():
-    print "usage:", sys.argv[0], "[filename]"
+    print("usage:", sys.argv[0], "[filename]")
     sys.exit(48)
 
 def main():

@@ -57,8 +57,8 @@ def guessOs ():
         uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
         osType = uname.stdout.readlines()[0][:-1]
 
-       #print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
-       #print "          (using: \"%s\")" % osType
+       #print("[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1])
+       #print("          (using: \"%s\")" % osType)
     
     return (osType,libDir)
       
@@ -118,10 +118,10 @@ export PATH LD_LIBRARY_PATH PYTHONPATH BOOTSTRAP_TOP CORIOLIS_TOP MANGROVE_TOP;
 hash -r
 """
 
-  print shellScript % { "PATH"            : strippedPath
+  print(shellScript % { "PATH"            : strippedPath
                       , "LD_LIBRARY_PATH" : strippedLibraryPath
                       , "PYTHONPATH"      : strippedPythonPath
                       , "CORIOLIS_TOP"    : sysCoriolisTop
                       , "MANGROVE_TOP"    : mangroveTop
                       , "buildDir"        : buildDir
-                      }
+                      })

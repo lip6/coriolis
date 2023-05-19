@@ -333,8 +333,8 @@ class Side ( object ):
 #                                                 , height
 #                                                 ) )
 #     if not connecteds:
-#       print WarningMessage( 'Cannot find a suitable connector for <%s> on pad <%s>'
-#                           % (net.getName(),pad.getName()) )
+#       print(WarningMessage( 'Cannot find a suitable connector for <%s> on pad <%s>'
+#                           % (net.getName(),pad.getName()) ))
 #
 #     trace( 550, '-' )
 #     return
@@ -348,7 +348,7 @@ class Side ( object ):
 #          and masterCell.getName() != self._corona.pvddeckName \
 #          and masterCell.getName() != self._corona.pvsseckName:
 #         continue
-#      #print 'Power pad:', pad
+#      #print('Power pad:', pad)
 #       self._createPowerContacts( pad, self._corona.vddi )
 #       self._createPowerContacts( pad, self._corona.vssi )
 #       if self._corona.useClockTree:
@@ -1281,7 +1281,7 @@ class Corona ( object ):
 #     if not net:
 #       net = self.cell.getNet( masterNet.getName() )
 #       if not net:
-#         print ErrorMessage( 1, 'Missing global net <%s> at chip level.' % masterNet.getName() )
+#         print(ErrorMessage( 1, 'Missing global net <%s> at chip level.' % masterNet.getName() ))
 #         continue
 #
 #     for component in masterNet.getExternalComponents():
@@ -1297,17 +1297,17 @@ class Corona ( object ):
 #   self._powerRails.sort( key=itemgetter(2) )
 #
 #  #for rail in self._powerRails:
-#  #  print 'Pad rail %s @%d width:%d layer:%s' % ( str(rail[0].getName())
+#  #  print('Pad rail %s @%d width:%d layer:%s' % ( str(rail[0].getName())
 #  #                                              , DbU.toLambda(rail[2])
 #  #                                              , DbU.toLambda(rail[3])
 #  #                                              , str(rail[1].getName())
-#  #                                              )
+#  #                                              ))
 #   return
 #
 # def _guessPadHvLayers ( self ):
 #   if not self.powerPad:
-#     print ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad power terminals.' \
-#                            % self.pvddick )
+#     print(ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad power terminals.' \
+#                            % self.pvddick ))
 #     return False
 #
 #   availableDepths = set()
@@ -1316,7 +1316,7 @@ class Corona ( object ):
 #     if component.getBoundingBox().getYMin() <= masterCell.getAbutmentBox().getYMin():
 #       availableDepths.add( self.routingGauge.getLayerDepth(component.getLayer()) )
 #
-#  #print 'available depth:', availableDepths
+#  #print('available depth:', availableDepths)
 #
 #   self._horizontalPadDepth = 0
 #   self._verticalPadDepth   = 0
@@ -1328,8 +1328,8 @@ class Corona ( object ):
 #     if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
 #       self._verticalPadDepth = depth
 #
-#  #print 'h:', self._horizontalPadDepth
-#  #print 'v:', self._verticalPadDepth
+#  #print('h:', self._horizontalPadDepth)
+#  #print('v:', self._verticalPadDepth)
 #   return
 
 

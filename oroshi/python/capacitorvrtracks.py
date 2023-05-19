@@ -98,8 +98,8 @@ class VerticalRoutingTracks ( CapacitorStack ):
          
         self.setRules                ()
         vRoutingTracksLayer  =  DataBase.getDB().getTechnology().getLayer("metal3" )
-       #print 'self.capacitorInstance.doMatrix:', self.capacitorInstance.doMatrix
-       #print 'self.capacitorsNumber:', self.capacitorsNumber
+       #print('self.capacitorInstance.doMatrix:', self.capacitorInstance.doMatrix)
+       #print('self.capacitorsNumber:', self.capacitorsNumber)
 
         if self.capacitorInstance.doMatrix == True and self.capacitorsNumber > 1 : 
             self.minimizeVRTs()
