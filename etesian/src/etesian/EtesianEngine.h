@@ -18,7 +18,7 @@
 #include <tuple>
 #include <iostream>
 #include <unordered_map>
-#include "coloquinte/circuit.hxx"
+#include "coloquinte2/coloquinte.hpp"
 
 #include "hurricane/Timer.h"
 #include "hurricane/Name.h"
@@ -131,10 +131,8 @@ namespace Etesian {
       inline  Transformation          toBlock                   ( const Transformation& ) const;
               void                    setPlaceArea              ( const Box& );
               size_t                  toColoquinte              ();
-              void                    preplace                  ();
-              void                    roughLegalize             ( float minDisruption, unsigned options );
-              void                    globalPlace               ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
-              void                    detailedPlace             ( int iterations, int effort, unsigned options=0 );
+              void                    globalPlace               ( unsigned options=0 );
+              void                    detailedPlace             ( unsigned options=0 );
               void                    antennaProtect            ();
               void                    place                     ();
               uint32_t                doHFNS                    ();
@@ -160,11 +158,12 @@ namespace Etesian {
              bool                                 _flatDesign;
              Box                                  _placeArea;
              std::vector<Box>                     _trackAvoids;
-             coloquinte::box<coloquinte::int_t>*  _surface;
-             coloquinte::netlist*                 _circuit;
-             coloquinte::placement_t*             _placementLB;
-             coloquinte::placement_t*             _placementUB;
-             coloquinte::density_restrictions*    _densityLimits;
+             coloquinte::Rectangle*               _surface;
+             coloquinte::Circuit*                 _circuit;
+             coloquinte::PlacementSolution*       _placementLB;
+             coloquinte::PlacementSolution*        _placementUB;
+             // TODO
+             // coloquinte::density_restrictions*    _densityLimits;
              NetsToIds                            _netsToIds;
              InstancesToIds                       _instsToIds;
              std::vector<InstanceInfos>           _idsToInsts;
@@ -195,7 +194,7 @@ namespace Etesian {
     private:
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
-              void           _updatePlacement ( const coloquinte::placement_t*, uint32_t flags=0 );
+              void           _updatePlacement ( const coloquinte::PlacementSolution*, uint32_t flags=0 );
               void           _progressReport1 ( string label ) const;
               void           _progressReport2 ( string label ) const;
   };
