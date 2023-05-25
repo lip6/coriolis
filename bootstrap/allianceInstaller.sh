@@ -20,6 +20,7 @@
 
       srcDir=${HOME}${nightly}/coriolis-2.x/src/alliance/alliance/src
   commonRoot=${HOME}${nightly}/coriolis-2.x/${arch}/Release.Shared
+ #commonRoot=${HOME}${nightly}/coriolis-2.x/${arch}/Debug.Shared
     buildDir=${commonRoot}/build
   installDir=${commonRoot}/install
 
