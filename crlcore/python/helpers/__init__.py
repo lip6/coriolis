@@ -282,8 +282,10 @@ def staticInitialization ( quiet=True ):
         elif coriolisTop:
             sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
         else:
-            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
+            import platformdirs
+            sysConfDir = os.path.join(platformdirs.user_config_dir(), 'coriolis2')
+            #raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+            #                       , 'The path is something ending by <.../etc/coriolis2>.'] )
     if not quiet: print( '     - "{}"'.format( sysConfDir ))
     initTechno( quiet )
     return
@@ -308,8 +310,10 @@ def setSysConfDir ( quiet=False ):
         elif coriolisTop:
             sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
         else:
-            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
+            import platformdirs
+            sysConfDir = os.path.join(platformdirs.user_config_dir(), 'coriolis2')
+            #raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+            #                       , 'The path is something ending by <.../etc/coriolis2>.'] )
     if not quiet: print( '     - "{}"'.format( sysConfDir ))
     sys.path.append( sysConfDir )
     return
