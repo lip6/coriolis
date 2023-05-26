@@ -4,7 +4,7 @@
 
  pythonSiteLocator = "import distutils.sysconfig; print distutils.sysconfig.get_python_lib(1)"
 
-             tools = bootstrap vlsisapd hurricane crlcore coloquinte coloquinte2 etesian knik \
+             tools = bootstrap vlsisapd hurricane crlcore coloquinte etesian knik \
                      katabatic kite equinox solstice cumulus stratus1 unicorn documentation
             prefix = /usr
         rootPrefix = $(subst /usr,,$(prefix))

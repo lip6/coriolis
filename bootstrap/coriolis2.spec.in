@@ -157,7 +157,6 @@ Development files for the Coriolis 2 package.
 %dir %{coriolisTop}/include/vlsisapd/dtr
 %dir %{coriolisTop}/include/vlsisapd/openChams
 %dir %{coriolisTop}/include/coriolis2/coloquinte
-%dir %{coriolisTop}/include/coriolis2/coloquinte2
 %dir %{coriolisTop}/include/coriolis2/hurricane
 %dir %{coriolisTop}/include/coriolis2/hurricane/viewer
 %dir %{coriolisTop}/include/coriolis2/hurricane/isobar
@@ -181,7 +180,7 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/include/vlsisapd/configuration/*.h
 %{coriolisTop}/include/vlsisapd/dtr/*.h
 %{coriolisTop}/include/vlsisapd/openChams/*.h
-%{coriolisTop}/include/coriolis2/coloquinte/*.hxx
+%{coriolisTop}/include/coriolis2/coloquinte/*.hpp
 %{coriolisTop}/include/coriolis2/hurricane/*.h
 %{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
 %{coriolisTop}/include/coriolis2/hurricane/isobar/*.h
