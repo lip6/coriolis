@@ -46,7 +46,6 @@
                                             man_stratus.tex
                                             see_also.tex
                                  IMAGE_DIRS images )
- endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/stratus/ )
@@ -58,3 +57,4 @@
                                ${LATEX_OUTPUT_PATH}/stratus.dvi
                                ${LATEX_OUTPUT_PATH}/stratus.pdf DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${LATEX_OUTPUT_PATH}/stratus DESTINATION ${htmlInstallDir} )
+ endif()

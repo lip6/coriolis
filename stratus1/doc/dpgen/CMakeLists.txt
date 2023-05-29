@@ -44,7 +44,6 @@
                                           man_dpgenxnor2.tex
                                           man_dpgenxor2.tex
                                  )
- endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/dpgen )
@@ -57,3 +56,4 @@
                                ${LATEX_OUTPUT_PATH}/dpgen.dvi
                                ${LATEX_OUTPUT_PATH}/dpgen.pdf DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${LATEX_OUTPUT_PATH}/dpgen DESTINATION ${htmlInstallDir} )
+ endif()

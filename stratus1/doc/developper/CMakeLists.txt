@@ -13,7 +13,6 @@
                                                 man_stratus.tex
                                                 see_also.tex
                        )
- endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/stratus_developper )
@@ -25,3 +24,4 @@
                                ${LATEX_OUTPUT_PATH}/stratus_developper.dvi
                                ${LATEX_OUTPUT_PATH}/stratus_developper.pdf DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${LATEX_OUTPUT_PATH}/stratus_developper DESTINATION ${htmlInstallDir} )
+ endif()

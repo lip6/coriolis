@@ -14,10 +14,10 @@
                      && ${DOXYGEN_EXECUTABLE} doxyfile
                      && cp -f ${doxExtras} html
                    )
- endif()
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
            install ( FILES     ${doxExtras}         DESTINATION ${htmlInstallDir} )
 
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )
            install ( FILES     asimbook.cls         DESTINATION ${latexInstallDir} )
+ endif()

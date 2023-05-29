@@ -7,7 +7,6 @@
                                                     CACHE STRING "Custom arguments passeds to latex2html" FORCE )
 
     add_latex_document ( patterns.tex )
- endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/patterns )
@@ -19,3 +18,4 @@
                                ${LATEX_OUTPUT_PATH}/patterns.dvi
                                ${LATEX_OUTPUT_PATH}/patterns.pdf DESTINATION ${latexInstallDir} )
                install ( DIRECTORY ${LATEX_OUTPUT_PATH}/patterns DESTINATION ${htmlInstallDir} )
+ endif()
