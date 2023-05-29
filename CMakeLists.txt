@@ -27,6 +27,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${target} ${build_dir})
     execute_process(COMMAND ${CMAKE_COMMAND} ${build_dir}
                                 -D CMAKE_BUILD_TYPE=Release
                                 -D CMAKE_INSTALL_PREFIX:PATH=${CORIOLIS_TMP_INSTALL_DIR}
+                                -D "PYTHON_INCLUDE_DIR=\$(python -c \"from distutils.sysconfig import get_python_inc\; print(get_python_inc())\")"
+                                -D "PYTHON_LIBRARY=\$(python -c \"import distutils.sysconfig as sysconfig\; print(sysconfig.get_config_var('LIBDIR'))\")"
+                                -D PYTHON_EXECUTABLE:FILEPATH=`which python`
                                 -G "${CMAKE_GENERATOR}"
         WORKING_DIRECTORY ${build_dir}/build
         RESULT_VARIABLE ${target}_setup_result
