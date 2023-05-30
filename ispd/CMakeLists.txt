@@ -17,7 +17,7 @@
  
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)

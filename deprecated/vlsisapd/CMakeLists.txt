@@ -18,7 +18,7 @@
  setup_boost(program_options python)
 
  find_package(LibXml2 REQUIRED)
- find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
+ find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(BISON REQUIRED)
  find_package(FLEX REQUIRED)

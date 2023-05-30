@@ -10,7 +10,7 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
-      find_package (Python3 COMPONENTS Interpreter Development)
+      find_package (Python 3 COMPONENTS Interpreter Development.Module )
                    set( includes      etesian/Configuration.h
                                       etesian/Placement.h
                                       etesian/FeedCells.h
@@ -59,7 +59,7 @@
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
                                       ${LIBXML2_LIBRARIES}
-                                      ${Python3_LIBRARIES}
+                                      ${Python_LIBRARIES}
                                        -lutil
                                       ${LIBEXECINFO_LIBRARIES}
                       )

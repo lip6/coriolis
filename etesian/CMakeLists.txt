@@ -18,7 +18,7 @@
  set_cmake_policies()
  setup_boost(program_options)
  
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE          REQUIRED)
 #find_package(KATABATIC          REQUIRED)

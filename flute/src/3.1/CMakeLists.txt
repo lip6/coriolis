@@ -6,7 +6,7 @@
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Python_INCLUDE_DIRS}
                       )
-      find_package (Python3 COMPONENTS Interpreter Development)
+      find_package (Python 3 COMPONENTS Interpreter Development.Module )
 
                    set( includes      flute.h
                                       dl.h
@@ -34,7 +34,7 @@
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${HURRICANE_LIBRARIES}
                                       ${UTILITIES_LIBRARY}
-                                      ${Python3_LIBRARIES}
+                                      ${Python_LIBRARIES}
                                       
                                       -lutil
                       )

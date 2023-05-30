@@ -12,7 +12,7 @@
  list(INSERT CMAKE_MODULE_PATH 0 "${Bootstrap_SOURCE_DIR}/cmake_modules/")
  find_package(Bootstrap          REQUIRED)
  # find_package(Python 3           REQUIRED COMPONENTS Interpreter Development )
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development )
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  print_cmake_module_path()
 

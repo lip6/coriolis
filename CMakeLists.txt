@@ -12,24 +12,40 @@ set(CORIOLIS_TMP_INSTALL_DIR  ${CMAKE_BINARY_DIR}/install)
 set(ENV{CORIOLIS_TOP} ${CORIOLIS_TMP_INSTALL_DIR})
 
 function (build_coriolis_module target)
+    message("---------- Start building ${target} ----------")
     set(build_dir ${CMAKE_BINARY_DIR}/build_${target})
     file(MAKE_DIRECTORY ${build_dir} ${build_dir}/build)
     file(WRITE ${build_dir}/CMakeLists.txt "
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION ${CMAKE_VERSION})
 
 project(build_${target})
+
+find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
+
+if(NOT Python_LIBRARIES)
+    set(Python_LIBRARIES \"-Wl,--unresolved-symbols=ignore-all\")
+endif()
+
+set(CXX_STANDARD \"-fPIC\")
+
+if(NOT Python3_LIBRARIES)
+    set(Python3_LIBRARIES \"\${Python_LIBRARIES}\")
+endif()
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/bootstrap/cmake_modules)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${target} ${build_dir})
     ")
 
-    execute_process(COMMAND ${CMAKE_COMMAND} ${build_dir}
-                                -D CMAKE_BUILD_TYPE=Release
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} ${build_dir}
+                                -D CMAKE_BUILD_TYPE:STRING=Release
                                 -D CMAKE_INSTALL_PREFIX:PATH=${CORIOLIS_TMP_INSTALL_DIR}
-                                -D "PYTHON_INCLUDE_DIR=\$(python -c \"from distutils.sysconfig import get_python_inc\; print(get_python_inc())\")"
-                                -D "PYTHON_LIBRARY=\$(python -c \"import distutils.sysconfig as sysconfig\; print(sysconfig.get_config_var('LIBDIR'))\")"
-                                -D PYTHON_EXECUTABLE:FILEPATH=`which python`
+                                -D CMAKE_BUILD_RPATH_USE_ORIGIN:BOOL=TRUE
+                                -D CMAKE_SKIP_BUILD_RPATH:BOOL=FALSE
+                                -D CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=FALSE
+                                -D CMAKE_INSTALL_RPATH:STRING='$ORIGIN/libs:$ORIGIN'
+                                -D CMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=TRUE
                                 -G "${CMAKE_GENERATOR}"
         WORKING_DIRECTORY ${build_dir}/build
         RESULT_VARIABLE ${target}_setup_result
@@ -95,35 +111,6 @@ endfunction()
 set(CORIOLIS_EXTRAS_DIR ${CMAKE_BINARY_DIR}/extras)
 file(MAKE_DIRECTORY ${CORIOLIS_EXTRAS_DIR})
 
-file(WRITE ${CORIOLIS_EXTRAS_DIR}/__init__.py
-"import .libs
-"
-)
-file(READ ${CORIOLIS_PACKAGE_SRCDIR}/__init__.py CORIOLIS_INIT_PY)
-file(APPEND ${CORIOLIS_EXTRAS_DIR}/__init__.py "${CORIOLIS_INIT_PY}")
-
-file(WRITE ${CORIOLIS_EXTRAS_DIR}/libs/__init__.py
-"import os, os.path, ctypes
-
-__libs=[]
-def _preload_shared_libraries(dirname):
-    libs = []
-    for name in os.listdir(dirname):
-        if name.endswith('.so'):
-            libs.append(os.path.join(dirname,name))
-    nload = len(libs)
-    while nload > 0:
-        name=libs.pop(0)
-        try:
-            lib=ctypes.CDLL(name)
-            __libs.append(lib)
-            nload = len(libs)
-        except OSError:
-            libs.append(name)
-            nload -= 1
-
-_preload_shared_libraries(os.path.dirname(os.path.realpath(__file__)))
-"
-)
+# Put all extra python things into ${CORIOLIS_EXTRAS_DIR} directory
 
 coriolis_install_all(${CORIOLIS_PACKAGE_SRCDIR} ${CORIOLIS_EXTRAS_DIR})
