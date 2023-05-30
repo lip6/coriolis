@@ -40,14 +40,35 @@
 name = "coriolis"
 version = "2.4.1"
 #dynamic = ["version"]
-
+description = "Place and Route for semiconductors"
+authors = [
+    { name = "Rémy ESCASSUT & Christian" },
+    { name = "Christophe ALEXANDRE" },
+    { name = "Sophie BELLOEIL" },
+    { name = "Damien DUPUIS" },
+    { name = "Jean-Paul CHAPUT", email="Jean-Paul.Chaput@lip6.fr" }
+]
+readme = "README.rst"
+long_description = """Coriolis provides several tools to perform the layout of VLSI circuits.
+Its main components are the Hurricane database, the Etesian placer and
+the Katana router, but other tools can use the Hurricane database and
+the parsers provided.
+"""
 
 [build-system]
 #requires = ["scikit-build-core","poetry-core", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
-requires = ["scikit-build-core", "cmake", "ninja", "patchelf"]
+requires = ["scikit-build-core", "cmake", "ninja", "hatch-vcs"]
 build-backend = "scikit_build_core.build"
 
+[tool.hatch.version]
+source = "vcs"
+
+[tool.scikit-build.metadata]
+# List dynamic metadata fields and hook locations in this table
+#version.provider = "hatch_vcs"
+
 [tool.scikit-build]
+
 # The PEP 517 build hooks will add ninja and/or cmake if the versions on the
 # system are not at least these versions. Disabled by an empty string.
 cmake.minimum-version = "3.16"
@@ -117,7 +138,7 @@ editable.rebuild = false
 editable.verbose = true
 
 # Enable experimental features if any are available
-experimental = false
+experimental = true #false
 
 # Strictly validate config options
 strict-config = true
@@ -132,9 +153,6 @@ build-dir = ""
 
 [tool.scikit-build.cmake.define]
 # Put CMake defines in this table.
-
-[tool.scikit-build.metadata]
-# List dynamic metadata fields and hook locations in this table
 
 [tool.cibuildwheel.linux]
 skip = ["cp36-*", "cp37-*", "pp*"]
