@@ -859,11 +859,11 @@ namespace Etesian {
           Box overlapAb = topAb.getIntersection( instance->getAbutmentBox() );
           if (not overlapAb.isEmpty()) {
           // Upper rounded
-            int xsize = (overlapAb.getWidth () + vpitch - 1) / vpitch;
-            int ysize = (overlapAb.getHeight() + hpitch - 1) / hpitch;
+            int xsize = (overlapAb.getWidth () + hpitch - 1) / hpitch;
+            int ysize = (overlapAb.getHeight() + vpitch - 1) / vpitch;
           // Lower rounded
-            int xpos  = overlapAb.getXMin() / vpitch;
-            int ypos  = overlapAb.getYMin() / hpitch;
+            int xpos  = overlapAb.getXMin() / hpitch;
+            int ypos  = overlapAb.getYMin() / vpitch;
 
             cellX[instanceId] = xpos;
             cellY[instanceId] = ypos;
@@ -910,20 +910,20 @@ namespace Etesian {
         }
       }
 
-      stdCellSizes.addSample( (float)(masterCell->getAbutmentBox().getWidth() / vpitch), 0 );
+      stdCellSizes.addSample( (float)(masterCell->getAbutmentBox().getWidth() / hpitch), 0 );
       Box instanceAb = _bloatCells.getAb( occurrence );
-      stdCellSizes.addSample( (float)(instanceAb.getWidth() / vpitch), 1 );
+      stdCellSizes.addSample( (float)(instanceAb.getWidth() / hpitch), 1 );
 
       Transformation instanceTransf = instance->getTransformation();
       occurrence.getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
 
       // Upper rounded
-      int xsize = (instanceAb.getWidth () + vpitch - 1) / vpitch;
-      int ysize = (instanceAb.getHeight() + hpitch - 1) / hpitch;
+      int xsize = (instanceAb.getWidth () + hpitch - 1) / hpitch;
+      int ysize = (instanceAb.getHeight() + vpitch - 1) / vpitch;
       // Lower rounded
-      int xpos  = instanceAb.getXMin() / vpitch;
-      int ypos  = instanceAb.getYMin() / hpitch;
+      int xpos  = instanceAb.getXMin() / hpitch;
+      int ypos  = instanceAb.getYMin() / vpitch;
 
       //if (xsize <  6) xsize += 2;
 
@@ -1005,6 +1005,12 @@ namespace Etesian {
 
       ++netsNb;
     }
+    _circuit->setCellX(cellX);
+    _circuit->setCellY(cellY);
+    _circuit->setCellWidth(cellWidth);
+    _circuit->setCellHeight(cellHeight);
+    _circuit->setCellIsFixed(cellIsFixed);
+    _circuit->setCellIsObstruction(cellIsObstruction);
 
     cmess1 << "     - Converting " << netsNb << " nets" << endl;
 
@@ -1035,8 +1041,8 @@ namespace Etesian {
         if (pin) {
           if (path.isEmpty()) {
             Point pt   = rp->getCenter();
-            int xpin = pt.getX() / vpitch;
-            int ypin = pt.getY() / hpitch;
+            int xpin = pt.getX() / hpitch;
+            int ypin = pt.getY() / vpitch;
           // Dummy last instance
             pinX.push_back(xpin);
             pinY.push_back(ypin);
@@ -1067,8 +1073,8 @@ namespace Etesian {
         string    insName  = extractInstanceName( rp );
         Point     offset   = extractRpOffset    ( rp );
 
-        int xpin    = offset.getX() / vpitch;
-        int ypin    = offset.getY() / hpitch;
+        int xpin    = offset.getX() / hpitch;
+        int ypin    = offset.getY() / vpitch;
 
         auto  iid = _instsToIds.find( instance );
         if (iid == _instsToIds.end()) {
@@ -1101,13 +1107,13 @@ namespace Etesian {
       cmess2 << stdCellSizes.toString(1) << endl;
 
     //_densityLimits = new coloquinte::density_restrictions ();
-    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / vpitch)
-                            , (int)(topAb.getXMax() / vpitch)
-                            , (int)(topAb.getYMin() / hpitch)
-                            , (int)(topAb.getYMax() / hpitch)
+    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
+                            , (int)(topAb.getXMax() / hpitch)
+                            , (int)(topAb.getYMin() / vpitch)
+                            , (int)(topAb.getYMax() / vpitch)
                             );
+    _circuit->setupRows(*_surface, (getSliceHeight() + vpitch - 1) / vpitch);
     _circuit->check();
-    // TODO: define the rows
     _placementLB = new coloquinte::PlacementSolution ();
     _placementUB = new coloquinte::PlacementSolution ( *_placementLB );
 
@@ -1255,6 +1261,7 @@ namespace Etesian {
     Density       densityConf     = getSpreadingConf();
 
     cmess1 << "  o  Running Coloquinte." << endl;
+    startMeasures();
 
     unsigned globalOptions=0, detailedOptions=0;
 
@@ -1268,6 +1275,7 @@ namespace Etesian {
 
     if (densityConf == ForceUniform)
       globalOptions |= ForceUniformDensity;
+    cmess1 << _circuit->report() << std::endl;
 
     cmess1 << "  o  Global placement." << endl;
     globalPlace(globalOptions);
