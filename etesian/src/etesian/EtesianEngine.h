@@ -195,6 +195,7 @@ namespace Etesian {
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
               void           _updatePlacement ( const coloquinte::PlacementSolution*, uint32_t flags=0 );
+              void           _coloquinteCallback(coloquinte::PlacementStep step);
               void           _progressReport1 ( string label ) const;
               void           _progressReport2 ( string label ) const;
   };
