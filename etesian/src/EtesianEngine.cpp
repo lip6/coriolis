@@ -200,7 +200,7 @@ namespace {
         break;
       */
       default:
-        throw Error("Unsupported orientation");
+        throw Error("Unsupported orientation " + toString(orientation));
     }
     return Transformation( tx, ty, orient );
   }
@@ -829,6 +829,7 @@ namespace Etesian {
     vector<int> cellHeight( instancesNb+1 );
     vector<bool> cellIsFixed( instancesNb+1 );
     vector<bool> cellIsObstruction( instancesNb+1 );
+    vector<coloquinte::CellRowPolarity> cellRowPolarity( instancesNb+1, coloquinte::CellRowPolarity::SAME );
 
     cmess1 << ::Dots::asUInt( "     - Number of instances ", instancesNb ) << endl;
     if (instancesNb) {
@@ -1007,10 +1008,12 @@ namespace Etesian {
     }
     _circuit->setCellX(cellX);
     _circuit->setCellY(cellY);
+    _circuit->setCellOrientation(orient);
     _circuit->setCellWidth(cellWidth);
     _circuit->setCellHeight(cellHeight);
     _circuit->setCellIsFixed(cellIsFixed);
     _circuit->setCellIsObstruction(cellIsObstruction);
+    _circuit->setCellRowPolarity(cellRowPolarity);
 
     cmess1 << "     - Converting " << netsNb << " nets" << endl;
 
