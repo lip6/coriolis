@@ -1158,6 +1158,18 @@ namespace Etesian {
     }
   }
 
+  void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
+    GraphicUpdate conf = getUpdateConf();
+    if (conf == GraphicUpdate::FinalOnly) {
+      return;
+    }
+    if (step == coloquinte::PlacementStep::UpperBound && conf == GraphicUpdate::LowerBound) {
+      return;
+    }
+    auto placement = _circuit->solution();
+    _updatePlacement(&placement);
+  }
+
 
   void  EtesianEngine::globalPlace ( unsigned options )
   {
@@ -1180,8 +1192,6 @@ namespace Etesian {
 
   void  EtesianEngine::antennaProtect ()
   {
-    // TODO
-    /*
     DbU::Unit maxWL = getAntennaGateMaxWL();
     if (not maxWL) return;
     
@@ -1190,8 +1200,11 @@ namespace Etesian {
     int    diodeWidth = _diodeCell->getAbutmentBox().getWidth() / getSliceStep();
     cdebug_log(122,0) << "diodeWidth=" << diodeWidth << "p" << endl;
 
-    for ( coloquinte::int inet=0 ; inet < _circuit->nbNets() ; ++inet ) {
-      DbU::Unit rsmt = toDbU( coloquinte::get_RSMT_length( *_circuit, *_placementUB, inet ) );
+    vector<int> cellWidth = _circuit->cellWidth();
+    for (int inet=0 ; inet < _circuit->nbNets() ; ++inet ) {
+      // TODO: compute net size based on the current placement
+      // TODO: net ids do not match coloquinte net orders when some nets are empty
+      DbU::Unit rsmt = std::numeric_limits<DbU::Unit>::max();
       Net*      net  = std::get<0>( _idsToNets[inet] );
 
       if ((rsmt > maxWL) or net->isExternal()) {
@@ -1213,15 +1226,13 @@ namespace Etesian {
           if (iinst == _instsToIds.end()) continue;
           
           std::get<1>( _idsToInsts[ (*iinst).second ] ).push_back( rp );
-          coloquinte::point<int> cell_size = _circuit->get_cell_size( (*iinst).second );
-          cell_size.x += 2*diodeWidth;
-          _circuit->set_cell_size( (*iinst).second, cell_size );
+          cellWidth[(*iinst).second] += 2*diodeWidth;
           ++count;
         }
       }
     }
+    _circuit->setCellWidth(cellWidth);
     cmess1 << ::Dots::asInt( "     - Inserted diodes", count ) << endl;
-    */
   }
 
 
