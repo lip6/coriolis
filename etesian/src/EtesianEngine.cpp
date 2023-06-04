@@ -714,6 +714,7 @@ namespace Etesian {
 
   size_t  EtesianEngine::toColoquinte ()
   {
+    clearColoquinte();
     AllianceFramework* af          = AllianceFramework::get();
     DbU::Unit          hpitch      = getSliceStep();
     DbU::Unit          vpitch      = getSliceStep();
