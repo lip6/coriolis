@@ -200,6 +200,7 @@ if __name__ == '__main__':
           etesian = Etesian.EtesianEngine.create(cell)
          #if options.showConf: etesian.printConfiguration()
           etesian.place()
+          etesian.toHurricane()
 
       if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
       runKiteTool = loadGlobal or globalRoute or detailRoute
