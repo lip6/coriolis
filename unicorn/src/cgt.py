@@ -108,7 +108,6 @@ if __name__ == '__main__':
       parser.add_option( '-D', '--core-dump'        , action='store_true', dest='coreDump'       , help='Enable core-dump when a crash occurs.')
       parser.add_option( '-L', '--log-mode'         , action='store_true', dest='logMode'        , help='Disable ANSI escape sequences in console output.')
       parser.add_option( '-t', '--text'             , action='store_true', dest='textMode'       , help='Run in command line mode.')
-      parser.add_option( '-K', '--use-katana'       , action='store_true', dest='useKatana'      , help='Use Katana instead of Knik/Kite router.')
       parser.add_option( '-m', '--margin'           , type='float'       , dest='margin'         , help='Percentage of free area to add to the minimal placement area.')
       parser.add_option( '-P', '--place'            , action='store_true', dest='place'          , help='Run the analytical placer (Etesian).')
       parser.add_option( '-G', '--global-route'     , action='store_true', dest='globalRoute'    , help='Run the global router (Knik).')
@@ -125,7 +124,6 @@ if __name__ == '__main__':
       (options, args) = parser.parse_args()
       args.insert(0, 'cgt')
 
-      useKatana = False
       flags     = 0
       if options.noInit:
         flags |= CRL.AllianceFramework.NoPythonInit
@@ -148,7 +146,6 @@ if __name__ == '__main__':
       if options.vTracksLocal:    Cfg.getParamInt       ('katana.vTracksReservedLocal').setInt(options.vTracksLocal)
       if options.eventsLimit:     Cfg.getParamInt       ('katana.eventsLimit'         ).setInt(options.eventsLimit)
       if options.topRoutingLayer: Cfg.getParamString    ('anabatic.topRoutingLayer'   ).setString(options.topRoutingLayer)
-      if options.useKatana:       useKatana = True
 
       loadGlobal     = options.loadGlobal
       saveGlobal     = options.saveGlobal
@@ -207,7 +204,7 @@ if __name__ == '__main__':
       if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
       runKiteTool = loadGlobal or globalRoute or detailRoute
 
-      if useKatana and runKiteTool:
+      if runKiteTool:
         runKiteTool = False
 
         katana = Katana.KatanaEngine.create( cell )
