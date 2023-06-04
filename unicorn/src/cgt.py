@@ -191,54 +191,53 @@ if __name__ == '__main__':
           unicorn.setLayerVisible     ("text.instance" , False);
           unicorn.setLayerVisible     ("text.component", False);
           
-          if options.script:
-              runScript(options.script,unicorn)
-          
+      if options.script:
+          runScript(options.script,unicorn)
+
+     # Run in command line mode.
+      if options.script: runScript(options.script,None)
+
+      kiteSuccess = True
+      
+      if runEtesianTool:
+          etesian = Etesian.EtesianEngine.create(cell)
+         #if options.showConf: etesian.printConfiguration()
+          etesian.place()
+
+      if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
+      runKiteTool = loadGlobal or globalRoute or detailRoute
+
+      if useKatana and runKiteTool:
+        runKiteTool = False
+
+        katana = Katana.KatanaEngine.create( cell )
+       #katana.printConfiguration   ()
+        katana.digitalInit          ()
+       #katana.runNegociatePreRouted()
+        katana.runGlobalRouter      ( Katana.Flags.NoFlags )
+        katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
+        katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
+        katana.runNegociate         ( Katana.Flags.NoFlags )
+        kiteSuccess = katana.isDetailedRoutingSuccess()
+       #katana.finalizeLayout()
+        katana.destroy()
+
+      if options.saveDesign:
+          views = CRL.Catalog.State.Physical
+          if options.vstUseConcat: views |= CRL.Catalog.State.VstUseConcat
+          if options.saveDesign != cell.getName():
+              cell.setName(options.saveDesign)
+              views |= CRL.Catalog.State.Logical
+          af.saveCell(cell, views)
+ 
+      if not options.textMode:
           setCgtBanner(unicorn.getBanner())
-         #print( unicorn.getBanner() )
-         #print( credits() )
 
           if cell: unicorn.setCell(cell)
           unicorn.show()
           ha.qtExec()
       else:
-         # Run in command line mode.
-          if options.script: runScript(options.script,None)
-
-          kiteSuccess = True
-          
-          if runEtesianTool:
-              etesian = Etesian.EtesianEngine.create(cell)
-             #if options.showConf: etesian.printConfiguration()
-              etesian.place()
-
-          if detailRoute and not (loadGlobal or globalRoute): globalRoute = True
-          runKiteTool = loadGlobal or globalRoute or detailRoute
-
-          if useKatana and runKiteTool:
-            runKiteTool = False
-
-            katana = Katana.KatanaEngine.create( cell )
-           #katana.printConfiguration   ()
-            katana.digitalInit          ()
-           #katana.runNegociatePreRouted()
-            katana.runGlobalRouter      ( Katana.Flags.NoFlags )
-            katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
-            katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
-            katana.runNegociate         ( Katana.Flags.NoFlags )
-            kiteSuccess = katana.isDetailedRoutingSuccess()
-           #katana.finalizeLayout()
-            katana.destroy()
-
-          if options.saveDesign:
-              views = CRL.Catalog.State.Physical
-              if options.vstUseConcat: views |= CRL.Catalog.State.VstUseConcat
-              if options.saveDesign != cell.getName():
-                  cell.setName(options.saveDesign)
-                  views |= CRL.Catalog.State.Logical
-              af.saveCell(cell, views)
-
-          sys.exit(not kiteSuccess)
+            sys.exit(not kiteSuccess)
 
     except Exception as e:
         helpers.io.showPythonTrace( sys.argv[0], e )
