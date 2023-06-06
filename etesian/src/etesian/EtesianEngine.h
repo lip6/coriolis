@@ -181,6 +181,7 @@ namespace Etesian {
              uint32_t                             _diodeCount;
              uint32_t                             _bufferCount;
              NetNameSet                           _excludedNets;
+             bool                                 _antennaDone;
 
     protected:
     // Constructors & Destructors.
