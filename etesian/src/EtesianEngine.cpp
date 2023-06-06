@@ -476,7 +476,6 @@ namespace Etesian {
     _placementUB   = NULL;
     //_densityLimits = NULL;
     _diodeCount    = 0;
-    _antennaDone   = false;
   }
 
 
@@ -1181,11 +1180,7 @@ namespace Etesian {
              step == coloquinte::PlacementStep::LowerBound) {
       _updatePlacement(&placement);
     }
-
-    // Antenna update
-    // TODO
   }
-
 
   void  EtesianEngine::globalPlace ( unsigned options )
   {
@@ -1205,52 +1200,6 @@ namespace Etesian {
     *_placementUB = _circuit->solution();
     *_placementLB = *_placementUB; // In case we run other passes
     _updatePlacement(_placementUB);
-  }
-
-
-  void  EtesianEngine::antennaProtect ()
-  {
-    DbU::Unit maxWL = getAntennaGateMaxWL();
-    if (not maxWL) return;
-    
-    cmess1 << "  o  Inserting antenna effect protection." << endl;
-    uint32_t count      = 0;
-    int    diodeWidth = _diodeCell->getAbutmentBox().getWidth() / getSliceStep();
-    cdebug_log(122,0) << "diodeWidth=" << diodeWidth << "p" << endl;
-
-    vector<int> cellWidth = _circuit->cellWidth();
-    for (int inet=0 ; inet < _circuit->nbNets() ; ++inet ) {
-      // TODO: compute net size based on the current placement
-      // TODO: net ids do not match coloquinte net orders when some nets are empty
-      DbU::Unit rsmt = std::numeric_limits<DbU::Unit>::max();
-      Net*      net  = std::get<0>( _idsToNets[inet] );
-
-      if ((rsmt > maxWL) or net->isExternal()) {
-        cdebug_log(122,0) << "| Net [" << inet << "] \"" << net->getName() << "\" may have antenna effect, "
-                          << DbU::getValueString(rsmt)
-                          << endl;
-        std::get<2>( _idsToNets[inet] ) |= NeedsDiode;
-
-        for ( RoutingPad* rp : net->getRoutingPads() ) {
-          Segment* segment = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
-          if (not segment) continue;
-          if (segment->getNet()->getDirection() & Net::Direction::DirOut) continue;
-
-          Instance* instance = extractInstance( rp );
-          if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
-            continue;
-
-          auto iinst = _instsToIds.find( instance );
-          if (iinst == _instsToIds.end()) continue;
-          
-          std::get<1>( _idsToInsts[ (*iinst).second ] ).push_back( rp );
-          cellWidth[(*iinst).second] += 2*diodeWidth;
-          ++count;
-        }
-      }
-    }
-    _circuit->setCellWidth(cellWidth);
-    cmess1 << ::Dots::asInt( "     - Inserted diodes", count ) << endl;
   }
 
 
