@@ -179,7 +179,7 @@ namespace {
         break;
       case CellOrientation::MX:
         orient = Transformation::Orientation::MX;
-        ty    +=   cellBox.getWidth();
+        tx    +=   cellBox.getWidth();
         break;
       /*
       case CellOrientation::R90:
