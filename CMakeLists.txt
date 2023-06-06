@@ -114,3 +114,4 @@ file(MAKE_DIRECTORY ${CORIOLIS_EXTRAS_DIR})
 # Put all extra python things into ${CORIOLIS_EXTRAS_DIR} directory
 
 coriolis_install_all(${CORIOLIS_PACKAGE_SRCDIR} ${CORIOLIS_EXTRAS_DIR})
+install(FILES "${CORIOLIS_TMP_INSTALL_DIR}/bin/cgt" DESTINATION coriolis RENAME __main__.py)
