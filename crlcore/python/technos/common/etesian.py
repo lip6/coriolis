@@ -35,7 +35,7 @@ param.addValue( 'High'    , 3 )
 param.addValue( 'Extreme' , 4 )
 
 param = Cfg.getParamEnumerate( 'etesian.graphics' )
-param.setInt( 2 )
+param.setInt( 3 )
 param.addValue( 'Show every step' , 1 )
 param.addValue( 'Show lower bound', 2 )
 param.addValue( 'Show result only', 3 )

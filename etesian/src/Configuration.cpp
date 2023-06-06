@@ -56,7 +56,7 @@ namespace Etesian {
     , _placeEffort      ( static_cast<Effort>
                           (Cfg::getParamEnumerate ("etesian.effort"         , Standard   )->asInt()) )
     , _updateConf       ( static_cast<GraphicUpdate>                        
-                          (Cfg::getParamEnumerate ("etesian.graphics"       , LowerBound )->asInt()) )
+                          (Cfg::getParamEnumerate ("etesian.graphics"       , FinalOnly  )->asInt()) )
     , _spreadingConf    (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
     , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
     , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
