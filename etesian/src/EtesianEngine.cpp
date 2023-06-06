@@ -476,6 +476,7 @@ namespace Etesian {
     _placementUB   = NULL;
     //_densityLimits = NULL;
     _diodeCount    = 0;
+    _antennaDone   = false;
   }
 
 
@@ -1163,18 +1164,26 @@ namespace Etesian {
   }
 
   void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
-    GraphicUpdate conf = getUpdateConf();
-    if (conf == GraphicUpdate::FinalOnly) {
-      return;
-    }
-    if (conf == GraphicUpdate::LowerBound) {
-      if (step == coloquinte::PlacementStep::UpperBound ||
-          step == coloquinte::PlacementStep::Detailed) {
-        return;
-      }
-    }
     auto placement = _circuit->solution();
-    _updatePlacement(&placement);
+    if (step == coloquinte::PlacementStep::LowerBound) {
+      *_placementLB = placement;
+    }
+    else {
+      *_placementUB = placement;
+    }
+
+    // Graphical update
+    GraphicUpdate conf = getUpdateConf();
+    if (conf == GraphicUpdate::UpdateAll) {
+      _updatePlacement(&placement);
+    }
+    else if (conf == GraphicUpdate::LowerBound &&
+             step == coloquinte::PlacementStep::LowerBound) {
+      _updatePlacement(&placement);
+    }
+
+    // Antenna update
+    // TODO
   }
 
 
@@ -1183,7 +1192,6 @@ namespace Etesian {
     coloquinte::ColoquinteParameters params(getPlaceEffort());
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
     _circuit->placeGlobal(params, callback);
-    // TODO: add callback for placement update + antenna effect
     *_placementUB = _circuit->solution();
     _updatePlacement(_placementUB);
   }
@@ -1195,7 +1203,6 @@ namespace Etesian {
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
     _circuit->placeDetailed(params, callback);
     *_placementUB = _circuit->solution();
-    // TODO: add callback for placement update + antenna effect
     *_placementLB = *_placementUB; // In case we run other passes
     _updatePlacement(_placementUB);
   }
