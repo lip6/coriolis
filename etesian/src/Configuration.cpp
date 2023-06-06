@@ -61,8 +61,6 @@ namespace Etesian {
     , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
     , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
     , _aspectRatio      (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
-    , _antennaInsertThreshold
-                        (  Cfg::getParamDouble    ("etesian.antennaInsertThreshold",       50.0)->asDouble() )
     , _tieName          (  Cfg::getParamString    ("etesian.tieName"        ,"tie_x0"          )->asString() )
     , _feedNames        (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
     , _diodeName        (  Cfg::getParamString    ("etesian.diodeName"      ,"dio_x0"          )->asString() )
@@ -110,7 +108,6 @@ namespace Etesian {
     , _spreadingConf    ( other._spreadingConf   )
     , _spaceMargin      ( other._spaceMargin     )
     , _aspectRatio      ( other._aspectRatio     )
-    , _antennaInsertThreshold( other._antennaInsertThreshold )
     , _tieName          ( other._tieName         )
     , _feedNames        ( other._feedNames       )
     , _diodeName        ( other._diodeName       )
@@ -146,7 +143,6 @@ namespace Etesian {
     cmess1 << Dots::asPercentage("     - Space Margin"     ,_spaceMargin             ) << endl;
     cmess1 << Dots::asPercentage("     - Aspect Ratio"     ,_aspectRatio             ) << endl;
     cmess1 << Dots::asString    ("     - Bloat model"      ,_bloat                   ) << endl;
-    cmess1 << Dots::asPercentage("     - Antenna Insert"   ,_antennaInsertThreshold  ) << endl;
     cmess1 << Dots::asString    ("     - Antenna gate Max. WL" ,DbU::getValueString(_antennaGateMaxWL )) << endl;
     cmess1 << Dots::asString    ("     - Antenna diode Max. WL",DbU::getValueString(_antennaDiodeMaxWL)) << endl;
     cmess1 << Dots::asString    ("     - Latch up Distance",DbU::getValueString(_latchUpDistance)) << endl;
@@ -177,7 +173,6 @@ namespace Etesian {
     record->add ( getSlot( "_spreadingConf"         ,  (int)_spreadingConf   ) );
     record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin     ) );
     record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio     ) );
-    record->add ( getSlot( "_antennaInsertThreshold",       _antennaInsertThreshold   ) );
     record->add ( getSlot( "_tieName"             ,         _tieName         ) );
     record->add ( getSlot( "_feedNames"             ,       _feedNames       ) );
     record->add ( getSlot( "_diodeName"             ,       _diodeName       ) );

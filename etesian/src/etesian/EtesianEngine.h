@@ -94,7 +94,6 @@ namespace Etesian {
       inline  Density                 getSpreadingConf          () const;
       inline  double                  getSpaceMargin            () const;
       inline  double                  getAspectRatio            () const;
-      inline  double                  getAntennaInsertThreshold () const;
       inline  DbU::Unit               getAntennaGateMaxWL       () const;
       inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
       inline  DbU::Unit               getLatchUpDistance        () const;
@@ -133,7 +132,6 @@ namespace Etesian {
               size_t                  toColoquinte              ();
               void                    globalPlace               ( unsigned options=0 );
               void                    detailedPlace             ( unsigned options=0 );
-              void                    antennaProtect            ();
               void                    place                     ();
               uint32_t                doHFNS                    ();
       inline  void                    useFeed                   ( Cell* );
@@ -181,7 +179,6 @@ namespace Etesian {
              uint32_t                             _diodeCount;
              uint32_t                             _bufferCount;
              NetNameSet                           _excludedNets;
-             bool                                 _antennaDone;
 
     protected:
     // Constructors & Destructors.
@@ -218,7 +215,6 @@ namespace Etesian {
   inline  Density                EtesianEngine::getSpreadingConf          () const { return getConfiguration()->getSpreadingConf(); }
   inline  double                 EtesianEngine::getSpaceMargin            () const { return getConfiguration()->getSpaceMargin(); }
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
-  inline  double                 EtesianEngine::getAntennaInsertThreshold () const { return getConfiguration()->getAntennaInsertThreshold(); }
   inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
