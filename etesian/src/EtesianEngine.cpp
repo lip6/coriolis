@@ -1167,8 +1167,11 @@ namespace Etesian {
     if (conf == GraphicUpdate::FinalOnly) {
       return;
     }
-    if (step == coloquinte::PlacementStep::UpperBound && conf == GraphicUpdate::LowerBound) {
-      return;
+    if (conf == GraphicUpdate::LowerBound) {
+      if (step == coloquinte::PlacementStep::UpperBound ||
+          step == coloquinte::PlacementStep::Detailed) {
+        return;
+      }
     }
     auto placement = _circuit->solution();
     _updatePlacement(&placement);
@@ -1177,7 +1180,9 @@ namespace Etesian {
 
   void  EtesianEngine::globalPlace ( unsigned options )
   {
-    _circuit->placeGlobal(getPlaceEffort());
+    coloquinte::ColoquinteParameters params(getPlaceEffort());
+    coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
+    _circuit->placeGlobal(params, callback);
     // TODO: add callback for placement update + antenna effect
     *_placementUB = _circuit->solution();
     _updatePlacement(_placementUB);
@@ -1186,7 +1191,9 @@ namespace Etesian {
 
   void  EtesianEngine::detailedPlace ( unsigned options )
   {
-    _circuit->placeDetailed(getPlaceEffort());
+    coloquinte::ColoquinteParameters params(getPlaceEffort());
+    coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
+    _circuit->placeDetailed(params, callback);
     *_placementUB = _circuit->solution();
     // TODO: add callback for placement update + antenna effect
     *_placementLB = *_placementUB; // In case we run other passes
