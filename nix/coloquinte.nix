@@ -12,8 +12,6 @@ stdenv.mkDerivation {
   buildInputs = [ boostWithPython coriolis-bootstrap qt4 ];
   nativeBuildInputs = [ cmake ninja doxygen ];
 
-  cmakeFlags = [ "-DWITH_OPENMP:STRING=TRUE" ];
-
   inherit version;
 
   meta = meta // { license = lib.licenses.gpl2Plus; };
