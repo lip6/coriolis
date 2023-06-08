@@ -70,7 +70,6 @@ namespace Etesian {
       typedef std::tuple<Net*,int32_t,uint32_t>                NetInfos;
       typedef std::tuple<Instance*, std::vector<RoutingPad*> > InstanceInfos;
       typedef std::map<Instance*,size_t,DBo::CompareById>      InstancesToIds;
-      typedef std::map<Net*,size_t,DBo::CompareById>           NetsToIds;
       typedef std::set<std::string>                            NetNameSet;
     public:
       static  const Name&             staticGetName             ();
@@ -130,8 +129,8 @@ namespace Etesian {
       inline  Transformation          toBlock                   ( const Transformation& ) const;
               void                    setPlaceArea              ( const Box& );
               size_t                  toColoquinte              ();
-              void                    globalPlace               ( unsigned options=0 );
-              void                    detailedPlace             ( unsigned options=0 );
+              void                    globalPlace               ();
+              void                    detailedPlace             ();
               void                    place                     ();
               uint32_t                doHFNS                    ();
       inline  void                    useFeed                   ( Cell* );
@@ -160,12 +159,8 @@ namespace Etesian {
              coloquinte::Circuit*                 _circuit;
              coloquinte::PlacementSolution*       _placementLB;
              coloquinte::PlacementSolution*        _placementUB;
-             // TODO
-             // coloquinte::density_restrictions*    _densityLimits;
-             NetsToIds                            _netsToIds;
              InstancesToIds                       _instsToIds;
              std::vector<InstanceInfos>           _idsToInsts;
-             std::vector<NetInfos>                _idsToNets;
              Hurricane::CellViewer*               _viewer;
              Cell*                                _diodeCell;
              FeedCells                            _feedCells;

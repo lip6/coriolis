@@ -317,11 +317,8 @@ namespace Etesian {
     , _circuit      (NULL)
     , _placementLB  (NULL)
     , _placementUB  (NULL)
-    //, _densityLimits(NULL)
-    , _netsToIds    ()
     , _instsToIds   ()
     , _idsToInsts   ()
-    , _idsToNets    ()
     , _viewer       (NULL)
     , _diodeCell    (NULL)
     , _feedCells    (this)
@@ -456,10 +453,6 @@ namespace Etesian {
     delete _circuit;
     delete _placementLB;
     delete _placementUB;
-    //delete _densityLimits;
-
-    NetsToIds emptyNetsToIds;
-    _netsToIds.swap( emptyNetsToIds );
 
     InstancesToIds emptyInstsToIds;
     _instsToIds.swap( emptyInstsToIds );
@@ -467,14 +460,10 @@ namespace Etesian {
     vector<InstanceInfos> emptyIdsToInsts;
     _idsToInsts.swap( emptyIdsToInsts );
 
-    vector<NetInfos> emptyIdsToNets;
-    _idsToNets.swap( emptyIdsToNets );
-
     _surface       = NULL;
     _circuit       = NULL;
     _placementLB   = NULL;
     _placementUB   = NULL;
-    //_densityLimits = NULL;
     _diodeCount    = 0;
   }
 
@@ -721,6 +710,8 @@ namespace Etesian {
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
+    // TODO: Density       densityConf     = getSpreadingConf();
+
     CRL::Histogram  stdCellSizes ( 0.0, 1.0, 2 );
     stdCellSizes.setTitle ( "Width"  , 0 );
     stdCellSizes.setColor ( "green"  , 0 );
@@ -794,18 +785,18 @@ namespace Etesian {
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
       string    masterName = getString( instance->getMasterCell()->getName() );
+      DbU::Unit length = (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
       if (af->isRegister(masterName)) {
         ++registerNb;
-        registerLength += instanceAb.getWidth();
+        registerLength += length;
       }
       if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
         ++fixedNb;
-        totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+        totalLength -= length;
       } else if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
         cerr << "PLACED " << instance << endl;
       } else {
-        usedLength += (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
-      //cerr << DbU::getValueString(usedLength) << " " << instance << endl;
+        usedLength += length;
       }
     }
     if (instancesNb <= fixedNb) {
@@ -818,19 +809,6 @@ namespace Etesian {
   //cerr << "used length=" << DbU::getValueString(usedLength) << endl;
     cmess1 << ::Dots::asPercentage( "     - Effective space margin"
                                   , (float)(totalLength-usedLength)/(float)totalLength ) << endl;
-
-  // Coloquinte circuit description data-structures.
-  // One dummy fixed instance at the end
-
-    _circuit = new coloquinte::Circuit( instancesNb+1 );
-    vector<int> cellX( instancesNb+1 );
-    vector<int> cellY( instancesNb+1 );
-    vector<coloquinte::CellOrientation> orient( instancesNb+1 );
-    vector<int> cellWidth( instancesNb+1 );
-    vector<int> cellHeight( instancesNb+1 );
-    vector<bool> cellIsFixed( instancesNb+1 );
-    vector<bool> cellIsObstruction( instancesNb+1 );
-    vector<coloquinte::CellRowPolarity> cellRowPolarity( instancesNb+1, coloquinte::CellRowPolarity::SAME );
 
     cmess1 << ::Dots::asUInt( "     - Number of instances ", instancesNb ) << endl;
     if (instancesNb) {
@@ -846,6 +824,19 @@ namespace Etesian {
       cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
     }
     cout.flush();
+
+  // Coloquinte circuit description data-structures.
+  // One dummy fixed instance at the end
+
+    _circuit = new coloquinte::Circuit( instancesNb+1 );
+    vector<int> cellX( instancesNb+1 );
+    vector<int> cellY( instancesNb+1 );
+    vector<coloquinte::CellOrientation> orient( instancesNb+1 );
+    vector<int> cellWidth( instancesNb+1 );
+    vector<int> cellHeight( instancesNb+1 );
+    vector<bool> cellIsFixed( instancesNb+1 );
+    vector<bool> cellIsObstruction( instancesNb+1 );
+    vector<coloquinte::CellRowPolarity> cellRowPolarity( instancesNb+1, coloquinte::CellRowPolarity::SAME );
 
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
@@ -1018,9 +1009,6 @@ namespace Etesian {
 
     cmess1 << "     - Converting " << netsNb << " nets" << endl;
 
-    _idsToNets.resize( netsNb );
-
-    unsigned int netId = 0;
     for ( Net* net : getCell()->getNets() )
     {
       const char* excludedType = NULL;
@@ -1032,9 +1020,6 @@ namespace Etesian {
       if (af->isBLOCKAGE(net->getName())) continue;
 
       dots.dot();
-
-      _netsToIds.insert( make_pair(net,netId) );
-      _idsToNets[netId] = make_tuple( net, _instsToIds.size(), 0 );
       
       string topCellInstancePin = getString(getCell()->getName()) + ":C";
       vector<int> netCells, pinX, pinY;
@@ -1089,19 +1074,9 @@ namespace Etesian {
           pinX.push_back(xpin);
           pinY.push_back(ypin);
           netCells.push_back((*iid).second);
-          Net*  rpNet = NULL;
-          Plug* plug  = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
-          if (plug) {
-            rpNet = plug->getMasterNet();
-            if (rpNet->getDirection() & Net::Direction::DirOut) {
-              std::get<1>( _idsToNets[netId] ) = (*iid).second;
-            }
-          }
         }
       }
       _circuit->addNet(netCells, pinX, pinY);
-
-      netId++;
     }
     dots.finish( Dots::Reset );
 
@@ -1182,7 +1157,7 @@ namespace Etesian {
     }
   }
 
-  void  EtesianEngine::globalPlace ( unsigned options )
+  void  EtesianEngine::globalPlace ()
   {
     coloquinte::ColoquinteParameters params(getPlaceEffort());
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
@@ -1192,7 +1167,7 @@ namespace Etesian {
   }
 
 
-  void  EtesianEngine::detailedPlace ( unsigned options )
+  void  EtesianEngine::detailedPlace ()
   {
     coloquinte::ColoquinteParameters params(getPlaceEffort());
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
@@ -1235,31 +1210,16 @@ namespace Etesian {
   //findYSpin();
     if (not toColoquinte()) return;
 
-    GraphicUpdate placementUpdate = getUpdateConf();
-    Density       densityConf     = getSpreadingConf();
-
     cmess1 << "  o  Running Coloquinte." << endl;
     startMeasures();
 
-    unsigned globalOptions=0, detailedOptions=0;
-
-    if (placementUpdate == UpdateAll) {
-      globalOptions   |= (UpdateUB | UpdateLB);
-      detailedOptions |=  UpdateDetailed;
-    }
-    else if (placementUpdate == LowerBound) {
-      globalOptions |= UpdateLB;
-    }
-
-    if (densityConf == ForceUniform)
-      globalOptions |= ForceUniformDensity;
     cmess1 << _circuit->report() << std::endl;
 
     cmess1 << "  o  Global placement." << endl;
-    globalPlace(globalOptions);
+    globalPlace();
 
     cmess1 << "  o  Detailed Placement." << endl;
-    detailedPlace(detailedOptions);
+    detailedPlace();
 
   //toHurricane();
   //addFeeds();
