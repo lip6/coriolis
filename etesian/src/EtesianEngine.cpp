@@ -805,8 +805,7 @@ namespace Etesian {
                    ) << endl;
       return 0;
     }
-  //cerr << "total length=" << DbU::getValueString(totalLength) << endl;
-  //cerr << "used length=" << DbU::getValueString(usedLength) << endl;
+
     cmess1 << ::Dots::asPercentage( "     - Effective space margin"
                                   , (float)(totalLength-usedLength)/(float)totalLength ) << endl;
 
@@ -843,7 +842,6 @@ namespace Etesian {
   //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
     getCell()->flattenNets( NULL, _excludedNets, Cell::Flags::NoClockFlatten );
 
-    bool    tooManyInstances = false;
     int instanceId       = 0;
     if (getBlockInstance()) {
       for ( Instance* instance : getCell()->getInstances() ) {
@@ -867,11 +865,6 @@ namespace Etesian {
 
             _instsToIds.insert( make_pair(instance,instanceId) );
             _idsToInsts.push_back( make_tuple(instance,vector<RoutingPad*>()) );
-            // cerr << endl;
-            // cerr << "FIXED " << instance << endl;
-            // cerr << "  id=" << instanceId
-            //      << " " << instance << " size:(" << xsize << " " << ysize
-            //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
             ++instanceId;
             dots.dot();
           }
@@ -881,23 +874,21 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      if (tooManyInstances or (instanceId == instancesNb)) {
-        tooManyInstances = true;
+      if (instanceId >= instancesNb) {
         ++instanceId;
         continue;
       }
 
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = occurrence.getCompactString();
-    // Remove the enclosing brackets...
-      instanceName.erase( 0, 1 );
-      instanceName.erase( instanceName.size()-1 );
-
       if (CatalogExtension::isFeed(masterCell)) {
         string feedName = getString( instance->getName() );
         if (  (feedName.substr(0,11) != "spare_feed_")
            or (not instance->isFixed())) {
+          string    instanceName = occurrence.getCompactString();
+          // Remove the enclosing brackets...
+          instanceName.erase( 0, 1 );
+          instanceName.erase( instanceName.size()-1 );
           throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
                      , instanceName.c_str() );
         }
@@ -918,18 +909,6 @@ namespace Etesian {
       int xpos  = instanceAb.getXMin() / hpitch;
       int ypos  = instanceAb.getYMin() / vpitch;
 
-      //if (xsize <  6) xsize += 2;
-
-      // if ( (ysize != 1) and not instance->isFixed() ) {
-      //   cerr << Error( "EtesianEngine::toColoquinte(): Instance \"%s\" of \"%s\" is a block (height: %d)." 
-      //                , instanceName.c_str()
-      //                , getString(masterCell->getName()).c_str()
-      //                , ysize ) << endl;
-      // }
-
-      // cerr << instance << " size:(" << xsize << " " << ysize
-      //     << ") pos:(" << xpos << " " << ypos << ")" << endl;
-
       string masterName = getString( instance->getMasterCell()->getName() );
       if (isFlexLib and not instance->isFixed() and (masterName == "buf_x8"))
          ++xsize;
@@ -945,11 +924,6 @@ namespace Etesian {
       } else {
         cellIsFixed[instanceId] = true;
         cellIsObstruction[instanceId] = true;
-        // cerr << endl;
-        // cerr << "FIXED " << instance << endl;
-        // cerr << "  id=" << instanceId
-        //      << " " << instance << " size:(" << xsize << " " << ysize
-        //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
       }
 
       _instsToIds.insert( make_pair(instance,instanceId) );
@@ -958,16 +932,10 @@ namespace Etesian {
       dots.dot();
     }
 
-    if (tooManyInstances) {
-      throw Error( "EtesianEngine::toColoquinte(): Too many leaf instances, %d (expected: %d)\n"
+    if (instanceId != instancesNb) {
+      throw Error( "EtesianEngine::toColoquinte(): %d  leaf instances, but expected %d\n"
                    "        maybe a virtual flattening problem."
                  , instanceId, instancesNb 
-                 );
-    }
-    if (instanceId < instancesNb) {
-      throw Error( "EtesianEngine::toColoquinte(): Too little leaf instances, %d (expected: %d)\n"
-                   "        maybe a virtual flattening problem."
-                 , instanceId, instancesNb
                  );
     }
 
@@ -1053,13 +1021,11 @@ namespace Etesian {
                            , getString(getBlockInstance()).c_str()
                            , getString(rp->getOccurrence()).c_str()
                            ) << endl;
-          //cerr << "Outside RP: " << rp << endl;
             continue;
           }
         }
 
         Instance* instance = extractInstance    ( rp );
-        string    insName  = extractInstanceName( rp );
         Point     offset   = extractRpOffset    ( rp );
 
         int xpin    = offset.getX() / hpitch;
@@ -1068,6 +1034,7 @@ namespace Etesian {
         auto  iid = _instsToIds.find( instance );
         if (iid == _instsToIds.end()) {
           if (not instance) {
+            string    insName  = extractInstanceName( rp );
             cerr << Error( "Unable to lookup instance \"%s\".", insName.c_str() ) << endl;
           }
         } else {
