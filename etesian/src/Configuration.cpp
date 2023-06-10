@@ -57,7 +57,6 @@ namespace Etesian {
                           (Cfg::getParamEnumerate ("etesian.effort"         , Standard   )->asInt()) )
     , _updateConf       ( static_cast<GraphicUpdate>                        
                           (Cfg::getParamEnumerate ("etesian.graphics"       , FinalOnly  )->asInt()) )
-    , _spreadingConf    (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
     , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
     , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
     , _densityVariation (  Cfg::getParamPercentage("etesian.densityVariation",  5.0)->asDouble() )
@@ -106,7 +105,6 @@ namespace Etesian {
     , _cg               (NULL)
     , _placeEffort      ( other._placeEffort     )
     , _updateConf       ( other._updateConf      )
-    , _spreadingConf    ( other._spreadingConf   )
     , _spaceMargin      ( other._spaceMargin     )
     , _densityVariation ( other._densityVariation)
     , _aspectRatio      ( other._aspectRatio     )
@@ -140,7 +138,6 @@ namespace Etesian {
     cmess1 << Dots::asIdentifier("     - Cell Gauge"       ,getString(_cg->getName())) << endl;
     cmess1 << Dots::asInt       ("     - Place Effort"     ,_placeEffort             ) << endl;
     cmess1 << Dots::asInt       ("     - Update Conf"      ,_updateConf              ) << endl;
-    cmess1 << Dots::asInt       ("     - Spreading Conf"   ,_spreadingConf           ) << endl;
     cmess1 << Dots::asBool      ("     - Routing driven"   ,_routingDriven           ) << endl;
     cmess1 << Dots::asPercentage("     - Space Margin"     ,_spaceMargin             ) << endl;
     cmess1 << Dots::asPercentage("     - Spread Margin"    ,_densityVariation            ) << endl;
@@ -173,7 +170,6 @@ namespace Etesian {
     record->add ( getSlot( "_cg"                    ,       _cg              ) );
     record->add ( getSlot( "_placeEffort"           ,  (int)_placeEffort     ) );
     record->add ( getSlot( "_updateConf"            ,  (int)_updateConf      ) );
-    record->add ( getSlot( "_spreadingConf"         ,  (int)_spreadingConf   ) );
     record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin     ) );
     record->add ( getSlot( "_densityVariation"      ,       _densityVariation    ) );
     record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio     ) );

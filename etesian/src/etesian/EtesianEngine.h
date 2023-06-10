@@ -90,7 +90,6 @@ namespace Etesian {
       inline  DbU::Unit               getFixedAbWidth           () const;
       inline  Effort                  getPlaceEffort            () const;
       inline  GraphicUpdate           getUpdateConf             () const;
-      inline  Density                 getSpreadingConf          () const;
       inline  double                  getSpaceMargin            () const;
       inline  double                  getDensityVariation       () const;
       inline  double                  getAspectRatio            () const;
@@ -208,7 +207,6 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getFixedAbWidth           () const { return _fixedAbWidth; }
   inline  Effort                 EtesianEngine::getPlaceEffort            () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf             () const { return getConfiguration()->getUpdateConf(); }
-  inline  Density                EtesianEngine::getSpreadingConf          () const { return getConfiguration()->getSpreadingConf(); }
   inline  double                 EtesianEngine::getSpaceMargin            () const { return getConfiguration()->getSpaceMargin(); }
   inline  double                 EtesianEngine::getDensityVariation       () const { return getConfiguration()->getDensityVariation(); }
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }

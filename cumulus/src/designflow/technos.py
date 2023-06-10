@@ -294,7 +294,7 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
         cfg.misc.verboseLevel1       = True
         cfg.misc.verboseLevel2       = True
         cfg.etesian.graphics         = 3
-        cfg.etesian.uniformDensity   = True
+        cfg.etesian.densityVariation = 0.04
         cfg.etesian.spaceMargin      = 0.04
         cfg.katana.eventsLimit       = 4000000
         af  = CRL.AllianceFramework.get()
