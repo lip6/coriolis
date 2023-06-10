@@ -60,7 +60,7 @@ namespace Etesian {
     , _spreadingConf    (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
     , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
     , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
-    , _spreadMargin     (  Cfg::getParamPercentage("etesian.spreadMargin"   ,  5.0)->asDouble() )
+    , _densityVariation (  Cfg::getParamPercentage("etesian.densityVariation",  5.0)->asDouble() )
     , _aspectRatio      (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
     , _tieName          (  Cfg::getParamString    ("etesian.tieName"        ,"tie_x0"          )->asString() )
     , _feedNames        (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
@@ -108,7 +108,7 @@ namespace Etesian {
     , _updateConf       ( other._updateConf      )
     , _spreadingConf    ( other._spreadingConf   )
     , _spaceMargin      ( other._spaceMargin     )
-    , _spreadMargin     ( other._spreadMargin    )
+    , _densityVariation ( other._densityVariation)
     , _aspectRatio      ( other._aspectRatio     )
     , _tieName          ( other._tieName         )
     , _feedNames        ( other._feedNames       )
@@ -116,8 +116,8 @@ namespace Etesian {
     , _spareBufferName  ( other._spareBufferName )
     , _bloat            ( other._bloat           )
     , _latchUpDistance  ( other._latchUpDistance )
-    , _antennaGateMaxWL ( other._antennaGateMaxWL    )
-    , _antennaDiodeMaxWL( other._antennaDiodeMaxWL    )
+    , _antennaGateMaxWL ( other._antennaGateMaxWL )
+    , _antennaDiodeMaxWL( other._antennaDiodeMaxWL)
   {
     if (other._rg) _rg = other._rg->getClone();
     if (other._cg) _cg = other._cg->getClone();
@@ -143,7 +143,7 @@ namespace Etesian {
     cmess1 << Dots::asInt       ("     - Spreading Conf"   ,_spreadingConf           ) << endl;
     cmess1 << Dots::asBool      ("     - Routing driven"   ,_routingDriven           ) << endl;
     cmess1 << Dots::asPercentage("     - Space Margin"     ,_spaceMargin             ) << endl;
-    cmess1 << Dots::asPercentage("     - Spread Margin"    ,_spreadMargin            ) << endl;
+    cmess1 << Dots::asPercentage("     - Spread Margin"    ,_densityVariation            ) << endl;
     cmess1 << Dots::asPercentage("     - Aspect Ratio"     ,_aspectRatio             ) << endl;
     cmess1 << Dots::asString    ("     - Bloat model"      ,_bloat                   ) << endl;
     cmess1 << Dots::asString    ("     - Antenna gate Max. WL" ,DbU::getValueString(_antennaGateMaxWL )) << endl;
@@ -175,7 +175,7 @@ namespace Etesian {
     record->add ( getSlot( "_updateConf"            ,  (int)_updateConf      ) );
     record->add ( getSlot( "_spreadingConf"         ,  (int)_spreadingConf   ) );
     record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin     ) );
-    record->add ( getSlot( "_spreadMargin"          ,       _spreadMargin    ) );
+    record->add ( getSlot( "_densityVariation"      ,       _densityVariation    ) );
     record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio     ) );
     record->add ( getSlot( "_tieName"               ,       _tieName         ) );
     record->add ( getSlot( "_feedNames"             ,       _feedNames       ) );
