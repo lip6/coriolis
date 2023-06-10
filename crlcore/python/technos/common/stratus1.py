@@ -16,8 +16,8 @@
 import coriolis.Cfg as Cfg
 
 layout  = Cfg.Configuration.get().getLayout()
-layout.addTab      ( 'stratus1', 'Stratus1' )
-layout.addTitle    ( 'stratus1', 'Stratus1 - Netlist & Layout Capture' )
-layout.addParameter( 'stratus1', 'stratus1.mappingName', 'Virtual Library Translation', 0, 2 )
-layout.addParameter( 'stratus1', 'stratus1.format'     , 'Netlist Format (vst, vhd)'  , 0, 2 )
-layout.addParameter( 'stratus1', 'stratus1.simulator'  , 'Simulator'                  , 0, 2 )
+layout.addTab      ( 'Netlist', 'Stratus1' )
+layout.addTitle    ( 'Netlist', 'Stratus1 - Netlist & Layout Capture' )
+layout.addParameter( 'Netlist', 'stratus1.mappingName', 'Virtual Library Translation', 0, 2 )
+layout.addParameter( 'Netlist', 'stratus1.format'     , 'Netlist Format (vst, vhd)'  , 0, 2 )
+layout.addParameter( 'Netlist', 'stratus1.simulator'  , 'Simulator'                  , 0, 2 )
