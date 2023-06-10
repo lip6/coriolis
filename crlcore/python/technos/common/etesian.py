@@ -21,7 +21,6 @@ param.setDouble( 1.0 )
 
 Cfg.getParamDouble    ( 'etesian.spaceMargin'      ).setPercentage( 0.05 )
 Cfg.getParamDouble    ( 'etesian.densityVariation' ).setPercentage( 0.05 )
-Cfg.getParamBool      ( 'etesian.uniformDensity'   ).setBool      ( False )
 Cfg.getParamBool      ( 'etesian.routingDriven'    ).setBool      ( False )
 Cfg.getParamString    ( 'etesian.feedNames'        ).setString    ( 'tie_x0,rowend_x0' )
 Cfg.getParamString    ( 'etesian.cell.zero'        ).setString    ( 'zero_x0' )

@@ -48,9 +48,6 @@ namespace Etesian {
                      , LowerBound=2 
                      , FinalOnly =3 
                      };
-  enum Density       { ForceUniform=1
-                     , MaxDensity  =2
-                     };
 
   class Configuration {
     public:
@@ -63,7 +60,6 @@ namespace Etesian {
       inline CellGauge*       getCellGauge              () const;
       inline Effort           getPlaceEffort            () const;
       inline GraphicUpdate    getUpdateConf             () const;
-      inline Density          getSpreadingConf          () const;
       inline bool             getRoutingDriven          () const;
       inline double           getSpaceMargin            () const;
       inline double           getDensityVariation       () const;
@@ -89,7 +85,6 @@ namespace Etesian {
       CellGauge*     _cg;
       Effort         _placeEffort;
       GraphicUpdate  _updateConf;
-      Density        _spreadingConf;
       bool           _routingDriven;
       double         _spaceMargin;
       double         _densityVariation;
@@ -112,7 +107,6 @@ namespace Etesian {
   inline CellGauge*    Configuration::getCellGauge              () const { return _cg; }
   inline Effort        Configuration::getPlaceEffort            () const { return _placeEffort; }
   inline GraphicUpdate Configuration::getUpdateConf             () const { return _updateConf; }
-  inline Density       Configuration::getSpreadingConf          () const { return _spreadingConf; }
   inline bool          Configuration::getRoutingDriven          () const { return _routingDriven; }
   inline double        Configuration::getSpaceMargin            () const { return _spaceMargin; }
   inline double        Configuration::getDensityVariation       () const { return _densityVariation; }

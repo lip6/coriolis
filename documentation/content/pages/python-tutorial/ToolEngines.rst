@@ -36,15 +36,15 @@ You can configure the placer in two ways:
    .. code-block:: Python
    
       with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
-          cfg.etesian.effort          = 2
-          cfg.etesian.uniformDensity  = True
-          cfg.etesian.spaceMargin     = 0.8
-          cfg.etesian.aspectRatio     = 1.0
+          cfg.etesian.effort           = 2
+          cfg.etesian.spaceMargin      = 0.8
+          cfg.etesian.densityVariation = 0.1
+          cfg.etesian.aspectRatio      = 1.0
 
 
-   With this setup, the cells will be spread uniformally over the
-   area (``etesian.uniformDensity``), with ``80%`` of free space
-   added and an aspect ratio of ``100%`` (square shape).
+   With this setup, the placement will have ``80%`` of free space added and
+   an aspect ratio of ``100%`` (square shape). Some variations in density
+   is allowed, with at most ``10%`` unused space.
 
 
 8.1 Router -- Katana
