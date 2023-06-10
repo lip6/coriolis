@@ -55,19 +55,6 @@ namespace {
   using Etesian::EtesianEngine;
   using coloquinte::CellOrientation;
 
-// Options for both placers
-  unsigned const SteinerModel        = 0x0001;
-
-// Options for the global placer
-  unsigned const ForceUniformDensity = 0x0010;
-  unsigned const UpdateLB            = 0x0020;
-  unsigned const UpdateUB            = 0x0040;
-
-// Options for the detailed placer
-  unsigned const UpdateDetailed      = 0x0100;
-//unsigned const NonConvexOpt        = 0x0200;
-
-
   Instance* extractInstance ( const RoutingPad* rp )
   {
     return rp->getOccurrence().getPath().getTailInstance();
@@ -871,11 +858,9 @@ namespace Etesian {
     }
 
     double spaceMargin = getSpaceMargin();
-    double spreadMargin = getSpreadMargin();
-    Density densityConf = getSpreadingConf();
-    double bloatFactor = 1.0;
-    if (densityConf == Density::ForceUniform) {
-      bloatFactor += std::max(spaceMargin - spreadMargin, 0.0);
+    double densityVariation = getDensityVariation();
+    double bloatFactor = 1.0 +  std::max(spaceMargin - densityVariation, 0.0);
+    if (bloatFactor != 1.0) {
       cmess1 << "     - Cells inflated by " << bloatFactor << endl;
     }
 
@@ -1052,7 +1037,6 @@ namespace Etesian {
     if (_bloatCells.getSelected()->getName() != "disabled")
       cmess2 << stdCellSizes.toString(1) << endl;
 
-    //_densityLimits = new coloquinte::density_restrictions ();
     _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
                             , (int)(topAb.getXMax() / hpitch)
                             , (int)(topAb.getYMin() / vpitch)

@@ -66,7 +66,7 @@ namespace Etesian {
       inline Density          getSpreadingConf          () const;
       inline bool             getRoutingDriven          () const;
       inline double           getSpaceMargin            () const;
-      inline double           getSpreadMargin           () const;
+      inline double           getDensityVariation       () const;
       inline double           getAspectRatio            () const;
       inline string           getTieName                () const;
       inline string           getFeedNames              () const;
@@ -77,7 +77,7 @@ namespace Etesian {
       inline DbU::Unit        getAntennaGateMaxWL       () const;
       inline DbU::Unit        getAntennaDiodeMaxWL      () const;
       inline void             setSpaceMargin            ( double );
-      inline void             setSpreadMargin           ( double );
+      inline void             setDensityVariation       ( double );
       inline void             setAspectRatio            ( double );
              void             print                     ( Cell* ) const;
              Record*          _getRecord                () const;
@@ -92,7 +92,7 @@ namespace Etesian {
       Density        _spreadingConf;
       bool           _routingDriven;
       double         _spaceMargin;
-      double         _spreadMargin;
+      double         _densityVariation;
       double         _aspectRatio;
       string         _tieName;
       string         _feedNames;
@@ -115,7 +115,7 @@ namespace Etesian {
   inline Density       Configuration::getSpreadingConf          () const { return _spreadingConf; }
   inline bool          Configuration::getRoutingDriven          () const { return _routingDriven; }
   inline double        Configuration::getSpaceMargin            () const { return _spaceMargin; }
-  inline double        Configuration::getSpreadMargin           () const { return _spreadMargin; }
+  inline double        Configuration::getDensityVariation       () const { return _densityVariation; }
   inline double        Configuration::getAspectRatio            () const { return _aspectRatio; }
   inline string        Configuration::getTieName                () const { return _tieName; }
   inline string        Configuration::getFeedNames              () const { return _feedNames; }
@@ -126,7 +126,7 @@ namespace Etesian {
   inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
   inline DbU::Unit     Configuration::getAntennaDiodeMaxWL      () const { return _antennaDiodeMaxWL; }
   inline void          Configuration::setSpaceMargin            ( double margin ) { _spaceMargin = margin; }
-  inline void          Configuration::setSpreadMargin           ( double margin ) { _spreadMargin = margin; }
+  inline void          Configuration::setDensityVariation       ( double margin ) { _densityVariation = margin; }
   inline void          Configuration::setAspectRatio            ( double ratio  ) { _aspectRatio = ratio; }
 
 
