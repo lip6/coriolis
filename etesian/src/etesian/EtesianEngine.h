@@ -92,6 +92,7 @@ namespace Etesian {
       inline  GraphicUpdate           getUpdateConf             () const;
       inline  Density                 getSpreadingConf          () const;
       inline  double                  getSpaceMargin            () const;
+      inline  double                  getSpreadMargin           () const;
       inline  double                  getAspectRatio            () const;
       inline  DbU::Unit               getAntennaGateMaxWL       () const;
       inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
@@ -112,6 +113,7 @@ namespace Etesian {
       inline  void                    setFixedAbHeight          ( DbU::Unit );
       inline  void                    setFixedAbWidth           ( DbU::Unit );
       inline  void                    setSpaceMargin            ( double );
+      inline  void                    setSpreadMargin           ( double );
       inline  void                    setAspectRatio            ( double );
               void                    setDefaultAb              ();
               void                    adjustSliceHeight         ();
@@ -189,8 +191,7 @@ namespace Etesian {
               Instance*      _createDiode     ( Cell* );
               void           _updatePlacement ( const coloquinte::PlacementSolution*, uint32_t flags=0 );
               void           _coloquinteCallback(coloquinte::PlacementStep step);
-              void           _progressReport1 ( string label ) const;
-              void           _progressReport2 ( string label ) const;
+              void           _checkNotAFeed   ( Occurrence occurrence ) const;
   };
 
 
@@ -209,6 +210,7 @@ namespace Etesian {
   inline  GraphicUpdate          EtesianEngine::getUpdateConf             () const { return getConfiguration()->getUpdateConf(); }
   inline  Density                EtesianEngine::getSpreadingConf          () const { return getConfiguration()->getSpreadingConf(); }
   inline  double                 EtesianEngine::getSpaceMargin            () const { return getConfiguration()->getSpaceMargin(); }
+  inline  double                 EtesianEngine::getSpreadMargin           () const { return getConfiguration()->getSpreadMargin(); }
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
   inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
@@ -224,6 +226,7 @@ namespace Etesian {
   inline  void                   EtesianEngine::setFixedAbHeight          ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
   inline  void                   EtesianEngine::setFixedAbWidth           ( DbU::Unit abWidth  ) { _fixedAbWidth  = abWidth; }
   inline  void                   EtesianEngine::setSpaceMargin            ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
+  inline  void                   EtesianEngine::setSpreadMargin           ( double margin ) { getConfiguration()->setSpreadMargin(margin); }
   inline  void                   EtesianEngine::setAspectRatio            ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
   inline  DbU::Unit              EtesianEngine::toDbU                     ( int64_t v ) const { return v*getSliceStep(); }
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }
