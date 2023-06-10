@@ -81,6 +81,7 @@ extern "C" {
   DirectSetLongAttribute   (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
   DirectSetLongAttribute   (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute (PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
+  DirectSetDoubleAttribute (PyEtesianEngine_setSpreadMargin ,setSpreadMargin ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute (PyEtesianEngine_setAspectRatio  ,setAspectRatio  ,PyEtesianEngine,EtesianEngine)
   DirectGetLongAttribute   (PyEtesianEngine_getFixedAbHeight,getFixedAbHeight,PyEtesianEngine,EtesianEngine)
   DirectGetLongAttribute   (PyEtesianEngine_getFixedAbWidth ,getFixedAbWidth ,PyEtesianEngine,EtesianEngine)
@@ -273,6 +274,8 @@ extern "C" {
                             , "Use this width when computing the size of the default abutment box (disable aspect ratio)." }
     , { "setSpaceMargin"    , (PyCFunction)PyEtesianEngine_setSpaceMargin    , METH_VARARGS
                             , "Override the configuration space margin parameter value." }
+    , { "setSpreadMargin"   , (PyCFunction)PyEtesianEngine_setSpreadMargin   , METH_VARARGS
+                            , "Override the configuration spread margin parameter value." }
     , { "setAspectRatio"    , (PyCFunction)PyEtesianEngine_setAspectRatio    , METH_VARARGS
                             , "Override the configuration aspect ratio parameter value." }
     , { "resetPlacement"    , (PyCFunction)PyEtesianEngine_resetPlacement    , METH_NOARGS

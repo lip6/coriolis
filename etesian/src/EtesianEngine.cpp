@@ -539,7 +539,7 @@ namespace Etesian {
 
       if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
         cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
-
+        // TODO: block instances and multi-row cells are manageable in Coloquinte now
         cerr << Error( "EtesianEngine::setDefaultAb(): Block instances are not managed, \"%s\"."
                      , getString(instance->getName()).c_str() ) << endl;
       }
@@ -710,8 +710,6 @@ namespace Etesian {
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
-    // TODO: Density       densityConf     = getSpreadingConf();
-
     CRL::Histogram  stdCellSizes ( 0.0, 1.0, 2 );
     stdCellSizes.setTitle ( "Width"  , 0 );
     stdCellSizes.setColor ( "green"  , 0 );
@@ -872,27 +870,26 @@ namespace Etesian {
       }
     }
 
+    double spaceMargin = getSpaceMargin();
+    double spreadMargin = getSpreadMargin();
+    Density densityConf = getSpreadingConf();
+    double bloatFactor = 1.0;
+    if (densityConf == Density::ForceUniform) {
+      bloatFactor += std::max(spaceMargin - spreadMargin, 0.0);
+      cmess1 << "     - Cells inflated by " << bloatFactor << endl;
+    }
+
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       if (instanceId >= instancesNb) {
+        // This will be an error
         ++instanceId;
         continue;
       }
+      _checkNotAFeed(occurrence);
 
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
-      if (CatalogExtension::isFeed(masterCell)) {
-        string feedName = getString( instance->getName() );
-        if (  (feedName.substr(0,11) != "spare_feed_")
-           or (not instance->isFixed())) {
-          string    instanceName = occurrence.getCompactString();
-          // Remove the enclosing brackets...
-          instanceName.erase( 0, 1 );
-          instanceName.erase( instanceName.size()-1 );
-          throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
-                     , instanceName.c_str() );
-        }
-      }
 
       stdCellSizes.addSample( (float)(masterCell->getAbutmentBox().getWidth() / hpitch), 0 );
       Box instanceAb = _bloatCells.getAb( occurrence );
@@ -912,6 +909,9 @@ namespace Etesian {
       string masterName = getString( instance->getMasterCell()->getName() );
       if (isFlexLib and not instance->isFixed() and (masterName == "buf_x8"))
          ++xsize;
+
+      // Take bloat into account to compute the size
+      xsize *= bloatFactor;
 
       cellX[instanceId] = xpos;
       cellY[instanceId] = ypos;
@@ -1334,6 +1334,23 @@ namespace Etesian {
     ostringstream os;
     os << "diode_" << _getNewDiodeId();
     return os.str();
+  }
+
+  void EtesianEngine::_checkNotAFeed( Occurrence occurrence ) const {
+    Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+    Cell*     masterCell   = instance->getMasterCell();
+    if (CatalogExtension::isFeed(masterCell)) {
+      string feedName = getString( instance->getName() );
+      if (  (feedName.substr(0,11) != "spare_feed_")
+          or (not instance->isFixed())) {
+        string    instanceName = occurrence.getCompactString();
+        // Remove the enclosing brackets...
+        instanceName.erase( 0, 1 );
+        instanceName.erase( instanceName.size()-1 );
+        throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
+                    , instanceName.c_str() );
+      }
+    }
   }
 
 
