@@ -22,6 +22,12 @@ project(build_${target})
 
 find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
 
+set(POETRY TRUE) # this will prevent looking for python site-packages directory
+                 # and next vars will not be overwritten
+set(Python_CORIOLISARCH coriolis) # relative to install dir
+set(Python_CORIOLISLIB coriolis)  # relative to install dir
+set(PYTHON_SITE_PACKAGES ..) # python packages directory (relative to coriolis python dir)
+
 if(NOT Python_LIBRARIES)
     set(Python_LIBRARIES \"-Wl,--unresolved-symbols=ignore-all\")
 endif()
@@ -69,7 +75,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${target} ${build_dir})
     endif()
 endfunction()
 
-
+build_coriolis_module(lefdef)
 build_coriolis_module(coloquinte)
 build_coriolis_module(hurricane)
 build_coriolis_module(crlcore)
@@ -94,24 +100,24 @@ file(GLOB SHARED_LIB_FILES LIST_DIRECTORIES false "${CORIOLIS_TMP_INSTALL_DIR}/l
 
 install(FILES ${SHARED_LIB_FILES} DESTINATION coriolis/libs)
 
-file(GLOB CORIOLIS_PACKAGE_SRCDIR "${CORIOLIS_TMP_INSTALL_DIR}/lib/*/*/coriolis")
-
-function(coriolis_install_all)
-    foreach(srcdir ${ARGN})
-        file(GLOB_RECURSE CORIOLIS_PACKAGE_FILES RELATIVE "${srcdir}" "${srcdir}/*.*")
-        foreach(name ${CORIOLIS_PACKAGE_FILES})
-            if(NOT IS_DIRECTORY "${srcdir}/${name}")
-                get_filename_component(dstdir ${name} DIRECTORY)
-                install(FILES "${srcdir}/${name}" DESTINATION coriolis/${dstdir})
-            endif()
-        endforeach()
+function(coriolis_install_folder dstdir srcdir)
+    file(GLOB_RECURSE files RELATIVE "${srcdir}" "${srcdir}/*.*")
+    foreach(name ${files})
+        if(NOT IS_DIRECTORY "${srcdir}/${name}")
+            get_filename_component(subdir ${name} DIRECTORY)
+            install(FILES "${srcdir}/${name}" DESTINATION ${dstdir}/${subdir})
+        endif()
     endforeach()
 endfunction()
+
+coriolis_install_folder(coriolis/share/flute ${CORIOLIS_TMP_INSTALL_DIR}/share/flute)
+coriolis_install_folder(coriolis ${CORIOLIS_TMP_INSTALL_DIR}/coriolis)
 
 set(CORIOLIS_EXTRAS_DIR ${CMAKE_BINARY_DIR}/extras)
 file(MAKE_DIRECTORY ${CORIOLIS_EXTRAS_DIR})
 
 # Put all extra python things into ${CORIOLIS_EXTRAS_DIR} directory
 
-coriolis_install_all(${CORIOLIS_PACKAGE_SRCDIR} ${CORIOLIS_EXTRAS_DIR})
+coriolis_install_folder(coriolis ${CORIOLIS_EXTRAS_DIR})
+
 install(FILES "${CORIOLIS_TMP_INSTALL_DIR}/bin/cgt" DESTINATION coriolis RENAME __main__.py)

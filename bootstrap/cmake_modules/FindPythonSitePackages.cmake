@@ -38,6 +38,8 @@ if(UNIX AND NOT POETRY)
   mark_as_advanced(Python_CORIOLISARCH)
   mark_as_advanced(Python_CORIOLISLIB)
   mark_as_advanced(Python_SITELIB)
+  
+  set(PYTHON_SITE_PACKAGES "${Python_SITELIB}")
 
   if(FindPythonSitePackages_FOUND)
     if(NOT FindPythonSitePackages_FIND_QUIETLY)

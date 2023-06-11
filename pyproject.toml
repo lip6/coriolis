@@ -38,7 +38,7 @@
 
 [project]
 name = "coriolis"
-version = "2.4.1"
+version = "2.4.2"
 #dynamic = ["version"]
 description = "Place and Route for semiconductors"
 authors = [
