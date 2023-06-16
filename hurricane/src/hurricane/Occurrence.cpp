@@ -289,7 +289,8 @@ string Occurrence::getCompactString() const
   if (_entity) {
     s += getString(getOwnerCell()->getName());
     s += ":";
-    if (_sharedPath) s += getString(_sharedPath->getName()) + ":";
+    if (_sharedPath) s += getString(_sharedPath->getName());
+    s += ":";
     Instance* instance = dynamic_cast<Instance*>(_entity);
     if (instance) {
       s += "I."+getString(instance->getName());
