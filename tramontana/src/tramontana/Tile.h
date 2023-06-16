@@ -52,14 +52,17 @@ namespace Tramontana {
 
   class Tile {
     public:
-      static const uint32_t  NoFlags    =  0;
-      static const uint32_t  LeftEdge   = (1<<0);
-      static const uint32_t  RightEdge  = (1<<1);
-      static const uint32_t  Compress   = (1<<2);
-      static const uint32_t  MergeEqui  = (1<<3);
-      static const uint32_t  ForceLayer = (1<<4);
+      static const uint32_t  NoFlags      =  0;
+      static const uint32_t  LeftEdge     = (1<<0);
+      static const uint32_t  RightEdge    = (1<<1);
+      static const uint32_t  Compress     = (1<<2);
+      static const uint32_t  MergeEqui    = (1<<3);
+      static const uint32_t  MakeLeafEqui = (1<<4);
+      static const uint32_t  ForceLayer   = (1<<5);
+      static const uint32_t  OccMerged    = (1<<6);
     public:
       static inline const std::vector<Tile*>  getAllTiles      ();
+      static              void                deleteAllTiles   ();
       static inline       void                timeTick         ();
       static              Tile*               create           ( Occurrence
                                                                , const BasicLayer*
@@ -68,6 +71,7 @@ namespace Tramontana {
                                                                , uint32_t flags=NoFlags );
                           void                destroy          ();
              inline       bool                isUpToDate       () const;
+             inline       bool                isOccMerged      () const;
              inline       unsigned int        getId            () const;
              inline       uint32_t            getRank          () const;
              inline       Tile*               getParent        () const;
@@ -88,6 +92,7 @@ namespace Tramontana {
              inline       void                syncTime         ();
              inline       void                setParent        ( Tile* );
                           Tile*               merge            ( Tile* );
+             inline       void                setOccMerged     ( bool state );
              inline       void                setEquipotential ( Equipotential* );
                           Equipotential*      newEquipotential ();
                           Record*             _getRecord       () const;
@@ -117,6 +122,7 @@ namespace Tramontana {
   inline const std::vector<Tile*>  Tile::getAllTiles      () { return _allocateds; }
   inline       void                Tile::timeTick         () { _time++; }
   inline       bool                Tile::isUpToDate       () const { return _timeStamp >= _time; }
+  inline       bool                Tile::isOccMerged      () const { return _flags & OccMerged; }
   inline       unsigned int        Tile::getId            () const { return _id; }
 //inline       Component*          Tile::getComponent     () const { return dynamic_cast<Component*>( _occurrence.getEntity() ); }
   inline       Occurrence          Tile::getOccurrence    () const { return _occurrence; }
@@ -135,6 +141,10 @@ namespace Tramontana {
   inline       void                Tile::syncTime         () { _timeStamp=_time; }
   inline       void                Tile::setParent        ( Tile* parent ) { _parent=parent; }
   inline       void                Tile::setEquipotential ( Equipotential* equi ) { _equipotential=equi; }
+
+  inline void  Tile::setOccMerged ( bool state )
+  { if (state) _flags |=  OccMerged;
+    else       _flags &= ~OccMerged; }
 
 
   class TileCompare {

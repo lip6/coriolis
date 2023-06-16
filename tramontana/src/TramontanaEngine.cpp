@@ -151,6 +151,7 @@ namespace Tramontana {
       startMeasures();
     }
 
+    cdebug_log(160,0) << "EXTRACTING " << getCell() << endl;
     for ( Instance* instance : getCell()->getInstances() ) {
       Cell*             master    = instance->getMasterCell();
       TramontanaEngine* extractor = TramontanaEngine::get( master );

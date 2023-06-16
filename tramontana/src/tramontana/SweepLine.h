@@ -75,6 +75,7 @@ namespace Tramontana {
               const LayerSet&   getCutConnexLayers  ( const BasicLayer* ) const;
               void              run                 ();
               void              loadTiles           ();
+              void              deleteTiles         ();
       inline  void              add                 ( Tile* );
               void              mergeEquipotentials ();
               Record*           _getRecord          () const;

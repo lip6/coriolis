@@ -100,7 +100,10 @@ namespace Tramontana {
     , _rank         (0)
     , _timeStamp    (0)
   {
+    cdebug_log(160,0) << "Tile::Tile() " << this << endl;
     _allocateds.push_back( this );
+    if (occurrence.getPath().isEmpty() and not occurrence.getEntity())
+      cerr << "Tile with empty occurrence!!" << endl;
   }
 
 
@@ -199,25 +202,78 @@ namespace Tramontana {
   { }
 
 
+  void  Tile::deleteAllTiles ()
+  {
+    for ( Tile* tile : _allocateds) delete tile;
+    _allocateds.clear();
+    _idCounter = 0;
+  }
+
   // Net* Tile::getNet () const
   // { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
 
 
   Tile* Tile::getRoot ( uint32_t flags )
   {
-    if (not getParent() and (not (flags & MergeEqui))) return this;
-    cdebug_log(160,1) << "Tile::getRoot()" << endl;
+    cdebug_log(160,1) << "Tile::getRoot() tid=" << getId() << " " << getOccurrence() << endl;
+    cdebug_log(160,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
+    if (not getParent()) {
+      if ((flags & MakeLeafEqui) and not getEquipotential()) {
+        newEquipotential();
+      }
+      cdebug_tabw(160,-1);
+      return this;
+    }
     
     Tile* root = this;
     while ( root->getParent() ) {
-      if (flags & MergeEqui) {
-        if (not root->getParent()->getEquipotential() and root->getEquipotential())
-          root->getParent()->setEquipotential( root->getEquipotential() );
-      }
+      // if (flags & MergeEqui) {
+      //   if (not root->getParent()->getEquipotential() and root->getEquipotential()) {
+      //     cdebug_log(160,0) << "| tile has no equi, immediate merge" << endl;
+      //     root->getParent()->setEquipotential( root->getEquipotential() );
+      //     root->getEquipotential()->add( root->getParent()->getOccurrence ()
+      //                                  , root->getParent()->getBoundingBox() );
+      //     root->getParent()->setOccMerged( true );
+      //   }
+      // }
       root = root->getParent();
+      cdebug_log(160,0) << "| parent tid=" << root->getId() << " " << root->getOccurrence() << endl;
     }
-    cdebug_log(160,0) << "> root " << root->getId() << " "
+    cdebug_log(160,0) << "> root tid=" << root->getId() << " "
                       << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
+
+
+    if (flags & MergeEqui) {
+      Equipotential* rootEqui = root->getEquipotential();
+      if (not rootEqui) {
+        rootEqui = root->newEquipotential();
+      }
+
+      Tile* current = this;
+      while ((current != root) and current) {
+        if (current->isUpToDate()) {
+          cdebug_log(160,0) << "> Up to date current: tid=" << current->getId() << endl;
+          break;
+        }
+        if (not current->isOccMerged()) {
+          if (current->getEquipotential()) {
+            if (current->getEquipotential() != rootEqui) {
+              cdebug_log(160,0) << "| merge tid=" << current->getId() << " => tid=" << root->getId() << endl;
+              cdebug_log(160,0) << "|       tid=" << current->getEquipotential() << endl;
+              rootEqui->merge( current->getEquipotential() );
+            }
+          } else {
+            cdebug_log(160,0) << "| add " << current->getOccurrence() << endl;
+            rootEqui->add( current->getOccurrence(), _boundingBox );
+          }
+          current->setOccMerged( true );
+          current->syncTime();
+          cdebug_log(160,0) << "| current up to date: time=" << current->_timeStamp
+                            << " " << current->isUpToDate() << endl;
+        }
+        current = current->getParent();
+      }
+    }
 
     if (flags & Compress) {
       Tile* current = this;
@@ -228,30 +284,6 @@ namespace Tramontana {
       }
     }
 
-    if (flags & MergeEqui) {
-      Equipotential* rootEqui = root->getEquipotential();
-      if (not rootEqui) {
-        rootEqui = root->newEquipotential();
-      }
-
-      Tile* current = this;
-      while ( current ) {
-        if (current->isUpToDate()) break;
-        if (current->getEquipotential()) {
-          if (current->getEquipotential() != rootEqui) {
-            cdebug_log(160,0) << "| merge " << current->getId() << " => " << root->getId() << endl;
-            cdebug_log(160,0) << "|       " << current->getEquipotential() << endl;
-            rootEqui->merge( current->getEquipotential() );
-          }
-        } else {
-          cdebug_log(160,0) << "| add " << current->getOccurrence() << endl;
-          rootEqui->add( current->getOccurrence(), _boundingBox );
-        }
-        current->syncTime();
-        current = current->getParent();
-      }
-    }
-
     cdebug_tabw(160,-1);
     return root;
   }
@@ -259,17 +291,26 @@ namespace Tramontana {
 
   Tile* Tile::merge ( Tile* other )
   {
-    Tile* root1 = getRoot();
-    Tile* root2 = other->getRoot();
-    if (root1 and (root1 == root2)) return root1;
+    cdebug_log(160,1) << "Tile::merge() this->tid:" << getId()
+                      << " + other->tid:" << other->getId() << endl;
+    Tile* root1 = getRoot( Compress|MergeEqui );
+    Tile* root2 = other->getRoot( Compress|MergeEqui );
+    if (root1 and (root1 == root2)) {
+      cdebug_log(160,0) << "Already have same root tid:" << root1->getId() << endl;
+      cdebug_tabw(160,-1);
+      return root1;
+    }
 
     if (root1->getRank() < root2->getRank())
       std::swap( root1, root2 );
     if (root1->getRank() == root2->getRank())
       root1->incRank();
     root2->setParent( root1 );
+    cdebug_log(160,0) << "New root tid:" << root1->getId()
+                      << " child tid:" << root2->getId() << endl;
   // Fuse root2 into root1 here!
 
+    cdebug_tabw(160,-1);
     return root1;
   }
 

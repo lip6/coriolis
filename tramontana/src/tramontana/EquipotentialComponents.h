@@ -27,6 +27,7 @@
 #include "hurricane/Box.h"
 #include "hurricane/Net.h"
 #include "hurricane/Occurrence.h"
+#include "tramontana/Equipotential.h"
 
 
 namespace Tramontana {
@@ -51,7 +52,6 @@ namespace Tramontana {
   using Hurricane::GenericFilter;
   using Hurricane::GenericLocator;
   using Hurricane::GenericCollection;
-  class Equipotential;
 
   typedef  Hurricane::Locator<Component*>  ComponentsLocator;
   typedef  Hurricane::Locator<Occurrence>  OccurrencesLocator;
@@ -84,13 +84,13 @@ namespace Tramontana {
           virtual void         progress   ();
           virtual std::string  _getString () const;
         private:
-          const Equipotential*           _equipotential;
-                uint16_t                 _state;
-                OccurrenceSet::iterator  _componentsIterator;
-                NetSet::iterator         _netsIterator;
-                OccurrenceSet::iterator  _childsIterator;
-                OccurrencesLocator*      _childCompsLocator;
-                ComponentsLocator*       _componentsLocator;
+          const Equipotential*                   _equipotential;
+                uint16_t                         _state;
+                OccurrenceSet::iterator          _componentsIterator;
+                Equipotential::NetMap::const_iterator  _netsIterator;
+                OccurrenceSet::iterator          _childsIterator;
+                OccurrencesLocator*              _childCompsLocator;
+                ComponentsLocator*               _componentsLocator;
       };
 
     public:

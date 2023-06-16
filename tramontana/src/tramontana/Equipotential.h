@@ -44,12 +44,45 @@ namespace Tramontana {
   using Hurricane::Occurrences;
 
 
+  class NetCompareByName {
+    public:
+      bool operator() ( const Net* lhs, const Net* rhs ) const;
+  };
+
+
+  class OccNetCompareByName {
+    public:
+      bool operator() ( const Occurrence& lhs, const Occurrence& rhs ) const;
+  };
+
+
+// -------------------------------------------------------------------
+// Class  :  "Tramontana::ShortCircuit".
+
+  class ShortCircuit {
+    public:
+      inline ShortCircuit ( Net*, Net*, Component* );
+    private:
+      Net*       _netA;
+      Net*       _netB;
+      Component* _shortCircuit;
+  };
+
+  
+  inline ShortCircuit::ShortCircuit ( Net* a, Net* b, Component* shortCircuit )
+    : _netA        (a)
+    , _netB        (b)
+    , _shortCircuit(shortCircuit)
+  { }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::Equipotential".
 
   class Equipotential : public Entity {
     public:
       typedef  Entity  Super;
+      typedef  std::map< Net*, std::pair<uint32_t,uint32_t>, NetCompareByName >  NetMap;
     public:
       static        Equipotential* get               ( Component* );
       static        Equipotential* get               ( Occurrence );
@@ -68,12 +101,15 @@ namespace Tramontana {
       inline        bool           hasComponent      ( Component* ) const;
                     void           add               ( Occurrence, const Box& boundingBox=Box() );
                     void           merge             ( Equipotential* );
+      inline        void           add               ( ShortCircuit* );
                     void           consolidate       ();
                     void           clear             ();
       inline  const OccurrenceSet& getComponents     () const;
       inline  const OccurrenceSet& getChilds         () const;
-      inline  const NetSet&        getNets           () const;
+      inline  const NetMap&        getNets           () const;
                     Occurrences    getFlatComponents () const;
+      inline  const std::vector<ShortCircuit*>&
+                                   getShortCircuits  () const;
                     Record*        _getRecord        () const;
                     std::string    _getString        () const;
                     std::string    _getTypeName      () const;
@@ -87,32 +123,37 @@ namespace Tramontana {
                                    Equipotential     ( const Equipotential& ) = delete;
                     Equipotential& operator=         ( const Equipotential& ) = delete;
     private:
-      Cell*           _owner;
-      Box             _boundingBox;
-      NetSet          _nets;
-      OccurrenceSet   _components;
-      OccurrenceSet   _childs;
-      std::string     _name;
-      Net::Type       _type;
-      Net::Direction  _direction;
-      uint32_t        _netCount;
-      bool            _isBuried;
-      bool            _isExternal;
-      bool            _isGlobal;
-      bool            _isAutomatic;
-      bool            _hasFused;
+      Cell*                       _owner;
+      Box                         _boundingBox;
+      NetMap                      _nets;
+      OccurrenceSet               _components;
+      OccurrenceSet               _childs;
+      std::string                 _name;
+      Net::Type                   _type;
+      Net::Direction              _direction;
+      uint32_t                    _netCount;
+      bool                        _isBuried;
+      bool                        _isExternal;
+      bool                        _isGlobal;
+      bool                        _isAutomatic;
+      bool                        _hasFused;
+      std::vector<ShortCircuit*>  _shortCircuits;
   };
 
 
   
-  inline       bool            Equipotential::isEmpty       () const { return _components.empty() and _childs.empty(); }
-  inline       bool            Equipotential::isBuried      () const { return _isBuried; }
-  inline const OccurrenceSet&  Equipotential::getComponents () const { return _components; }
-  inline const OccurrenceSet&  Equipotential::getChilds     () const { return _childs; }
-  inline const NetSet&         Equipotential::getNets       () const { return _nets; }
-  inline       std::string     Equipotential::getName       () const { return _name; }
-  inline       Net::Type       Equipotential::getType       () const { return _type; }
-  inline       Net::Direction  Equipotential::getDirection  () const { return _direction; }
+  inline       bool            Equipotential::isEmpty          () const { return _components.empty() and _childs.empty(); }
+  inline       bool            Equipotential::isBuried         () const { return _isBuried; }
+  inline const OccurrenceSet&  Equipotential::getComponents    () const { return _components; }
+  inline const OccurrenceSet&  Equipotential::getChilds        () const { return _childs; }
+  inline const Equipotential::NetMap&
+                               Equipotential::getNets          () const { return _nets; }
+  inline       std::string     Equipotential::getName          () const { return _name; }
+  inline       Net::Type       Equipotential::getType          () const { return _type; }
+  inline       Net::Direction  Equipotential::getDirection     () const { return _direction; }
+  inline const std::vector<ShortCircuit*>&
+                               Equipotential::getShortCircuits () const { return _shortCircuits; }
+  inline       void            Equipotential::add              ( ShortCircuit* s ) { _shortCircuits.push_back( s ); }
 
   inline bool  Equipotential::hasComponent ( Component* component ) const
   {

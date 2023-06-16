@@ -278,11 +278,13 @@ namespace Tramontana {
       // if (tile->getOccurrence().getEntity()->getId() == 3348) {
       //   DebugSession::close();
       // }
+      cdebug_tabw(160,-1);
     }
   //if (debugOn) DebugSession::close();
     cdebug_tabw(160,-1);
   //DebugSession::close();
     mergeEquipotentials();
+    deleteTiles();
   }
 
 
@@ -322,6 +324,12 @@ namespace Tramontana {
   }
 
 
+  void  SweepLine::deleteTiles ()
+  {
+    Tile::deleteAllTiles();
+  }
+
+
   void  SweepLine::mergeEquipotentials ()
   {
   //DebugSession::open( 160, 169 );
@@ -329,7 +337,7 @@ namespace Tramontana {
   //cerr << "SweepLine::mergeEquipotentials()" << endl;
     Tile::timeTick();
     for ( Tile* tile : Tile::getAllTiles() ) {
-      tile->getRoot( Tile::MergeEqui );
+      tile->getRoot( Tile::MergeEqui|Tile::MakeLeafEqui );
     }
     cdebug_tabw(160,-1);
   //DebugSession::close();

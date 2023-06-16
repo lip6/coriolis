@@ -30,6 +30,7 @@
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Contact.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -41,53 +42,6 @@
 #include "tramontana/EquipotentialRelation.h"
 #include "tramontana/EquipotentialComponents.h"
 #include "tramontana/TramontanaEngine.h"
-
-
-namespace {
-
-  using std::map;
-  using Hurricane::Net;
-  using Hurricane::Plug;
-  using Hurricane::Occurrence;
-
-
-  class NetCompareByName {
-    public:
-      bool operator() ( const Net* lhs, const Net* rhs ) const;
-  };
-
-
-  bool NetCompareByName::operator() ( const Net* lhs, const Net* rhs ) const
-  {
-    if (lhs->isFused    () != rhs->isFused    ()) return rhs->isFused();
-    if (lhs->isAutomatic() != rhs->isAutomatic()) return rhs->isAutomatic();
-    if (lhs->isGlobal   () != rhs->isGlobal   ()) return rhs->isGlobal();
-
-    if (lhs->getName().size() != rhs->getName().size())
-       return lhs->getName().size() < rhs->getName().size();
-    return lhs->getName() < rhs->getName();
-  }
-
-
-  class OccNetCompareByName {
-    public:
-      bool operator() ( const Occurrence& lhs, const Occurrence& rhs ) const;
-  };
-
-
-  bool OccNetCompareByName::operator() ( const Occurrence& lhs, const Occurrence& rhs ) const
-  {
-    static NetCompareByName compareByName;
-    
-    size_t lhsLength = lhs.getPath().getInstances().getSize();
-    size_t rhsLength = rhs.getPath().getInstances().getSize();
-
-    if (lhsLength != rhsLength) return lhsLength < rhsLength;
-    return compareByName( static_cast<Net*>(lhs.getEntity()), static_cast<Net*>(rhs.getEntity()) );
-  }
-
-
-}  // Anonymous namespace.
 
 
 namespace Tramontana {
@@ -119,12 +73,38 @@ namespace Tramontana {
   using Hurricane::Layer;
   using Hurricane::Entity;
   using Hurricane::Net;
+  using Hurricane::Plug;
+  using Hurricane::Contact;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::Cell;
   using Hurricane::Instance;
   using Hurricane::Path;
+
+
+  bool NetCompareByName::operator() ( const Net* lhs, const Net* rhs ) const
+  {
+    if (lhs->isFused    () != rhs->isFused    ()) return rhs->isFused();
+    if (lhs->isAutomatic() != rhs->isAutomatic()) return rhs->isAutomatic();
+    if (lhs->isGlobal   () != rhs->isGlobal   ()) return rhs->isGlobal();
+
+    if (lhs->getName().size() != rhs->getName().size())
+       return lhs->getName().size() < rhs->getName().size();
+    return lhs->getName() < rhs->getName();
+  }
+
+
+  bool OccNetCompareByName::operator() ( const Occurrence& lhs, const Occurrence& rhs ) const
+  {
+    static NetCompareByName compareByName;
+    
+    size_t lhsLength = lhs.getPath().getInstances().getSize();
+    size_t rhsLength = rhs.getPath().getInstances().getSize();
+
+    if (lhsLength != rhsLength) return lhsLength < rhsLength;
+    return compareByName( static_cast<Net*>(lhs.getEntity()), static_cast<Net*>(rhs.getEntity()) );
+  }
 
 
 // -------------------------------------------------------------------
@@ -194,19 +174,20 @@ namespace Tramontana {
 
 
   Equipotential::Equipotential ( Cell* owner )
-    : _owner      (owner)
-    , _boundingBox()
-    , _components ()
-    , _childs     ()
-    , _name       ()
-    , _type       (Net::Type::UNDEFINED)
-    , _direction  (Net::Direction::DirUndefined)
-    , _netCount   (0)
-    , _isBuried   (false)
-    , _isExternal (false)
-    , _isGlobal   (false)
-    , _isAutomatic(false)
-    , _hasFused   (false)
+    : _owner        (owner)
+    , _boundingBox  ()
+    , _components   ()
+    , _childs       ()
+    , _name         ()
+    , _type         (Net::Type::UNDEFINED)
+    , _direction    (Net::Direction::DirUndefined)
+    , _netCount     (0)
+    , _isBuried     (false)
+    , _isExternal   (false)
+    , _isGlobal     (false)
+    , _isAutomatic  (false)
+    , _hasFused     (false)
+    , _shortCircuits()
   {
     _name = "Unnamed_" + getString( getId() );
   }
@@ -235,7 +216,9 @@ namespace Tramontana {
 
 
   Equipotential::~Equipotential ()
-  { }
+  {
+    for ( ShortCircuit* shortCircuit : _shortCircuits ) delete shortCircuit;
+  }
 
 
   Cell* Equipotential::getCell () const
@@ -253,7 +236,54 @@ namespace Tramontana {
   void  Equipotential::add ( Occurrence occ, const Box& boundingBox )
   {
     if(occ.getPath().isEmpty()) {
+      Contact* contact = dynamic_cast<Contact*>( occ.getEntity() );
+      if ((_components.find(occ) != _components.end())) {
+        if (not contact)
+          cdebug_log(160,0) << "Equipotential::add(): Duplicated " << occ.getCompactString() << endl;
+        return;
+      }
+      Component* comp = dynamic_cast<Component*>( occ.getEntity() );
+      if (not comp) {
+        cerr << Error( "Equipotential::add(): Occurrences with null Path must be Components.\n"
+                     "        (on:%s)"
+                     , getString(occ).c_str()
+                     ) << endl;
+        return;
+      }
+      cdebug_log(160,0) << "Equipotential::add(): " << occ << endl;
       _components.insert( occ );
+      NetMap::iterator inet = _nets.find( comp->getNet() );
+      if (inet != _nets.end()) {
+        inet->second.first++;
+        if (inet->second.first > inet->second.second) {
+          cerr << Error( "Equipotential::add(): Doubly counted component of %s.\n"
+                         "        (on:%s)"
+                       , getString(inet->first).c_str()
+                       , getString(occ).c_str()
+                       ) << endl;
+        }
+        return;
+      }
+      uint32_t compCount = 0;
+      for ( Component* component : comp->getNet()->getComponents() ) {
+        if (dynamic_cast<Plug*>(component)) continue;
+        ++compCount;
+      }
+      _nets.insert( make_pair( comp->getNet(), make_pair(1,compCount) ));
+      if (comp->getNet()->isFused()) {
+        _hasFused = true;
+        return;
+      }
+      if (_nets.size() <= 1 + ((_hasFused) ? 1 : 0))
+        return;
+      Net* netA = nullptr;
+      for ( auto item : _nets ) {
+        if (not item.first->isFused() and (item.first != comp->getNet())) {
+          netA = item.first;
+          break;
+        }
+      }
+      _shortCircuits.push_back( new ShortCircuit( netA, comp->getNet(), comp ));
     } else {
       Equipotential* equi = dynamic_cast<Equipotential*>( occ.getEntity() );
       if (not equi) {
@@ -274,8 +304,7 @@ namespace Tramontana {
     }
     _boundingBox.merge( boundingBox );
   }
-
-  
+ 
   void  Equipotential::merge ( Equipotential* other )
   {
     if (this == other) {
@@ -285,16 +314,84 @@ namespace Tramontana {
                      ) << endl;
       return;
     }
+
+    for ( auto otherNetData : other->_nets ) {
+      NetMap::iterator inet = _nets.find( otherNetData.first );
+      if (inet != _nets.end()) {
+      //inet->second.first += otherNetData.second.first;
+        continue;
+      }
+
+      if (otherNetData.first->isFused()) _hasFused = true;
+      _nets.insert( make_pair( otherNetData.first, make_pair(0,otherNetData.second.second) ));
+
+      if (_nets.size() > 1 + ((_hasFused) ? 1 : 0)) {
+        cdebug_log(169,0) << "Short by merging equis." << _nets.size() << endl;
+        for ( auto inet : _nets ) {
+          cdebug_log(169,0) << "this  | " << inet.first << endl;
+        }
+        for ( auto inet : other->_nets ) {
+          cdebug_log(169,0) << "other | " << inet.first << endl;
+        }
+      }
+    }
     
-    for ( const Occurrence& component : other->getComponents() ) add( component );
-    for ( const Occurrence& child     : other->getChilds    () ) add( child );
+  //cerr << "Equipotential::merge() " << this << endl;
+  //cerr << "  " << other << endl;
+    for ( const Occurrence&   component    : other->getComponents    () ) add( component );
+    for ( const Occurrence&   child        : other->getChilds        () ) add( child );
+    for (       ShortCircuit* shortCircuit : other->getShortCircuits () ) add( shortCircuit );
     _boundingBox.merge( other->_boundingBox );
+  //cerr << "Equipotential::merge() done" << endl;
     other->clear();
   }
 
   
   void  Equipotential::consolidate ()
   {
+    EquipotentialRelation* relation = EquipotentialRelation::create( this );
+
+    
+    for ( const Occurrence& occurrence : getComponents() ) {
+      Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
+      if (not component) continue;
+      if (not occurrence.getPath().isEmpty()) {
+      //cerr << "Occurrence from a DeepNet " << occurrence << endl;
+        continue;
+      }
+      component->put( relation );
+    }
+
+    if (not _nets.empty()) {
+      _name = getString( (*_nets.begin()).first->getName() );
+    }
+
+    for ( auto netData : _nets ) {
+      Net* net = netData.first;
+      if (net->isFused()) continue;
+      if (net->isExternal ()) _isExternal  = true;
+      if (net->isGlobal   ()) _isGlobal    = true;
+      if (net->isAutomatic()) _isAutomatic = true;
+      _type       = net->getType();
+      _direction |= net->getDirection();
+
+      if (netData.second.first >= netData.second.second) {
+        for ( Component* component : net->getComponents() ) {
+          if (dynamic_cast<Plug*>(component)) continue;
+          component->remove( relation );
+        }
+        net->put( relation );
+      }
+      cdebug_log(169,0) << netData.first << " [" << netData.second.first
+                        << " / " << netData.second.second << "]" << endl;
+    }
+
+    for ( Occurrence childEqui : _childs ) {
+      childEqui.put( relation );
+    }
+    if (_components.empty() and _nets.empty()) _isBuried = true;
+
+#if FIRST_IMPLEMENTATION
     EquipotentialRelation*              relation = EquipotentialRelation::create( this );
     map<Net*,uint32_t,NetCompareByName> nets;
     set<Occurrence,OccNetCompareByName> deepNets;
@@ -350,7 +447,7 @@ namespace Tramontana {
         component->remove( relation );
       }
       net->put( relation );
-      _nets.insert( net );
+    //_nets.insert( net );
     }
     for ( Occurrence childEqui : _childs ) {
       childEqui.put( relation );
@@ -359,14 +456,16 @@ namespace Tramontana {
 
     // if (_name == "abc_11873_auto_rtlil_cc_2560_muxgate_11612")
     //   show();
+#endif
   }
 
   
   void  Equipotential::clear ()
   {
-    _components.clear();
-    _childs    .clear();
-    _nets      .clear();
+    _components   .clear();
+    _childs       .clear();
+    _nets         .clear();
+    _shortCircuits.clear();
   }
 
 
@@ -391,7 +490,7 @@ namespace Tramontana {
     sflags += ((_isGlobal   ) ? "g" : "-");
     sflags += ((_isAutomatic) ? "a" : "-");
     sflags += ((_isBuried   ) ? "B" : "-");
-    sflags += " [N:" + getString( _netCount - ((_hasFused) ? 1 : 0) );
+    sflags += " [N:" + getString( _nets.size() - ((_hasFused) ? 1 : 0) );
     sflags +=  "+E:" + getString( _childs.size() );
     if (_hasFused)
       sflags += "+fused";
@@ -423,7 +522,7 @@ namespace Tramontana {
     if (record) {
       record->add( getSlot( "_name"       , &_name        ) );
       record->add( getSlot( "_boundingBox", &_boundingBox ) );
-      record->add( getSlot( "_nets"       , &_nets        ) );
+    //record->add( getSlot( "_nets"       , &_nets        ) );
       record->add( getSlot( "_components" , &_components  ) );
       record->add( getSlot( "_childs"     , &_childs      ) );
     }

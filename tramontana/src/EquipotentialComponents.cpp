@@ -185,12 +185,15 @@ namespace Tramontana {
         }
         case InNets: {
           if (_netsIterator != _equipotential->getNets().end()) {
-            if (not _componentsLocator) {
-              _componentsLocator = (*_netsIterator)->getComponents().getLocator()->getClone();
-              if (_componentsLocator->isValid()) return;
-            } else {
-              _componentsLocator->progress();
-              if (_componentsLocator->isValid()) return;
+            if (   not _netsIterator->first->isFused()
+               and     _netsIterator->first->getProperty(EquipotentialRelation::staticGetName())) {
+              if (not _componentsLocator) {
+                _componentsLocator = _netsIterator->first->getComponents().getLocator()->getClone();
+                if (_componentsLocator->isValid()) return;
+              } else {
+                _componentsLocator->progress();
+                if (_componentsLocator->isValid()) return;
+              }
             }
 
             _componentsLocator = nullptr;
