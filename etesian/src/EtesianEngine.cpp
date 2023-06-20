@@ -524,13 +524,13 @@ namespace Etesian {
         continue;
       }
 
-      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
+      if (masterCell->getAbutmentBox().getHeight() % getSliceHeight() != 0) {
         cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
-        // TODO: block instances and multi-row cells are manageable in Coloquinte now
-        cerr << Error( "EtesianEngine::setDefaultAb(): Block instances are not managed, \"%s\"."
+        cerr << Error( "EtesianEngine::setDefaultAb(): Cell not aligned on the slice height, \"%s\"."
                      , getString(instance->getName()).c_str() ) << endl;
       }
-      cellLength += _bloatCells.getAb( occurrence ).getWidth();
+      DbU::Unit nbRows = masterCell->getAbutmentBox().getHeight() / getSliceHeight();
+      cellLength += nbRows * _bloatCells.getAb( occurrence ).getWidth() ;
       instanceNb += 1;
     }
 
@@ -711,25 +711,9 @@ namespace Etesian {
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
-
-    for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
-    {
-      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-      Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = occurrence.getCompactString();
-
-      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
-        cmess2 << "        - Using as block: " << instanceName << "." << endl;
-
-        if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED) {
-          cerr << Error( "EtesianEngine::toColoquinte(): Block instance \"%s\" is *not* FIXED."
-                       , getString(instance->getName()).c_str() ) << endl;
-        }
-      }
-    }
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
-    DbU::Unit totalLength    = (_placeArea.getHeight()/sliceHeight) * _placeArea.getWidth();
+    DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
     DbU::Unit usedLength     = 0;
     DbU::Unit registerLength = 0;
 
@@ -756,7 +740,7 @@ namespace Etesian {
           if (topAb.intersect(instanceAb)) {
             ++instancesNb;
             ++fixedNb;
-            totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+            totalLength -= (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
           }
         }
         if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
@@ -770,7 +754,7 @@ namespace Etesian {
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
       string    masterName = getString( instance->getMasterCell()->getName() );
-      DbU::Unit length = (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+      DbU::Unit length = (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
       if (af->isRegister(masterName)) {
         ++registerNb;
         registerLength += length;
@@ -863,6 +847,7 @@ namespace Etesian {
     if (bloatFactor != 1.0) {
       cmess1 << "     - Cells inflated by " << bloatFactor << endl;
     }
+    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
