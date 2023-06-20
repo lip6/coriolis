@@ -188,7 +188,7 @@ namespace Etesian {
     private:
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
-              void           _updatePlacement ( const coloquinte::PlacementSolution*, uint32_t flags=0 );
+              void           _updatePlacement ( const coloquinte::PlacementSolution* );
               void           _coloquinteCallback(coloquinte::PlacementStep step);
               void           _checkNotAFeed   ( Occurrence occurrence ) const;
   };
