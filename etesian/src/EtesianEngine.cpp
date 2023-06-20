@@ -160,11 +160,11 @@ namespace {
         tx    +=   cellBox.getWidth();
         orient = Transformation::Orientation::R2;
         break;
-      case CellOrientation::MY:
+      case CellOrientation::MX:
         orient = Transformation::Orientation::MY;
         ty    +=   cellBox.getHeight();
         break;
-      case CellOrientation::MX:
+      case CellOrientation::MY:
         orient = Transformation::Orientation::MX;
         tx    +=   cellBox.getWidth();
         break;
