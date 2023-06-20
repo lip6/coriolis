@@ -54,6 +54,7 @@ namespace {
   using namespace Hurricane;
   using Etesian::EtesianEngine;
   using coloquinte::CellOrientation;
+  using coloquinte::CellRowPolarity;
 
   Instance* extractInstance ( const RoutingPad* rp )
   {
@@ -804,7 +805,7 @@ namespace Etesian {
     vector<int> cellHeight( instancesNb+1 );
     vector<bool> cellIsFixed( instancesNb+1 );
     vector<bool> cellIsObstruction( instancesNb+1 );
-    vector<coloquinte::CellRowPolarity> cellRowPolarity( instancesNb+1, coloquinte::CellRowPolarity::SAME );
+    vector<CellRowPolarity> cellRowPolarity( instancesNb+1, CellRowPolarity::SAME );
 
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
@@ -887,6 +888,11 @@ namespace Etesian {
       cellY[instanceId] = ypos;
       cellWidth[instanceId] = xsize;
       cellHeight[instanceId] = ysize;
+
+      int nbRows = ysize / rowHeight;
+      if (nbRows % 2 != 1) {
+        cellRowPolarity[instanceId] = CellRowPolarity::NW;
+      }
 
       if ( not instance->isFixed() and instance->isTerminalNetlist() ) {
         cellIsFixed[instanceId] = false;
@@ -1027,7 +1033,7 @@ namespace Etesian {
                             , (int)(topAb.getYMin() / vpitch)
                             , (int)(topAb.getYMax() / vpitch)
                             );
-    _circuit->setupRows(*_surface, (getSliceHeight() + vpitch - 1) / vpitch);
+    _circuit->setupRows(*_surface, rowHeight);
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
     _placementUB = new coloquinte::PlacementSolution ( *_placementLB );
