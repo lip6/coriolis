@@ -1051,33 +1051,28 @@ namespace Etesian {
      * Useful for Bookshelf benchmarks
      */
 
-    bool isSliceHeightSet = false;
+    std::set<DbU::Unit> heights;
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-      Cell* masterCell = instance->getMasterCell();
 
-      if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ))
+      if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED)
       {
-        DbU::Unit cellHeight = masterCell->getAbutmentBox().getHeight();
-        bool sliceHeightChange = cellHeight != getSliceHeight();
-        if (isSliceHeightSet)
-        {
-          if (sliceHeightChange) throw Error( "EtesianEngine::toColoquinte(): Cannot manage unplaced block, instance \"%s\" of \"%s\": slice height was set to %d but cell height is %d."
-                 , getString(instance  ->getName()).c_str()
-                 , getString(masterCell->getName()).c_str()
-                 , getSliceHeight()
-                 , cellHeight
-                 );
-        }
-        else
-        {
-          if (sliceHeightChange) cerr << Warning("Adjusting slice height from %d to %d fit a placeable cell.", getSliceHeight(), cellHeight) << endl;
-          _sliceHeight = cellHeight;
-        }
-        isSliceHeightSet = true;
+        Cell* masterCell = instance->getMasterCell();
+        heights.emplace(masterCell->getAbutmentBox().getHeight());
       }
+    }
+    if (heights.empty() || *heights.begin() <= 0) {
+      cerr << Warning("No appropriate slice height found") << endl;
+      return;
+    }
+    DbU::Unit newSliceHeight = *heights.begin();
+    for (DbU::Unit h : heights) {
+      if (h % newSliceHeight != 0) {
+        cerr << Warning("Cannot set slice height to %d (does not divide cell height %d).", newSliceHeight, h) << endl;
+        return;
+      }
+      _sliceHeight = newSliceHeight;
     }
   }
 
