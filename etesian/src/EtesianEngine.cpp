@@ -54,6 +54,7 @@ namespace {
   using namespace Hurricane;
   using Etesian::EtesianEngine;
   using coloquinte::CellOrientation;
+  using coloquinte::CellRowPolarity;
 
   Instance* extractInstance ( const RoutingPad* rp )
   {
@@ -524,13 +525,13 @@ namespace Etesian {
         continue;
       }
 
-      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
+      if (masterCell->getAbutmentBox().getHeight() % getSliceHeight() != 0) {
         cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
-        // TODO: block instances and multi-row cells are manageable in Coloquinte now
-        cerr << Error( "EtesianEngine::setDefaultAb(): Block instances are not managed, \"%s\"."
+        cerr << Error( "EtesianEngine::setDefaultAb(): Cell not aligned on the slice height, \"%s\"."
                      , getString(instance->getName()).c_str() ) << endl;
       }
-      cellLength += _bloatCells.getAb( occurrence ).getWidth();
+      DbU::Unit nbRows = masterCell->getAbutmentBox().getHeight() / getSliceHeight();
+      cellLength += nbRows * _bloatCells.getAb( occurrence ).getWidth() ;
       instanceNb += 1;
     }
 
@@ -711,25 +712,9 @@ namespace Etesian {
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
-
-    for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
-    {
-      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-      Cell*     masterCell   = instance->getMasterCell();
-      string    instanceName = occurrence.getCompactString();
-
-      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
-        cmess2 << "        - Using as block: " << instanceName << "." << endl;
-
-        if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED) {
-          cerr << Error( "EtesianEngine::toColoquinte(): Block instance \"%s\" is *not* FIXED."
-                       , getString(instance->getName()).c_str() ) << endl;
-        }
-      }
-    }
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
-    DbU::Unit totalLength    = (_placeArea.getHeight()/sliceHeight) * _placeArea.getWidth();
+    DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
     DbU::Unit usedLength     = 0;
     DbU::Unit registerLength = 0;
 
@@ -756,7 +741,7 @@ namespace Etesian {
           if (topAb.intersect(instanceAb)) {
             ++instancesNb;
             ++fixedNb;
-            totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+            totalLength -= (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
           }
         }
         if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
@@ -770,7 +755,7 @@ namespace Etesian {
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
       string    masterName = getString( instance->getMasterCell()->getName() );
-      DbU::Unit length = (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+      DbU::Unit length = (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
       if (af->isRegister(masterName)) {
         ++registerNb;
         registerLength += length;
@@ -820,7 +805,7 @@ namespace Etesian {
     vector<int> cellHeight( instancesNb+1 );
     vector<bool> cellIsFixed( instancesNb+1 );
     vector<bool> cellIsObstruction( instancesNb+1 );
-    vector<coloquinte::CellRowPolarity> cellRowPolarity( instancesNb+1, coloquinte::CellRowPolarity::SAME );
+    vector<CellRowPolarity> cellRowPolarity( instancesNb+1, CellRowPolarity::SAME );
 
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
@@ -863,6 +848,7 @@ namespace Etesian {
     if (bloatFactor != 1.0) {
       cmess1 << "     - Cells inflated by " << bloatFactor << endl;
     }
+    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
@@ -902,6 +888,11 @@ namespace Etesian {
       cellY[instanceId] = ypos;
       cellWidth[instanceId] = xsize;
       cellHeight[instanceId] = ysize;
+
+      int nbRows = ysize / rowHeight;
+      if (nbRows % 2 != 1) {
+        cellRowPolarity[instanceId] = CellRowPolarity::NW;
+      }
 
       if ( not instance->isFixed() and instance->isTerminalNetlist() ) {
         cellIsFixed[instanceId] = false;
@@ -1042,7 +1033,7 @@ namespace Etesian {
                             , (int)(topAb.getYMin() / vpitch)
                             , (int)(topAb.getYMax() / vpitch)
                             );
-    _circuit->setupRows(*_surface, (getSliceHeight() + vpitch - 1) / vpitch);
+    _circuit->setupRows(*_surface, rowHeight);
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
     _placementUB = new coloquinte::PlacementSolution ( *_placementLB );
@@ -1114,7 +1105,6 @@ namespace Etesian {
     coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
     _circuit->placeGlobal(params, callback);
     *_placementUB = _circuit->solution();
-    _updatePlacement(_placementUB);
   }
 
 
@@ -1196,7 +1186,7 @@ namespace Etesian {
     UpdateSession::close();
   }
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement, uint32_t flags )
+  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement )
   {
     UpdateSession::open();
 
@@ -1234,69 +1224,11 @@ namespace Etesian {
                                                     , vpitch
                                                     );
         topTransformation.applyOn( cellTrans );
-      //if (flags & FinalStage)
-      //  cerr << "Raw position of <" << instanceName << " @" << cellTrans << endl;
-
-        const vector<RoutingPad*>& rps = std::get<1>( _idsToInsts[(*iid).second] );
-        if ((flags & FinalStage) and not rps.empty()) {
-          DbU::Unit sign       = 1;
-          DbU::Unit cellWidth  = instance->getMasterCell()->getAbutmentBox().getWidth();
-          cdebug_log(122,0) << "cellWidth="  << DbU::getValueString(cellWidth) << endl;
-          cdebug_log(122,0) << "diodeWidth=" << DbU::getValueString(diodeWidth) << endl;
-          if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
-             or (cellTrans.getOrientation() == Transformation::Orientation::MX)) {
-            sign = -1;
-          }
-          for ( size_t i=0 ; i<rps.size() ; ++i ) {
-            cdebug_log(122,0) << "diode position [" << i << "] " << DbU::getValueString((DbU::Unit)(cellTrans.getTx() + cellWidth + i*diodeWidth)) << endl;
-            diodeInsts.push_back
-              ( make_tuple( rps[i]
-                          , Transformation( cellTrans.getTx() + sign * (cellWidth + i*diodeWidth)
-                                          , cellTrans.getTy()
-                                          , cellTrans.getOrientation() ))
-              );
-          }
-        }
 
       // This is temporary as it's not trans-hierarchic: we ignore the positions
       // of all the intermediary instances.
         instance->setTransformation( cellTrans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
-      }
-    }
-
-    if (_diodeCell) {
-      Net* diodeOutput = NULL;
-      for ( Net* net : _diodeCell->getNets() ) {
-        if (net->isSupply() or not net->isExternal()) continue;
-        diodeOutput = net;
-        break;
-      }
-
-      for ( auto diodeInfos : diodeInsts ) {
-        RoutingPad* rp        = std::get<0>( diodeInfos );
-        Net*        topNet    = rp->getNet();
-        Instance*   instance  = extractInstance( rp );
-        Cell*       ownerCell = instance->getCell();
-        Instance*   diode     = _createDiode( ownerCell );
-        diode->setTransformation ( std::get<1>( diodeInfos ));
-        diode->setPlacementStatus( Instance::PlacementStatus::PLACED );
-
-        cdebug_log(122,0) << "Driver net=" << topNet << endl;
-        cdebug_log(122,0) << "  " << instance << " @" << instance->getTransformation() << endl;
-
-        Plug* sinkPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
-        if (sinkPlug) {
-          cdebug_log(122,0) << "  Bind diode input:" << endl;
-          Plug* diodePlug  = diode->getPlug( diodeOutput );
-          diodePlug->setNet( sinkPlug->getNet() );
-          
-          cdebug_log(122,0) << "    " << diode    << " @" << diode   ->getTransformation() << endl;
-          cdebug_log(122,0) << "    topNet->getCell():" << topNet->getCell() << endl;
-          cdebug_log(122,0) << "    " << rp->getOccurrence().getPath() << endl;
-          Path path = rp->getOccurrence().getPath().getHeadPath();
-          RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
-        }
       }
     }
 

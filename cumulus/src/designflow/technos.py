@@ -42,15 +42,16 @@ class Where ( object ):
         return '<Where coriolisTop="{}">'.format( Where.coriolisTop.as_posix() )
 
 
-def setupCMOS ():
+def setupCMOS ( checkToolkit=None ):
+    Where( checkToolkit )
+    ShellEnv().export()
+
     from ..         import Cfg 
     from ..         import Viewer
     from ..         import CRL 
     from ..helpers  import overlay, l, u, n
     from .yosys     import Yosys
     import coriolis.technos.symbolic.cmos
-
-    Where()
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.misc.catchCore              = False
