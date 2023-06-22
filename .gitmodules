@@ -1,3 +1,4 @@
 [submodule "coloquinte"]
 	path = coloquinte
 	url = git@github.com:Coloquinte/PlaceRoute.git
+	branch = coriolis-submodule
