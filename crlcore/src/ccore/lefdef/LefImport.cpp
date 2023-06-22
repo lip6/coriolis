@@ -33,6 +33,7 @@
 #include "hurricane/Contact.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Library.h"
 #include "hurricane/UpdateSession.h"
@@ -71,6 +72,7 @@ namespace {
 
   class LefParser {
     public:
+      static       void               setMergeLibrary          ( Library* );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -121,6 +123,7 @@ namespace {
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
     private:                                               
+      static       Library*            _mergeLibrary;
                    string              _file;
                    string              _libraryName;
                    Library*            _library;
@@ -174,10 +177,15 @@ namespace {
   inline       void              LefParser::clearPinSegments         () { _pinSegments.clear(); }
 
 
+  Library*            LefParser::_mergeLibrary = nullptr;
   map<string,Layer*>  LefParser::_layerLut;
   DbU::Unit           LefParser::_coreSiteX = 0;
   DbU::Unit           LefParser::_coreSiteY = 0;
 
+
+  void  LefParser::setMergeLibrary ( Library* library )
+  { _mergeLibrary = library; }
+  
 
   void  LefParser::reset ()
   {
@@ -272,6 +280,11 @@ namespace {
 
   Library* LefParser::createLibrary ()
   {
+    if (_mergeLibrary) {
+      _library = _mergeLibrary;
+      return _library;
+    }
+
     DataBase* db          = DataBase::getDB();
     Library*  rootLibrary = db->getRootLibrary();
     if (not rootLibrary) rootLibrary = Library::create( db, "RootLibrary" );
@@ -499,6 +512,17 @@ namespace {
         }
         cdebug_log(100,0) << "| " << segment << endl;
       }
+
+      if (geoms->itemType(igeom) == lefiGeomPolygonE) {
+        lefiGeomPolygon* polygon = geoms->getPolygon(igeom);
+        vector<Point>    points;
+        for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
+          points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
+                                 , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
+        }
+        Rectilinear::create( blockageNet, blockageLayer, points );
+        continue;
+      }
     }
 
     return 0;
@@ -645,6 +669,16 @@ namespace {
           }
           if (segment) parser->addPinSegment( pin->name(), segment );
         //cerr << "       | " << segment << endl;
+          continue;
+        }
+        if (geoms->itemType(igeom) == lefiGeomPolygonE) {
+          lefiGeomPolygon* polygon = geoms->getPolygon(igeom);
+          vector<Point>    points;
+          for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
+            points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
+                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
+          }
+          Rectilinear::create( net, layer, points );
           continue;
         }
         if (geoms->itemType(igeom) == lefiGeomClassE) {
@@ -959,6 +993,14 @@ namespace CRL {
   {
 #if defined(HAVE_LEFDEF)
     LefParser::reset();
+#endif
+  }
+
+
+  void  LefImport::setMergeLibrary ( Library* library )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setMergeLibrary( library );
 #endif
   }
 

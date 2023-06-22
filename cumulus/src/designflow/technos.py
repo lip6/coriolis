@@ -304,3 +304,52 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
 
     Yosys.setLiberty( liberty )
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
+
+
+def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None ):
+    from ..        import Cfg 
+    from ..        import Viewer
+    from ..        import CRL 
+    from ..helpers import setNdaTopDir, overlay, l, u, n
+    from .yosys    import Yosys
+
+    if isinstance(pdkTop,str):
+        pdkTop = Path( pdkTop )
+    if not pdkTop:
+        print( '[ERROR] technos.setupGF180MCU_GF(): pdkTop directory has *not* been set.' )
+    if not pdkTop.is_dir():
+        print( '[ERROR] technos.setupSky130_c4m(): pdkTop directory do *not* exists:' )
+        print( '        "{}"'.format(pdkTop.as_posix()) )
+
+    Where( checkToolkit )
+
+    cellsTop = pdkTop / 'libraries' / 'gf180mcu_fd_sc_mcu9t5v0' / 'latest' / 'cells'
+   #liberty  = pdkTop / 'libraries' / 'gf180mcu_fd_sc_mcu9t5v0' / 'latest' / 'liberty' / 'gf180mcu_fd_sc_mcu9t5v0__tt_025C_5v00.lib'
+    liberty  = pdkTop / 'FULL.lib'
+
+    from coriolis.technos.node180.gf180mcu import techno
+    from coriolis.technos.node180.gf180mcu import mcu9t5v0
+    techno.setup()
+    mcu9t5v0.setup( cellsTop )
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore           = False
+        cfg.misc.minTraceLevel       = 12300
+        cfg.misc.maxTraceLevel       = 12400
+        cfg.misc.info                = False
+        cfg.misc.paranoid            = False
+        cfg.misc.bug                 = False
+        cfg.misc.logMode             = True
+        cfg.misc.verboseLevel1       = False
+        cfg.misc.verboseLevel2       = False
+        cfg.etesian.graphics         = 2
+        cfg.anabatic.topRoutingLayer = 'm4'
+        cfg.katana.eventsLimit       = 4000000
+        af  = CRL.AllianceFramework.get()
+       #lg5 = af.getRoutingGauge( 'mcu9t' ).getLayerGauge( 5 ) 
+       #lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
+        env = af.getEnvironment()
+        env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
+
+    Yosys.setLiberty( liberty )
+    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
