@@ -763,10 +763,11 @@ namespace Etesian {
       if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
         ++fixedNb;
         totalLength -= length;
-      } else if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
-        cerr << "PLACED " << instance << endl;
       } else {
         usedLength += length;
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
+          cerr << "PLACED " << instance << endl;
+        }
       }
     }
     if (instancesNb <= fixedNb) {
@@ -842,7 +843,8 @@ namespace Etesian {
       }
     }
 
-    double spaceMargin = getSpaceMargin();
+    // Compute the space margin from the row length computed earlier
+    double spaceMargin = (double) (totalLength - usedLength) / usedLength;
     double densityVariation = getDensityVariation();
     double bloatFactor = 1.0 +  std::max(spaceMargin - densityVariation, 0.0);
     if (bloatFactor != 1.0) {
