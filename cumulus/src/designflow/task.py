@@ -69,7 +69,13 @@ class ShellEnv ( object ):
         self.shellEnv[ 'MBK_CATAL_NAME' ] = env.getCATALOG()
         self.shellEnv[ 'RDS_IN'         ] = 'gds'
         self.shellEnv[ 'RDS_OUT'        ] = 'gds'
-        self.shellEnv[ 'ALLIANCE_TOP'   ] = ShellEnv.ALLIANCE_TOP
+        if ShellEnv.ALLIANCE_TOP:
+            self.shellEnv[ 'ALLIANCE_TOP'   ] = ShellEnv.ALLIANCE_TOP
+            libPath         = ShellEnv.ALLIANCE_TOP + '/lib'
+            LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
+            if LD_LIBRARY_PATH != '':
+                libPath += ':' + LD_LIBRARY_PATH
+            self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
 
     def export ( self ):
         """
