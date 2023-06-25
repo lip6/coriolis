@@ -848,7 +848,9 @@ namespace Etesian {
     double densityVariation = getDensityVariation();
     double bloatFactor = 1.0 +  std::max(spaceMargin - densityVariation, 0.0);
     if (bloatFactor != 1.0) {
-      cmess1 << "     - Cells inflated by " << bloatFactor << endl;
+      ostringstream bf;
+      bf << fixed << setprecision(2) << bloatFactor << "%";
+      cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
     }
     int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
 
