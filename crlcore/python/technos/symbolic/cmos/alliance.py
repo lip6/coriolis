@@ -43,6 +43,7 @@ env.setGROUND         ( 'vss'   )
 env.setCLOCK          ( '.*ck.*|.*nck.*'   )
 env.setBLOCKAGE       ( 'blockage[Nn]et.*' )
 env.setPad            ( '.*_px$'           )
+env.setRegister       ( 'sff.*' )
 
 env.setWORKING_LIBRARY( '.' )
 env.addSYSTEM_LIBRARY ( library=cellsTop+'/sxlib'   , mode=Environment.Append )

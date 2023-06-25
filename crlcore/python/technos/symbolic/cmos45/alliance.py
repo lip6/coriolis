@@ -43,6 +43,7 @@ env.setGROUND         ( 'vss'   )
 env.setCLOCK          ( '.*ck.*|.*nck.*'   )
 env.setBLOCKAGE       ( 'blockage[Nn]et.*' )
 env.setPad            ( '.*_mpx$'          )
+env.setRegister       ( 'sff.*' )
 
 env.setWORKING_LIBRARY( '.' )
 env.addSYSTEM_LIBRARY ( library=cellsTop+'/nsxlib', mode=Environment.Append )
