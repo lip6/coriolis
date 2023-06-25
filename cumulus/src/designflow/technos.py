@@ -190,6 +190,7 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
         cfg.misc.logMode             = True
         cfg.misc.verboseLevel1       = False
         cfg.misc.verboseLevel2       = False
+        cfg.viewer.pixelThreshold    = 5
         cfg.etesian.graphics         = 2
         cfg.anabatic.topRoutingLayer = 'm4'
         cfg.katana.eventsLimit       = 4000000

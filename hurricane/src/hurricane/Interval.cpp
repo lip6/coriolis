@@ -111,21 +111,21 @@ bool Interval::intersect(const Interval& interval, bool strict) const
   if (isEmpty() or interval.isEmpty()) return false;
   if ( (_vMax < interval._vMin) or (interval._vMax < _vMin) ) return false;
 
-  return not strict or ( (_vMax != interval._vMin) and (interval._vMax != _vMin) );
+  return not strict or ( (_vMax > interval._vMin) or (interval._vMax > _vMin) );
 }
 
 bool Interval::inferior(const Interval& interval, bool strict) const
 // *****************************************************************
 {
-  if (_vMax < interval._vMin) return true;
-  return not strict and (_vMax == interval._vMin);
+  if (_vMax == interval._vMin) return not strict;
+  return (_vMax < interval._vMin);
 }
 
 bool Interval::superior(const Interval& interval, bool strict) const
 // *****************************************************************
 {
   if (_vMin > interval._vMax) return true;
-  return !strict && (_vMin == interval._vMax);
+  return not (strict or (_vMin != interval._vMax));
 }
 
 bool Interval::isConstrainedBy(const Interval& interval) const

@@ -121,6 +121,10 @@ class JsonOccurrence : public JsonObject {
   public: virtual void toData(JsonStack&); 
 };
 
+
+  typedef  std::set<Occurrence>  OccurrenceSet;
+
+
 } // End of Hurricane namespace.
 
 

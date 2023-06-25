@@ -219,6 +219,7 @@ extern "C" {
     }
 
     cw->setApplicationName ( name );
+    cw->refreshTitle ();
     HCATCH
 
     Py_RETURN_NONE;

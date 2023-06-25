@@ -65,6 +65,7 @@ namespace {
       cerr << endl << endl;
     }
 
+    rb.remove( Interval( l(3), l(4) ));
     rb.write( "finalRbTree.gv" );
 
     for ( Interval intv : rb.getElements() ) {
@@ -100,6 +101,7 @@ namespace {
       cerr << endl << endl;
     }
 
+    itree.remove( IntvString( "a", l(3), l(4) ));
     itree.write( "finalIntervalTree.gv" );
 
     for ( IntervalData<string> intv : itree.getElements() ) {

@@ -1204,8 +1204,8 @@ namespace Etesian {
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();
     // Remove the enclosing brackets...
-      instanceName.erase( 0, 1 );
-      instanceName.erase( instanceName.size()-1 );
+    //instanceName.erase( 0, 1 );
+    //instanceName.erase( instanceName.size()-1 );
 
       auto iid = _instsToIds.find( instance );
       if (iid == _instsToIds.end() ) {

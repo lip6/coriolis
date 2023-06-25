@@ -772,15 +772,23 @@ void Net::_preDestroy()
   cdebug_tabw(18,-1);
 }
 
+string Net::_getFlagsAsString() const
+// **********************************
+{
+  string ds;
+  ds += ((isDeepNet() ) ? "d" : "-");
+  ds += ((_isExternal ) ? "e" : "-");
+  ds += ((_isGlobal   ) ? "g" : "-");
+  ds += ((_isAutomatic) ? "a" : "-");
+  return ds;
+}
+
 string Net::_getString() const
 // ***************************
 {
   string bs = Inherit::_getString();
   string ds = "\"" + getString(_name) + "\" ";
-  ds += ((isDeepNet() ) ? "d" : "-");
-  ds += ((_isExternal ) ? "e" : "-");
-  ds += ((_isGlobal   ) ? "g" : "-");
-  ds += ((_isAutomatic) ? "a" : "-");
+  ds += _getFlagsAsString();
   ds += " ";
   ds += getString(_type     ) + " ";
   ds += getString(_direction);

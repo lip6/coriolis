@@ -58,8 +58,8 @@ using namespace CRL;
 #include "katana/GraphicKatanaEngine.h"
 #include "etesian/GraphicEtesianEngine.h"
 #include "katana/GraphicKatanaEngine.h"
-#include "equinox/GraphicEquinoxEngine.h"
-#include "solstice/GraphicSolsticeEngine.h"
+//#include "equinox/GraphicEquinoxEngine.h"
+//#include "solstice/GraphicSolsticeEngine.h"
 #include "unicorn/UnicornGui.h"
 using namespace Unicorn;
 

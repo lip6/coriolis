@@ -191,8 +191,9 @@ namespace CRL {
   bool  ToolEngine::_inDestroyAll = false;
 
 
-  ToolEngine::ToolEngine ( Cell* cell )
+  ToolEngine::ToolEngine ( Cell* cell, bool verbose )
     : Super()
+    , _verbose                  (verbose)
     , _cell                     (cell)
     , _placementModificationFlag(0)
     , _routingModificationFlag  (0)
@@ -219,11 +220,13 @@ namespace CRL {
 
     put( enginesRelation );
 
-    cmess1 << "  o  Creating ToolEngine<" << getName() << "> for Cell <"
-           << _cell->getName() << ">" << endl;
-
-    cmess1 << Dots::asString( "     - Initial memory"
-                            , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
+    if (_verbose) {
+      cmess1 << "  o  Creating ToolEngine<" << getName() << "> for Cell <"
+             << _cell->getName() << ">" << endl;
+      
+      cmess1 << Dots::asString( "     - Initial memory"
+                              , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
+    }
   }
 
 

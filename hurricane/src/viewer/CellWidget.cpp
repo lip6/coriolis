@@ -2683,7 +2683,86 @@ namespace Hurricane {
     } else
       selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::selectSet ( const ComponentSet& components )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( Component* component : components ) {
+      if (component->getCell() == getCell()) {
+        select( Occurrence( component ));
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::selectSet ( const OccurrenceSet& occurrences )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        select( occurrence );
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::select ( Occurrences occurrences )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        select( occurrence );
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2744,7 +2823,7 @@ namespace Hurricane {
 
     if ( (--_delaySelectionChanged == 0) and selected ) {
       if ( _state->showSelection() ) _redrawManager.refresh ();
-      emit selectionChanged(_selectors);
+        emit selectionChanged(_selectors);
     }
   }
 
@@ -2782,7 +2861,47 @@ namespace Hurricane {
     }
 
     _selectionHasChanged = true;
-    if ( (_delaySelectionChanged == 0) and unselected ) emit selectionChanged( _selectors );
+    if ( (_delaySelectionChanged == 0) and unselected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselectSet ( const ComponentSet& components )
+  {
+    ++_delaySelectionChanged;
+    for ( Component* component : components ) {
+      if (component->getCell() == getCell()) {
+        unselect( Occurrence( component ));
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselectSet ( const OccurrenceSet& occurrences )
+  {
+    ++_delaySelectionChanged;
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        unselect( occurrence );
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselect ( Occurrences occurrences )
+  {
+    ++_delaySelectionChanged;
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        unselect( occurrence );
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2793,7 +2912,8 @@ namespace Hurricane {
     _state->getSelection().clear ();
     _unselectAll ();
 
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged(_selectors);
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged(_selectors);
   }
 
 
