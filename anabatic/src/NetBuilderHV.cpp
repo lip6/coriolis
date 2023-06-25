@@ -1155,8 +1155,8 @@ namespace Anabatic {
     }
     
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
