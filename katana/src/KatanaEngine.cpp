@@ -473,7 +473,7 @@ namespace Katana {
 
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
-      if (rp->getLayerGauge()->getType() == Constant::PinOnly) continue;
+      if (rp->getLayerGauge()->getType() != Constant::Default) continue;
       if (rp->getLayerGauge()->getDepth() > getConfiguration()->getAllowedDepth()) continue;
 
       int    elementCapacity = 1;
