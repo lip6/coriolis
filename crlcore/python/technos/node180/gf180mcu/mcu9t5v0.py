@@ -111,7 +111,7 @@ def _routing ():
 
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         env = af.getEnvironment()
-        env.setRegister( '^dff.*' )
+        env.setRegister( '.*__dff.*' )
         # Place & Route setup
         cfg.viewer.minimumSize = 500
         cfg.viewer.pixelThreshold = 2
@@ -146,7 +146,7 @@ def _routing ():
             ('Show result only', 3),
         )
         cfg.anabatic.routingGauge = 'mcu9t5v0'
-        cfg.anabatic.cellGauge = 'LEF.CoreSite'
+        cfg.anabatic.cellGauge = 'LEF.GF018hv5v_green_sc9'
         cfg.anabatic.globalLengthThreshold = 1450
         cfg.anabatic.saturateRatio = 0.90
         cfg.anabatic.saturateRp = 10
