@@ -188,11 +188,11 @@ if __name__ == '__main__':
           unicorn.setLayerVisible     ("text.instance" , False);
           unicorn.setLayerVisible     ("text.component", False);
           
-      if options.script:
-          runScript(options.script,unicorn)
-
-     # Run in command line mode.
-      if options.script: runScript(options.script,None)
+          if options.script:
+              runScript(options.script,unicorn)
+      else:
+         # Run in command line mode.
+          if options.script: runScript(options.script,None)
 
       kiteSuccess = True
       
