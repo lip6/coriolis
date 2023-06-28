@@ -658,6 +658,19 @@ namespace Hurricane {
   }
 
 
+  void  ControllerWidget::insertTabAfter ( const QString& ref, QWidget* tab, const QString& label )
+  {
+    for ( int itab=0 ; true; ++itab ) {
+      QWidget* refTab = widget( itab );
+      if (not refTab) break;
+      if (refTab->objectName() != ref) continue;
+      insertTab( itab, tab, label );
+      return;
+    }
+    addTab( tab, label );
+  }
+  
+
 // -------------------------------------------------------------------
 // Class  :  "ControllerWidget::GraphicsObserver".
 

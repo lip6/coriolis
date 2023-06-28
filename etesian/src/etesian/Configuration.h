@@ -40,16 +40,13 @@ namespace Etesian {
 // Class  :  "Etesian::Configuration".
 
   enum Effort        { Fast    =1
-                     , Standard=2
-                     , High    =3
-                     , Extreme =4
+                     , Standard=3
+                     , High    =6
+                     , Extreme =9
                      };
   enum GraphicUpdate { UpdateAll =1 
                      , LowerBound=2 
                      , FinalOnly =3 
-                     };
-  enum Density       { ForceUniform=1
-                     , MaxDensity  =2
                      };
 
   class Configuration {
@@ -63,11 +60,10 @@ namespace Etesian {
       inline CellGauge*       getCellGauge              () const;
       inline Effort           getPlaceEffort            () const;
       inline GraphicUpdate    getUpdateConf             () const;
-      inline Density          getSpreadingConf          () const;
       inline bool             getRoutingDriven          () const;
       inline double           getSpaceMargin            () const;
+      inline double           getDensityVariation       () const;
       inline double           getAspectRatio            () const;
-      inline double           getAntennaInsertThreshold () const;
       inline string           getTieName                () const;
       inline string           getFeedNames              () const;
       inline string           getDiodeName              () const;
@@ -77,6 +73,7 @@ namespace Etesian {
       inline DbU::Unit        getAntennaGateMaxWL       () const;
       inline DbU::Unit        getAntennaDiodeMaxWL      () const;
       inline void             setSpaceMargin            ( double );
+      inline void             setDensityVariation       ( double );
       inline void             setAspectRatio            ( double );
              void             print                     ( Cell* ) const;
              Record*          _getRecord                () const;
@@ -88,11 +85,10 @@ namespace Etesian {
       CellGauge*     _cg;
       Effort         _placeEffort;
       GraphicUpdate  _updateConf;
-      Density        _spreadingConf;
       bool           _routingDriven;
       double         _spaceMargin;
+      double         _densityVariation;
       double         _aspectRatio;
-      double         _antennaInsertThreshold;
       string         _tieName;
       string         _feedNames;
       string         _diodeName;
@@ -111,11 +107,10 @@ namespace Etesian {
   inline CellGauge*    Configuration::getCellGauge              () const { return _cg; }
   inline Effort        Configuration::getPlaceEffort            () const { return _placeEffort; }
   inline GraphicUpdate Configuration::getUpdateConf             () const { return _updateConf; }
-  inline Density       Configuration::getSpreadingConf          () const { return _spreadingConf; }
   inline bool          Configuration::getRoutingDriven          () const { return _routingDriven; }
   inline double        Configuration::getSpaceMargin            () const { return _spaceMargin; }
+  inline double        Configuration::getDensityVariation       () const { return _densityVariation; }
   inline double        Configuration::getAspectRatio            () const { return _aspectRatio; }
-  inline double        Configuration::getAntennaInsertThreshold () const { return _antennaInsertThreshold; }
   inline string        Configuration::getTieName                () const { return _tieName; }
   inline string        Configuration::getFeedNames              () const { return _feedNames; }
   inline string        Configuration::getDiodeName              () const { return _diodeName; }
@@ -125,6 +120,7 @@ namespace Etesian {
   inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
   inline DbU::Unit     Configuration::getAntennaDiodeMaxWL      () const { return _antennaDiodeMaxWL; }
   inline void          Configuration::setSpaceMargin            ( double margin ) { _spaceMargin = margin; }
+  inline void          Configuration::setDensityVariation       ( double margin ) { _densityVariation = margin; }
   inline void          Configuration::setAspectRatio            ( double ratio  ) { _aspectRatio = ratio; }
 
 

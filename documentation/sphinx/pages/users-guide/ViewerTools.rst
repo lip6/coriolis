@@ -176,11 +176,10 @@ Etesian Configuration Parameters
 |                                   | The extra white space added to the total area |
 |                                   | of the standard cells                         |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.uniformDensity``         | TypeBool         | :cb:`False`                |
+|``etesian.densityVariation``       | TypePercentage   | :cb:`5`                    |
 |                                   +------------------+----------------------------+
-|                                   | Whether the cells will be spread envenly      |
-|                                   | across the area or allowed to form denser     |
-|                                   | clusters                                      |
+|                                   | Control deviation from uniform density in the |
+|                                   | placement, as a percentage of area.           |
 +-----------------------------------+------------------+----------------------------+
 |``etesian.effort``                 | TypeInt          | :cb:`2`                    |
 |                                   +------------------+----------------------------+

@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_NET
-#define HURRICANE_NET
-
+#pragma  once
 #include <functional>
 #include "hurricane/Entity.h"
 #include "hurricane/Nets.h"
@@ -253,6 +251,7 @@ class Net : public Entity {
     public: virtual void _toJsonSignature(JsonWriter*) const;
     public: virtual void _toJsonCollections(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Net");};
+    public: string _getFlagsAsString() const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
     public: NetMainName& _getMainName() { return _mainName; }
@@ -445,9 +444,10 @@ namespace Hurricane {
 // Because sometimes it didn't happens (?).
   const SlotTemplate<Net*> dummyNetSlot ( string("dummyNetSlot"), NULL );
 
-}
 
-#endif // HURRICANE_NET
+  typedef  std::set<Net*,DBo::CompareById>  NetSet;
+
+}
 
 
 // ****************************************************************************************************

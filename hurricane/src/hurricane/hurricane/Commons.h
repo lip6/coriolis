@@ -146,6 +146,9 @@ namespace Hurricane {
   }
 
 
+  string& split ( std::string& );
+
+
 } // End of Hurricane namespace.
 
 

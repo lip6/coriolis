@@ -81,13 +81,14 @@ namespace CRL {
     protected:
                     Cell*        _cell;
     private:
+                    bool         _verbose;
                     unsigned int _placementModificationFlag;
                     unsigned int _routingModificationFlag;
                     bool         _inRelationDestroy;
                     Timer        _timer;
                     uint32_t     _passNumber;
     protected:
-                                 ToolEngine                          ( Cell* cell );
+                                 ToolEngine                          ( Cell* cell, bool verbose=true );
       virtual       void         _postCreate                         ();
       virtual       void         _preDestroy                         ();
     protected:      

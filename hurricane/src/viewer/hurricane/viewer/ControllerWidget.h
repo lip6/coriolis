@@ -312,6 +312,7 @@ namespace Hurricane {
       inline TabSettings*         getSettings         ();
              void                 setCellWidget       ( CellWidget* );
     //inline int                  addSetting          ( QWidget* page, const QString& label );
+             void                 insertTabAfter      ( const QString& ref, QWidget*, const QString& label );
     public slots:                                     
              void                 graphicsUpdated     ();
              void                 cellPreModificate   ();

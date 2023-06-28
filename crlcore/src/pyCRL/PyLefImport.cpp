@@ -43,6 +43,8 @@ namespace  CRL {
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
   using Isobar::PyLibrary_Link;
+  using Isobar::PyTypeLibrary;
+  using Isobar::PyLibrary;
 
 
 extern "C" {
@@ -86,14 +88,37 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setMergeLibrary ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setMergeLibrary()" << endl;
+    HTRY
+      PyObject* pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "O:LefImport.setMergeLibrary", &pyLibrary )) {
+        if (IsPyLibrary(pyLibrary)) {
+          LefImport::setMergeLibrary( PYLIBRARY_O(pyLibrary) );
+        } else {
+          PyErr_SetString( ConstructorError, "LefImport.setMergeLibrary(): Bad parameter type (not a Library)." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString( ConstructorError, "LefImport.setMergeLibrary(): Bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Destroy (Attribute).
 
 
   PyMethodDef PyLefImport_Methods[] =
-    { { "load"                , (PyCFunction)PyLefImport_load     , METH_VARARGS|METH_STATIC
+    { { "load"                , (PyCFunction)PyLefImport_load          , METH_VARARGS|METH_STATIC
                               , "Load a complete Cadence LEF library." }
-    , { "reset"               , (PyCFunction)PyLefImport_reset    , METH_NOARGS|METH_STATIC
+    , { "reset"               , (PyCFunction)PyLefImport_reset         , METH_NOARGS|METH_STATIC
                               , "Reset the Cadence LEF parser (clear technology)." }
+    , { "setMergeLibrary"     , (PyCFunction)PyLefImport_setMergeLibrary, METH_VARARGS|METH_STATIC
+                              , "Merge into this library instead of creating a new one." }
   //, { "destroy"             , (PyCFunction)PyLefImport_destroy  , METH_VARARGS
   //                          , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

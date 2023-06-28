@@ -18,7 +18,7 @@
 #include <tuple>
 #include <iostream>
 #include <unordered_map>
-#include "coloquinte/circuit.hxx"
+#include "coloquinte/coloquinte.hpp"
 
 #include "hurricane/Timer.h"
 #include "hurricane/Name.h"
@@ -70,7 +70,6 @@ namespace Etesian {
       typedef std::tuple<Net*,int32_t,uint32_t>                NetInfos;
       typedef std::tuple<Instance*, std::vector<RoutingPad*> > InstanceInfos;
       typedef std::map<Instance*,size_t,DBo::CompareById>      InstancesToIds;
-      typedef std::map<Net*,size_t,DBo::CompareById>           NetsToIds;
       typedef std::set<std::string>                            NetNameSet;
     public:
       static  const Name&             staticGetName             ();
@@ -91,10 +90,9 @@ namespace Etesian {
       inline  DbU::Unit               getFixedAbWidth           () const;
       inline  Effort                  getPlaceEffort            () const;
       inline  GraphicUpdate           getUpdateConf             () const;
-      inline  Density                 getSpreadingConf          () const;
       inline  double                  getSpaceMargin            () const;
+      inline  double                  getDensityVariation       () const;
       inline  double                  getAspectRatio            () const;
-      inline  double                  getAntennaInsertThreshold () const;
       inline  DbU::Unit               getAntennaGateMaxWL       () const;
       inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
       inline  DbU::Unit               getLatchUpDistance        () const;
@@ -114,6 +112,7 @@ namespace Etesian {
       inline  void                    setFixedAbHeight          ( DbU::Unit );
       inline  void                    setFixedAbWidth           ( DbU::Unit );
       inline  void                    setSpaceMargin            ( double );
+      inline  void                    setDensityVariation       ( double );
       inline  void                    setAspectRatio            ( double );
               void                    setDefaultAb              ();
               void                    adjustSliceHeight         ();
@@ -131,11 +130,8 @@ namespace Etesian {
       inline  Transformation          toBlock                   ( const Transformation& ) const;
               void                    setPlaceArea              ( const Box& );
               size_t                  toColoquinte              ();
-              void                    preplace                  ();
-              void                    roughLegalize             ( float minDisruption, unsigned options );
-              void                    globalPlace               ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
-              void                    detailedPlace             ( int iterations, int effort, unsigned options=0 );
-              void                    antennaProtect            ();
+              void                    globalPlace               ();
+              void                    detailedPlace             ();
               void                    place                     ();
               uint32_t                doHFNS                    ();
       inline  void                    useFeed                   ( Cell* );
@@ -160,15 +156,12 @@ namespace Etesian {
              bool                                 _flatDesign;
              Box                                  _placeArea;
              std::vector<Box>                     _trackAvoids;
-             coloquinte::box<coloquinte::int_t>*  _surface;
-             coloquinte::netlist*                 _circuit;
-             coloquinte::placement_t*             _placementLB;
-             coloquinte::placement_t*             _placementUB;
-             coloquinte::density_restrictions*    _densityLimits;
-             NetsToIds                            _netsToIds;
+             coloquinte::Rectangle*               _surface;
+             coloquinte::Circuit*                 _circuit;
+             coloquinte::PlacementSolution*       _placementLB;
+             coloquinte::PlacementSolution*        _placementUB;
              InstancesToIds                       _instsToIds;
              std::vector<InstanceInfos>           _idsToInsts;
-             std::vector<NetInfos>                _idsToNets;
              Hurricane::CellViewer*               _viewer;
              Cell*                                _diodeCell;
              FeedCells                            _feedCells;
@@ -195,9 +188,9 @@ namespace Etesian {
     private:
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
-              void           _updatePlacement ( const coloquinte::placement_t*, uint32_t flags=0 );
-              void           _progressReport1 ( string label ) const;
-              void           _progressReport2 ( string label ) const;
+              void           _updatePlacement ( const coloquinte::PlacementSolution* );
+              void           _coloquinteCallback(coloquinte::PlacementStep step);
+              void           _checkNotAFeed   ( Occurrence occurrence ) const;
   };
 
 
@@ -214,10 +207,9 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getFixedAbWidth           () const { return _fixedAbWidth; }
   inline  Effort                 EtesianEngine::getPlaceEffort            () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf             () const { return getConfiguration()->getUpdateConf(); }
-  inline  Density                EtesianEngine::getSpreadingConf          () const { return getConfiguration()->getSpreadingConf(); }
   inline  double                 EtesianEngine::getSpaceMargin            () const { return getConfiguration()->getSpaceMargin(); }
+  inline  double                 EtesianEngine::getDensityVariation       () const { return getConfiguration()->getDensityVariation(); }
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
-  inline  double                 EtesianEngine::getAntennaInsertThreshold () const { return getConfiguration()->getAntennaInsertThreshold(); }
   inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
@@ -232,6 +224,7 @@ namespace Etesian {
   inline  void                   EtesianEngine::setFixedAbHeight          ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
   inline  void                   EtesianEngine::setFixedAbWidth           ( DbU::Unit abWidth  ) { _fixedAbWidth  = abWidth; }
   inline  void                   EtesianEngine::setSpaceMargin            ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
+  inline  void                   EtesianEngine::setDensityVariation       ( double margin ) { getConfiguration()->setDensityVariation(margin); }
   inline  void                   EtesianEngine::setAspectRatio            ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
   inline  DbU::Unit              EtesianEngine::toDbU                     ( int64_t v ) const { return v*getSliceStep(); }
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }

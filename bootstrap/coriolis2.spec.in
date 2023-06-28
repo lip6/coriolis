@@ -180,7 +180,7 @@ Development files for the Coriolis 2 package.
 %{coriolisTop}/include/vlsisapd/configuration/*.h
 %{coriolisTop}/include/vlsisapd/dtr/*.h
 %{coriolisTop}/include/vlsisapd/openChams/*.h
-%{coriolisTop}/include/coriolis2/coloquinte/*.hxx
+%{coriolisTop}/include/coriolis2/coloquinte/*.hpp
 %{coriolisTop}/include/coriolis2/hurricane/*.h
 %{coriolisTop}/include/coriolis2/hurricane/viewer/*.h
 %{coriolisTop}/include/coriolis2/hurricane/isobar/*.h

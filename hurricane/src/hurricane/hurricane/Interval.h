@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2023, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_INTERVAL_H
-#define HURRICANE_INTERVAL_H
-
+#pragma  once
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
@@ -44,6 +42,11 @@ namespace Hurricane {
   class Interval {
     public:
       class CompareByMin {
+        public:
+          inline bool  operator() ( const Interval& rhs, const Interval& lhs ) const;
+          inline bool  operator() ( const Interval* rhs, const Interval* lhs ) const;
+      };
+      class CompareByMinMax {
         public:
           inline bool  operator() ( const Interval& rhs, const Interval& lhs ) const;
           inline bool  operator() ( const Interval* rhs, const Interval* lhs ) const;
@@ -124,6 +127,20 @@ namespace Hurricane {
   { return lhs->getVMin() < rhs->getVMin(); }
 
 
+  inline bool  Interval::CompareByMinMax::operator() ( const Interval& lhs, const Interval& rhs ) const
+  {
+    if (lhs.getVMin() != rhs.getVMin()) return lhs.getVMin() < rhs.getVMin();
+    return lhs.getVMax() < rhs.getVMax();
+  }
+
+  
+  inline bool  Interval::CompareByMinMax::operator() ( const Interval* lhs, const Interval* rhs ) const
+  {
+    if (lhs->getVMin() != rhs->getVMin()) return lhs->getVMin() < rhs->getVMin();
+    return lhs->getVMax() < rhs->getVMax();
+  }
+
+
 } // Hurricane namespace.
 
 
@@ -136,7 +153,5 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane:
   w->endArray();
 }
 
+
 INSPECTOR_PR_SUPPORT(Hurricane::Interval);
-
-
-#endif  // HURRICANE_INTERVAL_H

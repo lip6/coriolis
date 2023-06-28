@@ -284,6 +284,16 @@ class GitRepository ( object ):
         Command( [ 'git', 'checkout', branch ], self.fdLog ).execute()
         return
 
+    def submoduleInit ( self ):
+        os.chdir( self.localRepoDir )
+        Command( [ 'git', 'submodule', 'init' ], self.fdLog ).execute()
+        return
+
+    def submoduleUpdate ( self ):
+        os.chdir( self.localRepoDir )
+        Command( [ 'git', 'submodule', 'update' ], self.fdLog ).execute()
+        return
+
 
 class Configuration ( object ):
 
@@ -601,6 +611,8 @@ try:
                 if conf.rmSource: gitCoriolis.removeLocalRepo()
                 gitCoriolis.clone   ()
                 gitCoriolis.checkout( 'devel' )
+                gitCoriolis.submoduleInit()
+                gitCoriolis.submoduleUpdate()
       
         if conf.rmSource: gitBenchs.removeLocalRepo()
         gitBenchs.clone()
