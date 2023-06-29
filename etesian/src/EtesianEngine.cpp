@@ -709,6 +709,7 @@ namespace Etesian {
     cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
+    cmess1 << ::Dots::asString("     - Slice height"    , DbU::getValueString(sliceHeight)) << endl;
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
