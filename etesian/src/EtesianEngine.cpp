@@ -750,6 +750,11 @@ namespace Etesian {
         }
       }
     }
+    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
+                            , (int)(topAb.getXMax() / hpitch)
+                            , (int)(topAb.getYMin() / vpitch)
+                            , (int)(topAb.getYMax() / vpitch)
+                            );
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
@@ -844,9 +849,10 @@ namespace Etesian {
       }
     }
 
-    // Compute the space margin from the row length computed earlier
-    double spaceFactor = (1.0 - getDensityVariation()) * totalLength / usedLength;
-    double bloatFactor = std::max(1.0, spaceFactor);
+    // Compute a bloat factor to be reach 1 - densityVariation density
+    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
+    // Limit the maximum size of cells after bloat to avoid placement issues
+    int maxBloatSize = _surface->width() / 8;
     if (bloatFactor != 1.0) {
       ostringstream bf;
       bf << fixed << setprecision(2) << bloatFactor << "%";
@@ -886,7 +892,7 @@ namespace Etesian {
          ++xsize;
 
       // Take bloat into account to compute the size
-      xsize *= bloatFactor;
+      xsize = std::max(xsize, std::min(maxBloatSize, (int) (xsize * bloatFactor)));
 
       cellX[instanceId] = xpos;
       cellY[instanceId] = ypos;
@@ -1032,11 +1038,6 @@ namespace Etesian {
     if (_bloatCells.getSelected()->getName() != "disabled")
       cmess2 << stdCellSizes.toString(1) << endl;
 
-    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
-                            , (int)(topAb.getXMax() / hpitch)
-                            , (int)(topAb.getYMin() / vpitch)
-                            , (int)(topAb.getYMax() / vpitch)
-                            );
     _circuit->setupRows(*_surface, rowHeight);
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
