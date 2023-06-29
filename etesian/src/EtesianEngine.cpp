@@ -845,9 +845,8 @@ namespace Etesian {
     }
 
     // Compute the space margin from the row length computed earlier
-    double spaceMargin = (double) (totalLength - usedLength) / usedLength;
-    double densityVariation = getDensityVariation();
-    double bloatFactor = 1.0 +  std::max(spaceMargin - densityVariation, 0.0);
+    double spaceFactor = (1.0 - getDensityVariation()) * totalLength / usedLength;
+    double bloatFactor = std::max(1.0, spaceFactor);
     if (bloatFactor != 1.0) {
       ostringstream bf;
       bf << fixed << setprecision(2) << bloatFactor << "%";
