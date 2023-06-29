@@ -754,7 +754,7 @@ namespace Etesian {
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
-      Box       instanceAb = instance->getAbutmentBox();
+      Box       instanceAb = _bloatCells.getAb( occurrence );
       string    masterName = getString( instance->getMasterCell()->getName() );
       DbU::Unit length = (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
       if (af->isRegister(masterName)) {
