@@ -709,6 +709,7 @@ namespace Etesian {
     cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
+    cmess1 << ::Dots::asString("     - Slice height"    , DbU::getValueString(sliceHeight)) << endl;
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
@@ -749,11 +750,16 @@ namespace Etesian {
         }
       }
     }
+    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
+                            , (int)(topAb.getXMax() / hpitch)
+                            , (int)(topAb.getYMin() / vpitch)
+                            , (int)(topAb.getYMax() / vpitch)
+                            );
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
-      Box       instanceAb = instance->getAbutmentBox();
+      Box       instanceAb = _bloatCells.getAb( occurrence );
       string    masterName = getString( instance->getMasterCell()->getName() );
       DbU::Unit length = (instanceAb.getHeight() / sliceHeight) * instanceAb.getWidth();
       if (af->isRegister(masterName)) {
@@ -843,10 +849,10 @@ namespace Etesian {
       }
     }
 
-    // Compute the space margin from the row length computed earlier
-    double spaceMargin = (double) (totalLength - usedLength) / usedLength;
-    double densityVariation = getDensityVariation();
-    double bloatFactor = 1.0 +  std::max(spaceMargin - densityVariation, 0.0);
+    // Compute a bloat factor to be reach 1 - densityVariation density
+    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
+    // Limit the maximum size of cells after bloat to avoid placement issues
+    int maxBloatSize = _surface->width() / 8;
     if (bloatFactor != 1.0) {
       ostringstream bf;
       bf << fixed << setprecision(2) << bloatFactor << "%";
@@ -886,7 +892,7 @@ namespace Etesian {
          ++xsize;
 
       // Take bloat into account to compute the size
-      xsize *= bloatFactor;
+      xsize = std::max(xsize, std::min(maxBloatSize, (int) (xsize * bloatFactor)));
 
       cellX[instanceId] = xpos;
       cellY[instanceId] = ypos;
@@ -1032,11 +1038,6 @@ namespace Etesian {
     if (_bloatCells.getSelected()->getName() != "disabled")
       cmess2 << stdCellSizes.toString(1) << endl;
 
-    _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
-                            , (int)(topAb.getXMax() / hpitch)
-                            , (int)(topAb.getYMin() / vpitch)
-                            , (int)(topAb.getYMax() / vpitch)
-                            );
     _circuit->setupRows(*_surface, rowHeight);
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
