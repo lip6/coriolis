@@ -277,7 +277,9 @@ namespace Anabatic {
 
         if (flags & (VSmall|UseNonPref)) {
           cdebug_log(145,0) << "case: UseNonPref" << endl;
-  
+
+          if (flags & VSmall) 
+            useNonPref.reset( Flags::UseNonPref );
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
           AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|useNonPref );
           rpSourceContact = subContact1;

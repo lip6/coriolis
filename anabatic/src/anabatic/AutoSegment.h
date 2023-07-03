@@ -109,6 +109,7 @@ namespace Anabatic {
       static const uint64_t  SegNonPref           = (1L<<37);
       static const uint64_t  SegAtMinArea         = (1L<<38);
       static const uint64_t  SegNoMoveUp          = (1L<<39);
+      static const uint64_t  SegOnVSmall          = (1L<<40);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -202,6 +203,7 @@ namespace Anabatic {
       inline         bool                isTerminal                 () const;
       inline         bool                isUnbreakable              () const;
       inline         bool                isNonPref                  () const;
+      inline         bool                isNonPrefOnVSmall          () const;
       inline         bool                isDrag                     () const;
       inline         bool                isAtMinArea                () const;
       inline         bool                isNotSourceAligned         () const;
@@ -536,6 +538,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isLocal                () const { return not (_flags & SegGlobal); }
   inline  bool            AutoSegment::isUnbreakable          () const { return _flags & SegUnbreakable; }
   inline  bool            AutoSegment::isNonPref              () const { return _flags & SegNonPref; }
+  inline  bool            AutoSegment::isNonPrefOnVSmall      () const { return (_flags & SegNonPref) and (_flags & SegOnVSmall); }
   inline  bool            AutoSegment::isBipoint              () const { return _flags & SegBipoint; }
   inline  bool            AutoSegment::isWeakTerminal         () const { return (_rpDistance < 2); }
   inline  bool            AutoSegment::isWeakTerminal1        () const { return (_rpDistance == 1); }

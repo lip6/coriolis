@@ -106,6 +106,7 @@ namespace Katana {
       virtual bool                    isVertical             () const = 0;
       virtual bool                    isWide                 () const;
       virtual bool                    isNonPref              () const;
+      virtual bool                    isNonPrefOnVSmall      () const;
       virtual bool                    isUnbreakable          () const;
       virtual bool                    isLocal                () const;
       virtual bool                    isGlobal               () const;

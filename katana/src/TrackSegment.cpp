@@ -195,6 +195,7 @@ namespace Katana {
   bool           TrackSegment::isWide               () const { return _base->isWide(); }
   bool           TrackSegment::isShortNet           () const { return _base->isShortNet(); }
   bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
+  bool           TrackSegment::isNonPrefOnVSmall    () const { return _base->isNonPrefOnVSmall(); }
 // Predicates.
   bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
 // Accessors.

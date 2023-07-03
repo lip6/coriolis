@@ -14,7 +14,6 @@ endif ( CHECK_DETERMINISM )
                         ${QtX_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
-      find_package (Python 3  COMPONENTS Interpreter Development.Module )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
                                      anabatic/Matrix.h

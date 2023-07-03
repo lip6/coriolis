@@ -82,6 +82,7 @@ namespace Katana {
       virtual bool                  isAnalog               () const;
       virtual bool                  isWide                 () const;
       virtual bool                  isShortNet             () const;
+      virtual bool                  isNonPrefOnVSmall      () const;
       virtual bool                  isPriorityLocked       () const;
     // Predicates.
       virtual bool                  hasSymmetric           () const;

@@ -19,12 +19,12 @@
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options)
  setup_qt()
+ setup_python()
  
  if (USE_LIBBFD)
    find_package(Libbfd)
  endif()
  find_package(BZip2              REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(COLOQUINTE)

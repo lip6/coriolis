@@ -110,8 +110,8 @@ namespace {
       inline       int                getNthRouting            () const;
       inline       void               incNthRouting            ();
       inline       RoutingGauge*      getRoutingGauge          () const;
-      inline       void               addPinSegment            ( string name, Segment* );
-      inline       void               clearPinSegments         ();
+      inline       void               addPinComponent          ( string name, Component* );
+      inline       void               clearPinComponents       ();
     private:                                               
       static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*      , lefiUserData );
       static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*      , lefiUserData );
@@ -131,7 +131,7 @@ namespace {
                    Net*                _net;
                    string              _busBits;
                    double              _unitsMicrons;
-                   map< string, vector<Segment*> >  _pinSegments;
+                   map< string, vector<Component*> >  _pinComponents;
       static       map<string,Layer*>  _layerLut;
                    vector<string>      _unmatchedLayers;
                    vector<string>      _errors;
@@ -173,8 +173,8 @@ namespace {
   inline const vector<string>&   LefParser::getErrors                () const { return _errors; }
   inline       void              LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
   inline       void              LefParser::clearErrors              () { return _errors.clear(); }
-  inline       void              LefParser::addPinSegment            ( string name, Segment* s ) { _pinSegments[name].push_back(s); }
-  inline       void              LefParser::clearPinSegments         () { _pinSegments.clear(); }
+  inline       void              LefParser::addPinComponent          ( string name, Component* comp ) { _pinComponents[name].push_back(comp); }
+  inline       void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
 
 
   Library*            LefParser::_mergeLibrary = nullptr;
@@ -520,6 +520,8 @@ namespace {
           points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
                                  , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
         }
+        points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
+                               , parser->fromUnitsMicrons(polygon->y[0]) ));
         Rectilinear::create( blockageNet, blockageLayer, points );
         continue;
       }
@@ -577,7 +579,7 @@ namespace {
 
     if (not isPad) parser->_pinStdPostProcess();
     else           parser->_pinPadPostProcess();
-    parser->clearPinSegments();
+    parser->clearPinComponents();
 
     cerr << "     - " << cellName
          << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
@@ -667,7 +669,7 @@ namespace {
                                       , parser->fromUnitsMicrons( r->yh )
                                       );
           }
-          if (segment) parser->addPinSegment( pin->name(), segment );
+          if (segment) parser->addPinComponent( pin->name(), segment );
         //cerr << "       | " << segment << endl;
           continue;
         }
@@ -678,7 +680,10 @@ namespace {
             points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
                                    , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
           }
-          Rectilinear::create( net, layer, points );
+          points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
+                                 , parser->fromUnitsMicrons(polygon->y[0]) ));
+          Rectilinear* rectilinear = Rectilinear::create( net, layer, points );
+          if (rectilinear) parser->addPinComponent( pin->name(), rectilinear );
           continue;
         }
         if (geoms->itemType(igeom) == lefiGeomClassE) {
@@ -722,20 +727,27 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-  //cerr << "       @ _pinStdPostProcess" << endl;
+    cerr << "       @ _pinStdPostProcess" << endl;
 
-    for ( auto element : _pinSegments ) {
-      string            pinName  = element.first;
-      vector<Segment*>& segments = element.second;
-      vector<Segment*>  ongrids;
+    for ( auto element : _pinComponents ) {
+      string              pinName    = element.first;
+      vector<Component*>& components = element.second;
+      vector<Segment*>    ongrids;
 
-      for ( Segment* segment : segments ) {
-        bool isWide = (segment->getWidth() >= getMinTerminalWidth());
+      for ( Component* component : components ) {
+        Segment* segment = dynamic_cast<Segment*>( component );
+        if (segment) {
+          if (component->getNet()->isSupply()) continue;
+          bool isWide = (segment->getWidth() >= getMinTerminalWidth());
 
-      //cerr << "       > " << segment << endl;
+          cerr << "       > " << segment << endl;
+          if (not isVH())
+            cerr << "NOT isVH()" << endl;
+          else
+            cerr << "isVH()" << endl;
         
-        if (not segment->getNet()->isSupply()) {
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
+            cerr << "isVH()" << endl;
             Vertical* v = dynamic_cast<Vertical*>( segment );
             if (v) {
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
@@ -746,7 +758,7 @@ namespace {
               if (nearestX == v->getX()) {
               } else {
                 DbU::Unit neighbor = nearestX
-                                   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+                  + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
 
               //cerr << "       | X:" << DbU::getValueString(v->getX())
               //     <<  " nearestX:" << DbU::getValueString(nearestX)
@@ -772,16 +784,67 @@ namespace {
               }
             }
           }
-        }
       
-        if (isWide) ongrids.push_back( segment );
+          if (isWide) ongrids.push_back( segment );
+        }
+        Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+        if (not (rectilinear->getLayer()->getMask() == metal1->getMask()))
+          continue;
+
+        if (rectilinear) {
+          cerr << "       > " << rectilinear << endl;
+          vector<Box> boxes;
+          rectilinear->getAsRectangles( boxes );
+
+          if (component->getNet()->isSupply()) {
+            ongrids.push_back( Horizontal::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , boxes.front().getYCenter()
+                                                 , boxes.front().getHeight()
+                                                 , _cell->getAbutmentBox().getXMin()
+                                                 , _cell->getAbutmentBox().getXMax()
+                                                 )
+                                 );
+          } else {
+            for ( const Box& box : boxes ) {
+              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
+                                                                , ab.getXMax()
+                                                                , box.getXCenter()
+                                                                , Constant::Nearest );
+              DbU::Unit xmin = std::min( box.getXMin(), nearestX - gaugeMetal2->getViaWidth()/2 );
+              DbU::Unit xmax = std::max( box.getXMax(), nearestX + gaugeMetal2->getViaWidth()/2 );
+              ongrids.push_back( Vertical::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , (xmax+xmin)/2
+                                                 ,  xmax-xmin
+                                                 , box.getYMin()
+                                                 , box.getYMax()
+                                                 )
+                                 );
+              // DbU::Unit neighbor = nearestY
+              //   + ((nearestY > box.getYCenter()) ? 1 : -1) * gaugeMetal2->getPitch();
+              
+              // if (  (box.getYMin() > neighbor)
+              //    or (box.getYMax() < neighbor) ) {
+              //   ongrids.push_back( Vertical::create( rectilinear->getNet()
+              //                                      , rectilinear->getLayer()
+              //                                      , box.getXCenter()
+              //                                      , box.getWidth()
+              //                                      , box.getYMin()
+              //                                      , box.getYMax()
+              //                                      )
+              //                    );
+              // }
+            }
+          }
+        }
       }
 
       if (ongrids.empty()) {
         cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
                        , pinName.c_str() ) << endl;
-        for ( Segment* segment : segments ) {
-          NetExternalComponents::setExternal( segment );
+        for ( Component* component : components ) {
+          NetExternalComponents::setExternal( component );
         }
       } else {
         for ( Segment* segment : ongrids ) {
@@ -797,10 +860,10 @@ namespace {
     Box  ab          = getCell()->getAbutmentBox();
     bool isCornerPad = (_cellGauge) and (_cellGauge->getSliceHeight() == _cellGauge->getSliceStep());
 
-    for ( auto element : _pinSegments ) {
-      string            pinName  = element.first;
-      vector<Segment*>& segments = element.second;
-      vector<Segment*>  ongrids;
+    for ( auto element : _pinComponents ) {
+      string              pinName  = element.first;
+      vector<Component*>& segments = element.second;
+      vector<Segment*>    ongrids;
 
       if (segments.empty()) continue;
       

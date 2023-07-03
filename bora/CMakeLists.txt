@@ -18,9 +18,9 @@
  setup_boost(program_options)
  setup_qt()
  setup_qwt()
+ setup_python()
  
  find_package(Libexecinfo        REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(FLUTE              REQUIRED)

@@ -211,6 +211,7 @@ parser.add_option (       "--bfd"            , action="store_true" ,            
 parser.add_option (       "--openmp"         , action="store_true" ,                dest="openmp"         , help="Enable the use of OpenMP in Gcc." )
 parser.add_option (       "--ninja"          , action="store_true" ,                dest="ninja"          , help="Use Ninja instead of UNIX Makefile." )
 parser.add_option (       "--clang"          , action="store_true" ,                dest="clang"          , help="Force use of Clang C/C++ compiler instead of system default." )
+parser.add_option (       "--manylinux"      , action="store_true" ,                dest="manylinux"      , help="Build target is manylinux (PyPY)." )
 parser.add_option (       "--make"           , action="store"      , type="string", dest="makeArguments"  , help="Arguments to pass to make (ex: \"-j4 install\")." )
 parser.add_option (       "--project"        , action="append"     , type="string", dest="projects"       , help="The name of a project to build (may appears any number of time)." )
 parser.add_option ( "-t", "--tool"           , action="append"     , type="string", dest="tools"          , help="The name of a tool to build (may appears any number of time)." )
@@ -282,6 +283,7 @@ else:
         if options.llvmtoolset:                  builder.llvmtoolset       = options.llvmtoolset
         if options.bfd:                          builder.bfd               = "ON"
         if options.qt4:                          builder.qt4               = True
+        if options.manylinux:                    builder.manylinux         = True
         if options.openmp:                       builder.openmp            = True
         if options.makeArguments:                builder.makeArguments     = options.makeArguments
        #if options.svnMethod:                    builder.svnMethod         = options.svnMethod

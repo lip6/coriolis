@@ -32,8 +32,6 @@
                        -lutil
                       )
 
-    find_package (Python 3 COMPONENTS Interpreter Development.Module )
-
        add_definitions( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                         -DSYS_CONF_DIR="${SYS_CONF_DIR}"
                         -DPYTHON_SITE_PACKAGES="${PYTHON_SITE_PACKAGES}"

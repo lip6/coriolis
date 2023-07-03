@@ -14,11 +14,11 @@
  set_cmake_policies()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options)
+ setup_python()
  
  if (USE_LIBBFD)
    find_package(Libbfd)
  endif()
- find_package(Python 3             REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages   REQUIRED)
  find_package(HURRICANE            REQUIRED)
  find_package(CORIOLIS             REQUIRED)

@@ -14,10 +14,10 @@
  set_cmake_policies()
 #setup_apple()
  setup_boost(program_options)
+ setup_python()
  
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module )
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)

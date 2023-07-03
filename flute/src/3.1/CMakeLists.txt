@@ -6,7 +6,6 @@
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Python_INCLUDE_DIRS}
                       )
-      find_package (Python 3 COMPONENTS Interpreter Development.Module )
 
                    set( includes      flute.h
                                       dl.h
