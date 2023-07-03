@@ -7,6 +7,7 @@ if(NOT CMAKE_BUILD_PARALLEL_LEVEL)
     math(EXPR CMAKE_BUILD_PARALLEL_LEVEL "${Ncpu}-1")
 endif()
 
+set(USE_MANYLINUX ON)
 set(CORIOLIS_TMP_INSTALL_DIR  ${CMAKE_BINARY_DIR}/install)
 
 set(ENV{CORIOLIS_TOP} ${CORIOLIS_TMP_INSTALL_DIR})
@@ -20,6 +21,7 @@ cmake_minimum_required(VERSION ${CMAKE_VERSION})
 
 project(build_${target})
 
+set(USE_MANYLINUX ON)
 find_package(Python 3 REQUIRED COMPONENTS Interpreter Development.Module)
 
 set(POETRY TRUE) # this will prevent looking for python site-packages directory
