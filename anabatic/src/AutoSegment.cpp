@@ -3069,6 +3069,7 @@ namespace Anabatic {
     if (wPitch > 1) segment->setFlags( SegWide );
     if (source->canDrag() or target->canDrag()) segment->setFlags( SegDrag );
     if (dir & Flags::UseNonPref)  segment->setFlags( SegNonPref );
+    if (dir.contains(Flags::UseNonPref|Flags::OnVSmall)) segment->setFlags( SegOnVSmall );
 
     return segment;
   }

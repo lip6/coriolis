@@ -76,6 +76,16 @@ namespace {
         cdebug_tabw(159,-1);
         return;
       }
+
+      if (segment->isNonPrefOnVSmall()) {
+        cdebug_log(159,0) << "Infinite cost from (NonPref on VSmall): " << segment << endl;
+        cost.setInfinite   ();
+        cost.setOverlap    ();
+        cost.setHardOverlap();
+        cost.setBlockage   ();
+        cdebug_tabw(159,-1);
+        return;
+      }
     }
 
     if (cost.getInterval().getVMax() > intersect.getVMax()) cost.setLeftOverlap();
