@@ -11,6 +11,7 @@ from   coriolis.CRL             import AllianceFramework, Gds, LefImport, CellGa
                                        RoutingGauge, RoutingLayerGauge
 from   coriolis.helpers         import l, u, n, overlay, io, ndaTopDir
 from   coriolis.helpers.overlay import CfgCache, UpdateSession
+from   coriolis.Anabatic        import StyleFlags
 
 
 __all__ = [ "setup" ]
@@ -27,7 +28,7 @@ def _routing ():
     rg.setSymbolic( False )
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal1' )         # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , RoutingLayerGauge.Horizontal      # preferred routing direction
                                 , RoutingLayerGauge.PinOnly         # layer usage
                                 , 0                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -39,7 +40,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal2' )         # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , RoutingLayerGauge.Vertical        # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 1                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -48,10 +49,10 @@ def _routing ():
                                 , u(0.28)                           # wire width
                                 , u(0.28)                           # perpandicular wire width
                                 , u(0.26)                           # VIA side
-                                , u(0.0 ) ))                         # obstacle dW
+                                , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal3' )         # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , RoutingLayerGauge.Horizontal      # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 2                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -63,7 +64,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal4' )         # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , RoutingLayerGauge.Vertical        # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 3                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -75,7 +76,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal5' )         # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , RoutingLayerGauge.Horizontal      # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 4                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -87,7 +88,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'MetalTop' )       # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , RoutingLayerGauge.Vertical        # preferred routing direction
                                 , RoutingLayerGauge.PowerSupply     # layer usage
                                 , 5                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -161,7 +162,9 @@ def _routing ():
         cfg.anabatic.globalIterations = [ 1, 100 ]
         cfg.anabatic.gcell.displayMode = 1
         cfg.anabatic.gcell.displayMode = (("Boundary", 1), ("Density", 2))
-        cfg.katana.disableStackedVias = True
+        cfg.anabatic.netBuilderStyle = 'VH,3RL+'
+        cfg.anabatic.routingStyle = StyleFlags.VH
+        cfg.katana.disableStackedVias = False
         cfg.katana.hTracksReservedLocal = 4
         cfg.katana.hTracksReservedLocal = [0, 20]
         cfg.katana.vTracksReservedLocal = 3
