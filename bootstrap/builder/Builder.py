@@ -35,6 +35,7 @@ class Builder:
         self._noCache          = False
         self._ninja            = False
         self._clang            = False
+        self._manylinux        = False
         self._noSystemBoost    = False
         self._macports         = False
         self._devtoolset       = 0
@@ -62,6 +63,7 @@ class Builder:
         elif attribute == "noCache":          self._noCache          = value
         elif attribute == "ninja":            self._ninja            = value
         elif attribute == "clang":            self._clang            = value
+        elif attribute == "manylinux":        self._manylinux        = value
         elif attribute == "macports":
             self._macports = value
             if value: self._noSystemBoost = True
@@ -177,6 +179,7 @@ class Builder:
         if self._bfd:           command += [ "-D", "USE_LIBBFD:STRING=%s" % self._bfd ]
         if self._qt4:           command += [ "-D", "WITH_QT4:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
+        if self._manylinux:     command += [ "-D", "USE_MANYLINUX:STRING=TRUE" ]
         command += [ "-D", "CMAKE_BUILD_TYPE:STRING=%s"     % self.buildMode
                   #, "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir

@@ -10,7 +10,6 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
-      find_package (Python3 COMPONENTS Interpreter Development)
                    set( includes      etesian/Configuration.h
                                       etesian/Placement.h
                                       etesian/FeedCells.h

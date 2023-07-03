@@ -16,8 +16,8 @@
  set_cmake_policies()
  check_distribution()
  setup_sysconfdir( "${CMAKE_INSTALL_PREFIX}" )
+ setup_python()
 
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)

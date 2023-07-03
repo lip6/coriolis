@@ -1,7 +1,6 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/x2y> -*-
 
 
-   find_package(Python 3 REQUIRED COMPONENTS Interpreter Development)
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}

@@ -224,6 +224,20 @@ endif()
 
 
 #
+# Setup Python, select detection depending on USE_MANYLINUX.
+#
+ macro(setup_python)
+   set(pydevelArg "Development")
+ 
+   if (USE_MANYLINUX)
+     message(STATUS "Build for manylinux")
+     set(pydevelArg "Development.Module")
+   endif()
+  find_package(Python 3 REQUIRED COMPONENTS Interpreter ${pydevelArg} )
+ endmacro()
+
+
+#
 # Find Qt, the union of all the modules we need for the whole project.
 #
  macro(setup_qt)
