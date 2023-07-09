@@ -3,3 +3,4 @@
 #	url = git@github.com:Coloquinte/PlaceRoute.git
 	url = https://github.com/Coloquinte/PlaceRoute.git
 	branch = coriolis-submodule
+	update = merge
