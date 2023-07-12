@@ -22,7 +22,7 @@ The |git| repositories of all the components of the project:
 ================================  =======================================================
 Component                         Repository
 ================================  =======================================================
-|Alliance|                        https://gitlab.lip6.fr/vlsi-eda/alliance.git
-|Coriolis|                        https://gitlab.lip6.fr/vlsi-eda/coriolis.git
-:cb:`Alliance Check Toolkit`      https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git
+|Alliance|                        https://github.com/lip6/alliance.git
+|Coriolis|                        https://github.com/lip6/coriolis.git
+:cb:`Alliance Check Toolkit`      https://github.com/lip6/alliance-check-toolkit.git
 ================================  =======================================================

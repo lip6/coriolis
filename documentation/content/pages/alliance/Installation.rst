@@ -91,7 +91,7 @@ to rebuild |Alliance| from source. To perform this, be aware that you must
 have at least a basic knowlegde of how to build a C/C++ program from source.
 Sources are available through the following |git| repository: 
 
-    https://gitlab.lip6.fr/jpc/alliance.git
+    https://github.com/lip6/alliance.git
 
 The stable version is under the branch :cb:`master`, while the development
 is kept under :cb:`devel` (and will be merged into :cb:`master` from time
@@ -159,7 +159,7 @@ directory alongside with |Coriolis|.
    
       ego@home:~> mkdir -p coriolis-2.x/src
       ego@home:~> cd coriolis-2.x/src
-      ego@home:src> git clone https://gitlab.lip6.fr/jpc/alliance.git
+      ego@home:src> git clone https://github.com/lip6/alliance.git
 
 3. Compilation & installation. For that step, you can use the following shell
    script.
@@ -218,7 +218,7 @@ or ``/Linux.fc_64/`` (Fedora).
    
       ego@home:~> mkdir -p coriolis-2.x/src
       ego@home:~> cd coriolis-2.x/src
-      ego@home:src> git clone https://gitlab.lip6.fr/jpc/alliance.git
+      ego@home:src> git clone https://github.com/lip6/alliance.git
 
 3. Compilation & installation. For that step, you can use the following shell
    script.
