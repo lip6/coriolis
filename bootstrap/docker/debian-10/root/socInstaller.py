@@ -300,9 +300,9 @@ class Configuration ( object ):
         self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
         self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', ]
         self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
-        self._allianceRepo = 'https://gitlab.lip6.fr/jpc/alliance.git'
-        self._coriolisRepo = 'https://gitlab.lip6.fr/jpc/coriolis.git'
-        self._benchsRepo   = 'https://gitlab.lip6.fr/jpc/alliance-check-toolkit.git'
+        self._allianceRepo = 'https://github.com/lip6/alliance.git'
+        self._coriolisRepo = 'https://github.com/lip6/coriolis.git'
+        self._benchsRepo   = 'https://github.com/lip6/alliance-check-toolkit.git'
         self._homeDir      = os.environ['HOME']
         self._debugArg     = ''
         self._rmSource     = False
