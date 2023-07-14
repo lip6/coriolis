@@ -313,7 +313,7 @@ class Configuration ( object ):
     def __init__ ( self ):
         self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
         self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', ]
-        self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
+        self._supportRepos = [ 'https://github.com/Tencent/rapidjson.git' ]
         self._allianceRepo = 'https://gitlab.lip6.fr/jpc/alliance.git'
         self._coriolisRepo = 'https://gitlab.lip6.fr/jpc/coriolis.git'
         self._benchsRepo   = 'https://gitlab.lip6.fr/jpc/alliance-check-toolkit.git'
