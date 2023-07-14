@@ -118,6 +118,9 @@ Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Un
 {
   if (not _layer)
     throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
+
+  if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
+  if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
 Contact::Contact(Net* net, Component* anchor, const Layer* layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width, DbU::Unit height)
