@@ -82,6 +82,46 @@ def setupCMOS ( checkToolkit=None ):
             break
 
 
+def setupLCMOS ( checkToolkit=None ):
+    Where( checkToolkit )
+    ShellEnv().export()
+
+    from ..         import Cfg 
+    from ..         import Viewer
+    from ..         import CRL 
+    from ..helpers  import overlay, l, u, n
+    from .yosys     import Yosys
+    import coriolis.technos.symbolic.lcmos
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore              = False
+        cfg.misc.info                   = False
+        cfg.misc.paranoid               = False
+        cfg.misc.bug                    = False
+        cfg.misc.logMode                = True
+        cfg.misc.verboseLevel1          = True
+        cfg.misc.verboseLevel2          = True
+        cfg.misc.minTraceLevel          = 1900
+        cfg.misc.maxTraceLevel          = 3000
+        cfg.katana.eventsLimit          = 1000000
+        cfg.katana.termSatReservedLocal = 6 
+        cfg.katana.termSatThreshold     = 9 
+        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+        af  = CRL.AllianceFramework.get()
+        env = af.getEnvironment()
+        env.setCLOCK( '^ck$|m_clock|^clk$' )
+
+    Yosys.setLiberty( Where.checkToolkit / 'cells' / 'lsxlib' / 'lsxlib.lib' )
+    ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
+
+    path = None
+    for pathVar in [ 'PATH', 'path' ]:
+        if pathVar in os.environ:
+            path = os.environ[ pathVar ]
+            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
+            break
+
+
 def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
     from   ..        import Cfg 
     from   ..        import Viewer
