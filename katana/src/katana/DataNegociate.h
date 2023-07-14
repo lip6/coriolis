@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_DATA_NEGOCIATE_H
-#define  KATANA_DATA_NEGOCIATE_H
-
+#pragma  once
 #include <string>
 #include <iostream>
 
@@ -49,19 +47,18 @@ namespace Katana {
 
   class DataNegociate {
     public:
-      enum SlackState { RipupPerpandiculars    =  1
-                      , Minimize               =  2
-                      , Dogleg                 =  3
-                      , Slacken                =  4
-                      , ConflictSolveByHistory =  5
-                      , ConflictSolveByPlaceds =  6
-                      , LocalVsGlobal          =  7
-                      , MoveUp                 =  8
-                      , MaximumSlack           =  9
-                      , Unimplemented          = 10
-                      , Repair                 = 11
-                      , RepairFailed           = 12
-                      };
+      static const uint32_t RipupPerpandiculars    =  1;
+      static const uint32_t Minimize               =  2;
+      static const uint32_t Dogleg                 =  3;
+      static const uint32_t Slacken                =  4;
+      static const uint32_t ConflictSolveByHistory =  5;
+      static const uint32_t ConflictSolveByPlaceds =  6;
+      static const uint32_t LocalVsGlobal          =  7;
+      static const uint32_t MoveUp                 =  8;
+      static const uint32_t MaximumSlack           =  9;
+      static const uint32_t Unimplemented          = 10;
+      static const uint32_t Repair                 = 11;
+      static const uint32_t RepairFailed           = 12;
     public:
                                           DataNegociate         ( TrackElement* );
                                          ~DataNegociate         ();
@@ -77,6 +74,7 @@ namespace Katana {
       inline uint32_t                     getState              () const;
       inline uint32_t                     getStateCount         () const;
       inline uint32_t                     getRipupCount         () const;
+      inline uint32_t                     getSameRipup          () const;
       inline uint32_t                     getStateAndRipupCount () const;
              DbU::Unit                    getWiringDelta        ( DbU::Unit axis ) const;
       inline const vector<TrackElement*>& getPerpandiculars     () const;
@@ -89,6 +87,8 @@ namespace Katana {
       inline void                         decRipupCount         ();
       inline void                         resetRipupCount       ();
       inline void                         resetStateCount       ();
+      inline void                         resetSameRipup        ();
+      inline void                         incSameRipup          ();
              void                         update                ();
       static string                       getStateString        ( uint32_t state, unsigned int stateCount  );
       static string                       getStateString        ( DataNegociate* );
@@ -105,6 +105,7 @@ namespace Katana {
       unsigned int          _stateCount :  5;
       unsigned int          _terminals  :  5;
       unsigned int          _ripupCount : 16;
+      unsigned int          _sameRipup  :  8;
       DbU::Unit             _leftMinExtend;
       DbU::Unit             _rightMinExtend;
       vector<DbU::Unit>     _attractors;
@@ -126,6 +127,7 @@ namespace Katana {
   inline uint32_t                     DataNegociate::getState             () const { return _state; }
   inline uint32_t                     DataNegociate::getTerminals         () const { return _terminals; }
   inline uint32_t                     DataNegociate::getRipupCount        () const { return _ripupCount; }
+  inline uint32_t                     DataNegociate::getSameRipup         () const { return _sameRipup; }
   inline DbU::Unit                    DataNegociate::getLeftMinExtend     () const { return _leftMinExtend; }
   inline DbU::Unit                    DataNegociate::getRightMinExtend    () const { return _rightMinExtend; }
   inline Net*                         DataNegociate::getNet               () const { return _net; }
@@ -139,6 +141,8 @@ namespace Katana {
   inline void                         DataNegociate::incRipupCount        () { _ripupCount++; }
   inline void                         DataNegociate::decRipupCount        () { if (_ripupCount) _ripupCount--; }
   inline void                         DataNegociate::resetRipupCount      () { _ripupCount = 0; }
+  inline void                         DataNegociate::incSameRipup         () { _sameRipup++; }
+  inline void                         DataNegociate::resetSameRipup       () { _sameRipup = 0; }
   inline string                       DataNegociate::_getTypeName         () const { return "DataNegociate"; }
 
   inline void  DataNegociate::setState ( uint32_t state, Flags flags )
@@ -169,5 +173,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::DataNegociate);
-
-#endif  // KATANA_DATA_NEGOCIATE_H

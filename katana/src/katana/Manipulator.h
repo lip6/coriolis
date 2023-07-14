@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_MANIPULATOR_H
-#define  KATANA_MANIPULATOR_H
-
+#pragma  once
 #include "hurricane/DbU.h"
 #include "anabatic/Constants.h"
 
@@ -53,6 +51,8 @@ namespace Katana {
     public:
                                   Manipulator             ( TrackElement*, SegmentFsm& );
                                  ~Manipulator             ();
+             uint32_t             getLongWireUpThreshold1 () const;
+             double               getLongWireUpReserve1   () const;
       inline TrackElement*        getSegment              () const;
       inline DataNegociate*       getData                 () const;
       inline RoutingEvent*        getEvent                () const;
@@ -63,8 +63,11 @@ namespace Katana {
              bool                 isCaged                 ( DbU::Unit ) const;
              bool                 ripup                   ( uint32_t type, DbU::Unit axisHint=0 );
              bool                 ripupPerpandiculars     ( uint32_t flags=0 );
-             void                 repackPerpandiculars    ();
+             void                 repackPerpandiculars    ( uint32_t flags );
              void                 reprocessPerpandiculars ();
+             void                 reprocessParallels      ();
+             void                 avoidStackedVias        ( DbU::Unit axis );
+             bool                 avoidBlockage           ();
              bool                 ripple                  ();
              bool                 minimize                ();
              bool                 dragMinimize            ();
@@ -110,5 +113,3 @@ namespace Katana {
 
 
 }  // Katana namespace.
-
-#endif  // KATANA_MANIPULATOR_H

@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) UPMC 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./CellWidget.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -27,6 +27,7 @@
 #include <QBitmap>
 #include <QLabel>
 
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -369,7 +370,7 @@ namespace Hurricane {
   {
     _normalPen = pen;
     _linePen   = pen;
-    _linePen.setStyle( Qt::SolidLine );
+  //_linePen.setStyle( Qt::SolidLine );
 
 #if 0
   //#if (QT_VERSION == QT_VERSION_CHECK(4,8,5))
@@ -377,7 +378,7 @@ namespace Hurricane {
     _normalPen.setWidth( 2 );
     _linePen.setWidth( 2 );
 #else
-    _linePen.setWidth( 1 );
+  //    _linePen.setWidth( 1 );
 #endif
  
     if (_lineMode) painter().setPen( _linePen );
@@ -640,7 +641,8 @@ namespace Hurricane {
                                                 )
   {
     Box bbox = transformation.getBox(cell->getAbutmentBox());
-    _cellWidget->drawBox ( bbox );
+  //_cellWidget->drawBoxBorder( bbox );
+    _cellWidget->drawBox( bbox );
   }
 
 
@@ -674,7 +676,7 @@ namespace Hurricane {
       rectangle = _cellWidget->dbuToScreenRect( bb );
 
       if (component->isNonRectangle()) {
-        if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
+        if ( (rectangle.width() > 4) or (rectangle.height() > 4) ) {
           QPolygon contour;
           for ( Point point : component->getContour() )
             contour << _cellWidget->dbuToScreenPoint( transformation.getPoint(point) );
@@ -868,9 +870,12 @@ namespace Hurricane {
 
   void  CellWidget::TextDrawingQuery::masterCellCallback ()
   {
-    Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
-    if ( getDepth() == 2 )
-      _cellWidget->drawText ( Point(bbox.getXMin(),bbox.getYMin())
+    Box   bb        = getTransformation().getBox( getMasterCell()->getAbutmentBox() );
+    QRect rectangle = _cellWidget->dbuToScreenRect( bb );
+    if (   (getDepth() == 2)
+       and (rectangle.width () >    _cellWidget->getPixelThreshold())
+       and (rectangle.height() > 15*_cellWidget->getPixelThreshold()))
+      _cellWidget->drawText ( Point(bb.getXMin(),bb.getYMin())
                             , getString(getInstance()->getName()).c_str()
                             , Reverse|Top
                             , -90
@@ -916,16 +921,19 @@ namespace Hurricane {
   { clear (); }
 
 
-  SelectorCriterion* CellWidget::SelectorCriterions::add ( const Net* net )
+  SelectorCriterion* CellWidget::SelectorCriterions::add ( Occurrence hyperNetOcc )
   {
-    if ( _cellWidget == NULL ) return NULL;
-    if ( not _cellWidget->isSelected(Occurrence(net)) ) {
-      _criterions.push_back ( new NetSelectorCriterion(net) );
+    if (_cellWidget == NULL) return NULL;
+    if (not _cellWidget->isSelected(hyperNetOcc)) {
+      _criterions.push_back ( new NetSelectorCriterion(hyperNetOcc) );
     //_criterions.back()->doSelection ( _cellWidget );
       return _criterions.back();
     }
     for ( size_t i=0 ; i<_criterions.size() ; ++i ) {
-      if ( _criterions[i]->getNet() == net ) return _criterions[i];
+      if (not _criterions[i]->getNetOccurrence().getEntity())
+        continue;
+      if (_criterions[i]->getNetOccurrence() == hyperNetOcc)
+        return _criterions[i];
     }
     return NULL;
   }
@@ -944,19 +952,19 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::SelectorCriterions::remove (  const Net* net )
+  bool  CellWidget::SelectorCriterions::remove ( Occurrence netOccurrence )
   {
-    if ( _cellWidget == NULL ) return false;
-    if ( not _cellWidget->isSelected(Occurrence(net)) ) return false;
+    if (not _cellWidget) return false;
+    if (not _cellWidget->isSelected(netOccurrence)) return false;
 
     size_t i=0;
     for ( ; i<_criterions.size() ; i++ )
-      if ( _criterions[i]->getNet() == net ) break;
+      if (_criterions[i]->getNetOccurrence() == netOccurrence) break;
 
-    if ( i < _criterions.size() ) {
-      swap ( _criterions[i], *(_criterions.end()-1) );
+    if (i < _criterions.size()) {
+      swap( _criterions[i], *(_criterions.end()-1) );
     //_criterions.back()->undoSelection ( _cellWidget );
-      _criterions.pop_back ();
+      _criterions.pop_back();
     } else
       return false;
 
@@ -1078,16 +1086,16 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 350;
-
-
   CellWidget::CellWidget ( QWidget* parent )
     : QWidget               (parent)
     , _technology           (NULL)
     , _palette              (NULL)
-    , _screenArea           (0,0,_initialSide,_initialSide)
+    , _screenArea           ( 0, 0
+                            , Cfg::getParamInt("viewer.minimumSize",350)->asInt()
+                            , Cfg::getParamInt("viewer.minimumSize",350)->asInt() )
     , _redrawManager        (this)
-    , _drawingPlanes        (QSize(_initialSide,_initialSide),this)
+    , _drawingPlanes        (QSize(Cfg::getParamInt("viewer.minimumSize",350)->asInt()
+                                  ,Cfg::getParamInt("viewer.minimumSize",350)->asInt()),this)
     , _drawingQuery         (this)
     , _textDrawingQuery     (this)
     , _darkening            (DisplayStyle::HSVr())
@@ -1105,7 +1113,9 @@ namespace Hurricane {
     , _commands             ()
     , _redrawRectCount      (0)
     , _textFontHeight       (20)
+    , _pixelThreshold       (Cfg::getParamInt("viewer.pixelThreshold",50)->asInt())
   {
+  //cerr << "viewer.pixelThreshold=" << _pixelThreshold << endl;
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
     setAttribute     ( Qt::WA_OpaquePaintEvent );
@@ -1122,8 +1132,8 @@ namespace Hurricane {
     _textFontHeight = QFontMetrics(font).ascent();
 
     if (Graphics::isHighDpi()) {
-      resize( Graphics::toHighDpi(_initialSide)
-            , Graphics::toHighDpi(_initialSide) );
+      resize( Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",500)->asInt())
+            , Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",500)->asInt()) );
     }
   }
 
@@ -1175,6 +1185,13 @@ namespace Hurricane {
     }
   }
 
+
+  void  CellWidget::detach ( Selector* selector )
+  {
+    getSelectorSet().erase( selector );
+    emit unlinkSelector( selector );
+  }
+  
 
   void  CellWidget::bindCommand ( Command* command )
   {
@@ -1235,7 +1252,8 @@ namespace Hurricane {
 
   QSize  CellWidget::minimumSizeHint () const
   {
-    return QSize(Graphics::toHighDpi(_initialSide),Graphics::toHighDpi(_initialSide));
+    return QSize(Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt())
+                ,Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt()));
   }
 
 
@@ -1267,11 +1285,11 @@ namespace Hurricane {
 
   void  CellWidget::setShowSelection ( bool state )
   {
+  //cerr << "CellWidget::setShowSelection(): " << state << " vs. " << _state->showSelection() << endl;
     if ( state != _state->showSelection() ) {
       _state->setShowSelection ( state );
       _selectionHasChanged = false;
       refresh ();
-
       emit selectionModeChanged ();
     }
   }
@@ -1306,7 +1324,7 @@ namespace Hurricane {
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-  //cerr << "CellWidget::redraw() - start "
+  //cerr << "CellWidget::_redraw() - start "
   //     << _selectionHasChanged << " filter:"
   //     << _state->getQueryFilter() << endl;
 
@@ -1337,9 +1355,13 @@ namespace Hurricane {
       _drawingPlanes.painter().eraseRect    ( redrawArea );
 
       setDarkening( (_state->showSelection()) ? Graphics::getDarkening() : DisplayStyle::HSVr() );
+      if (isDrawable("grid")) drawGrid( redrawArea );
 
       if (getCell()) {
         Box redrawBox = screenToDbuBox( redrawArea );
+
+      //cerr << "redrawBox:" << redrawBox << endl;
+      //cerr << "Threshold:" << DbU::getValueString(screenToDbuLength(_pixelThreshold)) << endl;
 
         _drawingQuery.resetGoCount         ();
         _drawingQuery.resetExtensionGoCount();
@@ -1347,6 +1369,21 @@ namespace Hurricane {
         _drawingQuery.setExtensionMask     ( 0 );
         _drawingQuery.setArea              ( redrawBox );
         _drawingQuery.setTransformation    ( Transformation() );
+        _drawingQuery.setThreshold         ( screenToDbuLength(_pixelThreshold) );
+
+        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
+          if (isDrawable("boundaries")) {
+             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
+             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
+
+             _drawingQuery.setBasicLayer( NULL );
+             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
+                                                                |Query::DoRubbers
+                                                                |Query::DoMarkers
+                                                                |Query::DoExtensionGos) );
+             _drawingQuery.doQuery      ();
+          }
+        }
 
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );
@@ -1368,20 +1405,7 @@ namespace Hurricane {
         //if ( timeout("redraw [layer]",timer,10.0,timedout) ) break;
         }
 
-        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
-          if (isDrawable("boundaries")) {
-             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
-             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
-
-             _drawingQuery.setBasicLayer( NULL );
-             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
-                                                                |Query::DoRubbers
-                                                                |Query::DoMarkers
-                                                                |Query::DoExtensionGos) );
-             _drawingQuery.doQuery      ();
-          }
-        }
-
+        _drawingQuery.setStopLevel( _state->getStartLevel() + 1 );
         if ( /*not timeout("redraw [markers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("text.reference") ) {
              _drawingPlanes.setPen  ( Graphics::getPen  ("text.reference",getDarkening()) );
@@ -1439,13 +1463,13 @@ namespace Hurricane {
             _drawingQuery.doQuery           ();
           }
         }
+        _drawingQuery.setStopLevel( _state->getStopLevel() );
       }
 
       _drawingPlanes.end();
       _cellModificated = false;
     }
 
-    if (isDrawable("grid"))       drawGrid  ( redrawArea );
     if (isDrawable("text.ruler")) drawRulers( redrawArea );
 
     setDarkening( 100 );
@@ -1492,28 +1516,29 @@ namespace Hurricane {
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
 
-    if ( getCell() ) {
-      Box                    redrawBox = screenToDbuBox ( redrawArea );
+    if (getCell()) {
+      Box                    redrawBox = screenToDbuBox( redrawArea );
       SelectorSet::iterator  iselector;
 
-      forEach ( BasicLayer*, basicLayer, _technology->getBasicLayers() ) {
+      for ( BasicLayer* basicLayer : _technology->getBasicLayers() ) {
       //if ( !isDrawableLayer(basicLayer->getName()) ) continue;
 
         _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
         _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
-        iselector = _selectors.begin();
-        for ( ; iselector != _selectors.end() ; iselector++ ) {
-          Occurrence occurrence = (*iselector)->getOccurrence();
-          Component* component  = dynamic_cast<Component*>(occurrence.getEntity());
+        for ( Selector* selector : _selectors ) {
+          if (not selector->isSelected(this)) continue;
+          
+          Occurrence occurrence = selector->getOccurrence();
+          Component* component  = dynamic_cast<Component*>( occurrence.getEntity() );
 
-          if ( component == NULL ) continue;
-          if ( not component->getLayer() ) continue;
-          if ( not component->getLayer()->contains(*basicLayer) ) continue;
+          if (not component) continue;
+          if (not component->getLayer()) continue;
+          if (not component->getLayer()->contains(basicLayer)) continue;
 
           Transformation  transformation = occurrence.getPath().getTransformation();
           _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
-                               , *basicLayer
+                               , basicLayer
                                , redrawBox
                                , transformation
                                );
@@ -1523,52 +1548,55 @@ namespace Hurricane {
       _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
       _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence  occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence  occurrence = selector->getOccurrence();
         Instance*   instance   = dynamic_cast<Instance*>(occurrence.getEntity());
-        if ( instance ) {
+        if (instance) {
           Transformation  transformation
             = occurrence.getPath().getTransformation().getTransformation(instance->getTransformation());
-          _drawingQuery.drawMasterCell ( instance->getMasterCell(), transformation );
+          _drawingQuery.drawMasterCell( instance->getMasterCell(), transformation );
         }
       }
 
-      _drawingPlanes.setPen   ( Graphics::getPen  ("rubber") );
-      _drawingPlanes.setBrush ( Graphics::getBrush("rubber") );
+      _drawingPlanes.setPen  ( Graphics::getPen  ("rubber") );
+      _drawingPlanes.setBrush( Graphics::getBrush("rubber") );
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence occurrence = selector->getOccurrence();
         Rubber*    rubber     = dynamic_cast<Rubber*>(occurrence.getEntity());
 
-        if ( rubber == NULL ) continue;
+        if (not rubber) continue;
 
         Transformation  transformation = occurrence.getPath().getTransformation();
-        _drawingQuery.drawRubber ( rubber, redrawBox, transformation );
+        _drawingQuery.drawRubber( rubber, redrawBox, transformation );
       }
 
       Name extensionName = "";
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence   occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence   occurrence = selector->getOccurrence();
         ExtensionGo* eGo        = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
 
-        if ( eGo == NULL ) continue;
+        if (not eGo) continue;
 
         Transformation transformation = occurrence.getPath().getTransformation();
-        if ( eGo->getName() != extensionName ) {
+        if (eGo->getName() != extensionName) {
           extensionName = eGo->getName();
-          _drawingQuery.setDrawExtensionGo ( extensionName );
+          _drawingQuery.setDrawExtensionGo( extensionName );
         }
 
-        if ( isDrawable(extensionName) )
-          _drawingQuery.drawExtensionGo ( this, eGo, NULL, redrawBox, transformation );
+        if (isDrawable(extensionName))
+          _drawingQuery.drawExtensionGo( this, eGo, NULL, redrawBox, transformation );
       }
     }
 
-    _drawingPlanes.end ();
+    _drawingPlanes.end();
     _selectionHasChanged = false;
   }
 
@@ -1591,10 +1619,10 @@ namespace Hurricane {
   {
     PaletteItem* item  = (_palette) ? _palette->find(name) : NULL;
   //DbU::Unit    unity = symbolicMode() ? DbU::lambda(1.0) : DbU::grid(10.0);
-    DbU::Unit    unity = DbU::lambda(1.0);
+  //DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
-    return item->isItemVisible() and (Graphics::getThreshold(name) < getScale()*unity);
+    return item->isItemVisible(); //and (Graphics::getThreshold(name) < getScale()*unity);
   }
 
 
@@ -1610,10 +1638,10 @@ namespace Hurricane {
   bool  CellWidget::isDrawableExtension ( const Name& extensionName )
   {
     PaletteItem* item  = (_palette) ? _palette->find(extensionName) : NULL;
-    DbU::Unit    unity = DbU::lambda(1.0);
+  //DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
-    return item->isItemVisible() and (Graphics::getThreshold(extensionName) < getScale()*unity);
+    return item->isItemVisible(); // and (Graphics::getThreshold(extensionName) < getScale()*unity);
   }
 
 
@@ -1653,6 +1681,15 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::drawBoxBorder ( const Box& box )
+  {
+    drawLine( box.getXMin(), box.getYMin(), box.getXMin(), box.getYMax(), true );
+    drawLine( box.getXMin(), box.getYMax(), box.getXMax(), box.getYMax(), true );
+    drawLine( box.getXMax(), box.getYMax(), box.getXMax(), box.getYMin(), true );
+    drawLine( box.getXMax(), box.getYMin(), box.getXMin(), box.getYMin(), true );
+  }
+
+
   void  CellWidget::drawText ( const Point& point, const char* text, unsigned int flags, int angle )
   {
     drawDisplayText ( dbuToScreenPoint(point), text, flags, angle );
@@ -1666,7 +1703,7 @@ namespace Hurricane {
     if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
-    int          width   = metrics.width  ( text );
+    int          width   = metrics.width( text );
   //int          height  = metrics.height ();
     int          angle   = 0;
 
@@ -1792,55 +1829,91 @@ namespace Hurricane {
 
   bool  CellWidget::_underDetailedGridThreshold () const
   {
-    if ( symbolicMode() )
-      return Graphics::getThreshold("grid")/DbU::lambda(1.0) < getScale()/5;
-    return Graphics::getThreshold("grid")/DbU::grid(10.0) < getScale()/5;
+    // if (symbolicMode()) return 5*Graphics::getThreshold("grid")/DbU::getSymbolicSnapGridStep() < getScale();
+    // if (physicalMode()) return 5*Graphics::getThreshold("grid")/DbU::getRealSnapGridStep() < getScale();
+    // return 5*Graphics::getThreshold("grid")/DbU::grid(10.0) < getScale();
+    DbU::Unit  gridLength = 0;
+    if      (symbolicMode()) gridLength =    DbU::getSymbolicSnapGridStep();
+    else if (physicalMode()) gridLength = 10*DbU::getRealSnapGridStep();
+    else                     gridLength = 10*DbU::fromGrid(1.0);
+    double pixelLength = dbuToScreenLength( gridLength );
+    return pixelLength > 50;
   }
 
 
   void  CellWidget::drawGrid ( QRect redrawArea )
   {
-    _drawingPlanes.select  ( PlaneId::Normal );
-    _drawingPlanes.begin   ();
-    _drawingPlanes.painter ().setClipRect   ( redrawArea );
-    _drawingPlanes.painter ().setPen ( Graphics::getPen("grid") );
+    // _drawingPlanes.select ( PlaneId::Normal );
+    // _drawingPlanes.begin  ();
+    // _drawingPlanes.painter().setClipRect( redrawArea );
+    QPen pen = Graphics::getPen( ("grid"), getDarkening() );
+    pen.setStyle( Qt::DashLine );
+    _drawingPlanes.setPen  ( pen );
+  //_drawingPlanes.setPen  ( Graphics::getPen  (("grid"), getDarkening() ));
+    _drawingPlanes.setBrush( Graphics::getBrush(("grid"), getDarkening() ));
 
-    Box redrawBox = screenToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
+    Box  redrawBox    = screenToDbuBox( redrawArea ).inflate( DbU::lambda(1.0) );
+  //bool detailedGrid = _underDetailedGridThreshold();
 
-    bool detailedGrid = _underDetailedGridThreshold();
+    DbU::Unit  longerSide = std::max( _screenArea.getWidth(), _screenArea.getHeight() );
+    double     scale      = std::pow( 10.0
+                                    , std::max( 1.0
+                                              , std::floor( std::log10( longerSide / _snapGridStep() ))));
 
-    DbU::Unit  gridStep      = _snapGridStep();
-    DbU::Unit  superGridStep = gridStep*5;
+  //DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
+    DbU::Unit  superGridStep = _snapGridStep() * scale;
     DbU::Unit  xGrid;
     DbU::Unit  yGrid;
     QPoint     center;
+  //cerr << "scale=" << scale << " superGridstep=" << DbU::getValueString(superGridStep) << endl;
 
-    for ( yGrid = _onSnapGrid(redrawBox.getYMin())
+#if 0
+    cerr << "CellWidget::drawGrid() step:" << DbU::getValueString(gridStep)
+         << " superStep:" << DbU::getValueString(superGridStep)
+         << " pixels:" << dbuToScreenLength(gridStep)
+         << " draw:" << detailedGrid << endl;
+
+    for ( yGrid = DbU::getOnCustomGrid(redrawBox.getYMin(),gridStep,DbU::SnapMode::Superior)
         ; yGrid < redrawBox.getYMax()
         ; yGrid += gridStep
         ) {
-      for ( xGrid = _onSnapGrid(redrawBox.getXMin())
+      for ( xGrid = DbU::getOnCustomGrid(redrawBox.getXMin(),gridStep,DbU::SnapMode::Superior)
           ; xGrid < redrawBox.getXMax()
           ; xGrid += gridStep
           ) {
-        center = dbuToScreenPoint(xGrid,yGrid);
-        if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
-          if ( detailedGrid ) {
-            _drawingPlanes.painter().drawPoint ( center );
+        center = dbuToScreenPoint( xGrid, yGrid );
+        if ( (xGrid % superGridStep) or (yGrid % superGridStep) ) {
+          if (detailedGrid) {
+            _drawingPlanes.painter().drawPoint( center );
           }
         } else {
-          if ( detailedGrid ) {
-            _drawingPlanes.painter().drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-            _drawingPlanes.painter().drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+          if (detailedGrid) {
+            _drawingPlanes.painter().drawLine( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter().drawLine( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
-            _drawingPlanes.painter().drawPoint ( center );
+            _drawingPlanes.painter().drawPoint( center );
           }
         }
       }
     }
+#endif
 
-    _drawingPlanes.copyToSelect ( redrawArea );
-    _drawingPlanes.end          ();
+    for ( xGrid = DbU::getOnCustomGrid(redrawBox.getXMin(),superGridStep,DbU::SnapMode::Superior)
+        ; xGrid < redrawBox.getXMax()
+        ; xGrid += superGridStep
+        ) {
+      drawLine( Point(xGrid,redrawBox.getYMin()), Point(xGrid,redrawBox.getYMax()) );
+    }
+
+    for ( yGrid = DbU::getOnCustomGrid(redrawBox.getYMin(),superGridStep,DbU::SnapMode::Superior)
+        ; yGrid < redrawBox.getYMax()
+        ; yGrid += superGridStep
+        ) {
+      drawLine( Point(redrawBox.getXMin(),yGrid), Point(redrawBox.getXMax(),yGrid) );
+    }
+
+    // _drawingPlanes.copyToSelect( redrawArea );
+    // _drawingPlanes.end         ();
   }
 
 
@@ -1870,7 +1943,7 @@ namespace Hurricane {
   {
     QFont        font          = Graphics::getNormalFont();
     QFontMetrics metrics       = QFontMetrics(font);
-    int          tickLength    = metrics.width ( "+00000u" );
+    int          tickLength    = metrics.width( "+00000u" );
     Point        origin        = ruler->getOrigin    ();
     Point        extremity     = ruler->getExtremity ();
     Point        angle         = ruler->getAngle     ();
@@ -2488,6 +2561,7 @@ namespace Hurricane {
     openRefreshSession();
 
     shared_ptr<State>  state ( new State(cell,topPath) );
+    state->setDbuMode( getDbuMode() );
     setState( state, flags );
     if ( cell and cell->isTerminal() ) setQueryFilter( ~0 );
   //setRealMode ();
@@ -2544,29 +2618,30 @@ namespace Hurricane {
 
   Occurrences  CellWidget::getOccurrencesUnder ( const Box& area ) const
   {
-    return getCell()->getOccurrencesUnder(area,3).getSubSet(Occurrences_IsSelectable(this));
+    return getCell()->getOccurrencesUnder( area, 3, screenToDbuLength(_pixelThreshold) ) \
+                      .getSubSet( Occurrences_IsSelectable(this) );
   }
 
 
   bool  CellWidget::isSelected ( Occurrence occurrence )
   {
-	if ( !occurrence.isValid() )
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+    if (not occurrence.isValid())
+      throw Error( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(getCell()) );
-      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s"
-                  , s1.c_str(), s2.c_str() );
+    if (occurrence.getOwnerCell() != getCell()) {
+      string s1 = Graphics::toHtml( getString(getCell()) );
+      string s2 = Graphics::toHtml( getString(occurrence.getOwnerCell()) );
+      throw Error( "Can't select occurrence : incompatible occurrence %s vs. %s"
+                 , s1.c_str(), s2.c_str() );
     }
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
-	if ( !property )
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
+	if (not property)
       return false;
 
     Selector* selector = dynamic_cast<Selector*>(property);
     if ( !selector )
-      throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      throw Error( "Abnormal property named " + getString(Selector::getPropertyName()) );
 
 	return selector->isAttachedTo(this);
   }
@@ -2589,9 +2664,9 @@ namespace Hurricane {
   void  CellWidget::selectOccurrencesUnder ( Box selectArea )
   {
     if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
-      openRefreshSession ();
-      unselectAll ();
-      closeRefreshSession ();
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
     }
 
     bool               selected  = true;
@@ -2603,46 +2678,129 @@ namespace Hurricane {
     //  cerr << "Selecting: " << occurrence << endl;
     //}
 
-      forEach ( Occurrence, ioccurrence, getOccurrencesUnder(selectArea) )
-        select ( *ioccurrence );
+      for ( Occurrence occurrence : getOccurrencesUnder(selectArea) )
+        select( occurrence );
     } else
       selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged(_selectors);
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::selectSet ( const ComponentSet& components )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( Component* component : components ) {
+      if (component->getCell() == getCell()) {
+        select( Occurrence( component ));
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::selectSet ( const OccurrenceSet& occurrences )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        select( occurrence );
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::select ( Occurrences occurrences )
+  {
+    if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
+    }
+
+    bool               selected  = true;
+    // SelectorCriterion* criterion = _state->getSelection().add ( selectArea );
+    // if ( criterion and (not criterion->isEnabled()) ) {
+    //   criterion->enable();
+
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        select( occurrence );
+      }
+    }
+    // } else
+    //   selected = false;
+
+    if ( (--_delaySelectionChanged == 0) and selected )
+      emit selectionChanged( _selectors );
   }
 
 
   void  CellWidget::select ( Occurrence occurrence )
   {
     if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
-      openRefreshSession ();
-      unselectAll ();
-      closeRefreshSession ();
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
     }
 
-	if ( not occurrence.isValid() )
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+	if (not occurrence.isValid())
+      throw Error( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(getCell()) );
-      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
-                  , s1.c_str(), s2.c_str() );
+	if (occurrence.getOwnerCell() != getCell()) {
+      string s1 = Graphics::toHtml( getString(getCell()) );
+      string s2 = Graphics::toHtml( getString(occurrence.getOwnerCell()) );
+      throw Error( "Can't select occurrence : incompatible occurrence %s vs. %s" 
+                 , s1.c_str(), s2.c_str() );
     }
 
     bool       selected = true;
-    const Net* net      = dynamic_cast<const Net*>(occurrence.getEntity());
-    if ( net ) {
-      SelectorCriterion* criterion = _state->getSelection().add ( net );
+    const Net* net      = dynamic_cast<const Net*>( occurrence.getEntity() );
+    if (net) {
+      SelectorCriterion* criterion = _state->getSelection().add( occurrence );
       if ( criterion and (not criterion->isEnabled()) ) {
-        criterion->enable ();
-        forEach ( Component*, component, net->getComponents() ) {
-          Occurrence occurrence ( *component );
-          select ( occurrence );
-        }
-        forEach ( Rubber*, irubber, net->getRubbers() ) {
-          Occurrence occurrence ( *irubber );
-          select ( occurrence );
+        criterion->enable();
+        HyperNet hyperNet ( occurrence );
+        for ( Occurrence netOcc : hyperNet.getNetOccurrences() ) {
+          Net* subNet = static_cast<Net*>( netOcc.getEntity() );
+          for ( Component* component : subNet->getComponents() ) {
+            Occurrence occurrence ( component, netOcc.getPath() );
+            select( occurrence );
+          }
+          for ( Rubber* rubber : subNet->getRubbers() ) {
+            Occurrence occurrence ( rubber, netOcc.getPath() );
+            select( occurrence );
+          }
         }
       } else
         selected = false;
@@ -2654,18 +2812,18 @@ namespace Hurricane {
       selector = Selector::create ( occurrence );
 	else {
       selector = dynamic_cast<Selector*>(property);
-      if ( not selector )
+      if (not selector)
         throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
     }
 
-	selector->attachTo(this);
+	selector->attachTo( this );
 
-    setShowSelection ( true );
+  //setShowSelection( true );
     _selectionHasChanged = true;
 
     if ( (--_delaySelectionChanged == 0) and selected ) {
       if ( _state->showSelection() ) _redrawManager.refresh ();
-      emit selectionChanged(_selectors);
+        emit selectionChanged(_selectors);
     }
   }
 
@@ -2681,29 +2839,69 @@ namespace Hurricane {
 
   void  CellWidget::unselect ( Occurrence occurrence )
   {
-	if ( not occurrence.isValid() )
+	if (not occurrence.isValid())
 		throw Error ( "Can't unselect occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() )
+	if (occurrence.getOwnerCell() != getCell())
 		throw Error ( "Can't unselect occurrence : incompatible occurrence" );
 
     bool       unselected = true;
     const Net* net        = dynamic_cast<const Net*>(occurrence.getEntity());
-    if ( net ) {
-      unselected = _state->getSelection().remove ( net );
+    if (net) {
+      unselected = _state->getSelection().remove( occurrence );
     }
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
-	if ( property ) {
-      Selector* selector = dynamic_cast<Selector*>(property);
-      if ( not selector )
-        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
+	if (property) {
+      Selector* selector = dynamic_cast<Selector*>( property );
+      if (not selector)
+        throw Error( "Abnormal property named " + getString(Selector::getPropertyName()) );
 
-      selector->detachFrom(this);
+      selector->detachFrom( this );
     }
 
     _selectionHasChanged = true;
-    if ( (_delaySelectionChanged == 0) and unselected ) emit selectionChanged(_selectors);
+    if ( (_delaySelectionChanged == 0) and unselected )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselectSet ( const ComponentSet& components )
+  {
+    ++_delaySelectionChanged;
+    for ( Component* component : components ) {
+      if (component->getCell() == getCell()) {
+        unselect( Occurrence( component ));
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselectSet ( const OccurrenceSet& occurrences )
+  {
+    ++_delaySelectionChanged;
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        unselect( occurrence );
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
+  }
+
+
+  void  CellWidget::unselect ( Occurrences occurrences )
+  {
+    ++_delaySelectionChanged;
+    for ( const Occurrence& occurrence : occurrences ) {
+      if (occurrence.getOwnerCell() == getCell()) {
+        unselect( occurrence );
+      }
+    }
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged( _selectors );
   }
 
 
@@ -2714,56 +2912,61 @@ namespace Hurricane {
     _state->getSelection().clear ();
     _unselectAll ();
 
-    if ( --_delaySelectionChanged == 0 ) emit selectionChanged(_selectors);
+    if ( --_delaySelectionChanged == 0 )
+      emit selectionChanged(_selectors);
   }
 
 
   void  CellWidget::toggleSelection ( Occurrence occurrence )
   {
-	if ( not occurrence.isValid() )
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+	if (not occurrence.isValid())
+      throw Error( "CellWidget::toggleSelection(): Unable to select invalid occurrence." );
 
 	if ( occurrence.getOwnerCell() != getCell() )
-      throw Error ( "Can't select occurrence : incompatible occurrence" );
+      throw Error( "CellWidget::toggleSelection(): Occurrence do not belong to the loaded cell." );
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
     Selector* selector = NULL;
-	if ( not property ) {
+	if (not property) {
     // Net special case.
-      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
-      if ( net ) {
-        if ( occurrence.getPath().isEmpty() ) {
-          select ( net );
+      Net* net = dynamic_cast<Net*>( occurrence.getEntity() );
+      if (net) {
+        if (occurrence.getPath().isEmpty()) {
+          select( net );
         } else {
-          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+          cerr << "CellWidget::toggleSelection(): Selection of " << occurrence
+               << " is not implemented." << endl;
         }
       } else {
-        selector = Selector::create ( occurrence );
-        selector->attachTo ( this );
-        setShowSelection ( true );
+        selector = Selector::create( occurrence );
+        selector->attachTo( this );
+        setShowSelection( true );
       }
 	} else {
-      selector = dynamic_cast<Selector*>(property);
-      if ( !selector )
-        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      selector = dynamic_cast<Selector*>( property );
+      if (not selector)
+        throw Error( "CellWidget::toggleSelection(): Abnormal property named "
+                   + getString(Selector::getPropertyName()) + " in place of Selector." );
 
     // Net special case.
-      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
-      if ( net ) {
-        if ( occurrence.getPath().isEmpty() ) {
-          unselect ( net );
+      Net* net = dynamic_cast<Net*>( occurrence.getEntity() );
+      if (net) {
+        if (occurrence.getPath().isEmpty()) {
+          unselect( net );
         } else {
-          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+          cerr << "CellWidget::toggleSelection(): Selection of " << occurrence
+               << " is not implemented." << endl;
         }
       } else {
-        selector->detachFrom ( this );
+        if (not selector->isToggleByController(this))
+          selector->detachFrom( this );
       }
     }
 
     _selectionHasChanged = true;
-    if ( _state->showSelection() ) _redrawManager.refresh ();
+    if (_state->showSelection()) _redrawManager.refresh ();
 
-    emit selectionToggled ( occurrence );
+    emit selectionToggled( selector );
   }
 
 
@@ -2807,11 +3010,11 @@ namespace Hurricane {
   void  CellWidget::_unselectAll ()
   {
     SelectorSet::iterator iselector;
-    while ( !_selectors.empty() )
-      (*_selectors.begin())->detachFrom ( this );
+    while ( not _selectors.empty() )
+      (*_selectors.begin())->detachFrom( this );
 
-    if ( !_selectionHasChanged ) _selectionHasChanged = true;
-    if ( _state->showSelection() ) _redrawManager.refresh ();
+    if (not _selectionHasChanged) _selectionHasChanged = true;
+    if (_state->showSelection()) _redrawManager.refresh ();
   }
 
 

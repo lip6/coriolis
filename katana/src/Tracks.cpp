@@ -43,7 +43,8 @@ namespace Katana {
 
     _track = routingPlane->getTrackByPosition ( _constraints.getVMin() );
     cdebug_log(155,0) << "* Nearest track: " << _track << endl;;
-    cdebug_log(155,0) << "* axis:" << _track->getAxis() << " vmin:" << _constraints.getVMin() << endl;
+    cdebug_log(155,0) << "* axis:" << ((_track) ? DbU::getValueString(_track->getAxis()) : string("None"))
+                      << " vmin:" << _constraints.getVMin() << endl;
 
     if ( _track and (_track->getAxis() < _constraints.getVMin()) ) _track = _track->getNextTrack();
     if ( _track and (_track->getAxis() > _constraints.getVMax()) ) _track = NULL;

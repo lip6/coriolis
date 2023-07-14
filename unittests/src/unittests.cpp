@@ -19,11 +19,11 @@ namespace Hurricane {
 
 }
 
-INSPECTOR_PV_SUPPORT(Hurricane::RbInterval);
-INSPECTOR_PV_SUPPORT(Hurricane::RbInterval::Node);
-INSPECTOR_PV_SUPPORT(Hurricane::IntvString);
-INSPECTOR_PV_SUPPORT(Hurricane::IntervalTreeString);
-INSPECTOR_PV_SUPPORT(Hurricane::IntervalTreeString::Node);
+INSPECTOR_PR_SUPPORT(Hurricane::RbInterval);
+INSPECTOR_PR_SUPPORT(Hurricane::RbInterval::Node);
+INSPECTOR_PR_SUPPORT(Hurricane::IntvString);
+INSPECTOR_PR_SUPPORT(Hurricane::IntervalTreeString);
+INSPECTOR_PR_SUPPORT(Hurricane::IntervalTreeString::Node);
 
 using namespace std;
 using namespace Hurricane;
@@ -65,6 +65,7 @@ namespace {
       cerr << endl << endl;
     }
 
+    rb.remove( Interval( l(3), l(4) ));
     rb.write( "finalRbTree.gv" );
 
     for ( Interval intv : rb.getElements() ) {
@@ -100,6 +101,7 @@ namespace {
       cerr << endl << endl;
     }
 
+    itree.remove( IntvString( "a", l(3), l(4) ));
     itree.write( "finalIntervalTree.gv" );
 
     for ( IntervalData<string> intv : itree.getElements() ) {

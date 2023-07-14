@@ -1,0 +1,603 @@
+.TH "TrackElement" 3 "Sun Nov 21 2021" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TrackElement \- Abstract Class for all Elements inserted inside a \fBTrack\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBTrackFixedSegment\fP, and \fBTrackSegment\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual bool \fBisFixed\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisHorizontal\fP () const =0"
+.br
+.ti -1c
+.RI "virtual bool \fBisVertical\fP () const =0"
+.br
+.ti -1c
+.RI "virtual bool \fBisLocal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisGlobal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisBipoint\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisTerminal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisStrap\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisSlackened\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisDogleg\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisCreated\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisInvalidated\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisBlockage\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisLocked\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisRouted\fP () const"
+.br
+.ti -1c
+.RI "bool \fBhasSourceDogleg\fP () const"
+.br
+.ti -1c
+.RI "bool \fBhasTargetDogleg\fP () const"
+.br
+.ti -1c
+.RI "bool \fBcanRipple\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP (\fBInterval\fP)"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP (\fBKatabatic::GCell\fP *, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "virtual unsigned long \fBgetId\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDirection\fP () const =0"
+.br
+.ti -1c
+.RI "virtual \fBNet\fP * \fBgetNet\fP () const =0"
+.br
+.ti -1c
+.RI "virtual const \fBLayer\fP * \fBgetLayer\fP () const =0"
+.br
+.ti -1c
+.RI "\fBTrack\fP * \fBgetTrack\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBgetIndex\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned long \fBgetFreedomDegree\fP () const"
+.br
+.ti -1c
+.RI "virtual float \fBgetMaxUnderDensity\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "\fBBox\fP \fBgetBoundingBox\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetNext\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetPrevious\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetAxis\fP () const =0"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetSourceU\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetTargetU\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetLength\fP () const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetCanonicalInterval\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetFreeInterval\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetSourceConstraints\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetTargetConstraints\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDataNegociate\fP * \fBgetDataNegociate\fP (unsigned int flags=\fBKtDataSelf\fP) const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetCanonical\fP (\fBInterval\fP &)"
+.br
+.ti -1c
+.RI "virtual size_t \fBgetGCells\fP (Katabatic::GCellVector &) const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetParent\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDoglegLevel\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetSourceDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetTargetDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual TrackElements \fBgetPerpandiculars\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetFlags\fP (unsigned int)"
+.br
+.ti -1c
+.RI "void \fBunsetFlags\fP (unsigned int)"
+.br
+.ti -1c
+.RI "virtual void \fBsetTrack\fP (\fBTrack\fP *)"
+.br
+.ti -1c
+.RI "void \fBsetIndex\fP (size_t)"
+.br
+.ti -1c
+.RI "virtual void \fBupdateFreedomDegree\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBsetDoglegLevel\fP (unsigned int)"
+.br
+.ti -1c
+.RI "virtual void \fBswapTrack\fP (\fBTrackElement\fP *)"
+.br
+.ti -1c
+.RI "virtual void \fBreschedule\fP (unsigned int level)"
+.br
+.ti -1c
+.RI "virtual void \fBdetach\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBinvalidate\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBrevalidate\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBincOverlapCost\fP (\fBNet\fP *, TrackCost &) const"
+.br
+.ti -1c
+.RI "virtual void \fBsetAxis\fP (\fBDbU::Unit\fP, unsigned int flags=Katabatic::SegAxisSet)"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBmakeDogleg\fP ()"
+.br
+.ti -1c
+.RI "bool \fBmakeDogleg\fP (\fBKatabatic::GCell\fP *)"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBmakeDogleg\fP (\fBInterval\fP, unsigned int &flags)"
+.br
+.ti -1c
+.RI "virtual bool \fB_check\fP () const"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBSegmentOverlapCostCB\fP * \fBsetOverlapCostCB\fP (\fBSegmentOverlapCostCB\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Abstract Class for all Elements inserted inside a \fBTrack\fP\&. 
+
+
+.SH "TrackElement Abstract"
+.PP
+The \fBTrackElement\fP class is abstract and is used as base class for any element that can be inserted in a \fBTrack\fP\&. It represent the footprint of that element inside the \fBTrack\fP (an interval)\&. Additionnaly it keep a pointer to the \fBTrack\fP and it's index inside it (\fBTrack\fP is implemented with a \fCvector<>\fP)\&.
+.PP
+To avoid some explicit dynamic cast later, it provides a default implementation for almost all the methods that will be present in all the derived classes\&. All default methods return \fCfalse\fP, \fCNULL\fP or \fC0\fP (\fIzero\fP) or whatever is appropriated to tell it is not meaningful\&.
+.PP
+\fBDesign Note\fP
+.PP
+\fBTrackElement\fP has been designed to serve as a base class for \fBTrackSegment\fP and \fBTrackMarker\fP\&. But, in the end, those two classes have been put in separated vectors inside the \fBTrack\fP, thus rendering this design choice less pertinent\&. We keep it for now because we may introduce other object than \fBTrackSegment\fP inside a \fBTrack\fP\&. If the need do not arise, we may merge back \fBTrackElement\fP and \fBTrackSegment\fP\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBSegmentOverlapCostCB\fP * setOverlapCostCB (\fBSegmentOverlapCostCB\fP * cb)\fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcb\fP the new overlap cost callback\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+the previous overlap cost callback\&.
+.RE
+.PP
+sets the overlap callback\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+.SS "bool isFixed () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isFixed()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by SegmentFsm::addAction(), SegmentFsm::conflictSolveByPlaceds(), NegociateWindow::createTrackSegment(), SegmentFsm::desaturate(), SegmentAction::doAction(), Manipulator::forceOverLocals(), Manipulator::forceToTrack(), Manipulator::insertInTrack(), Manipulator::isCaged(), Manipulator::makeDogleg(), Manipulator::minimize(), Manipulator::moveUp(), Manipulator::pivotDown(), Manipulator::pivotUp(), Manipulator::relax(), Manipulator::repackPerpandiculars(), Manipulator::ripup(), Manipulator::shrinkToTrack(), and Manipulator::slacken()\&.
+.SS "bool isHorizontal () const\fC [pure virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isHorizontal()\fP\&. 
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), and Manipulator::makeDogleg()\&.
+.SS "bool isVertical () const\fC [pure virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isVertical()\fP\&. 
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.SS "bool isLocal () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::isLocal()\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByPlaceds(), SegmentFsm::doActions(), Manipulator::insertInTrack(), Manipulator::makeDogleg(), Manipulator::moveUp(), Manipulator::pivotUp(), Manipulator::relax(), Manipulator::ripple(), Manipulator::ripupPerpandiculars(), SegmentFsm::SegmentFsm(), Manipulator::shrinkToTrack(), SegmentFsm::slackenTopology(), and SegmentFsm::solveFullBlockages()\&.
+.SS "bool isGlobal () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isGlobal()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByPlaceds(), Manipulator::insertInTrack(), Manipulator::relax(), Manipulator::repackPerpandiculars(), and SegmentFsm::SegmentFsm()\&.
+.SS "bool isBipoint () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isBipoint()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by SegmentFsm::desaturate()\&.
+.SS "bool isTerminal () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::AutoSegment::isTerminal()\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::makeDogleg(), and Manipulator::relax()\&.
+.SS "bool isStrap () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isStrap()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::insertInTrack(), Manipulator::pivotDown(), Manipulator::pivotUp(), SegmentFsm::SegmentFsm(), and SegmentFsm::slackenTopology()\&.
+.SS "bool isSlackened () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isSlackened()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "bool isDogleg () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::isDogleg()\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "bool isCreated () const\fC [inline]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isCreated()\fP\&. 
+.SS "bool isInvalidated () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the segment is invalidated (may be different from the supporting AutoSegment status)\&. 
+.PP
+Referenced by SegmentObserver::notify()\&.
+.SS "bool isBlockage () const\fC [inline]\fP"
+\fBtrue\fP if the element is a blockage (obstacle)\&. 
+.PP
+Referenced by SegmentFsm::conflictSolveByPlaceds(), NegociateWindow::createTrackSegment(), Manipulator::insertInTrack(), and Manipulator::isCaged()\&.
+.SS "bool isLocked () const\fC [inline]\fP"
+\fBtrue\fP if the element is part of a net, but must not be moved by the router, whatever the reason\&. 
+.SS "bool isRouted () const\fC [inline]\fP"
+\fBtrue\fP if the router has placed it\&. 
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "bool hasSourceDogleg () const\fC [inline]\fP"
+This method purpose has not been reviewed yet\&. 
+.PP
+Referenced by TrackSegment::canDogleg(), TrackSegment::getSourceDogleg(), and TrackSegment::getTargetDogleg()\&.
+.SS "bool hasTargetDogleg () const\fC [inline]\fP"
+This method purpose has not been reviewed yet\&. 
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "bool canRipple () const\fC [inline]\fP"
+This method purpose has not been reviewed yet\&. 
+.PP
+Referenced by Manipulator::ripple()\&.
+.SS "bool canDogleg ()\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At \fBKite\fP level, this variant of the method will apply only on local segments and the segment must not already have a source or target dogleg\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), Manipulator::makeDogleg(), and Manipulator::relax()\&.
+.SS "bool canDogleg (\fBInterval\fP)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At \fBKite\fP level, this variant of the method will apply only on local segments and the segment must not already have a source or target dogleg\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "bool canDogleg (\fBKatabatic::GCell\fP * doglegGCell, unsigned int flags = \fC0\fP)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At kite level, this variant of the method is mainly targeted to global segment\&. For local segment it behave like \fBTrackElement::canDogleg(Interval)\fP\&. For global segment, make the break in the requested GCell \fCdoglegGCell\fP\&. If it's in the first or last GCell and there is already a dogleg, allow to reuse it if \fCflags\fP contains \fBKite::KtAllowDoglegReuse\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "unsigned long getId () const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The \fCId\fP of the supporting AutoSegment, if there is any\&. \fIZero\fP otherwise\&. 
+.RE
+.PP
+
+.PP
+Reimplemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "unsigned int getDirection () const\fC [pure virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The direction of the supporting element (should match the preferred direction of the \fBTrack\fP)\&. 
+.RE
+.PP
+
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by TrackElement::getBoundingBox(), TrackSegment::getSourceDogleg(), TrackSegment::getTargetDogleg(), Manipulator::makeDogleg(), Manipulator::minimize(), Manipulator::relax(), and Manipulator::ripple()\&.
+.SS "\fBNet\fP * getNet () const\fC [pure virtual]\fP"
+\fBReturns:\fP The Net associated to the element (may be \fCNULL\fP)\&. 
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), SegmentFsm::conflictSolveByPlaceds(), SegmentFsm::desaturate(), SegmentAction::doAction(), Manipulator::forceOverLocals(), Manipulator::forceToTrack(), TrackElement::getFreeInterval(), TrackElement::getNext(), Track::getOverlapCost(), TrackElement::getPrevious(), TrackElement::incOverlapCost(), Manipulator::insertInTrack(), Manipulator::makeDogleg(), Manipulator::minimize(), RoutingEvent::process(), RoutingEvent::revalidate(), Manipulator::ripple(), Manipulator::ripupPerpandiculars(), SegmentFsm::SegmentFsm(), Manipulator::shrinkToTrack(), SegmentFsm::slackenTopology(), and SegmentFsm::solveFullBlockages()\&.
+.SS "const \fBLayer\fP * getLayer () const\fC [pure virtual]\fP"
+\fBReturns:\fP The Layer of the element (should match the one of the \fBTrack\fP)\&. 
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), SegmentFsm::conflictSolveByPlaceds(), Track::insert(), Manipulator::relax(), RoutingEvent::revalidate(), Manipulator::ripple(), Manipulator::ripupPerpandiculars(), and SegmentFsm::SegmentFsm()\&.
+.SS "\fBTrack\fP * getTrack () const\fC [inline]\fP"
+\fBReturns:\fP The \fBTrack\fP into which the element is inserted (may be \fCNULL\fP)\&. 
+.PP
+Referenced by RoutingEventQueue::add(), SegmentAction::doAction(), TrackFixedSegment::getAxis(), TrackFixedSegment::getDirection(), DataNegociate::getTrack(), Manipulator::isCaged(), TrackFixedSegment::isHorizontal(), TrackFixedSegment::isVertical(), Manipulator::relax(), and TrackSegment::swapTrack()\&.
+.SS "size_t getIndex () const\fC [inline]\fP"
+\fBReturns:\fP The index of the element inside the \fBTrack\fP's vector\&.
+.PP
+\fBRemark: If the element is not inserted in a Track, it is set to\fP
+.RS 4
+\fBTrack::npos\fP, and obviously must not be used\&. 
+.RE
+.PP
+
+.PP
+Referenced by TrackSegment::swapTrack()\&.
+.SS "unsigned long getFreedomDegree () const\fC [virtual]\fP"
+\fBReturns:\fP The degree of freedom of the element\&. It is used as a priority value when sorting \fBTrackElement\fP (in \fBRoutingEvent\fP)\&.
+.PP
+\fBReturns:\fP The degree of freedom of the element\&. It is used as a priority value when sorting \fBTrackElement\fP (in \fBRoutingEvent\fP)\&.
+.PP
+Currently, it is the \fIslack\fP of the \fBKatabatic::AutoSegment\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "float getMaxUnderDensity (unsigned int flags = \fC0\fP) const\fC [virtual]\fP"
+\fBReturns:\fP The maximum density of all the GCells under this element\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "\fBBox\fP getBoundingBox () const\fC [inline]\fP"
+\fBReturns:\fP The box that this element uses in the \fBTrack\fP\&. 
+.SS "\fBTrackElement\fP * getNext () const\fC [virtual]\fP"
+\fBReturns:\fP The next \fBTrackElement\fP, on the same track and of a \fIdifferent\fP net\&. \fBSee also:\fP  \fBTrack::getNext()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by Manipulator::isCaged()\&.
+.SS "\fBTrackElement\fP * getPrevious () const\fC [virtual]\fP"
+\fBReturns:\fP The previous \fBTrackElement\fP, on the same track and of a \fIdifferent\fP net\&. \fBSee also:\fP  \fBTrack::getPrevious()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by Manipulator::isCaged()\&.
+.SS "\fBDbU::Unit\fP getAxis () const\fC [pure virtual]\fP"
+\fBReturns:\fP The axis position of the element (must be the same as the \fBTrack\fP)\&. 
+.PP
+Implemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), TrackElement::getBoundingBox(), Manipulator::ripple(), and Manipulator::ripupPerpandiculars()\&.
+.SS "\fBDbU::Unit\fP getSourceU () const\fC [inline]\fP"
+\fBReturns:\fP The minimun of the interval used by the element (cached in an attribute)\&. 
+.PP
+Referenced by TrackSegment::_check(), SegmentFsm::conflictSolveByHistory(), Track::find(), TrackElement::getBoundingBox(), TrackElement::getCanonicalInterval(), TrackElement::getLength(), Manipulator::insertInTrack(), Manipulator::isCaged(), Manipulator::minimize(), and Manipulator::shrinkToTrack()\&.
+.SS "\fBDbU::Unit\fP getTargetU () const\fC [inline]\fP"
+\fBReturns:\fP The maximum of the interval used by the element (cached in an attribute)\&. 
+.PP
+Referenced by TrackSegment::_check(), TrackElement::getBoundingBox(), TrackElement::getCanonicalInterval(), TrackElement::getLength(), Manipulator::insertInTrack(), and Manipulator::isCaged()\&.
+.SS "\fBDbU::Unit\fP getLength () const\fC [inline]\fP"
+\fBReturns:\fP The length of the interval used by the element\&. 
+.PP
+Referenced by NegociateWindow::computeWirelength(), Manipulator::makeDogleg(), Manipulator::moveUp(), and RoutingEvent::revalidate()\&.
+.SS "\fBInterval\fP getCanonicalInterval () const\fC [inline]\fP"
+\fBReturns:\fP The interval span used by the element inside the \fBTrack\fP\&. 
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), SegmentFsm::conflictSolveByPlaceds(), SegmentFsm::desaturate(), Manipulator::forceOverLocals(), Manipulator::forceToTrack(), Track::getOverlapCost(), Manipulator::insertInTrack(), Manipulator::makeDogleg(), Manipulator::minimize(), Manipulator::relax(), Manipulator::ripple(), Manipulator::ripupPerpandiculars(), Manipulator::shrinkToTrack(), and SegmentFsm::solveFullBlockages()\&.
+.SS "\fBInterval\fP getFreeInterval () const\fC [virtual]\fP"
+\fBReturns:\fP The greatest free interval enclosing this element\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP, and \fBTrackFixedSegment\fP\&.
+.SS "\fBInterval\fP getSourceConstraints () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::getSourceConstraints()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "\fBInterval\fP getTargetConstraints () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::getTargetConstraints()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "\fBDataNegociate\fP * getDataNegociate (unsigned int flags = \fC\fBKtDataSelf\fP\fP) const\fC [virtual]\fP"
+\fBReturns:\fP The additional data-structure supplied by the routing algorithm\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by NegociateWindow::addRoutingEvent(), SegmentFsm::desaturate(), SegmentAction::doAction(), Manipulator::forceOverLocals(), Manipulator::forceToTrack(), TrackSegment::getDataNegociate(), RoutingEvent::getState(), Manipulator::insertInTrack(), Manipulator::makeDogleg(), RoutingEvent::process(), Manipulator::relax(), Manipulator::repackPerpandiculars(), RoutingEvent::reschedule(), Manipulator::ripple(), SegmentFsm::SegmentFsm(), NegociateWindow::setGCells(), RoutingEvent::setSegment(), RoutingEvent::setState(), and SegmentFsm::slackenTopology()\&.
+.SS "\fBTrackElement\fP * getCanonical (\fBInterval\fP & i)\fC [virtual]\fP"
+Inner working still unclear to myself\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by NegociateWindow::createTrackSegment(), and DataNegociate::update()\&.
+.SS "size_t getGCells (Katabatic::GCellVector & gcells) const\fC [virtual]\fP"
+\fBReturns:\fP The table of \fBKatabatic::GCell\fP underneath the element whole span\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::makeDogleg(), and Manipulator::relax()\&.
+.SS "\fBTrackElement\fP * getParent () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBTrackElement\fP from which the dogleg has been created, if any\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by RoutingEvent::setAxisHintFromParent()\&.
+.SS "unsigned int getDoglegLevel () const\fC [virtual]\fP"
+\fBReturns:\fP The deepness of the dogleg\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "\fBTrackElement\fP * getSourceDogleg ()\fC [virtual]\fP"
+\fBReturns:\fP The source part of the segment from which the dogleg has been created\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::relax()\&.
+.SS "\fBTrackElement\fP * getTargetDogleg ()\fC [virtual]\fP"
+\fBReturns:\fP The target part of the segment from which the dogleg has been created\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::relax()\&.
+.SS "TrackElements getPerpandiculars ()\fC [virtual]\fP"
+\fBReturns:\fP The collection of all element perpandiculars to this one\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Manipulator::forceToTrack(), and Manipulator::insertInTrack()\&.
+.SS "void setFlags (unsigned int flags)\fC [inline]\fP"
+Set to \fBtrue\fP \fCflags\fP in the element state array\&. 
+.PP
+Referenced by TrackSegment::detach(), TrackSegment::invalidate(), and Manipulator::relax()\&.
+.SS "void unsetFlags (unsigned int flags)\fC [inline]\fP"
+Reset to \fBfalse\fP \fCflags\fP in the element state array\&. 
+.PP
+Referenced by TrackSegment::revalidate()\&.
+.SS "void setTrack (\fBTrack\fP * track)\fC [virtual]\fP"
+Insert the element into \fCtrack\fP, also used as an insertion marker\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by Track::insert(), and TrackSegment::setTrack()\&.
+.SS "void setIndex (size_t index)\fC [inline]\fP"
+Cache the element's index in the \fBTrack\fP internal vector\&. 
+.PP
+Referenced by TrackSegment::detach(), and TrackSegment::swapTrack()\&.
+.SS "void updateFreedomDegree ()\fC [virtual]\fP"
+Update, from the element characteristics, it's degree of freedom\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "void setDoglegLevel (unsigned int level)\fC [virtual]\fP"
+Sets the level of dogleg of the element\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "void swapTrack (\fBTrackElement\fP * other)\fC [virtual]\fP"
+Swap the tracks of \fCthis\fP and \fCother\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "void reschedule (unsigned int level)\fC [virtual]\fP"
+If the \fBTrackElement\fP has already an event scheduled, change the level of this event, otherwise create a new event\&.
+.PP
+\fBSee also:\fP  NegotiateWindow::rescheduleEvent()\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by TrackSegment::_postDoglegs()\&.
+.SS "void detach ()\fC [virtual]\fP"
+Remove the link from the \fBTrackElement\fP to it's owning \fBTrack\fP, marking it for removal\&. The removal from the \fBTrack\fP's vector is managed by the \fBTrack\fP itself during the \fBSession\fP revalidation stage\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "void invalidate ()\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::invalidate()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by NegociateWindow::createTrackSegment(), and SegmentObserver::notify()\&.
+.SS "void revalidate ()\fC [virtual]\fP"
+Actualize the \fBTrackElement\fP characteristics from the supporting elements (set of AutoSegment)\&.
+.PP
+Must be completed with the event management 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "void incOverlapCost (\fBNet\fP * net, TrackCost & cost) const\fC [virtual]\fP"
+\fBSee also:\fP  Compute the cost of overlap between this segment and the interval specified in \fCcost\fP\&. Mainly calls the relevant callback\&. 
+.SS "void setAxis (\fBDbU::Unit\fP, unsigned int flags = \fCKatabatic::SegAxisSet\fP)\fC [virtual]\fP"
+Sets the axis of the \fBTrackElement\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by NegociateWindow::createTrackSegment(), SegmentAction::doAction(), Track::insert(), TrackSegment::makeDogleg(), and Manipulator::relax()\&.
+.SS "\fBTrackElement\fP * makeDogleg ()\fC [virtual]\fP"
+Create a dogleg on the source end of the \fBTrackSegment\fP\&. Put the dogleg axis on the source \fBTo be further reviewed\fP\&.
+.PP
+\fBSee also:\fP  \fBDogleg management\fP\&.
+.PP
+Post-processing done by \fBTrackSegment::_postDoglegs()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), Manipulator::makeDogleg(), TrackElement::makeDogleg(), and Manipulator::relax()\&.
+.SS "\fBTrackElement\fP * makeDogleg (\fBKatabatic::GCell\fP * gcell)\fC [inline]\fP"
+\fBSee also:\fP  \fBAutoSegment::makeDogleg()\fP, \fBDogleg management\fP\&.
+.PP
+Post-processing done by \fBTrackSegment::_postDoglegs()\fP\&. 
+.SS "\fBTrackElement\fP * makeDogleg (\fBInterval\fP interval, unsigned int & flags)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::makeDogleg()\fP, \fBDogleg management\fP, the return flags from this method are returned through the \fCflags\fP variable\&.
+.PP
+Post-processing done by \fBTrackSegment::_postDoglegs()\fP\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+.SS "bool _check () const\fC [virtual]\fP"
+Check the coherency of the element\&. For a \fBTrackSegment\fP:
+.IP "\(bu" 2
+The supporting AutoSegment the canonical one of the set\&.
+.IP "\(bu" 2
+The cached \fCmin\fP & \fCmax\fP values are identical to the computed ones\&.
+.PP
+.PP
+\fBReturns:\fP \fBtrue\fP on success\&. 
+.PP
+Reimplemented in \fBTrackSegment\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

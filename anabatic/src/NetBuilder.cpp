@@ -37,6 +37,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Rectilinear.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/AutoContactTerminal.h"
@@ -220,30 +221,53 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Bug;
+  using Hurricane::Rectilinear;
 
   
 // -------------------------------------------------------------------
 // Class  :  "NetBuilder".
 
-
+  
   void  NetBuilder::getPositions ( Component* anchor, Point& source, Point& target )
   {
-    Segment* segment = dynamic_cast<Segment*>( anchor );
+    Segment* segment   = dynamic_cast<Segment*>( anchor );
     if (segment) {
       source = segment->getSourcePosition();
       target = segment->getTargetPosition();
-      return;
+    } else {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( anchor );
+      if (rp) {
+        source = rp->getSourcePosition();
+        target = rp->getTargetPosition();
+      } else {
+        source = anchor->getPosition();
+        target = anchor->getPosition();
+        return;
+      }
     }
 
-    RoutingPad* rp = dynamic_cast<RoutingPad*>( anchor );
-    if (rp) {
-      source = rp->getSourcePosition();
-      target = rp->getTargetPosition();
-      return;
-    }
+    if (source == target) return;
+    if (source.getX() > target.getX()) swap( source, target );
+    if (source.getY() > target.getY()) swap( source, target );
 
-    source = anchor->getPosition();
-    target = anchor->getPosition();
+    if (not Session::getRoutingGauge()->isSymbolic()) {
+      size_t    rpDepth   = Session::getLayerDepth( anchor->getLayer() );
+      Flags     direction = Session::getDirection ( rpDepth );
+      DbU::Unit wwidth    = Session::getWireWidth (rpDepth) / 2;
+      cdebug_log(145,0) << "Not a symbolic gauge, shrink positions of " << DbU::getValueString(wwidth)  << endl;
+      if (rpDepth == 0) return;
+      if (direction.contains(Flags::Horizontal)) {
+        cdebug_log(145,0) << "H shrink" << endl;
+        source.translate(  wwidth, 0 );
+        target.translate( -wwidth, 0 );
+      } else {
+        cdebug_log(145,0) << "V shrink" << endl;
+        source.translate( 0,  wwidth );
+        target.translate( 0, -wwidth );
+      }
+    } else {
+      cdebug_log(145,0) << "Symbolic gauge, no shrink" << endl;
+    }
   }
 
 
@@ -329,6 +353,8 @@ namespace Anabatic {
     , _forks                 ()
     , _connexity             ()
     , _topology              (0)
+    , _net                   (NULL)
+    , _netData               (NULL)
     , _gcell                 (NULL)
     , _sourceContact         (NULL)
     , _southWestContact      (NULL)
@@ -342,7 +368,9 @@ namespace Anabatic {
     , _routingPadAutoSegments()
     , _toFixSegments         ()
     , _degree                (0)
-    , _isTwoMetals           (false)
+    , _isStrictChannel       (false)
+    , _sourceFlags           (0)
+    , _flags                 (0)
   { }
 
 
@@ -353,7 +381,11 @@ namespace Anabatic {
   void  NetBuilder::clear ()
   {
     _connexity.connexity = 0;
+    _sourceFlags         = 0;
+    _flags               = 0;
     _topology            = 0;
+    _net                 = NULL;
+    _netData             = NULL;
     _gcell               = NULL;
     _sourceContact       = NULL;
     _southWestContact    = NULL;
@@ -364,8 +396,8 @@ namespace Anabatic {
     _norths                .clear();
     _souths                .clear();
     _routingPads           .clear();
-    _toFixSegments         .clear();
     _routingPadAutoSegments.clear();
+    _toFixSegments         .clear();
   }
   
 
@@ -377,17 +409,22 @@ namespace Anabatic {
   }
 
 
-  NetBuilder& NetBuilder::setStartHook ( AnabaticEngine* anbt, Hook* fromHook, AutoContact* sourceContact )
+  NetBuilder& NetBuilder::setStartHook ( AnabaticEngine* anbt
+                                       , Hook*           fromHook
+                                       , AutoContact*    sourceContact
+                                       , uint64_t        sourceFlags )
   {
     clear();
 
-    _isTwoMetals   = anbt->getConfiguration()->isTwoMetals();
-    _sourceContact = sourceContact;
-    _fromHook      = fromHook;
+    _isStrictChannel = anbt->isChannelStyle() and not anbt->isHybridStyle();
+    _sourceFlags     = sourceFlags;
+    _sourceContact   = sourceContact;
+    _fromHook        = fromHook;
 
     cdebug_log(145,1) << "NetBuilder::setStartHook()" << endl;
     cdebug_log(145,0) << "* _fromHook:     " << fromHook << endl;
     cdebug_log(145,0) << "* _sourceContact:" << sourceContact << endl;
+    cdebug_log(145,0) << "_isStrictChannel:" << _isStrictChannel << endl;
 
     if (not _fromHook) {
       cdebug_tabw(145,-1);
@@ -395,20 +432,21 @@ namespace Anabatic {
     }
 
     Segment* fromSegment = static_cast<Segment*>( _fromHook->getComponent() );
-    _net = fromSegment->getNet();
+    _net     = fromSegment->getNet();
+    _netData = anbt->getNetData( _net );
 
     cdebug_log(145,0) << "For Hooks from fromHook" << endl;
     for ( Hook* hook : fromHook->getHooks() ) {
       cdebug_log(145,0) << "Hook: " << hook << endl;
       cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
-                 << "["  << (int)_connexity.fields.globals
-                 << "+"  << (int)_connexity.fields.M1     
-                 << "+"  << (int)_connexity.fields.M2     
-                 << "+"  << (int)_connexity.fields.M3
-                 << "+"  << (int)_connexity.fields.Pin
-                 << "+"  << (int)_connexity.fields.Pad
-                 << "] " << _gcell
-                 << endl;
+                        << "["  << (int)_connexity.fields.globals
+                        << "+"  << (int)_connexity.fields.M1     
+                        << "+"  << (int)_connexity.fields.M2     
+                        << "+"  << (int)_connexity.fields.M3
+                        << "+"  << (int)_connexity.fields.Pin
+                        << "+"  << (int)_connexity.fields.Pad
+                        << "] " << _gcell
+                        << endl;
 
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
       if (toSegment) {
@@ -443,12 +481,18 @@ namespace Anabatic {
               throw Error( mismatchGCell );
             }
 
+            if (  (_gcell->getDensity( Session::getDHorizontalDepth() ) > 0.9)
+               or (_gcell->getDensity( Session::getDVerticalDepth  () ) > 0.9)) {
+              cdebug_log(145,0) << "Base layers blockeds, moving up" << endl;
+              _flags |= ToUpperRouting;
+            }
+
             if (not _gcell->isMatrix()) {
               cdebug_log(145,0) << "* Non-matrix GCell under: " << contact << endl;
               cdebug_log(145,0) << "| " << gcell << endl;
             }
           } else {
-            if (rp and AllianceFramework::get()->isPad(rp->_getEntityAsComponent()->getCell())) {
+            if (rp and AllianceFramework::get()->isPad(rp->_getEntityAs<Component>()->getCell())) {
               _connexity.fields.Pad++;
             } else {
               const Layer* layer = anchor->getLayer();
@@ -462,11 +506,32 @@ namespace Anabatic {
                 continue;
               }
 
-              if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
-              else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
-              else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
-              else if (layer->getMask() == Session::getRoutingLayer(3)->getMask()) _connexity.fields.M2++; // M4 H
-              else if (layer->getMask() == Session::getRoutingLayer(4)->getMask()) _connexity.fields.M3++; // M5 V
+              bool   isPin   = (dynamic_cast<Pin*>( rp->getOccurrence().getEntity() ) != nullptr);
+              size_t rpDepth = 0;
+              for ( size_t depth=0 ; depth < Session::getRoutingGauge()->getDepth() ; ++depth ) {
+                if (layer->getMask() == Session::getRoutingLayer(depth)->getMask()) {
+                  rpDepth = depth;
+                  break;
+                }
+              }
+              if (rpDepth >= Session::getRoutingGauge()->getFirstRoutingLayer())
+                rpDepth -= Session::getRoutingGauge()->getFirstRoutingLayer();
+              else
+                cerr << Error( "Terminal layer \"%s\" of %s is below first usable routing layer."
+                               , getString(layer->getName()).c_str()
+                               , getString(anchor).c_str() )
+                     << endl;
+              if ((rpDepth > 0) and not isPin
+                                and not Session::getRoutingGauge()->isSuperPitched()) {
+                _flags |= ToUpperRouting;
+                cdebug_log(145,0) << "ToUpperRouting set, getFlags():" << getFlags() << endl;
+              }
+
+              if      (rpDepth == 0) _connexity.fields.M1++; // M1 V
+              else if (rpDepth == 1) _connexity.fields.M2++; // M2 H
+              else if (rpDepth == 2) _connexity.fields.M3++; // M3 V
+              else if (rpDepth == 3) _connexity.fields.M2++; // M4 H
+              else if (rpDepth == 4) _connexity.fields.M3++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()
@@ -475,7 +540,7 @@ namespace Anabatic {
               //continue;
               }
 
-              if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) _connexity.fields.Pin++; 
+              if (isPin) _connexity.fields.Pin++; 
             }
 
             cdebug_log(145,0) << "| Component to connect: " << anchor << endl;
@@ -507,6 +572,15 @@ namespace Anabatic {
 
     if (_gcell == NULL) throw Error( missingGCell );
 
+    cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
+                      << "["  << (int)_connexity.fields.globals
+                      << "+"  << (int)_connexity.fields.M1     
+                      << "+"  << (int)_connexity.fields.M2     
+                      << "+"  << (int)_connexity.fields.M3
+                      << "+"  << (int)_connexity.fields.Pin
+                      << "+"  << (int)_connexity.fields.Pad
+                      << "] " << _gcell
+                      << endl;
     return *this;
   }
     
@@ -516,6 +590,7 @@ namespace Anabatic {
     cdebug_log(145,0) << "NetBuilder::push()" << endl;
     cdebug_log(145,0) << "* toHook:   " << toHook << endl;
     cdebug_log(145,0) << "* _fromHook:" << _fromHook << endl;
+    cdebug_log(145,0) << "* flags:" << flags << endl;
 
     if (not toHook or (toHook == _fromHook)) {
       if (contact) {
@@ -534,23 +609,85 @@ namespace Anabatic {
     Hook* toHookOpposite = getSegmentOppositeHook( toHook );
     cdebug_log(145,0) << "Pushing (to)   " << getString(toHook) << endl;
     cdebug_log(145,0) << "Pushing (from) " << contact << endl;
-    _forks.push( toHookOpposite, contact );
+    _forks.push( toHookOpposite, contact, getFlags() );
 
     return true;
   }
 
 
+  bool  NetBuilder::isInsideBlockage ( GCell* gcell, Component* rp ) const
+  {
+    cdebug_log(145,1) << getTypeName() << "::isInsideBlockage() " << endl;
+    cdebug_log(145,0) << rp << endl;
+    cdebug_log(145,0) << rp->getLayer()->getMask() << endl;
+
+    size_t rpDepth = Session::getLayerDepth( rp->getLayer() );
+    if (gcell->getDensity(rpDepth) < 0.5) {
+      cdebug_tabw(145,-1);
+      return false;
+    }
+    
+    Box         rpBb   = rp->getBoundingBox();
+    Layer::Mask rpMask = rp->getLayer()->getBlockageLayer()->getMask();
+    cdebug_log(145,0) << "rpBb: " << rpBb << endl;
+    for ( Occurrence occurrence : getAnabatic()->getCell()->getOccurrencesUnder(rpBb) ) {
+      cdebug_log(145,0) << "| " << occurrence.getEntity() << endl;
+      Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
+      if (not component) continue;
+
+      const Layer* blockageLayer = component->getLayer();
+      Box          blockageBb    = component->getBoundingBox();
+      cdebug_log(145,0) << "  Mask: " << blockageLayer->getMask() << endl;
+      if (    blockageLayer->isBlockage()
+         and (blockageLayer->getMask() == rpMask)) {
+        occurrence.getPath().getTransformation().applyOn( blockageBb );
+        cdebug_log(145,0) << "  Bb: " << blockageBb << endl;
+        if (blockageBb.contains(rpBb)) {
+          cdebug_log(145,-1) << "* Inside " << component << endl;
+          return true;
+        }
+        if (blockageBb.intersect(rpBb)) {
+          cerr << Warning( "NetBuilder::isInsideBlockage(): RoutingPad is only partially inside blocked area.\n"
+                           "           * %s\n"
+                           "           * %s"
+                         , getString(rp).c_str()
+                         , getString(component).c_str()
+                         ) << endl; 
+          cdebug_log(145,-1) << "* Partially inside " << component << endl;
+          return true;
+        }
+      }
+    }
+    cdebug_tabw(145,-1);
+    return false;
+  }
+  
+
   void  NetBuilder::construct ()
   {
     cdebug_log(145,1) << "NetBuilder::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
+    cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
+                      << "["  << (int)_connexity.fields.globals
+                      << "+"  << (int)_connexity.fields.M1     
+                      << "+"  << (int)_connexity.fields.M2     
+                      << "+"  << (int)_connexity.fields.M3
+                      << "+"  << (int)_connexity.fields.Pin
+                      << "+"  << (int)_connexity.fields.Pad
+                      << "] " << _gcell
+                      << endl;
+    cdebug_log(145,0) << "getSourceFlags():" << getSourceFlags()
+                      << " getFlags():" << getFlags() << endl;
 
-    if (not isTwoMetals()) {
+    if (not isStrictChannel()) {
       _southWestContact = NULL;
       _northEastContact = NULL;
     }
 
     if (not _gcell->isAnalog()) {
-      if (isTwoMetals() and not _sourceContact) _fromHook = NULL;
+      if (isStrictChannel() and not _sourceContact) {
+        cdebug_log(145,0) << "No _sourceContact, resetting _fromHook" << endl;
+        _fromHook = NULL;
+      }
       
       switch ( _connexity.connexity ) {
         case Conn_1G_1Pad:
@@ -562,7 +699,11 @@ namespace Anabatic {
         case Conn_1G_2M1:
         case Conn_1G_3M1:
         case Conn_1G_4M1:
-        case Conn_1G_5M1:   _do_1G_xM1(); break;
+        case Conn_1G_5M1:
+        case Conn_1G_6M1:
+        case Conn_1G_7M1:
+        case Conn_1G_8M1:
+        case Conn_1G_9M1:   _do_1G_xM1(); break;
         // End 1G_xM1 cascaded cases.
 
         case Conn_1G_1M2:
@@ -582,17 +723,31 @@ namespace Anabatic {
         case Conn_2G_3M1:
         case Conn_2G_4M1:
         case Conn_2G_5M1:
+        case Conn_2G_6M1:
+        case Conn_2G_7M1:
+        case Conn_2G_8M1:
+        case Conn_2G_9M1:  _do_xG_xM1_xM3(); break;
         case Conn_3G_1M1:  if (_do_xG_1M1()) break;
         case Conn_3G_2M1:
         case Conn_3G_3M1:
         case Conn_3G_4M1:
+        case Conn_3G_5M1:
+        case Conn_3G_6M1:
+        case Conn_3G_7M1:
+        case Conn_3G_8M1:
+        case Conn_3G_9M1:
         case Conn_3G_2M3:
         case Conn_3G_3M3:
-        case Conn_3G_4M3:
+        case Conn_3G_4M3:  _do_xG_xM1_xM3(); break;
         case Conn_4G_1M1:  if (_do_xG_1M1()) break;
         case Conn_4G_2M1:
         case Conn_4G_3M1:
-        case Conn_4G_4M1:  _do_xG_xM1_xM3(); break;
+        case Conn_4G_4M1:
+        case Conn_4G_5M1:
+        case Conn_4G_6M1:
+        case Conn_4G_7M1:
+        case Conn_4G_8M1:
+        case Conn_4G_9M1:  _do_xG_xM1_xM3(); break;
         // End xG_xM1_xM3 cascaded cases.
 
         case Conn_4G_1M2:  if (_do_4G_1M2()) break;
@@ -616,19 +771,36 @@ namespace Anabatic {
         case Conn_4G:     _do_xG(); break;
         // End xG cascaded cases.
         // Optimized specific cases.
-        case Conn_1G_1PinM2:  _do_1G_1PinM2 (); break;
-        case Conn_2G_1PinM2:
-        case Conn_3G_1PinM2:  _do_xG_1PinM2 (); break;
-        case Conn_1G_1PinM3:  _do_1G_1PinM3 (); break;
-        case Conn_2G_1PinM3:
-        case Conn_3G_1PinM3:  _do_xG_1PinM3 (); break;
-        case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
-        case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
-        case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_1G_1PinM1:      _do_1G_1PinM1    (); break;
+        case Conn_2G_1PinM1:      _do_2G_1PinM1    (); break;
+        case Conn_1G_1PinM2:      _do_1G_1PinM2    (); break;
+        case Conn_2G_1PinM2:                       
+        case Conn_3G_1PinM2:      _do_xG_1PinM2    (); break;
+        case Conn_1G_1PinM3:      _do_1G_1PinM3    (); break;
+        case Conn_2G_1PinM3:                       
+        case Conn_3G_1PinM3:      _do_xG_1PinM3    (); break;
+        case Conn_1G_2M1_1PinM1:  _do_1G_xM1_1PinM1(); break;
+        case Conn_1G_1M1_1PinM3:  _do_1G_1M1_1PinM3(); break;
+        case Conn_1G_1M1_1PinM2:
+        case Conn_1G_2M1_1PinM2:
+        case Conn_1G_3M1_1PinM2:
+        case Conn_1G_4M1_1PinM2:
+        case Conn_1G_5M1_1PinM2:  _do_1G_xM1_1PinM2(); break;
+        case Conn_2G_1M1_1PinM2:
+        case Conn_2G_2M1_1PinM2:  _do_2G_xM1_1PinM2(); break;
+        case Conn_2G_1M1_1PinM3:
+        case Conn_2G_2M1_1PinM3:
+        case Conn_2G_3M1_1PinM3:  _do_2G_xM1_1PinM3(); break;
+        case Conn_3G_1M1_1PinM3:
+        case Conn_3G_2M1_1PinM3:
+        case Conn_3G_3M1_1PinM3:  _do_3G_xM1_1PinM3(); break;
+        case Conn_1G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
+        case Conn_1G_1M1_1M3:     _do_1G_xM1       (); break;
+        case Conn_2G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
         default:
-          if (not isTwoMetals())
+        //if (not isStrictChannel())
             throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                       "      The global routing seems to be defective."
+                     "      The global routing seems to be defective."
                      , _connexity.connexity
                      , _connexity.fields.globals
                      , _connexity.fields.M1     
@@ -641,6 +813,9 @@ namespace Anabatic {
                      );
           _do_xG();
       }
+
+      cdebug_log(145,0) << "SouthWest: " << _southWestContact << endl;
+      cdebug_log(145,0) << "NorthEast: " << _northEastContact << endl;
 
       if (not _do_globalSegment()) {
         cdebug_log(145,0) << "No global generated, finish." << endl;
@@ -666,11 +841,15 @@ namespace Anabatic {
                  , getString(_net).c_str()
                  );
 
-      if ( (_sourceContact) && (targetContact) ){
+      if ( (_sourceContact) and (targetContact) ){
+        Segment*     baseSegment   = static_cast<Segment*>( _fromHook->getComponent() );
         AutoSegment* globalSegment = AutoSegment::create( _sourceContact
                                                         , targetContact
-                                                        , static_cast<Segment*>( _fromHook->getComponent() )
+                                                        , baseSegment
                                                         );
+        if (_netData and _netData->isNoMoveUp(baseSegment)) {
+          globalSegment->setFlags( AutoSegment::SegNoMoveUp );
+        }
         cdebug_log(145,0) << "[Create global segment (1)]: " << globalSegment << endl;
       }     
     }
@@ -962,9 +1141,25 @@ namespace Anabatic {
   }
 
   
+  bool  NetBuilder::_do_1G_1PinM1 ()
+  {
+    throw Error ( "%s::_do_1G_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_2G_1PinM1 ()
+  {
+    throw Error ( "%s::_do_2G_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
   bool  NetBuilder::_do_xG_1PinM2 ()
   {
-    throw Error ( "%s::_do_xG_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    throw Error( "%s::_do_xG_1PinM2() method *not* reimplemented from base class.\n"
+                 "        On %s"
+               , getTypeName().c_str(), getString(getNet()).c_str() );
     return false;
   }
 
@@ -1052,7 +1247,49 @@ namespace Anabatic {
     return false;
   }
 
+
+  bool  NetBuilder::_do_1G_1M1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_1G_1M1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_1G_xM1_1PinM2 ()
+  {
+    throw Error ( "%s::_do_1G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_2G_xM1_1PinM2 ()
+  {
+    throw Error ( "%s::_do_2G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_2G_xM1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_2G_xM1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_1G_xM1_1PinM1 ()
+  {
+    throw Error ( "%s::_do_1G_xM1_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_3G_xM1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_3G_xM1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
   
+
   bool  NetBuilder::_do_globalSegment ()
   {
     throw Error ( "%s::_do_globalSegment() method *not* reimplemented from base class.", getTypeName().c_str() );
@@ -1067,11 +1304,12 @@ namespace Anabatic {
     vector<RoutingPad*>  rpM1s;
     Component*           rpM2 = NULL;
 
-    forEach ( RoutingPad*, irp, net->getRoutingPads() ) {
-      if (Session::getRoutingGauge()->getLayerDepth(irp->getLayer()) == 1)
-        rpM2 = *irp;
+    for ( RoutingPad* rp : net->getRoutingPads() ) {
+      if (      Session::getRoutingGauge()->getLayerDepth(rp->getLayer())
+         == 1 + Session::getRoutingGauge()->getFirstRoutingLayer())
+        rpM2 = rp;
       else
-        rpM1s.push_back( *irp );
+        rpM1s.push_back( rp );
     }
 
     if ((rpM1s.size() < 2) and not rpM2) {
@@ -2241,12 +2479,15 @@ namespace Anabatic {
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;
+    uint64_t     sourceFlags   = NoFlags;
     RoutingPads  routingPads   = net->getRoutingPads();
     size_t       degree        = routingPads.getSize();
 
     if (degree == 0) {
-      cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
-                       ,getString(net->getName()).c_str()) << endl;
+      if (not net->isBlockage()) {
+        cmess2 << Warning( "Net \"%s\" do not have any RoutingPad (ignored)."
+                         , getString(net->getName()).c_str() ) << endl;
+      }
       cdebug_tabw(145,-1);
       return;
     }
@@ -2277,7 +2518,7 @@ namespace Anabatic {
           ++connecteds;
           segmentFound = true;
 
-          setStartHook( anabatic, hook, NULL );
+          setStartHook( anabatic, hook, NULL, NoFlags );
           if (getStateG() == 1) {
             if ( (lowestGCell == NULL) or (*getGCell() < *lowestGCell) ) {
               cdebug_log(145,0) << "Potential starting GCell " << getGCell() << endl;
@@ -2305,9 +2546,9 @@ namespace Anabatic {
     }
     cdebug_tabw(145,-1);
 
-    if (startHook == NULL) { setStartHook(anabatic,NULL,NULL).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
+    if (startHook == NULL) { setStartHook(anabatic,NULL,NULL,NoFlags).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
 
-    setStartHook( anabatic, startHook, NULL );
+    setStartHook( anabatic, startHook, NULL, NoFlags );
     cdebug_log(145,0) << endl;
     cdebug_log(145,0) << "--------~~~~=={o}==~~~~--------" << endl;
     cdebug_log(145,0) << endl;
@@ -2316,18 +2557,21 @@ namespace Anabatic {
 
     sourceHook    = _forks.getFrom   ();
     sourceContact = _forks.getContact();
+    sourceFlags   = _forks.getFlags  ();
     _forks.pop();
 
     while ( sourceHook ) {
-      setStartHook( anabatic, sourceHook, sourceContact );
+      setStartHook( anabatic, sourceHook, sourceContact, sourceFlags );
       construct();
 
-      sourceHook    = _forks.getFrom();
+      sourceHook    = _forks.getFrom   ();
       sourceContact = _forks.getContact();
+      sourceFlags   = _forks.getFlags  ();
       _forks.pop();
 
-      cdebug_log(145,0) << "Popping (from) " << sourceHook << endl;
-      cdebug_log(145,0) << "Popping (to)   " << sourceContact << endl;
+      cdebug_log(145,0) << "Popping (from)  " << sourceHook << endl;
+      cdebug_log(145,0) << "Popping (to)    " << sourceContact << endl;
+      cdebug_log(145,0) << "Popping (flags) " << sourceFlags << endl;
     }
 
     Session::revalidate();
@@ -2338,10 +2582,11 @@ namespace Anabatic {
     for ( ; iover != overconstraineds.end() ; ++iover ) {
       (*iover)->makeDogLeg( (*iover)->getAutoSource()->getGCell(), true );
     }
+    Session::revalidate();
 #endif
 
-    Session::revalidate();
     fixSegments();
+    Session::revalidate();
     cdebug_tabw(145,-1);
 
   //DebugSession::close();

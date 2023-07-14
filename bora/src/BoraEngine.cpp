@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <Python.h>
 #include <sstream>
 #include <QAction>
 #include <QMenu>
@@ -30,6 +31,7 @@
 #include "hurricane/Library.h"
 #include "hurricane/viewer/HApplication.h"
 #include "hurricane/viewer/ExceptionWidget.h"
+#include "hurricane/viewer/Script.h"
 #include "hurricane/UpdateSession.h" 
 #include "hurricane/analog/AnalogCellExtension.h"
 #include "hurricane/analog/LayoutGenerator.h"
@@ -42,12 +44,16 @@
 #include "bora/SlicingDataWidget.h"
 #include "bora/AnalogDistance.h"
 #include "bora/BoraEngine.h"
+#include "bora/PyBoraEngine.h"
 
 
 namespace Bora {
 
   using namespace std;
+  using Hurricane::dbo_ptr;
   using Hurricane::Error;
+  using Hurricane::Warning;
+  using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
@@ -58,6 +64,7 @@ namespace Bora {
   using Hurricane::UpdateSession;
   using Analog::AnalogCellExtension;
   using Analog::Device;
+  using CRL::System;
   using CRL::GdsDriver;
 
 
@@ -87,6 +94,7 @@ namespace Bora {
   void  BoraEngine::_postCreate ()
   {
     Super::_postCreate();
+    _runBoraInit();
   }
 
 
@@ -97,6 +105,27 @@ namespace Bora {
 
     bora->_postCreate();
     return bora;
+  }
+
+
+  void  BoraEngine::_runBoraInit ()
+  {
+    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
+    Utilities::Path confFile           = "coriolis/bora/initHook.py";
+    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
+
+    if (systemConfFile.exists()) {
+    //Isobar::Script::addPath( systemConfDir.toString() );
+
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
+      script->addKwArgument( "bora"    , (PyObject*)PyBoraEngine_Link(this) );
+      script->runFunction  ( "boraHook", getCell() );
+
+    //Isobar::Script::removePath( systemConfDir.toString() );
+    } else {
+      cerr << Warning( "Bora system configuration file:\n  <%s> not found."
+                     , systemConfFile.toString().c_str() ) << endl;
+    }
   }
 
 
@@ -200,7 +229,7 @@ namespace Bora {
         CRL::RoutingGauge* rg      = slicingtree->getRoutingGauge();
         DbU::Unit          hpitch  = rg->getHorizontalPitch();
         DbU::Unit          vpitch  = rg->getVerticalPitch();
-
+        
         slicingtree->expandRoutingChannel( hpitch*2, vpitch*2 );
         slicingtree->replace();
         slicingtree->updateSymNetAxis();
@@ -220,7 +249,8 @@ namespace Bora {
 
         Anabatic::Dijkstra* dijkstra = new Anabatic::Dijkstra( katana );
         AnalogDistance distance = AnalogDistance( cell, hpitch, vpitch );
-        dijkstra->setDistance( distance );
+        dijkstra->setDistance      ( distance );
+        dijkstra->setSearchAreaHalo( std::max(hpitch,vpitch) );
 
         for ( Net* net : cell->getNets() ) {
           distance.setNet( net );
@@ -237,7 +267,7 @@ namespace Bora {
         slicingtree->expandRoutingChannel();
         slicingtree->replace();
         slicingtree->updateSymNetAxis();
-
+        
         katana->updateMatrix();
         katana->analogInit();
         Katana::Session::close(); 

@@ -6,24 +6,77 @@
 
  /*! \class        Technology
   *  \brief        Technological rules description (\b API).
-  *
+  * 
   *  \section      sTechnologyIntro  Introduction
-  *
+  * 
   *                The Technology object provides the description of all the technology
-  *                rules needed by the tools, currently it is limited to the description
-  *                of all layers available. This object must be created once within the
+  *                rules needed by the tools, currently it contains:
+  * 
+  *                - The layers, roughly from bottom (i.e. closest to the subtsrate)
+  *                  to top. Layers can be basic, that is, match a real physical layer,
+  *                  or composite, like for VIAs in symbolic for macro-generation.
+  *                  It also provides a connexity table between layers.
+  *                - Three sets of rules describing the technology rules (formerly the
+  *                  \c DTR in Alliance).
+  *                  -# <tt>Zero Layer</tt>: rules not associated to any layer.
+  *                  -# <tt>One Layer</tt>: rules associated to one layer.
+  *                  -# <tt>Two Layers</tt>: rules associated to two layer.
+  * 
+  *                This object must be created once within the
   *                DataBase, and, in principle never destroyed (this would destroy layers
   *                and all objects laying on them ...).
+  * 
+  *                Here
   *
   *  \remark       There is only one technology for the current DataBase, and only one
   *                Database object, so only one technology defined.
+  * 
+  *  \section      sTechnologyRules  Using PhysicalRules
+  * 
+  *                How to create a simple one layer rule, setup the minimal width
+  *                of \c metal1 layer to 0.5&micro;m.
+  *
+\code
+tech = DataBase::getDB()->getTechnology();
+PhysicalRule* rule = tech->addPhysicalRule( "minWidth", "metal1" );
+rule->addValue( DbU::fromPhysical( 0.5, DbU::UnitPower::Micro ), 0 );
+\endcode
+  * 
+  *                How to create a one layer rule, with multiple steps.
+  *                The minimal spacing of \c metal1 layer which will depend
+  *                on the wire length. The spacing will be of 2&micro;m for length
+  *                below 50&micro;m and 4&micro;m above.
+  *
+\code
+tech = DataBase::getDB()->getTechnology();
+PhysicalRule* rule = tech->addPhysicalRule( "minWidth", "metal1" );
+rule->addValue( DbU::fromPhysical(    2.0, DbU::UnitPower::Micro )
+              , DbU::fromPhysical(   50.0, DbU::UnitPower::Micro ) );
+rule->addValue( DbU::fromPhysical(    4.0, DbU::UnitPower::Micro )
+              , DbU::fromPhysical( 1000.0, DbU::UnitPower::Micro ) );
+\endcode
+  * 
+  *                How to create a two layers rule, with non-isomorphic values.
+  *                The minimum enclosure of \c metal1 layer over \c cut1 will be
+  *                1&micro;m in horizontal direction and 0.5&micro;m in vertical.
+  *                The order of layers is significant in the function call, it
+  *                must be read as <em>"The encolusre of metal1 over cut1"</em>.
+  *
+\code
+tech = DataBase::getDB()->getTechnology();
+PhysicalRule* rule = tech->addPhysicalRule( "minWidth", "metal1", "cut1" );
+rule->addValue( DbU::fromPhysical( 1.0, DbU::UnitPower::Micro )
+              , DbU::fromPhysical( 0.5, DbU::UnitPower::Micro )
+              , 0 );
+\endcode
+  */
   */
 
 
  /*! \function     Technology* Technology::create ( DataBase* dataBase, const Name& name );
   *  \Return       a newly created technology named \c \<name\> for the data base \c \<dataBase\>.
   *
-  *  \caution      Throws an exception if the \c dataBase is \NULL, if the name is empty or if
+  *  \warning      Throws an exception if the \c dataBase is \NULL, if the name is empty or if
   *                the \c dataBase has already a technology.
   */
 
@@ -136,5 +189,79 @@
   *                Sets the \c layer as the working layer for it's mask.
   *                Returns \true on success (the layer exists).
   */
+
+ /*! \function     bool  Technology::setSymbolicLayer ( const Layer* layer );
+  *                Sets this exact \c layer as symbolic (not is mask).
+  *                Returns \true on success (the layer exists).
+  */
+
+ //! \function     PhysicalRule* Technology::getUnitRule ( std::string ruleName ) const;
+ //! \param        ruleName    The name of the rule
+ //!
+ //! \Return       The matching rule in the table of <b>unit</b> rules.
+
+ //! \function     PhysicalRule* Technology::getPhysicalRule ( std::string ruleName, std::string layerName ) const;
+ //! \param        ruleName    The name of the rule
+ //! \param        layerName   The name of the layer
+ //!
+ //! \Return       The matching rule in the table of <b>one layer</b> rules.
+
+ //! \function     PhysicalRule* Technology::getPhysicalRule ( std::string ruleName, std::string layer1Name, std::string layer2Name  ) const;
+ //! \param        ruleName    The name of the rule
+ //! \param        layer1Name  The name of the first layer
+ //! \param        layer2Name  The name of the second layer
+ //!
+ //! \Return       The matching rule in the table of <b>two layers</b> rules.
+ //!               The order of layers arguments is meaningful and should match
+ //!               The one used at rule creation.
+
+ //! \function     PhysicalRule* Technology::addUnitRule ( const std::string& ruleName, const std::string& reference );
+ //! \param        ruleName   The name of the rule
+ //! \param        reference  A free comentary string for further reference.
+ //!
+ //! \Return       The newly added rule.
+ //!
+ //!               Create and add to Technology a rule whithout associated layer.
+ //!               The rule should contain a value which is anything but a length
+ //!               (Volt, Henry, Ohm, ...)
+ //!               The rule is created empty. For a detailed explanation see
+ //!               PhysicalRule.
+
+ //! \function     PhysicalRule* Technology::addPhysicalRule ( std::string ruleName, std::string reference );
+ //! \param        ruleName   The name of the rule
+ //! \param        reference  A free comentary string for further reference.
+ //!
+ //! \Return       The newly added rule.
+ //!
+ //!               Create and add to Technology a rule whithout associated layer.
+ //!               The rule should contain only length value(s) (so DbU::Unit).
+ //!               The rule is created empty. For a detailed explanation see
+ //!               PhysicalRule.
+
+ //! \function     PhysicalRule* Technology::addPhysicalRule ( std::string ruleName, std::string layerName, std::string reference );
+ //! \param        ruleName   The name of the rule
+ //! \param        layerName  The one layer associated to the rule.
+ //! \param        reference  A free comentary string for further reference.
+ //!
+ //! \Return       The newly added rule.
+ //!
+ //!               Create and add to Technology a rule associated to \b one layer.
+ //!               The rule should contain only length value(s) (so DbU::Unit).
+ //!               The rule is created empty. For a detailed explanation see
+ //!               PhysicalRule.
+
+ //! \function     PhysicalRule* Technology::addPhysicalRule ( std::string ruleName, std::string layer1Name, std::string layer2Name, std::string reference );
+ //! \param        ruleName    The name of the rule
+ //! \param        layer1Name  First layer associated to the rule.
+ //! \param        layer2Name  First layer associated to the rule.
+ //! \param        reference   A free comentary string for further reference.
+ //!
+ //! \Return       The newly added rule.
+ //!
+ //!               Create and add to Technology a rule associated to \b two layers.
+ //!               The order of layers is meaningful in case of an asymmetric rule.
+ //!               The rule should contain only length value(s) (so DbU::Unit).
+ //!               The rule is created empty. For a detailed explanation see
+ //!               PhysicalRule.
 
  }

@@ -1,19 +1,20 @@
 <map id="Hurricane::Entity" name="Hurricane::Entity">
-<area shape="rect" id="node3" href="$classHurricane_1_1Cell.html" title="The model (API). " alt="" coords="333,157,443,184"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1Go.html" title="Go description (API) " alt="" coords="337,208,439,235"/>
-<area shape="rect" id="node18" href="$classHurricane_1_1Net.html" title="Net description (API) " alt="" coords="335,259,441,285"/>
-<area shape="rect" id="node2" href="$classHurricane_1_1DBo.html" title="DataBase object root class (API). " alt="" coords="5,208,117,235"/>
-<area shape="rect" id="node5" href="$classHurricane_1_1Component.html" title="Component description (API) " alt="" coords="491,157,645,184"/>
-<area shape="rect" id="node16" href="$classHurricane_1_1Instance.html" title="Instance description (API) " alt="" coords="500,208,636,235"/>
-<area shape="rect" id="node17" href="$classHurricane_1_1Rubber.html" title="Rubber description (API) " alt="" coords="504,259,632,285"/>
-<area shape="rect" id="node6" href="$classHurricane_1_1Contact.html" title="Contact description (API) " alt="" coords="705,5,837,32"/>
-<area shape="rect" id="node8" href="$classHurricane_1_1Diagonal.html" title="Diagonal description (API) " alt="" coords="702,56,839,83"/>
-<area shape="rect" id="node9" href="$classHurricane_1_1Pad.html" title="Pad description (API) " alt="" coords="716,107,825,133"/>
-<area shape="rect" id="node10" href="$classHurricane_1_1Plug.html" title="Plug description (API) " alt="" coords="715,157,827,184"/>
-<area shape="rect" id="node11" href="$classHurricane_1_1Polygon.html" title="Polygon description (API) " alt="" coords="704,208,837,235"/>
-<area shape="rect" id="node12" href="$classHurricane_1_1RoutingPad.html" title="RoutingPad description (API) " alt="" coords="693,259,848,285"/>
-<area shape="rect" id="node13" href="$classHurricane_1_1Segment.html" title="Segment description (API) " alt="" coords="701,309,840,336"/>
-<area shape="rect" id="node7" href="$classHurricane_1_1Pin.html" title="Pin description (API) " alt="" coords="917,5,1022,32"/>
-<area shape="rect" id="node14" href="$classHurricane_1_1Horizontal.html" title="Horizontal description (API) " alt="" coords="897,284,1042,311"/>
-<area shape="rect" id="node15" href="$classHurricane_1_1Vertical.html" title="Vertical description (API) " alt="" coords="904,335,1035,361"/>
+<area shape="rect" id="node1" title="Occurrenceable objects root class (API)." alt="" coords="165,208,285,235"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1Cell.html" title="The model (API)." alt="" coords="333,157,443,184"/>
+<area shape="rect" id="node4" href="$classHurricane_1_1Go.html" title="Go description (API)" alt="" coords="337,208,439,235"/>
+<area shape="rect" id="node18" href="$classHurricane_1_1Net.html" title="Net description (API)" alt="" coords="335,259,441,285"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1DBo.html" title="DataBase object root class (API)." alt="" coords="5,208,117,235"/>
+<area shape="rect" id="node5" href="$classHurricane_1_1Component.html" title="Component description (API)" alt="" coords="491,157,644,184"/>
+<area shape="rect" id="node16" href="$classHurricane_1_1Instance.html" title="Instance description (API)" alt="" coords="499,208,635,235"/>
+<area shape="rect" id="node17" href="$classHurricane_1_1Rubber.html" title="Rubber description (API)" alt="" coords="503,259,631,285"/>
+<area shape="rect" id="node6" href="$classHurricane_1_1Contact.html" title="Contact description (API)" alt="" coords="703,5,835,32"/>
+<area shape="rect" id="node8" href="$classHurricane_1_1Diagonal.html" title="Diagonal description (API)" alt="" coords="701,56,838,83"/>
+<area shape="rect" id="node9" href="$classHurricane_1_1Pad.html" title="Pad description (API)" alt="" coords="715,107,824,133"/>
+<area shape="rect" id="node10" href="$classHurricane_1_1Plug.html" title="Plug description (API)" alt="" coords="713,157,825,184"/>
+<area shape="rect" id="node11" href="$classHurricane_1_1Polygon.html" title="Polygon description (API)" alt="" coords="703,208,835,235"/>
+<area shape="rect" id="node12" href="$classHurricane_1_1RoutingPad.html" title="RoutingPad description (API)" alt="" coords="692,259,847,285"/>
+<area shape="rect" id="node13" href="$classHurricane_1_1Segment.html" title="Segment description (API)" alt="" coords="700,309,839,336"/>
+<area shape="rect" id="node7" href="$classHurricane_1_1Pin.html" title="Pin description (API)" alt="" coords="914,5,1019,32"/>
+<area shape="rect" id="node14" href="$classHurricane_1_1Horizontal.html" title="Horizontal description (API)" alt="" coords="895,284,1039,311"/>
+<area shape="rect" id="node15" href="$classHurricane_1_1Vertical.html" title="Vertical description (API)" alt="" coords="901,335,1032,361"/>
 </map>

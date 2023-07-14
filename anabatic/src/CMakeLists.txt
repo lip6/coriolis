@@ -6,12 +6,13 @@ endif ( CHECK_DETERMINISM )
 
    include_directories( ${ANABATIC_SOURCE_DIR}/src
                         ${CORIOLIS_INCLUDE_DIR} 
+                        ${ETESIAN_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${FLUTE_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
-                        ${QtX_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${QtX_INCLUDE_DIRS}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
@@ -35,9 +36,10 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/NetBuilderM2.h
                                      anabatic/NetBuilderHV.h
                                      anabatic/NetBuilderVH.h
+                                     anabatic/NetBuilderHybridVH.h
                                      anabatic/ChipTools.h
                       )
-                   set( pyIncludes   )
+                   set( pyIncludes   anabatic/PyStyleFlags.h )
                    set( cpps         Constants.cpp
                                      Configuration.cpp
                                      Matrix.cpp
@@ -61,15 +63,19 @@ endif ( CHECK_DETERMINISM )
                                      NetBuilderM2.cpp
                                      NetBuilderHV.cpp
                                      NetBuilderVH.cpp
+                                     NetBuilderHybridVH.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
+                                     AntennaProtect.cpp
                                      PreRouteds.cpp
                                      AnabaticEngine.cpp
                       )
-                   set( pyCpps       PyAnabatic.cpp
+                   set( pyCpps       PyStyleFlags.cpp
+		                     PyAnabatic.cpp
                       )
 
-                   set( depLibs      ${CORIOLIS_PYTHON_LIBRARIES}
+                   set( depLibs      ${ETESIAN_LIBRARIES}
+                                     ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_PYTHON_LIBRARIES}
                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
@@ -77,13 +83,15 @@ endif ( CHECK_DETERMINISM )
                                      ${CONFIGURATION_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${COLOQUINTE_LIBRARIES}
                                      ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                     ${Python3_LIBRARIES}
+                                      -lutil
                       )
 
            add_library( anabatic    ${cpps} )

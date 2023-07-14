@@ -1,0 +1,61 @@
+.TH "Observable" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Observable \- \fBObserver\fP Design Pattern, Subject part\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBObservable\fP ()"
+.br
+.ti -1c
+.RI "template<typename T > T * \fBgetObserver\fP ()"
+.br
+.ti -1c
+.RI "void \fBaddObserver\fP (\fBBaseObserver\fP *)"
+.br
+.ti -1c
+.RI "void \fBremoveObserver\fP (\fBBaseObserver\fP *)"
+.br
+.ti -1c
+.RI "void \fBnotify\fP (unsigned int flags)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBObserver\fP Design Pattern, Subject part\&. 
+
+\fBObservable\fP is the implementation of the \fIsubject\fP part of the \fBObserver\fP design pattern\&. For the time beeing it's a simplificated version that allows only one \fBObserver\fP to watch the subject\&.
+.PP
+\fBObservable\fP is designed to be an attribute of the subject, not one of it's base class\&.
+.PP
+This implantation is completly generic and has nothing specific to \fBKatabatic\fP\&. It may be moved sometimes in Hurricane at Property level in \fBHurricane::DBo\fP\&.
+.PP
+\fBNote to Myself:\fP \fBObserver\fP pattern is the one behind signal/slots\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBObservable\fP ()\fC [inline]\fP"
+Default and only constructor\&. The copy constructor is disabled (made private and unimplemented)\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "T * getObserver ()\fC [inline]\fP"
+\fBReturns:\fP The (only) observer, \fCNULL\fP if there is none\&. It is the object of which the \fBObserver\fP is an attribute, that is, it's \fIowner\fP, and not the \fBObserver\fP itself which is returned\&. 
+.SS "void addObserver (\fBBaseObserver\fP * observer)\fC [inline]\fP"
+Adds an observer\&. If more than one is added, throw an error\&. 
+.SS "void removeObserver (\fBBaseObserver\fP * observer)\fC [inline]\fP"
+Removes an observer\&. If the observer do not belong to this observable, throw an exception\&. 
+.SS "void notify (unsigned int flags)\fC [inline]\fP"
+Used by the subject to signal a change in it's state to the observers\&. The \fCflags\fP parameter can be used to indicates what kind of change is occuring\&. Values for \fCflags\fP are defined between the subject and the observers\&. 
+.PP
+References BaseObserver::notify()\&.
+.PP
+Referenced by AutoSegment::_invalidate(), AutoSegment::_postCreate(), AutoSegment::_preDestroy(), and AutoSegment::revalidate()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

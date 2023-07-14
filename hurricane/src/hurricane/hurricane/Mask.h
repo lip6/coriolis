@@ -66,7 +66,7 @@ namespace Hurricane {
              inline bool    operator <       ( const Mask mask ) const;
              inline bool    operator >       ( const Mask mask ) const;
              inline         operator IntType () const;
-      static inline Mask    fromString       ( const string& );
+      static inline Mask    fromString       ( std::string );
     // Hurricane Managment.
              inline string  _getTypeName     () const;
              inline string  _getString       () const;
@@ -194,11 +194,11 @@ namespace Hurricane {
 
 
   template<typename IntType>
-  size_t  Mask<IntType>::_width = sizeof(IntType)<<2;
+  size_t  Mask<IntType>::_width = sizeof(IntType)<<1;
 
 
   template<typename IntType>
-  inline Mask<IntType>  Mask<IntType>::fromString ( const string& s )
+  inline Mask<IntType>  Mask<IntType>::fromString ( std::string s )
   {
     IntType       value;
     istringstream iss ( s );

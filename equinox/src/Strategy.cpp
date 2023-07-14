@@ -241,7 +241,7 @@ namespace Equinox {
   void WithAlimStrategy::operationAfterScanLine(EquinoxEngine* equinox)
   {
     Cell * cell = equinox->_cell;
-   if( cell->isLeaf())  // If this is a leaf cell
+   if( cell->isTerminalNetlist())  // If this is a leaf cell
       equinox->cleanUpLeafCell();
    else 
       equinox->getOccurrencesOfEquis();
@@ -318,7 +318,7 @@ namespace Equinox {
 
  Occurrences componentoccurrences ;
    
-   if(equinox->_cell->isLeaf())
+   if(equinox->_cell->isTerminalNetlist())
      componentoccurrences = equinox->_cell->getComponentOccurrencesUnder(underbox,
 									 DataBase::getDB()->getTechnology()->_getMetalMask()).getSubSet((WithAlimStrategyFilter()));
    else 
@@ -430,7 +430,7 @@ namespace Equinox {
   void WithoutAlimStrategy::operationAfterScanLine(EquinoxEngine* equinox)
   {
     Cell * cell = equinox->_cell;
-   if( cell->isLeaf())  // If this is a leaf cell
+   if( cell->isTerminalNetlist())  // If this is a leaf cell
       equinox->cleanUpLeafCell();
    else 
       equinox->getOccurrencesOfEquis();

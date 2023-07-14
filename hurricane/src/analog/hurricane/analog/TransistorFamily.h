@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_TRANSISTOR_FAMILY_H
-#define ANALOG_TRANSISTOR_FAMILY_H
-
+#pragma once
 #include "hurricane/DbU.h"
 #include "hurricane/analog/Device.h"
 #include "hurricane/analog/MetaTransistor.h"
@@ -86,6 +84,7 @@ namespace Analog {
     // Sizing parameters commons to all MOS transistors.
       inline        int             getOperatorIndex           () const;
       inline        void            setOperatorIndex           ( int );
+      virtual       Record*         _getRecord                 () const;
   
     protected:
                                     TransistorFamily           ( Hurricane::Library*
@@ -124,7 +123,7 @@ namespace Analog {
   inline       void                    TransistorFamily::setSourceFirst         ( const bool sourceFirst ) { _sourceFirst->setValue ( (sourceFirst)?1:0 ); }
   inline       void                    TransistorFamily::setWmin                ( float wmin  ) { _secureGetReferenceTransistor()->setWmin (wmin ); }
   inline       void                    TransistorFamily::setWmax                ( float wmax  ) { _secureGetReferenceTransistor()->setWmax (wmax ); }
-  inline       void                    TransistorFamily::setNfing               ( int   nfing ) { _secureGetReferenceTransistor()->setNfing(nfing); }
+  inline       void                    TransistorFamily::setNfing               ( int   nfing ) { _secureGetReferenceTransistor()->setNfing(nfing); _m->setValue(nfing); }
   inline       void                    TransistorFamily::setExternalDummy       ( long  ndumm ) { _externalDummy->setValue(ndumm); }
   inline       void                    TransistorFamily::setBulkType            ( long  btype ) { _bulkType->setValue(btype); }
   inline       void                    TransistorFamily::setWE                  ( float we    ) { _secureGetReferenceTransistor()->setWE   (we   ); }
@@ -176,4 +175,29 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif // ANALOG_TRANSISTOR_FAMILY_H
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  Net::Type::Code*".
+
+template<>
+inline std::string  getString<const Analog::TransistorFamily::Type*>
+                             ( const Analog::TransistorFamily::Type* object )
+                             {
+                               switch ( *object ) {
+                                 case Analog::TransistorFamily::NMOS: return "NMOS";
+                                 case Analog::TransistorFamily::PMOS: return "PMOS";
+                               }
+                               return "Unknow (error)";
+                             }
+
+template<>
+inline Hurricane::Record* getRecord<const Analog::TransistorFamily::Type*>
+                                   ( const  Analog::TransistorFamily::Type* object )
+                                   {
+                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
+                                     record->add(getSlot("Type", (unsigned int*)object));
+                                     return record;
+                                   }
+
+IOSTREAM_POINTER_SUPPORT(Analog::TransistorFamily::Type);
+IOSTREAM_VALUE_SUPPORT(Analog::TransistorFamily::Type);

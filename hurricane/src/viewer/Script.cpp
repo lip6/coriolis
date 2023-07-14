@@ -136,13 +136,14 @@ namespace Isobar {
     _pyArgs   = NULL;
     _pyKw     = NULL;
 
-    if (_pyResult == NULL) {
-      cerr << "Something has gone slightly wrong" << endl;
-    }
-
     if (PyErr_Occurred()) {
       PyErr_Print();
+      PyErr_Clear();
       returnCode = false;
+    }
+
+    if (_pyResult == NULL) {
+      cerr << "Something has gone slightly wrong" << endl;
     }
 
     finalize();
@@ -167,12 +168,15 @@ namespace Isobar {
 
     _pyResult = PyObject_Call( _pyFunction, pyArgs, NULL );
 
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+      PyErr_Clear();
+    }
+
     if (_pyResult == NULL) {
       cerr << "Something has gone slightly wrong" << endl;
       return NULL;
     }
-
-    if (PyErr_Occurred()) PyErr_Print();
 
     return _pyResult;
   }
@@ -191,7 +195,7 @@ namespace Isobar {
     vector<string>::iterator ipath = _pathes.begin();
 
     for ( ; ipath != _pathes.end() ; ++ipath ) {
-      PyObject* element = PyString_FromString( const_cast<char*>((*ipath).c_str()) );
+      PyObject* element = PyUnicode_FromString( const_cast<char*>((*ipath).c_str()) );
       PyList_Insert( path, 0, element );
     }
 
@@ -227,7 +231,8 @@ namespace Isobar {
     if (Py_IsInitialized()) {
     // Python is already running. Launch a sub-interpreter.
       _globalState    = PyThreadState_Get();
-      _subInterpreter = Py_NewInterpreter();
+    //_subInterpreter = Py_NewInterpreter();
+      _subInterpreter = _globalState;
     } else 
       Py_Initialize();
 
@@ -257,14 +262,18 @@ namespace Isobar {
     if (not (_flags & Initialized)) return;
     _flags &= ~Initialized;
 
-    if (_subInterpreter != NULL) {
+  //if (_subInterpreter == _globalState) return;
+    
+    if ( (_subInterpreter != NULL) and (_subInterpreter != _globalState) ) {
       Py_EndInterpreter(_subInterpreter);
       PyThreadState_Swap(_globalState);
       _subInterpreter = NULL;
     } else {
-      if ( _userModule      != NULL ) { Py_DECREF ( _userModule ); }
-      if ( _hurricaneModule != NULL ) { Py_DECREF ( _hurricaneModule ); }
-      if ( _sysModule       != NULL ) { Py_DECREF ( _sysModule ); }
+      if (_subInterpreter != _globalState) {
+        if ( _userModule      != NULL ) { Py_DECREF ( _userModule ); }
+        if ( _hurricaneModule != NULL ) { Py_DECREF ( _hurricaneModule ); }
+        if ( _sysModule       != NULL ) { Py_DECREF ( _sysModule ); }
+      }
       if ( _pyResult        != NULL ) { Py_DECREF ( _pyResult ); }
       if ( _pyArgs          != NULL ) { Py_DECREF ( _pyArgs ); }
       if ( _pyFunction      != NULL ) { Py_DECREF ( _pyFunction ); }
@@ -293,7 +302,7 @@ namespace Isobar {
   {
     if (_pyKw == NULL) _pyKw = PyDict_New();
 
-    PyObject* pyKey = PyString_FromString( key );
+    PyObject* pyKey = PyUnicode_FromString( key );
     if (PyDict_Contains(_pyKw,pyKey) == 1) {
       cerr << Error( "Script::addKwArgument(): Attempt to add twice key %s (nothing done)."
                    , key ) << endl;

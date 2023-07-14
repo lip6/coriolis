@@ -31,9 +31,286 @@
 #include "hurricane/Horizontal.h"
 #include "hurricane/Cell.h"
 #include "crlcore/RoutingGauge.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/AnabaticEngine.h"
+
+
+namespace {
+
+
+  using namespace std;
+  using namespace CRL;
+  using namespace Hurricane;
+  using namespace Anabatic;
+
+
+  class SortRpByX {
+    public:
+      inline       SortRpByX  ();
+      inline bool  operator() ( RoutingPad* rp1, RoutingPad* rp2 );
+  };
+
+
+  inline  SortRpByX::SortRpByX ()
+  { }
+
+
+  inline bool  SortRpByX::operator() ( RoutingPad* rp1, RoutingPad* rp2 )
+  {
+    DbU::Unit x1 = rp1->getCenter().getX();
+    DbU::Unit x2 = rp2->getCenter().getX();
+
+    if (x1 == x2) return false;
+    return (x1 < x2);
+  }
+
+
+// -----------------------------------------------------------------
+// Class : "RpsInRow".
+
+  class RpsInRow {
+    public:
+      class Compare {
+        public:
+          bool  operator() ( const RpsInRow* lhs, const RpsInRow* rhs ) const;
+      };
+    public:
+      inline                            RpsInRow      ( RoutingPad*, AnabaticEngine* );
+      inline const vector<RoutingPad*>& getRps        () const;
+      inline       size_t               getSouth      () const;
+      inline       size_t               getNorth      () const;
+      inline const Interval&            getRpsHSpan   () const;
+      inline const Interval&            getRpsVSpan   () const;
+                   void                 slacken       ();
+    private:
+                   void                 _findTopology ();
+      inline       void                 _merge        ( RoutingPad* );
+    private:
+      AnabaticEngine*      _anabatic;
+      vector<RoutingPad*>  _rps;
+      size_t               _north;
+      size_t               _south;
+      Interval             _hSpan;
+      Interval             _vSpan;
+  };
+
+
+  inline RpsInRow::RpsInRow ( RoutingPad* seed, AnabaticEngine* anabatic )
+    : _anabatic(anabatic)
+    , _rps     ()
+    , _north   (0)
+    , _south   (0)
+    , _hSpan   ()
+    , _vSpan   ( false )
+  {
+    _rps.push_back( seed );
+    _findTopology();
+  }
+
+  
+  inline const vector<RoutingPad*>& RpsInRow::getRps      () const { return _rps; }
+  inline       size_t               RpsInRow::getSouth    () const { return _south; }
+  inline       size_t               RpsInRow::getNorth    () const { return _north; }
+  inline const Interval&            RpsInRow::getRpsHSpan () const { return _hSpan; }
+  inline const Interval&            RpsInRow::getRpsVSpan () const { return _vSpan; }
+
+  
+  bool  RpsInRow::Compare::operator() ( const RpsInRow* lhs, const RpsInRow* rhs ) const
+  {
+    if ( (lhs->_rps.size() == 2) and (rhs->_rps.size() != 2) ) return true;
+    if ( (lhs->_rps.size() != 2) and (rhs->_rps.size() == 2) ) return false;
+    if ( lhs->_rps.size() != rhs->_rps.size() ) return lhs->_rps.size() < rhs->_rps.size();
+
+    size_t lhsNs = lhs->_south + lhs->_north;
+    size_t rhsNs = rhs->_south + rhs->_north;
+    if (lhsNs != rhsNs) return lhsNs < rhsNs;
+
+    if (lhs->_vSpan != rhs->_vSpan) return lhs->_vSpan.getSize() < rhs->_vSpan.getSize();
+    if (lhs->_hSpan != rhs->_hSpan) return lhs->_hSpan.getSize() < rhs->_hSpan.getSize();
+    
+    return lhs->_rps[0]->getId() < rhs->_rps[0]->getId();
+  }
+
+
+  inline void  RpsInRow::_merge ( RoutingPad* rp )
+  {
+    if (rp != _rps[0]) _rps.push_back( rp );
+
+    Box bb ( _rps.back()->getBoundingBox() );
+    _hSpan.merge( bb.getCenter().getX() );
+    _vSpan.intersection( bb.getYMin(), bb.getYMax() );
+  }
+
+
+  void  RpsInRow::_findTopology ()
+  {
+    cdebug_log(146,1) << "RpsInRow::findTopology() - " << _rps[0] << endl;
+
+    _merge( _rps[0] );
+
+    AutoSegmentStack stack;
+
+    for ( Component* component : _rps[0]->getSlaveComponents() ) {
+      cdebug_log(146,0) << "slave component: " << component << endl;
+      AutoContact* rpContact = Session::lookup( dynamic_cast<Contact*>(component) );
+      if (rpContact) {
+        cdebug_log(146,0) << "Start rp: " << rpContact << endl;
+
+        for ( AutoSegment* segment : rpContact->getAutoSegments() ) {
+          cdebug_log(146,0) << "Examining: " << segment << endl;
+          AutoContact* target = segment->getOppositeAnchor(rpContact);
+
+          if (target) {
+            if (segment->isHorizontal()) {
+              stack.push( target, segment );
+            } else {
+              if (segment->isLocal()) {
+                stack.push( target, segment );
+              } else {
+                if (segment->getAutoSource() == rpContact) ++_north;
+                else                                       ++_south;
+              }
+            }
+          }
+        }
+
+        // Find Rps in same horizontal GCell range.
+        cdebug_log(146,0) << "Find Rps in same horizontal GCell range" << endl;
+
+        while ( not stack.isEmpty() ) {
+          AutoSegment* from    = stack.getAutoSegment();
+          AutoContact* contact = stack.getAutoContact();
+          stack.pop();
+
+          for ( AutoSegment* segment : contact->getAutoSegments() ) {
+            if (segment == from) continue;
+            if (segment->isVertical() and not segment->isLocal()) {
+              if (segment->getAutoSource() == contact) ++_north;
+              else                                     ++_south;
+              continue;
+            }
+
+            AutoContact*         target   = segment->getOppositeAnchor( contact );
+            AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( target );
+            if (terminal) {
+              _merge( terminal->getRoutingPad() );
+            }
+
+            stack.push( target, segment );
+          }
+        }
+      }
+    }
+
+    sort( _rps.begin(), _rps.end(), SortRpByX() );
+
+    cdebug_log(146,0) << "findHAlignedsRps() - Exit" << endl;
+    cdebug_tabw(146,-1);
+  }
+
+
+  void  RpsInRow::slacken ()
+  {
+    cdebug_log(149,1) << "RpsInRow::slacken()" << endl;
+
+    for ( RoutingPad* rp : _rps ) {
+      cdebug_log(149,0) << "Slacken from: " << rp << endl;
+
+      if (rp->getLayer()) {
+        if (_anabatic->getConfiguration()->getLayerDepth(rp->getLayer()) == 1) {
+          cdebug_log(149,0) << "In METAL2, skiping" << endl;
+          continue;
+        }
+      }
+         
+      for ( Component* component : rp->getSlaveComponents() ) {
+        AutoContact* rpContact = Session::lookup( dynamic_cast<Contact*>(component) );
+        if (rpContact) {
+          cdebug_log(149,0) << "+ " << rpContact << endl;
+          for ( AutoSegment* segment : rpContact->getAutoSegments() ) {
+            cdebug_log(149,0) << "| " << segment << endl;
+
+            if (segment->isVertical()) {
+              if (segment->getDepth() == 1) {
+                cdebug_log(149,0) << "| Slacken: " << segment << endl;
+                segment->changeDepth( 2, Flags::NoFlags );
+                cdebug_log(149,0) << "| After Slacken: " << segment << endl;
+              }
+            } else {
+              segment->makeDogleg( rpContact->getGCell() );
+              cdebug_log(149,0) << "| Make dogleg: " << segment << endl;
+            }
+          }
+        }
+      }
+    }
+    cdebug_tabw(149,-1);
+  }
+
+
+// -----------------------------------------------------------------
+// Class : "GCellRps".
+
+  class GCellRps {
+    public:
+      class Compare {
+        public:
+          bool  operator() ( const GCellRps* lhs, const GCellRps* rhs ) const;
+      };
+    public:
+                                      GCellRps     ( GCell*, AnabaticEngine* );
+                                     ~GCellRps     ();
+      inline GCell*                   getGCell     () const;
+      inline size_t                   add          ( RoutingPad* );
+      inline void                     consolidate  ();
+      inline RpsInRow*                getRpsInRow  ( size_t i );
+      inline const vector<RpsInRow*>& getRpsInRows () const;
+    private:
+      AnabaticEngine*    _anabatic;
+      GCell*             _gcell;
+      vector<RpsInRow*>  _rpsInRows;
+  };
+
+
+  GCellRps::GCellRps ( GCell* gcell, AnabaticEngine* anabatic )
+    : _anabatic (anabatic)
+    , _gcell    (gcell)
+    , _rpsInRows()
+  { }
+
+
+  GCellRps::~GCellRps ()
+  {
+    for ( RpsInRow* elem : _rpsInRows ) delete elem;
+  }
+
+
+  inline GCell* GCellRps::getGCell () const { return _gcell; }
+
+
+  inline size_t  GCellRps::add ( RoutingPad* rp )
+  {
+    _rpsInRows.push_back( new RpsInRow(rp,_anabatic) );
+    return _rpsInRows.size() - 1;
+  }
+
+
+  inline void  GCellRps::consolidate ()
+  {
+    sort( _rpsInRows.begin(), _rpsInRows.end(), RpsInRow::Compare() );
+  }
+
+
+  inline       RpsInRow*          GCellRps::getRpsInRow  ( size_t i ) { return _rpsInRows[i]; }
+  inline const vector<RpsInRow*>& GCellRps::getRpsInRows () const     { return _rpsInRows; }
+
+  
+  bool  GCellRps::Compare::operator() ( const GCellRps* lhs, const GCellRps* rhs ) const
+  { return lhs->getGCell()->getId() < rhs->getGCell()->getId(); }
+
+
+}  // Anonymous namespace.
 
 
 namespace Anabatic {
@@ -59,9 +336,58 @@ namespace Anabatic {
 
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
+    cdebug_log(149,0) << "Session::getSaturateRatio()=" << Session::getSaturateRatio() << endl;
 
+    GCellKeyQueue  queue;
+    GCell::Set     invalidateds;
+
+    for ( GCell* gcell : getGCells() ) queue.push( gcell->cloneKey(depth) );
+
+    bool optimized = true;
+    bool finished  = false;
+    while ( optimized ) {
+      Session::revalidate ();
+      optimized = false;
+
+      while ( not queue.empty() ) {
+        GCell::Key* topKey = queue.top();
+        GCell*      gcell  = const_cast<GCell*>( topKey->getGCell() );
+        queue.pop();
+
+        if (topKey->isActive()) {
+          cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
+                            << gcell->getDensity(depth) << " " << gcell << endl;
+          
+          if (not gcell->isSaturated(depth)) {
+            cdebug_log(149,0) << "STOP desaturated: " << gcell << endl;
+            finished = true;
+          } else {
+            if (finished) {
+              cparanoid << "[ERROR] Still saturated: " << gcell << endl;
+            }
+          }
+          
+          if (not finished) {
+            optimized = gcell->stepNetDesaturate( depth, globalNets, invalidateds );
+            gcell->setSatProcessed( depth );
+            if (optimized) {
+              for ( GCell* gcell : invalidateds ) {
+                if (not gcell->isSatProcessed(depth))
+                  queue.push( gcell->cloneKey(depth) );
+              }
+              invalidateds.clear();
+            }
+          }
+        }
+
+        delete topKey;
+      }
+    }
+    
+
+#if OLD_QUEUE_DISABLED
     GCellDensitySet queue   ( depth, getGCells() );
-    GCell::Set      invalidateds;
+    GCell::Set     invalidateds;
 
     bool optimized = true;
     while ( optimized ) {
@@ -73,7 +399,7 @@ namespace Anabatic {
       size_t i = 0;
       for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
         cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
-                    << (*igcell)->getDensity(depth) << " " << *igcell << endl;
+                          << (*igcell)->getDensity(depth) << " " << *igcell << endl;
 
         if (not (*igcell)->isSaturated(depth)) {
           cdebug_log(149,0) << "STOP desaturated: @" << i << " " << *igcell << endl;
@@ -95,6 +421,7 @@ namespace Anabatic {
         }
       }
     }
+#endif
   }
 
 
@@ -246,22 +573,23 @@ namespace Anabatic {
 
       for ( AutoSegment* horizontal : horizontals ) {
         vector<AutoSegment*> collapseds;
-        vector<AutoSegment*> perpandiculars;
-        vector<AutoSegment*> northBounds;
-        vector<AutoSegment*> southBounds;
+        vector< tuple<AutoSegment*,Flags> > perpandicularsDatas;
+      //vector<AutoSegment*> northBounds;
+      //vector<AutoSegment*> southBounds;
         DbU::Unit            leftBound;
         DbU::Unit            rightBound;
-        bool                 hasNorth = false;
-        bool                 hasSouth = false;
+      //bool                 hasNorth = false;
+      //bool                 hasSouth = false;
 
         AutoSegment::getTopologicalInfos( horizontal
                                         , collapseds
-                                        , perpandiculars
+                                        , perpandicularsDatas
                                         , leftBound
                                         , rightBound
                                         );
 
-        for ( AutoSegment* perpandicular : perpandiculars ) {
+        for ( auto perpandicularDatas : perpandicularsDatas ) {
+          AutoSegment* perpandicular = std::get<0>( perpandicularDatas );
           if (Session::getLayerDepth(perpandicular->getLayer()) > 2) continue;
 
           bool hasGlobal = false;
@@ -431,7 +759,7 @@ namespace Anabatic {
         if (not segment->isStrongTerminal()) locals.push_back( segment );
         continue;
       }
-      if ( (segment->getLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
+      if ( (segment->getAnchoredLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
         locals.push_back( segment );
         continue;
       }
@@ -507,7 +835,7 @@ namespace Anabatic {
     cmess1 << "  o  Balance Global Density "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
 
-    GCellDensitySet queue ( depth, getGCells()) );
+    GCellDensitySet queue ( depth, getGCells() );
     GCell::Set      invalidateds;
 
     bool optimized = true;
@@ -599,6 +927,8 @@ namespace Anabatic {
 
   void  AnabaticEngine::layerAssign ( uint32_t method )
   {
+  //DebugSession::open( 145, 150 );
+
     cdebug_log(9000,0) << "Deter| Layer Assignment" << endl;
 
     set<Net*> globalNets;
@@ -645,6 +975,54 @@ namespace Anabatic {
   
       Session::setAnabaticFlags( Flags::WarnOnGCellOverload );
     }
+
+    set<GCellRps*,GCellRps::Compare> gcellRpss;
+    
+    for ( GCell* gcell : getGCells() ) {
+      set<RoutingPad*,Entity::CompareById> rps;
+      
+      const vector<AutoContact*> contacts = gcell->getContacts();
+      for ( AutoContact* contact : contacts ) {
+        AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( contact );
+        if (terminal) {
+          rps.insert( terminal->getRoutingPad() );
+        }
+      }
+      if (rps.size() > getConfiguration()->getSaturateRp()) {
+        GCellRps* gcellRps = new GCellRps ( gcell, this );
+        gcellRpss.insert( gcellRps );
+
+        for ( RoutingPad* rp : rps ) gcellRps->add( rp );
+      }
+    } 
+
+    for ( GCellRps* gcellRps : gcellRpss ) {
+      gcellRps->consolidate();
+      
+      const vector<RpsInRow*>& rpsInRows = gcellRps->getRpsInRows();
+      cdebug_log(149,0) << gcellRps->getGCell() << " has " << rpsInRows.size() << " terminals." << endl;
+
+      size_t count = 0;
+      for ( RpsInRow* rpsInRow : rpsInRows ) {
+        cdebug_log(149,0) << "North:" << rpsInRow->getNorth() << " South:"
+             << rpsInRow->getSouth() << " net:"
+             << rpsInRow->getRps()[0]->getNet()->getName() << endl;
+        cdebug_log(149,0) << "H-Span:" << rpsInRow->getRpsHSpan() << " V-Span:" << rpsInRow->getRpsVSpan() << endl;
+        for ( RoutingPad* arp : rpsInRow->getRps() ) {
+          cdebug_log(149,0) << "| " << arp << endl;
+        }
+        if (++count < 2) rpsInRow->slacken();
+      }
+
+      for ( AutoSegment* segment : gcellRps->getGCell()->getHSegments() ) {
+        if (segment->canPivotUp()) {
+          cdebug_log(149,0) << "Move up horizontal: " << segment << endl;
+          segment->moveUp( Flags::Propagate );
+        }
+      }
+      
+      delete gcellRps;
+    }
   
     checkGCellDensities();
     Session::close();
@@ -656,6 +1034,8 @@ namespace Anabatic {
     // cmess2 << "     - Global segments : " << global << endl;
     // cmess2 << "     - Ratio : "
     //        << ((float)global/(float)total)*100.0 << "%." << endl;
+
+  //DebugSession::close();
   }
 
 

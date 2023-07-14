@@ -32,9 +32,11 @@
 // Needed for registering. May be deleted later.
 #include "hurricane/Initializer.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Error.h"
 #include "hurricane/Warning.h"
-#include "hurricane/Library.h"
-#include "hurricane/Cell.h"
+#include "hurricane/Entity.h"
+//#include "hurricane/Library.h"
+//#include "hurricane/Cell.h"
 
 
 namespace Hurricane {
@@ -234,7 +236,7 @@ namespace Hurricane {
   void  JsonTypes::_registerType ( JsonObject* object )
   {
     if (_find(object->getTypeName())) {
-      throw Error( "JsonTypes::_registerType(): Attempt to register <%s> twice.", object->getTypeName().c_str() );
+      throw Error( "JsonTypes::_registerType(): Attempt to register \"%s\" twice.", object->getTypeName().c_str() );
     }
     _jsonObjects.insert( object );
   }

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Printable Version of this Document DesignFlow. Contents Printable Version of this Document 1. Introduction 1.1 Task vs. Rules 1.2 A Warning About Determinism 2. Using The Design Flow 2.1 Locating...">
+        <meta name="keywords" content="">
+        <link rel="icon" href="../favicon.ico">
+
+        <title>Design Flow - Coriolis VLSI CAD Tools [offline]</title>
+
+        <!-- Stylesheets -->
+        <link href="../theme/css/bootstrap.css" rel="stylesheet">
+        <link href="../theme/css/fonts.css"     rel="stylesheet">
+        <link href="../theme/css/nest.css"      rel="stylesheet">
+        <link href="../theme/css/pygment.css"   rel="stylesheet">
+        <link href="../theme/css/coriolis.css"  rel="stylesheet">
+        <!-- /Stylesheets -->
+
+        <script src="../theme/js/jquery.min.js"></script>
+        <script src="../theme/js/bootstrap.min.js"></script>
+
+        <!-- RSS Feeds -->
+        <!-- /RSS Feeds -->
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+    </head>
+
+    <body>
+      <!-- Header -->
+    <div class="header-container" style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/common/layout-motif-faded-4.png'); background-position: center; ">
+
+
+      <!--
+      <div class="container">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+            </div>
+            <ul class="nav navbar-nav">
+                   <li><a href="../pages/gitlab.html">Git</a></li>
+                   <li><a href="../pages/documentation.html">Documentation</a></li>
+              <li class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="caret"></span>Topics
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item " href="../pages/.html"></a></li>
+                  <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                  <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div> <!-- navbar container -->
+      -->
+
+      <!-- Static navbar -->
+      <div class="container">
+        <div class="header-nav">
+          <div class="header-logo">
+            <a class="pull-left" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+          </div>
+          <div class="nav pull-right">
+                <a href="../pages/gitlab.html">Git</a>
+                <a href="../pages/documentation.html">Documentation</a>
+          </div>
+          <div class="nav pull-right">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="caret"></span>Topics
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item " href="../pages/.html"></a></li>
+                <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Static navbar -->
+
+        <!-- Header -->
+    <div class="container header-wrapper">
+        <div class="row">
+              <div class="col-lg-12">
+                  <div class="header-content">
+                      <a href="https://www.lip6.fr/"><img class="mr20" height="60px" src="../images/common/LogoLIP6Blanc.png" alt="LIP6"></a>
+                      <a href="https://www.sorbonne-universite.fr/"><img class="mr20" height="60px" src="../images/common/logo-SU-blanc-700px.png" alt="Sorbonne Universite"></a>
+                      <a href="https://www.cnrs.fr/"><img class="mr20" height="60px" src="../images/common/LOGO-cnrs-white-large.png" alt="CNRS"></a>
+                      <h1 class="header-title text-uppercase">Design Flow</h1>
+                      <div class="header-underline"></div>
+                  </div>
+              </div>
+        </div>
+    </div>
+        <!-- /Header -->
+
+        </div>
+        <!-- /Header -->
+
+
+        <!-- Content -->
+    <div class="container content">
+        <!-- -*- Mode: rst -*- -->
+<!-- URLs that changes between the various backends. -->
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#id2">Printable Version of this Document</a></h2>
+<p><a class="reference external" href="../pdfs/DesignFlow.pdf">DesignFlow</a>.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#printable-version-of-this-document" id="id2">Printable Version of this Document</a></li>
+<li><a class="reference internal" href="#introduction" id="id3">1. Introduction</a><ul>
+<li><a class="reference internal" href="#task-vs-rules" id="id4">1.1 Task vs. Rules</a></li>
+<li><a class="reference internal" href="#a-warning-about-determinism" id="id5">1.2 A Warning About Determinism</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-design-flow" id="id6">2. Using The Design Flow</a><ul>
+<li><a class="reference internal" href="#locating-the-various-parts" id="id7">2.1 Locating the Various Parts</a></li>
+<li><a class="reference internal" href="#basic-example-of-dodo-file" id="id8">2.2 Basic Example of <span class="cb">dodo</span> File</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#rules-s-catalog" id="id9">3. Rules's Catalog</a><ul>
+<li><a class="reference internal" href="#alliance-legacy-tools" id="id10">3.1 Alliance Legacy Tools</a></li>
+<li><a class="reference internal" href="#current-tools" id="id11">3.2 Current Tools</a></li>
+<li><a class="reference internal" href="#utility-rules" id="id12">3.3 Utility Rules</a></li>
+<li><a class="reference internal" href="#rule-sets" id="id13">3.4 Rule Sets</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<!-- -*- Mode: rst; explicit-buffer-name: "definition.rst<documentation/etc>" -*- -->
+<!-- HTML/LaTeX backends mixed macros. -->
+<!-- Acronyms & names. -->
+<!-- URLs -->
+<!-- Standard CAO/VLSI Concepts. -->
+<!-- Alliance & MBK Concepts -->
+<!-- Hurricane Concepts. -->
+<!-- -*- Mode: rst -*- -->
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id3">1. Introduction</a></h2>
+<p>The  goal  of the  DesignFlow  Python  tool is  to  provide  a replacement  for
+Makefiles,  especially  the  complex  system   that  has  been  developped  for
+alliance-check-toolkit.  It is build upon <span class="sc">DoIt</span> (<a class="reference external" href="https://pydoit.org/contents.html">DoIt</a>).</p>
+<div class="section" id="task-vs-rules">
+<h3><a class="toc-backref" href="#id4">1.1 Task vs. Rules</a></h3>
+<p>Both as a tribute to <span class="cb">Makefile</span>, to avoid ambiguties with <span class="sc">DoIt</span> and to remember
+that they are task <em>generators</em>, the classes defined to create tasks for the design
+flow are called <tt class="docutils literal">rules</tt>.</p>
+</div>
+<div class="section" id="a-warning-about-determinism">
+<h3><a class="toc-backref" href="#id5">1.2 A Warning About Determinism</a></h3>
+<p>There  is  a very  important  execution  difference  from  a <span class="cb">Makefile</span>.  In  a
+<span class="cb">Makefile</span>  each  rule  command  is  executed in  a  a  separated  process,  so
+information is  effectively passed  through files which  are written  then read
+from disk. But in <span class="sc">DoIt</span> we are running inside <em>one</em> <span class="sc">Python</span> process, so while
+using  Coriolis  and  the  <span class="sc">Hurricane</span> database,  all  informations  stays  <em>in
+memory</em>. Files are driven, but <em>not re-read</em> as the database will use the datas
+already present in memory.</p>
+<p>This is not  whitout consequences about determism. Let's look  at two different
+scenarii.</p>
+<ol class="arabic">
+<li><p class="first">We run straight from the RTL to the layout, using the rule/task sequence:</p>
+<pre class="literal-block">
+Yosys =&gt; design.blif =&gt; blif2vst =&gt; design.vst =&gt; PnR =&gt; design.gds
+</pre>
+<p>In this case, while <tt class="docutils literal">design.vst</tt> is written on disk, the <tt class="docutils literal">PnR</tt> stage
+will not re-read the <tt class="docutils literal">vst</tt> file and directly access the data in memory.</p>
+</li>
+<li><p class="first">Run in two separated steps, first we create the <tt class="docutils literal">vst</tt> file:</p>
+<pre class="literal-block">
+Yosys =&gt; design.blif =&gt; blif2vst =&gt; design.vst
+</pre>
+<p>Then, we perform the <tt class="docutils literal">PnR</tt>:</p>
+<pre class="literal-block">
+design.vst =&gt; PnR =&gt; design.gds
+</pre>
+<p>In this case, as the <span class="sc">DoIt</span> processess has been restarted between the two
+tasks, the <tt class="docutils literal">PnR</tt> stage <em>will</em> read the <tt class="docutils literal">vst</tt> file.</p>
+</li>
+</ol>
+<p>The determism in <span class="sc">Coriolis</span> is ensured through the unique identifiers of the
+objects, attributed in creation order. So between thoses two scenarii, the
+identifiers will change and so the algorithm results. The differences should
+be minor as the identifiers are used as a <em>last ditch</em> test to sort between
+two objects which cost functions are exactly equal, nevertheless, it will
+occur.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><span class="sc">Coriolis</span> is deterministic, meaning that each scenario will always
+give the same result. The difference is truly <em>between</em> scenarii.</p>
+</div>
+</div>
+</div>
+<div class="section" id="using-the-design-flow">
+<h2><a class="toc-backref" href="#id6">2. Using The Design Flow</a></h2>
+<div class="section" id="locating-the-various-parts">
+<h3><a class="toc-backref" href="#id7">2.1 Locating the Various Parts</a></h3>
+<p>One of the most tricky part of setting up the design flow is to locate where
+the various components are. The script needs to be able to find:</p>
+<ol class="arabic">
+<li><p class="first">Coriolis, binaries &amp; libraries. This depends widely of your kind of
+installation and system. The helper script <tt class="docutils literal">crlenv.py</tt> supplied
+both in <tt class="docutils literal"><span class="pre">alliance-check-toolkit</span></tt> and <span class="sc">Coriolis</span> may help you there.
+It looks in all the standard locations (that it is aware of) to try
+to find it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Usually, <span class="sc">Alliance</span> is installed in the same tree as
+<span class="sc">Coriolis</span>, so it's setup can be deduced from it.</p>
+</div>
+</li>
+<li><p class="first">The configurations files for the technology to be used. Here again,
+the <tt class="docutils literal">designflow.technos</tt> module provides you with a set of
+pre-defined configurations for open sources technologie shipped
+with <span class="sc">Coriolis</span>. For unsupported ones, you may write your own,
+it should perform the whole initialization of the <span class="sc">Coriolis</span> and
+<span class="sc">Hurricane</span> database.</p>
+</li>
+<li><p class="first">Optionnaly the <tt class="docutils literal"><span class="pre">alliance-check-toolkit</span></tt>.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="basic-example-of-dodo-file">
+<h3><a class="toc-backref" href="#id8">2.2 Basic Example of <span class="cb">dodo</span> File</a></h3>
+<p>This example can be found in <tt class="docutils literal"><span class="pre">alliance-check-toolkit</span></tt>, under <tt class="docutils literal">benchs/arlet6502/sky130_c4m</tt>.</p>
+<p>Here</p>
+<pre class="code Python literal-block">
+<span class="kn">from</span> <span class="nn">designflow.technos</span> <span class="kn">import</span> <span class="n">setupSky130_c4m</span>
+
+<span class="n">setupSky130_c4m</span><span class="p">(</span> <span class="n">checkToolkit</span><span class="o">=</span><span class="s1">'../../..'</span>
+               <span class="p">,</span> <span class="n">pdkMasterTop</span><span class="o">=</span><span class="s1">'../../../pdkmaster/C4M.Sky130'</span> <span class="p">)</span>
+
+<span class="n">DOIT_CONFIG</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">'verbosity'</span> <span class="p">:</span> <span class="mi">2</span> <span class="p">}</span>
+
+<span class="kn">from</span> <span class="nn">designflow.pnr</span>      <span class="kn">import</span> <span class="n">PnR</span>
+<span class="kn">from</span> <span class="nn">designflow.yosys</span>    <span class="kn">import</span> <span class="n">Yosys</span>
+<span class="kn">from</span> <span class="nn">designflow.blif2vst</span> <span class="kn">import</span> <span class="n">Blif2Vst</span>
+<span class="kn">from</span> <span class="nn">designflow.alias</span>    <span class="kn">import</span> <span class="n">Alias</span>
+<span class="kn">from</span> <span class="nn">designflow.clean</span>    <span class="kn">import</span> <span class="n">Clean</span>
+<span class="n">PnR</span><span class="o">.</span><span class="n">textMode</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="kn">from</span> <span class="nn">doDesign</span> <span class="kn">import</span> <span class="n">scriptMain</span>
+
+<span class="n">ruleYosys</span> <span class="o">=</span> <span class="n">Yosys</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'yosys'</span><span class="p">,</span> <span class="s1">'Arlet6502.v'</span> <span class="p">)</span>
+<span class="n">ruleB2V</span>   <span class="o">=</span> <span class="n">Blif2Vst</span><span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'b2v'</span>  <span class="p">,</span> <span class="p">[</span> <span class="s1">'arlet6502.vst'</span>
+                                      <span class="p">,</span> <span class="s1">'Arlet6502.spi'</span> <span class="p">]</span>
+                                    <span class="p">,</span> <span class="p">[</span><span class="n">ruleYosys</span><span class="p">]</span>
+                                    <span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span> <span class="p">)</span>
+<span class="n">rulePnR</span>   <span class="o">=</span> <span class="n">PnR</span>     <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'pnr'</span>  <span class="p">,</span> <span class="p">[</span> <span class="s1">'arlet6502_cts_r.gds'</span>
+                                      <span class="p">,</span> <span class="s1">'arlet6502_cts_r.spi'</span>
+                                      <span class="p">,</span> <span class="s1">'arlet6502_cts_r.vst'</span> <span class="p">]</span>
+                                    <span class="p">,</span> <span class="p">[</span><span class="n">ruleB2V</span><span class="p">]</span>
+                                    <span class="p">,</span> <span class="n">scriptMain</span> <span class="p">)</span>
+<span class="n">ruleCgt</span>   <span class="o">=</span> <span class="n">PnR</span>     <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'cgt'</span> <span class="p">)</span>
+<span class="n">ruleGds</span>   <span class="o">=</span> <span class="n">Alias</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'gds'</span><span class="p">,</span> <span class="p">[</span><span class="n">rulePnR</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">ruleClean</span> <span class="o">=</span> <span class="n">Clean</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">()</span>
+</pre>
+<p>You can run it with:</p>
+<pre class="code bash literal-block">
+ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit list
+b2v          Run &lt;blif2vst arlet6502 <span class="nv">depends</span><span class="o">=[</span>Arlet6502.blif<span class="o">]</span>&gt;.
+cgt          Run plain CGT <span class="o">(</span>no loaded design<span class="o">)</span>
+clean_flow   Clean all generated <span class="o">(</span>targets<span class="o">)</span> files.
+gds          Run &lt;Alias <span class="s2">&quot;gds&quot;</span> <span class="k">for</span> <span class="s2">&quot;pnr&quot;</span>&gt;.
+pnr          Run &lt;pnr arlet6502_cts_r.gds <span class="nv">depends</span><span class="o">=[</span>arlet6502.vst,Arlet6502.spi<span class="o">]</span>&gt;.
+yosys        Run &lt;yosys Arlet6502.v <span class="nv">top</span><span class="o">=</span>Arlet6502 <span class="nv">blackboxes</span><span class="o">=[]</span> <span class="nv">flattens</span><span class="o">=[]</span>&gt;.
+ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit pnr
+ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit clean_flow
+</pre>
+<p>Let's have a detailed look on the various parts of the script.</p>
+<ol class="upperalpha">
+<li><p class="first"><strong>Choosing the technology</strong> Here, we load the predefined configuration for
+SkyWater 130nm.  We also have to give the location of the
+<tt class="docutils literal"><span class="pre">alliance-check-toolkit</span></tt>, it may be relative or absolute.</p>
+<p>If you want to use another one, it up to you to configure <span class="sc">Coriolis</span> at
+this point by any means you see fit.</p>
+<pre class="code Python literal-block">
+<span class="kn">from</span> <span class="nn">designflow.technos</span> <span class="kn">import</span> <span class="n">setupSky130_c4m</span>
+
+<span class="n">setupSky130_c4m</span><span class="p">(</span> <span class="n">checkToolkit</span><span class="o">=</span><span class="s1">'../../..'</span>
+               <span class="p">,</span> <span class="n">pdkMasterTop</span><span class="o">=</span><span class="s1">'../../../pdkmaster/C4M.Sky130'</span> <span class="p">)</span>
+</pre>
+</li>
+<li><p class="first"><strong>Loading the various task/rule generators that we will use</strong>, from the
+<tt class="docutils literal">designflow</tt> namespace. The rules are named from the tool they
+encapsulate.</p>
+<pre class="code Python literal-block">
+<span class="kn">from</span> <span class="nn">designflow.pnr</span>      <span class="kn">import</span> <span class="n">PnR</span>
+<span class="kn">from</span> <span class="nn">designflow.yosys</span>    <span class="kn">import</span> <span class="n">Yosys</span>
+<span class="kn">from</span> <span class="nn">designflow.blif2vst</span> <span class="kn">import</span> <span class="n">Blif2Vst</span>
+<span class="kn">from</span> <span class="nn">designflow.alias</span>    <span class="kn">import</span> <span class="n">Alias</span>
+<span class="kn">from</span> <span class="nn">designflow.clean</span>    <span class="kn">import</span> <span class="n">Clean</span>
+<span class="n">PnR</span><span class="o">.</span><span class="n">textMode</span> <span class="o">=</span> <span class="kc">True</span>
+</pre>
+</li>
+<li><p class="first"><strong>Creating the rule set.</strong> Each rule generator as a static method <tt class="docutils literal">mkRule()</tt>
+to create a new task. The three first parameters are always:</p>
+<ol class="arabic simple">
+<li>The name of the task (the <tt class="docutils literal">basename</tt> for <span class="sc">DoIt</span>).</li>
+<li>A target or list of targets, must be files or <tt class="docutils literal">pathlib.Path</tt> objects.</li>
+<li>A dependency or list of dependencies, they can be files, <tt class="docutils literal">pathlib.Path</tt>
+objects, or other tasks. We can see that the <tt class="docutils literal">Blif2Vst</tt> rule uses
+directly the <tt class="docutils literal">Yosys</tt> one (the input file will be the <em>first</em> target
+of the <tt class="docutils literal">Yosys</tt> rule).</li>
+<li>Any extra parameters. A set of flag for <tt class="docutils literal">Blif2Vst</tt>. The <tt class="docutils literal">PnR</tt> rule takes
+an optional callable argument, <em>any</em> callable. In this case we import the
+<tt class="docutils literal">scriptMain()</tt> function from <tt class="docutils literal">doDesign()</tt>.</li>
+</ol>
+<p>There are two more special rules:</p>
+<ul>
+<li><p class="first"><tt class="docutils literal">Alias</tt>, to rename a rule. It this case <tt class="docutils literal">gds</tt> is defined as an alias to
+<tt class="docutils literal">PnR</tt> (because it generate the <span class="sc">gds</span> file).</p>
+</li>
+<li><p class="first"><tt class="docutils literal">Clean</tt> to create a rule that will remove all the generated targets.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The clean rule is named <tt class="docutils literal">clean_flow</tt> because <span class="sc">DoIt</span> already have
+a <tt class="docutils literal">clean</tt> arguments which would shadow it.</p>
+</div>
+</li>
+</ul>
+<pre class="code Python literal-block">
+<span class="n">PnR</span><span class="o">.</span><span class="n">textMode</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="kn">from</span> <span class="nn">doDesign</span> <span class="kn">import</span> <span class="n">scriptMain</span>
+
+<span class="n">ruleYosys</span> <span class="o">=</span> <span class="n">Yosys</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'yosys'</span><span class="p">,</span> <span class="s1">'Arlet6502.v'</span> <span class="p">)</span>
+<span class="n">ruleB2V</span>   <span class="o">=</span> <span class="n">Blif2Vst</span><span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'b2v'</span>  <span class="p">,</span> <span class="p">[</span> <span class="s1">'arlet6502.vst'</span>
+                                      <span class="p">,</span> <span class="s1">'Arlet6502.spi'</span> <span class="p">]</span>
+                                    <span class="p">,</span> <span class="p">[</span><span class="n">ruleYosys</span><span class="p">]</span>
+                                    <span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span> <span class="p">)</span>
+<span class="n">rulePnR</span>   <span class="o">=</span> <span class="n">PnR</span>     <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'pnr'</span>  <span class="p">,</span> <span class="p">[</span> <span class="s1">'arlet6502_cts_r.gds'</span>
+                                      <span class="p">,</span> <span class="s1">'arlet6502_cts_r.spi'</span>
+                                      <span class="p">,</span> <span class="s1">'arlet6502_cts_r.vst'</span> <span class="p">]</span>
+                                    <span class="p">,</span> <span class="p">[</span><span class="n">ruleB2V</span><span class="p">]</span>
+                                    <span class="p">,</span> <span class="n">scriptMain</span> <span class="p">)</span>
+<span class="n">ruleCgt</span>   <span class="o">=</span> <span class="n">PnR</span>     <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'cgt'</span> <span class="p">)</span>
+<span class="n">ruleGds</span>   <span class="o">=</span> <span class="n">Alias</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">(</span> <span class="s1">'gds'</span><span class="p">,</span> <span class="p">[</span><span class="n">rulePnR</span><span class="p">]</span> <span class="p">)</span>
+<span class="n">ruleClean</span> <span class="o">=</span> <span class="n">Clean</span>   <span class="o">.</span><span class="n">mkRule</span><span class="p">()</span>
+</pre>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="rules-s-catalog">
+<h2><a class="toc-backref" href="#id9">3. Rules's Catalog</a></h2>
+<div class="section" id="alliance-legacy-tools">
+<h3><a class="toc-backref" href="#id10">3.1 Alliance Legacy Tools</a></h3>
+<p>Support for the <span class="sc">Alliance</span> legacy tools. They are run through sub-processes.
+For more detailed documentation about those tools, refer to their <span class="cb">man</span> pages.</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal">Asimut</tt>, <span class="sc">vhdl</span> simulator.</li>
+<li><tt class="docutils literal">Boog</tt>, logical synthesys. Map a <span class="sc">vhdl</span> behavioral description to a standard
+cell library (works with <tt class="docutils literal">boom</tt> &amp; <tt class="docutils literal">loon</tt>).</li>
+<li><tt class="docutils literal">Boom</tt>, behavioral description optimizer (works with <tt class="docutils literal">boog</tt> &amp; <tt class="docutils literal">loon</tt>).</li>
+<li><tt class="docutils literal">Cougar</tt>, symbolic layout extractor.</li>
+<li><tt class="docutils literal">Dreal</tt>, real layout (<span class="sc">gds</span>, <span class="sc">cif</span>) editor.</li>
+<li><tt class="docutils literal">Druc</tt>, symbolic layout <span class="sc">drc</span>.</li>
+<li><tt class="docutils literal">Flatph</tt>, flatten a layout, fully or in part.</li>
+<li><tt class="docutils literal">Genpat</tt>, pattern generator (for use with <tt class="docutils literal">Asimut</tt>).</li>
+<li><tt class="docutils literal">Graal</tt>, symbolic layout editor.</li>
+<li><tt class="docutils literal">Loon</tt>, netlist optimizer for surface and/or delay (works with <tt class="docutils literal">boom</tt> &amp; <tt class="docutils literal">boog</tt>).</li>
+<li><tt class="docutils literal">Lvx</tt>, netlist comparator (<em>Layout</em> <em>Versus</em> <em>Extracted</em>).</li>
+<li><tt class="docutils literal">S2R</tt>, symbolic to real translator (to <span class="sc">gds</span> or <span class="sc">cif</span>).</li>
+<li><tt class="docutils literal">Vasy</tt>, Alliance <span class="sc">vhdl</span> subset translator towards standard <span class="sc">vhdl</span> or <span class="sc">Verilog</span>.</li>
+</ol>
+</div>
+<div class="section" id="current-tools">
+<h3><a class="toc-backref" href="#id11">3.2 Current Tools</a></h3>
+<ol class="arabic simple">
+<li><tt class="docutils literal">Blif2Vst</tt>, translate a <span class="cb">blif</span> netlist (<span class="sc">Yosys</span> output) into the <span class="sc">Alliance</span>
+netlist format <span class="cb">vst</span>. This is a <span class="sc">Python</span> script calling <span class="sc">Coriolis</span> directly
+integrated inside the task.</li>
+<li><tt class="docutils literal">PnR</tt>, maybe a bit of a misnomer. This is a caller to function that the user have
+to write to perform the P&amp;R as he sees fit for it's particular design.</li>
+<li><tt class="docutils literal">Yosys</tt>, call the <span class="sc">Yosys</span> logical synthesyser. Provide an off the shelf subset
+of functionalities to perform classic use cases.</li>
+</ol>
+</div>
+<div class="section" id="utility-rules">
+<h3><a class="toc-backref" href="#id12">3.3 Utility Rules</a></h3>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal">Alias</tt>, create a name alias for a rule.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">Clean</tt>, remove all the generated targets of all the rules. The name of the
+rule is <tt class="docutils literal">clean_flow` to not interfer with the |DoIt| clean arguments.
+Files not part of any rules targets can be added to be removeds. Then,
+to actually remove them, add the <span class="pre">``--extras</span></tt> flag to the command line.</p>
+<pre class="code bash literal-block">
+ego&#64;home:sky130_c4m&gt; ../../../bin/crlenv.py -- doit clean_flow --extras
+</pre>
+</li>
+<li><p class="first"><tt class="docutils literal">Copy</tt>, copy a file into the current directory.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="rule-sets">
+<h3><a class="toc-backref" href="#id13">3.4 Rule Sets</a></h3>
+<p>For commonly used sequences of rules, some predefined sets are defined.</p>
+<ol class="arabic">
+<li><p class="first"><tt class="docutils literal">alliancesynth</tt>, to apply the logical <span class="sc">Alliance</span> logical synthesis
+set of tools. From <span class="sc">vhdl</span> to optimized <span class="cb">vst</span>. The set is as follow:</p>
+<pre class="literal-block">
+x.vbe =&gt; boom =&gt; x_boom.vbe =&gt; boog =&gt; x_boog.vst =&gt; loon =&gt; x.vst
+</pre>
+<p>An additional rule using <tt class="docutils literal">vasy</tt> is triggered if the input format
+is standard <span class="sc">vhdl</span>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">pnrcheck</tt>, complete flow from <span class="sc">Verilog</span> to symbolic layout, with
+<span class="sc">drc</span> and <span class="sc">lvx</span> checks. Uses <span class="sc">Yosys</span> for synthesis.</p>
+</li>
+<li><p class="first"><tt class="docutils literal">routecheck</tt>, perform the routing, the <span class="sc">drc</span> and <span class="sc">lvx</span> check on an
+already placed design. Use symbolic layout.</p>
+</li>
+</ol>
+</div>
+</div>
+
+    </div>
+        <!-- /Content --> 
+
+        <!-- Footer -->
+        <div class="footer gradient-2">
+            <div class="container footer-container ">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Social</div>
+                        <ul class="list-unstyled">
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-2">
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Links</div>
+                        <ul class="list-unstyled">
+                            <li><a href="https://coriolis.lip6.fr/" target="_blank">Alliance/Coriolis</a></li>
+                            <li><a href="https://www-soc.lip6.fr/" target="_blank">CIAN Team Website</a></li>
+                            <li><a href="https://f-si.org" target="_blank">Free Silicon Foundation</a></li>
+                        </ul>
+                    </div> 
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
+                        <p class="pull-right text-right">
+                            <small><em>Proudly powered by <a href="http://docs.getpelican.com/" target="_blank">pelican</a></em></small><br/>
+			    <small><em><span class="sc">NEST</span> theme by <a href="https://github.com/molivier" target="_blank">molivier</a></em></small><br/>
+                            <small>Copyright © 2020-2020 Sorbonne Universite</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Footer -->
+    </body>
+</html>

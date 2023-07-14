@@ -17,7 +17,6 @@
 #include "hurricane/isobar/PyRule.h"
 #include "hurricane/isobar/PyUnitRule.h"
 #include "hurricane/isobar/PyPhysicalRule.h"
-#include "hurricane/isobar/PyTwoLayersPhysicalRule.h"
 
 
 namespace  Isobar {
@@ -82,9 +81,6 @@ LinkCreateMethod(Rule)
 
     UnitRule* unitRule = dynamic_cast<UnitRule*>(object);
     if (unitRule) return PyUnitRule_Link(unitRule);
-
-    TwoLayersPhysicalRule* twoLayersPhysicalRule = dynamic_cast<TwoLayersPhysicalRule*>(object);
-    if (twoLayersPhysicalRule) return PyTwoLayersPhysicalRule_Link(twoLayersPhysicalRule);
 
     PhysicalRule* physicalRule = dynamic_cast<PhysicalRule*>(object);
     if (physicalRule) return PyPhysicalRule_Link(physicalRule);

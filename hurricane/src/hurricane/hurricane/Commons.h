@@ -29,8 +29,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_COMMONS_H
-#define  HURRICANE_COMMONS_H
+#pragma once
+#define HURRICANE_COMMONS_H
 
 #include <cstdio>
 #include <cassert>
@@ -146,6 +146,9 @@ namespace Hurricane {
   }
 
 
+  string& split ( std::string& );
+
+
 } // End of Hurricane namespace.
 
 
@@ -161,12 +164,7 @@ namespace Hurricane {
 // Note 3: thoses templates manage all POD & STL types.
 
 
-// Forward declaration of "getSlot<>()" template.
-
-template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data  );
-template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data* );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data  );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data* );
+template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data );
 
 
 // -------------------------------------------------------------------
@@ -181,34 +179,34 @@ template<typename Data> inline std::string  getString ( Data data )
 
 // "const &" flavors.
 
-template<> inline std::string  getString<const bool> ( const bool b )
+template<> inline std::string  getString<const bool&> ( const bool& b )
 { return (b)?"True":"False" ; }
 
-template<> inline std::string  getString<const int> ( const int i )
+template<> inline std::string  getString<const int&> ( const int& i )
 { std::ostringstream os (""); os << i; return os.str(); }
 
-template<> inline std::string  getString<const long> ( const long l )
+template<> inline std::string  getString<const long&> ( const long& l )
 { std::ostringstream os (""); os << l; return os.str(); }
 
-template<> inline std::string  getString<const unsigned int>  ( const unsigned int u )
+template<> inline std::string  getString<const unsigned int&>  ( const unsigned int& u )
 { std::ostringstream os (""); os << u; return os.str(); }
 
-template<> inline std::string  getString<const unsigned long> ( const unsigned long ul )
+template<> inline std::string  getString<const unsigned long&> ( const unsigned long& ul )
 { std::ostringstream os (""); os << ul; return os.str(); }
 
-template<> inline std::string  getString<const unsigned long long> ( const unsigned long long ull )
+template<> inline std::string  getString<const unsigned long long&> ( const unsigned long long& ull )
 { std::ostringstream os (""); os << ull; return os.str(); }
 
-template<> inline std::string  getString<const unsigned short int> ( const unsigned short int us )
+template<> inline std::string  getString<const unsigned short int&> ( const unsigned short int& us )
 { std::ostringstream os (""); os << us; return os.str(); }
 
-template<> inline std::string  getString<const float> ( const float f )
+template<> inline std::string  getString<const float&> ( const float& f )
 { std::ostringstream os (""); os << f; return os.str(); }
 
-template<> inline std::string  getString<const double> ( const double d )
+template<> inline std::string  getString<const double&> ( const double& d )
 { std::ostringstream os; os << d; return os.str(); }
 
-template<> inline std::string  getString<const std::string> ( const std::string s )
+template<> inline std::string  getString<const std::string&> ( const std::string& s )
 { return s; }
 
 // "const *" flavors.
@@ -326,7 +324,10 @@ template<> inline std::string  getString<std::string> ( std::string s )
 
 
 template<typename Data> inline Hurricane::Record* getRecord ( Data data )
-{ return NULL; }
+{
+//std::cerr << "::getRecord(Data) Data=" << Hurricane::demangle(typeid(data).name()) << std::endl;
+  return NULL;
+}
 
 
 // -------------------------------------------------------------------
@@ -344,8 +345,8 @@ inline Hurricane::Record* getRecord ( const std::pair<T,U>& p )
 {
   Hurricane::Record* record = NULL;
   record = new Hurricane::Record ( "const std::pair<T,U>" );
-  record->add( getSlot<T>("first" , &p.first ) );
-  record->add( getSlot<U>("second", &p.second) );
+  record->add( getSlot<const T>(std::string("first" ), &p.first ) );
+  record->add( getSlot<const U>(std::string("second"), &p.second) );
   return record;
 }
 
@@ -362,8 +363,8 @@ inline Hurricane::Record* getRecord ( std::pair<T,U>& p )
 {
   Hurricane::Record* record = NULL;
   record = new Hurricane::Record ( "std::pair<T,U>" );
-  record->add( getSlot<T>("first" , &p.first ) );
-  record->add( getSlot<U>("second", &p.second) );
+  record->add( getSlot<T>(std::string("first" ), &p.first ) );
+  record->add( getSlot<U>(std::string("second"), &p.second) );
   return record;
 }
 
@@ -467,13 +468,13 @@ inline Hurricane::Record* getRecord ( const std::array<Element,N>& v )
 
 
 // -------------------------------------------------------------------
-// Inspector Support for  :  "[const] std::vector<Element>*".
+// Inspector Support for  :  "std::vector<Element>*".
 
 
 template<typename Element>
 inline std::string  getString ( std::vector<Element>* v )
 {
-  std::string name = "const std::vector<Element>:";
+  std::string name = "std::vector<Element>*:";
   return name + getString<size_t>(v->size());
 }
 
@@ -483,11 +484,11 @@ inline Hurricane::Record* getRecord ( std::vector<Element>* v )
 {
   Hurricane::Record* record = NULL;
   if ( !v->empty() ) {
-    record = new Hurricane::Record ( "std::vector<Element>" );
+    record = new Hurricane::Record ( "std::vector<Element>*" );
     unsigned n = 0;
     typename std::vector<Element>::iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -495,10 +496,43 @@ inline Hurricane::Record* getRecord ( std::vector<Element>* v )
 }
 
 
+// -------------------------------------------------------------------
+// Inspector Support for  :  "std::vector<Element*>*".
+
+
+template<typename Element>
+inline std::string  getString ( std::vector<Element*>* v )
+{
+  std::string name = "std::vector<Element*>*:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<typename Element>
+inline Hurricane::Record* getRecord ( std::vector<Element*>* v )
+{
+  Hurricane::Record* record = NULL;
+  if ( !v->empty() ) {
+    record = new Hurricane::Record ( "std::vector<Element*>*" );
+    unsigned n = 0;
+    typename std::vector<Element*>::iterator iterator = v->begin();
+    while ( iterator != v->end() ) {
+      record->add ( getSlot<Element*>(getString(n++), *iterator) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "const std::vector<Element>*".
+
+
 template<typename Element>
 inline std::string  getString ( const std::vector<Element>* v )
 {
-  std::string name = "const std::vector<Element>:";
+  std::string name = "const std::vector<Element>*:";
   return name + getString<size_t>(v->size());
 }
 
@@ -508,11 +542,40 @@ inline Hurricane::Record* getRecord ( const std::vector<Element>* v )
 {
   Hurricane::Record* record = NULL;
   if ( !v->empty() ) {
-    record = new Hurricane::Record ( "const std::vector<Element>" );
+    record = new Hurricane::Record ( "const std::vector<Element>*" );
     unsigned n = 0;
     typename std::vector<Element>::const_iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<const Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
+      ++iterator;
+    }
+  }
+  return record;
+}
+
+
+// -------------------------------------------------------------------
+// Inspector Support for  :  "const std::vector<Element*>*".
+
+
+template<typename Element>
+inline std::string  getString ( const std::vector<Element*>* v )
+{
+  std::string name = "const std::vector<Element*>*:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<typename Element>
+inline Hurricane::Record* getRecord ( const std::vector<Element*>* v )
+{
+  Hurricane::Record* record = NULL;
+  if (not v->empty()) {
+    record = new Hurricane::Record ( "const std::vector<Element*>*" );
+    size_t n = 0;
+    typename std::vector<Element*>::const_iterator iterator = v->begin();
+    while (iterator != v->end()) {
+      record->add ( getSlot<const Element*>(getString(n++), *iterator) );
       ++iterator;
     }
   }
@@ -527,7 +590,7 @@ inline Hurricane::Record* getRecord ( const std::vector<Element>* v )
 template<typename Element>
 inline std::string  getString ( const std::list<Element>* l )
 {
-  std::string name = "const std::list<Element>:";
+  std::string name = "const std::list<Element>*:";
   return name + getString<size_t>(l->size());
 }
 
@@ -541,7 +604,7 @@ inline Hurricane::Record* getRecord ( const std::list<Element>* l )
     unsigned n = 1;
     typename std::list<Element>::const_iterator iterator = l->begin();
     while ( iterator != l->end() ) {
-      record->add ( getSlot<const Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -552,7 +615,7 @@ inline Hurricane::Record* getRecord ( const std::list<Element>* l )
 template<typename Element>
 inline std::string  getString ( std::list<Element>* l )
 {
-  std::string name = "std::list<Element>:";
+  std::string name = "std::list<Element>*:";
   return name + getString<size_t>(l->size());
 }
 
@@ -566,7 +629,7 @@ inline Hurricane::Record* getRecord ( std::list<Element>* l )
     unsigned n = 1;
     typename std::list<Element>::iterator iterator = l->begin();
     while ( iterator != l->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -771,12 +834,12 @@ template< typename Element, typename Compare, typename Allocator >
 inline Hurricane::Record* getRecord ( std::set<Element,Compare,Allocator>* s )
 {
   Hurricane::Record* record = NULL;
-  if ( !s->empty() ) {
+  if (not s->empty()) {
     record = new Hurricane::Record ( "std::set<Element>" );
     unsigned n = 1;
     typename std::set<Element,Compare,Allocator>::iterator iterator = s->begin();
     while ( iterator != s->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add( getSlot<Element>(getString(n++), *iterator) );
       ++iterator;
     }
   }
@@ -923,28 +986,23 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   IOSTREAM_REFERENCE_SUPPORT(Data)
 
 
-# define INSPECTOR_V_SUPPORT(Data)   \
-  GETRECORD_VALUE_SUPPORT(Data)      \
-  GETSTRING_VALUE_SUPPORT(Data)      \
-  IOSTREAM_VALUE_SUPPORT(Data)
-
-
 # define INSPECTOR_PR_SUPPORT(Data)  \
-  GETRECORD_POINTER_SUPPORT(Data)    \
   GETSTRING_POINTER_SUPPORT(Data)    \
-  GETRECORD_REFERENCE_SUPPORT(Data)  \
   GETSTRING_REFERENCE_SUPPORT(Data)  \
+  GETSTRING_VALUE_SUPPORT(Data)      \
   IOSTREAM_POINTER_SUPPORT(Data)     \
-  IOSTREAM_REFERENCE_SUPPORT(Data)
+  IOSTREAM_REFERENCE_SUPPORT(Data)   \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETRECORD_REFERENCE_SUPPORT(Data)
 
 
 # define INSPECTOR_PV_SUPPORT(Data)  \
-  GETRECORD_POINTER_SUPPORT(Data)    \
   GETSTRING_POINTER_SUPPORT(Data)    \
-  GETRECORD_VALUE_SUPPORT(Data)      \
   GETSTRING_VALUE_SUPPORT(Data)      \
   IOSTREAM_POINTER_SUPPORT(Data)     \
-  IOSTREAM_VALUE_SUPPORT(Data)
+  IOSTREAM_VALUE_SUPPORT(Data)       \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETRECORD_VALUE_SUPPORT(Data)
 
 
 #include "hurricane/Tabulation.h"
@@ -1073,6 +1131,3 @@ extern tstream  cdebug;
 #include "hurricane/Initializer.h"
 #include "hurricane/JsonWriter.h"
 #include "hurricane/JsonObject.h"
-
-
-#endif  // HURRICANE_COMMONS_H

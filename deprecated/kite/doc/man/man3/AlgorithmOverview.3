@@ -1,0 +1,61 @@
+.TH "AlgorithmOverview" 3 "Sun Nov 21 2021" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AlgorithmOverview \- Description of the algorithm\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SH "Detailed Description"
+.PP 
+Description of the algorithm\&. 
+
+The algorithm top-level is implemented in the \fC\fBNegociateWindow\fP\fP\&.
+.PP
+\fBFirst step :\fP NegociateWindow::_loadRouting() 
+.PD 0
+
+.IP "1." 4
+Load routing wires (\fCAutoSegment\fP) from \fCKatabaticEngine\fP inside the \fBKite\fP \fCGCell's\fP\&. Then update the \fCGCell's\fP density\&. 
+.IP "2." 4
+Sort the \fCGCell's\fP according to decreasing density (denser \fCGCell's\fP are to be routed first)\&. 
+.IP "3." 4
+Agglomerate clusters of contiguous GCell's whose density is superior to 0\&.7 to the seed GCell\&. See \fCGCellRoutingSet\fP for the mechanism\&.
+.PP
+GCellRoutingSet receive an increasing order number\&. The higher the order the lower the density\&. This order is transmitted to the \fC\fBTrackSegment\fP\fP of the \fCGCellRoutingSet\fP to be taken into account by the track cost function\&. 
+.PP
+.PP
+\fBSecond step :\fP \fCNegociateWindow::_runOnGCellRoutingSet()\fP 
+.PP
+For each \fCGCellRoutingSet\fP in decreasing density, negociate the set of associated \fC\fBTrackSegment\fP\fP\&. 
+.PD 0
+
+.IP "1." 4
+Build a \fC\fBRoutingEventQueue\fP\fP from the list of \fC\fBTrackSegment\fP\fP\&. The queue is responsible for allocating the \fC\fBRoutingEvent\fP\fP associated to each \fC\fBTrackSegment\fP\fP\&. 
+.IP "2." 4
+The queue is sorted according to the 'event level' then to the priority, which is for now the slack of the \fC\fBTrackSegment\fP\fP\&. That is, constrained \fC\fBTrackSegment\fP\fP are routed first\&. 
+.IP "3." 4
+The queue is processed till it's empty (no unprocessed \fC\fBRoutingEvent\fP\fP remains)\&.
+.PP
+Processing a \fC\fBRoutingEvent\fP\fP is trying to insert a \fC\fBTrackSegment\fP\fP in a suitable \fBTrack\fP\&. We proceed as follow : 
+.PD 0
+
+.IP "  \(bu" 4
+The maximum ripup count for the to be inserted segment has been reached\&. Issue a severe warning and left unrouted this \fC\fBTrackSegment\fP\fP (for now)\&. 
+.IP "  \(bu" 4
+Compute the Tracks in which the \fC\fBTrackSegment\fP\fP can be inserted, then compute the insertion cost in each one\&. The candidates are ordered by the insertion cost\&. 
+.IP "  \(bu" 4
+Now consider the lower cost \fC\fBTrack\fP\fP\&. If there is a free interval for the \fC\fBTrackSegment\fP\fP\&. Issue a \fCSession::addInsertEvent()\fP then finish\&.
+.PP
+If there is a \fI'soft overlap'\fP, that is the overlaping \fC\fBTrackSegment\fP\fP already in the \fC\fBTrack\fP\fP could be shrunk either to the left or the right so the new \fC\fBTrackSegment\fP\fP can be inserted\&. This is managed by \fCRoutingEvent::_setAside()\fP, for each soft overlaping \fC\fBTrackSegment\fP\fP, gets its perpandiculars and issue a displacement request for all of them\&. That is, re-post a \fC\fBRoutingEvent\fP\fP with updated constraints and remove the perpandicular from it's \fBTrack\fP if it has already been routed\&. Note that no request is issued for the overlaping \fC\fBTrackSegment\fP\fP itself has it do not change of \fBTrack\fP\&.
+.PP
+If there is a \fI'hard overlap'\fP, that is the two \fC\fBTrackSegment\fP\fP cannot share the same \fC\fBTrack\fP\fP, remove the previous one from the \fC\fBTrack\fP\fP and re-post a \fC\fBRoutingEvent\fP\fP\&. Note that, the cost object should have selected a \fC\fBTrackSegment\fP\fP which could be ripped-up\&. Otherwise the \fC\fBTrack\fP\fP would'nt even be a candidate\&. 
+.PP
+.PP
+When a \fBTrackSegment\fP is riped up, it is re-routed immediately afterward\&. This is done by increasing his event level\&. 
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

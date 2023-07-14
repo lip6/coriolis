@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2015-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -21,7 +21,15 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+//Work sround for older qwt releases
+#include <QtGlobal>
+#if QT_VERSION >= 0x050400
+ #define QT_STATIC_CONST static const
+#endif
+
+
 #include <qwt_scale_draw.h>
+#include <qwt_scale_map.h>
 #include <qwt_scale_widget.h>
 #include <qwt_symbol.h>
 #include <qwt_plot_curve.h>
@@ -73,11 +81,20 @@ namespace Bora {
     : QWidget        (parent)
     , _viewer        (NULL)
     , _plot          (new QwtPlot      ())
+#if QWT_VERSION < 0x060000
+    , _picker        (new QwtPlotPicker( QwtPlot::xBottom           // X Axis id.
+                                       , QwtPlot::yLeft             // Y Axis id. 
+                                       , QwtPicker::PointSelection
+                                       , QwtPicker::CrossRubberBand
+                                       , QwtPicker::ActiveOnly
+                                       , _plot->canvas()) )
+#else
     , _picker        (new QwtPlotPicker( QwtPlot::xBottom           // X Axis id.
                                        , QwtPlot::yLeft             // Y Axis id. 
                                        , QwtPicker::CrossRubberBand
                                        , QwtPicker::ActiveOnly
                                        , _plot->canvas()) )
+#endif
     , _gridDisplay   (new QGridLayout()) 
     , _gridLabel     ()                                             // Label line 2: text
     , _widths        (NULL)                                         // Coordinates X for STreeCurve
@@ -89,10 +106,12 @@ namespace Bora {
     , _paretoCurve   (new QwtPlotCurve("Pareto"))                   // Black curve: pareto curve
     , _selectedPoint (new QwtPlotCurve("Selected"))                 // Red dot    : selected placement
   {
+#if QWT_VERSION >= 0x060000
     _picker->setStateMachine(new QwtPickerClickPointMachine());
+#endif
     setStyleSheet ( "border: 0px" );
 
-    int ptSize = Graphics::isHighDpi() ? 5 : 3;
+    int ptSize = Graphics::isHighDpi() ? 2 : 2;
 
     QwtText xTitle ( QString::fromUtf8("Width (µm)") );
     QwtText yTitle ( QString::fromUtf8("Height (µm)") );
@@ -123,10 +142,14 @@ namespace Bora {
     _STreeCurve->attach  ( _plot );
 
     QwtSymbol* symbol = new QwtSymbol();
-    symbol->setStyle( QwtSymbol::Cross );
-    symbol->setSize ( 20 );
+    symbol->setStyle( QwtSymbol::Triangle );
+    symbol->setSize ( 6 );
     symbol->setPen  ( dotPen );
+#if QWT_VERSION < 0x060000
+    _STreeCurve->setSymbol( *symbol );
+#else
     _STreeCurve->setSymbol( symbol );
+#endif
 
     QPen selectPen ( Qt::red );
     selectPen.setWidth( ptSize+2 );
@@ -134,7 +157,11 @@ namespace Bora {
     _selectedPoint->setPen  ( selectPen );
     _selectedPoint->attach  ( _plot );
 
+#if QWT_VERSION < 0x060000
+    connect( _picker, SIGNAL(selected(const QwtDoublePoint&)), this, SLOT(onPointSelect(const QwtDoublePoint&)) );
+#else
     connect( _picker, SIGNAL(selected(const QPointF&)), this, SLOT(onPointSelect(const QPointF&)) );
+#endif
 
     QVBoxLayout* vLayout = new QVBoxLayout();
     vLayout->addWidget ( _plot );
@@ -262,8 +289,13 @@ namespace Bora {
       i++;
     }
 
+#if QWT_VERSION < 0x060000
+    _STreeCurve->setData ( _widths     , _heights    , nodeSets->size() );
+    _paretoCurve->setData( _pareto.xs(), _pareto.ys(), _pareto.size()  );
+#else
     _STreeCurve->setSamples ( _widths     , _heights    , nodeSets->size() );
     _paretoCurve->setSamples( _pareto.xs(), _pareto.ys(), _pareto.size()  );
+#endif
     _STreeCurve->show();
     _paretoCurve->show();
     _plot->replot();
@@ -304,7 +336,11 @@ namespace Bora {
   }
 
 
+#if QWT_VERSION < 0x060000
+  void  SlicingPlotWidget::onPointSelect ( const QwtDoublePoint& point )
+#else
   void  SlicingPlotWidget::onPointSelect ( const QPointF& point )
+#endif
   {
   // Clicking on SlicingTree's Pareto Graph:
   // 1) Update slicing tree
@@ -321,8 +357,13 @@ namespace Bora {
     cdebug.log(539) << "  Selection: [" << point.x() << " " << point.y() << "]" << endl;
 
     if ( (iclosest >= 0) and (iclosest < dataSize) ) {
+#if QWT_VERSION < 0x060000
+      double x = _STreeCurve->x( iclosest );
+      double y = _STreeCurve->y( iclosest );
+#else
       double x = _STreeCurve->sample( iclosest ).x();
       double y = _STreeCurve->sample( iclosest ).y();
+#endif
 
       ostringstream message;
       message << "(" << DbU::getValueString(x) << "," << DbU::getValueString(y) << ")";
@@ -365,7 +406,11 @@ namespace Bora {
     _widthSelected [0] = x;
     _heightSelected[0] = y;
 
+#if QWT_VERSION < 0x060000
+    _selectedPoint->setData ( _widthSelected, _heightSelected, 1 );
+#else
     _selectedPoint->setSamples ( _widthSelected, _heightSelected, 1 );
+#endif
     _selectedPoint->show();
     _plot->replot();
 
@@ -399,9 +444,11 @@ namespace Bora {
 
       if (device) {
         TransistorFamily* tf = dynamic_cast<TransistorFamily*>( device );
-        if (tf) _gridLabel[i+5]->setDynamicText ( QString("%1" ).arg( tf->getNfing() ) );
+        if (tf) {
+          _gridLabel[i+5]->setDynamicText ( QString("%1" ).arg( tf->getNfing() ) );
+          i++;
+        }
       }
-      i++;
     }
   }
 

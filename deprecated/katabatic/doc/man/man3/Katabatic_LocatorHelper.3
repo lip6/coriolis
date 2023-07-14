@@ -1,0 +1,81 @@
+.TH "LocatorHelper" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LocatorHelper \- Locator Helper Collection's Locators\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLocatorHelper\fP (\fBAutoContact\fP *, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "bool \fBisValid\fP () const"
+.br
+.ti -1c
+.RI "\fBAutoSegment\fP * \fBgetSegment\fP () const"
+.br
+.ti -1c
+.RI "void \fBprogress\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Locator Helper Collection's Locators\&. 
+
+Provide a small uniform walktough over the AutoSegments anchored on AutoContacts\&. The \fCflags\fP argument allows to choose between direction and include perpandiculars (in that case all segments are processeds)\&.
+.SH "Implementation Details"
+.PP
+As, at most, two horizontals and two verticals may be anchored on any \fBAutoContact\fP subtype, the locator helper perform a walk through a virtual table of 4 elements\&. The two first are the horizontals, the two last the verticals\&. The meaning of this index is consistent whith the \fCindex\fP argument of \fBAutoContact::getSegment()\fP\&. When a segment is not present in an \fBAutoContact\fP, the \fC\fBgetSegment()\fP\fP returns \fCNULL\fP and the \fBLocatorHelper::progress()\fP function will skip it\&.
+.PP
+The private methods:
+.IP "\(bu" 2
+\fCLocatorHelper::_min()\fP 
+.IP "\(bu" 2
+\fCLocatorHelper::_max()\fP 
+.PP
+.PP
+Computes the bounds of \fC_index\fP according to the value of \fC_flags:\fP 
+.IP "\(bu" 2
+\fCKbHorizontal\fP : \fC0\fP to less than \fC2\fP\&.
+.IP "\(bu" 2
+\fCKbVertical\fP : \fC2\fP to less than \fC4\fP\&.
+.IP "\(bu" 2
+\fCKbHorizontal|KbVertical\fP : \fC0\fP to less than \fC4\fP\&. 
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLocatorHelper\fP (\fBAutoContact\fP * contact, unsigned int flags = \fC0\fP)\fC [inline]\fP"
+Create a helper to iterate over the AutoSegments anchored on \fCcontact\fP\&. The \fCflags\fP arguments allow to select:
+.IP "\(bu" 2
+The direction: \fBKatabatic::KbHorizontal\fP or \fBKatabatic::KbVertical\fP\&.
+.IP "\(bu" 2
+Perpandicular inclusion: \fBKatabatic::KbWithPerpands\fP\&.
+.PP
+.PP
+When setting KbWithPerpands, all the segments will be iterated over\&. It may seems a somewhat contorted way of doing things, the reason is the ability to share (an pass) flags directly between different functions\&. 
+.PP
+References AutoContact::getSegment(), and LocatorHelper::progress()\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "bool isValid () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if there is an \fBAutoSegment\fP to be processed\&. 
+.SS "\fBAutoSegment\fP * getSegment () const\fC [inline]\fP"
+\fBReturns:\fP The current \fBAutoSegment\fP\&. \fCNULL\fP if the loop is over\&. 
+.PP
+References AutoContact::getSegment()\&.
+.SS "void progress ()\fC [inline]\fP"
+\fBReturns:\fP Go to the next \fBAutoSegment\fP\&. 
+.PP
+References AutoContact::getSegment()\&.
+.PP
+Referenced by LocatorHelper::LocatorHelper()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

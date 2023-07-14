@@ -23,8 +23,10 @@
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
@@ -52,6 +54,8 @@ namespace {
   using Hurricane::Net;
   using Hurricane::DeepNet;
   using Hurricane::Horizontal;
+  using Hurricane::Pad;
+  using Hurricane::Rectilinear;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
@@ -112,8 +116,6 @@ namespace {
       inline Net*  getCk                () const;
       inline Net*  getBlockage          () const;
       inline void  setBlockage          ( Net* );
-    private:                            
-             bool  guessGlobalNet       ( const Name&, Net* );
     private:
       uint32_t  _flags;
       Name      _vddCoreName;
@@ -174,6 +176,7 @@ namespace {
         }
       }
 
+      if (NetRoutingExtension::isManualDetailRoute(net)) continue;
       if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
 
       if (netType == Net::Type::POWER) {
@@ -212,62 +215,28 @@ namespace {
   }
 
 
-  bool  GlobalNetTable::guessGlobalNet ( const Name& name, Net* net )
-  {
-    if (name == _vddCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vdd) power net." << endl;
-      _vdd = net;
-      return true;
-    }
-
-    if (name == _vssCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vss) ground net." << endl;
-      _vss = net;
-      return true;
-    }
-
-    if (name == _ckCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:ck) clock net." << endl;
-      _ck = net;
-
-      if (NetRoutingExtension::isMixedPreRoute(_ck)) {
-        cmess1 << "          (core clock net is already routed)" << endl;
-        _flags |= ClockIsRouted;
-      } else {
-        cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
     cdebug_log(159,0) << "    getRootNet:" << path << ":" << net << endl;
 
     if (net == _blockage) return _blockage;
-
     if (net->getType() == Net::Type::POWER ) return _vdd;
     if (net->getType() == Net::Type::GROUND) return _vss;
-    if (net->getType() != Net::Type::CLOCK ) {
-      return NULL;
-    }
 
   // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
-      DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
-      if (deepClockNet) {
-        cdebug_log(159,0) << "    Deep Clock Net:" << deepClockNet
-                    << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
+      cdebug_log(159,0) << "    Path is *not* empty:" << path << endl;
+      DeepNet* deepNet = getTopCell()->getDeepNet( path, net );
+      if (deepNet) {
+        cdebug_log(159,0) << "    Deep Clock Net:" << deepNet
+                          << " state:" << NetRoutingExtension::getFlags(deepNet) << endl;
 
-        return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
+        return NetRoutingExtension::isFixed(deepNet) ? _blockage : NULL;
       } else {
-        cdebug_log(159,0) << "    Top Clock Net:" << net
-                    << " state:" << NetRoutingExtension::getFlags(net) << endl;
+        cdebug_log(159,0) << "    Top DeepNet:" << net
+                          << " state:" << NetRoutingExtension::getFlags(net) << endl;
       }
 
       Path       upPath   = path;
@@ -286,18 +255,26 @@ namespace {
 
         upNet = plug->getNet();
         path  = path.getHeadPath();
+
+        if (not upNet) {
+          cerr << Warning( "GlobalNetTable::getRootNet(): Unconnected %s."
+                         , getString(plug).c_str() ) << endl;
+          return NULL;
+        }
       }
     }
 
-    cdebug_log(159,0) << "      Check againts top clocks ck:"
+    cdebug_log(159,0) << "      Check against top clocks ck:"
                       << ((_ck) ? _ck->getName() : "NULL") << endl;
 
     if (_ck) {
       if (upNet->getName() == _ck->getName()) {
+        cdebug_log(159,0) << "      Clock name matches upNet." << endl;
         if (isCoreClockNetRouted(upNet)) return _ck;
       }
     }
 
+    cdebug_log(159,0) << "      upNet fixed:" << NetRoutingExtension::isFixed(upNet) << endl;
     return NetRoutingExtension::isFixed(upNet) ? _blockage : NULL;
   }
 
@@ -380,11 +357,11 @@ namespace {
                  void          merge             ( const Box&, Net* );
                  void          doLayout          ();
         private:
-          const Layer*         _layer;
-          RoutingPlane*        _routingPlane;
-          RailsMap             _horizontalRails;
-          RailsMap             _verticalRails;
-          Flags                _powerDirection;
+          const Layer*  _layer;
+          RoutingPlane* _routingPlane;
+          RailsMap      _horizontalRails;
+          RailsMap      _verticalRails;
+          Flags         _powerDirection;
       };
 
     public:
@@ -401,7 +378,7 @@ namespace {
              void   merge                  ( const Box&, Net* );
              void   doLayout               ();
     private:
-      KatanaEngine*     _katana;
+      KatanaEngine*   _katana;
       GlobalNetTable  _globalNets;
       PlanesMap       _planes;
       Plane*          _activePlane;
@@ -501,8 +478,10 @@ namespace {
   //DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
   //                          - plane->getLayerGauge()->getHalfWireWidth()
   //                          - DbU::fromLambda(0.1);
-    DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
-    DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
+  //DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
+    DbU::Unit     delta     =   0;
+    DbU::Unit     extension = layer->getExtentionCap();
+  //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getHalfPitch() + getHalfWireWidth();
   //DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
@@ -511,10 +490,23 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
+    if (not layer->isBlockage()) {
+      if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
+        if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
+          delta = 2 * plane->getLayerGauge()->getPitch();
+        } else {
+          delta = plane->getLayerGauge()->getPitch();
+        }
+      }
+      if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
+        delta = plane->getLayerGauge()->getPitch();
+      }
+    }
+
     cdebug_log(159,0) << "  delta:" << DbU::getValueString(delta)
-                << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
-                << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
-                << ")" << endl;
+                      << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
+                      << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
+                      << ")" << endl;
 
     // if ( type == Constant::PinOnly ) {
     //   cdebug_log(159,0) << "  Layer is PinOnly." << endl;
@@ -540,7 +532,7 @@ namespace {
         }
         
         cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
-                    << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
+                          << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Horizontal::create ( net
                                      , layer
@@ -559,17 +551,28 @@ namespace {
           axisMax += delta;
         }
 
+        // if (segment->getId() == 51904) {
+        //   DebugSession::open( 0, 1000 );
+        // }
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
+
+          // if (segment->getId() == 51904) {
+          //   cerr << "  Insert in " << track << endl;
+          //   cerr << "    +" << element << endl;
+          // }
         }
+        // if (segment->getId() == 51904) {
+        //   DebugSession::close();
+        // }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
         cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
-                    << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
+                          << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Vertical::create ( net
                                    , layer
@@ -795,7 +798,7 @@ namespace {
 
 
   PowerRailsPlanes::PowerRailsPlanes ( KatanaEngine* katana )
-    : _katana               (katana)
+    : _katana             (katana)
     , _globalNets         (katana)
     , _planes             ()
     , _activePlane        (NULL)
@@ -803,26 +806,22 @@ namespace {
   {
     _globalNets.setBlockage( katana->getBlockageNet() );
 
-    Technology*   technology = DataBase::getDB()->getTechnology();
-    RoutingGauge* rg         = _katana->getConfiguration()->getRoutingGauge();
+    RoutingGauge* rg = _katana->getConfiguration()->getRoutingGauge();
 
-    for( Layer* layer : technology->getLayers() ) {
-      RegularLayer* regular = dynamic_cast<RegularLayer*>(layer);
-      if ( not regular
-         or (regular->getBasicLayer()->getMaterial() != BasicLayer::Material::metal) ) continue;
-
-      RoutingLayerGauge* lg = rg->getLayerGauge(regular);
-      if ( not lg ) continue;
-
+    for ( RoutingLayerGauge* lg : rg->getLayerGauges() ) {
       cdebug_log(159,0) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
+
+      const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( lg->getLayer() );
+      if (not basicLayer)
+        basicLayer = dynamic_cast<const RegularLayer*>( lg->getLayer() )->getBasicLayer();
 
       RoutingPlane* rp = _katana->getRoutingPlaneByIndex(lg->getDepth());
       cdebug_log(159,0) << "Plane:"  << rp << endl;
 
-      _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
+      _planes.insert( make_pair(basicLayer,new Plane(lg->getLayer(),rp)) );
 
-      if (lg->getType() == Constant::PinOnly) continue;
-      const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
+    //if (lg->getType() == Constant::PinOnly) continue;
+      const BasicLayer* blockageLayer = dynamic_cast<const BasicLayer*>( lg->getBlockageLayer() );
       if (not blockageLayer) continue;
 
       _planes.insert( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
@@ -924,9 +923,10 @@ namespace {
       virtual void          doQuery             ();
       inline  void          doLayout            ();
       inline  uint32_t      getGoMatchCount     () const;
+      inline  RoutingGauge* getRoutingGauge     () const;
     private:
       AllianceFramework*      _framework;
-      KatanaEngine*             _katana;
+      KatanaEngine*           _katana;
       RoutingGauge*           _routingGauge;
       const ChipTools&        _chipTools;
       PowerRailsPlanes        _powerRailsPlanes;
@@ -964,6 +964,10 @@ namespace {
 
   inline  void  QueryPowerRails::doLayout ()
   { return _powerRailsPlanes.doLayout(); }
+
+
+  inline  RoutingGauge* QueryPowerRails::getRoutingGauge () const
+  { return _routingGauge; }
 
 
   bool  QueryPowerRails::hasBasicLayer ( const BasicLayer* basicLayer )
@@ -1038,7 +1042,13 @@ namespace {
       }
 
       cdebug_log(159,0) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
-                  << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
+                        << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
+
+      // unsigned int type = _powerRailsPlanes.getActivePlane()->getRoutingPlane()->getLayerGauge()->getType();
+      if (go->getCell()->isTerminalNetlist()) {
+        if (not rootNet->isSupply() and not rootNet->isClock() and not _isBlockagePlane)
+          return;
+      }
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
@@ -1076,6 +1086,32 @@ namespace {
                       << " " << basicLayer << endl;
           
           _powerRailsPlanes.merge ( bb, rootNet );
+        } else {
+          const Pad* pad = dynamic_cast<const Pad*>(component);
+          if (pad != NULL) {
+            _goMatchCount++;
+
+            Box bb = pad->getBoundingBox( basicLayer );
+            transformation.applyOn( bb );
+          
+            cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+                              << " " << basicLayer << endl;
+            
+            _powerRailsPlanes.merge( bb, rootNet );
+          } else {
+            const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>(component);
+            if (rectilinear and (rectilinear->getPoints().size() == 5)) {
+              _goMatchCount++;
+
+              Box bb = rectilinear->getBoundingBox( basicLayer );
+              transformation.applyOn( bb );
+          
+              cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
+                                << " " << basicLayer << endl;
+            
+              _powerRailsPlanes.merge( bb, rootNet );
+            }
+          }
         }
       }
     }
@@ -1134,7 +1170,7 @@ namespace {
   { }
 
 
-} // End of anonymous namespace.
+} // anonymous namespace.
 
 
 namespace Katana {
@@ -1166,11 +1202,12 @@ namespace Katana {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
-    for( BasicLayer* layer : technology->getBasicLayers() ) {
+    query.setStopCellFlags( Cell::Flags::AbstractedSupply );
+    for ( BasicLayer* layer : technology->getBasicLayers() ) {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )
         continue;
-      if (_configuration->isGMetal(layer)) continue;
+      if (getConfiguration()->isGMetal(layer)) continue;
       if (not query.hasBasicLayer(layer)) continue;
 
       query.setBasicLayer( layer );

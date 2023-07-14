@@ -23,25 +23,17 @@
 // +-----------------------------------------------------------------+
 
 
-# include  <string.h>
+#include <string.h>
 
-# include  <iostream>
-# include  <string>
-# include  <vector>
-# include  <map>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
 
 using namespace std;
 
-# include  "VstParserGrammar.hpp"
-
-
-
-namespace Vst {
-
-  extern void  ClearIdentifiers ();
-  extern void  incVhdLineNumber ();
-
-}
+#include "VstParser.h"
+#include "VstParserGrammar.hpp"
 
 
 namespace {
@@ -175,29 +167,7 @@ namespace {
     }
 
 
-    class Identifiers : public vector<string*> {
-      public:
-        ~Identifiers ();
-        void clear   ();
-    };
-
-
-    Identifiers::~Identifiers () {
-      for ( unsigned int i=0 ; i < size() ; i++ )
-        delete (*this)[i];
-    }
-
-
-    void  Identifiers::clear () {
-      for ( unsigned int i=0 ; i < size() ; i++ )
-        delete (*this)[i];
-
-      vector<string*>::clear ();
-    }
-
-
     VHDLKeywords vhdlKeywords;
-    Identifiers  identifiers;
 
     char* lower ( char* str );
 
@@ -258,38 +228,33 @@ base_specifier            (B|b|O|o|X|x)
 \.                        { return Dot;        }
 \/                        { return Slash;      }
 
-{letter}(_?{letter_or_digit})*  {
-      VHDLKeywords::iterator it = vhdlKeywords.find ( lower(yytext) );
-
-      if ( it != vhdlKeywords.end() ) { return it->second; }
-
-      VSTlval._text = new string ( yytext );
-      identifiers.push_back ( VSTlval._text );
-
+{letter}(_|{letter_or_digit})*  {
+      char keyword[512];
+      strncpy( keyword, yytext, 511 );
+      lower( keyword );
+      VHDLKeywords::iterator it = vhdlKeywords.find( keyword );
+      if (it != vhdlKeywords.end()) { return it->second; }
+      VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return Identifier;
     }
 
 ({decimal_literal})|({base}#{based_integer}(\.{based_integer})?#({exponent})?)|({base}:{based_integer}(\.{based_integer})?:({exponent})?)  {
-      VSTlval._text = new string ( yytext );
-      identifiers.push_back ( VSTlval._text );
+      VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return AbstractLit;
     }
 
 '({graphic_character}|\"|\%)'  {
-      VSTlval._text = new string ( yytext );
-      identifiers.push_back ( VSTlval._text );
+      VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return CharacterLit;
     }
 
 (\"({graphic_character}|(\"\")|\%)*\")|(\%({graphic_character}|(\%\%)|\")*\%)  {
-      VSTlval._text = new string ( yytext );
-      identifiers.push_back ( VSTlval._text );
+      VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return StringLit;
     }
 
 {base_specifier}(\"{extended_digit}(_?{extended_digit})*\"|\%{extended_digit}(_?{extended_digit})*\%)  {
-      VSTlval._text = new string ( yytext );
-      identifiers.push_back ( VSTlval._text );
+      VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return BitStringLit;
     }
 
@@ -302,16 +267,6 @@ base_specifier            (B|b|O|o|X|x)
 
 
 int yywrap () { return 1; }
-
-
-namespace Vst {
-
-
-  void  ClearIdentifiers ()
-  { identifiers.clear (); }
-
-
-}  // Vst namespace.
 
 
 namespace {

@@ -82,7 +82,12 @@ namespace Anabatic {
     , _segmentRevalidateds()
     , _netInvalidateds    ()
     , _netRevalidateds    ()
-  { }
+  {
+    _autoContacts       .reserve( 1024 );
+    _doglegs            .reserve( 1024 );
+    _segmentInvalidateds.reserve( 1024 );
+    _segmentRevalidateds.reserve( 1024 );
+  }
 
 
   void  Session::_postCreate ()
@@ -210,16 +215,20 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "Anabatic::Session::_revalidateTopology()" << endl;
 
+    _anabatic->disableCanonize();
     for ( Net* net : _netInvalidateds ) {
       cdebug_log(145,0) << "Anabatic::Session::_revalidateTopology(Net*)" << net << endl;
       _anabatic->updateNetTopology    ( net );
       _anabatic->computeNetConstraints( net );
       _anabatic->_computeNetOptimals  ( net );
-      _anabatic->_computeNetTerminals ( net );
+    //_anabatic->_computeNetTerminals ( net );
     }
+    _anabatic->enableCanonize();
     _canonize ();
 
-    for ( AutoSegment* segment : _segmentInvalidateds ) {
+    AutoSegment* segment = NULL;
+    for ( size_t i=0 ; i<_segmentInvalidateds.size() ; ++i ) {
+      segment = _segmentInvalidateds[i];
       if (segment->isCanonical()) {
         if (segment->isUnsetAxis()) segment->toOptimalAxis();
         else                        segment->toConstraintAxis();
@@ -252,6 +261,8 @@ namespace Anabatic {
     cdebug_log(145,0) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
 
     _segmentRevalidateds.clear();
+    std::sort( _segmentInvalidateds.begin(), _segmentInvalidateds.end()
+             , AutoSegment::CompareByRevalidate() );
     for ( size_t i=0 ; i < _segmentInvalidateds.size() ; ++i, ++count ) {
       _segmentInvalidateds[i]->revalidate();
       if ( not _destroyedSegments.empty()
@@ -353,6 +364,31 @@ namespace Anabatic {
   }
 
 
+  DbU::Unit  Session::_getNearestTrackAxis ( const Layer* layer, DbU::Unit axis, uint32_t mode )
+  {
+    Box ab = _anabatic->getCell()->getAbutmentBox();
+
+    RoutingLayerGauge* lg = _routingGauge->getLayerGauge( layer );
+    if (not lg) return axis;
+    
+    DbU::Unit minAxis = 0;
+    DbU::Unit maxAxis = 0;
+    if (lg->getDirection() == Constant::Horizontal) {
+      minAxis = ab.getYMin();
+      maxAxis = ab.getYMax();
+    } else {
+      minAxis = ab.getXMin();
+      maxAxis = ab.getXMax();
+    }
+    DbU::Unit trackAxis = lg->getTrackPosition( minAxis
+                                              , lg->getTrackIndex( minAxis
+                                                                 , maxAxis
+                                                                 , axis
+                                                                 , mode ) );
+    return trackAxis;
+  }
+
+
   Point  Session::_getNearestGridPoint ( Point p, Box constraint )
   {
     Box ab = _anabatic->getCell()->getAbutmentBox();
@@ -376,12 +412,23 @@ namespace Anabatic {
     if (y < constraint.getYMin()) y += lg->getPitch();
     if (y > constraint.getYMax()) y -= lg->getPitch();
 
+    y = std::max( y, constraint.getYMin() );
+    y = std::min( y, constraint.getYMax() );
+
     return Point(x,y);
   }
 
 
+  StyleFlags  Session::getRoutingStyle ()
+  { return get("getRoutingStyle()")->_anabatic->getRoutingStyle(); }
+
+
   bool  Session::isInDemoMode ()
   { return get("isInDemoMode()")->_anabatic->isInDemoMode(); }
+
+
+  bool  Session::isChannelStyle ()
+  { return get("isChannelStyle()")->_anabatic->isChannelStyle(); }
 
 
   float  Session::getSaturateRatio ()

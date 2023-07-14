@@ -196,11 +196,11 @@ Hook::Hook()
 {
 }
 
-Hook::~Hook()
-// **********
+Hook::~Hook() noexcept(false)
+// **************************
 {
     if (_nextHook != this)
-        throw Error("Abnormal deletion of hook : always attached");
+        throw Error("Abnormal deletion of hook : still attached");
 }
 
 Hook* Hook::getNextHook() const

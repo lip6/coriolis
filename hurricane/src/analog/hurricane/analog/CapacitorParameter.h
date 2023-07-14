@@ -24,10 +24,11 @@ namespace Analog {
 
   class CapacitorParameter : public Parameter {
     public:
-      inline          CapacitorParameter ( std::string id, double value );
-      inline double   getValue           () const;
-      inline operator double             () const;
-      inline void     setValue           ( double );
+      inline               CapacitorParameter ( std::string id, double value );
+      inline  double       getValue           () const;
+      inline               operator double    () const;
+      inline  void         setValue           ( double );
+      virtual std::string  _getTypeName       () const { return "CapacitorParameter"; }
     private:
       double  _value;
   };

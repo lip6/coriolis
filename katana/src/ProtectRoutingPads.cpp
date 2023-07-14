@@ -16,6 +16,7 @@
 
 #include <map>
 #include <list>
+#include "hurricane/Error.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -43,6 +44,7 @@
 namespace {
 
   using namespace std;
+  using Hurricane::Error;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
@@ -55,6 +57,7 @@ namespace {
   using Hurricane::RegularLayer;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::Plug;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
   using Hurricane::Occurrence;
@@ -68,16 +71,25 @@ namespace {
   using namespace Katana;
 
 
-  void  protectRoutingPad ( RoutingPad* rp )
+  void  protectRoutingPad ( RoutingPad* rp, Flags flags )
   {
     cdebug_log(145,1) << "::protectRoutingPad() " << rp << endl;
     
     Name            padNetName     = "pad";
-    Component*      usedComponent  = rp->_getEntityAsComponent();
+    Component*      usedComponent  = rp->_getEntityAs<Component>();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
+    if (dynamic_cast<Plug*>(usedComponent)) {
+      cerr << Error( "Katana::protectRoutingPad(): A RoutingPad of \"%s\" is still on it's Plug.\n"
+                     "        (%s)"
+                   , getString(rp->getNet()->getName()).c_str()
+                   , getString(usedComponent).c_str()
+                   ) << endl;
+      cdebug_tabw(145,-1);
+      return;
+    }
     if (Session::getRoutingGauge()->getLayerType(usedComponent->getLayer()) == Constant::PinOnly) {
       cdebug_tabw(145,-1);
       return;
@@ -88,9 +100,10 @@ namespace {
 
     if (CatalogExtension::isPad(masterNet->getCell())) {
       if (   rp->getNet()->isPower()
-         or (rp->getNet()->getName() == padNetName) )
+         or (rp->getNet()->getName() == padNetName) ) {
         cdebug_tabw(145,-1);
         return;
+      }
     }
 
     vector<Segment*> segments;
@@ -99,7 +112,8 @@ namespace {
       RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment->getLayer());
       if (not plane) continue;
 
-      if (usedComponent == dynamic_cast<Component*>(segment)) continue;
+      if (usedComponent == dynamic_cast<Component*>(segment)
+         and not (flags & Flags::ProtectSelf)) continue;
       if (not NetExternalComponents::isExternal(segment)) continue;
 
       segments.push_back( segment );
@@ -109,8 +123,8 @@ namespace {
       RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
       Flags         direction = plane->getDirection();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
-      DbU::Unit     delta     =   plane->getLayerGauge()->getHalfPitch()
-                                + wireWidth/2
+      DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
+                                - wireWidth/2
                                 - DbU::fromLambda(0.1);
       DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
       Box           bb        ( segments[i]->getBoundingBox() );
@@ -118,6 +132,7 @@ namespace {
       transformation.applyOn ( bb );
 
       cdebug_log(145,0) << "@ " << segments[i] << " bb:" << bb << endl;
+      cdebug_log(145,0) << "delta=" << DbU::getValueString(delta) << endl;
 
       if ( direction == Flags::Horizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
@@ -169,7 +184,7 @@ namespace Katana {
   using Anabatic::NetData;
 
 
-  void  KatanaEngine::protectRoutingPads ()
+  void  KatanaEngine::protectRoutingPads ( Flags flags )
   {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
@@ -179,22 +194,24 @@ namespace Katana {
       if (net->isSupply()) continue;
 
       DebugSession::open( net, 145, 150 );
+      cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
 
       NetData* data = getNetData( net );
       if (data and data->isFixed()) continue;
 
       vector<RoutingPad*> rps;
-      for ( RoutingPad* rp : net->getRoutingPads() ) {
+      for ( RoutingPad* rp : net->getRoutingPads() )
         rps.push_back( rp );
-      }
 
       for ( size_t i=0 ; i<rps.size() ; ++i )
-        protectRoutingPad( rps[i] );
+        protectRoutingPad( rps[i], flags );
 
       DebugSession::close();
     }
 
     Session::close();
+    cerr.flush();
+    cout.flush();
   }
 
 

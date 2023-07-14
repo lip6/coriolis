@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -102,7 +101,7 @@ def dpgen_port_bit ( n, flags, s ) :
 #################
 def dpgen_place ( Ins, x, y, plac = FIXED ) :
   sym = NOSYM
-  if ( y / 50 ) % 2 : sym = SYM_Y
+  if ( y // 50 ) % 2 : sym = SYM_Y
 
   Place ( Ins, sym, XY ( x, y ), plac )
 

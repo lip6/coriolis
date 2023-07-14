@@ -144,6 +144,20 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::_disable ()
+  {
+    _qtEnabled = false;
+    for ( size_t si=0 ; si < _styles.size() ; si++ )
+      _styles[si]->qtFree ();
+
+    _fireColorScale.qtFree ();
+    _rainbowColorScale.qtFree();
+    _temperatureColorScale.qtFree();
+
+    Breakpoint::setStopCb ( Breakpoint::simpleStopCb );
+  }
+
+
   size_t  Graphics::_findStyle ( const Name& name ) const
   {
     size_t si = 0;
@@ -212,6 +226,16 @@ namespace Hurricane {
   }
 
 
+  void  Graphics::_clear ()
+  {
+    _disable();
+    _active = NULL;
+
+    for ( DisplayStyle* style : _styles ) delete style;
+    _styles.clear();
+  }
+
+
   bool  Graphics::isEnabled ()
   { return getGraphics()->_qtEnabled; }
 
@@ -222,6 +246,10 @@ namespace Hurricane {
 
   void  Graphics::enable ()
   { return getGraphics()->_enable(); }
+
+
+  void  Graphics::disable ()
+  { return getGraphics()->_disable(); }
 
 
   void  Graphics::addStyle ( DisplayStyle* displayStyle )
@@ -351,6 +379,7 @@ namespace Hurricane {
     return value;
   }
 
+
   bool  Graphics::breakpointStopCb ( const string& message )
   {
     static BreakpointWidget* bpw = NULL;
@@ -361,6 +390,12 @@ namespace Hurricane {
     bpw->execNoModal();
 
     return (bpw->result() == QDialog::Accepted);
+  }
+
+
+  void  Graphics::clear ()
+  {
+    return getGraphics()->_clear();
   }
 
 

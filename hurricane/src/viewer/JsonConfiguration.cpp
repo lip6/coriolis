@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#include "vlsisapd/configuration/LayoutDescription.h"
+#include "hurricane/configuration/LayoutDescription.h"
 #include "hurricane/Error.h"
 #include "hurricane/viewer/JsonConfiguration.h"
 

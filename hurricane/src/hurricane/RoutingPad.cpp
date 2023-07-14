@@ -159,72 +159,85 @@ namespace Hurricane {
 
   Box RoutingPad::getBoundingBox () const
   {
-    Component* component = _getEntityAsComponent();
-    if ( component )
-      return _occurrence.getPath().getTransformation().getBox ( component->getBoundingBox() );
-
-    return Box(getPosition());
+    Component* component = _getEntityAs<Component>();
+    if (component)
+      return _occurrence.getPath().getTransformation().getBox( component->getBoundingBox() );
+    return Box( getPosition() );
   }
 
 
   Box RoutingPad::getBoundingBox ( const BasicLayer* basicLayer ) const
   {
-    Component* component = _getEntityAsComponent();
-    if ( component ) {
-      return _occurrence.getPath().getTransformation().getBox ( component->getBoundingBox(basicLayer) );
-    }
-
-    return Box(getPosition());
+    Component* component = _getEntityAs<Component>();
+    if (component)
+      return _occurrence.getPath().getTransformation().getBox( component->getBoundingBox(basicLayer) );
+    return Box( getPosition() );
   }
 
 
   const Layer* RoutingPad::getLayer () const
   {
-    Component* component = _getEntityAsComponent();
-    if (component) return component->getLayer ();
-
-    return NULL;
+    Component* component = _getEntityAs<Component>();
+    if (not component) return nullptr;
+    return component->getLayer ();
   }
 
 
   Point RoutingPad::getPosition () const
   {
-    Component* component = _getEntityAsComponent();
-    if (component) {
+    Component* component = _getEntityAs<Component>();
+    if (component)
       return _occurrence.getPath().getTransformation().getPoint( component->getCenter() );
-    }
-
     return Point();
   }
 
 
   Point RoutingPad::getSourcePosition () const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment ) {
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getSourcePosition() );
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getSourcePosition() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad) {
+      Box   bb = pad->getBoundingBox();
+      Point position;
+      if (bb.getWidth() > bb.getHeight())
+        position = Point( bb.getXMin() + bb.getHeight()/2, bb.getYCenter() );
+      else
+        position = Point( bb.getYCenter(), bb.getYMin() + bb.getWidth()/2 );
+      return _occurrence.getPath().getTransformation().getPoint( position );
     }
-
     return getPosition();
   }
 
 
   Point RoutingPad::getTargetPosition() const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment )
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getTargetPosition() );
-
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getTargetPosition() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad) {
+      Box   bb = pad->getBoundingBox();
+      Point position;
+      if (bb.getWidth() > bb.getHeight())
+        position = Point( bb.getXMax() - bb.getHeight()/2, bb.getYCenter() );
+      else
+        position = Point( bb.getYCenter(), bb.getYMax() - bb.getWidth()/2 );
+      return _occurrence.getPath().getTransformation().getPoint( position );
+    }
     return getPosition();
   }
 
 
   Point RoutingPad::getCenter() const
   {
-    Segment* segment = _getEntityAsSegment();
-    if ( segment )
-      return _occurrence.getPath().getTransformation().getPoint ( segment->getCenter() );
-    
+    Segment* segment = _getEntityAs<Segment>();
+    if (segment)
+      return _occurrence.getPath().getTransformation().getPoint( segment->getCenter() );
+    Pad* pad = _getEntityAs<Pad>();
+    if (pad)
+      return _occurrence.getPath().getTransformation().getPoint( pad->getCenter() );
     return getPosition();
   }
 
@@ -275,39 +288,27 @@ namespace Hurricane {
   }
 
 
-  Component* RoutingPad::_getEntityAsComponent () const
-  {
-    if ( _occurrence.isValid() )
-      return dynamic_cast<Component*>( _occurrence.getEntity() );
-
-    return NULL;
-  }
-
-
-  Segment* RoutingPad::_getEntityAsSegment () const
-  {
-    if ( _occurrence.isValid() )
-      return dynamic_cast<Segment*>( _occurrence.getEntity() );
-    
-    return NULL;
-  }
-
-
   void RoutingPad::setExternalComponent ( Component* component )
   {
-    if ( isMaterialized() ) invalidate(false);
+    if (isMaterialized()) invalidate( false );
 
     Occurrence plugOccurrence = getPlugOccurrence();
-    Plug*      plug           = static_cast<Plug*>(plugOccurrence.getEntity());
-    if ( plug->getMasterNet() != component->getNet() )
-      throw Error("Cannot Set External Component to Routing Pad : Inconsistant Net");
+    Plug*      plug           = static_cast<Plug*>( plugOccurrence.getEntity() );
+    if (plug->getMasterNet() != component->getNet())
+      throw Error( "RoutingPad::setExternalComponent(): Cannot set external Component of RoutingPadn, inconsistant net.\n"
+                   "        * RoutingPad:%s\n"
+                   "        * Component:%s"
+                 , getString(getNet()).c_str()
+                 , getString(component).c_str()
+                 );
 
-    _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
-    _occurrence = Occurrence(component,Path(plugOccurrence.getPath(),plug->getInstance()));
+    _occurrence.getMasterCell()->_removeSlaveEntity( _occurrence.getEntity(), this );
+    _occurrence = Occurrence( component, Path(plugOccurrence.getPath(),plug->getInstance()) );
+    _occurrence.getMasterCell()->_addSlaveEntity( _occurrence.getEntity(), this );
 
-    _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
-
-    if (!isMaterialized()) materialize();
+    if (not isMaterialized() and not Go::autoMaterializationIsDisabled())
+    //if (not isMaterialized())
+      materialize();
   }
 
 
@@ -319,11 +320,16 @@ namespace Hurricane {
     Net*       net       = component->getNet();
     Path       path      = _occurrence.getPath();
 
-    if (path.isEmpty())
-      throw Error( "RoutingPad::getPlugOccurrence(): Empty Path, *not* in an instance for\n"
-                   "        %s"
-                 , getString(this).c_str()
-                 );
+    if (path.isEmpty()) {
+      Pin* pin = dynamic_cast<Pin*>( component );
+      if (not pin)
+        throw Error( "RoutingPad::getPlugOccurrence(): Empty Path, *not* in an instance for\n"
+                     "        %s"
+                   , getString(this).c_str()
+                   );
+
+      return Occurrence(pin,Path());
+    }
 
     Instance* instance = path.getTailInstance();
     Plug*     plug     = instance->getPlug(net);
@@ -346,43 +352,48 @@ namespace Hurricane {
 
     Component* bestComponent = NULL;
     Plug*      plug          = static_cast<Plug*>(_occurrence.getEntity());
+    
+    for ( Component* component : NetExternalComponents::get(plug->getMasterNet()) ) {
+      if (not bestComponent) { bestComponent = component; continue; }
 
-    forEach ( Component*, icomponent, NetExternalComponents::get(plug->getMasterNet()) ) {
-      if ( not bestComponent ) { bestComponent = *icomponent; continue; }
+      if (dynamic_cast<Pin*>(component)) {
+        bestComponent = component;
+        break;
+      }
 
-      switch ( flags & ComponentSelection ) {
+      switch (flags & ComponentSelection) {
         case LowestLayer:
-          if ( icomponent->getLayer()->below(bestComponent->getLayer()) )
-            bestComponent = *icomponent;
+          if (component->getLayer()->below(bestComponent->getLayer()))
+            bestComponent = component;
           break;
         case HighestLayer:
-          if ( icomponent->getLayer()->above(bestComponent->getLayer()) )
-            bestComponent = *icomponent;
+          if (component->getLayer()->above(bestComponent->getLayer()))
+            bestComponent = component;
           break;
         case BiggestArea:
         default:
           {
-            double compArea = getArea(*icomponent);
+            double compArea = getArea(component);
             double bestArea = getArea(bestComponent);
 
             if (compArea == bestArea) {
-              Box compBox  = icomponent->getBoundingBox();
+              Box compBox  = component->getBoundingBox();
               Box bestBox  = bestComponent->getBoundingBox();
 
               if (compBox.getXMin() == bestBox.getXMin()) {
                 if (compBox.getYMin() == bestBox.getYMin()) {
-                  if (icomponent->getId() < bestComponent->getId())
-                    bestComponent = *icomponent;
+                  if (component->getId() < bestComponent->getId())
+                    bestComponent = component;
                 } else
                   if (compBox.getYMin() < bestBox.getYMin())
-                    bestComponent = *icomponent;
+                    bestComponent = component;
               } else {
                 if (compBox.getXMin() < bestBox.getXMin())
-                  bestComponent = *icomponent;
+                  bestComponent = component;
               }
             } else {
               if (compArea > bestArea)
-                bestComponent = *icomponent;
+                bestComponent = component;
             }
           }
           break;
@@ -390,7 +401,7 @@ namespace Hurricane {
     }
 
     if ( not bestComponent )
-      throw Error ( "RoutingPad::_getBestComponent(): No external components for\n"
+      throw Error ( "RoutingPad::setOnBestComponent(): No external components for\n"
                    "  %s of %s."
                   ,getString(plug->getMasterNet()).c_str()
                   ,getString(plug->getInstance ()).c_str() );

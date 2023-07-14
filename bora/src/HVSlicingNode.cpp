@@ -377,10 +377,14 @@ namespace Bora {
     if (getType() == HorizontalSNode) symmetryType = HSymmetry;
     if (getType() == VerticalSNode  ) symmetryType = VSymmetry;
   
-  
     if (not getChild(childIndex)->isSymmetric(getChild(copyIndex), symmetryType, ShowDiff)) { 
-      cerr << Warning( "HVSlicingNode::addSymmetry(int,int)): Children %d and %d are not the same, symmetry is ignored." 
-                     , childIndex, copyIndex ) << endl;
+      cerr << Warning( "HVSlicingNode::addSymmetry(int,int)): Children %d and %d are not the same, symmetry is ignored.\n" 
+                       "        child %d: %s\n"
+                       "        child %d: %s"
+                     , childIndex, copyIndex
+                     , childIndex, getString(getChild(childIndex)).c_str()
+                     , copyIndex , getString(getChild( copyIndex)).c_str()
+                     ) << endl;
       return;
     }
   
@@ -699,7 +703,7 @@ namespace Bora {
       } else {
         vector<BoxSet*>::const_iterator ibs = boxSet->getSet().begin();
         for ( VSlicingNodes::iterator ichild = _children.begin()
-            ; ichild != _children.end(); ichild++){
+            ; ichild != _children.end(); ichild++) {
           (*ichild)->_setGlobalSize( *ibs );
           ibs++;
         }
@@ -1128,6 +1132,9 @@ namespace Bora {
 
   void  HVSlicingNode::addSymmetryNet ( unsigned int type, Net* net1, Net* net2 )
   {
+    cerr << "HVSlicingNode::addSymmetryNet(): " << this << endl;
+    cerr << "* " << net1 << endl;
+                  
     if (checkSymmetryNet(type,net1,net2)) {
       cerr << Warning( "HVSlicingNode::addSymmetryNet(): Net symmetry already set." ) << endl;
       return;
@@ -1201,6 +1208,13 @@ namespace Bora {
     }
     
     for ( const NetSymmetry& symNet : _netSymmetries ) {
+      if (_symmetries.empty())
+        throw Error( "HVSlicingNode::updateSymNetAxis(): \n"
+                     "        Symmetry request for \"%s\" in non-symmetrical node \"%s\"."
+                   , getString(get<1>(symNet)->getName()).c_str()
+                   , getString(this).c_str()
+                   );
+                                        
       SlicingNode* n1      = getChild( _symmetries.front().first  );
       SlicingNode* n2      = getChild( _symmetries.front().second );
       DbU::Unit    xCenter = (n1->getX() + n2->getX() + n2->getWidth())/2;
@@ -1248,11 +1262,11 @@ namespace Bora {
           }
         }
       }
+    }
 
-      for ( SlicingNode* child : _children ) {
-        if ( (child->getType() == HorizontalSNode) or (child->getType() == VerticalSNode) )
-          child->updateSymNetAxis();
-      }
+    for ( SlicingNode* child : _children ) {
+      if ( (child->getType() == HorizontalSNode) or (child->getType() == VerticalSNode) )
+        child->updateSymNetAxis();
     }
   }
 

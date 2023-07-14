@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2021, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,12 +29,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_DBO_H
-#define  HURRICANE_DBO_H
-
-#include  "hurricane/DBos.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/Properties.h"
+#pragma  once
+#include "hurricane/Error.h"
+#include "hurricane/DBos.h"
+#include "hurricane/Name.h"
+#include "hurricane/Properties.h"
 
 
 namespace Hurricane {
@@ -54,6 +53,7 @@ namespace Hurricane {
       static  unsigned int       getIdCounter        ();
               unsigned int       getNextId           ();
       static  void               setNextId           ( unsigned int );
+      static  void               resetId             ();
       static  bool               inForcedIdMode      ();
       static  void               enableForcedIdMode  ();
       static  void               disableForcedIdMode ();
@@ -81,23 +81,25 @@ namespace Hurricane {
               void               toJsonSignature     ( JsonWriter* ) const;
     protected:                   
                                  DBo                 ();
-      virtual                   ~DBo                 ();
+      virtual                   ~DBo                 () noexcept(false);
       virtual void               _postCreate         ();
       virtual void               _preDestroy         ();
     private:                                         
-                                 DBo                 ( const DBo& );
-              DBo&               operator=           ( const DBo& );
+                                 DBo                 ( const DBo& ) = delete;
+              DBo&               operator=           ( const DBo& ) = delete;
     private:                     
       static  unsigned int       _memoryLimit;
       static  unsigned long      _flags;
       static  unsigned int       _nextId;
+      static  unsigned int       _idCount;
       static  unsigned int       _idCounter;
       static  unsigned int       _idCounterLimit;
               unsigned int       _id;
       mutable set<Property*>     _propertySet;
     public:
       struct CompareById : public std::binary_function<const DBo*,const DBo*,bool> {
-          inline bool  operator() ( const DBo* lhs, const DBo* rhs ) const;
+          template<typename Key>
+          inline bool  operator() ( const Key* lhs, const Key* rhs ) const;
       };
   };
 
@@ -107,7 +109,8 @@ namespace Hurricane {
   inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
   inline unsigned int    DBo::getId           () const { return _id; }
 
-  inline bool  DBo::CompareById::operator() ( const DBo* lhs, const DBo* rhs ) const
+  template<typename Key>
+  inline bool  DBo::CompareById::operator() ( const Key* lhs, const Key* rhs ) const
   { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }
 
 
@@ -131,5 +134,3 @@ namespace Hurricane {
 } // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::DBo);
-
-#endif // HURRICANE_DBO_H

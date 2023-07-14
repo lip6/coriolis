@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_PATH
-#define HURRICANE_PATH
-
+#pragma  once
 #include "hurricane/Instances.h"
 #include "hurricane/Transformation.h"
 
@@ -87,6 +85,7 @@ class Path {
 // **********
 
     public: bool isEmpty() const;
+    public: int32_t contains(Instance*) const;
 
 // Updators
 // ********
@@ -97,7 +96,7 @@ class Path {
 // Others
 // ******
 
-    public: string getCompactString() const;
+    public: string getCompactString(bool showBrackets=true) const;
     public: string getJsonString(unsigned long flags) const;
     public: string _getTypeName() const { return _TName("Occurrence"); };
     public: string _getString() const;
@@ -112,10 +111,7 @@ class Path {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Path);
-
-
-#endif // HURRICANE_PATH
+INSPECTOR_PR_SUPPORT(Hurricane::Path);
 
 
 // ****************************************************************************************************

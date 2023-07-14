@@ -1,15 +1,18 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<bora/src>" -*-
 
    include_directories( ${BORA_SOURCE_DIR}/src
+                        ${ANABATIC_INCLUDE_DIR}
+                        ${KATANA_INCLUDE_DIR}
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QWT_INCLUDE_DIR}
-                        ${QtX_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${QtX_INCLUDE_DIRS}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     bora/Constants.h
+                                     bora/ParameterRange.h
                                      bora/BoxSet.h
                                      bora/NodeSets.h
                                      bora/HVSetState.h
@@ -27,7 +30,10 @@
                                      bora/BoraEngine.h
 
                       )
-                   set( pyIncludes   bora/PySlicingNode.h
+                   set( pyIncludes   bora/PyParameterRange.h
+                                     bora/PyStepParameterRange.h
+                                     bora/PyMatrixParameterRange.h
+                                     bora/PySlicingNode.h
                                      bora/PyDSlicingNode.h
                                      bora/PyHSlicingNode.h
                                      bora/PyVSlicingNode.h
@@ -44,6 +50,7 @@
 		      )
                    set( cpps         BoxSet.cpp
                                      NodeSets.cpp
+                                     ParameterRange.cpp
                                      HVSetState.cpp
                                      SlicingNode.cpp
                                      HVSlicingNode.cpp
@@ -62,7 +69,10 @@
                                      SlicingWidget.cpp
                                      GraphicBoraEngine.cpp
                       )
-                   set( pyCpps       PySlicingNode.cpp
+                   set( pyCpps       PyParameterRange.cpp
+                                     PyStepParameterRange.cpp
+                                     PyMatrixParameterRange.cpp
+                                     PySlicingNode.cpp
                                      PyDSlicingNode.cpp
                                      PyHSlicingNode.cpp
                                      PyRHSlicingNode.cpp
@@ -91,10 +101,10 @@
                                      ${QWT_LIBRARY}
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                      -lutil
                       )
 
-           add_library( bora         ${cpps} ${mocCpps} )
+           add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( bora         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries( bora         ${depLibs} )
 

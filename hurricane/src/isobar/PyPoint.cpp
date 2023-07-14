@@ -27,20 +27,17 @@ extern "C" {
 #define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Point,point,function)
 
 
-// x=================================================================x
+// +=================================================================+
 // |                "PyPoint" Python Module Code Part                |
-// x=================================================================x
+// +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
 
 
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
   // |               "PyPoint" Attribute Methods                   |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPoint_NEW ()"
 
   static PyObject* PyPoint_NEW ( PyObject* module, PyObject *args )
   {
@@ -86,26 +83,38 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyPoint_Translate ()"
-
-  static PyObject* PyPoint_Translate ( PyPoint *self, PyObject* args )
+  static PyObject* PyPoint_translate ( PyPoint *self, PyObject* args )
   {
-    cdebug_log(20,0) << "PyPoint_Translate()" << endl;
-
+    cdebug_log(20,0) << "PyPoint_translate()" << endl;
     HTRY
-
-    METHOD_HEAD ( "Box.Translate()" )
-
-    PyObject* arg0;
-    PyObject* arg1;
-    if ( ! ParseTwoArg ( "Box.Translate", args, INTS2_ARG, &arg0, &arg1 ) ) return ( NULL );
-
-    point->translate ( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-
+      METHOD_HEAD( "Point.translate()" )
+      PyObject* arg0;
+      PyObject* arg1;
+      if (not ParseTwoArg( "Point.translate", args, INTS2_ARG, &arg0, &arg1 )) return NULL;
+      point->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
     HCATCH
-
     Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyPoint_manhattanDistance ( PyPoint *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyPoint_manhattanDistance()" << endl;
+    DbU::Unit distance = 0;
+    HTRY
+      METHOD_HEAD ( "Point.manahattanDistance()" )
+      PyObject* pyPoint = NULL;
+      if (not PyArg_ParseTuple(args,"O:Point.manhattanDistance()", &pyPoint)) {
+        PyErr_SetString ( ConstructorError, "Point.manhattanDistance(): Takes exactly one argument." );
+        return NULL;
+      }
+      if (not IsPyPoint(pyPoint)) {
+        PyErr_SetString ( ConstructorError, "Point.manhattanDistance(): Argument is not a Point." );
+        return NULL;
+      }
+      distance = point->manhattanDistance( *(PYPOINT_O(pyPoint)) );
+    HCATCH
+    return PyDbU_FromLong(distance);
   }
 
 
@@ -114,8 +123,8 @@ extern "C" {
   // Standart Accessors (Attributes).
   DirectGetLongAttribute(PyPoint_getX,getX,PyPoint,Point)
   DirectGetLongAttribute(PyPoint_getY,getY,PyPoint,Point)
-  DirectSetLongAttribute(PyPoint_SetX,setX,PyPoint,Point)
-  DirectSetLongAttribute(PyPoint_SetY,setY,PyPoint,Point)
+  DirectSetLongAttribute(PyPoint_setX,setX,PyPoint,Point)
+  DirectSetLongAttribute(PyPoint_setY,setY,PyPoint,Point)
 
 
   // Standart destroy (Attribute).
@@ -128,14 +137,15 @@ extern "C" {
   // PyPoint Attribute Method table.
 
   PyMethodDef PyPoint_Methods[] =
-    { { "getX"     , (PyCFunction)PyPoint_getX     , METH_NOARGS , "Return the Point X value." }
-    , { "getY"     , (PyCFunction)PyPoint_getY     , METH_NOARGS , "Return the Point Y value." }
-    , { "setX"     , (PyCFunction)PyPoint_SetX     , METH_VARARGS, "Modify the Point X value." }
-    , { "setY"     , (PyCFunction)PyPoint_SetY     , METH_VARARGS, "Modify the Point Y value." }
-    , { "translate", (PyCFunction)PyPoint_Translate, METH_VARARGS, "Translate the point of dx and dy." }
-    , { "destroy"  , (PyCFunction)PyPoint_destroy  , METH_NOARGS
-                   , "Destroy associated hurricane object The python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getX"              , (PyCFunction)PyPoint_getX             , METH_NOARGS , "Return the Point X value." }
+    , { "getY"              , (PyCFunction)PyPoint_getY             , METH_NOARGS , "Return the Point Y value." }
+    , { "setX"              , (PyCFunction)PyPoint_setX             , METH_VARARGS, "Modify the Point X value." }
+    , { "setY"              , (PyCFunction)PyPoint_setY             , METH_VARARGS, "Modify the Point Y value." }
+    , { "translate"         , (PyCFunction)PyPoint_translate        , METH_VARARGS, "Translate the point of dx and dy." }
+    , { "manhattanDistance" , (PyCFunction)PyPoint_manhattanDistance, METH_VARARGS, "Compute the Manhattan distance between the two points." }
+    , { "destroy"           , (PyCFunction)PyPoint_destroy          , METH_NOARGS
+                            , "Destroy associated hurricane object The python object remains." }
+    , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
 

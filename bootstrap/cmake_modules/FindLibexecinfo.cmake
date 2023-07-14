@@ -1,9 +1,9 @@
-# Try to find LibExecinfo functionality
+# Try to find Libexecinfo functionality
 # Once done this will define
 #
-#  LIBEXECINFO_FOUND - system has LibExecinfo
-#  LIBEXECINFO_INCLUDE_DIR - LibExecinfo include directory
-#  LIBEXECINFO_LIBRARIES - Libraries needed to use LibExecinfo
+#  LIBEXECINFO_FOUND - system has Libexecinfo
+#  LIBEXECINFO_INCLUDE_DIR - Libexecinfo include directory
+#  LIBEXECINFO_LIBRARIES - Libraries needed to use Libexecinfo
 #
 # TODO: This will enable translations only if Gettext functionality is
 # present in libc. Must have more robust system for release, where Gettext
@@ -17,7 +17,7 @@
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
  
 if(LIBEXECINFO_INCLUDE_DIR AND LIBEXECINFO_LIB_FOUND)
-  set(LibExecinfo_FIND_QUIETLY TRUE)
+  set(Libexecinfo_FIND_QUIETLY TRUE)
 endif(LIBEXECINFO_INCLUDE_DIR AND LIBEXECINFO_LIB_FOUND)
  
 find_path(LIBEXECINFO_INCLUDE_DIR execinfo.h)
@@ -41,6 +41,6 @@ if(LIBEXECINFO_INCLUDE_DIR)
 endif(LIBEXECINFO_INCLUDE_DIR)
  
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibExecinfo  DEFAULT_MSG  LIBEXECINFO_INCLUDE_DIR  LIBEXECINFO_LIB_FOUND)
+find_package_handle_standard_args(Libexecinfo  DEFAULT_MSG  LIBEXECINFO_INCLUDE_DIR  LIBEXECINFO_LIB_FOUND)
  
 mark_as_advanced(LIBEXECINFO_INCLUDE_DIR  LIBEXECINFO_LIBRARIES  LIBEXECINFO_LIBC_HAS_LIBEXECINFO_BACKTRACE  LIBEXECINFO_LIB_FOUND)

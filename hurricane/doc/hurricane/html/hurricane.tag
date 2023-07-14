@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="class">
     <name>Hurricane::Contact::AnchorHook</name>
     <filename>classHurricane_1_1Contact_1_1AnchorHook.html</filename>
@@ -42,8 +42,8 @@
       <type>static BasicLayer *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1BasicLayer.html</anchorfile>
-      <anchor>a76ccb64abaaf9c834c8ee8f010d5d24f</anchor>
-      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, unsigned gds2Layer, unsigned gds2Datatype, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
+      <anchor>adff716f670e03c59ff970cd4fee298b6</anchor>
+      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, uint32_t gds2Layer=0, uint32_t gds2Datatype=0, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -327,8 +327,8 @@
       <anchor>aa689be4b37c83412f3dc95fc23c82156</anchor>
       <arglist>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Box" title="Introduction">secBoxIntro</docanchor>
-    <docanchor file="classHurricane_1_1Box" title="Remark on Modifiers">secBoxModifierRemark</docanchor>
+    <docanchor file="classHurricane_1_1Box.html" title="Introduction">secBoxIntro</docanchor>
+    <docanchor file="classHurricane_1_1Box.html" title="Remark on Modifiers">secBoxModifierRemark</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Cell</name>
@@ -366,8 +366,8 @@
       <type>Instances</type>
       <name>getInstancesUnder</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a5eb16d9d0f340ad71b81d794f6f8525f</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>a3af933175d318b205d94adaf92ba0499</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
     <member kind="function">
       <type>Instances</type>
@@ -380,8 +380,8 @@
       <type>Net *</type>
       <name>getNet</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a63cb19881279b5af0a4e7dae707ef1bd</anchor>
-      <arglist>(const Name &amp;name) const</arglist>
+      <anchor>a70f06abd224895aeeeeb042365dbf48a</anchor>
+      <arglist>(const Name &amp;name, bool useAlias=true) const</arglist>
     </member>
     <member kind="function">
       <type>Nets</type>
@@ -478,8 +478,29 @@
       <type>Occurrences</type>
       <name>getOccurrencesUnder</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a7fb09c8e350923c47ce4c4407bdb00ce</anchor>
-      <arglist>(const Box &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max()) const</arglist>
+      <anchor>aee27efc0497992f811c9812ffa272a5a</anchor>
+      <arglist>(const Box &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max(), DbU::Unit threshold=0) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Occurrences</type>
+      <name>getTerminalInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a30b71d9a35ff4e0b59b98ef515f26fc0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>Occurrences</type>
+      <name>getTerminalNetlistInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a6f559f7dab6e4afc0b60eba064c5e474</anchor>
+      <arglist>(const Instance *topInstance=NULL) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Occurrences</type>
+      <name>getNonTerminalNetlistInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a9e7a0536ec1efb23be2764068a85b6a7</anchor>
+      <arglist>(const Instance *topInstance=NULL) const</arglist>
     </member>
     <member kind="function">
       <type>const Box &amp;</type>
@@ -500,6 +521,13 @@
       <name>isTerminal</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
       <anchor>aac4e9218b7806f3a0f2d5a55f00abd69</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isTerminalNetlist</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a6fe2b5a80d4b344733416b25ea559497</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -539,10 +567,10 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>setTerminal</name>
+      <name>setTerminalNetlist</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a4591dc37153a835daa42b442221742cb</anchor>
-      <arglist>(bool isTerminal)</arglist>
+      <anchor>a47ce34631bb9f6862caa13e5b25a4d8f</anchor>
+      <arglist>(bool state)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -579,11 +607,12 @@
       <anchor>ad803afb3e52bea3bf3d520e353b162e0</anchor>
       <arglist>(Library *library, const Name &amp;name)</arglist>
     </member>
+    <docanchor file="classHurricane_1_1Cell.html" title="Layout vs. Netlist Cell Hierarchy">secCellHierarchy</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Collection</name>
     <filename>classHurricane_1_1Collection.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <member kind="function" virtualness="virtual">
       <type>virtual</type>
       <name>~Collection</name>
@@ -640,14 +669,14 @@
       <anchor>a673afd14782da82ad03a68366ae1f09b</anchor>
       <arglist>(const Filter&lt; SubType &gt; &amp;filter) const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Collection" title="Introduction">secCollectionIntro</docanchor>
-    <docanchor file="classHurricane_1_1Collection" title="STL Iterator Support">secIterator</docanchor>
-    <docanchor file="classHurricane_1_1Collection" title="The forEach Macro (obsoleted)">secForEachMacro</docanchor>
-    <docanchor file="classHurricane_1_1Collection" title="The Generic getCollection">secGenericgetCollection</docanchor>
-    <docanchor file="classHurricane_1_1Collection" title="Locators">secCollectionLocators</docanchor>
+    <docanchor file="classHurricane_1_1Collection.html" title="Introduction">secCollectionIntro</docanchor>
+    <docanchor file="classHurricane_1_1Collection.html" title="STL Iterator Support">secIterator</docanchor>
+    <docanchor file="classHurricane_1_1Collection.html" title="The forEach Macro (obsoleted)">secForEachMacro</docanchor>
+    <docanchor file="classHurricane_1_1Collection.html" title="The Generic getCollection">secGenericgetCollection</docanchor>
+    <docanchor file="classHurricane_1_1Collection.html" title="Locators">secCollectionLocators</docanchor>
   </compound>
   <compound kind="class">
-    <name>Collection&lt; Cell *&gt;</name>
+    <name>Collection&lt; Cell * &gt;</name>
     <filename>classHurricane_1_1Collection.html</filename>
     <member kind="function" virtualness="virtual">
       <type>virtual</type>
@@ -926,10 +955,10 @@
       <anchor>a8680f2756892366db8642bfcfd7ce097</anchor>
       <arglist>(const Box &amp;area)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Component" title="Introduction">secComponentIntro</docanchor>
-    <docanchor file="classHurricane_1_1Component" title="Concept of Location">secComponentConceptOfLocation</docanchor>
-    <docanchor file="classHurricane_1_1Component" title="Destruction">secComponentDestruction</docanchor>
-    <docanchor file="classHurricane_1_1Component" title="Predefined filters">secComponentPredefinedFilters</docanchor>
+    <docanchor file="classHurricane_1_1Component.html" title="Introduction">secComponentIntro</docanchor>
+    <docanchor file="classHurricane_1_1Component.html" title="Concept of Location">secComponentConceptOfLocation</docanchor>
+    <docanchor file="classHurricane_1_1Component.html" title="Destruction">secComponentDestruction</docanchor>
+    <docanchor file="classHurricane_1_1Component.html" title="Predefined filters">secComponentPredefinedFilters</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Contact</name>
@@ -958,24 +987,24 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getDx</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>acf8405f74b97239ea74ec629d0b4e194</anchor>
+      <anchor>a8a5c4475668b6c6730ed5265e5447553</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getDy</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aa7bc32ab9211fd5f6ad3aacdf1214f20</anchor>
+      <anchor>af674c59fcaf1f5214d54a558fe30e41a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getWidth</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a28bd18de9ca6e5cf2b77fce5e22af43a</anchor>
+      <anchor>a794ce7c3aa5ffe894c1231f7c5ac3c52</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -986,10 +1015,10 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getHeight</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>adf6487485a4f48bd15aa6f9a8ac5fd27</anchor>
+      <anchor>a07a4ecc7ea2479e2d63f5f31d9325dde</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1003,94 +1032,94 @@
       <type>void</type>
       <name>setLayer</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a147644849f33bc4d58b6b997543c8306</anchor>
-      <arglist>(const Layer *layer)</arglist>
+      <anchor>aec627634d5b6cfc5079a02b1b518b50e</anchor>
+      <arglist>(const Layer *)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setWidth</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aae6d5c96862fd6c834ff4abd61edc86f</anchor>
-      <arglist>(const DbU::Unit &amp;width)</arglist>
+      <anchor>a08d14ce6cdf3696e472f4a621b936afe</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setHeight</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a2fc2e7c85dc5495810544c48bb604712</anchor>
-      <arglist>(const DbU::Unit &amp;height)</arglist>
+      <anchor>a6480b6a75cc098d3227f27080a2cb42b</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setSizes</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aa18aa1e78eba9f4c10ece0e20683faf5</anchor>
-      <arglist>(const DbU::Unit &amp;width, const DbU::Unit &amp;height)</arglist>
+      <anchor>a1bded13596d448c6bb9c93271fffe5fd</anchor>
+      <arglist>(DbU::Unit width, DbU::Unit height)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setX</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a181436f128b65467e1ab94ffcb0c345b</anchor>
-      <arglist>(const DbU::Unit &amp;x)</arglist>
+      <anchor>a5b2338675993259feabb641fd9a1996e</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setY</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a455b8925aae10157c9143b58a3a52e57</anchor>
-      <arglist>(const DbU::Unit &amp;y)</arglist>
+      <anchor>a232a49a5dd180e9ff8dfb2bd2a67f2cd</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setPosition</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>afac88ee8442e3e943a24bb526057851a</anchor>
-      <arglist>(const DbU::Unit &amp;x, const DbU::Unit &amp;y)</arglist>
+      <anchor>ae44d4d7655428705f13dca34c7167690</anchor>
+      <arglist>(DbU::Unit x, DbU::Unit y)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setPosition</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>ad3ff25d47d1c00c53bb07bb0ff4067f1</anchor>
-      <arglist>(const Point &amp;position)</arglist>
+      <anchor>aedcc63fe54538939c03fe81a16b0bae0</anchor>
+      <arglist>(const Point &amp;)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setDx</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a6ee60b9d228fe5487bf73dc396b94706</anchor>
-      <arglist>(const DbU::Unit &amp;dx)</arglist>
+      <anchor>a82f29c6b48b0c5a51fe3c1678d71876c</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setDy</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a32ee96c21115ee9d197bc505fd48e37d</anchor>
-      <arglist>(const DbU::Unit &amp;dy)</arglist>
+      <anchor>ac5dadc06ae38c1ff287f031864f58850</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setOffset</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a41ba972136e77d768f58ad0407d18f8e</anchor>
-      <arglist>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</arglist>
+      <anchor>a5c8cb75debcbe10aedc092e2089a975c</anchor>
+      <arglist>(DbU::Unit dx, DbU::Unit dy)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Contact *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a5402fec0518c81d35fbec2c2b2ec0f8f</anchor>
-      <arglist>(Net *net, const Layer *layer, const DbU::Unit &amp;x, const DbU::Unit &amp;y, const DbU::Unit &amp;width=0, const DbU::Unit &amp;height=0)</arglist>
+      <anchor>ab66989c2dce4d398f1f7647aca50d983</anchor>
+      <arglist>(Net *net, const Layer *layer, DbU::Unit x, DbU::Unit y, DbU::Unit width=0, DbU::Unit height=0)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Contact *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a6645345f819cb4769fac075a0b1ea028</anchor>
-      <arglist>(Component *anchor, const Layer *layer, const DbU::Unit &amp;dx, const DbU::Unit &amp;dy, const DbU::Unit &amp;width=0, const DbU::Unit &amp;height=0)</arglist>
+      <anchor>a2e555edb8984b599c391f16db105c1f5</anchor>
+      <arglist>(Component *anchor, const Layer *layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width=0, DbU::Unit height=0)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Contact" title="Introduction">secContactIntro</docanchor>
+    <docanchor file="classHurricane_1_1Contact.html" title="Introduction">secContactIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::ContactLayer</name>
@@ -1196,437 +1225,449 @@
       <anchor>a3e02f3d665cb0b2120df2fdfe9c3df4f</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1DBo" title="Introduction">sDBoIntro</docanchor>
-    <docanchor file="classHurricane_1_1DBo" title="Creation process">sDBoCreation</docanchor>
-    <docanchor file="classHurricane_1_1DBo" title="Deletion process">sDBodestroy</docanchor>
-    <docanchor file="classHurricane_1_1DBo" title="Extentions">sDBoExtentions</docanchor>
-    <docanchor file="classHurricane_1_1DBo" title="Remark">sDBoRemark</docanchor>
+    <docanchor file="classHurricane_1_1DBo.html" title="Introduction">sDBoIntro</docanchor>
+    <docanchor file="classHurricane_1_1DBo.html" title="Creation process">sDBoCreation</docanchor>
+    <docanchor file="classHurricane_1_1DBo.html" title="Deletion process">sDBodestroy</docanchor>
+    <docanchor file="classHurricane_1_1DBo.html" title="Extentions">sDBoExtentions</docanchor>
+    <docanchor file="classHurricane_1_1DBo.html" title="Remark">sDBoRemark</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::DbU</name>
     <filename>classHurricane_1_1DbU.html</filename>
     <member kind="enumeration">
       <type></type>
-      <name>UnitPower</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga50b5785bf4d75026c4c112caec3040a7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Pico</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nano</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Micro</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Milli</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Unity</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Kilo</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
       <name>StringMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga6af6a5b8d113a661fea65b2bcb8b25c4</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Symbolic</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>SnapMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga1082168d6f9956ebba22ab8bbec21637</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Inferior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Superior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nearest</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>std::int64_t</type>
       <name>Unit</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4fbfa3e8c89347af76c9628ea06c4146</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Pico</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nano</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Micro</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Milli</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Unity</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Kilo</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a4fbfa3e8c89347af76c9628ea06c4146</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>Symbolic</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Inferior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Superior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nearest</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
       <arglist></arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>fromDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaec69d65ec1651c2feea24c5931f4580b</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>aec69d65ec1651c2feea24c5931f4580b</anchor>
       <arglist>(Unit value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>fromGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga367e1d1b5ac1df076745550cba8a83c1</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a367e1d1b5ac1df076745550cba8a83c1</anchor>
       <arglist>(double value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>fromLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4b570755b19ea9ff0f2f258a221bd935</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a4b570755b19ea9ff0f2f258a221bd935</anchor>
       <arglist>(double value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>fromPhysical</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga11d4dbd9134a19bda35cbacde1cb2769</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a11d4dbd9134a19bda35cbacde1cb2769</anchor>
       <arglist>(double value, UnitPower p)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static unsigned int</type>
       <name>getPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga6169efbdd9b3d54a0bd8467c8f957fda</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a6169efbdd9b3d54a0bd8467c8f957fda</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static unsigned int</type>
       <name>getMaximalPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga8756c9f0a32af5f601cd150e73b02c03</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a8756c9f0a32af5f601cd150e73b02c03</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>getResolution</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga120a60b09b344d01c583567a1e489d9e</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a120a60b09b344d01c583567a1e489d9e</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>setPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gace9a8644e7e80dcaed2a8a95deeb1622</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>ace9a8644e7e80dcaed2a8a95deeb1622</anchor>
       <arglist>(unsigned int precision, unsigned int flags=NoFlags)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>setGridsPerLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gac93f9ba2a09105227e34bd05bcb1500c</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>ac93f9ba2a09105227e34bd05bcb1500c</anchor>
       <arglist>(double gridsPerLambda, unsigned int flags=NoFlags)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>getGridsPerLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9a0359adbfafc356326f5c6adf57ff04</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a9a0359adbfafc356326f5c6adf57ff04</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getRealSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga09e46fcca6aaca94851adfa196e10170</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a09e46fcca6aaca94851adfa196e10170</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getOnRealSnapGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga8746e486f153aa37ee469c1604eba5c0</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a8746e486f153aa37ee469c1604eba5c0</anchor>
       <arglist>(DbU::Unit u, SnapMode mode=Nearest)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>setRealSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga202cc3aa3364c2224647a29dde047fae</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a202cc3aa3364c2224647a29dde047fae</anchor>
       <arglist>(DbU::Unit step)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getSymbolicSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga687a9134729b107c42fb7f69596c4c3b</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a687a9134729b107c42fb7f69596c4c3b</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getOnSymbolicSnapGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gad1b0c0f3680093cf5a63d901312c925d</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>ad1b0c0f3680093cf5a63d901312c925d</anchor>
       <arglist>(DbU::Unit u, SnapMode mode=Nearest)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>setSymbolicSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9ccd423c8f268ef54770f4663e6c9304</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a9ccd423c8f268ef54770f4663e6c9304</anchor>
       <arglist>(DbU::Unit step)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getOnCustomGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga87323d9038656dceabffc37d45de408a</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a87323d9038656dceabffc37d45de408a</anchor>
       <arglist>(DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static DbU::Unit</type>
       <name>getOnPhysicalGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9419025221579f4277475c65655be3dc</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a9419025221579f4277475c65655be3dc</anchor>
       <arglist>(DbU::Unit u, SnapMode mode=Superior)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>toDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaec07c6e7ae2a2a6f54e2a16b32c8bf26</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>aec07c6e7ae2a2a6f54e2a16b32c8bf26</anchor>
       <arglist>(Unit u)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>toGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga318d673386c9424e07c12efd598c730d</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a318d673386c9424e07c12efd598c730d</anchor>
       <arglist>(Unit u)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>toLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4923a9a443871282ad7d331be2a2a5d4</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a4923a9a443871282ad7d331be2a2a5d4</anchor>
       <arglist>(Unit u)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>toPhysical</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gab901e9d5c12e878728178f113def6c45</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>ab901e9d5c12e878728178f113def6c45</anchor>
       <arglist>(Unit u, UnitPower p)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static string</type>
       <name>getValueString</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gadc9c1a06b4296dbddcf711077113f4bd</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>adc9c1a06b4296dbddcf711077113f4bd</anchor>
       <arglist>(Unit u, int mode=SmartTruncate)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>setStringMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga89ab8f8326c54113336086663ecf1d25</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a89ab8f8326c54113336086663ecf1d25</anchor>
       <arglist>(unsigned int mode, UnitPower p=Nano)</arglist>
     </member>
+    <member kind="enumvalue">
+      <name>Pico</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nano</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Micro</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Milli</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Unity</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Kilo</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>UnitPower</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Pico</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nano</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Micro</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Milli</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Unity</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Kilo</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Inferior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Superior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nearest</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SnapMode</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Inferior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Superior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nearest</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Pico</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nano</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Micro</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Milli</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Unity</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Kilo</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Inferior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Superior</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Nearest</name>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gacd77957381fb93fc4203bdca215e0b48</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>acd77957381fb93fc4203bdca215e0b48</anchor>
       <arglist>(Unit value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga1d4bac6e3b68c8cd44b345de3b425753</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a1d4bac6e3b68c8cd44b345de3b425753</anchor>
       <arglist>(double value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>lambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaa1ba98acc939ff1c370c18544a5e0dce</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>aa1ba98acc939ff1c370c18544a5e0dce</anchor>
       <arglist>(double value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Unit</type>
       <name>getDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4233772b1b3e68f3ec723c7509ea87ff</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>a4233772b1b3e68f3ec723c7509ea87ff</anchor>
       <arglist>(Unit u)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>getGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gad4485d0d7b5fd7ae87b32f165155c0a2</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>ad4485d0d7b5fd7ae87b32f165155c0a2</anchor>
       <arglist>(Unit u)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static double</type>
       <name>getLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gadea6b9a6e84243f70f3a5e2725b2c6d8</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gacd77957381fb93fc4203bdca215e0b48</anchor>
-      <arglist>(Unit value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga1d4bac6e3b68c8cd44b345de3b425753</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>lambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaa1ba98acc939ff1c370c18544a5e0dce</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>getDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4233772b1b3e68f3ec723c7509ea87ff</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gad4485d0d7b5fd7ae87b32f165155c0a2</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gadea6b9a6e84243f70f3a5e2725b2c6d8</anchor>
+      <anchorfile>classHurricane_1_1DbU.html</anchorfile>
+      <anchor>adea6b9a6e84243f70f3a5e2725b2c6d8</anchor>
       <arglist>(Unit u)</arglist>
     </member>
   </compound>
@@ -1675,7 +1716,7 @@
       <anchor>ac880eca99eeec60c669c0696f495ac42</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1DebugSession" title="Trace Levels">secTraceLevels</docanchor>
+    <docanchor file="classHurricane_1_1DebugSession.html" title="Trace Levels">secTraceLevels</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Diagonal</name>
@@ -1695,7 +1736,7 @@
       <anchor>a83cd4332e78515e2c3745fd017e7441f</anchor>
       <arglist>(Net *, const Layer *, const Point &amp;source, const Point &amp;target, DbU::Unit width)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Diagonal" title="Introduction">secDiagonalIntro</docanchor>
+    <docanchor file="classHurricane_1_1Diagonal.html" title="Introduction">secDiagonalIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::DiffusionLayer</name>
@@ -1894,8 +1935,8 @@
       <anchor>ad834f8ce33a08a13e2a88446696e63e7</anchor>
       <arglist>() const =0</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Entity" title="Introduction">secEntityIntro</docanchor>
-    <docanchor file="classHurricane_1_1Entity" title="Unique Identifier">secEntityId</docanchor>
+    <docanchor file="classHurricane_1_1Entity.html" title="Introduction">secEntityIntro</docanchor>
+    <docanchor file="classHurricane_1_1Entity.html" title="Unique Identifier">secEntityId</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Error</name>
@@ -1964,7 +2005,7 @@
       <anchor>afafcbeae105f75906c7c45024de41c18</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Error" title="Printing format">secErrorPrintingFormat</docanchor>
+    <docanchor file="classHurricane_1_1Error.html" title="Printing format">secErrorPrintingFormat</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Exception</name>
@@ -2004,13 +2045,13 @@
       <anchor>a0effe808df00f4efe10925131304b8d0</anchor>
       <arglist>(const TextTranslator &amp;translator)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Exception" title="Introduction">secExceptionIntro</docanchor>
-    <docanchor file="classHurricane_1_1Exception" title="Example">secExceptionExample</docanchor>
+    <docanchor file="classHurricane_1_1Exception.html" title="Introduction">secExceptionIntro</docanchor>
+    <docanchor file="classHurricane_1_1Exception.html" title="Example">secExceptionExample</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Filter</name>
     <filename>classHurricane_1_1Filter.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <member kind="function">
       <type>GenericFilter&lt; Type &gt;</type>
       <name>operator!</name>
@@ -2024,7 +2065,7 @@
       <anchorfile>classHurricane_1_1Filter.html</anchorfile>
       <anchor>a596cad421801115efbc5c541f8d29e0b</anchor>
       <arglist>() const =0</arglist>
-      <docanchor file="classHurricane_1_1Filter" title="Remarks">secFilterRemarks</docanchor>
+      <docanchor file="classHurricane_1_1Filter.html" title="Remarks">secFilterRemarks</docanchor>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
@@ -2033,15 +2074,36 @@
       <anchor>aeaa771f17950fe05273c471ccfffb7f7</anchor>
       <arglist>(Type type) const =0</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Filter" title="Introduction">secFilterIntro</docanchor>
-    <docanchor file="classHurricane_1_1Filter" title="Simple Example">secFilterSimpleExample</docanchor>
-    <docanchor file="classHurricane_1_1Filter" title="Complex Example">secFilterComplexExample</docanchor>
+    <docanchor file="classHurricane_1_1Filter.html" title="Introduction">secFilterIntro</docanchor>
+    <docanchor file="classHurricane_1_1Filter.html" title="Simple Example">secFilterSimpleExample</docanchor>
+    <docanchor file="classHurricane_1_1Filter.html" title="Complex Example">secFilterComplexExample</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::GenericCollection</name>
     <filename>classHurricane_1_1GenericCollection.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <base>Hurricane::Collection</base>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a177ca321f1b7761c8b000a59051ba9f9</anchor>
+      <arglist>(const Collection&lt; Type &gt; &amp;collection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a9b77dc014864c2248f31b9dfee242d25</anchor>
+      <arglist>(const GenericCollection&lt; Type &gt; &amp;genericCollection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a8e4f70213efb85c0ba802b7de9c03b32</anchor>
+      <arglist>(Collection&lt; Type &gt; *collection)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>GenericCollection</name>
@@ -2068,6 +2130,27 @@
     <name>GenericCollection&lt; Element &gt;</name>
     <filename>classHurricane_1_1GenericCollection.html</filename>
     <base>Collection&lt; Element &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a177ca321f1b7761c8b000a59051ba9f9</anchor>
+      <arglist>(const Collection&lt; Element &gt; &amp;collection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a9b77dc014864c2248f31b9dfee242d25</anchor>
+      <arglist>(const GenericCollection&lt; Element &gt; &amp;genericCollection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>GenericCollection</name>
+      <anchorfile>classHurricane_1_1GenericCollection.html</anchorfile>
+      <anchor>a8e4f70213efb85c0ba802b7de9c03b32</anchor>
+      <arglist>(Collection&lt; Element &gt; *collection)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>GenericCollection</name>
@@ -2120,7 +2203,7 @@
   <compound kind="class">
     <name>Hurricane::GenericLocator</name>
     <filename>classHurricane_1_1GenericLocator.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <base>Hurricane::Locator</base>
     <member kind="function">
       <type></type>
@@ -2230,10 +2313,10 @@
       <anchor>a0d49d22a3788e8001e58152e62b9f3cc</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Go" title="Introduction">secGoIntro</docanchor>
-    <docanchor file="classHurricane_1_1Go" title="Materialization">secGoMaterialization</docanchor>
-    <docanchor file="classHurricane_1_1Go" title="Update sessions">secGoUpdateSessions</docanchor>
-    <docanchor file="classHurricane_1_1Go" title="Construction and destruction">secGoConstructionAndDestruction</docanchor>
+    <docanchor file="classHurricane_1_1Go.html" title="Introduction">secGoIntro</docanchor>
+    <docanchor file="classHurricane_1_1Go.html" title="Materialization">secGoMaterialization</docanchor>
+    <docanchor file="classHurricane_1_1Go.html" title="Update sessions">secGoUpdateSessions</docanchor>
+    <docanchor file="classHurricane_1_1Go.html" title="Construction and destruction">secGoConstructionAndDestruction</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Hook</name>
@@ -2329,13 +2412,13 @@
       <anchor>a7b98f0796a9080495472d574a23bcca0</anchor>
       <arglist>(Hook *hook)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Hook" title="Introduction">secHookIntro</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Rings">secHookRings</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Master and Slave hook types">secHookMasterAndSlaveHookTypes</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Explicit connections">secHookExplicitConnections</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Implicit connections">secHookImplicitConnections</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Concepts of HyperHooks and HyperRings">secHookConceptsOfHyperhooksAndHyperrings</docanchor>
-    <docanchor file="classHurricane_1_1Hook" title="Constructor and Destructor">secHookConstructorAndDestructor</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Introduction">secHookIntro</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Rings">secHookRings</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Master and Slave hook types">secHookMasterAndSlaveHookTypes</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Explicit connections">secHookExplicitConnections</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Implicit connections">secHookImplicitConnections</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Concepts of HyperHooks and HyperRings">secHookConceptsOfHyperhooksAndHyperrings</docanchor>
+    <docanchor file="classHurricane_1_1Hook.html" title="Constructor and Destructor">secHookConstructorAndDestructor</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Horizontal</name>
@@ -2390,7 +2473,7 @@
       <anchor>ac30e0cbdfdd1f2cb02f000380652daf7</anchor>
       <arglist>(Component *source, Component *target, const Layer *layer, const DbU::Unit &amp;y, const DbU::Unit &amp;width=0, const DbU::Unit &amp;dxSource=0, const DbU::Unit &amp;dxTarget=0)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Horizontal" title="Introduction">secHorizontalIntro</docanchor>
+    <docanchor file="classHurricane_1_1Horizontal.html" title="Introduction">secHorizontalIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::HyperNet</name>
@@ -2430,14 +2513,7 @@
       <anchor>ab278267a5f1d91bd22bc7fe411b3cfb0</anchor>
       <arglist>(Box area, bool doExtraction=false, bool allowInterruption=false) const</arglist>
     </member>
-    <member kind="function">
-      <type>Occurrences</type>
-      <name>getLeafPlugOccurrences</name>
-      <anchorfile>classHurricane_1_1HyperNet.html</anchorfile>
-      <anchor>a5e88025fbe1663d8279b4f4cb4bd6ffd</anchor>
-      <arglist>(bool doExtraction=false, bool allowInterruption=false) const</arglist>
-    </member>
-    <docanchor file="classHurricane_1_1HyperNet" title="Introduction">secHyperNetIntro</docanchor>
+    <docanchor file="classHurricane_1_1HyperNet.html" title="Introduction">secHyperNetIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Initializer</name>
@@ -2450,7 +2526,7 @@
       <anchor>ab80fdb7c17aaf5bd3facdf3f0f9d12ae</anchor>
       <arglist>(unsigned int order)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Initializer" title="Initializer Mechanism">secInitializerMechanism</docanchor>
+    <docanchor file="classHurricane_1_1Initializer.html" title="Initializer Mechanism">secInitializerMechanism</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Instance</name>
@@ -2583,10 +2659,10 @@
       <anchor>ae2bc936dfecfaf70a0052959b4b2861e</anchor>
       <arglist>(const Box &amp;area)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Instance" title="Introduction">secInstanceIntro</docanchor>
-    <docanchor file="classHurricane_1_1Instance" title="Placement Status">secInstancePlacement</docanchor>
-    <docanchor file="classHurricane_1_1Instance" title="Predefined filters">secInstancePredefinedFilters</docanchor>
-    <docanchor file="classHurricane_1_1Instance" title="Instance Destruction">secInstanceDestroy</docanchor>
+    <docanchor file="classHurricane_1_1Instance.html" title="Introduction">secInstanceIntro</docanchor>
+    <docanchor file="classHurricane_1_1Instance.html" title="Placement Status">secInstancePlacement</docanchor>
+    <docanchor file="classHurricane_1_1Instance.html" title="Predefined filters">secInstancePredefinedFilters</docanchor>
+    <docanchor file="classHurricane_1_1Instance.html" title="Instance Destruction">secInstanceDestroy</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Interruption</name>
@@ -2620,7 +2696,7 @@
       <anchor>a3c528402a234e354e508b5b7512475bc</anchor>
       <arglist>(const Interruption &amp;interruption)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Interruption" title="Introduction">secInterruptionIntro</docanchor>
+    <docanchor file="classHurricane_1_1Interruption.html" title="Introduction">secInterruptionIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Interval</name>
@@ -2814,8 +2890,8 @@
       <anchor>acf0aab51a74fe1216bfe112999066466</anchor>
       <arglist>(const DbU::Unit &amp;)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Interval" title="Introduction">secIntervalIntro</docanchor>
-    <docanchor file="classHurricane_1_1Interval" title="Remark">secIntervalRemark</docanchor>
+    <docanchor file="classHurricane_1_1Interval.html" title="Introduction">secIntervalIntro</docanchor>
+    <docanchor file="classHurricane_1_1Interval.html" title="Remark">secIntervalRemark</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::JsonObject</name>
@@ -3263,9 +3339,9 @@
       <anchor>a7a6943dbcb3403aff34056cd5de00e66</anchor>
       <arglist>(const BasicLayer *layer, DbU::Unit)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Layer" title="Introduction">secLayerIntro</docanchor>
-    <docanchor file="classHurricane_1_1Layer" title="BasicLayer Creation Ordering">secBasicLayerOrder</docanchor>
-    <docanchor file="classHurricane_1_1Layer" title="Looking Up a Layer from a Mask">secLayerLookup</docanchor>
+    <docanchor file="classHurricane_1_1Layer.html" title="Introduction">secLayerIntro</docanchor>
+    <docanchor file="classHurricane_1_1Layer.html" title="BasicLayer Creation Ordering">secBasicLayerOrder</docanchor>
+    <docanchor file="classHurricane_1_1Layer.html" title="Looking Up a Layer from a Mask">secLayerLookup</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Library</name>
@@ -3348,7 +3424,7 @@
       <anchor>a36bc1af0e48307180be81a81d462650e</anchor>
       <arglist>(Library *library, const Name &amp;name)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Library" title="Introduction">secLibraryIntro</docanchor>
+    <docanchor file="classHurricane_1_1Library.html" title="Introduction">secLibraryIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::ListCollection</name>
@@ -3362,11 +3438,18 @@
       <anchor>a11d0b27c9b01f16fe9ac9da091575e7c</anchor>
       <arglist>(const ElementList *elementList=NULL)</arglist>
     </member>
+    <member kind="function">
+      <type></type>
+      <name>ListCollection</name>
+      <anchorfile>classHurricane_1_1ListCollection.html</anchorfile>
+      <anchor>a11d0b27c9b01f16fe9ac9da091575e7c</anchor>
+      <arglist>(const ElementList *elementList=NULL)</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>Hurricane::Locator</name>
     <filename>classHurricane_1_1Locator.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <member kind="function" virtualness="pure">
       <type>virtual Type</type>
       <name>getElement</name>
@@ -3395,12 +3478,12 @@
       <anchor>ad8d72c1625a343a50520792c96fa1ca1</anchor>
       <arglist>()=0</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Locator" title="Introduction">secLocatorIntro</docanchor>
-    <docanchor file="classHurricane_1_1Locator" title="General concepts">secLocatorGeneralConcepts</docanchor>
-    <docanchor file="classHurricane_1_1Locator" title="Usage examples">secLocatorUsageExamples</docanchor>
+    <docanchor file="classHurricane_1_1Locator.html" title="Introduction">secLocatorIntro</docanchor>
+    <docanchor file="classHurricane_1_1Locator.html" title="General concepts">secLocatorGeneralConcepts</docanchor>
+    <docanchor file="classHurricane_1_1Locator.html" title="Usage examples">secLocatorUsageExamples</docanchor>
   </compound>
   <compound kind="class">
-    <name>Locator&lt; Cell *&gt;</name>
+    <name>Locator&lt; Cell * &gt;</name>
     <filename>classHurricane_1_1Locator.html</filename>
     <member kind="function" virtualness="pure">
       <type>virtual Cell *</type>
@@ -3496,7 +3579,7 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>Locator&lt; Hurricane::DBo *&gt;</name>
+    <name>Locator&lt; Hurricane::DBo * &gt;</name>
     <filename>classHurricane_1_1Locator.html</filename>
     <member kind="function" virtualness="pure">
       <type>virtual Hurricane::DBo *</type>
@@ -3528,7 +3611,7 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>Locator&lt; Hurricane::Instance *&gt;</name>
+    <name>Locator&lt; Hurricane::Instance * &gt;</name>
     <filename>classHurricane_1_1Locator.html</filename>
     <member kind="function" virtualness="pure">
       <type>virtual Hurricane::Instance *</type>
@@ -3605,10 +3688,264 @@
       <anchor>a0b905fb46ced35815132e5eab62a8de1</anchor>
       <arglist>(const ElementMap *elementMap=NULL)</arglist>
     </member>
+    <member kind="function">
+      <type></type>
+      <name>MapCollection</name>
+      <anchorfile>classHurricane_1_1MapCollection.html</anchorfile>
+      <anchor>a0b905fb46ced35815132e5eab62a8de1</anchor>
+      <arglist>(const ElementMap *elementMap=NULL)</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>Hurricane::BasicLayer::Material</name>
     <filename>classHurricane_1_1BasicLayer_1_1Material.html</filename>
+    <member kind="enumvalue">
+      <name>nWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8acdf0cf84e1b081113add657e0a8bd49c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8abab32187e9c4013a84e39cb6283bcc92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac4e1ac9fce1c8328c415aebc024d1fda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a73d7adbdda868d5e680a24ce3c20279e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>active</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ab67cfb3c192135ea8d52452a8932f7b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>poly</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a506eb536d54e1005b664cc0f2c101670</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>cut</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac853c14f5754c0d802b5be0f8068b4cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>metal</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a9f5ac52339b7bd9bbf7cdac468c51924</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>blockage</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a0dd9279952186054fda92b8a97b253fd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>other</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a43faff93bcb2788ccb23905cc0d07bec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>Code</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8acdf0cf84e1b081113add657e0a8bd49c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8abab32187e9c4013a84e39cb6283bcc92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac4e1ac9fce1c8328c415aebc024d1fda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a73d7adbdda868d5e680a24ce3c20279e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>active</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ab67cfb3c192135ea8d52452a8932f7b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>poly</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a506eb536d54e1005b664cc0f2c101670</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>cut</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac853c14f5754c0d802b5be0f8068b4cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>metal</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a9f5ac52339b7bd9bbf7cdac468c51924</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>blockage</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a0dd9279952186054fda92b8a97b253fd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>other</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a43faff93bcb2788ccb23905cc0d07bec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8acdf0cf84e1b081113add657e0a8bd49c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8abab32187e9c4013a84e39cb6283bcc92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac4e1ac9fce1c8328c415aebc024d1fda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a73d7adbdda868d5e680a24ce3c20279e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>active</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ab67cfb3c192135ea8d52452a8932f7b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>poly</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a506eb536d54e1005b664cc0f2c101670</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>cut</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac853c14f5754c0d802b5be0f8068b4cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>metal</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a9f5ac52339b7bd9bbf7cdac468c51924</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>blockage</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a0dd9279952186054fda92b8a97b253fd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>other</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a43faff93bcb2788ccb23905cc0d07bec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8acdf0cf84e1b081113add657e0a8bd49c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pWell</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8abab32187e9c4013a84e39cb6283bcc92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>nImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac4e1ac9fce1c8328c415aebc024d1fda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>pImplant</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a73d7adbdda868d5e680a24ce3c20279e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>active</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ab67cfb3c192135ea8d52452a8932f7b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>poly</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a506eb536d54e1005b664cc0f2c101670</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>cut</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8ac853c14f5754c0d802b5be0f8068b4cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>metal</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a9f5ac52339b7bd9bbf7cdac468c51924</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>blockage</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a0dd9279952186054fda92b8a97b253fd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>other</name>
+      <anchorfile>classHurricane_1_1BasicLayer_1_1Material.html</anchorfile>
+      <anchor>a3e815440ad4b86b3569fa54ca06fc3e8a43faff93bcb2788ccb23905cc0d07bec</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>Code</name>
@@ -3838,7 +4175,7 @@
       <anchor>a6c05cf200a0aeb95f98603fa0c9c9d4b</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Name" title="Introduction">secNameIntro</docanchor>
+    <docanchor file="classHurricane_1_1Name.html" title="Introduction">secNameIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Net</name>
@@ -4147,12 +4484,47 @@
       <anchor>ac241f44abf1f332004dd6103ee1dfa48</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Net" title="Predefined filters">secNetPredefinedFilters</docanchor>
+    <member kind="function" static="yes">
+      <type>static NetFilter</type>
+      <name>getIsGlobalFilter</name>
+      <anchorfile>classHurricane_1_1Net.html</anchorfile>
+      <anchor>a1730ed1247cd9bce7fcf519ea60dc738</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static NetFilter</type>
+      <name>getIsExternalFilter</name>
+      <anchorfile>classHurricane_1_1Net.html</anchorfile>
+      <anchor>a3af91a80e219e37e70229e61dfd385da</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static NetFilter</type>
+      <name>getIsInternalFilter</name>
+      <anchorfile>classHurricane_1_1Net.html</anchorfile>
+      <anchor>a7a2d1c4ab84bf81a16e24557d2342ea5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static NetFilter</type>
+      <name>getIsClockFilter</name>
+      <anchorfile>classHurricane_1_1Net.html</anchorfile>
+      <anchor>afdb2269f3a88923c25264f6f785372a1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static NetFilter</type>
+      <name>getIsSupplyFilter</name>
+      <anchorfile>classHurricane_1_1Net.html</anchorfile>
+      <anchor>ac241f44abf1f332004dd6103ee1dfa48</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classHurricane_1_1Net.html" title="Predefined filters">secNetPredefinedFilters</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::NotFilter</name>
     <filename>classHurricane_1_1NotFilter.html</filename>
-    <templarg>Type</templarg>
+    <templarg></templarg>
     <base>Hurricane::Filter</base>
     <member kind="function">
       <type></type>
@@ -4312,9 +4684,9 @@
       <anchor>ae9b269d39f3f68645d6d396d7ab5d8b7</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Occurrence" title="Introduction">secOccurrenceIntro</docanchor>
-    <docanchor file="classHurricane_1_1Occurrence" title="Terminology">secOccurrenceTerminology</docanchor>
-    <docanchor file="classHurricane_1_1Occurrence" title="Remarks">secOccurrenceRemarks</docanchor>
+    <docanchor file="classHurricane_1_1Occurrence.html" title="Introduction">secOccurrenceIntro</docanchor>
+    <docanchor file="classHurricane_1_1Occurrence.html" title="Terminology">secOccurrenceTerminology</docanchor>
+    <docanchor file="classHurricane_1_1Occurrence.html" title="Remarks">secOccurrenceRemarks</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Transformation::Orientation</name>
@@ -4338,7 +4710,7 @@
       <anchor>a0fdf586f9f815d375f54b40bfa027b24</anchor>
       <arglist>(Net *net, const Layer *layer, const Box &amp;boundingBox)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Pad" title="Introduction">secPadIntro</docanchor>
+    <docanchor file="classHurricane_1_1Pad.html" title="Introduction">secPadIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Path</name>
@@ -4504,8 +4876,83 @@
       <anchor>a505231a4bf7e8041c7a01e482505cd7a</anchor>
       <arglist>(char nameSeparator)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Path" title="Introduction">secPathIntro</docanchor>
-    <docanchor file="classHurricane_1_1Path" title="Remarks">secPathRemarks</docanchor>
+    <docanchor file="classHurricane_1_1Path.html" title="Introduction">secPathIntro</docanchor>
+    <docanchor file="classHurricane_1_1Path.html" title="Remarks">secPathRemarks</docanchor>
+  </compound>
+  <compound kind="class">
+    <name>Hurricane::PhysicalRule</name>
+    <filename>classHurricane_1_1PhysicalRule.html</filename>
+    <member kind="function">
+      <type>bool</type>
+      <name>isDouble</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ad419b79177064cab06f7c8dbeccc4dce</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isDbU</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>af1e9eeb3499bfd66cedf5756e2d7e2a3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isSymmetric</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a56f3eed5835ad1c268638f0f813fc029</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hasSteps</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a8cc9f7f2dfc580e4f91b7f93ce8a26cc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setSymmetric</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>afc1e61c5b2baa1126a2e253e02f40f40</anchor>
+      <arglist>(bool)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>getDoubleValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a89a0cd27aec78836500a5066c276bbf0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>DbU::Unit</type>
+      <name>getValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>aa3548c58b42cd29cbe07d1a0289416a0</anchor>
+      <arglist>(Hurricane::DbU::Unit length=0, bool hDir=true) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ada08351fb24f36a63f4e3a3c524000a2</anchor>
+      <arglist>(double)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ac25990fc4aff5e5739ae9632f43d9bf8</anchor>
+      <arglist>(Hurricane::DbU::Unit value, Hurricane::DbU::Unit maxLength)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a51356a2e3e6cae11c8063b6a092f304d</anchor>
+      <arglist>(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)</arglist>
+    </member>
+    <docanchor file="classHurricane_1_1PhysicalRule.html" title="Introduction">sPhysicalRuleIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Pin</name>
@@ -4515,6 +4962,24 @@
   <compound kind="class">
     <name>Hurricane::Instance::PlacementStatus</name>
     <filename>classHurricane_1_1Instance_1_1PlacementStatus.html</filename>
+    <member kind="enumvalue">
+      <name>UNPLACED</name>
+      <anchorfile>classHurricane_1_1Instance_1_1PlacementStatus.html</anchorfile>
+      <anchor>af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>PLACED</name>
+      <anchorfile>classHurricane_1_1Instance_1_1PlacementStatus.html</anchorfile>
+      <anchor>af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FIXED</name>
+      <anchorfile>classHurricane_1_1Instance_1_1PlacementStatus.html</anchorfile>
+      <anchor>af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>Code</name>
@@ -4586,7 +5051,7 @@
       <anchor>aa907067c594076ed8422bf6c949c8731</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Instance_1_1PlacementStatus" title="Instance Placement Status">secInstancePStatus</docanchor>
+    <docanchor file="classHurricane_1_1Instance_1_1PlacementStatus.html" title="Instance Placement Status">secInstancePStatus</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Plug</name>
@@ -4641,9 +5106,23 @@
       <anchor>af27b873ed2420329a63ea67dcc243f07</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Plug" title="Introduction">secPlugIntro</docanchor>
-    <docanchor file="classHurricane_1_1Plug" title="Constructors &amp; Destructors">secPlugConstructors</docanchor>
-    <docanchor file="classHurricane_1_1Plug" title="Predefined filters">secPlugPredefinedFilters</docanchor>
+    <member kind="function" static="yes">
+      <type>static PlugFilter</type>
+      <name>getIsConnectedFilter</name>
+      <anchorfile>classHurricane_1_1Plug.html</anchorfile>
+      <anchor>a51bd5d04a337544709950d7cace05f0d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static PlugFilter</type>
+      <name>getIsUnconnectedFilter</name>
+      <anchorfile>classHurricane_1_1Plug.html</anchorfile>
+      <anchor>af27b873ed2420329a63ea67dcc243f07</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classHurricane_1_1Plug.html" title="Introduction">secPlugIntro</docanchor>
+    <docanchor file="classHurricane_1_1Plug.html" title="Constructors &amp; Destructors">secPlugConstructors</docanchor>
+    <docanchor file="classHurricane_1_1Plug.html" title="Predefined filters">secPlugPredefinedFilters</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Point</name>
@@ -4694,15 +5173,15 @@
       <type>void</type>
       <name>setX</name>
       <anchorfile>classHurricane_1_1Point.html</anchorfile>
-      <anchor>a713ba6d38358fc1820371f74647b4214</anchor>
-      <arglist>(const DbU::Unit &amp;x)</arglist>
+      <anchor>adebab98c82f881b1d2e1e7680a907830</anchor>
+      <arglist>(DbU::Unit x)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setY</name>
       <anchorfile>classHurricane_1_1Point.html</anchorfile>
-      <anchor>a5b5c5811c3e354235142eacffc2d887e</anchor>
-      <arglist>(const DbU::Unit &amp;y)</arglist>
+      <anchor>a14a51f177d298ccccb25066c0298a268</anchor>
+      <arglist>(DbU::Unit y)</arglist>
     </member>
     <member kind="function">
       <type>Point &amp;</type>
@@ -4730,7 +5209,7 @@
       <anchor>ac248679558ff51bf509b28050027b7da</anchor>
       <arglist>(Net *, const Layer *, const std::vector&lt; Point &gt; &amp;)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Polygon" title="Introduction">secPolygonIntro</docanchor>
+    <docanchor file="classHurricane_1_1Polygon.html" title="Introduction">secPolygonIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::PrivateProperty</name>
@@ -4742,20 +5221,13 @@
       <anchorfile>classHurricane_1_1PrivateProperty.html</anchorfile>
       <anchor>a070ea464f4859734163b12a134e2d8f2</anchor>
       <arglist>() const</arglist>
-      <docanchor file="classHurricane_1_1PrivateProperty" title="Destruction">secPrivatePropertyDestruction</docanchor>
+      <docanchor file="classHurricane_1_1PrivateProperty.html" title="Destruction">secPrivatePropertyDestruction</docanchor>
     </member>
-    <docanchor file="classHurricane_1_1PrivateProperty" title="Introduction">secPrivatePropertyIntro</docanchor>
+    <docanchor file="classHurricane_1_1PrivateProperty.html" title="Introduction">secPrivatePropertyIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Property</name>
     <filename>classHurricane_1_1Property.html</filename>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>destroy</name>
-      <anchorfile>classHurricane_1_1Property.html</anchorfile>
-      <anchor>ab60362699e6c6ea35ace45dbd1075a2f</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function" virtualness="pure">
       <type>virtual Name</type>
       <name>getName</name>
@@ -4777,13 +5249,83 @@
       <anchor>a0ea7ee2089f1463c0c16e30313b54083</anchor>
       <arglist>(DBo *owner)=0</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Property" title="Introduction">secPropertyIntro</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="The Quarks">secPropertyTheQuarks</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="How that works">secPropertyHowThatWorks</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="Creation process">secPropertyCreationProcess</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="Deletion process">secPropertyDeletionProcess</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="Naming Conventions">secPropertyNaming</docanchor>
-    <docanchor file="classHurricane_1_1Property" title="Remarks">secPropertyRemarks</docanchor>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>destroy</name>
+      <anchorfile>classHurricane_1_1Property.html</anchorfile>
+      <anchor>ab60362699e6c6ea35ace45dbd1075a2f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>destroy</name>
+      <anchorfile>classHurricane_1_1Property.html</anchorfile>
+      <anchor>ab60362699e6c6ea35ace45dbd1075a2f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classHurricane_1_1Property.html" title="Introduction">secPropertyIntro</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="The Quarks">secPropertyTheQuarks</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="How that works">secPropertyHowThatWorks</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="Creation process">secPropertyCreationProcess</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="Deletion process">secPropertyDeletionProcess</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="Naming Conventions">secPropertyNaming</docanchor>
+    <docanchor file="classHurricane_1_1Property.html" title="Remarks">secPropertyRemarks</docanchor>
+  </compound>
+  <compound kind="class">
+    <name>Isobar::PyAttributesHolder</name>
+    <filename>structIsobar_1_1PyAttributesHolder.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>Isobar::PyHolderProperty</name>
+    <filename>classIsobar_1_1PyHolderProperty.html</filename>
+    <base>Hurricane::PrivateProperty</base>
+  </compound>
+  <compound kind="class">
+    <name>Isobar::PythonAttributes</name>
+    <filename>classIsobar_1_1PythonAttributes.html</filename>
+    <member kind="function" static="yes">
+      <type>static PyAttributesHolder *</type>
+      <name>get</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>abc2a7357c26409151f6badeba79cdb91</anchor>
+      <arglist>(const DBo *)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>delattr</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>a703279c730fff76257f056065b7f8abd</anchor>
+      <arglist>(DBo *, std::string)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>enable</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>a4b2191b1e2f18375cbde4c9c1f80cc15</anchor>
+      <arglist>(DBo *)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>disable</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>a889d59d4e4b0133387128637f2a33e82</anchor>
+      <arglist>(DBo *)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>disableAll</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>a5bb9421104ee90ecda93c488dbd34e2e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>disableAll</name>
+      <anchorfile>classIsobar_1_1PythonAttributes.html</anchorfile>
+      <anchor>aaae3df93d04779f5933d9b1be3872ae2</anchor>
+      <arglist>(std::string)</arglist>
+    </member>
+    <docanchor file="classIsobar_1_1PythonAttributes.html" title="Introduction">sPythonPropertiesIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::QuadTree</name>
@@ -4820,8 +5362,8 @@
       <type>Gos</type>
       <name>getGosUnder</name>
       <anchorfile>classHurricane_1_1QuadTree.html</anchorfile>
-      <anchor>ae6a48f63ef2e6b5ec562afe267c85fe3</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>a6b4aa294b89c3f6b5f49388dbb985ff7</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -4844,7 +5386,7 @@
       <anchor>af646d2864c70f6456d845c2d6a8d1785</anchor>
       <arglist>(Go *go)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1QuadTree" title="Introduction">secQuadTreeIntro</docanchor>
+    <docanchor file="classHurricane_1_1QuadTree.html" title="Introduction">secQuadTreeIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Quark</name>
@@ -4857,10 +5399,10 @@
       <anchor>a22ee192574dae1546ec17d6c549b2ca0</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Quark" title="Introduction">secQuarkIntro</docanchor>
-    <docanchor file="classHurricane_1_1Quark" title="Important">secQuarkImportant</docanchor>
-    <docanchor file="classHurricane_1_1Quark" title="Construction and destruction">secQuarkConstructionAndDestruction</docanchor>
-    <docanchor file="classHurricane_1_1Quark" title="Example">secQuarkExample</docanchor>
+    <docanchor file="classHurricane_1_1Quark.html" title="Introduction">secQuarkIntro</docanchor>
+    <docanchor file="classHurricane_1_1Quark.html" title="Important">secQuarkImportant</docanchor>
+    <docanchor file="classHurricane_1_1Quark.html" title="Construction and destruction">secQuarkConstructionAndDestruction</docanchor>
+    <docanchor file="classHurricane_1_1Quark.html" title="Example">secQuarkExample</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Query</name>
@@ -5107,8 +5649,8 @@
       <type>void</type>
       <name>setQuery</name>
       <anchorfile>classHurricane_1_1Query.html</anchorfile>
-      <anchor>a63c50b61799b729ff4b2e7e291959b4d</anchor>
-      <arglist>(Cell *cell, const Box &amp;area, const Transformation &amp;transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter)</arglist>
+      <anchor>a70fce1e5b7754f1ec11097ad5b9ecfc9</anchor>
+      <arglist>(Cell *cell, const Box &amp;area, const Transformation &amp;transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5173,8 +5715,8 @@
       <anchor>a2ca5bf71c7b35e14c4a64488a5e21bc6</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Query" title="Introduction">secQueryIntro</docanchor>
-    <docanchor file="classHurricane_1_1Query">secQueryParameters</docanchor>
+    <docanchor file="classHurricane_1_1Query.html" title="Introduction">secQueryIntro</docanchor>
+    <docanchor file="classHurricane_1_1Query.html">secQueryParameters</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::RegularLayer</name>
@@ -5191,8 +5733,8 @@
       <type>static RegularLayer *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1RegularLayer.html</anchorfile>
-      <anchor>a88c2d5516f42b033ae2fdc0797e3dae1</anchor>
-      <arglist>(Technology *technology, const Name &amp;name)</arglist>
+      <anchor>a6b40a35fec1c4fc168d608b8b96c8477</anchor>
+      <arglist>(Technology *technology, const Name &amp;name, BasicLayer *layer)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -5204,43 +5746,6 @@
     <name>Hurricane::RoutingPad</name>
     <filename>classHurricane_1_1RoutingPad.html</filename>
     <base>Hurricane::Component</base>
-    <member kind="enumeration">
-      <type></type>
-      <name>Flags</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>BiggestArea</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HighestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>LowestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ComponentSelection</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ShowWarning</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>Component</type>
       <name>Inherit</name>
@@ -5248,42 +5753,12 @@
       <anchor>a53bed3713fe846a351621d2022bc6b68</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumvalue">
-      <name>BiggestArea</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4add72642d150e901835fa7d66d40e327d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HighestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8f7993760a105713a97abdfb05eee852</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>LowestLayer</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ComponentSelection</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4aa2db526191b29a7e094bff309e27ef4c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ShowWarning</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a69f37f0b06b9bfd758d9be42c71e2bd4a8fd74358022a29aab828700c8f7347ba</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="function">
       <type>bool</type>
       <name>isPlacedOccurrence</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a3e94730dded06e5953087755f0551b73</anchor>
-      <arglist>(unsigned int flags) const</arglist>
+      <anchor>a7a85faad00cd522aac35026af43c8b98</anchor>
+      <arglist>(uint32_t flags) const</arglist>
     </member>
     <member kind="function">
       <type>Occurrence</type>
@@ -5394,8 +5869,8 @@
       <type>Component *</type>
       <name>setOnBestComponent</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a410992ef75c40f9a898c36f39a7d1a1a</anchor>
-      <arglist>(unsigned int flags)</arglist>
+      <anchor>af842dc50d4271214514c1fd43ffb1adb</anchor>
+      <arglist>(uint32_t flags)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5408,17 +5883,45 @@
       <type>static RoutingPad *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
-      <anchor>a87c3a286477f81b9c791dc24104a3e51</anchor>
-      <arglist>(Net *, Occurrence, unsigned int flags=0)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static RoutingPad *</type>
-      <name>create</name>
-      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
       <anchor>a1883e5711b5700cd7d1024f1cff6abb0</anchor>
       <arglist>(Pin *)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1RoutingPad" title="Introduction">secRoutingPadIntro</docanchor>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>BiggestArea</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>add72642d150e901835fa7d66d40e327d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>HighestLayer</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a8f7993760a105713a97abdfb05eee852</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>LowestLayer</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a14c89f0c4ca6f4108b7f2ac30ab885a6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>ShowWarning</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>a8fd74358022a29aab828700c8f7347ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const uint32_t</type>
+      <name>ComponentSelection</name>
+      <anchorfile>classHurricane_1_1RoutingPad.html</anchorfile>
+      <anchor>aa2db526191b29a7e094bff309e27ef4c</anchor>
+      <arglist></arglist>
+    </member>
+    <docanchor file="classHurricane_1_1RoutingPad.html" title="Introduction">secRoutingPadIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Rubber</name>
@@ -5466,8 +5969,8 @@
       <anchor>a6d87ff89d80fbaeeb6fea4157b92d1e3</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Rubber" title="Introduction">secRubberIntro</docanchor>
-    <docanchor file="classHurricane_1_1Rubber" title="Constructors &amp; Destructors">secRubberConstructors</docanchor>
+    <docanchor file="classHurricane_1_1Rubber.html" title="Introduction">secRubberIntro</docanchor>
+    <docanchor file="classHurricane_1_1Rubber.html" title="Constructors &amp; Destructors">secRubberConstructors</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Segment</name>
@@ -5615,7 +6118,7 @@
       <anchor>aceaa61242eb7275cf9c6a39cf1868c53</anchor>
       <arglist>()</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Segment" title="Introduction">secSegmentIntro</docanchor>
+    <docanchor file="classHurricane_1_1Segment.html" title="Introduction">secSegmentIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::SetCollection</name>
@@ -5630,12 +6133,19 @@
       <anchor>a3ee200fd00f3a6951906209c11c03e34</anchor>
       <arglist>(const ElementSet *elementSet=NULL)</arglist>
     </member>
+    <member kind="function">
+      <type></type>
+      <name>SetCollection</name>
+      <anchorfile>classHurricane_1_1SetCollection.html</anchorfile>
+      <anchor>a3ee200fd00f3a6951906209c11c03e34</anchor>
+      <arglist>(const ElementSet *elementSet=NULL)</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>Hurricane::SharedProperty</name>
     <filename>classHurricane_1_1SharedProperty.html</filename>
     <base>Hurricane::Property</base>
-    <docanchor file="classHurricane_1_1SharedProperty" title="Introduction">secSharedPropertyIntro</docanchor>
+    <docanchor file="classHurricane_1_1SharedProperty.html" title="Introduction">secSharedPropertyIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Slice</name>
@@ -5679,12 +6189,12 @@
       <type>Components</type>
       <name>getComponentsUnder</name>
       <anchorfile>classHurricane_1_1Slice.html</anchorfile>
-      <anchor>af672fc823044869db42a8f2df0672164</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>ada51a63690db8912eb58f1f33aa9f62c</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Slice" title="Introduction">secSliceIntro</docanchor>
-    <docanchor file="classHurricane_1_1Slice" title="Construction and destruction">secSliceConstructionAndDestruction</docanchor>
-    <docanchor file="classHurricane_1_1Slice" title="Example">secSliceExample</docanchor>
+    <docanchor file="classHurricane_1_1Slice.html" title="Introduction">secSliceIntro</docanchor>
+    <docanchor file="classHurricane_1_1Slice.html" title="Construction and destruction">secSliceConstructionAndDestruction</docanchor>
+    <docanchor file="classHurricane_1_1Slice.html" title="Example">secSliceExample</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Segment::SourceHook</name>
@@ -5697,7 +6207,7 @@
     <templarg></templarg>
     <templarg></templarg>
     <base>Hurricane::PrivateProperty</base>
-    <docanchor file="classHurricane_1_1StandardPrivateProperty" title="Introduction">secStandardPrivatePropertyIntro</docanchor>
+    <docanchor file="classHurricane_1_1StandardPrivateProperty.html" title="Introduction">secStandardPrivatePropertyIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::StandardRelation</name>
@@ -5707,15 +6217,29 @@
   <compound kind="class">
     <name>Hurricane::StandardSharedProperty</name>
     <filename>classHurricane_1_1StandardSharedProperty.html</filename>
-    <templarg>Value</templarg>
+    <templarg></templarg>
     <base>Hurricane::SharedProperty</base>
-    <docanchor file="classHurricane_1_1StandardSharedProperty" title="Introduction">secStandardSharedPropertyIntro</docanchor>
+    <docanchor file="classHurricane_1_1StandardSharedProperty.html" title="Introduction">secStandardSharedPropertyIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::SubSetCollection</name>
     <filename>classHurricane_1_1SubSetCollection.html</filename>
     <templarg></templarg>
     <base>Hurricane::Collection</base>
+    <member kind="function">
+      <type></type>
+      <name>SubSetCollection</name>
+      <anchorfile>classHurricane_1_1SubSetCollection.html</anchorfile>
+      <anchor>a6da1f511e27351cdc8b56bda7fbc44e8</anchor>
+      <arglist>(const Collection&lt; Type &gt; &amp;collection, const Filter&lt; Type &gt; &amp;filter)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SubSetCollection</name>
+      <anchorfile>classHurricane_1_1SubSetCollection.html</anchorfile>
+      <anchor>ad4e0bd9554d898f3991585758dbf2aac</anchor>
+      <arglist>(const SubSetCollection &amp;subSetCollection)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>SubSetCollection</name>
@@ -5737,6 +6261,27 @@
     <templarg></templarg>
     <templarg></templarg>
     <base>Collection&lt; SubType &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>SubTypeCollection</name>
+      <anchorfile>classHurricane_1_1SubTypeCollection.html</anchorfile>
+      <anchor>a0fd6c8e781097e607b813306fd2ad677</anchor>
+      <arglist>(const Collection&lt; Type &gt; *collection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SubTypeCollection</name>
+      <anchorfile>classHurricane_1_1SubTypeCollection.html</anchorfile>
+      <anchor>a09df045ff335493ac3068a865b793291</anchor>
+      <arglist>(const GenericCollection&lt; Type &gt; &amp;collection)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SubTypeCollection</name>
+      <anchorfile>classHurricane_1_1SubTypeCollection.html</anchorfile>
+      <anchor>a5c223a20f42ebb72d8d4be5ee99bb2d8</anchor>
+      <arglist>(const SubTypeCollection &amp;subTypeCollection)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>SubTypeCollection</name>
@@ -5818,10 +6363,10 @@
       <anchor>a9bdb9f81cd412ffcfb1da048b75cbd99</anchor>
       <arglist>(int)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Tabulation" title="Introduction">secTabulationIntro</docanchor>
-    <docanchor file="classHurricane_1_1Tabulation" title="New global variable">secTabulationNewGlobalVariable</docanchor>
-    <docanchor file="classHurricane_1_1Tabulation" title="Usage">secTabulationUsage</docanchor>
-    <docanchor file="classHurricane_1_1Tabulation" title="Remark">secTabulationRemark</docanchor>
+    <docanchor file="classHurricane_1_1Tabulation.html" title="Introduction">secTabulationIntro</docanchor>
+    <docanchor file="classHurricane_1_1Tabulation.html" title="New global variable">secTabulationNewGlobalVariable</docanchor>
+    <docanchor file="classHurricane_1_1Tabulation.html" title="Usage">secTabulationUsage</docanchor>
+    <docanchor file="classHurricane_1_1Tabulation.html" title="Remark">secTabulationRemark</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Segment::TargetHook</name>
@@ -5966,20 +6511,77 @@
       <arglist>(int) const</arglist>
     </member>
     <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getUnitRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a6ab76e8a246a10a395d68341bca9ea96</anchor>
+      <arglist>(std::string ruleName) const</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a21ef6f7507785a587e56aecc52a0c0ee</anchor>
+      <arglist>(std::string ruleName, std::string layerName) const</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>aec2ce8a8195e90537e6d35cb3ba8b58f</anchor>
+      <arglist>(std::string ruleName, std::string layer1Name, std::string layer2Name) const</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>setName</name>
       <anchorfile>classHurricane_1_1Technology.html</anchorfile>
       <anchor>a247b75d5cbb85198cea9e5e609304cd0</anchor>
       <arglist>(const Name &amp;)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>setSymbolicLayer</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a26c12c5828acaeb33068a2899df1134b</anchor>
+      <arglist>(const Layer *)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addUnitRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a96d62a8b3eb12560a9cb778328f8a301</anchor>
+      <arglist>(std::string ruleName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a267e44b205b97ff46297d16ed278a5bc</anchor>
+      <arglist>(std::string ruleName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a4210936e097a774035bf52bce7d962bc</anchor>
+      <arglist>(std::string ruleName, std::string layerName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a3f04a0d9fe9c76fc3c0911c76c120e00</anchor>
+      <arglist>(std::string ruleName, std::string layer1Name, std::string layer2Name, std::string reference)</arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static Technology *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Technology.html</anchorfile>
-      <anchor>a8fd65387c7fd6ba1396f905fadf20087</anchor>
+      <anchor>a64670f0d48e9460342005df52f25c152</anchor>
       <arglist>(DataBase *, const Name &amp;)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Technology" title="Introduction">sTechnologyIntro</docanchor>
+    <docanchor file="classHurricane_1_1Technology.html" title="Introduction">sTechnologyIntro</docanchor>
+    <docanchor file="classHurricane_1_1Technology.html" title="Using PhysicalRules">sTechnologyRules</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Transformation</name>
@@ -6166,7 +6768,7 @@
       <anchorfile>classHurricane_1_1Transformation.html</anchorfile>
       <anchor>ad37365bfd47851ca33519bb9a05b5402</anchor>
       <arglist>(DbU::Unit &amp;x, DbU::Unit &amp;y) const</arglist>
-      <docanchor file="classHurricane_1_1Transformation" title="Transformers">secTransformationTransformers</docanchor>
+      <docanchor file="classHurricane_1_1Transformation.html" title="Transformers">secTransformationTransformers</docanchor>
     </member>
     <member kind="function">
       <type>void</type>
@@ -6189,7 +6791,7 @@
       <anchor>a3ac2c40977ecf061b4316ecedc87918a</anchor>
       <arglist>(Transformation &amp;transformation) const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Transformation" title="Introduction">secTransformationIntro</docanchor>
+    <docanchor file="classHurricane_1_1Transformation.html" title="Introduction">secTransformationIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::TransistorLayer</name>
@@ -6352,13 +6954,20 @@
     <name>Hurricane::UpdateSession</name>
     <filename>classHurricane_1_1UpdateSession.html</filename>
     <base>Hurricane::SharedProperty</base>
-    <docanchor file="classHurricane_1_1UpdateSession" title="Update Session Mechanism">secUpdateSessionMechanism</docanchor>
+    <docanchor file="classHurricane_1_1UpdateSession.html" title="Update Session Mechanism">secUpdateSessionMechanism</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::VectorCollection</name>
     <filename>classHurricane_1_1VectorCollection.html</filename>
     <templarg></templarg>
     <base>Collection&lt; Element &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>VectorCollection</name>
+      <anchorfile>classHurricane_1_1VectorCollection.html</anchorfile>
+      <anchor>a783d1c053ef4d46040db27bba255dfb8</anchor>
+      <arglist>(const ElementVector *elementVector=NULL)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>VectorCollection</name>
@@ -6420,7 +7029,7 @@
       <anchor>aabfa1b7d21d851f6f4c278bf2d7a2ff2</anchor>
       <arglist>(Component *source, Component *target, const Layer *layer, const DbU::Unit &amp;x, const DbU::Unit &amp;width=0, const DbU::Unit &amp;dySource=0, const DbU::Unit &amp;dyTarget=0)</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Vertical" title="Introduction">secVerticalIntro</docanchor>
+    <docanchor file="classHurricane_1_1Vertical.html" title="Introduction">secVerticalIntro</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::ViaLayer</name>
@@ -6494,85 +7103,86 @@
       <anchor>a28350d25d1691b754fd8d79d1539234c</anchor>
       <arglist>() const</arglist>
     </member>
-    <docanchor file="classHurricane_1_1Warning" title="Introduction">secWarningIntro</docanchor>
-    <docanchor file="classHurricane_1_1Warning" title="Nouveaux types">secWarningNouveauxTypes</docanchor>
-    <docanchor file="classHurricane_1_1Warning" title="Remark">secWarningRemark</docanchor>
+    <docanchor file="classHurricane_1_1Warning.html" title="Introduction">secWarningIntro</docanchor>
+    <docanchor file="classHurricane_1_1Warning.html" title="Nouveaux types">secWarningNouveauxTypes</docanchor>
+    <docanchor file="classHurricane_1_1Warning.html" title="Remark">secWarningRemark</docanchor>
   </compound>
   <compound kind="namespace">
     <name>Hurricane</name>
     <filename>namespaceHurricane.html</filename>
-    <class kind="class">Hurricane::BasicLayer</class>
-    <class kind="class">Hurricane::Box</class>
-    <class kind="class">Hurricane::Cell</class>
-    <class kind="class">Hurricane::Collection</class>
-    <class kind="class">Hurricane::Component</class>
-    <class kind="class">Hurricane::Contact</class>
-    <class kind="class">Hurricane::ContactLayer</class>
-    <class kind="class">Hurricane::DataBase</class>
-    <class kind="class">Hurricane::DBo</class>
-    <class kind="class">Hurricane::DbU</class>
     <class kind="class">Hurricane::DebugSession</class>
-    <class kind="class">Hurricane::Diagonal</class>
-    <class kind="class">Hurricane::DiffusionLayer</class>
-    <class kind="class">Hurricane::Entity</class>
-    <class kind="class">Hurricane::Error</class>
-    <class kind="class">Hurricane::Exception</class>
-    <class kind="class">Hurricane::Filter</class>
-    <class kind="class">Hurricane::GenericCollection</class>
-    <class kind="class">Hurricane::GenericFilter</class>
-    <class kind="class">Hurricane::GenericLocator</class>
-    <class kind="class">Hurricane::Go</class>
-    <class kind="class">Hurricane::Hook</class>
-    <class kind="class">Hurricane::Horizontal</class>
-    <class kind="class">Hurricane::HyperNet</class>
     <class kind="class">Hurricane::Initializer</class>
-    <class kind="class">Hurricane::Instance</class>
-    <class kind="class">Hurricane::Interruption</class>
-    <class kind="class">Hurricane::Interval</class>
     <class kind="class">Hurricane::JsonObject</class>
     <class kind="class">Hurricane::JsonStack</class>
-    <class kind="class">Hurricane::Layer</class>
-    <class kind="class">Hurricane::Library</class>
-    <class kind="class">Hurricane::ListCollection</class>
-    <class kind="class">Hurricane::Locator</class>
-    <class kind="class">Hurricane::MapCollection</class>
-    <class kind="class">Hurricane::Name</class>
-    <class kind="class">Hurricane::Net</class>
-    <class kind="class">Hurricane::NotFilter</class>
-    <class kind="class">Hurricane::Occurrence</class>
-    <class kind="class">Hurricane::Pad</class>
-    <class kind="class">Hurricane::Path</class>
-    <class kind="class">Hurricane::Pin</class>
-    <class kind="class">Hurricane::Plug</class>
-    <class kind="class">Hurricane::Point</class>
-    <class kind="class">Hurricane::Polygon</class>
-    <class kind="class">Hurricane::PrivateProperty</class>
-    <class kind="class">Hurricane::Property</class>
-    <class kind="class">Hurricane::QuadTree</class>
-    <class kind="class">Hurricane::Quark</class>
-    <class kind="class">Hurricane::Query</class>
-    <class kind="class">Hurricane::RegularLayer</class>
-    <class kind="class">Hurricane::Relation</class>
-    <class kind="class">Hurricane::RoutingPad</class>
-    <class kind="class">Hurricane::Rubber</class>
-    <class kind="class">Hurricane::Segment</class>
-    <class kind="class">Hurricane::SetCollection</class>
-    <class kind="class">Hurricane::SharedProperty</class>
-    <class kind="class">Hurricane::Slice</class>
-    <class kind="class">Hurricane::StandardPrivateProperty</class>
-    <class kind="class">Hurricane::StandardRelation</class>
-    <class kind="class">Hurricane::StandardSharedProperty</class>
-    <class kind="class">Hurricane::SubSetCollection</class>
-    <class kind="class">Hurricane::SubTypeCollection</class>
-    <class kind="class">Hurricane::Tabulation</class>
-    <class kind="class">Hurricane::Technology</class>
-    <class kind="class">Hurricane::Transformation</class>
-    <class kind="class">Hurricane::TransistorLayer</class>
-    <class kind="class">Hurricane::UpdateSession</class>
-    <class kind="class">Hurricane::VectorCollection</class>
-    <class kind="class">Hurricane::Vertical</class>
-    <class kind="class">Hurricane::ViaLayer</class>
+    <class kind="class">Hurricane::Exception</class>
+    <class kind="class">Hurricane::Error</class>
     <class kind="class">Hurricane::Warning</class>
+    <class kind="class">Hurricane::Interruption</class>
+    <class kind="class">Hurricane::GenericCollection</class>
+    <class kind="class">Hurricane::SubTypeCollection</class>
+    <class kind="class">Hurricane::SubSetCollection</class>
+    <class kind="class">Hurricane::Collection</class>
+    <class kind="class">Hurricane::ListCollection</class>
+    <class kind="class">Hurricane::MapCollection</class>
+    <class kind="class">Hurricane::SetCollection</class>
+    <class kind="class">Hurricane::VectorCollection</class>
+    <class kind="class">Hurricane::Locator</class>
+    <class kind="class">Hurricane::GenericLocator</class>
+    <class kind="class">Hurricane::GenericFilter</class>
+    <class kind="class">Hurricane::NotFilter</class>
+    <class kind="class">Hurricane::Filter</class>
+    <class kind="class">Hurricane::Relation</class>
+    <class kind="class">Hurricane::StandardRelation</class>
+    <class kind="class">Hurricane::Tabulation</class>
+    <class kind="class">Hurricane::DbU</class>
+    <class kind="class">Hurricane::Point</class>
+    <class kind="class">Hurricane::Box</class>
+    <class kind="class">Hurricane::Interval</class>
+    <class kind="class">Hurricane::Transformation</class>
+    <class kind="class">Hurricane::Name</class>
+    <class kind="class">Hurricane::DBo</class>
+    <class kind="class">Hurricane::DataBase</class>
+    <class kind="class">Hurricane::PhysicalRule</class>
+    <class kind="class">Hurricane::Technology</class>
+    <class kind="class">Hurricane::Layer</class>
+    <class kind="class">Hurricane::BasicLayer</class>
+    <class kind="class">Hurricane::RegularLayer</class>
+    <class kind="class">Hurricane::ViaLayer</class>
+    <class kind="class">Hurricane::ContactLayer</class>
+    <class kind="class">Hurricane::DiffusionLayer</class>
+    <class kind="class">Hurricane::TransistorLayer</class>
+    <class kind="class">Hurricane::Library</class>
+    <class kind="class">Hurricane::Entity</class>
+    <class kind="class">Hurricane::Cell</class>
+    <class kind="class">Hurricane::Net</class>
+    <class kind="class">Hurricane::HyperNet</class>
+    <class kind="class">Hurricane::Go</class>
+    <class kind="class">Hurricane::Instance</class>
+    <class kind="class">Hurricane::Component</class>
+    <class kind="class">Hurricane::Plug</class>
+    <class kind="class">Hurricane::Contact</class>
+    <class kind="class">Hurricane::Pin</class>
+    <class kind="class">Hurricane::Segment</class>
+    <class kind="class">Hurricane::Vertical</class>
+    <class kind="class">Hurricane::Horizontal</class>
+    <class kind="class">Hurricane::Pad</class>
+    <class kind="class">Hurricane::Polygon</class>
+    <class kind="class">Hurricane::Diagonal</class>
+    <class kind="class">Hurricane::Rubber</class>
+    <class kind="class">Hurricane::RoutingPad</class>
+    <class kind="class">Hurricane::Quark</class>
+    <class kind="class">Hurricane::Property</class>
+    <class kind="class">Hurricane::PrivateProperty</class>
+    <class kind="class">Hurricane::StandardPrivateProperty</class>
+    <class kind="class">Hurricane::SharedProperty</class>
+    <class kind="class">Hurricane::StandardSharedProperty</class>
+    <class kind="class">Hurricane::Hook</class>
+    <class kind="class">Hurricane::Path</class>
+    <class kind="class">Hurricane::Occurrence</class>
+    <class kind="class">Hurricane::QuadTree</class>
+    <class kind="class">Hurricane::Slice</class>
+    <class kind="class">Hurricane::Query</class>
+    <class kind="class">Hurricane::UpdateSession</class>
     <member kind="typedef">
       <type>GenericCollection&lt; Cell * &gt;</type>
       <name>Cells</name>
@@ -7017,15 +7627,15 @@
     <member kind="function">
       <type>string</type>
       <name>demangle</name>
-      <anchorfile>group__Generalities.html</anchorfile>
-      <anchor>ga93af87d1b7b19294382ba6dae51d0363</anchor>
+      <anchorfile>namespaceHurricane.html</anchorfile>
+      <anchor>a93af87d1b7b19294382ba6dae51d0363</anchor>
       <arglist>(const char *symbol)</arglist>
     </member>
     <member kind="function">
       <type>string</type>
       <name>demangle</name>
-      <anchorfile>group__Generalities.html</anchorfile>
-      <anchor>gae4be209e8a3f2227b0c7a22246817c6f</anchor>
+      <anchorfile>namespaceHurricane.html</anchorfile>
+      <anchor>ae4be209e8a3f2227b0c7a22246817c6f</anchor>
       <arglist>(const type_info &amp;info)</arglist>
     </member>
     <member kind="typedef">
@@ -7453,27 +8063,13 @@
     <name>Generalities</name>
     <title>Generalities</title>
     <filename>group__Generalities.html</filename>
-    <member kind="function">
-      <type>string</type>
-      <name>demangle</name>
-      <anchorfile>group__Generalities.html</anchorfile>
-      <anchor>ga93af87d1b7b19294382ba6dae51d0363</anchor>
-      <arglist>(const char *symbol)</arglist>
-    </member>
-    <member kind="function">
-      <type>string</type>
-      <name>demangle</name>
-      <anchorfile>group__Generalities.html</anchorfile>
-      <anchor>gae4be209e8a3f2227b0c7a22246817c6f</anchor>
-      <arglist>(const type_info &amp;info)</arglist>
-    </member>
-    <docanchor file="group__Generalities" title="Introduction">secGeneralitiesIntro</docanchor>
-    <docanchor file="group__Generalities" title="Namming conventions">secGeneralitiesNammingConventions</docanchor>
-    <docanchor file="group__Generalities" title="GetString">secGeneralitiesGetString</docanchor>
-    <docanchor file="group__Generalities" title="Predicates">secGeneralitiesPredicates</docanchor>
-    <docanchor file="group__Generalities" title="Inheritance">secGeneralitiesInheritance</docanchor>
-    <docanchor file="group__Generalities" title="Trace utilities">secGeneralitiesTraceUtilities</docanchor>
-    <docanchor file="group__Generalities" title="Remarks">secGeneralitiesRemarks</docanchor>
+    <docanchor file="group__Generalities.html" title="Introduction">secGeneralitiesIntro</docanchor>
+    <docanchor file="group__Generalities.html" title="Namming conventions">secGeneralitiesNammingConventions</docanchor>
+    <docanchor file="group__Generalities.html" title="GetString">secGeneralitiesGetString</docanchor>
+    <docanchor file="group__Generalities.html" title="Predicates">secGeneralitiesPredicates</docanchor>
+    <docanchor file="group__Generalities.html" title="Inheritance">secGeneralitiesInheritance</docanchor>
+    <docanchor file="group__Generalities.html" title="Trace utilities">secGeneralitiesTraceUtilities</docanchor>
+    <docanchor file="group__Generalities.html" title="Remarks">secGeneralitiesRemarks</docanchor>
   </compound>
   <compound kind="group">
     <name>JsonSupport</name>
@@ -7481,14 +8077,14 @@
     <filename>group__JsonSupport.html</filename>
     <class kind="class">Hurricane::JsonObject</class>
     <class kind="class">Hurricane::JsonStack</class>
-    <docanchor file="group__JsonSupport" title="Introduction">secJsonSupportIntro</docanchor>
-    <docanchor file="group__JsonSupport" title="JSON Additional Semantic">secJsonSemantic</docanchor>
-    <docanchor file="group__JsonSupport" title="JSON Driver Support">secJsonDriver</docanchor>
-    <docanchor file="group__JsonSupport" title="DBos Special Case">secJsonDriverDBo</docanchor>
-    <docanchor file="group__JsonSupport" title="JSON Parser Support">secJsonParser</docanchor>
-    <docanchor file="group__JsonSupport" title="JSON Array">secJsonArray</docanchor>
-    <docanchor file="group__JsonSupport" title="Parser Stack">secJsonStack</docanchor>
-    <docanchor file="group__JsonSupport" title="JsonObject Life Cycle">secJsonCycle</docanchor>
+    <docanchor file="group__JsonSupport.html" title="Introduction">secJsonSupportIntro</docanchor>
+    <docanchor file="group__JsonSupport.html" title="JSON Additional Semantic">secJsonSemantic</docanchor>
+    <docanchor file="group__JsonSupport.html" title="JSON Driver Support">secJsonDriver</docanchor>
+    <docanchor file="group__JsonSupport.html" title="DBos Special Case">secJsonDriverDBo</docanchor>
+    <docanchor file="group__JsonSupport.html" title="JSON Parser Support">secJsonParser</docanchor>
+    <docanchor file="group__JsonSupport.html" title="JSON Array">secJsonArray</docanchor>
+    <docanchor file="group__JsonSupport.html" title="Parser Stack">secJsonStack</docanchor>
+    <docanchor file="group__JsonSupport.html" title="JsonObject Life Cycle">secJsonCycle</docanchor>
   </compound>
   <compound kind="group">
     <name>grpSynthHierarchy</name>
@@ -7500,398 +8096,16 @@
     <title>DbU/Unit description</title>
     <filename>group__DbUGroup.html</filename>
     <class kind="class">Hurricane::DbU</class>
-    <member kind="typedef">
-      <type>std::int64_t</type>
-      <name>Unit</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4fbfa3e8c89347af76c9628ea06c4146</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>StringMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga6af6a5b8d113a661fea65b2bcb8b25c4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Symbolic</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>UnitPower</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga50b5785bf4d75026c4c112caec3040a7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Pico</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nano</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Micro</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Milli</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Unity</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Kilo</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>SnapMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga1082168d6f9956ebba22ab8bbec21637</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Inferior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Superior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nearest</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Symbolic</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Pico</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nano</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Micro</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Milli</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Unity</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Kilo</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Inferior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Superior</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Nearest</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>fromDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaec69d65ec1651c2feea24c5931f4580b</anchor>
-      <arglist>(Unit value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>fromGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga367e1d1b5ac1df076745550cba8a83c1</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>fromLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4b570755b19ea9ff0f2f258a221bd935</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>fromPhysical</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga11d4dbd9134a19bda35cbacde1cb2769</anchor>
-      <arglist>(double value, UnitPower p)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>toDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaec07c6e7ae2a2a6f54e2a16b32c8bf26</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>toGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga318d673386c9424e07c12efd598c730d</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>toLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4923a9a443871282ad7d331be2a2a5d4</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>toPhysical</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gab901e9d5c12e878728178f113def6c45</anchor>
-      <arglist>(Unit u, UnitPower p)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static unsigned int</type>
-      <name>getPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga6169efbdd9b3d54a0bd8467c8f957fda</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static unsigned int</type>
-      <name>getMaximalPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga8756c9f0a32af5f601cd150e73b02c03</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getResolution</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga120a60b09b344d01c583567a1e489d9e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>setGridsPerLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gac93f9ba2a09105227e34bd05bcb1500c</anchor>
-      <arglist>(double gridsPerLambda, unsigned int flags=NoFlags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getGridsPerLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9a0359adbfafc356326f5c6adf57ff04</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>setStringMode</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga89ab8f8326c54113336086663ecf1d25</anchor>
-      <arglist>(unsigned int mode, UnitPower p=Nano)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static string</type>
-      <name>getValueString</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gadc9c1a06b4296dbddcf711077113f4bd</anchor>
-      <arglist>(Unit u, int mode=SmartTruncate)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>setPrecision</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gace9a8644e7e80dcaed2a8a95deeb1622</anchor>
-      <arglist>(unsigned int precision, unsigned int flags=NoFlags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>setRealSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga202cc3aa3364c2224647a29dde047fae</anchor>
-      <arglist>(DbU::Unit step)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getRealSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga09e46fcca6aaca94851adfa196e10170</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getOnRealSnapGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga8746e486f153aa37ee469c1604eba5c0</anchor>
-      <arglist>(DbU::Unit u, SnapMode mode=Nearest)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>setSymbolicSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9ccd423c8f268ef54770f4663e6c9304</anchor>
-      <arglist>(DbU::Unit step)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getSymbolicSnapGridStep</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga687a9134729b107c42fb7f69596c4c3b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getOnSymbolicSnapGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gad1b0c0f3680093cf5a63d901312c925d</anchor>
-      <arglist>(DbU::Unit u, SnapMode mode=Nearest)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getOnCustomGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga87323d9038656dceabffc37d45de408a</anchor>
-      <arglist>(DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static DbU::Unit</type>
-      <name>getOnPhysicalGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga9419025221579f4277475c65655be3dc</anchor>
-      <arglist>(DbU::Unit u, SnapMode mode=Superior)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>db</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gacd77957381fb93fc4203bdca215e0b48</anchor>
-      <arglist>(Unit value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>grid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga1d4bac6e3b68c8cd44b345de3b425753</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>lambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gaa1ba98acc939ff1c370c18544a5e0dce</anchor>
-      <arglist>(double value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static Unit</type>
-      <name>getDb</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>ga4233772b1b3e68f3ec723c7509ea87ff</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getGrid</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gad4485d0d7b5fd7ae87b32f165155c0a2</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static double</type>
-      <name>getLambda</name>
-      <anchorfile>group__DbUGroup.html</anchorfile>
-      <anchor>gadea6b9a6e84243f70f3a5e2725b2c6d8</anchor>
-      <arglist>(Unit u)</arglist>
-    </member>
-    <docanchor file="group__DbUGroup" title="Introduction">secDbUIntro</docanchor>
-    <docanchor file="group__DbUGroup" title="Precision">secDbUPrecision</docanchor>
-    <docanchor file="group__DbUGroup" title="Resolution">secDbUResolution</docanchor>
-    <docanchor file="group__DbUGroup" title="Grids per Lambda ratio">secDbUGridsPerLamba</docanchor>
-    <docanchor file="group__DbUGroup" title="Grid">secDbUGrid</docanchor>
-    <docanchor file="group__DbUGroup" title="Translators">secDbUTranslators</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Introduction">secDbUIntro</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Precision">secDbUPrecision</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Resolution">secDbUResolution</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Grids per Lambda ratio">secDbUGridsPerLamba</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Grid">secDbUGrid</docanchor>
+    <docanchor file="group__DbUGroup.html" title="Translators">secDbUTranslators</docanchor>
   </compound>
   <compound kind="page">
     <name>index</name>
     <title>Hurricane Documentation</title>
-    <filename>index</filename>
+    <filename>index.html</filename>
   </compound>
 </tagfile>

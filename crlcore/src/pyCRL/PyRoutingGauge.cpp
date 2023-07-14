@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./PyRoutingGauge.cpp"                          |
 // +-----------------------------------------------------------------+
@@ -40,6 +40,7 @@ namespace  CRL {
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
   using Isobar::PyAny_AsLong;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -112,14 +113,11 @@ extern "C" {
   static PyObject* PyRoutingGauge_getDepth ( PyRoutingGauge* self )
   {
     cdebug_log(30,0) << "PyRoutingGauge_getDepth()" << endl;
-
     size_t depth = 0;
-
     HTRY
-    METHOD_HEAD("RoutingGauge.getDepth()")
-    depth = rg->getDepth();
+      METHOD_HEAD("RoutingGauge.getDepth()")
+      depth = rg->getDepth();
     HCATCH
-
     return Py_BuildValue("I",depth);
   }
 
@@ -179,100 +177,161 @@ extern "C" {
   }
 
 
+  static PyObject* PyRoutingGauge_getPitch ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPitch()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPitch()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getPitch", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getLayerPitch()." );
+          return NULL;
+        }
+        pitch = rg->getPitch( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getPitch()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",pitch);
+  }
+
+
+  static PyObject* PyRoutingGauge_getOffset ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getOffset()" << endl;
+
+    DbU::Unit offset = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getOffset()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getOffset", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getOffset()." );
+          return NULL;
+        }
+        offset = rg->getOffset( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getOffset()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",offset);
+  }
+
+
+  static PyObject* PyRoutingGauge_getWireWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getWireWidth()" << endl;
+
+    DbU::Unit wireWidth = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getWireWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getWireWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getWireWidth()." );
+          return NULL;
+        }
+        wireWidth = rg->getWireWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getWireWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",wireWidth);
+  }
+
+
+  static PyObject* PyRoutingGauge_getPWireWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPWireWidth()" << endl;
+
+    DbU::Unit wireWidth = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPWireWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getPWireWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getPWireWidth()." );
+          return NULL;
+        }
+        wireWidth = rg->getPWireWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getPWireWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",wireWidth);
+  }
+
+
+  static PyObject* PyRoutingGauge_getViaWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getViaWidth()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getViaWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getViaWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getViaWidth()." );
+          return NULL;
+        }
+        pitch = rg->getViaWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getViaWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",pitch);
+  }
+
+
   static PyObject* PyRoutingGauge_getLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyRoutingGauge_getLayerGauge()" << endl;
 
     RoutingLayerGauge* rlg = NULL;
-
     HTRY
-    METHOD_HEAD("RoutingGauge.getLayerGauge()")
-
-    PyObject* arg0 = NULL;
-    
-    __cs.init ("RoutingGauge.getLayerGauge");
-    if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerGauge", Converter, &arg0)) {
-      if ( __cs.getObjectIds() == ":layer" )
-        rlg = rg->getLayerGauge( PYLAYER_O(arg0) );
-      else if  ( __cs.getObjectIds() == ":int" )
-        rlg = rg->getLayerGauge( (size_t)PyAny_AsLong(arg0) );
-      else {
-        PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerGauge()." );
+      METHOD_HEAD("RoutingGauge.getLayerGauge()")
+      PyObject* arg0 = NULL;
+      
+      __cs.init ("RoutingGauge.getLayerGauge");
+      if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerGauge", Converter, &arg0)) {
+        string layerName;
+        if (__cs.getObjectIds() == ":layer") {
+          rlg = rg->getLayerGauge( PYLAYER_O(arg0) );
+          layerName = "\"" + getString(PYLAYER_O(arg0)) + "\"";
+        } else if (__cs.getObjectIds() == ":int") {
+          rlg = rg->getLayerGauge( (size_t)PyAny_AsLong(arg0) );
+          layerName = "depth=" + getString(PyAny_AsLong(arg0));
+        } else {
+          PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerGauge()." );
+          return NULL;
+        }
+        if ( rlg == NULL ) {
+          string message = "RoutingGauge.getLayerDepth(), requested Layer "
+                         + layerName + " has no RoutingLayerGauge.";
+          PyErr_SetString ( ConstructorError, message.c_str() );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerDepth()." );
         return NULL;
       }
-      if ( rlg == NULL ) {
-        PyErr_SetString ( ConstructorError, "RoutingGauge.getLayerDepth(), requested Layer has no RoutingLayerGauge." );
-        return NULL;
-      }
-    } else {
-      PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerDepth()." );
-      return NULL;
-    }
     HCATCH
 
     return PyRoutingLayerGauge_Link(rlg);
-  }
-
-
-  static PyObject* PyRoutingGauge_getLayerDirection ( PyRoutingGauge* self, PyObject* args )
-  {
-    cdebug_log(30,0) << "PyRoutingGauge_getLayerDirection()" << endl;
-
-    unsigned int direction = 0;
-
-    HTRY
-    METHOD_HEAD("RoutingGauge.getLayerDirection()")
-
-    PyObject* arg0 = NULL;
-    
-    __cs.init ("RoutingGauge.getLayerDirection");
-    if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerDirection", Converter, &arg0)) {
-      if ( __cs.getObjectIds() == ":layer" )
-        direction = rg->getLayerDirection( PYLAYER_O(arg0) );
-      else if  ( __cs.getObjectIds() == ":int" )
-        direction = rg->getLayerDirection( (size_t)PyAny_AsLong(arg0) );
-      else {
-        PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerDirection()." );
-        return NULL;
-      }
-    } else {
-      PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerDirection()." );
-      return NULL;
-    }
-    HCATCH
-
-    return Py_BuildValue("I",direction);
-  }
-
-
-  static PyObject* PyRoutingGauge_getLayerPitch ( PyRoutingGauge* self, PyObject* args )
-  {
-    cdebug_log(30,0) << "PyRoutingGauge_getLayerPitch()" << endl;
-
-    DbU::Unit pitch = 0;
-
-    HTRY
-    METHOD_HEAD("RoutingGauge.getLayerPitch()")
-
-    PyObject* arg0 = NULL;
-    
-    __cs.init ("RoutingGauge.getLayerPitch");
-    if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerPitch", Converter, &arg0)) {
-      if ( __cs.getObjectIds() == ":layer" ) {
-      //pitch = rg->getLayerPitch( PYLAYER_O(arg0) );
-      } else if  ( __cs.getObjectIds() == ":int" )
-        pitch = rg->getLayerPitch( (size_t)PyAny_AsLong(arg0) );
-      else {
-        PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerPitch()." );
-        return NULL;
-      }
-    } else {
-      PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerPitch()." );
-      return NULL;
-    }
-    HCATCH
-
-    return Py_BuildValue("I",pitch);
   }
 
 
@@ -281,25 +340,23 @@ extern "C" {
     cdebug_log(30,0) << "PyRoutingGauge_getRoutingLayer()" << endl;
 
     Layer* layer = NULL;
-
     HTRY
-    METHOD_HEAD("RoutingGauge.getRoutingLayer()")
-
-    unsigned int depth = 0;
-    
-    if (PyArg_ParseTuple( args, "I:RoutingGauge.getRoutingLayer", &depth)) {
-      layer = const_cast<Layer*>(rg->getRoutingLayer( (size_t)depth ));
-      if ( layer == NULL ) {
-        string message
-          = "RoutingGauge.getRoutingLayer(): No layer at the requested depth " + getString(depth)
-          + " (must be < " + getString(rg->getDepth()) + ").";
-        PyErr_SetString ( ConstructorError, message.c_str() );
+      METHOD_HEAD("RoutingGauge.getRoutingLayer()")
+      unsigned int depth = 0;
+      
+      if (PyArg_ParseTuple( args, "I:RoutingGauge.getRoutingLayer", &depth)) {
+        layer = const_cast<Layer*>(rg->getRoutingLayer( (size_t)depth ));
+        if ( layer == NULL ) {
+          string message
+            = "RoutingGauge.getRoutingLayer(): No layer at the requested depth " + getString(depth)
+            + " (must be < " + getString(rg->getDepth()) + ").";
+          PyErr_SetString ( ConstructorError, message.c_str() );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getRoutingLayer()." );
         return NULL;
       }
-    } else {
-      PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getRoutingLayer()." );
-      return NULL;
-    }
     HCATCH
 
     return PyLayer_LinkDerived(layer);
@@ -311,28 +368,97 @@ extern "C" {
     cdebug_log(30,0) << "PyRoutingGauge_getContactLayer()" << endl;
 
     Layer* layer = NULL;
-
     HTRY
-    METHOD_HEAD("RoutingGauge.getContactLayer()")
-
-    unsigned int depth = 0;
-    
-    if (PyArg_ParseTuple( args, "I:RoutingGauge.getContactLayer", &depth)) {
-      layer = rg->getContactLayer( (size_t)depth );
-      if ( layer == NULL ) {
-        string message
-          = "RoutingGauge.getContactLayer(): No layer at the requested depth " + getString(depth)
-          + " (must be < " + getString(rg->getDepth()-1) + ").";
-        PyErr_SetString ( ConstructorError, message.c_str() );
+      METHOD_HEAD("RoutingGauge.getContactLayer()")
+      unsigned int depth = 0;
+      
+      if (PyArg_ParseTuple( args, "I:RoutingGauge.getContactLayer", &depth)) {
+        layer = rg->getContactLayer( (size_t)depth );
+        if ( layer == NULL ) {
+          string message
+            = "RoutingGauge.getContactLayer(): No layer at the requested depth " + getString(depth)
+            + " (must be < " + getString(rg->getDepth()-1) + ").";
+          PyErr_SetString ( ConstructorError, message.c_str() );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getContactLayer()." );
         return NULL;
       }
-    } else {
-      PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getContactLayer()." );
-      return NULL;
-    }
     HCATCH
 
     return PyLayer_LinkDerived(layer);
+  }
+
+
+  static PyObject* PyRoutingGauge_getLayerDirection ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerDirection()" << endl;
+
+    unsigned int direction = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getLayerDirection()")
+      PyObject* arg0 = NULL;
+      
+      __cs.init ("RoutingGauge.getLayerDirection");
+      if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerDirection", Converter, &arg0)) {
+        if ( __cs.getObjectIds() == ":layer" )
+          direction = rg->getLayerDirection( PYLAYER_O(arg0) );
+        else if  ( __cs.getObjectIds() == ":int" )
+          direction = rg->getLayerDirection( (size_t)PyAny_AsLong(arg0) );
+        else {
+          PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerDirection()." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerDirection()." );
+        return NULL;
+      }
+    HCATCH
+
+    return Py_BuildValue("I",direction);
+  }
+
+
+  static PyObject* PyRoutingGauge_getLayerPitch ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getLayerPitch()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getLayerPitch()")
+      PyObject* arg0 = NULL;
+      
+      __cs.init ("RoutingGauge.getLayerPitch");
+      if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerPitch", Converter, &arg0)) {
+        if ( __cs.getObjectIds() == ":layer" ) {
+        //pitch = rg->getLayerPitch( PYLAYER_O(arg0) );
+        } else if  ( __cs.getObjectIds() == ":int" )
+          pitch = rg->getLayerPitch( (size_t)PyAny_AsLong(arg0) );
+        else {
+          PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerPitch()." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError, "Invalid number of parameters passed to RoutingGauge.getLayerPitch()." );
+        return NULL;
+      }
+    HCATCH
+
+    return Py_BuildValue("I",pitch);
+  }
+
+
+  static PyObject* PyRoutingGauge_getPowerSupplyGauge ( PyRoutingGauge* self )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPowerSupplyGauge()" << endl;
+    RoutingLayerGauge* rlg = NULL;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPowerSupplyGauge()")
+      rlg = rg->getPowerSupplyGauge();
+      if (not rlg) Py_RETURN_NONE;
+    HCATCH
+    return PyRoutingLayerGauge_Link( rlg );
   }
 
 
@@ -364,10 +490,13 @@ extern "C" {
   // Standard Attributes.
   GetNameMethod(RoutingGauge,rg)
   accessorVectorFromVoid(getLayerGauges,PyRoutingGauge,RoutingGauge,RoutingLayerGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isSymbolic ,isSymbolic ,PyRoutingGauge,RoutingGauge)
-  DirectSetBoolAttribute(PyRoutingGauge_setSymbolic,setSymbolic,PyRoutingGauge,RoutingGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isHV       ,isHV       ,PyRoutingGauge,RoutingGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isVH       ,isVH       ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isSymbolic    ,isSymbolic    ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isSuperPitched,isSuperPitched,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isTwoMetals   ,isTwoMetals   ,PyRoutingGauge,RoutingGauge)
+  DirectSetBoolAttribute(PyRoutingGauge_setSymbolic   ,setSymbolic   ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isHV          ,isHV          ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isVH          ,isVH          ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_hasPowerSupply,hasPowerSupply,PyRoutingGauge,RoutingGauge)
 
 
   // Standart Destroy (Attribute).
@@ -378,10 +507,16 @@ extern "C" {
                                 , "Create a new RoutingGauge." }
     , { "isSymbolic"            , (PyCFunction)PyRoutingGauge_isSymbolic        , METH_NOARGS
                                 , "The RoutingGauge is for symbolic technology." }
+    , { "isSuperPitched"        , (PyCFunction)PyRoutingGauge_isSuperPitched    , METH_NOARGS
+                                , "The RoutingGauge is super-pitched." }
+    , { "isTwoMetals"           , (PyCFunction)PyRoutingGauge_isTwoMetals       , METH_NOARGS
+                                , "The RoutingGauge has only two routing metal layers." }
     , { "isHV"                  , (PyCFunction)PyRoutingGauge_isHV              , METH_NOARGS
                                 , "The first routing layer (metal2) is horizontal." }
     , { "isVH"                  , (PyCFunction)PyRoutingGauge_isVH              , METH_NOARGS
                                 , "The first routing layer (metal2) is vertical." }
+    , { "hasPowerSupply"        , (PyCFunction)PyRoutingGauge_hasPowerSupply    , METH_NOARGS
+                                , "Is there a dedicated layer for power supplies." }
     , { "getName"               , (PyCFunction)PyRoutingGauge_getName           , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
     , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology     , METH_NOARGS
@@ -394,16 +529,28 @@ extern "C" {
                                 , "Return the vertical pitch of the metal closest to the substrate." }
     , { "getLayerDepth"         , (PyCFunction)PyRoutingGauge_getLayerDepth     , METH_VARARGS
                                 , "Return the depth of the given layer." }
+    , { "getPitch"              , (PyCFunction)PyRoutingGauge_getPitch          , METH_VARARGS
+                                , "Return the routing pitch of the given layer." }
+    , { "getOffset"             , (PyCFunction)PyRoutingGauge_getOffset         , METH_VARARGS
+                                , "Return the offset of the first track of the given layer." }
+    , { "getWireWidth"          , (PyCFunction)PyRoutingGauge_getWireWidth      , METH_VARARGS
+                                , "Return the default wire width of the given layer." }
+    , { "getViaWidth"           , (PyCFunction)PyRoutingGauge_getViaWidth       , METH_VARARGS
+                                , "Return the default via width of the given layer." }
+    , { "getPWireWidth"         , (PyCFunction)PyRoutingGauge_getPWireWidth     , METH_VARARGS
+                                , "Return the default perpandicular wire width of the given layer." }
+    , { "getPowerSupplyGauge"   , (PyCFunction)PyRoutingGauge_getPowerSupplyGauge, METH_NOARGS
+                                , "Return the power supply gauge (None if there isn't)." }
     , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge     , METH_VARARGS
-                                , "Return the RoutingLayerGauge of the given layer/depth." }
-    , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection , METH_VARARGS
-                                , "Return the direction of the given layer/depth." }
-    , { "getLayerPitch"         , (PyCFunction)PyRoutingGauge_getLayerPitch     , METH_VARARGS
-                                , "Return the pitch of the given layer/depth." }
+                                , "Return the RoutingLayerGauge of the given layer/routing depth." }
     , { "getRoutingLayer"       , (PyCFunction)PyRoutingGauge_getRoutingLayer   , METH_VARARGS
-                                , "Return the routing layer used for the requested depth." }
+                                , "Return the routing layer used for the requested routing depth." }
     , { "getContactLayer"       , (PyCFunction)PyRoutingGauge_getContactLayer   , METH_VARARGS
-                                , "Return the contact layer used for the requested depth." }
+                                , "Return the contact layer used for the requested routing depth." }
+    , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection , METH_VARARGS
+                                , "Return the direction of the given layer/routing depth." }
+    , { "getLayerPitch"         , (PyCFunction)PyRoutingGauge_getLayerPitch     , METH_VARARGS
+                                , "Return the pitch of the given layer/routing depth." }
     , { "getLayerGauges"        , (PyCFunction)PyRoutingGauge_getLayerGauges    , METH_NOARGS
                                 , "Return the list of RoutingLayerGauge." }
     , { "addLayerGauge"         , (PyCFunction)PyRoutingGauge_addLayerGauge     , METH_VARARGS
@@ -422,6 +569,14 @@ extern "C" {
   
   IteratorNextMethod(RoutingLayerGauge)
   VectorMethods     (RoutingLayerGauge)
+
+
+  extern  void  PyRoutingGauge_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeRoutingGauge.tp_dict,RoutingGauge::nlayerdepth,"nlayerdepth");
+  }
 
 
 #else  // End of Python Module Code Part.

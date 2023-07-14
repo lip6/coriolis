@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -30,8 +30,8 @@
 #include <QPrintDialog>
 #include <QFileDialog>
 
-#include "vlsisapd/utilities/Path.h"
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/utilities/Path.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"
@@ -391,7 +391,7 @@ namespace Hurricane {
     addMenu( "tools"        , "Tools"     , TopMenu );
     addMenu( "placeAndRoute", "P&&R"      , TopMenu );
     addMenu( "misc"         , "Misc"      , TopMenu );
-    addMenu( "misc.beta"    , "&beta"     );
+    addMenu( "misc.alpha"   , "&alpha"    );
     addMenu( "misc.obsolete", "&Obsolete" );
 
   // Building the "File" menu.
@@ -584,7 +584,7 @@ namespace Hurricane {
 
   void  CellViewer::refreshTitle ()
   {
-    QString  cellName = "None";
+    QString  cellName = "empty";
     if ( getCell() )
       cellName = getString(getCell()->getName()).c_str();
 
@@ -754,10 +754,17 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::setShowSelection ( bool state )
+  void  CellViewer::setShowSelection ( bool )
   {
     _updateState = InternalEmit;
-    _cellWidget->setShowSelection ( state );
+    _cellWidget->setShowSelection ( not _cellWidget->showSelection() );
+  }
+
+
+  void  CellViewer::setCumulativeSelection ( bool state )
+  {
+    _updateState = InternalEmit;
+    _cellWidget->setCumulativeSelection ( state );
   }
 
 
@@ -831,6 +838,10 @@ namespace Hurricane {
   { if ( _cellWidget ) _cellWidget->unselectAll(); }
 
 
+  void  CellViewer::reframe ( const Box& area, bool historyEnable )
+  { if ( _cellWidget ) _cellWidget->reframe( area, historyEnable ); }
+
+
   void  CellViewer::printDisplay ()
   {
     if ( !_cellWidget ) return;
@@ -841,8 +852,12 @@ namespace Hurricane {
 
     QPrinter printer ( QPrinter::ScreenResolution );
     printer.setOutputFileName ( "unicorn-snapshot.pdf" );
-    printer.setPaperSize  ( (QPrinter::PaperSize  )Cfg::getParamEnumerate("viewer.printer.paper"      ,0)->asInt() );
+    printer.setPageSize       ( (QPrinter::PaperSize  )Cfg::getParamEnumerate("viewer.printer.paper"      ,0)->asInt() );
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     printer.setOrientation( (QPrinter::Orientation)Cfg::getParamEnumerate("viewer.printer.orientation",0)->asInt() );
+#else
+    printer.setPageOrientation( (QPageLayout::Orientation)Cfg::getParamEnumerate("viewer.printer.orientation",0)->asInt() );
+#endif
 
     QPrintDialog  dialog ( &printer );
     if ( dialog.exec() == QDialog::Accepted )
@@ -904,7 +919,7 @@ namespace Hurricane {
     dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().toString());
     script->addKwArgument( "cell"      , (PyObject*)PyCell_Link(getCell()) );
     script->addKwArgument( "editor"    , (PyObject*)PyCellViewer_Link(this) );
-    script->runFunction  ( "ScriptMain", getCell() );
+    script->runFunction  ( "scriptMain", getCell() );
 
     Isobar::Script::removePath( userDirectory.toString() );
   }
@@ -917,7 +932,7 @@ namespace Hurricane {
   void  CellViewer::runStressScript ()
   {
     for ( size_t i=0 ; i<1000 ; ++i ) {
-      cerr << "Calling ./stressScript [" << setw(3) << right << setfill('0') << i << "]" << endl;
+      cerr << "Calling ./stressScript [" << setw(3) << right << setfill('0') << i << "]" << setfill(' ') << endl;
       ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this, "stressScript.py" ) );
     }
   }

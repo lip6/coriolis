@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -195,7 +194,7 @@ def PadNorth ( *args ) :
   for arg in args :
     if not arg :
       raise Exception ( "\n[Stratus ERROR] PadNorth : one instance doesn't exist.\n" )
-    if str ( arg.__class__ ) != "st_instance.Inst" :
+    if str ( arg.__class__ ) != "<class 'st_instance.Inst'>" :
       raise Exception ( "\n[Stratus ERROR] PadNorth : one argument is not an instance.\n" )    
 
     hur_args.append ( arg._hur_instance )
@@ -217,7 +216,7 @@ def PadSouth ( *args ) :
   for arg in args :
     if not arg :
       raise Exception ( "\n[Stratus ERROR] PadSouth : one instance doesn't exist.\n" )
-    if str ( arg.__class__ ) != "st_instance.Inst" :
+    if str ( arg.__class__ ) != "<class 'st_instance.Inst'>" :
       raise Exception ( "\n[Stratus ERROR] PadSouth : one argument is not an instance.\n" )   
 
     hur_args.append ( arg._hur_instance )
@@ -239,7 +238,7 @@ def PadEast ( *args ) :
   for arg in args :
     if not arg :
       raise Exception ( "\n[Stratus ERROR] PadEast : one instance doesn't exist.\n" )
-    if str ( arg.__class__ ) != "st_instance.Inst" :
+    if str ( arg.__class__ ) != "<class 'st_instance.Inst'>" :
       raise Exception ( "\n[Stratus ERROR] PadEast : one argument is not an instance.\n" )    
 
     hur_args.append ( arg._hur_instance )
@@ -261,7 +260,7 @@ def PadWest ( *args ) :
   for arg in args :
     if not arg :
       raise Exception ( "\n[Stratus ERROR] PadWest : one instance doesn't exist.\n" )
-    if str ( arg.__class__ ) != "st_instance.Inst" :
+    if str ( arg.__class__ ) != "<class 'st_instance.Inst'>" :
       raise Exception ( "\n[Stratus ERROR] PadWest : one argument is not an instance.\n" ) 
 
     hur_args.append ( arg._hur_instance )
@@ -312,11 +311,11 @@ class ClockBuffer :
     plugQ = inst.getPlug ( modelMasterCell.getNet ( "q" ) )
     plugQ.setNet ( self.ck_b._hur_net[0] )
     
-    plugGround = inst.getPlug ( iter(modelMasterCell.getGroundNets()).next() )
-    plugGround.setNet ( iter(self.cell._hur_cell.getGroundNets()).next() )
+    plugGround = inst.getPlug ( iter(modelMasterCell.getGroundNets()).__next__() )
+    plugGround.setNet ( iter(self.cell._hur_cell.getGroundNets()).__next__() )
 
-    plugPower = inst.getPlug ( iter(modelMasterCell.getPowerNets()).next() )
-    plugPower.setNet ( iter(self.cell._hur_cell.getPowerNets()).next() )
+    plugPower = inst.getPlug ( iter(modelMasterCell.getPowerNets()).__next__() )
+    plugPower.setNet ( iter(self.cell._hur_cell.getPowerNets()).__next__() )
 
   def AddFF ( self, netname ) :
     net = self.cell._hur_cell.getNet ( netname )

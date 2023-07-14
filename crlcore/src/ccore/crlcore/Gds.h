@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2018-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2018-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -13,11 +13,8 @@
 // |  C++ Header  :  "./crlcore/Gds.h"                               |
 // +-----------------------------------------------------------------+
 
-
-#ifndef  CRL_GDS_H
-#define  CRL_GDS_H
-
-#include  <string>
+#pragma  once
+#include <string>
 
 
 namespace Hurricane {
@@ -34,11 +31,12 @@ namespace CRL {
 
   class Gds {
     public:
+      static const uint32_t  NoGdsPrefix        = (1<<0);
+      static const uint32_t  Layer_0_IsBoundary = (1<<1);
+    public:
       static bool  save ( Cell* );
-      static bool  load ( Library*, std::string gdsPath );
+      static bool  load ( Library*, std::string gdsPath, uint32_t flags=0 );
   };
 
 
 } // CRL namespace.
-
-# endif

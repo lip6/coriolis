@@ -1,3 +1,3 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<tutorial/python>" -*-
 
- install ( FILES runDemo.py  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+ install ( FILES runDemo.py  DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins )

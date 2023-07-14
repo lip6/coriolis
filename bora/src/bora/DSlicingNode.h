@@ -49,8 +49,8 @@ namespace Bora {
                     void          print                     () const;
                     DSlicingNode* clone                     ( unsigned int tr=None );
       inline        double        getDevicesArea            () const;
-                    void          setNFing                  ( int );
-                    int           getNFing                  () const;
+                    void          setBoxSetIndex            ( size_t );
+                    size_t        getBoxSetIndex            () const;
       inline        Instance*     getInstance               () const;
       inline        void          setInstance               ( Instance* );
                     void          place                     ( DbU::Unit x=0, DbU::Unit y=0 );
@@ -63,9 +63,6 @@ namespace Bora {
                     void          destroy                   ();
                     void          preRecursiveDestroy       ();
                     void          recursiveDestroy          ();
-                    double        getStartParameter         () const;
-                    double        getStepParameter          () const;
-                    double        getCountParameter         () const;
                     bool          checkInitialPlacement     ( int& cpt ) const;// see notes in .cpp
                     void          setGCell                  ( Anabatic::GCell* );
                     bool          isSame                    ( SlicingNode* ) const;    

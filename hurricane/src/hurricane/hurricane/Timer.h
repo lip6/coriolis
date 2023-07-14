@@ -34,23 +34,21 @@
 //! author="Igor Markov 06/22/97 "      
 // freely inspired from abktimer from UCLApack .... just no windows.
 
-#ifndef  HURRICANE_TIMER_H
-#define  HURRICANE_TIMER_H
+#pragma  once
+#include <sys/types.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <time.h>
+#include <math.h>
 
-#include  <sys/types.h>
-#include  <sys/time.h>
-#include  <unistd.h>
-#include  <time.h>
-#include  <math.h>
-
-#include  <sys/resource.h>
+#include <sys/resource.h>
 #if defined(sun)
 extern "C" int  getrusage ( int who, struct rusage *rusage );
 #elif defined(linux)
 #endif      
 
-#include  "hurricane/Error.h"
-#include  "hurricane/Slot.h"
+#include "hurricane/Error.h"
+#include "hurricane/Slot.h"
 
 
 namespace Hurricane {
@@ -182,5 +180,3 @@ namespace Hurricane {
 
 GETSTRING_VALUE_SUPPORT(Hurricane::Timer);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Timer);
-
-#endif  // HURRICANE_TIMER_H

@@ -29,8 +29,8 @@
 #include "crlcore/LibraryManager.h"
 #include "crlcore/GraphicToolEngine.h"
 #include "crlcore/AcmSigda.h"
-#include "crlcore/Ispd04Bookshelf.h"
-#include "crlcore/Ispd05Bookshelf.h"
+//#include "crlcore/Ispd04Bookshelf.h"
+//#include "crlcore/Ispd05Bookshelf.h"
 #include "crlcore/Gds.h"
 #include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
@@ -59,8 +59,8 @@ namespace Unicorn {
   using CRL::AllianceFramework;
   using CRL::LibraryManager;
   using CRL::AcmSigda;
-  using CRL::Ispd04;
-  using CRL::Ispd05;
+//using CRL::Ispd04;
+//using CRL::Ispd05;
   using CRL::Gds;
   using CRL::Blif;
   using CRL::Iccad04Lefdef;
@@ -98,10 +98,12 @@ namespace Unicorn {
 
     _importCell.setDialog( _importDialog );
     _importCell.addImporter<Cell*>   ( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
-    _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1, true ) );
+    _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1, false ) );
     _importCell.addImporter<Cell*>   ( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
+    /* Disabled because this is never the one you want
     _importCell.addImporter<Cell*>   ( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
     _importCell.addImporter<Cell*>   ( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
+    */
     _importCell.addImporter<Cell*>   ( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter<Cell*>   ( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
     _importCell.addImporter<Library*>( "Cadence LEF"                 , std::bind( &LefImport::load    , placeholders::_1 ) );
@@ -117,17 +119,17 @@ namespace Unicorn {
   void  UnicornGui::_runUnicornInit ()
   {
     Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
-    Utilities::Path systemConfDir      = pythonSitePackages / "unicorn";
-    Utilities::Path systemConfFile     = systemConfDir      / "unicornInit.py";
+    Utilities::Path confFile           = "coriolis/unicorn/initHook.py";
+    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
 
     if (systemConfFile.exists()) {
-      Isobar::Script::addPath( systemConfDir.toString() );
+    //Isobar::Script::addPath( systemConfDir.toString() );
 
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( systemConfFile.stem().toString() );
+      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
       script->addKwArgument( "editor"          , (PyObject*)PyCellViewer_Link(this) );
       script->runFunction  ( "unicornConfigure", getCell() );
 
-      Isobar::Script::removePath( systemConfDir.toString() );
+    //Isobar::Script::removePath( systemConfDir.toString() );
     } else {
       cerr << Warning("Unicorn system configuration file:\n  <%s> not found."
                      ,systemConfFile.toString().c_str()) << endl;

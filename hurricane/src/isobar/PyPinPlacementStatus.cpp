@@ -62,19 +62,19 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(PinPlacementStatus)
-  DirectReprMethod(PyPinPlacementStatus_Repr, PyPinPlacementStatus,   Pin::PlacementStatus)
-  DirectStrMethod (PyPinPlacementStatus_Str,  PyPinPlacementStatus,   Pin::PlacementStatus)
-  DirectCmpMethod (PyPinPlacementStatus_Cmp,  IsPyPinPlacementStatus, PyPinPlacementStatus)
-  DirectHashMethod(PyPinPlacementStatus_Hash, PyPinPlacementStatus)
+  DirectReprMethod      (PyPinPlacementStatus_Repr, PyPinPlacementStatus,   Pin::PlacementStatus)
+  DirectStrMethod       (PyPinPlacementStatus_Str,  PyPinPlacementStatus,   Pin::PlacementStatus)
+  DirectCmpByValueMethod(PyPinPlacementStatus_Cmp,  IsPyPinPlacementStatus, PyPinPlacementStatus)
+  DirectHashMethod      (PyPinPlacementStatus_Hash, PinPlacementStatus)
 
   extern void  PyPinPlacementStatus_LinkPyType() {
     cdebug_log(20,0) << "PyPinPlacementStatus_LinkType()" << endl;
-    PyTypePinPlacementStatus.tp_dealloc = (destructor) PyPinPlacementStatus_DeAlloc;
-    PyTypePinPlacementStatus.tp_compare = (cmpfunc)    PyPinPlacementStatus_Cmp;
-    PyTypePinPlacementStatus.tp_repr    = (reprfunc)   PyPinPlacementStatus_Repr;
-    PyTypePinPlacementStatus.tp_str     = (reprfunc)   PyPinPlacementStatus_Str;
-    PyTypePinPlacementStatus.tp_hash    = (hashfunc)   PyPinPlacementStatus_Hash;
-    PyTypePinPlacementStatus.tp_methods = PyPinPlacementStatus_Methods;
+    PyTypePinPlacementStatus.tp_dealloc     = (destructor) PyPinPlacementStatus_DeAlloc;
+    PyTypePinPlacementStatus.tp_richcompare = (richcmpfunc)PyPinPlacementStatus_Cmp;
+    PyTypePinPlacementStatus.tp_repr        = (reprfunc)   PyPinPlacementStatus_Repr;
+    PyTypePinPlacementStatus.tp_str         = (reprfunc)   PyPinPlacementStatus_Str;
+    PyTypePinPlacementStatus.tp_hash        = (hashfunc)   PyPinPlacementStatus_Hash;
+    PyTypePinPlacementStatus.tp_methods     = PyPinPlacementStatus_Methods;
   }
 
 

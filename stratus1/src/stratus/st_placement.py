@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -62,7 +61,9 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
 
   # Error if x and y found not permitted :
   if ref._x % MYPITCH :
-    err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x is not a mutiple of PITCH.\n"
+    err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x " \
+          + DbU.getValueString(ref._x) + " is not a mutiple of PITCH " \
+          + DbU.getValueString(MYPITCH) + ".\n"
     raise Exception ( err )
 
   if ref._y % MYSLICE :
@@ -72,7 +73,7 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
     raise Exception( message )
                                             
   # Error message : if ref is not a reference
-  if str ( ref.__class__ ) != "st_ref.XY" :
+  if str ( ref.__class__ ) != "<class 'st_ref.XY'>" :
     raise Exception ( "\n[Stratus ERROR] Place : wrong argument for placement, the coordinates must be put in a XY object.\n" )
     
   # Error message if plac is not one of the permitted values
@@ -272,7 +273,8 @@ def DefAb ( ref1, ref2 ) :
   UpdateSession.open ()
     
   # Error message : if ref are not references
-  if ( str ( ref1.__class__ ) != "st_ref.XY" ) or ( str ( ref2.__class__ ) != "st_ref.XY" ) :
+  if    ( str ( ref1.__class__ ) != "<class 'st_ref.XY'>" ) \
+     or ( str ( ref2.__class__ ) != "<class 'st_ref.XY'>" ) :
     err = "\n[Stratus ERROR] DefAb : wrong argument, the coordinates must be put in a XY object.\n"
     raise Exception ( err )
 
@@ -308,10 +310,10 @@ def ResizeAb ( dx1, dy1, dx2, dy2 ) :
   global CELLS
   from st_model import CELLS
 
- #print "ResizeAb()", DbU.getValueString(dx1) \
- #                  , DbU.getValueString(dy1) \
- #                  , DbU.getValueString(dx2) \
- #                  , DbU.getValueString(dy2)
+ #print( "ResizeAb()", DbU.getValueString(dx1) \
+ #                   , DbU.getValueString(dy1) \
+ #                   , DbU.getValueString(dx2) \
+ #                   , DbU.getValueString(dy2) )
 
   global MYSLICE, MYPITCH
   
@@ -381,7 +383,7 @@ def placement ( st_inst, sym, x, y, plac = FIXED, cell = None, fonction = None )
   if not st_inst : raise Exception ( "\n[Stratus ERROR] Placement : the instance doesn't exist.\n" )
 
   # Error : st_inst is not an instance
-  if str ( st_inst.__class__ ) != "st_instance.Inst" :
+  if str ( st_inst.__class__ ) != "<class 'st_instance.Inst'>" :
     err = "\n\n[Stratus ERROR] Placement : the first argument " + st_inst + " is not an instance.\n"
     raise Exception ( err )  
 
@@ -570,11 +572,11 @@ class ClockBuffer :
     plugQ = inst.getPlug ( modelMasterCell.getNet ( "q" ) )
     plugQ.setNet ( self.ck_b._hur_net[0] )
     
-    plugGround = inst.getPlug ( iter(modelMasterCell.getGroundNets()).next() )
-    plugGround.setNet ( iter(self.cell._hur_cell.getGroundNets()).next() )
+    plugGround = inst.getPlug ( iter(modelMasterCell.getGroundNets()).__next__() )
+    plugGround.setNet ( iter(self.cell._hur_cell.getGroundNets()).__next__() )
 
-    plugPower = inst.getPlug ( iter(modelMasterCell.getPowerNets()).next() )
-    plugPower.setNet ( iter(self.cell._hur_cell.getPowerNets()).next() )
+    plugPower = inst.getPlug ( iter(modelMasterCell.getPowerNets()).__next__() )
+    plugPower.setNet ( iter(self.cell._hur_cell.getPowerNets()).__next__() )
 
   def AddFF ( self, netname ) :
     net = self.cell._hur_cell.getNet ( netname )

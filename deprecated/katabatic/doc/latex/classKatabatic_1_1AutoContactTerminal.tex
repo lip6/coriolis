@@ -1,0 +1,214 @@
+\hypertarget{classKatabatic_1_1AutoContactTerminal}{}\section{Auto\+Contact\+Terminal Class Reference}
+\label{classKatabatic_1_1AutoContactTerminal}\index{Auto\+Contact\+Terminal@{Auto\+Contact\+Terminal}}
+
+
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} Terminal (S/T is a Terminal)  
+
+
+
+
+Inheritance diagram for Auto\+Contact\+Terminal\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classKatabatic_1_1AutoContactTerminal__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \textbf{ Box} \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_a00ed934305dd186a284b7a13b5798cb6}{get\+Native\+Constraint\+Box}} () const
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_a99fa8a78e97a29f2fb5730eaaa59acfc}{get\+Segment}} (unsigned int) const
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_ac9c9b04e245a1109e297510a3968b7ac}{get\+Opposite}} (const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$) const
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_ad99dd549214e43b6509fd8e3aefae919}{get\+Perpandicular}} (const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$) const
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_a3e218f6934c51380fb15d0e2bd380071}{update\+Geometry}} ()
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_af5bf1f5e71204ef84346e4e036175431}{update\+Topology}} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_a0d440e51525b09acc843f1d345850487}{create}} (\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$gcell, \textbf{ Component} $\ast$anchor, const \textbf{ Layer} $\ast$layer, \textbf{ Point} point, \textbf{ Db\+U\+::\+Unit} width, \textbf{ Db\+U\+::\+Unit} height)
+\item 
+static \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal_a60a625bca2cdfebcdcc7826ab781d1bb}{create}} (\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$gcell, \textbf{ Component} $\ast$anchor, const \textbf{ Layer} $\ast$layer, const \textbf{ Db\+U\+::\+Unit} dx, const \textbf{ Db\+U\+::\+Unit} dy, const \textbf{ Db\+U\+::\+Unit} width, const \textbf{ Db\+U\+::\+Unit} height)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} Terminal (S/T is a Terminal) 
+
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} that are directly attached by either source or target or both to a terminal. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_a0d440e51525b09acc843f1d345850487}\label{classKatabatic_1_1AutoContactTerminal_a0d440e51525b09acc843f1d345850487}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!create@{create}}
+\index{create@{create}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} $\ast$ create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$}]{gcell,  }\item[{\textbf{ Component} $\ast$}]{rp,  }\item[{const \textbf{ Layer} $\ast$}]{layer,  }\item[{\textbf{ Point}}]{point,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{width,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{height }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em gcell} & The \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} into which create the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em rp} & The Routing\+Pad on which to anchor the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em layer} & The Layer of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em point} & The absolute position. \\
+\hline
+{\em width} & The width of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em height} & The height of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The created \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}.
+\end{DoxyReturn}
+Create a new \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} anchored on {\ttfamily rp}. {\ttfamily point} gives the {\itshape absolute} position. 
+
+References Hook\+::detach(), and Component\+::get\+Body\+Hook().
+
+
+
+Referenced by G\+Cell\+Topology\+::do\+Rp\+\_\+\+Access\+Pad(), and G\+Cell\+Topology\+::do\+Rp\+\_\+\+Auto\+Contacts().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_a60a625bca2cdfebcdcc7826ab781d1bb}\label{classKatabatic_1_1AutoContactTerminal_a60a625bca2cdfebcdcc7826ab781d1bb}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!create@{create}}
+\index{create@{create}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} $\ast$ create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$}]{gcell,  }\item[{\textbf{ Component} $\ast$}]{rp,  }\item[{const \textbf{ Layer} $\ast$}]{layer,  }\item[{const \textbf{ Db\+U\+::\+Unit}}]{x,  }\item[{const \textbf{ Db\+U\+::\+Unit}}]{y,  }\item[{const \textbf{ Db\+U\+::\+Unit}}]{width,  }\item[{const \textbf{ Db\+U\+::\+Unit}}]{height }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em gcell} & The \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} into which create the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em rp} & The Component on which to anchor the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em layer} & The Layer of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em x} & The absolute X position. \\
+\hline
+{\em y} & The absolute Y position. \\
+\hline
+{\em width} & The width of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em height} & The height of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The created \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}.
+\end{DoxyReturn}
+Create a new \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}} anchored on {\ttfamily rp}. {\ttfamily (x,y)} gives the {\itshape absolute} position.
+
+The anchor component {\ttfamily rp} is most often a \textbf{ Hurricane\+::\+Routing\+Pad} (occurrencing a \textbf{ Hurricane\+::\+Segment}) or directly a \textbf{ Hurricane\+::\+Segment}, in case of Routing\+Pad layer promotion. 
+
+References Katabatic\+::\+Cnt\+In\+Creation\+Stage, Contact\+::create(), Component\+::get\+Position(), and Db\+U\+::get\+Value\+String().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_a00ed934305dd186a284b7a13b5798cb6}\label{classKatabatic_1_1AutoContactTerminal_a00ed934305dd186a284b7a13b5798cb6}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!get\+Native\+Constraint\+Box@{get\+Native\+Constraint\+Box}}
+\index{get\+Native\+Constraint\+Box@{get\+Native\+Constraint\+Box}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{get\+Native\+Constraint\+Box()}{getNativeConstraintBox()}}
+{\footnotesize\ttfamily \textbf{ Box} get\+Native\+Constraint\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The native constraint box (that is, whithout any user constraints applied). For \mbox{\hyperlink{classKatabatic_1_1AutoContactTerminal}{Auto\+Contact\+Terminal}}, this is the Box of the supporting external component, and for all others the bounding box of the owning \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}}. 
+
+Reimplemented from \mbox{\hyperlink{classKatabatic_1_1AutoContact_a00ed934305dd186a284b7a13b5798cb6}{Auto\+Contact}}.
+
+
+
+References Auto\+Contact\+::get\+Anchor(), G\+Cell\+::get\+Bounding\+Box(), Occurrence\+::get\+Entity(), Routing\+Pad\+::get\+Occurrence(), Transformation\+::get\+Orientation(), Occurrence\+::get\+Path(), Component\+::get\+Position(), Routing\+Pad\+::get\+Source\+Position(), Segment\+::get\+Source\+Position(), Routing\+Pad\+::get\+Target\+Position(), Segment\+::get\+Target\+Position(), Path\+::get\+Transformation(), and Db\+U\+::get\+Value\+String().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_a99fa8a78e97a29f2fb5730eaaa59acfc}\label{classKatabatic_1_1AutoContactTerminal_a99fa8a78e97a29f2fb5730eaaa59acfc}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!get\+Segment@{get\+Segment}}
+\index{get\+Segment@{get\+Segment}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{get\+Segment()}{getSegment()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Segment (\begin{DoxyParamCaption}\item[{unsigned int}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The nth anchored \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}}. The index is significant\+:
+\begin{DoxyItemize}
+\item {\bfseries 0} \+: first horizontal ({\bfseries h1}).
+\item {\bfseries 1} \+: second horizontal ({\bfseries h2}).
+\item {\bfseries 2} \+: first vertical ({\bfseries b1}).
+\item {\bfseries 3} \+: second vertical ({\bfseries b2}).
+\end{DoxyItemize}
+
+Not all the indexes are filled for every \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. For example {\ttfamily Turn} have {\bfseries h1} and {\bfseries b1}, and {\ttfamily H\+Tee} have {\bfseries h1}, {\bfseries h2} and {\bfseries v1}. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a50531ded68cc5206fe104b8d8bf3bd87}{Auto\+Contact}}.
+
+
+
+References Auto\+Segment\+::is\+Horizontal(), and Auto\+Segment\+::is\+Vertical().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_ac9c9b04e245a1109e297510a3968b7ac}\label{classKatabatic_1_1AutoContactTerminal_ac9c9b04e245a1109e297510a3968b7ac}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!get\+Opposite@{get\+Opposite}}
+\index{get\+Opposite@{get\+Opposite}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{get\+Opposite()}{getOpposite()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Opposite (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{reference }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The other \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} the {\itshape same} direction as {\ttfamily reference}, this is only meaningful on \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} or \mbox{\hyperlink{classKatabatic_1_1AutoContactVTee}{Auto\+Contact\+V\+Tee}}. If there is no opposite, {\ttfamily N\+U\+LL} is returned. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a48ab1d3bdf85712e4784ef83ef136939}{Auto\+Contact}}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_ad99dd549214e43b6509fd8e3aefae919}\label{classKatabatic_1_1AutoContactTerminal_ad99dd549214e43b6509fd8e3aefae919}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!get\+Perpandicular@{get\+Perpandicular}}
+\index{get\+Perpandicular@{get\+Perpandicular}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{get\+Perpandicular()}{getPerpandicular()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Perpandicular (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{reference }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} in the {\itshape perpandicular} direction to {\ttfamily reference}, this is only meaningful on Auto\+Contac\+Turn. It there is no unique perpandicular, {\ttfamily N\+U\+LL} is returned. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a994371005874f946cc0ac78005d38423}{Auto\+Contact}}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_a3e218f6934c51380fb15d0e2bd380071}\label{classKatabatic_1_1AutoContactTerminal_a3e218f6934c51380fb15d0e2bd380071}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!update\+Geometry@{update\+Geometry}}
+\index{update\+Geometry@{update\+Geometry}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{update\+Geometry()}{updateGeometry()}}
+{\footnotesize\ttfamily void update\+Geometry (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Compute the new position of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} based on the \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} positions. The \mbox{\hyperlink{classKatabatic_1_1Session}{Session}} mechanism ensure that all \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} are set into their final positions before calling this updator. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_af6a2454547eeb7f5a519970dcb467e90}{Auto\+Contact}}.
+
+
+
+References Auto\+Contact\+::base(), Debug\+Session\+::close(), Katabatic\+::\+Cnt\+Invalidated, Interval\+::contains(), Auto\+Contact\+::get\+Net(), Auto\+Contact\+::get\+U\+Constraints(), Db\+U\+::get\+Value\+String(), Auto\+Segment\+::get\+X(), Auto\+Segment\+::get\+Y(), Auto\+Contact\+::has\+Bad\+Topology(), Go\+::invalidate(), Auto\+Segment\+::is\+Created(), Auto\+Segment\+::is\+Horizontal(), Auto\+Contact\+::is\+Invalidated\+Cache(), Katabatic\+::\+Kb\+Horizontal, Katabatic\+::\+Kb\+Vertical, Debug\+Session\+::open(), Auto\+Contact\+::set\+X(), Auto\+Contact\+::set\+Y(), and Auto\+Contact\+::show\+Topology\+Error().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactTerminal_af5bf1f5e71204ef84346e4e036175431}\label{classKatabatic_1_1AutoContactTerminal_af5bf1f5e71204ef84346e4e036175431}} 
+\index{Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}!update\+Topology@{update\+Topology}}
+\index{update\+Topology@{update\+Topology}!Katabatic\+::\+Auto\+Contact\+Terminal@{Katabatic\+::\+Auto\+Contact\+Terminal}}
+\subsubsection{\texorpdfstring{update\+Topology()}{updateTopology()}}
+{\footnotesize\ttfamily void update\+Topology (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Restore the topology (i.\+e. connexity) of the contact after the incident segment has changed layer.
+
+Based on the layer depth delta between the terminal and the segment three case can occurs\+:
+\begin{DoxyItemize}
+\item The delta is {\bfseries zero}, then just sets the layer of the contact to the common metal layer.
+\item The delta is {\bfseries one}, then sets the contact layer to V\+IA connecting the two layers.
+\item The delta is {\bfseries two}, then create a dogleg to restore the connexity. Depending on whether the terminal was attached to the source or target, sets the layer of the segments.
+\item A delta of more than {\bfseries two} is an error, and must never occurs.
+\end{DoxyItemize}
+
+As, by default, the perpandicular is set in the layer above the parallel, it may be necessary to adjust his layer as well (to the one below).
+
+ 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a690764ddc997fe9766a79c4b8e0c3e2f}{Auto\+Contact}}.
+
+
+
+References Debug\+Session\+::close(), Katabatic\+::\+Cnt\+Bad\+Topology, Auto\+Contact\+::get\+Anchor(), Routing\+Gauge\+::get\+Contact\+Layer(), Auto\+Contact\+::get\+Layer(), Auto\+Segment\+::get\+Layer(), Routing\+Gauge\+::get\+Layer\+Depth(), Auto\+Contact\+::get\+Net(), Session\+::get\+Routing\+Gauge(), Routing\+Gauge\+::get\+Routing\+Layer(), Auto\+Segment\+::invalidate(), Auto\+Contact\+::is\+Invalidated\+Cache(), Auto\+Segment\+::make\+Dogleg(), Debug\+Session\+::open(), Auto\+Contact\+::set\+Layer(), and Auto\+Contact\+::show\+Topology\+Error().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Auto\+Contact\+Terminal.\+h\item 
+Auto\+Contact\+Terminal.\+cpp\item 
+Auto\+Contact\+Terminal.\+dox\end{DoxyCompactItemize}

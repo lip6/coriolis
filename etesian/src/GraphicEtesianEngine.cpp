@@ -101,6 +101,7 @@ namespace Etesian {
     EtesianEngine* etesian = getForFramework( CreateEngine );
     etesian->resetPlacement();
     etesian->place();
+    etesian->toHurricane();
   }
 
 

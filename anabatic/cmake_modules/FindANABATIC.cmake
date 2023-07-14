@@ -6,7 +6,7 @@
 #  ANABATIC_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(ANABATIC_INCLUDE_PATH_DESCRIPTION "directory containing the Katabatic include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(ANABATIC_INCLUDE_PATH_DESCRIPTION "directory containing the Katabatic include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(ANABATIC_DIR_MESSAGE "Set the ANABATIC_INCLUDE_DIR cmake cache entry to the ${ANABATIC_INCLUDE_PATH_DESCRIPTION}")
 
@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(ANABATIC_INCLUDE_PATH NAMES anabatic/AnabaticEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${ANABATIC_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -26,7 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(ANABATIC_LIBRARY_PATH
     NAMES anabatic
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${ANABATIC_INCLUDE_PATH_DESCRIPTION}"
   )

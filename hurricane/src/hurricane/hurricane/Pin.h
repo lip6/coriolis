@@ -1,167 +1,133 @@
-// ****************************************************************************************************
-// File: ./hurricane/Pin.h
-// Authors: C. Alexandre
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// -*- C++ -*-
+//
+// Copyright (c) BULL S.A. 2000-2020, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
-// Hurricane is free software: you can redistribute it  and/or  modify it under the  terms  of the  GNU
-// Lesser General Public License as published by the Free Software Foundation, either version 3 of  the
+// Hurricane is free software: you can redistribute it  and/or  modify
+// it under the terms of the GNU  Lesser  General  Public  License  as
+// published by the Free Software Foundation, either version 3 of  the
 // License, or (at your option) any later version.
 //
-// Hurricane is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without  even
-// the implied warranty of MERCHANTABILITY or FITNESS FOR A  PARTICULAR  PURPOSE. See  the  Lesser  GNU
+// Hurricane is distributed in the hope that it will  be  useful,  but
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-
+// TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See  the  Lesser  GNU
 // General Public License for more details.
 //
-// You should have received a copy of the Lesser GNU General Public License along  with  Hurricane.  If
-// not, see <http://www.gnu.org/licenses/>.
-// ****************************************************************************************************
+// You should have received a copy of the Lesser  GNU  General  Public
+// License along with Hurricane. If not, see
+//                                     <http://www.gnu.org/licenses/>.
+//
+// +-----------------------------------------------------------------+
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                Christophe Alexandre              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./hurricane/Commons.h"                         |
+// +-----------------------------------------------------------------+
 
-#ifndef HURRICANE_PIN
-#define HURRICANE_PIN
-
+#pragma  once
 #include "hurricane/Contact.h"
 #include "hurricane/Pins.h"
 
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Pin".
 
-// ****************************************************************************************************
-// Pin declaration
-// ****************************************************************************************************
+  class Pin : public Contact {
+    public:
+      typedef Contact Inherit;
 
-class Pin : public Contact {
-// ***********************
-
-// Types
-// *****
-
-    public: typedef Contact Inherit;
-
-    public: class AccessDirection {
-    // **************************
-
-        public: enum Code {UNDEFINED=0, NORTH=1, SOUTH=2, EAST=3, WEST=4};
-
-        private: Code _code;
-
-        public: AccessDirection(const Code& code = UNDEFINED);
-        public: AccessDirection(const AccessDirection& accessDirection);
-
-        public: AccessDirection& operator=(const AccessDirection& accessDirection);
-
-        public: operator const Code&() const {return _code;};
-
-        public: const Code& getCode() const {return _code;};
-
-        public: string _getTypeName() const { return _TName("Pin::AccessDirection"); };
-        public: string _getString() const;
-        public: Record* _getRecord() const;
-
+    public:
+      class AccessDirection {
+        public:
+          enum Code { UNDEFINED=0, NORTH=1, SOUTH=2, EAST=3, WEST=4 };
+        public:
+                           AccessDirection ( Code code=UNDEFINED );
+                           AccessDirection ( const AccessDirection& accessDirection );
+          AccessDirection& operator=       ( const AccessDirection& accessDirection );
+                           operator Code   () const { return _code; };
+          Code             getCode         () const { return _code; };
+          std::string      _getTypeName    () const { return _TName("Pin::AccessDirection"); };
+          std::string      _getString      () const;
+          Record*          _getRecord      () const;
+        private:
+          Code _code;
     };
 
-    public: class PlacementStatus {
-    // **************************
+    public:
+      class PlacementStatus {
+        public:
+          enum Code { UNPLACED=0, PLACED=1, FIXED=2 };
+        public:
+                           PlacementStatus ( Code code=UNPLACED);
+                           PlacementStatus ( const PlacementStatus& placementstatus );
+          PlacementStatus& operator=       ( const PlacementStatus& placementstatus );
+                           operator Code   () const { return _code; };
+          Code             getCode         () const { return _code; };
+          std::string      _getTypeName    () const { return _TName("Pin::PlacementStatus"); };
+          std::string      _getString      () const;
+          Record*          _getRecord      () const;
+        private:
+          Code _code;
+      };
 
-        public: enum Code {UNPLACED=0, PLACED=1, FIXED=2};
-
-        private: Code _code;
-
-        public: PlacementStatus(const Code& code = UNPLACED);
-        public: PlacementStatus(const PlacementStatus& placementstatus);
-
-        public: PlacementStatus& operator=(const PlacementStatus& placementstatus);
-
-        public: operator const Code&() const {return _code;};
-
-        public: const Code& getCode() const {return _code;};
-
-        public: string _getTypeName() const { return _TName("Pin::PlacementStatus"); };
-        public: string _getString() const;
-        public: Record* _getRecord() const;
-
-    };
-
-// Attributes
-// **********
-
-    private: Name _name;
-    private: AccessDirection _accessDirection;
-    private: PlacementStatus _placementStatus;
-    private: Pin* _nextOfCellPinMap;
-
-// Constructors
-// ************
-
-    protected: Pin( Net* net
-                  , const Name& name
-                  , const AccessDirection& accessDirection
-                  , const PlacementStatus& placementStatus
-                  , const Layer* layer
-                  , const DbU::Unit& x
-                  , const DbU::Unit& y
-                  , const DbU::Unit& width  = 0
-                  , const DbU::Unit& height = 0
-                  );
-    public: static Pin* create( Net* net
-                              , const Name& name
-                              , const AccessDirection& accessDirection
-                              , const PlacementStatus& placementStatus
-                              , const Layer* layer
-                              , const DbU::Unit& x
-                              , const DbU::Unit& y
-                              , const DbU::Unit& width  = 0
-                              , const DbU::Unit& height = 0
-                              );
-
-// Accessors
-// *********
-
-    public: const Name& getName() const {return _name;};
-    public: const AccessDirection& getAccessDirection() const {return _accessDirection;};
-    public: const PlacementStatus& getPlacementStatus() const {return _placementStatus;};
-
-// Predicates
-// **********
-
-    public: bool isUnplaced() const {return _placementStatus == PlacementStatus::UNPLACED;};
-    public: bool isPlaced()   const {return _placementStatus == PlacementStatus::PLACED;};
-    public: bool isFixed()    const {return _placementStatus == PlacementStatus::FIXED;};
-
-// Updators
-// ********
-
-    public: void setPlacementStatus(const PlacementStatus& placementstatus);
-
-// Others
-// ******
-
-    protected: virtual void _postCreate();
-
-    protected: virtual void _preDestroy();
-
-    public: virtual string _getTypeName() const {return _TName("Pin");};
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-
-    public: Pin* _getNextOfCellPinMap() const {return _nextOfCellPinMap;};
-
-    public: void _setNextOfCellPinMap(Pin* pin) {_nextOfCellPinMap = pin;};
-
-};
+    protected:
+      Pin (       Net*
+          , const Name&
+          , const AccessDirection&
+          , const PlacementStatus&
+          , const Layer*
+          ,       DbU::Unit x
+          ,       DbU::Unit y
+          ,       DbU::Unit width
+          ,       DbU::Unit height
+          );
+    public:
+      static Pin* create (       Net*
+                         , const Name&
+                         , const AccessDirection&
+                         , const PlacementStatus&
+                         , const Layer*
+                         ,       DbU::Unit x
+                         ,       DbU::Unit y
+                         ,       DbU::Unit width =0
+                         ,       DbU::Unit height=0
+                         );
+    public:
+      const   Name&            getName              () const { return _name; };
+      const   AccessDirection& getAccessDirection   () const { return _accessDirection; };
+      const   PlacementStatus& getPlacementStatus   () const { return _placementStatus; };
+              bool             isUnplaced           () const { return _placementStatus == PlacementStatus::UNPLACED; };
+              bool             isPlaced             () const { return _placementStatus == PlacementStatus::PLACED; };
+              bool             isFixed              () const { return _placementStatus == PlacementStatus::FIXED; };
+              void             setPlacementStatus   ( const PlacementStatus& );
+    protected:
+      virtual void             _postCreate          ();
+      virtual void             _preDestroy          ();
+    private:                     
+              bool             _postCheck           ();
+    public:                    
+      virtual std::string      _getTypeName         () const {return _TName("Pin");};
+      virtual std::string      _getString           () const;
+      virtual Record*          _getRecord           () const;
+              Pin*             _getNextOfCellPinMap () const { return _nextOfCellPinMap; };
+              void             _setNextOfCellPinMap ( Pin* pin ) { _nextOfCellPinMap = pin; };
+    private:
+      Name             _name;
+      AccessDirection  _accessDirection;
+      PlacementStatus  _placementStatus;
+      Pin*             _nextOfCellPinMap;
+  };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Pin);
-INSPECTOR_PV_SUPPORT(Hurricane::Pin::AccessDirection);
-INSPECTOR_PV_SUPPORT(Hurricane::Pin::PlacementStatus);
-
-
-#endif // HURRICANE_PIN
-
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
-// ****************************************************************************************************
+INSPECTOR_PR_SUPPORT(Hurricane::Pin::AccessDirection);
+INSPECTOR_PR_SUPPORT(Hurricane::Pin::PlacementStatus);

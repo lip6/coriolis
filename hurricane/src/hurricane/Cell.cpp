@@ -174,7 +174,7 @@ namespace Hurricane {
 
 
   string  Cell::UniquifyRelation::JsonProperty::getTypeName () const
-  { return getString(Cell::UniquifyRelation::staticGetName()); }
+  { return "Cell::UniquifyRelation"; }
 
 
   void  Cell::UniquifyRelation::JsonProperty::initialize ()
@@ -235,7 +235,7 @@ namespace Hurricane {
 
 
   string  Cell::UniquifyRelation::JsonPropertyRef::getTypeName () const
-  { return string("&")+getString(Cell::UniquifyRelation::staticGetName()); }
+  { return "&Cell::UniquifyRelation"; }
 
 
   void  Cell::UniquifyRelation::JsonPropertyRef::initialize ()
@@ -375,11 +375,13 @@ namespace Hurricane {
 
 
   string  Cell::SlavedsRelation::JsonProperty::getTypeName () const
-  { return getString(Cell::SlavedsRelation::staticGetName()); }
+  { return "Cell::SlavedsRelation"; }
 
 
   void  Cell::SlavedsRelation::JsonProperty::initialize ()
-  { JsonTypes::registerType( new Cell::SlavedsRelation::JsonProperty (JsonWriter::RegisterMode) ); }
+  {
+    JsonTypes::registerType( new Cell::SlavedsRelation::JsonProperty (JsonWriter::RegisterMode) );
+  }
 
 
   Cell::SlavedsRelation::JsonProperty* Cell::SlavedsRelation::JsonProperty::clone ( unsigned long flags ) const
@@ -434,7 +436,7 @@ namespace Hurricane {
 
 
   string  Cell::SlavedsRelation::JsonPropertyRef::getTypeName () const
-  { return string("&")+getString(Cell::SlavedsRelation::staticGetName()); }
+  { return "&Cell::SlavedsRelation"; }
 
 
   void  Cell::SlavedsRelation::JsonPropertyRef::initialize ()
@@ -524,6 +526,7 @@ namespace Hurricane {
 // Cell implementation
 // ****************************************************************************************************
 
+
 Cell::Cell(Library* library, const Name& name)
 // *******************************************
 :    Inherit(),
@@ -544,7 +547,7 @@ Cell::Cell(Library* library, const Name& name)
     _nextOfSymbolCellSet(NULL),
     _slaveEntityMap(),
     _observers(),
-    _flags(Flags::Terminal)
+    _flags(Flags::NoFlags)
 {
   if (!_library)
     throw Error("Can't create " + _TName("Cell") + " : null library");
@@ -596,12 +599,6 @@ Box Cell::getBoundingBox() const
     }
     
     return _boundingBox;
-}
-
-bool Cell::isLeaf() const
-// **********************
-{
-    return _instanceMap.isEmpty();
 }
 
 bool Cell::isCalledBy ( Cell* cell ) const
@@ -730,16 +727,19 @@ Entity* Cell::getEntity(const Signature& signature) const
   return NULL;
 }
 
-Net* Cell::getNet ( const Name& name ) const
-//******************************************
+Net* Cell::getNet ( const Name& name, bool useAlias ) const
+//*********************************************************
 {
   Net* net = _netMap.getElement(name);
   if (net) return net;
 
   NetAliasName key(name);
   AliasNameSet::iterator ialias = _netAliasSet.find( &key );
-  if (ialias != _netAliasSet.end())
+  if (ialias != _netAliasSet.end()) {
+    if (not (useAlias or (*ialias)->isExternal()))
+      return NULL;
     return (*ialias)->getNet();
+  }
 
   return NULL;
 }
@@ -799,17 +799,10 @@ DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
   if (not (_flags.isset(Flags::FlattenedNets))) return NULL;
 
   Occurrence rootNetOccurrence ( getHyperNetRootNetOccurrence(Occurrence(leafNet,path)) );
-
-  forEach ( Net*, inet, getNets() ) {
-    DeepNet* deepNet = dynamic_cast<DeepNet*>( *inet );
-    if (not deepNet) continue;
-
-    Occurrence deepNetOccurrence = deepNet->getRootNetOccurrence();
-    if (   (rootNetOccurrence.getEntity() == deepNetOccurrence.getEntity())
-       and (rootNetOccurrence.getPath  () == deepNetOccurrence.getPath  ()) )
-      return deepNet;
-  }
-  return NULL;
+  DeepNet::Uplink* uplink = static_cast<DeepNet::Uplink*>
+    ( rootNetOccurrence.getProperty( DeepNet::Uplink::staticGetName() ));
+  if (not uplink) return NULL;
+  return uplink->getUplink();
 }
 
 void Cell::flattenNets (uint64_t flags )
@@ -821,7 +814,14 @@ void Cell::flattenNets (uint64_t flags )
 void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 // ****************************************************************
 {
-  cdebug_log(18,0) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
+  static set<string> excludeds;
+  flattenNets( instance, excludeds, flags );
+}
+
+void Cell::flattenNets ( const Instance* instance, const std::set<string>& excludeds, uint64_t flags )
+// ***************************************************************************************************
+{
+  cdebug_log(18,1) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
 
   UpdateSession::open();
 
@@ -837,6 +837,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 
     if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;
     if (net->isPower() or net->isGround() or net->isBlockage()) continue;
+    if (excludeds.find(getString(occurrence.getName())) != excludeds.end()) continue;
 
     HyperNet  hyperNet ( occurrence );
     if ( not occurrence.getPath().isEmpty() ) {
@@ -871,8 +872,12 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 
   for ( size_t i=0 ; i<hyperNets.size() ; ++i ) {
     DeepNet* deepNet = DeepNet::create( hyperNets[i] );
+    cdebug_log(18,1) << "Flattening hyper net: " << deepNet << endl;
     if (deepNet) deepNet->_createRoutingPads( flags );
+    cdebug_log(18,0) << "Done: " << deepNet << endl;
+    cdebug_tabw(18,-1);
   }
+  cdebug_log(18,0) << "Non-root HyperNet (DeepNet) done" << endl;
 
   unsigned int rpFlags = (flags & Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
     
@@ -880,10 +885,10 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     Net* net = static_cast<Net*>(topHyperNets[i].getNetOccurrence().getEntity());
 
     DebugSession::open( net, 18, 19 ); 
-    cdebug_log(18,1) << "Flattening top: " << net << endl;
+    cdebug_log(18,1) << "Flattening top net: " << net << endl;
 
     vector<Occurrence>  plugOccurrences;
-    for ( Occurrence plugOccurrence : topHyperNets[i].getLeafPlugOccurrences() )
+    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() )
       plugOccurrences.push_back( plugOccurrence );
 
     for ( Occurrence plugOccurrence : plugOccurrences ) {
@@ -906,7 +911,9 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     DebugSession::close();
   }
 
+  cdebug_log(18,0) << "Before closing UpdateSession" << endl;
   UpdateSession::close();
+  cdebug_log(18,-1) << "Cell::flattenNets() Done" << endl;
 }
 
 
@@ -958,6 +965,50 @@ void Cell::createRoutingPadRings(uint64_t flags)
 }
 
 
+void Cell::destroyPhysical()
+// *************************
+{
+  cdebug_log(18,0) << "Cell::destroyPhysical()" << endl;
+
+  UpdateSession::open();
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<RoutingPad*>(component)) removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+
+  vector<DeepNet*> deepNets;
+  for ( Net* net : getNets() ) {
+    DeepNet* deepNet = dynamic_cast<DeepNet*>( net );
+    if (deepNet) deepNets.push_back( deepNet );
+  }
+  for ( DeepNet* deepNet : deepNets ) {
+    cerr << "Removing DeepNet:" << deepNet << endl;
+    deepNet->destroy();
+  }
+
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<Plug   *>(component)) continue;
+      if (dynamic_cast<Contact*>(component)) removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<Plug*>(component)) continue;
+      removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+  UpdateSession::close();
+}
+
 Cell* Cell::getCloneMaster() const
 // *******************************
 {
@@ -994,11 +1045,10 @@ Cell* Cell::getClone()
   }
 
   Cell* clone = Cell::create( getLibrary(), uniquify->getUniqueName() );
-  clone->put           ( uniquify );
-  clone->setTerminal   ( isTerminal    () );
-  clone->setFlattenLeaf( isFlattenLeaf () );
-  clone->setPad        ( isPad         () );
-  clone->setAbutmentBox( getAbutmentBox() );
+  clone->put               ( uniquify );
+  clone->setTerminalNetlist( isTerminalNetlist () );
+  clone->setPad            ( isPad         () );
+  clone->setAbutmentBox    ( getAbutmentBox() );
 
   for ( Net* inet : getNets() ) {
     if (dynamic_cast<DeepNet*>(inet)) continue;
@@ -1150,32 +1200,6 @@ void Cell::_slaveAbutmentBox ( Cell* topCell )
   }
   put( slaveds );
   _flags.set( Flags::SlavedAb );
-
-//_changeQuadTree( topCell );
-}
-
-
-void Cell::_changeQuadTree ( Cell* topCell )
-// *****************************************
-{
-  bool isMaterialized = _flags.isset(Flags::Materialized);
-
-  unmaterialize();
-
-  if (topCell or _flags.isset(Flags::MergedQuadTree)) {
-    delete _sliceMap;
-    delete _quadTree;
-
-    if (topCell) {
-      _sliceMap = topCell->_getSliceMap();
-      _quadTree = topCell->_getQuadTree();
-    } else {
-      _sliceMap = new SliceMap();
-      _quadTree = new QuadTree();
-    }
-  }
-
-  if (isMaterialized) materialize();
 }
 
 
@@ -1198,7 +1222,6 @@ void Cell::_preDestroy()
 
   Markers   markers   = getMarkers       (); while ( markers  .getFirst() ) markers  .getFirst()->destroy();
   Instances instances = getSlaveInstances(); while ( instances.getFirst() ) instances.getFirst()->destroy();
-            instances = getInstances     (); while ( instances.getFirst() ) instances.getFirst()->destroy();
 
   Nets nets = getNets();
   while ( nets.getFirst() ) {
@@ -1208,13 +1231,17 @@ void Cell::_preDestroy()
   }
   for ( auto islave : _netAliasSet ) delete islave;
 
+  instances = getInstances();
+  vector<Instance*> inss;
+  for ( Instance* instance : getInstances() ) inss.push_back( instance );
+  for ( Instance* instance : inss ) instance->destroy();
+//while ( instances.getFirst() ) instances.getFirst()->destroy();
+
   for ( Slice* slice  : getSlices()  ) slice->_destroy();
   while ( not _extensionSlices.empty() ) _removeSlice( _extensionSlices.begin()->second );
 
-  if (not _flags.isset(Flags::MergedQuadTree)) {
-    delete _sliceMap;
-    delete _quadTree;
-  }
+  delete _sliceMap;
+  delete _quadTree;
  
   _library->_getCellMap()._remove( this );
 
@@ -1375,14 +1402,14 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
     if (not _flags) return "<NoFlags>";
 
     string s = "<";
-    if (_flags & Pad          ) { s += "Pad"; }
-    if (_flags & Terminal     ) { if (s.size() > 1) s += "|"; s += "Terminal"; }
-    if (_flags & FlattenLeaf  ) { if (s.size() > 1) s += "|"; s += "FlattenLeaf"; }
-    if (_flags & FlattenedNets) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
-    if (_flags & Placed       ) { if (s.size() > 1) s += "|"; s += "Placed"; }
-    if (_flags & Routed       ) { if (s.size() > 1) s += "|"; s += "Routed"; }
-    if (_flags & SlavedAb     ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
-    if (_flags & Materialized ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
+    if (_flags & Pad             ) { s += "Pad"; }
+    if (_flags & TerminalNetlist ) { if (s.size() > 1) s += "|"; s += "TerminalNetlist"; }
+    if (_flags & FlattenedNets   ) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
+    if (_flags & Placed          ) { if (s.size() > 1) s += "|"; s += "Placed"; }
+    if (_flags & Routed          ) { if (s.size() > 1) s += "|"; s += "Routed"; }
+    if (_flags & AbstractedSupply) { if (s.size() > 1) s += "|"; s += "AbstractedSupply"; }
+    if (_flags & SlavedAb        ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
+    if (_flags & Materialized    ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
     s += ">";
 
     return s;
@@ -1528,7 +1555,7 @@ Name Cell::InstanceMap::_getKey(Instance* instance) const
 unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
 // *******************************************************
 {
-  return name._getSharedName()->getId() / 8;
+  return name._getSharedName()->getHash() / 8;
 }
 
 Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
@@ -1643,7 +1670,7 @@ Name Cell::PinMap::_getKey(Pin* pin) const
 unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-  return (unsigned int)name._getSharedName()->getId() / 8;
+  return (unsigned int)name._getSharedName()->getHash() / 8;
 }
 
 Pin* Cell::PinMap::_getNextElement(Pin* pin) const

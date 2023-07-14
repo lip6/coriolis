@@ -1,20 +1,20 @@
-\hypertarget{classHurricane_1_1Entity}{}\section{Hurricane\+:\+:Entity Class Reference}
-\label{classHurricane_1_1Entity}\index{Hurricane\+::\+Entity@{Hurricane\+::\+Entity}}
+\hypertarget{classHurricane_1_1Entity}{}\doxysection{Hurricane\+::Entity Class Reference}
+\label{classHurricane_1_1Entity}\index{Hurricane::Entity@{Hurricane::Entity}}
 
 
-Occurrenceable objects root class ({\bfseries A\+PI}).  
+Occurrenceable objects root class ({\bfseries{API}}).  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Entity\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Entity\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{classHurricane_1_1Entity__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 virtual \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Entity_a42bdf015f583be477cc54b48652b1007}{get\+Cell}} () const =0
@@ -23,36 +23,36 @@ virtual \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \mbox{\hyperlink{classHurr
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-Occurrenceable objects root class ({\bfseries A\+PI}). 
+\doxysubsection{Detailed Description}
+Occurrenceable objects root class ({\bfseries{API}}). 
 
-\hypertarget{classHurricane_1_1Entity_secEntityIntro}{}\subsection{Introduction}\label{classHurricane_1_1Entity_secEntityIntro}
-Entities are abstract objects representing the category of occurrenceable objects.\hypertarget{classHurricane_1_1Entity_secEntityId}{}\subsection{Unique Identifier}\label{classHurricane_1_1Entity_secEntityId}
+\hypertarget{classHurricane_1_1Entity_secEntityIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Entity_secEntityIntro}
+Entities are abstract objects representing the category of occurrenceable objects.\hypertarget{classHurricane_1_1Entity_secEntityId}{}\doxysubsection{Unique Identifier}\label{classHurricane_1_1Entity_secEntityId}
 Each \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} is associated with a unique identifier (see Entity\+::get\+Id()). This identifier is used as a sorting key in the various Intrusive\+Map throughout \mbox{\hyperlink{namespaceHurricane}{Hurricane}} to ensure determinism. It came as a replacement of the object\textquotesingle{}s own address which is not suitable for this purpose.
 
-For S\+TL container, the \mbox{\hyperlink{classEntity_1_1CompareById}{Entity\+::\+Compare\+By\+Id}} functor is provided.
+For STL container, the \mbox{\hyperlink{classEntity_1_1CompareById}{Entity\+::\+Compare\+By\+Id}} functor is provided.
 
 The identifier is generated from an ever incrementing counter on 32 bits or 64 bits, depending on the target system architecture. If the 32/64 bit capacity is reached an exception is thrown. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Entity_a42bdf015f583be477cc54b48652b1007}\label{classHurricane_1_1Entity_a42bdf015f583be477cc54b48652b1007}} 
-\index{Hurricane\+::\+Entity@{Hurricane\+::\+Entity}!get\+Cell@{get\+Cell}}
-\index{get\+Cell@{get\+Cell}!Hurricane\+::\+Entity@{Hurricane\+::\+Entity}}
-\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+\index{Hurricane::Entity@{Hurricane::Entity}!getCell@{getCell}}
+\index{getCell@{getCell}!Hurricane::Entity@{Hurricane::Entity}}
+\doxysubsubsection{\texorpdfstring{getCell()}{getCell()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Entity\+::get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-{\bfseries Returns\+:} Returns the cell owning this entity (when the \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} is a \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} itself is returned) \mbox{\Hypertarget{classHurricane_1_1Entity_ad834f8ce33a08a13e2a88446696e63e7}\label{classHurricane_1_1Entity_ad834f8ce33a08a13e2a88446696e63e7}} 
-\index{Hurricane\+::\+Entity@{Hurricane\+::\+Entity}!get\+Bounding\+Box@{get\+Bounding\+Box}}
-\index{get\+Bounding\+Box@{get\+Bounding\+Box}!Hurricane\+::\+Entity@{Hurricane\+::\+Entity}}
-\subsubsection{\texorpdfstring{get\+Bounding\+Box()}{getBoundingBox()}}
+{\bfseries{Returns\+:}} Returns the cell owning this entity (when the \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} is a \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} itself is returned) \mbox{\Hypertarget{classHurricane_1_1Entity_ad834f8ce33a08a13e2a88446696e63e7}\label{classHurricane_1_1Entity_ad834f8ce33a08a13e2a88446696e63e7}} 
+\index{Hurricane::Entity@{Hurricane::Entity}!getBoundingBox@{getBoundingBox}}
+\index{getBoundingBox@{getBoundingBox}!Hurricane::Entity@{Hurricane::Entity}}
+\doxysubsubsection{\texorpdfstring{getBoundingBox()}{getBoundingBox()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Box}{Box}} Hurricane\+::\+Entity\+::get\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
 \begin{DoxyReturn}{Returns}
 Returns the bounding box of the entity. It is defined as the smallest box enclosing the entity or its constituents.
 \end{DoxyReturn}
-\begin{DoxyParagraph}{Remark\+: For the Plugs, which are not objects of the physical layout,}
-the returned envelope is a \mbox{\hyperlink{classHurricane_1_1Box}{Box}} of null dimensions (ponctual) centered on the location of the master \mbox{\hyperlink{classHurricane_1_1Net}{Net}} of the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}, to which has been applied the transformation associated to the \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} of the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+For the Plugs, which are not objects of the physical layout, the returned envelope is a \mbox{\hyperlink{classHurricane_1_1Box}{Box}} of null dimensions (ponctual) centered on the location of the master \mbox{\hyperlink{classHurricane_1_1Net}{Net}} of the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}, to which has been applied the transformation associated to the \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} of the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}}. 
+\end{DoxyRemark}
 
 
 Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a2cc2894b5e1c82b725dedcf1978dc773}{Hurricane\+::\+Routing\+Pad}}.

@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group__JsonSupport" kind="group">
+    <compoundname>JsonSupport</compoundname>
+    <title>JSON Support</title>
+    <innerclass refid="classHurricane_1_1JsonObject" prot="public">Hurricane::JsonObject</innerclass>
+    <innerclass refid="classHurricane_1_1JsonStack" prot="public">Hurricane::JsonStack</innerclass>
+    <briefdescription>
+<para>JSON Import/Export of the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="group__JsonSupport_1secJsonSupportIntro">
+<title>Introduction</title>
+<para>One key feature of the <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref> <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> is it&apos;s hierarchical managment. But unfortunatly the simple approach of saving a design <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> by <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref>, hierarchical level by hierarchical level makes it very difficult to save the trans-hierarchical informations (mainly is the occurrences)</para>
+<para>One solution is to save the design and all it&apos;s levels, down and including the standard cells. With all the levels saved, we then can add the occurrences and all the attached trans-hierarchical informations. We call that comprehensive saving of a design, a <emphasis>design blob</emphasis>.</para>
+<para>Instead of creating one more ad-hoc format, we just dump the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> objects in a mirror like way in JSON format.</para>
+<para>As it is a textual format, the generated files are larges. So the files are compressed through <computeroutput>gzip</computeroutput>.</para>
+</sect1>
+<sect1 id="group__JsonSupport_1secJsonSemantic">
+<title>JSON Additional Semantic</title>
+<para>To ease the work of the parser, some semantic has been added to the JSON objects representing a <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref> <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref>.<orderedlist>
+<listitem><para>The first key/value pair must have the key <computeroutput>&quot;@typename&quot;</computeroutput> and give the kind of <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> associated. The value is the string returned by <computeroutput><ref refid="classHurricane_1_1JsonObject_1a947e1c3f8dbae63bb2d086b5b827a2a5" kindref="member">JsonObject::getTypeName()</ref></computeroutput>.</para>
+</listitem><listitem><para>Attributes keys must start by a <computeroutput>&apos;_&apos;</computeroutput> character. (yes, I know, the C++ convention has changed and it should be put at the end).</para>
+</listitem><listitem><para>Collections or containers must be put <emphasis>after</emphasis> all the scalar attributes and their keys must start by a <computeroutput>&apos;+&apos;</computeroutput> character.</para>
+</listitem></orderedlist>
+</para>
+<para><programlisting filename=".json"><codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;Cell&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_id&quot;:<sp/>3,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_library&quot;:<sp/>&quot;RootLibrary.AllianceFramework.sxlib&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_name&quot;:<sp/>&quot;o3_x2&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_abutmentBox&quot;:<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;Box&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;_xMin&quot;:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;_yMin&quot;:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;_xMax&quot;:<sp/>72000,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;_yMax&quot;:<sp/>120000</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;+instanceMap&quot;:<sp/>[],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;+netMap&quot;:<sp/>[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>],</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="group__JsonSupport_1secJsonDriver">
+<title>JSON Driver Support</title>
+<para>The driver is implemented through overloads (template and non-template) of the <computeroutput>jsonWriter()</computeroutput> function. For the template overload to work, even for non-Hurricane classes, it is defined outside the <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref> namespace.</para>
+<para>For POD types, four overloads of <computeroutput>jsonWriter()</computeroutput> are defined:</para>
+<para><programlisting><codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>int*<sp/>v<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>v<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>std::string&amp;<sp/>key,<sp/>const<sp/>int*<sp/>value<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>std::string&amp;<sp/>key,<sp/><sp/><sp/><sp/><sp/><sp/><sp/>int<sp/><sp/>value<sp/>)</highlight></codeline>
+</programlisting></para>
+<para>The first two writes the object (here: <computeroutput>int</computeroutput>) &quot;as is&quot; while the two later writes a pair key/object.</para>
+<para>For other class/object that needs to be writen in the JSON file, they must provide a <computeroutput>toJson()</computeroutput> function. It doesn&apos;t even need to be virtual. For <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref>:</para>
+<para><programlisting><codeline><highlight class="normal">void<sp/><sp/>Point::toJson<sp/>(<sp/>JsonWriter*<sp/>w<sp/>)<sp/>const</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>w-&gt;startObject();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>jsonWrite(<sp/>w,<sp/>&quot;@typename&quot;,<sp/>&quot;Point&quot;<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>jsonWrite(<sp/>w,<sp/>&quot;_x&quot;,<sp/>getX()<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>jsonWrite(<sp/>w,<sp/>&quot;_y&quot;,<sp/>getY()<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>w-&gt;endObject();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This function allows three templates of <computeroutput>jsonWrite()</computeroutput> to be used with an object of class <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref>:</para>
+<para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>C&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>C*<sp/>object<sp/>);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>C&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>std::string&amp;<sp/>key,<sp/>C*<sp/>object<sp/>);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>C&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>jsonWrite<sp/>(<sp/>JsonWriter*<sp/>w,<sp/>const<sp/>std::string&amp;<sp/>key,<sp/>const<sp/>C*<sp/>object<sp/>);</highlight></codeline>
+</programlisting></para>
+<para>Note that through those three overloads we only provides support for pointers to object. The driving mechanism is designed in such a way that passing arguments by value is not supported for non-POD types. Trying to do so will result in an unsupported message inside the generated JSON file.</para>
+<sect2 id="group__JsonSupport_1secJsonDriverDBo">
+<title>DBos Special Case</title>
+<para>For <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> objects, a complete parallel hierarchy of JsonObjects mimicking the one of DBos has been implemented. The <computeroutput>toJson()</computeroutput> function is implemented in the <ref refid="classHurricane_1_1DBo" kindref="compound">DBo</ref> base object, and the derived classes must implement the following virtual functions:</para>
+<para><programlisting><codeline><highlight class="normal">class<sp/>DBo<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>void<sp/><sp/>_toJson<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>JsonWriter*<sp/>)<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>void<sp/><sp/>_toJsonCollections<sp/>(<sp/>JsonWriter*<sp/>)<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>void<sp/><sp/>_toJsonSignature<sp/><sp/><sp/>(<sp/>JsonWriter*<sp/>)<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/><sp/>toJson<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>JsonWriter*<sp/>)<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>void<sp/><sp/>toJsonSignature<sp/><sp/><sp/><sp/>(<sp/>JsonWriter*<sp/>)<sp/>const;</highlight></codeline>
+</programlisting></para>
+<para>The JSON driver functions is splitted in two parts:<itemizedlist>
+<listitem><para><computeroutput>_toJson()</computeroutput> must drive the scalar attributes.</para>
+</listitem><listitem><para><computeroutput>_toJsonCollections()</computeroutput> must drive the various collections or containers. This is to ensure that all the scalars attributes are put before the collections, event through inheritance.</para>
+</listitem></itemizedlist>
+</para>
+<para>The additionnal <computeroutput>toJsonSignature()</computeroutput> method provide the signature for an <ref refid="classHurricane_1_1Entity" kindref="compound">Entity</ref> which is used by an occurrence. The signature of an occurrence is needed when we create a JSON for a <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> only. In that case we cannot directly save the transhierarchical informations, so we need a way to characterize the deep <ref refid="classHurricane_1_1Entity" kindref="compound">Entity</ref> (which is not part of the saved <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref>). Most of the time, the signature is the scalar attributes of the occurrenced object, it is far from foolproof, but it will do for now.</para>
+</sect2>
+</sect1>
+<sect1 id="group__JsonSupport_1secJsonParser">
+<title>JSON Parser Support</title>
+<para>To enable JSON parsing support for an object, say <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref>, an associated <computeroutput>JsonPoint</computeroutput> class must be created. This class must be derived (directly or not) from <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref>. It must implement one static functions and four methods, as shown below.</para>
+<para><programlisting><codeline><highlight class="normal">class<sp/>JsonPoint<sp/>:<sp/>public<sp/>JsonObject<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>public:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>static<sp/><sp/>void<sp/><sp/><sp/><sp/><sp/><sp/><sp/>initialize<sp/>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>JsonPoint<sp/><sp/>(unsigned<sp/>long<sp/>flags);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>string<sp/><sp/><sp/><sp/><sp/>getTypeName()<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>JsonPoint*<sp/>clone<sp/><sp/><sp/><sp/><sp/><sp/>(unsigned<sp/>long<sp/>flags)<sp/>const;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>virtual<sp/>void<sp/><sp/><sp/><sp/><sp/><sp/><sp/>toData<sp/><sp/><sp/><sp/><sp/>(JsonStack&amp;);</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>initialize()</computeroutput> static function must be present in concrete class only. It is used to register the Json object into the parser during the static initialization of the program.</para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&quot;hurricane/Initializer.h&quot;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;hurricane/Point.h&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">Initializer&lt;JsonPoint&gt;<sp/><sp/>jsonPointInit<sp/>(<sp/>0<sp/>);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">void<sp/><sp/>JsonPoint::initialize<sp/>()</highlight></codeline>
+<codeline><highlight class="normal">{<sp/>JsonTypes::registerType(<sp/>new<sp/>JsonPoint<sp/>(JsonWriter::RegisterMode)<sp/>);<sp/>}</highlight></codeline>
+</programlisting></para>
+<para>The constructor has to declare requirements, attributes, and collections needed to build the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> object. Note the the requirements are not part of the objects but only needed to build it.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">JsonPoint::JsonPoint<sp/>(<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>flags<sp/>)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>:<sp/>JsonObject(flags)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>add(<sp/></highlight><highlight class="stringliteral">&quot;_x&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(int64_t)<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>add(<sp/></highlight><highlight class="stringliteral">&quot;_y&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">typeid</highlight><highlight class="normal">(int64_t)<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>getTypeName()</computeroutput> virtual function must return the typename used for the <computeroutput>&quot;@typename&quot;</computeroutput> key in the JSON file. Most of the time it&apos;s the same name as the object itself, but not always.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>JsonPoint::getTypeName<sp/>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline><highlight class="keyword"></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;Point&quot;</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>clone()</computeroutput> virtual function must return a brand new Json object of the same type. The datas of the orignal object <bold>must</bold> not be copied. The cloning is about the class type, not the contents.</para>
+<para><programlisting><codeline><highlight class="normal">JsonPoint*<sp/>JsonPoint::clone<sp/>(<sp/>unsigned<sp/>long<sp/>flags<sp/>)<sp/>const</highlight></codeline>
+<codeline><highlight class="normal">{<sp/>return<sp/>new<sp/>JsonPoint<sp/>(<sp/>flags<sp/>);<sp/>}</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>toData()</computeroutput> virtual function actually gather the attributes to recreate the <ref refid="classHurricane_1_1DataBase" kindref="compound">DataBase</ref> object. It needs the parser stack to pull the attributes and to push the created object.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>JsonPoint::toData<sp/>(<sp/>JsonStack&amp;<sp/>stack<sp/>)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>check(<sp/>stack,<sp/></highlight><highlight class="stringliteral">&quot;JsonPoint::toData&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Point<sp/>point<sp/>(<sp/><ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">DbU::fromDb</ref>(get&lt;int64_t&gt;(stack,</highlight><highlight class="stringliteral">&quot;_x&quot;</highlight><highlight class="normal">))</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="classHurricane_1_1DbU_1aec69d65ec1651c2feea24c5931f4580b" kindref="member">DbU::fromDb</ref>(get&lt;int64_t&gt;(stack,</highlight><highlight class="stringliteral">&quot;_y&quot;</highlight><highlight class="normal">))<sp/>);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>update(<sp/>stack,<sp/>point<sp/>);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<sect2 id="group__JsonSupport_1secJsonArray">
+<title>JSON Array</title>
+<para>JSON array are not translated into containers of any kind. They are simply ignored (from the stack point of view). Objects in array comes from a great variety of containers including <ref refid="classHurricane_1_1Collection" kindref="compound">Hurricane::Collection</ref>, in almost all cases, their very constructors are responsibles for inserting the object in the relevant container/collection. So there is no need to build a mechanism to keep track of all the objects in an array through a temporary container.</para>
+<para>The corollary is that an object in an array must be able to extract the relevant context information from the stack. Say, if we are in an array of components, they must belong to a <ref refid="classHurricane_1_1Net" kindref="compound">Net</ref>, which must be present in the stack with a key &quot;.Net&quot;.</para>
+</sect2>
+<sect2 id="group__JsonSupport_1secJsonStack">
+<title>Parser Stack</title>
+<para>While performing the parsing, the parser maintain a stack (<ref refid="classHurricane_1_1JsonStack" kindref="compound">JsonStack</ref>) containing:<itemizedlist>
+<listitem><para>The stack of attributes translateds, but not consumeds by the parser and the objects currently openeds (that is, which parsing is not completed). This stack contains POD or <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref> objects (value or pointer). It is a vector of pair <computeroutput></computeroutput>(key,value) where the <emphasis>key</emphasis> is either the attribute name (<computeroutput>_boundingBox</computeroutput>, <computeroutput>_xMin</computeroutput>, <computeroutput>_masterCell</computeroutput>, ...) or the class name (<computeroutput></computeroutput>.<ref refid="classHurricane_1_1Net" kindref="compound">Net</ref>, <computeroutput></computeroutput>.<ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref>, ...).</para>
+</listitem><listitem><para>The stack of JSON objects currently openeds, thoses objects are all derived classes of <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref>.</para>
+</listitem><listitem><para>A stack of currently opened DBo*. This stack is somewhat redundant with the first, but is needed because <computeroutput>boost::any_cast&lt;&gt;</computeroutput> is not able to perform dynamic conversions. You have to know the exact for the conversion to work. Here, everything is DBo*, so the problem do not arises.</para>
+</listitem></itemizedlist>
+</para>
+</sect2>
+<sect2 id="group__JsonSupport_1secJsonCycle">
+<title>JsonObject Life Cycle</title>
+<para><programlisting filename=".json"><codeline><highlight class="normal">{<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#<sp/>JsonDummy()<sp/><sp/>(1).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_typename&quot;:<sp/>&quot;Net&quot;,<sp/><sp/><sp/><sp/><sp/><sp/>#<sp/>JsonNet()<sp/><sp/>CTOR<sp/>(2).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_id&quot;:<sp/>14622,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_name&quot;:<sp/>&quot;saccu(0)&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_isGlobal&quot;:<sp/>false,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_isExternal&quot;:<sp/>false,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_isAutomatic&quot;:<sp/>false,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_type&quot;:<sp/>&quot;LOGICAL&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;_direction&quot;:<sp/>&quot;----<sp/>(UNDEFINED)&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;+aliases&quot;:<sp/>[],<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#<sp/>JsonNet::toData()<sp/><sp/>(3).</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&quot;+componentSet&quot;:<sp/>[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;RoutingPad&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_id&quot;:<sp/>27410,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_bodyHook&quot;:<sp/>&quot;Contact::AnchorHook.46566&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_occurrence&quot;:<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;Occurrence&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_path&quot;:<sp/>&quot;14720.14976&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_entity&quot;:<sp/>3888</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;+propertySet&quot;:<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;RoutingPad&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_id&quot;:<sp/>27409,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_bodyHook&quot;:<sp/>&quot;Contact::AnchorHook.46574&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_occurrence&quot;:<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@typename&quot;:<sp/>&quot;Occurrence&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_path&quot;:<sp/>&quot;14654.18564&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;_entity&quot;:<sp/>4529</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;+propertySet&quot;:<sp/>[]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#<sp/>~JsonNet()<sp/><sp/>DTOR<sp/>(4).<sp/></highlight></codeline>
+</programlisting></para>
+<para>At <computeroutput></computeroutput>(1) , before <computeroutput>_typename</computeroutput> is encountered, we know that a new object is about to be created, but do not know what is type will be. So we push on top of the stack a <computeroutput>JsonDummy</computeroutput>.</para>
+<para>At <computeroutput></computeroutput>(2) , the <computeroutput>_typename</computeroutput> allows us to create the right kind of <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref>, which will <emphasis>replace</emphasis> the <computeroutput>JsonDummy</computeroutput> on top of the stack.</para>
+<para>At <computeroutput></computeroutput>(3) , a first non-POD attribute of JsonNet is encountered. This triggers the call to <computeroutput><ref refid="classHurricane_1_1JsonObject_1a57a845ca64ac8912b35c4dbf75723af6" kindref="member">JsonObject::toData()</ref></computeroutput>, which creates the <ref refid="namespaceHurricane" kindref="compound">Hurricane</ref> object <ref refid="classHurricane_1_1Net" kindref="compound">Net</ref>, and put it back on the attribute stack with the key <computeroutput>&quot;.Net&quot;</computeroutput> (because it is <emphasis>not</emphasis> an attribute).</para>
+<para>At <computeroutput></computeroutput>(4) , the Json parser knows that the current <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref> is finished, so it removes JsonNet from the stack and destroy it.</para>
+<para>So, if you need to perform specific post-processing that can only take place <computeroutput>after</computeroutput> the object and all it&apos;s sub-objects has been fully parsed, you may do it in the destructor of the <ref refid="classHurricane_1_1JsonObject" kindref="compound">JsonObject</ref>. For example, this technique is used to rebuild the rings of a <ref refid="classHurricane_1_1Net" kindref="compound">Net</ref>. </para>
+</sect2>
+</sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

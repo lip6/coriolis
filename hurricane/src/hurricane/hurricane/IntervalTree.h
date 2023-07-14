@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2018-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2018-2023, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -34,11 +34,11 @@
 //       Third edition, MIT press, 2011, p. 348.
 
 
-#ifndef  HURRICANE_INTERVAL_TREE_H
-#define  HURRICANE_INTERVAL_TREE_H
-
+#pragma  once
 #include "hurricane/Interval.h"
 #include "hurricane/RbTree.h"
+
+#include <algorithm>
 
 namespace Hurricane {
 
@@ -55,6 +55,7 @@ namespace Hurricane {
       inline Data&       getData          () const;
       inline DbU::Unit   getChildsVMax    () const;
       inline DbU::Unit   updateChildsVMax ( DbU::Unit lvmax, DbU::Unit rvmax );
+      inline bool        operator==       ( const IntervalData& ) const;
              string      _getString       () const;
              Record*     _getRecord       () const;
     private:
@@ -62,7 +63,7 @@ namespace Hurricane {
       Data       data_;
   };
 
-  
+
   template< typename Data >
   inline  IntervalData<Data>::IntervalData ()
     : Interval(1,-1) 
@@ -91,7 +92,17 @@ namespace Hurricane {
 
   template< typename Data >
   inline DbU::Unit  IntervalData<Data>::updateChildsVMax ( DbU::Unit lvmax, DbU::Unit rvmax )
-  { childsVMax_ = std::max( getVMax(), std::max( lvmax, rvmax ) ); return childsVMax_; }
+  {
+    cdebug_log(0,0) << "IntervalData::updateChildsVMax() " << DbU::getValueString(lvmax)
+                    << " " << DbU::getValueString(lvmax)
+                    << " " << this << endl;
+    childsVMax_ = std::max( getVMax(), std::max( lvmax, rvmax ) ); return childsVMax_;
+  }
+
+  
+  template< typename Data >
+  inline bool  IntervalData<Data>::operator== (  const IntervalData<Data>& other ) const
+  { return Interval::operator==(*this) and (data_ == other.data_); }
 
 
   template< typename Data >
@@ -115,14 +126,35 @@ namespace Hurricane {
     return record;
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::IntervalDataCompare".
+
+  template< typename Data, typename DataCompare=std::less<Data> >
+  class IntervalDataCompare {
+    public:
+      inline bool  operator() ( const IntervalData<Data>& lhs, const IntervalData<Data>& rhs ) const
+      {
+        static Interval::CompareByMinMax compare;
+        static DataCompare               dataCompare;
+        if (   (lhs.getVMin() == rhs.getVMin())
+           and (lhs.getVMax() == rhs.getVMax())) {
+          cdebug_log(0,0) << "IntervalDataCompare::operator<() - Data fallback." << endl;
+          cdebug_log(0,0) << "| " << lhs.getData() << endl;
+          return dataCompare( lhs.getData(), rhs.getData() );
+        }
+        return compare( lhs, rhs );
+      }
+  };
+  
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::IntervalTree".
 
-
-  template< typename Data >
-  class IntervalTree : public RbTree< IntervalData<Data>, Interval::CompareByMin > {
+  template< typename Data, typename DataCompare=std::less<Data> >
+  class IntervalTree : public RbTree< IntervalData<Data>, IntervalDataCompare<Data,DataCompare> > {
     public:
-      typedef  RbTree< IntervalData<Data>, Interval::CompareByMin >  Super;
+      typedef  RbTree< IntervalData<Data>, IntervalDataCompare<Data,DataCompare> >  Super;
     public:
       class overlap_iterator : public Super::iterator {
         public:
@@ -169,31 +201,39 @@ namespace Hurricane {
               size_t            getThickness     () const;
               overlap_iterator  beginOverlaps    ( const Interval& ) const;
       inline  OverlapElements   getOverlaps      ( const Interval& ) const;
+              void              checkVMax        () const;
+              void              checkVMax        ( typename Super::Node* node ) const;
     private:
       inline  void              updateChildsVMax ( typename Super::Node* );
   };
 
 
-  template< typename Data >
-  IntervalTree<Data>::overlap_iterator::overlap_iterator ( const typename Super::Node* node, const Interval& overlap )
+  template< typename Data, typename DataCompare >
+  IntervalTree<Data,DataCompare>::overlap_iterator::overlap_iterator ( const typename Super::Node* node, const Interval& overlap )
     : Super::iterator(node)
     , overlap_(overlap)
-  { }
-
-
-  template< typename Data >
-  typename IntervalTree<Data>::overlap_iterator& IntervalTree<Data>::overlap_iterator::operator++ ()
   {
-    while (this->isValid()) {
+    cdebug_log(0,0) << "IntervalTree::overlap_iterator CTOR "
+                    << (node ? ::getString(node->getValue()) : "node=NULL")
+                    << " " << overlap << endl;
+  }
+
+
+  template< typename Data, typename DataCompare >
+  typename IntervalTree<Data,DataCompare>::overlap_iterator&
+           IntervalTree<Data,DataCompare>::overlap_iterator::operator++ ()
+  {
+    cdebug_log(0,0) << "IntervalTree::overlap_iterator::operator++()" << endl;
+    while ( true ) {
       Super::iterator::operator++();
+      if (not this->isValid()) break;
 
-      cdebug_log(0,0) << "IntervalTree::overlap_iterator::operator++() "
-                      << ::getString(this->getNode()) << std::endl;
+      cdebug_log(0,0) << "  ==> " << ::getString(this->getNode()->getValue()) << std::endl;
 
-      if (this->getNode()->getValue().intersect(overlap_,true)) break;
-      cdebug_log(0,0) << "NO intersections" << endl;
-      if (overlap_.inferior(this->getNode()->getValue(),true)) {
-        cdebug_log(0,0) << "Node is inferior, stop here." << endl;
+      if (this->getNode()->getValue().intersect(overlap_,false)) break;
+      cdebug_log(0,0) << "  NO intersections" << endl;
+      if (overlap_.inferior(this->getNode()->getValue(),false)) {
+        cdebug_log(0,0) << "  Node is inferior, stop here." << endl;
         this->setNode( NULL );
         break;
       }
@@ -206,44 +246,45 @@ namespace Hurricane {
 // Class  :  "Hurricane::IntervalTree::OverlapOverlapElements" (implementation)
 
   
-  template< typename Data >
-  inline IntervalTree<Data>::OverlapElements::Locator::Locator ( const Locator &locator )
+  template< typename Data, typename DataCompare >
+  inline IntervalTree<Data,DataCompare>::OverlapElements::Locator::Locator ( const Locator &locator )
     : Hurricane::Locator< IntervalData<Data> >()
     , iterator_(locator.iterator_)
   { }
 
 
-  template< typename Data >
-  IntervalTree<Data>::OverlapElements::Locator::Locator ( const IntervalTree<Data>& tree, const Interval& span )
+  template< typename Data, typename DataCompare >
+  IntervalTree<Data,DataCompare>::OverlapElements::Locator::Locator ( const IntervalTree<Data,DataCompare>& tree, const Interval& span )
     : Hurricane::Locator< IntervalData<Data> >()
     , iterator_(tree.beginOverlaps(span))
   { }
 
 
-  template< typename Data >
-  typename IntervalTree<Data>::OverlapElements::Locator* IntervalTree<Data>::OverlapElements::Locator::getClone () const
+  template< typename Data, typename DataCompare >
+  typename IntervalTree<Data,DataCompare>::OverlapElements::Locator*
+           IntervalTree<Data,DataCompare>::OverlapElements::Locator::getClone () const
   { return new Locator(*this); }
 
 
-  template< typename Data >
-  IntervalData<Data>  IntervalTree<Data>::OverlapElements::Locator::getElement () const
+  template< typename Data, typename DataCompare >
+  IntervalData<Data>  IntervalTree<Data,DataCompare>::OverlapElements::Locator::getElement () const
   { return (*iterator_); }
 
 
-  template< typename Data >
-  bool  IntervalTree<Data>::OverlapElements::Locator::isValid () const
+  template< typename Data, typename DataCompare >
+  bool  IntervalTree<Data,DataCompare>::OverlapElements::Locator::isValid () const
   { return iterator_.isValid(); }
 
 
-  template< typename Data >
-  void  IntervalTree<Data>::OverlapElements::Locator::progress ()
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::OverlapElements::Locator::progress ()
   {
     if (isValid()) ++iterator_;
   }
 
 
-  template< typename Data >
-  std::string  IntervalTree<Data>::OverlapElements::Locator::_getString () const
+  template< typename Data, typename DataCompare >
+  std::string  IntervalTree<Data,DataCompare>::OverlapElements::Locator::_getString () const
   {
     std::string s = "<" + _TName("OverlapElements::Locator")
                         + ">";
@@ -251,34 +292,34 @@ namespace Hurricane {
   }
 
 
-  template< typename Data >
-  inline IntervalTree<Data>::OverlapElements::OverlapElements ( const IntervalTree& tree, const Interval& span )
+  template< typename Data, typename DataCompare >
+  inline IntervalTree<Data,DataCompare>::OverlapElements::OverlapElements ( const IntervalTree& tree, const Interval& span )
     : Collection< IntervalData<Data> >()
     , tree_(tree)
     , span_(span)
   { }
 
 
-  template< typename Data >
-  inline IntervalTree<Data>::OverlapElements::OverlapElements ( const OverlapElements& elements )
+  template< typename Data, typename DataCompare >
+  inline IntervalTree<Data,DataCompare>::OverlapElements::OverlapElements ( const OverlapElements& elements )
     : Collection< IntervalData<Data> >()
     , tree_(elements.tree_)
     , span_(elements.span_)
   { }
 
 
-  template< typename Data >
-  Collection< IntervalData<Data> >* IntervalTree<Data>::OverlapElements::getClone () const
+  template< typename Data, typename DataCompare >
+  Collection< IntervalData<Data> >* IntervalTree<Data,DataCompare>::OverlapElements::getClone () const
   { return new OverlapElements(*this); }
 
 
-  template< typename Data >
-  typename IntervalTree<Data>::OverlapElements::Locator* IntervalTree<Data>::OverlapElements::getLocator () const
+  template< typename Data, typename DataCompare >
+  typename IntervalTree<Data,DataCompare>::OverlapElements::Locator* IntervalTree<Data,DataCompare>::OverlapElements::getLocator () const
   { return new Locator( tree_, span_ ); }
 
 
-  template< typename Data >
-  std::string  IntervalTree<Data>::OverlapElements::_getString () const
+  template< typename Data, typename DataCompare >
+  std::string  IntervalTree<Data,DataCompare>::OverlapElements::_getString () const
   {
     std::string s = "<" + _TName("OverlapElements") + " "
                         + getString(tree_)
@@ -291,39 +332,45 @@ namespace Hurricane {
 // Class  :  "Hurricane::IntervalTree" (implementation).
 
 
-  template< typename Data >
-  inline void  IntervalTree<Data>::updateChildsVMax ( typename Super::Node* node )
+  template< typename Data, typename DataCompare >
+  inline void  IntervalTree<Data,DataCompare>::updateChildsVMax ( typename Super::Node* node )
   {
+    cdebug_log(0,1) << "IntervalTree::updateChildsVMax() " << node->getValue() << endl;
     DbU::Unit lchildVMax = (node->getLeft ()) ? node->getLeft ()->getValue().getChildsVMax() : node->getValue().getVMax();
     DbU::Unit rchildVMax = (node->getRight()) ? node->getRight()->getValue().getChildsVMax() : node->getValue().getVMax();
 
     const_cast< IntervalData<Data>& >( node->getValue() ).updateChildsVMax( lchildVMax, rchildVMax );
+    cdebug_tabw(0,-1);
   }
 
 
-  template< typename Data >
-  void  IntervalTree<Data>::postRotateLeft ( typename Super::Node* node )
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::postRotateLeft ( typename Super::Node* node )
   {
+    cdebug_log(0,1) << "IntervalTree::postRotateLeft() " << node->getValue() << endl;
+    updateChildsVMax( node );
+    if (node->getParent()) updateChildsVMax( node->getParent() );
+    cdebug_tabw(0,-1);
+  }
+
+  
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::postRotateRight ( typename Super::Node* node )
+  {
+    cdebug_log(0,0) << "IntervalTree::postRotateRight() " << node->getValue() << endl;
     updateChildsVMax( node );
     if (node->getParent()) updateChildsVMax( node->getParent() );
   }
 
   
-  template< typename Data >
-  void  IntervalTree<Data>::postRotateRight ( typename Super::Node* node )
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::postInsert ( typename Super::Node* node )
   {
-    updateChildsVMax( node );
-    if (node->getParent()) updateChildsVMax( node->getParent() );
-  }
-
-  
-  template< typename Data >
-  void  IntervalTree<Data>::postInsert ( typename Super::Node* node )
-  {
-    cdebug_log(0,1) << "IntervalTree::postInsert() " << node << std::endl;
+    cdebug_log(0,1) << "IntervalTree::postInsert() "
+                    << ((node) ? ::getString(node->getValue()) : "node=NULL") << std::endl;
 
     while ( node ) {
-      cdebug_log(0,0) << "| " << node << std::endl;
+      cdebug_log(0,0) << "| " << node->getValue() << std::endl;
 
       updateChildsVMax( node );
       node = node->getParent();
@@ -333,26 +380,38 @@ namespace Hurricane {
   }
 
   
-  template< typename Data >
-  void  IntervalTree<Data>::postRemove ( typename Super::Node* node )
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::postRemove ( typename Super::Node* node )
   {
+    cdebug_log(0,1) << "IntervalTree::postRemove() "
+                    << ((node) ? ::getString(node->getValue()) : "node=NULL") << std::endl;
+
+    if (not node) {
+      cdebug_tabw(0,-1);
+      return;
+    }
+    
     typename Super::Node* parent = node->getParent();
     if (parent) {
-      typename Super::Node* child = NULL;
+      DbU::Unit childsVMax = parent->getValue().getVMax();
+      typename Super::Node* child1 = parent->getLeft ();
+      typename Super::Node* child2 = parent->getRight();
+      if (child1 == node) std::swap( child1, child2 );
+      if (child1)             childsVMax = std::max( childsVMax, child1->getValue().getChildsVMax() );
+      if (child2->getLeft ()) childsVMax = std::max( childsVMax, child2->getLeft ()->getValue().getChildsVMax() );
+      if (child2->getRight()) childsVMax = std::max( childsVMax, child2->getRight()->getValue().getChildsVMax() );
 
-      if (parent->hasLeftChild(node)) child = parent->getRight();
-      else                            child = parent->getLeft ();
-
-      DbU::Unit childVMax = (child) ? child->getValue().getChildsVMax() : parent->getValue().getVMax();
-      const_cast< IntervalData<Data>& >( parent->getValue() ).updateChildsVMax( childVMax, childVMax );
+      const_cast< IntervalData<Data>& >( parent->getValue() ).updateChildsVMax( childsVMax, childsVMax );
 
       postInsert( parent->getParent() );
     }
+
+    cdebug_tabw(0,-1);
   }
 
 
-  template< typename Data >
-  size_t  IntervalTree<Data>::getThickness () const
+  template< typename Data, typename DataCompare >
+  size_t  IntervalTree<Data,DataCompare>::getThickness () const
   {
     cdebug_log(0,0) << "IntervalTree::getThickness() " << std::endl;
 
@@ -380,36 +439,70 @@ namespace Hurricane {
   }
   
 
-  template< typename Data >
-  typename IntervalTree<Data>::overlap_iterator  IntervalTree<Data>::beginOverlaps ( const Interval& overlap ) const
+  template< typename Data, typename DataCompare >
+  typename IntervalTree<Data,DataCompare>::overlap_iterator
+           IntervalTree<Data,DataCompare>::beginOverlaps ( const Interval& overlap ) const
   {
     cdebug_log(0,0) << "IntervalTree::beginOverlaps() " << overlap << std::endl;
 
     const typename Super::Node* current  = this->getRoot();
-    const typename Super::Node* leftMost = NULL;
+    const typename Super::Node* leftMost = nullptr;
     while ( current ) {
-      cdebug_log(0,0) << "| " << ::getString(current) << endl; 
+      cdebug_log(0,0) << "| " << ::getString(current->getValue()) << endl; 
 
-      if (current->getValue().intersect(overlap)) leftMost = current;
+      if (current->getValue().intersect(overlap,false)) {
+        cdebug_log(0,0) << "* Leftmost candidate." << endl;
+        leftMost = current;
+      }
       if (    current->getLeft()
-         and (overlap.getVMin() < current->getLeft()->getValue().getChildsVMax()) )
-        current = current->getLeft();
-      else
-        current = current->getRight();
+         and (overlap.getVMin() < current->getLeft()->getValue().getChildsVMax()) ) {
+        current  = current->getLeft();
+        leftMost = nullptr;
+      } else {
+        if (not leftMost)
+          current = current->getRight();
+        else
+          current = nullptr;
+      }
     }
     return overlap_iterator( leftMost, overlap );
   }
   
 
-  template< typename Data >
-  typename IntervalTree<Data>::OverlapElements  IntervalTree<Data>::getOverlaps ( const Interval& overlap ) const
+  template< typename Data, typename DataCompare >
+  typename IntervalTree<Data,DataCompare>::OverlapElements
+           IntervalTree<Data,DataCompare>::getOverlaps ( const Interval& overlap ) const
   {
     cdebug_log(0,0) << "IntervalTree::getOverlaps() " << overlap << std::endl;
     return OverlapElements( *this, overlap );
   }
 
+  
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::checkVMax () const
+  {
+    checkVMax( this->getRoot() );
+  }
+
+
+  template< typename Data, typename DataCompare >
+  void  IntervalTree<Data,DataCompare>::checkVMax ( typename Super::Node* node ) const
+  {
+    if (not node) return;
+    
+    DbU::Unit lchildVMax = (node->getLeft ()) ? node->getLeft ()->getValue().getChildsVMax() : node->getValue().getVMax();
+    DbU::Unit rchildVMax = (node->getRight()) ? node->getRight()->getValue().getChildsVMax() : node->getValue().getVMax();
+    DbU::Unit childsVMax = std::max( lchildVMax, rchildVMax );
+    childsVMax = std::max( childsVMax, node->getValue().getVMax() );
+
+    if (node->getValue().getChildsVMax() != childsVMax) {
+      cerr << "ChildVMax discrepency on vmax=" << DbU::getValueString(childsVMax)
+           << " " << ::getString(node->getValue()) << endl;
+    }
+
+    checkVMax( node->getLeft() );
+    checkVMax( node->getRight() );
+  }
 
 
 }  // HUrricane namespace.
-
-#endif  // HURRICANE_INTERVAL_TREE_H

@@ -1,30 +1,30 @@
-\hypertarget{classHurricane_1_1Component}{}\section{Hurricane\+:\+:Component Class Reference}
-\label{classHurricane_1_1Component}\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}}
+\hypertarget{classHurricane_1_1Component}{}\doxysection{Hurricane\+::Component Class Reference}
+\label{classHurricane_1_1Component}\index{Hurricane::Component@{Hurricane::Component}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Component}{Component}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Component}{Component}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Component\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Component\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[width=350pt]{classHurricane_1_1Component__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Classes}
+\doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classHurricane_1_1Component_1_1BodyHook}{Body\+Hook}}
 \end{DoxyCompactItemize}
-\subsection*{Public Types}
+\doxysubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
 typedef \mbox{\hyperlink{classHurricane_1_1Go}{Go}} \mbox{\hyperlink{classHurricane_1_1Component_a3911e94f9d220eb809d349b1181034e3}{Inherit}}
 \end{DoxyCompactItemize}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}{get\+Net}} () const
@@ -35,9 +35,9 @@ typedef \mbox{\hyperlink{classHurricane_1_1Go}{Go}} \mbox{\hyperlink{classHurric
 \item 
 virtual \mbox{\hyperlink{namespaceHurricane_a9dcd9b74dc5e2b51bec7a13c25807e02}{Hooks}} \mbox{\hyperlink{classHurricane_1_1Component_a1fc513b9465b2b8c22f41d56bf775594}{get\+Hooks}} () const
 \item 
-virtual \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{getX}} () const =0
+virtual \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{getX}} () const =0
 \item 
-virtual \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{getY}} () const =0
+virtual \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{getY}} () const =0
 \item 
 virtual \mbox{\hyperlink{classHurricane_1_1Point}{Point}} \mbox{\hyperlink{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}{get\+Position}} () const
 \item 
@@ -49,76 +49,76 @@ virtual \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \mbox{\hyperlink{classHurr
 \item 
 \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} \mbox{\hyperlink{classHurricane_1_1Component_af6d6b7c6b3cb18754cfa02bc5fb1e754}{get\+Slave\+Components}} () const
 \end{DoxyCompactItemize}
-\subsection*{Static Public Member Functions}
+\doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 static \mbox{\hyperlink{namespaceHurricane_acbfacb3aada84aa054e587817f204e90}{Component\+Filter}} \mbox{\hyperlink{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}{get\+Is\+Under\+Filter}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area)
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Component}{Component}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Component}{Component}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Component_secComponentIntro}{}\subsection{Introduction}\label{classHurricane_1_1Component_secComponentIntro}
-Components are the abstract objects representing the category of net components (segments, contacts, pads, plugs,...). Each component knows its net, its layer and has a \char`\"{}body\char`\"{}.\hypertarget{classHurricane_1_1Component_secComponentConceptOfLocation}{}\subsection{Concept of Location}\label{classHurricane_1_1Component_secComponentConceptOfLocation}
+\hypertarget{classHurricane_1_1Component_secComponentIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Component_secComponentIntro}
+Components are the abstract objects representing the category of net components (segments, contacts, pads, plugs,...). Each component knows its net, its layer and has a \char`\"{}body\char`\"{}.\hypertarget{classHurricane_1_1Component_secComponentConceptOfLocation}{}\doxysubsection{Concept of Location}\label{classHurricane_1_1Component_secComponentConceptOfLocation}
 Some components (for instance the segments) bear on contacts or other segments, more precisely they bear an extremity (the origin or the extremity), possibly through an offset on other components. The real location of the concerned part is therefore relative to the location of the component on which this part bears.
 
-For that purpose each components must be able to return a location from which a relative calculations can be done. The methods {\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}}} and {\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}}} provide this information and must be overloaded for each sub-\/type of component in oder to get the desired effect.
+For that purpose each components must be able to return a location from which a relative calculations can be done. The methods {\bfseries{\mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}}}} and {\bfseries{\mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}}}} provide this information and must be overloaded for each sub-\/type of component in oder to get the desired effect.
 
-\begin{DoxyParagraph}{Remark\+: The fact that a null value is systematically returned by one }
-of this methods means that the locations are computed relative to a null value, which is equivalent to say they are absolute values (see for instance the \mbox{\hyperlink{classHurricane_1_1Horizontal}{Horizontal}} segment whose \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}} returns always null, while \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}} return the ordinate of its axis).
-\end{DoxyParagraph}
-\hypertarget{classHurricane_1_1Component_secComponentDestruction}{}\subsection{Destruction}\label{classHurricane_1_1Component_secComponentDestruction}
+\begin{DoxyRemark}{Remarks}
+The fact that a null value is systematically returned by one of this methods means that the locations are computed relative to a null value, which is equivalent to say they are absolute values (see for instance the \mbox{\hyperlink{classHurricane_1_1Horizontal}{Horizontal}} segment whose \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}} returns always null, while \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}} return the ordinate of its axis).
+\end{DoxyRemark}
+\hypertarget{classHurricane_1_1Component_secComponentDestruction}{}\doxysubsection{Destruction}\label{classHurricane_1_1Component_secComponentDestruction}
 When a component is destroyed, all components which are anchored on its body (through the body hook) are also destroyed. This may recursively propagate to other components anchored on the body of those last ones.
 
-Rings are reorganized such that the connectivity remains invariant.\hypertarget{classHurricane_1_1Component_secComponentPredefinedFilters}{}\subsection{Predefined filters}\label{classHurricane_1_1Component_secComponentPredefinedFilters}
-{\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}{Component\+::get\+Is\+Under\+Filter}}} 
+Rings are reorganized such that the connectivity remains invariant.\hypertarget{classHurricane_1_1Component_secComponentPredefinedFilters}{}\doxysubsection{Predefined filters}\label{classHurricane_1_1Component_secComponentPredefinedFilters}
+{\bfseries{\mbox{\hyperlink{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}{Component\+::get\+Is\+Under\+Filter}}}} 
 
-\subsection{Member Typedef Documentation}
+\doxysubsection{Member Typedef Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Component_a3911e94f9d220eb809d349b1181034e3}\label{classHurricane_1_1Component_a3911e94f9d220eb809d349b1181034e3}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!Inherit@{Inherit}}
-\index{Inherit@{Inherit}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{Inherit}{Inherit}}
+\index{Hurricane::Component@{Hurricane::Component}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{Inherit}{Inherit}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Component_a3911e94f9d220eb809d349b1181034e3}{Hurricane\+::\+Component\+::\+Inherit}}}
 
 Useful for calling upon methods of the base class without knowing it. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}\label{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Net@{get\+Net}}
-\index{get\+Net@{get\+Net}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Net()}{getNet()}}
+\index{Hurricane::Component@{Hurricane::Component}!getNet@{getNet}}
+\index{getNet@{getNet}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getNet()}{getNet()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ Hurricane\+::\+Component\+::get\+Net (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the net owning the component. 
+{\bfseries{Returns\+:}} the net owning the component. 
 
 Referenced by Hurricane\+::\+Plug\+::is\+Connected().
 
 \mbox{\Hypertarget{classHurricane_1_1Component_ab701515debfdf1bf4142d4d917aaab1d}\label{classHurricane_1_1Component_ab701515debfdf1bf4142d4d917aaab1d}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Rubber@{get\+Rubber}}
-\index{get\+Rubber@{get\+Rubber}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Rubber()}{getRubber()}}
+\index{Hurricane::Component@{Hurricane::Component}!getRubber@{getRubber}}
+\index{getRubber@{getRubber}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getRubber()}{getRubber()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}} $\ast$ Hurricane\+::\+Component\+::get\+Rubber (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the rubber associated to the component (may be N\+U\+LL). \mbox{\Hypertarget{classHurricane_1_1Component_a19f06d7cad163bab3b97a13f4736c9d1}\label{classHurricane_1_1Component_a19f06d7cad163bab3b97a13f4736c9d1}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Body\+Hook@{get\+Body\+Hook}}
-\index{get\+Body\+Hook@{get\+Body\+Hook}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Body\+Hook()}{getBodyHook()}}
+{\bfseries{Returns\+:}} the rubber associated to the component (may be NULL). \mbox{\Hypertarget{classHurricane_1_1Component_a19f06d7cad163bab3b97a13f4736c9d1}\label{classHurricane_1_1Component_a19f06d7cad163bab3b97a13f4736c9d1}} 
+\index{Hurricane::Component@{Hurricane::Component}!getBodyHook@{getBodyHook}}
+\index{getBodyHook@{getBodyHook}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getBodyHook()}{getBodyHook()}}
 {\footnotesize\ttfamily Net\+::\+Body\+Hook $\ast$ Hurricane\+::\+Component\+::get\+Body\+Hook (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the hook representing the component body. \mbox{\Hypertarget{classHurricane_1_1Component_a1fc513b9465b2b8c22f41d56bf775594}\label{classHurricane_1_1Component_a1fc513b9465b2b8c22f41d56bf775594}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Hooks@{get\+Hooks}}
-\index{get\+Hooks@{get\+Hooks}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Hooks()}{getHooks()}}
+{\bfseries{Returns\+:}} the hook representing the component body. \mbox{\Hypertarget{classHurricane_1_1Component_a1fc513b9465b2b8c22f41d56bf775594}\label{classHurricane_1_1Component_a1fc513b9465b2b8c22f41d56bf775594}} 
+\index{Hurricane::Component@{Hurricane::Component}!getHooks@{getHooks}}
+\index{getHooks@{getHooks}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getHooks()}{getHooks()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a9dcd9b74dc5e2b51bec7a13c25807e02}{Hooks}} Hurricane\+::\+Component\+::get\+Hooks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-{\bfseries Returns\+:} the collection of component hooks, that is the collection of nested hooks within the component, each of them representing a part of the component. \mbox{\Hypertarget{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}\label{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!getX@{getX}}
-\index{getX@{getX}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+X()}{getX()}}
+{\bfseries{Returns\+:}} the collection of component hooks, that is the collection of nested hooks within the component, each of them representing a part of the component. \mbox{\Hypertarget{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}\label{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}} 
+\index{Hurricane::Component@{Hurricane::Component}!getX@{getX}}
+\index{getX@{getX}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getX()}{getX()}}
 {\footnotesize\ttfamily Unit Hurricane\+::\+Component\+::getX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-{\bfseries Returns\+:} the abscissa of the component\textquotesingle{}s body. This abscissa is a reference base for the components anchored, through an offset, on the component\textquotesingle{}s body. 
+{\bfseries{Returns\+:}} the abscissa of the component\textquotesingle{}s body. This abscissa is a reference base for the components anchored, through an offset, on the component\textquotesingle{}s body. 
 
 Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a5c9c00c648bd0d24e1a8b0876ab442df}{Hurricane\+::\+Routing\+Pad}}.
 
@@ -127,12 +127,12 @@ Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a5c9c00c648bd0d24e1
 Referenced by get\+Position().
 
 \mbox{\Hypertarget{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}\label{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!getY@{getY}}
-\index{getY@{getY}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Y()}{getY()}}
+\index{Hurricane::Component@{Hurricane::Component}!getY@{getY}}
+\index{getY@{getY}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getY()}{getY()}}
 {\footnotesize\ttfamily Unit Hurricane\+::\+Component\+::getY (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-{\bfseries Returns\+:} the ordinate of the component\textquotesingle{}s body. This ordinate is a reference base for the components anchored, through an offset, on the component\textquotesingle{}s body. 
+{\bfseries{Returns\+:}} the ordinate of the component\textquotesingle{}s body. This ordinate is a reference base for the components anchored, through an offset, on the component\textquotesingle{}s body. 
 
 Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_aede4c04a7f893b1e5478b164b6eaae2d}{Hurricane\+::\+Routing\+Pad}}.
 
@@ -141,88 +141,89 @@ Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_aede4c04a7f893b1e54
 Referenced by get\+Position().
 
 \mbox{\Hypertarget{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}\label{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Position@{get\+Position}}
-\index{get\+Position@{get\+Position}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Position()}{getPosition()}}
+\index{Hurricane::Component@{Hurricane::Component}!getPosition@{getPosition}}
+\index{getPosition@{getPosition}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getPosition()}{getPosition()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Point}{Point}} Hurricane\+::\+Component\+::get\+Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
 
-{\bfseries Returns\+:} the location of the component\textquotesingle{}s body.
+{\bfseries{Returns\+:}} the location of the component\textquotesingle{}s body.
 
 This method returns, in principle, a point built from the two previous methods. As far as some similar calculations are done in both methods, it is wise to redefine the method as shown below for the \mbox{\hyperlink{classHurricane_1_1Contact}{Contact}} \+: 
-\begin{DoxyCode}
-\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{DbU::Unit}} Contact::getX()\textcolor{keyword}{ const}
-\textcolor{keyword}{}\{
-  Component* anchor = getAnchor();
-  \textcolor{keywordflow}{return} (not anchor) ? \_dx : anchor->getX() + \_dx;
-\}
- 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{DbU::Unit}} Contact::getX()\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{}\{}
+\DoxyCodeLine{  Component* anchor = getAnchor();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} (not anchor) ? \_dx : anchor-\/>getX() + \_dx;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{DbU::Unit}} Contact::getY()\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{}\{}
+\DoxyCodeLine{  Component* anchor = getAnchor();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} (not anchor) ? \_dy : anchor-\/>getY() + \_dy;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{}
+\DoxyCodeLine{Point Contact::getPosition()\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{}\{}
+\DoxyCodeLine{  Component* anchor = getAnchor();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} (not anchor) ? Point(\_dx, \_dy)}
+\DoxyCodeLine{                      : anchor-\/>\mbox{\hyperlink{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}{getPosition}}().Translate(\_dx, \_dy);}
+\DoxyCodeLine{\}}
 
-\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{DbU::Unit}} Contact::getY()\textcolor{keyword}{ const}
-\textcolor{keyword}{}\{
-  Component* anchor = getAnchor();
-  \textcolor{keywordflow}{return} (not anchor) ? \_dy : anchor->getY() + \_dy;
-\}
- 
-
-Point Contact::getPosition()\textcolor{keyword}{ const}
-\textcolor{keyword}{}\{
-  Component* anchor = getAnchor();
-  \textcolor{keywordflow}{return} (not anchor) ? Point(\_dx, \_dy)
-                      : anchor->\mbox{\hyperlink{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}{getPosition}}().Translate(\_dx, \_dy);
-\}
 \end{DoxyCode}
 
 
-Indeed, contacts can possibly bear on other components through an offset defined by two attributes \+\_\+dx and \+\_\+dy. In order to compute the abscissa of a contact the component on which it bears must be found. This component named the {\bfseries anchor} is returned by the call to get\+Anchor(). If the component has no anchor, its coordinates are considered as absolute and the attribute \+\_\+dx gives directly its abscissa.
+Indeed, contacts can possibly bear on other components through an offset defined by two attributes \+\_\+dx and \+\_\+dy. In order to compute the abscissa of a contact the component on which it bears must be found. This component named the {\bfseries{anchor}} is returned by the call to get\+Anchor(). If the component has no anchor, its coordinates are considered as absolute and the attribute \+\_\+dx gives directly its abscissa.
 
 The method get\+Anchor() must loop through a ring in order to find the contact anchor. By overloading the function \mbox{\hyperlink{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}{get\+Position()}}, only one loop will be needed. Furtermore we call directly anchor-\/$>$\mbox{\hyperlink{classHurricane_1_1Component_aa4e9a47c89fe701670ca34355195d519}{get\+Position()}} and not both anchor-\/$>$\mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}} and anchor-\/$>$\mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}}, this will be faster (this anchor may be anchored itself on an other component). 
 
 References get\+X(), and get\+Y().
 
 \mbox{\Hypertarget{classHurricane_1_1Component_ab451ef19059e6e5bbb77ae391d02a039}\label{classHurricane_1_1Component_ab451ef19059e6e5bbb77ae391d02a039}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Layer@{get\+Layer}}
-\index{get\+Layer@{get\+Layer}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Layer()}{getLayer()}}
+\index{Hurricane::Component@{Hurricane::Component}!getLayer@{getLayer}}
+\index{getLayer@{getLayer}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getLayer()}{getLayer()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$ Hurricane\+::\+Component\+::get\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-{\bfseries Returns\+:} the layer on which the component is located (may return N\+U\+LL for some component types like the plugs). 
+{\bfseries{Returns\+:}} the layer on which the component is located (may return NULL for some component types like the plugs). 
 
 Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a7f1e300e4148556fa223e623738d79d4}{Hurricane\+::\+Routing\+Pad}}.
 
 \mbox{\Hypertarget{classHurricane_1_1Component_aabb87b9ef71f71cea681a03a6213f616}\label{classHurricane_1_1Component_aabb87b9ef71f71cea681a03a6213f616}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Bounding\+Box@{get\+Bounding\+Box}}
-\index{get\+Bounding\+Box@{get\+Bounding\+Box}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Bounding\+Box()}{getBoundingBox()}}
+\index{Hurricane::Component@{Hurricane::Component}!getBoundingBox@{getBoundingBox}}
+\index{getBoundingBox@{getBoundingBox}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getBoundingBox()}{getBoundingBox()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Box}{Box}} Hurricane\+::\+Component\+::get\+Bounding\+Box (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-{\bfseries Returns\+:} the envelope of the component for the {\ttfamily $<$basic\+Layer$>$}, that is the smallest box enclosing all layout elements located on the specified basic layer.
+{\bfseries{Returns\+:}} the envelope of the component for the {\ttfamily $<$basic\+Layer$>$}, that is the smallest box enclosing all layout elements located on the specified basic layer.
 
-{\bfseries Returns\+:} an empty box for objects which are not physical layout ones (i.\+e. plugs) or for those which have no layout on the specified basic layer. \mbox{\Hypertarget{classHurricane_1_1Component_a4acf996c03b0b94a186fad653ba578a6}\label{classHurricane_1_1Component_a4acf996c03b0b94a186fad653ba578a6}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Connex\+Components@{get\+Connex\+Components}}
-\index{get\+Connex\+Components@{get\+Connex\+Components}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Connex\+Components()}{getConnexComponents()}}
+{\bfseries{Returns\+:}} an empty box for objects which are not physical layout ones (i.\+e. plugs) or for those which have no layout on the specified basic layer. \mbox{\Hypertarget{classHurricane_1_1Component_a4acf996c03b0b94a186fad653ba578a6}\label{classHurricane_1_1Component_a4acf996c03b0b94a186fad653ba578a6}} 
+\index{Hurricane::Component@{Hurricane::Component}!getConnexComponents@{getConnexComponents}}
+\index{getConnexComponents@{getConnexComponents}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getConnexComponents()}{getConnexComponents()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Component\+::get\+Connex\+Components (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the collection of \char`\"{}connex components\char`\"{} to the component {\ttfamily $<$this$>$} (which includes at least this one).
+{\bfseries{Returns\+:}} the collection of \char`\"{}connex components\char`\"{} to the component {\ttfamily $<$this$>$} (which includes at least this one).
 
-\begin{DoxyParagraph}{Remark\+: A componnent is said connex to an other one if it is }
-attached directly or indirectly through hyper-\/hooks, that is if there exist a sequence of components whose parts (extremities or body) are either sharing the same anchor or anchored one upon the other.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+A componnent is said {\bfseries{connex}} to an other one if it is attached directly or indirectly through hyper-\/hooks, that is if there exist a sequence of components whose parts (extremities or body) are either sharing the same anchor or anchored one upon the other.
+\end{DoxyRemark}
 If the layout elements are correctly assembled and on the proper layers, this \char`\"{}connex components collection\char`\"{} represents an geometrically and electrically connected subset of layout elements
 
 On the other hand, if layout anchored objects don\textquotesingle{}t overlap on the same conducting layers (either by a wrong contact layer or by an offset which forbids layout intersection) electrical continuity will not be ensured. \mbox{\Hypertarget{classHurricane_1_1Component_af6d6b7c6b3cb18754cfa02bc5fb1e754}\label{classHurricane_1_1Component_af6d6b7c6b3cb18754cfa02bc5fb1e754}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Slave\+Components@{get\+Slave\+Components}}
-\index{get\+Slave\+Components@{get\+Slave\+Components}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Slave\+Components()}{getSlaveComponents()}}
+\index{Hurricane::Component@{Hurricane::Component}!getSlaveComponents@{getSlaveComponents}}
+\index{getSlaveComponents@{getSlaveComponents}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getSlaveComponents()}{getSlaveComponents()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Component\+::get\+Slave\+Components (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the collection of components whose existence depends directly or indirectly of the existence of the component {\ttfamily $<$this$>$} (a segment can\textquotesingle{}t survive to the destruction of a contact on which it is anchored). \mbox{\Hypertarget{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}\label{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}} 
-\index{Hurricane\+::\+Component@{Hurricane\+::\+Component}!get\+Is\+Under\+Filter@{get\+Is\+Under\+Filter}}
-\index{get\+Is\+Under\+Filter@{get\+Is\+Under\+Filter}!Hurricane\+::\+Component@{Hurricane\+::\+Component}}
-\subsubsection{\texorpdfstring{get\+Is\+Under\+Filter()}{getIsUnderFilter()}}
+{\bfseries{Returns\+:}} the collection of components whose existence depends directly or indirectly of the existence of the component {\ttfamily $<$this$>$} (a segment can\textquotesingle{}t survive to the destruction of a contact on which it is anchored). \mbox{\Hypertarget{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}\label{classHurricane_1_1Component_a8680f2756892366db8642bfcfd7ce097}} 
+\index{Hurricane::Component@{Hurricane::Component}!getIsUnderFilter@{getIsUnderFilter}}
+\index{getIsUnderFilter@{getIsUnderFilter}!Hurricane::Component@{Hurricane::Component}}
+\doxysubsubsection{\texorpdfstring{getIsUnderFilter()}{getIsUnderFilter()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_acbfacb3aada84aa054e587817f204e90}{Component\+Filter}} Hurricane\+::\+Component\+::get\+Is\+Under\+Filter (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-{\bfseries Returns\+:} the filter allowing to select only components which intersect the rectangular {\ttfamily $<$area$>$}. 
+{\bfseries{Returns\+:}} the filter allowing to select only components which intersect the rectangular {\ttfamily $<$area$>$}. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

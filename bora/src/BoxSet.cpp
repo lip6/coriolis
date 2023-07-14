@@ -16,6 +16,8 @@
 
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
+#include "hurricane/Cell.h"
+#include "crlcore/RoutingGauge.h"
 #include "bora/BoxSet.h"
 
 
@@ -84,8 +86,18 @@ namespace Bora {
   }
 
 
+  size_t  BoxSet::getIndex () const
+  {
+    cerr << Warning( "BoxSet::getIndex(): Only DBoxSet has parameter range indexes." ) << endl;
+    return 0;
+  }
+
+
   void BoxSet::destroy()
-  { delete this; }
+  {
+    if (_cpt < 2) delete this;
+    else --_cpt;
+  }
 
 
   void  BoxSet::setWidth ( DbU::Unit )
@@ -96,6 +108,21 @@ namespace Bora {
   { cerr << Warning( "BoxSet::setWidth(): Must never be called." ) << endl; }
 
 
+  string  BoxSet::_getTypeName () const
+  { return "BoxSet"; }
+
+
+  string  BoxSet::_getString () const
+  {
+    string s = "<"      + _getTypeName()
+             + " refs:" + getString(_cpt)
+             + " w:"    + DbU::getValueString(getWidth ())
+             + " h:"    + DbU::getValueString(getHeight())
+             + ">";
+    return s;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::HVBoxSet".
                                        
@@ -103,13 +130,17 @@ namespace Bora {
   HVBoxSet::HVBoxSet ( const vector<BoxSet*>& dimensionSet, DbU::Unit height, DbU::Unit width )
     : BoxSet(height,width)
     ,_dimensionSet(dimensionSet)
-  { }
+  {
+    for ( BoxSet* bs : _dimensionSet ) bs->incrementCpt();
+  }
                                        
 
   HVBoxSet::HVBoxSet ( HVBoxSet* boxSet )
     : BoxSet( boxSet )
     , _dimensionSet( boxSet->getSet() )
-  { }
+  {
+    for ( BoxSet* bs : _dimensionSet ) bs->incrementCpt();
+  }
 
 
   HVBoxSet::~HVBoxSet ()
@@ -122,6 +153,10 @@ namespace Bora {
     for ( BoxSet* bs : _dimensionSet ) area += bs->getDevicesArea();
     return area;
   }
+
+
+  string  HVBoxSet::_getTypeName () const
+  { return "HVBoxSet"; }
 
 
 // -------------------------------------------------------------------
@@ -188,6 +223,10 @@ namespace Bora {
   {
     BoxSet::destroy();
   }
+
+
+  string  HBoxSet::_getTypeName () const
+  { return "HBoxSet"; }
 
 
 // -------------------------------------------------------------------
@@ -257,6 +296,10 @@ namespace Bora {
   }
 
 
+  string  VBoxSet::_getTypeName () const
+  { return "VBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::DBoxSet".
 
@@ -265,9 +308,9 @@ namespace Bora {
   int  DBoxSet::_countAll = 0;
 
 
-  DBoxSet::DBoxSet ( DbU::Unit height, DbU::Unit width, int nfing )
+  DBoxSet::DBoxSet ( DbU::Unit height, DbU::Unit width, size_t index )
     : BoxSet( height, width )
-    , _nfing(nfing)
+    , _index(index)
   { 
     ++_count;
     ++_countAll;
@@ -276,7 +319,7 @@ namespace Bora {
 
   DBoxSet::DBoxSet ( DBoxSet* boxSet )
     : BoxSet( boxSet )
-    , _nfing( boxSet->getNFing() )
+    , _index( boxSet->getIndex() )
   { }
 
 
@@ -286,15 +329,40 @@ namespace Bora {
   }
 
 
-  DBoxSet* DBoxSet::create ( DbU::Unit height, DbU::Unit width, int nfing )
+  DBoxSet* DBoxSet::create ( Cell* cell, int index, CRL::RoutingGauge* rg )
   {
-    return new DBoxSet( height, width, nfing ); 
+    DbU::Unit abHeight = cell->getAbutmentBox().getHeight();
+    DbU::Unit abWidth  = cell->getAbutmentBox().getWidth();
+
+    if (rg) {
+      DbU::Unit h2pitch  = rg->getHorizontalPitch()*2;
+      DbU::Unit v2pitch  = rg->getVerticalPitch  ()*2;
+
+      if (abHeight % h2pitch) {
+        cerr << Warning( "DBoxSet::create(): The height of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
+                       , getString(cell->getName()).c_str()
+                       , DbU::getValueString(abHeight ).c_str()
+                       , DbU::getValueString(h2pitch/2).c_str()
+                       ) << endl;
+        abHeight += h2pitch - (abHeight % h2pitch);
+      }
+      if (abWidth % v2pitch) {
+        cerr << Warning( "DBoxSet::create(): The width of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
+                       , getString(cell->getName()).c_str()
+                       , DbU::getValueString(abWidth  ).c_str()
+                       , DbU::getValueString(v2pitch/2).c_str()
+                       ) << endl;
+        abWidth += v2pitch - (abWidth % v2pitch);
+      }
+    }
+    
+    return new DBoxSet( abHeight, abWidth, index );
   }
 
 
   DBoxSet* DBoxSet::clone ()
   {
-    return DBoxSet::create( getHeight(), getWidth(), getNFing() ); 
+    return new DBoxSet( getHeight(), getWidth(), getNFing() ); 
   }
 
 
@@ -302,6 +370,10 @@ namespace Bora {
   {
     BoxSet::destroy();
   }
+
+
+  string  DBoxSet::_getTypeName () const
+  { return "DBoxSet"; }
 
 
 // -------------------------------------------------------------------
@@ -345,6 +417,10 @@ namespace Bora {
   }
 
 
+  string  RHVBoxSet::_getTypeName () const
+  { return "RHVBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::RHBoxSet".
   
@@ -378,6 +454,10 @@ namespace Bora {
   }
 
 
+  string  RHBoxSet::_getTypeName () const
+  { return "RHBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::RVBoxSet".
   
@@ -409,6 +489,10 @@ namespace Bora {
   {
     return RVBoxSet::create( getWidth() ); 
   }
+
+
+  string  RVBoxSet::_getTypeName () const
+  { return "RVBoxSet"; }
 
 
 }  // Bora namespace.

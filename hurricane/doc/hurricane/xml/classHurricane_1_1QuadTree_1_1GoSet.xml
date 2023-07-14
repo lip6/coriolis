@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1QuadTree_1_1GoSet" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::QuadTree::GoSet</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">IntrusiveSet&lt; Go &gt;</basecompoundref>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1QuadTree_1_1GoSet_1a60611d9235fcc4512e6e8918e18a39de" prot="public" static="no">
+        <type>IntrusiveSet&lt; <ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> &gt;</type>
+        <definition>typedef IntrusiveSet&lt;Go&gt; Hurricane::QuadTree::GoSet::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="40" column="38" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1QuadTree_1_1GoSet_1aea00127ab4241f1b2b3b1efccb593f07" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::QuadTree::GoSet::GoSet</definition>
+        <argsstring>()</argsstring>
+        <name>GoSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="42" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1QuadTree_1_1GoSet_1a00fb9a8157d0695fb24e02bef28d28dd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>unsigned</type>
+        <definition>virtual unsigned Hurricane::QuadTree::GoSet::_getHashValue</definition>
+        <argsstring>(Go *go) const</argsstring>
+        <name>_getHashValue</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> *</type>
+          <declname>go</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="44" column="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1QuadTree_1_1GoSet_1a4285f2421db34510e8da4656625c385b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> *</type>
+        <definition>virtual Go* Hurricane::QuadTree::GoSet::_getNextElement</definition>
+        <argsstring>(Go *go) const</argsstring>
+        <name>_getNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> *</type>
+          <declname>go</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="45" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1QuadTree_1_1GoSet_1a16c59579579b06ba27096c1bcfb9040a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::QuadTree::GoSet::_setNextElement</definition>
+        <argsstring>(Go *go, Go *nextGo) const</argsstring>
+        <name>_setNextElement</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> *</type>
+          <declname>go</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1Go" kindref="compound">Go</ref> *</type>
+          <declname>nextGo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="46" column="30"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" line="37" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h" bodystart="37" bodyend="48"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1QuadTree_1_1GoSet_1a00fb9a8157d0695fb24e02bef28d28dd" prot="public" virt="virtual"><scope>Hurricane::QuadTree::GoSet</scope><name>_getHashValue</name></member>
+      <member refid="classHurricane_1_1QuadTree_1_1GoSet_1a4285f2421db34510e8da4656625c385b" prot="public" virt="virtual"><scope>Hurricane::QuadTree::GoSet</scope><name>_getNextElement</name></member>
+      <member refid="classHurricane_1_1QuadTree_1_1GoSet_1a16c59579579b06ba27096c1bcfb9040a" prot="public" virt="virtual"><scope>Hurricane::QuadTree::GoSet</scope><name>_setNextElement</name></member>
+      <member refid="classHurricane_1_1QuadTree_1_1GoSet_1aea00127ab4241f1b2b3b1efccb593f07" prot="public" virt="non-virtual"><scope>Hurricane::QuadTree::GoSet</scope><name>GoSet</name></member>
+      <member refid="classHurricane_1_1QuadTree_1_1GoSet_1a60611d9235fcc4512e6e8918e18a39de" prot="public" virt="non-virtual"><scope>Hurricane::QuadTree::GoSet</scope><name>Inherit</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

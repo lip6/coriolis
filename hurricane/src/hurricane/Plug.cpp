@@ -137,7 +137,7 @@ void Plug::setNet(Net* net)
   if (net != getNet()) {
     if (net and (getCell() != net->getCell()))
       throw Error( "Plug::setNet(): Can't set Net of plug %s to %s\n"
-                   "Net belong to %s instead of %s."
+                   "Net belong to %s while plug belong to of %s."
                  , getString(this).c_str()
                  , getString(net).c_str()
                  , getString(net->getCell()).c_str()

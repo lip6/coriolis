@@ -1,11 +1,11 @@
-\hypertarget{classHurricane_1_1HyperNet}{}\section{Hurricane\+:\+:Hyper\+Net Class Reference}
-\label{classHurricane_1_1HyperNet}\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
+\hypertarget{classHurricane_1_1HyperNet}{}\doxysection{Hurricane\+::Hyper\+Net Class Reference}
+\label{classHurricane_1_1HyperNet}\index{Hurricane::HyperNet@{Hurricane::HyperNet}}
 
 
-\mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} description ({\bfseries{API}})  
 
 
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1HyperNet_a30bdc04b4dece8bdef66361fe4469175}{Hyper\+Net}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence)
@@ -17,54 +17,52 @@ const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& \mbox{\hype
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1HyperNet_a02180e650b1f2e5b87bf4774a5799ebc}{get\+Net\+Occurrences}} (bool do\+Extraction=false, bool allow\+Interruption=false) const
 \item 
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1HyperNet_ab278267a5f1d91bd22bc7fe411b3cfb0}{get\+Net\+Occurrences\+Under}} (\mbox{\hyperlink{classHurricane_1_1Box}{Box}} area, bool do\+Extraction=false, bool allow\+Interruption=false) const
-\item 
-\mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1HyperNet_a5e88025fbe1663d8279b4f4cb4bd6ffd}{get\+Leaf\+Plug\+Occurrences}} (bool do\+Extraction=false, bool allow\+Interruption=false) const
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1HyperNet_secHyperNetIntro}{}\subsection{Introduction}\label{classHurricane_1_1HyperNet_secHyperNetIntro}
+\hypertarget{classHurricane_1_1HyperNet_secHyperNetIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1HyperNet_secHyperNetIntro}
 The \mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} is a part of the trans-\/hierarchical mechanism. An \mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} is build upon a \mbox{\hyperlink{classHurricane_1_1Net}{Net}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}, this occurrence is the root of a tree of \mbox{\hyperlink{classHurricane_1_1Net}{Net}} occurrences which represent the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} as if flattened. The walkthroughs are provided as Collections.
 
 In all the walkthrough, if {\ttfamily do\+Extraction} is set, a simple layout extraction is performed. Of course, it makes the walkthrough much slower. By default it\textquotesingle{}s disabled and the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} occurrence tree is created only from the \mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} information.
 
-\begin{DoxyParagraph}{Remark\+: The {\ttfamily allow\+Interuption} is deprecated and do nothing.}
+\begin{DoxyRemark}{Remarks}
+The {\ttfamily allow\+Interuption} is deprecated and do nothing. 
+\end{DoxyRemark}
 
-\end{DoxyParagraph}
 
-
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1HyperNet_a30bdc04b4dece8bdef66361fe4469175}\label{classHurricane_1_1HyperNet_a30bdc04b4dece8bdef66361fe4469175}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!Hyper\+Net@{Hyper\+Net}}
-\index{Hyper\+Net@{Hyper\+Net}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{Hyper\+Net()}{HyperNet()}}
+\index{Hurricane::HyperNet@{Hurricane::HyperNet}!HyperNet@{HyperNet}}
+\index{HyperNet@{HyperNet}!Hurricane::HyperNet@{Hurricane::HyperNet}}
+\doxysubsubsection{\texorpdfstring{HyperNet()}{HyperNet()}}
 {\footnotesize\ttfamily Hurricane\+::\+Hyper\+Net\+::\+Hyper\+Net (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{occurrence }\end{DoxyParamCaption})}
 
 Build an \mbox{\hyperlink{classHurricane_1_1HyperNet}{Hyper\+Net}} from an \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} of \mbox{\hyperlink{classHurricane_1_1Net}{Net}}, \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}} or \mbox{\hyperlink{classHurricane_1_1Component}{Component}}. That is, any \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} from which a \mbox{\hyperlink{classHurricane_1_1Net}{Net}} can be extracted. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1HyperNet_a327eab6dda243836becde745bfc53efa}\label{classHurricane_1_1HyperNet_a327eab6dda243836becde745bfc53efa}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!get\+Net\+Occurrence@{get\+Net\+Occurrence}}
-\index{get\+Net\+Occurrence@{get\+Net\+Occurrence}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{get\+Net\+Occurrence()}{getNetOccurrence()}}
+\index{Hurricane::HyperNet@{Hurricane::HyperNet}!getNetOccurrence@{getNetOccurrence}}
+\index{getNetOccurrence@{getNetOccurrence}!Hurricane::HyperNet@{Hurricane::HyperNet}}
+\doxysubsubsection{\texorpdfstring{getNetOccurrence()}{getNetOccurrence()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& Hurricane\+::\+Hyper\+Net\+::get\+Net\+Occurrence (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The root \mbox{\hyperlink{classHurricane_1_1Net}{Net}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}. \mbox{\Hypertarget{classHurricane_1_1HyperNet_a5a818c5887d1d8dd2e0a59e8a57c02d7}\label{classHurricane_1_1HyperNet_a5a818c5887d1d8dd2e0a59e8a57c02d7}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!get\+Cell@{get\+Cell}}
-\index{get\+Cell@{get\+Cell}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+\textbackslash{}sreturn The root \mbox{\hyperlink{classHurricane_1_1Net}{Net}} \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}}. \mbox{\Hypertarget{classHurricane_1_1HyperNet_a5a818c5887d1d8dd2e0a59e8a57c02d7}\label{classHurricane_1_1HyperNet_a5a818c5887d1d8dd2e0a59e8a57c02d7}} 
+\index{Hurricane::HyperNet@{Hurricane::HyperNet}!getCell@{getCell}}
+\index{getCell@{getCell}!Hurricane::HyperNet@{Hurricane::HyperNet}}
+\doxysubsubsection{\texorpdfstring{getCell()}{getCell()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Hyper\+Net\+::get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} that own the net occurrence (the top \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}). 
+\textbackslash{}sreturn The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} that own the net occurrence (the top \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}). 
 
 References Hurricane\+::\+Occurrence\+::get\+Owner\+Cell().
 
 \mbox{\Hypertarget{classHurricane_1_1HyperNet_a02180e650b1f2e5b87bf4774a5799ebc}\label{classHurricane_1_1HyperNet_a02180e650b1f2e5b87bf4774a5799ebc}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!get\+Net\+Occurrences@{get\+Net\+Occurrences}}
-\index{get\+Net\+Occurrences@{get\+Net\+Occurrences}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{get\+Net\+Occurrences()}{getNetOccurrences()}}
+\index{Hurricane::HyperNet@{Hurricane::HyperNet}!getNetOccurrences@{getNetOccurrences}}
+\index{getNetOccurrences@{getNetOccurrences}!Hurricane::HyperNet@{Hurricane::HyperNet}}
+\doxysubsubsection{\texorpdfstring{getNetOccurrences()}{getNetOccurrences()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Hyper\+Net\+::get\+Net\+Occurrences (\begin{DoxyParamCaption}\item[{bool}]{do\+Extraction = {\ttfamily false},  }\item[{bool}]{allow\+Interruption = {\ttfamily false} }\end{DoxyParamCaption}) const}
 
 
@@ -78,9 +76,9 @@ References Hurricane\+::\+Occurrence\+::get\+Owner\+Cell().
 The collection of all the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} occurrences. 
 \end{DoxyReturn}
 \mbox{\Hypertarget{classHurricane_1_1HyperNet_ab278267a5f1d91bd22bc7fe411b3cfb0}\label{classHurricane_1_1HyperNet_ab278267a5f1d91bd22bc7fe411b3cfb0}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!get\+Net\+Occurrences\+Under@{get\+Net\+Occurrences\+Under}}
-\index{get\+Net\+Occurrences\+Under@{get\+Net\+Occurrences\+Under}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{get\+Net\+Occurrences\+Under()}{getNetOccurrencesUnder()}}
+\index{Hurricane::HyperNet@{Hurricane::HyperNet}!getNetOccurrencesUnder@{getNetOccurrencesUnder}}
+\index{getNetOccurrencesUnder@{getNetOccurrencesUnder}!Hurricane::HyperNet@{Hurricane::HyperNet}}
+\doxysubsubsection{\texorpdfstring{getNetOccurrencesUnder()}{getNetOccurrencesUnder()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Hyper\+Net\+::get\+Net\+Occurrences\+Under (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Box}{Box}}}]{area,  }\item[{bool}]{do\+Extraction = {\ttfamily false},  }\item[{bool}]{allow\+Interruption = {\ttfamily false} }\end{DoxyParamCaption}) const}
 
 
@@ -94,22 +92,6 @@ The collection of all the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} occurren
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The collection of all the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} occurrences under {\ttfamily area}. 
-\end{DoxyReturn}
-\mbox{\Hypertarget{classHurricane_1_1HyperNet_a5e88025fbe1663d8279b4f4cb4bd6ffd}\label{classHurricane_1_1HyperNet_a5e88025fbe1663d8279b4f4cb4bd6ffd}} 
-\index{Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}!get\+Leaf\+Plug\+Occurrences@{get\+Leaf\+Plug\+Occurrences}}
-\index{get\+Leaf\+Plug\+Occurrences@{get\+Leaf\+Plug\+Occurrences}!Hurricane\+::\+Hyper\+Net@{Hurricane\+::\+Hyper\+Net}}
-\subsubsection{\texorpdfstring{get\+Leaf\+Plug\+Occurrences()}{getLeafPlugOccurrences()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Hyper\+Net\+::get\+Leaf\+Plug\+Occurrences (\begin{DoxyParamCaption}\item[{bool}]{do\+Extraction = {\ttfamily false},  }\item[{bool}]{allow\+Interruption = {\ttfamily false} }\end{DoxyParamCaption}) const}
-
-
-\begin{DoxyParams}{Parameters}
-{\em do\+Extraction} & Perform a layout extraction. \\
-\hline
-{\em allow\+Interruption} & Allows the extraction process to be interrupted. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-The \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all the Plugs from the leaf Cells only. 
 \end{DoxyReturn}
 
 

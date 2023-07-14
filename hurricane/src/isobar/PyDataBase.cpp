@@ -59,7 +59,8 @@ extern "C" {
     HTRY
     db = DataBase::getDB();
     if (db == NULL)
-      PyErr_SetString( HurricaneError, "DataBase.getDB(): DataBase has not been created yet" );
+    //PyErr_SetString( HurricaneError, "DataBase.getDB(): DataBase has not been created yet" );
+      Py_RETURN_NONE;
     HCATCH
 
     return PyDataBase_Link( db );
@@ -120,6 +121,7 @@ extern "C" {
   
   // Standart Accessors (Attributes).
   // Standart Destroy (Attribute).
+  DirectVoidMethod(DataBase,db,clear)
   DBoDestroyAttribute(PyDataBase_destroy,PyDataBase)
 
 
@@ -134,6 +136,7 @@ extern "C" {
     , { "getTechnology" , (PyCFunction)PyDataBase_getTechnology , METH_NOARGS , "Return the Technology" }
     , { "getRootLibrary", (PyCFunction)PyDataBase_getRootLibrary, METH_NOARGS , "Return the root library" }
     , { "getCell"       , (PyCFunction)PyDataBase_getCell       , METH_VARARGS, "Return a Cell" }
+    , { "clear"         , (PyCFunction)PyDataBase_clear         , METH_NOARGS , "Clear all the cells, keeps technology" }
     , { "destroy"       , (PyCFunction)PyDataBase_destroy       , METH_NOARGS
                         , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

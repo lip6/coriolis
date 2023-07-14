@@ -90,11 +90,11 @@ namespace Solstice {
 
 
   struct SelectedRoutingErrorCompare {
-      inline bool operator() ( const SelectedRoutingError& lhs, const SelectedRoutingError& rhs );
+      inline bool operator() ( const SelectedRoutingError& lhs, const SelectedRoutingError& rhs ) const;
   };
 
 
-  inline bool SelectedRoutingErrorCompare::operator() ( const SelectedRoutingError& lhs, const SelectedRoutingError& rhs )
+  inline bool SelectedRoutingErrorCompare::operator() ( const SelectedRoutingError& lhs, const SelectedRoutingError& rhs ) const
   {
     return lhs.getRoutingError() < rhs.getRoutingError();
   }

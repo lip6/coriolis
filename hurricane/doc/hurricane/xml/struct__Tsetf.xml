@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="struct__Tsetf" kind="struct" language="C++" prot="public">
+    <compoundname>_Tsetf</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct__Tsetf_1a7a4b502ced6c721b8ff0efc19fd32655" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int _Tsetf::n_</definition>
+        <argsstring></argsstring>
+        <name>n_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Commons.h" line="1109" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Commons.h" bodystart="1109" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Commons.h" line="1109" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Commons.h" bodystart="1109" bodyend="1109"/>
+    <listofallmembers>
+      <member refid="struct__Tsetf_1a7a4b502ced6c721b8ff0efc19fd32655" prot="public" virt="non-virtual"><scope>_Tsetf</scope><name>n_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -44,7 +44,7 @@ namespace Hurricane {
     const HierarchyInfos* infos = infosFromIndex(parent);
     if (not infos) return true;
 
-    return not infos->isLeaf();
+    return not infos->isTerminalNetlist();
   }
 
 

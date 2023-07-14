@@ -176,9 +176,10 @@ namespace Hurricane {
   void  TransistorLayer::setExtentionWidth ( const BasicLayer* layer, DbU::Unit width )
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
-      if ( _basicLayers[i] == layer )
+      if ( _basicLayers[i] == layer ) {
         _extentionWidths[i] = width;
         _maximalExtentionWidth = max ( _maximalExtentionWidth, width );
+      }
     }
   }
 

@@ -13,4 +13,4 @@
                               ${CMAKE_CURRENT_SOURCE_DIR}/ROM_encours.py
                   )
          
-          install ( FILES ${pysources} DESTINATION ${PYTHON_SITE_PACKAGES}/stratus )
+          install ( FILES ${pysources} DESTINATION ${Python_CORIOLISLIB}/stratus )

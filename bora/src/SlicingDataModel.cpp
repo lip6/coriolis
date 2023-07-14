@@ -77,12 +77,11 @@ namespace Bora {
         NodeSets nodeSets = slicingtree->getNodeSets();
         switch ( index.column() ) {
           case 0: return QVariant( row );
-          case 1: return QVariant( DbU::toPhysical(nodeSets[row]->getHeight()        , DbU::Micro) );
-          case 2: return QVariant( DbU::toPhysical(nodeSets[row]->getWidth()         , DbU::Micro) );
-          case 3: return QVariant( nodeSets[row]->getOccupationArea()                              );
-          case 4: return QVariant( nodeSets[row]->getCpt()                                         );
-          case 5: return QVariant( (double) ( nodeSets[row]->getWidth()
-                                   / nodeSets[row]->getHeight()) );
+          case 1: return QVariant( DbU::toPhysical(nodeSets[row]->getHeight(), DbU::Micro) );
+          case 2: return QVariant( DbU::toPhysical(nodeSets[row]->getWidth (), DbU::Micro) );
+          case 3: return QVariant( nodeSets[row]->getOccupationArea() );
+          case 4: return QVariant( nodeSets[row]->getCpt() );
+          case 5: return QVariant( nodeSets[row]->getRatio() );
           case 6: return QVariant( DbU::getPhysical( nodeSets[row]->getWidth() ,DbU::Micro) 
                                  * DbU::getPhysical( nodeSets[row]->getHeight(),DbU::Micro) );
           default:

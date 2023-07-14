@@ -63,7 +63,7 @@ namespace Hurricane {
 
 
   int  SimpleNetInformations::getColumnCount ()
-  { return 3; }
+  { return 6; }
 
 
   QVariant  SimpleNetInformations::getColumnName ( int column )
@@ -71,7 +71,10 @@ namespace Hurricane {
     switch ( column ) {
       case 0: return QVariant(QObject::tr("Net"));
       case 1: return QVariant(QObject::tr("Plugs"));
-      case 2: return QVariant(QObject::tr("RoutingPads"));
+      case 2: return QVariant(QObject::tr("RPs"));
+      case 3: return QVariant(QObject::tr("Flags"));
+      case 4: return QVariant(QObject::tr("Type"));
+      case 5: return QVariant(QObject::tr("Direction"));
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }
@@ -84,11 +87,15 @@ namespace Hurricane {
       case 1: return (unsigned int)_plugsCount;
       case 2:
         if (_net->isGlobal()) {
-          if (not _rpsCount) return "N/A (global)";
-          string s = getString(_rpsCount) + " (global)";
+          if (not _rpsCount) return "N/A";
+          string s = getString(_rpsCount);
           return s.c_str();
         }
         return (unsigned int)_rpsCount;
+      case 3: return QString::fromStdString( getString( _net->_getFlagsAsString() ));
+      case 4: return QString::fromStdString( getString( _net->getType() ));
+      case 5: return QString::fromStdString( getString( _net->getDirection() ));
+        
     }
     return QVariant(QObject::tr("Column Out of Bound"));
   }

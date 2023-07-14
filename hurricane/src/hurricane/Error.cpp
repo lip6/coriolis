@@ -32,7 +32,6 @@
 
 #include  <cstdarg>
 #include  <iomanip>
-#include  <boost/regex.hpp>
 #include  "hurricane/Error.h"
 
 

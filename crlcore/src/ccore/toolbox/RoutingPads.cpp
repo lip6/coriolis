@@ -66,7 +66,7 @@ void createRoutingPadsRing(Cell* top_cell)
             //getting the net occurrence relative to its cell (null Path)
             //in order to have plug occurrences relative to the RoutingPads-to-be
             netOccurrence = Occurrence(net);
-            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getLeafPlugOccurrences() )
+            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getTerminalNetlistPlugOccurrences() )
             {
                 //ltrace(58) << "Creating Routing Pad " << plugOccurrence << endl;ltracein(58);
                 RoutingPad::create ( net, plugOccurrence );
@@ -130,7 +130,7 @@ void createRoutingPadsAndPinsRing ( Cell* top_cell )
             //getting the net occurrence relative to its cell (null Path)
             //in order to have plug occurrences relative to the RoutingPads-to-be
             netOccurrence = Occurrence(net);
-            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getLeafPlugOccurrences() )
+            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getTerminalNetlistPlugOccurrences() )
             {
                 //ltrace(58) << "Creating Routing Pad " << plugOccurrence << endl;ltracein(58);
                 RoutingPad::create ( net, plugOccurrence );
@@ -206,7 +206,7 @@ void createPlacedRoutingPadsAndPinsRing ( Cell* top_cell )
             //getting the net occurrence relative to its cell (null Path)
             //in order to have plug occurrences relative to the RoutingPads-to-be
             netOccurrence = Occurrence(net);
-            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getLeafPlugOccurrences() )
+            for_each_occurrence ( plugOccurrence, HyperNet(netOccurrence).getTerminalNetlistPlugOccurrences() )
             {
               cdebug_log(109,1) << "Creating Routing Pad " << plugOccurrence << endl;
               cerr << RoutingPad::create ( net, plugOccurrence, RoutingPad::BiggestArea ) << endl;

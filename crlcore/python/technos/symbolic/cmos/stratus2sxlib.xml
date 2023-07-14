@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding='us-ascii'?>
+
+<technology name="sxlib">
+    <model name="a2" realcell="a2_x2"        
+           time="434" area="1.7"
+           i0="i0" i1="i1" q="q" vdd="vdd" vss="vss"></model>
+    <model name="a3" realcell="a3_x2"        
+           time="521" area="2"
+           i0="i0" i1="i1" i2="i2" q="q" vdd="vdd" vss="vss"></model>
+    <model name="a4" realcell="a4_x2"        
+           time="578" area="2.3"
+           i0="i0" i1="i1" i2="i2" i3="i3" q="q" vdd="vdd" vss="vss"></model>
+    <model name="na2" realcell="na2_x1"
+           time="288" area="1.3" 
+           i0="i0" i1="i1" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="na3" realcell="na3_x1"
+           time="363" area="1.7"
+           i0="i0" i1="i1" i2="i2" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="na4" realcell="na4_x1"
+           time="438" area="2" 
+           i0="i0" i1="i1" i2="i2" i3="i3" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="o2" realcell="o2_x2"
+           time="406" area="1.7"
+           i0="i0" i1="i1" q="q" vdd="vdd" vss="vss"></model>
+    <model name="o3" realcell="o3_x2"
+           time="506" area="2"
+           i0="i0" i1="i1" i2="i2" q="q" vdd="vdd" vss="vss"></model>
+    <model name="o4" realcell="o4_x2"
+           time="631" area="2.3"
+           i0="i0" i1="i1" i2="i2" i3="i3" q="q" vdd="vdd" vss="vss"></model>
+    <model name="no2" realcell="no2_x1"
+           time="298" area="1.3"
+           i0="i0" i1="i1" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="no3" realcell="no3_x1" 
+           time="407" area="1.7"
+           i0="i0" i1="i1" i2="i2" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="no4" realcell="no4_x1"
+           time="499" area="2"
+           i0="i0" i1="i1" i2="i2" i3="i3" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="xr2" realcell="xr2_x1"
+           time="405" area="3"
+           i0="i0" i1="i1" q="q" vdd="vdd" vss="vss"></model>
+    <model name="nxr2" realcell="nxr2_x1"
+           time="503" area="3"
+           i0="i0" i1="i1" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="inv" realcell="inv_x1"
+           time="139" area="1"
+           i="i" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="buf" realcell="buf_x2"
+           time="409" area="1.3"
+           i="i" q="q" vdd="vdd" vss="vss"></model>
+    <model name="zero" realcell="zero_x0"
+           time="0" area="1"
+           nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="one" realcell="one_x0"
+           time="0" area="1"
+           q="q" vdd="vdd" vss="vss"></model>
+    <model name="mx2" realcell="mx2_x2"
+           time="534" area="3"
+           i0="i0" i1="i1" cmd="cmd" q="q" vdd="vdd" vss="vss"></model>
+    <model name="nmx2" realcell="nmx2_x1"
+           time="410" area="2.3"
+           i0="i0" i1="i1" cmd="cmd" nq="nq" vdd="vdd" vss="vss"></model>
+    <model name="halfadder" realcell="halfadder_x2"
+           time="607" area="5.3"
+           a="a" b="b" sout="sout" cout="cout" vdd="vdd" vss="vss"></model>
+    <model name="fulladder" realcell="fulladder_x2"
+           time="1251" area="6.6"
+           a="a1,a2,a3,a4" b="b1,b2,b3,b4" cin="cin1,cin2,cin3" sout="sout" cout="cout" vdd="vdd" vss="vss"></model>
+    <model name="sff1" realcell="sff1_x4"
+           time="476" area="6"
+           i="i" ck="ck" q="q" vdd="vdd" vss="vss"></model>
+    <model name="sff2" realcell="sff2_x4"
+           time="666" area="8"
+           i0="i0" i1="i1" ck="ck" cmd="cmd" q="q" vdd="vdd" vss="vss"></model>
+    <model name="sff3" realcell="sff3_x4"
+           time="950" area="0"
+           i0="i0" i1="i1" i2="i2"  ck="ck" cmd0="cmd0" cmd1="cmd1" q="q" vdd="vdd" vss="vss"></model><!-- pas dans le .lib -->
+    <model name="ts" realcell="ts_x4"
+           time="492" area="3.3"
+           i="i" cmd="cmd" q="q" vdd="vdd" vss="vss"></model>
+    <model name="nts" realcell="nts_x1"
+           time="249" area="2"
+           i="i" cmd="cmd" nq="nq" vdd="vdd" vss="vss"></model>
+</technology>

@@ -1,0 +1,50 @@
+// -*- C++ -*-
+
+/*! \class      Tree
+ *  \brief      The tree contains all points of the circuit as its' nodes.
+ */
+
+/*! \var        vector<Node*> Tree::nodes
+ *              The list of nodes contained in the tree
+ */
+
+/*! \function   Tree::Tree()
+ *              Default constructor
+ */
+
+/*! \function   Tree:~Tree()
+ *              Default destructor
+ */
+
+/*! \function   int Tree::get_N()
+ *              Returns the number of nodes in the tree / points in the circuit
+ */
+
+/*! \function   Node* Tree::get_node( int i )
+ *              Returns node at index i in the tree
+ */
+
+/*! \function   vector<Node*> get_node_list()
+ *              Returns the list of nodes contained in the tree
+ */
+
+/*! \function   void Tree::new_node()
+ *              Create and add a new node to the tree
+ */
+
+/*! \function   void Tree::After_i( Node* node_i )
+ *              For each node in the tree, determine if they are after or before node_i.
+ *              In other words, change the value of ap of each node to 0 or 1 accordingly.
+ */
+
+/*! \function   set<int> Tree::Branch_i( int i )
+ *              Returns a set of indexes of nodes who are on the same branch as node i.
+ */
+
+/*! \function   int Tree::Delay_Elmore( int i)
+ *              Computes the Elmore's delay and returns the result.
+ */
+
+/*! \function   void Tree::print( ostream& out )
+ *              Prints the tree to the output file.
+ */

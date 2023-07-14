@@ -57,7 +57,7 @@ class HyperNet {
     public: Occurrences getNetOccurrences(bool doExtraction = false, bool allowInterruption = false) const;
     public: Occurrences getNetOccurrencesUnder(Box area, bool doExtraction = false,
                                                             bool allowInterruption = false) const;
-    public: Occurrences getLeafPlugOccurrences(bool doExtraction = false , bool allowInterruption = false) const;
+    public: Occurrences getTerminalNetlistPlugOccurrences(bool doExtraction = false , bool allowInterruption = false) const;
     public: Occurrences getComponentOccurrences(bool doExtraction = false , bool allowInterruption = false) const;
 
 // Predicates

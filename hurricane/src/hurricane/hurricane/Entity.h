@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_ENTITY
-#define HURRICANE_ENTITY
-
+#pragma  once
 #include <functional>
 #include "hurricane/DBo.h"
 #include "hurricane/Entities.h"
@@ -48,6 +46,7 @@ namespace Hurricane {
               Quark*        _getQuark           ( SharedPath* sharedPath = NULL ) const;
     protected:                                  
                             Entity              ();
+      virtual              ~Entity              ();
       virtual void          _postCreate         ();
       virtual void          _preDestroy         ();
   };
@@ -89,9 +88,6 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Entity);
-
-
-#endif // HURRICANE_ENTITY
 
 // ****************************************************************************************************
 // Copyright (c) BULL S.A. 2000-2018, All Rights Reserved

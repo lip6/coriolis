@@ -33,6 +33,7 @@ namespace Vhdl {
     : _name(name)
   { }
 
+
   Signal::~Signal ()
   { }
 
@@ -54,7 +55,9 @@ namespace Vhdl {
         case Net::Direction::IN:    out << "in";    break;
         case Net::Direction::OUT:   out << "out";   break;
         case Net::Direction::INOUT: out << "inout"; break;
-        default:                    out << "linkage";
+        default:
+          if (flags & Entity::VstNoLinkage) out << "in";
+          else                              out << "linkage";
       }
     }
 
@@ -96,8 +99,8 @@ namespace Vhdl {
 // Class  :  "Vhdl::ScalarSignal".
 
 
-  ScalarSignal::ScalarSignal ( Net* net )
-    : Signal(getString(net->getName()))
+  ScalarSignal::ScalarSignal ( string vhdlName, Net* net )
+    : Signal(vhdlName)
     , _bit  (BitExtension::create(net,this))
   { }
 
@@ -108,6 +111,7 @@ namespace Vhdl {
   bool            ScalarSignal::isVector     () const { return false; }
   bool            ScalarSignal::isExternal   () const { return _bit->isExternal(); }
   bool            ScalarSignal::isContiguous () const { return false; }
+  size_t          ScalarSignal::getSize      () const { return 1; }
   const Bit*      ScalarSignal::getBit       () const { return _bit; }
   const Bit*      ScalarSignal::getBit       ( size_t ) const { return _bit; }
   const Net*      ScalarSignal::getNet       () const { return _bit->getNet(); }
@@ -155,6 +159,7 @@ namespace Vhdl {
 
   bool            VectorSignal::isScalar     () const { return false; }
   bool            VectorSignal::isVector     () const { return true; }
+  size_t          VectorSignal::getSize      () const { return _bits.size(); }
   bool            VectorSignal::isExternal   () const { return (*_bits. begin())->isExternal(); }
   size_t          VectorSignal::getMin       () const { return (*_bits.rbegin())->getIndex(); }
   size_t          VectorSignal::getMax       () const { return (*_bits. begin())->getIndex(); }
@@ -191,13 +196,13 @@ namespace Vhdl {
 
   bool  VectorSignal::isContiguous () const
   {
+    if (_bits.size() < 2) return false;
+
     auto inet1 = _bits.rbegin();
     auto inet2 = inet1;
-
     for ( ++inet1; inet1!=_bits.rend() ; ++inet1, ++inet2 ) {
       if ((*inet1)->getIndex() != (*inet2)->getIndex()+1) return false;
     }
-
     return true;
   }
 
@@ -208,7 +213,6 @@ namespace Vhdl {
       string range = "(" + getString(getMax()) + " downto " + getString(getMin()) + ")";
       _toVhdlPort( out, width, flags, getName(), range, getDirection() );
     } else {
-
       bool first = true;
       for ( auto bit : _bits ) {
         string name = getName() + "_" + getString(bit->getIndex());

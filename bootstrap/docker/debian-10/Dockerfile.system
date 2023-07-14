@@ -1,0 +1,29 @@
+
+FROM debian:buster-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update                                                      \
+ && apt-get -y install build-essential binutils-dev                     \
+                       git cmake bison flex gcc python-dev              \
+                       libboost-all-dev libboost-python-dev             \
+                       zlib1g-dev libxml2-dev rapidjson-dev libbz2-dev  \
+                       qt4-dev-tools libqwt-dev python-qt4              \
+                       python3-setuptools                               \
+                                                                        \
+                       autotools-dev automake                           \
+                       libxt-dev libxpm-dev libmotif-dev                \
+                                                                        \
+                       tcl tcl-dev libffi6 libffi-dev libreadline-dev   \
+                                                                        \
+                       vim                                              \
+ && apt-get clean
+
+# If you want to build Alliance documentation, install those LaTeX
+# packages:
+#                      transfig texlive texlive-latex-extra
+#                      texlive-plain-generic texlive-pictures
+#                      imagemagick
+#
+# The packaged yosys 0.8 is too old to work with nMigen, must be 0.9.
+#                      yosys

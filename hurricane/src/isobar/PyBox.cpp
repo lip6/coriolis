@@ -58,9 +58,6 @@ extern "C" {
   DirectDestroyAttribute(PyBox_destroy, PyBox)
   
 
-  // ---------------------------------------------------------------
-  // Class Method  :  "PyBox_NEW ()"
-
   static PyObject* PyBox_NEW (PyObject *module, PyObject *args) {
     cdebug_log(20,0) << "PyBox_NEW()" << endl;
 
@@ -150,9 +147,6 @@ extern "C" {
   }
 
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_getIntersection ()"
-
   static PyObject* PyBox_getIntersection ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_getIntersection()" << endl;
 
@@ -174,9 +168,6 @@ extern "C" {
     return NULL;
   }
 
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_contains ()"
 
   static PyObject* PyBox_contains ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_contains ()" << endl;
@@ -210,8 +201,6 @@ extern "C" {
     }
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_intersect ()"
 
   static PyObject* PyBox_intersect ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_intersect ()" << endl;
@@ -238,11 +227,6 @@ extern "C" {
   }
 
 
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_isConstrainedBy ()"
-
   static PyObject* PyBox_isConstrainedBy ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_isConstrainedBy ()" << endl;
     
@@ -267,11 +251,6 @@ extern "C" {
   }
 
 
-
-
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_makeEmpty ()"
-
   static PyObject* PyBox_makeEmpty ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_makeEmpty ()" << endl;
 
@@ -285,8 +264,6 @@ extern "C" {
     return (PyObject*)self;
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_inflate ()"
 
   static PyObject* PyBox_inflate ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_inflate ()" << endl;
@@ -322,8 +299,6 @@ extern "C" {
     return ( (PyObject*)self );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_merge ()"
 
   static PyObject* PyBox_merge ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "Box_merge()" << endl;
@@ -360,8 +335,6 @@ extern "C" {
     return ( (PyObject*)self );
   }
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyBox_translate ()"
 
   static PyObject* PyBox_translate ( PyBox *self, PyObject* args ) {
     cdebug_log(20,0) << "PyBox_translate ()" << endl;
@@ -385,8 +358,6 @@ extern "C" {
 
     Py_RETURN_NONE;
   }
-
-
 
 
   // ---------------------------------------------------------------
@@ -421,25 +392,22 @@ extern "C" {
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 
-  // x-------------------------------------------------------------x
+
+  // +-------------------------------------------------------------+
   // |                  "PyBox" Object Methods                     |
-  // x-------------------------------------------------------------x
+  // +-------------------------------------------------------------+
 
 
   DirectDeleteMethod(PyBox_DeAlloc,PyBox)
-  PyTypeObjectLinkPyTypeNewInit(Box)
-//PyTypeObjectLinkPyType(Box)
+  PyTypeObjectLinkPyTypeAsValue(Box)
 
 #else  // End of Python Module Code Part.
 
 
-// x=================================================================x
+// +=================================================================+
 // |                "PyBox" Shared Library Code Part                 |
-// x=================================================================x
+// +=================================================================+
 
-
-  // ---------------------------------------------------------------
-  // PyBox Object Definitions.
   
   PyTypeObjectDefinitions(Box)
 

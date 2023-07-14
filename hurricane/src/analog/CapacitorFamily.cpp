@@ -24,8 +24,6 @@ namespace Analog {
   	: Super(library,name)
   	, _type              (type)
   	, _referenceCapacitor(NULL)
-  	, _operatorIndex     (0) 
-  	, _row               (0)
   { }
   
 

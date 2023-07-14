@@ -173,12 +173,12 @@ extern "C" {
   // PyPlug Attribute Method table.
 
   PyMethodDef PyPlug_Methods[] =
-    { { "getInstance"    , (PyCFunction)PyPlug_getInstance   , METH_NOARGS , "Return the instance to which belongs the plug." }
-    , { "getMasterNet"   , (PyCFunction)PyPlug_getMasterNet  , METH_NOARGS , "Returns the external net referenced by the plug in the master cell of its instance." }
-    , { "getNet"         , (PyCFunction)PyPlug_getNet  , METH_NOARGS , "Returns the  net connected by the plug in the cell of its instance." }
-    , { "isConnected"    , (PyCFunction)PyPlug_isConnected   , METH_NOARGS , "Returns true if the plug is connected, else false." }
-    , { "setNet"         , (PyCFunction)PyPlug_setNet        , METH_VARARGS, "This method allows to connect or change the net of a plug."  }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getInstance"     , (PyCFunction)PyPlug_getInstance , METH_NOARGS , "Return the instance to which belongs the plug." }
+    , { "getMasterNet"    , (PyCFunction)PyPlug_getMasterNet, METH_NOARGS , "Returns the external net referenced by the plug in the master cell of its instance." }
+    , { "getNet"          , (PyCFunction)PyPlug_getNet      , METH_NOARGS , "Returns the  net connected by the plug in the cell of its instance." }
+    , { "isConnected"     , (PyCFunction)PyPlug_isConnected , METH_NOARGS , "Returns true if the plug is connected, else false." }
+    , { "setNet"          , (PyCFunction)PyPlug_setNet      , METH_VARARGS, "This method allows to connect or change the net of a plug."  }
+    , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
 

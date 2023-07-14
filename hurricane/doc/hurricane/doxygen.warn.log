@@ -1,0 +1,140 @@
+DoxygenLayout.xml:21: warning: the type 'dirs' is not supported for the entry tag within a navindex! Check your layout file!
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:184: warning: documentation for unknown define trace found.
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:143: warning: documentation for unknown define for_each_basic_layer found.
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:86: warning: documentation for unknown define for_each_basic_layer found.
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:31: warning: Documentation for undefined enum 'Flags' found.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:160: warning: documented symbol 'bool Hurricane::in_trace' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:166: warning: documented symbol 'void Hurricane::trace_on' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:170: warning: documented symbol 'void Hurricane::trace_off' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:174: warning: documented symbol 'void Hurricane::trace_in' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:179: warning: documented symbol 'void Hurricane::trace_out' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Error.dox:60: warning: no uniquely matching class member found for 
+  Hurricane::Error::Inherit
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Error.dox:91: warning: no uniquely matching class member found for 
+  Error & Hurricane::Error::operator=(const Error &error)
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Interruption.dox:41: warning: documented symbol 'const string & Hurricane::Interruption::GetReason' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Interruption.dox:45: warning: documented symbol 'int Hurricane::Interruption::GetCode' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Collection.dox:439: warning: documented symbol 'typedef list< Element > Hurricane::ElementList' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Technology.dox:183: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Technology.dox:188: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:128: warning: documented symbol 'const DbU::Unit & Hurricane::Layer::getPitch' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:181: warning: no uniquely matching class member found for 
+  DbU::Unit Hurricane::Layer::getEnclosure() const
+Possible candidates:
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:185: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:189: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:193: warning: no uniquely matching class member found for 
+  DbU::Unit Hurricane::Layer::getEnclosure(const Hurricane::BasicLayer *layer) const
+Possible candidates:
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:197: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:201: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:227: warning: documented symbol 'bool Hurricane::Layer::isWorking' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:41: warning: documented symbol 'unsigned Hurricane::BasicLayer::getExtractNumber' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:117: warning: documented symbol 'void Hurricane::BasicLayer::setExtractNumber' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:130: warning: documented symbol 'Hurricane::BasicLayers' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:134: warning: documented symbol 'Hurricane::BasicLayerLocator' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:138: warning: documented symbol 'Hurricane::BasicLayerFilter' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:56: warning: no matching class member found for 
+  void Hurricane::RegularLayer::setBlockageLayer(RegularLayer *layer)
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:61: warning: documented symbol 'void Hurricane::RegularLayer::setExtractNumber' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:65: warning: no matching class member found for 
+  void Hurricane::RegularLayer::setRealName(const char *)
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:73: warning: documented symbol 'Hurricane::RegularLayers' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:77: warning: documented symbol 'Hurricane::RegularLayerLocator' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:81: warning: documented symbol 'Hurricane::RegularLayerFilter' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Entity.dox:30: warning: no matching class member found for 
+  unsigned int Hurricane::Entity::getId() const
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:47: warning: documented symbol 'Occurrences Hurricane::HyperNet::getLeafPlugOccurrences' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:39: warning: documented symbol 'Hurricane::Polygons' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:43: warning: documented symbol 'Hurricane::PolygonLocator' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:47: warning: documented symbol 'Hurricane::PolygonFilter' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:56: warning: no uniquely matching class member found for 
+  RoutingPad * Hurricane::RoutingPad::create(Hurricane::Net *net, Hurricane::Occurrence occurrence, unsigned int flags=0)
+Possible candidates:
+  'static RoutingPad * Hurricane::RoutingPad::create(Net *, Occurrence, uint32_t flags=0)' at line 57 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'static RoutingPad * Hurricane::RoutingPad::create(Pin *)' at line 58 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:102: warning: no uniquely matching class member found for 
+  Box Hurricane::RoutingPad::getBoundingBox(Hurricane::BasicLayer *layer) const
+Possible candidates:
+  'virtual Box Hurricane::RoutingPad::getBoundingBox() const' at line 68 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'virtual Box Hurricane::RoutingPad::getBoundingBox(const BasicLayer *) const' at line 69 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PrivateProperty.dox:49: warning: documented symbol 'typedef PrivateProperty::Inherit Hurricane::Property' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/SharedProperty.dox:50: warning: documented symbol 'typedef SharedProperty::Inherit Hurricane::Property' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/SharedProperty.dox:71: warning: documented symbol 'DBos Hurricane::SharedProperty::GetOwners' was not declared or defined.
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/DebugSession.dox:103: warning: Found unknown command '\Returns'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:40: warning: Illegal command @typename as part of a \c command
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:72: warning: argument 'stack' of command @param is not found in the argument list of Hurricane::JsonObject::check(JsonStack &, std::string fname) const
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:148: warning: argument 'name' of command @param is not found in the argument list of Hurricane::JsonObject::setName(const std::string &)
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:161: warning: argument 'T' of command @param is not found in the argument list of Hurricane::JsonObject::setObject(T t)
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h:102: warning: The following parameter of Hurricane::JsonObject::setObject(T t) is not documented:
+  parameter 't'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:178: warning: Found unknown command '\Important'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:181: warning: argument 'The' of command @param is not found in the argument list of Hurricane::JsonObject::toData(JsonStack &stack)
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:183: warning: Found unknown command '\Important'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h:105: warning: The following parameter of Hurricane::JsonObject::toData(JsonStack &stack) is not documented:
+  parameter 'stack'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:193: warning: Found unknown command '\Remark'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:204: warning: Found unknown command '\Remark'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Collection.dox:244: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'hvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'vvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/PhysicalRule.h:83: warning: The following parameters of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength) are not documented:
+  parameter 'hValue'
+  parameter 'vValue'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <this> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <cloneCell> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:299: warning: Unsupported xml/html tag <cloneCell> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:31: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:34: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Go.dox:201: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:103: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:163: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:177: warning: Unsupported xml/html tag <masterCell> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <this> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <cloneCell> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:184: warning: Unsupported xml/html tag <cloneCell> found
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:186: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:49: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:184: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:204: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:367: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/QuadTree.dox:15: warning: Illegal command \n as part of a title section
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:78: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:81: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:84: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:87: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:90: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:95: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:98: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:101: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:104: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:108: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:111: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:114: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:117: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:120: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:123: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:127: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:131: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:135: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:139: warning: Found unknown command '\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Query.h:357: warning: The following parameter of Hurricane::Query::setQuery(Cell *cell, const Box &area, const Transformation &transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0) is not documented:
+  parameter 'threshold'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PythonAttributes.dox:79: warning: Found unknown command '\Remark'

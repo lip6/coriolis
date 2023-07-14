@@ -57,6 +57,7 @@ namespace Hurricane {
     , _netOccurrence(netOccurrence)
   {
     cdebug_log(18,0) << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+    _netOccurrence.put( Uplink::create(this) );
   }
 
 
@@ -73,8 +74,8 @@ namespace Hurricane {
 
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hyperNet.getNetOccurrence() );
 
-    if (rootNetOccurrence.getMasterCell()->isFlattenLeaf()) return NULL;
-    if (rootNetOccurrence.getPath().isEmpty())              return NULL;
+    if (rootNetOccurrence.getMasterCell()->isTerminalNetlist()) return NULL;
+    if (rootNetOccurrence.getPath().isEmpty())                  return NULL;
     
     DeepNet* deepNet = new DeepNet( rootNetOccurrence );
     deepNet->_postCreate();
@@ -83,33 +84,52 @@ namespace Hurricane {
   }
 
 
+  void  DeepNet::_preDestroy ()
+  {
+    _netOccurrence.removeProperty( Uplink::staticGetName() );
+    Inherit::_preDestroy();
+  }
+
+  
+
   size_t  DeepNet::_createRoutingPads ( unsigned int flags )
   {
+    cdebug_log(18,1) << "DeepNet::_createRoutingPads(): " << this << endl;
+
     size_t        nbRoutingPads = 0;
     HyperNet      hyperNet      ( _netOccurrence );
     RoutingPad*   currentRp     = NULL;
     bool          createRp      = true;
-    unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
+  //unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
 
     for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
-      RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());
-      if ( rp and (rp->getCell() == getCell()) ) { createRp = false; break; }
-      if ( dynamic_cast<Segment*>(occurrence.getEntity()) ) { createRp = false; break; }
+      cdebug_log(18,0) << "| occurrence=" << occurrence << endl;
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( occurrence.getEntity() );
+      cdebug_log(18,0) << "| rp=" << rp << endl;
+      if (rp and (rp->getCell() == getCell())) { createRp = false; break; }
+      if (dynamic_cast<Segment*>(occurrence.getEntity())) { createRp = false; break; }
+      cdebug_log(18,0) << "| dynamic_cast OK createRp=" << createRp << endl;
     }
-    if (not createRp) return 0;
+    if (not createRp) {
+      cdebug_log(18,0) << "DeepNet::_createRoutingPads(): No RoutingPad created" << endl;
+      cdebug_tabw(18,-1);
+      return 0;
+    }
 
-    for ( Occurrence occurrence : hyperNet.getLeafPlugOccurrences() ) {
+    for ( Occurrence occurrence : hyperNet.getTerminalNetlistPlugOccurrences() ) {
       nbRoutingPads++;
 
       currentRp = RoutingPad::create( this, occurrence, RoutingPad::BiggestArea );
       if (flags & Cell::Flags::WarnOnUnplacedInstances)
-        currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
+        currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
         currentRp->getNet();
       }
     }
 
+    cdebug_log(18,0) << "DeepNet::_createRoutingPads(): done on " << this << endl;
+    cdebug_tabw(18,-1);
     return nbRoutingPads;
   }
 
@@ -118,8 +138,8 @@ namespace Hurricane {
   {
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hypernet.getNetOccurrence() );
   
-  //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-  //if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
+  //if (  rootNetOccurrence.getMasterCell()->isTerminalNetlist() ) return NULL;
+  //if (  rootNetOccurrence.getPath().isEmpty() )                  return NULL;
   
     return rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
   }
@@ -193,6 +213,57 @@ namespace Hurricane {
     update( stack, _net );
 
     cdebug_tabw(19,-1);
+  }
+
+
+
+// -------------------------------------------------------------------
+// Class  :  "Uplink"
+
+  Name  DeepNet::Uplink::_name = "DeepNet::Uplink";
+
+
+  DeepNet::Uplink* DeepNet::Uplink::create ( DeepNet* uplink )
+  {
+    Uplink *property = new Uplink( uplink );
+    property->_postCreate (); 
+    return property;
+  }
+
+
+  void  DeepNet::Uplink::onReleasedBy ( DBo* owner )
+  { PrivateProperty::onReleasedBy( owner ); }
+
+
+  Name  DeepNet::Uplink::getPropertyName ()
+  { return _name; }
+
+
+  Name  DeepNet::Uplink::getName () const
+  { return getPropertyName(); }
+
+
+  string  DeepNet::Uplink::_getTypeName () const
+  { return _TName( "DeepNet::Uplink" ); }
+
+
+  string  DeepNet::Uplink::_getString () const
+  {
+    string s = PrivateProperty::_getString ();
+    s.insert ( s.length() - 1 , " " + getString(_uplink) );
+
+    return s;
+  }
+
+
+  Record* DeepNet::Uplink::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if (record) {
+      record->add( getSlot( "_name"  , _name   ) );
+      record->add( getSlot( "_uplink", _uplink ) );
+    }
+    return record;
   }
 
 

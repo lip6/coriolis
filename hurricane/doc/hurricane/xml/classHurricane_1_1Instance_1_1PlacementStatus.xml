@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Instance_1_1PlacementStatus" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Instance::PlacementStatus</compoundname>
+      <sectiondef kind="user-defined">
+      <header>Instance Collection</header>
+      <memberdef kind="enum" id="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" prot="public" static="no" strong="no">
+        <type></type>
+        <name>Code</name>
+        <enumvalue id="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216" prot="public">
+          <name>UNPLACED</name>
+          <initializer>=0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">Instance::PlacementStatus</ref>. </para>
+</simplesect>
+</para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457" prot="public">
+          <name>PLACED</name>
+          <initializer>=1</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">Instance::PlacementStatus</ref>. </para>
+</simplesect>
+</para>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7" prot="public">
+          <name>FIXED</name>
+          <initializer>=2</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">Instance::PlacementStatus</ref>. </para>
+</simplesect>
+</para>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Describe the various placement status an <ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> can be in. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="46" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="46" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1a29d2678343f4b712a9bbbb8f5460ec11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Instance::PlacementStatus::PlacementStatus</definition>
+        <argsstring>(const Code &amp;code=UNPLACED)</argsstring>
+        <name>PlacementStatus</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" kindref="member">Code</ref> &amp;</type>
+          <declname>code</declname>
+          <defval><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216" kindref="member">UNPLACED</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructor. By default the status is unplaced. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="50" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1a121a628ab6f7a86b99acacc0d874d97b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Instance::PlacementStatus::PlacementStatus</definition>
+        <argsstring>(const PlacementStatus &amp;placementstatus)</argsstring>
+        <name>PlacementStatus</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+          <declname>placementstatus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Copy Constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="51" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1a375d2547ed3e8a127e34b0ee3ca14ad6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Instance::PlacementStatus::operator const Code &amp;</definition>
+        <argsstring>() const</argsstring>
+        <name>operator const Code &amp;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Type converter toward <ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" kindref="member">Instance::PlacementStatus::Code</ref> enum. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="56" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1aa907067c594076ed8422bf6c949c8731" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" kindref="member">Code</ref> &amp;</type>
+        <definition>Instance::PlacementStatus::Code &amp; Hurricane::Instance::PlacementStatus::getCode</definition>
+        <argsstring>() const</argsstring>
+        <name>getCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The status (Code) value. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="58" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="58" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Instance_1_1PlacementStatus_1a9d02cc191668237adc5de0958ede0c57" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" kindref="member">Code</ref></type>
+        <definition>Code Hurricane::Instance::PlacementStatus::_code</definition>
+        <argsstring></argsstring>
+        <name>_code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="48" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1a73d042853802424ba2cf07d1e007e660" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Instance::PlacementStatus::PlacementStatus</definition>
+        <argsstring>(string)</argsstring>
+        <name>PlacementStatus</name>
+        <param>
+          <type>string</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="52" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1aec27004e6f0be85b5e62881ea9572f57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+        <definition>PlacementStatus&amp; Hurricane::Instance::PlacementStatus::operator=</definition>
+        <argsstring>(const PlacementStatus &amp;placementstatus)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Instance_1_1PlacementStatus" kindref="compound">PlacementStatus</ref> &amp;</type>
+          <declname>placementstatus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="54" column="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1aaa3ab91c01cd57aabae3b664d5fcf2d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Instance::PlacementStatus::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="60" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="60" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1aa55af497f0752eb6069c554f71cfa42b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Instance::PlacementStatus::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="61" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Instance_1_1PlacementStatus_1a2b2e76e0e7d1930f186541a3be6ae82e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Instance::PlacementStatus::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="62" column="24"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> Placement Status (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Instance_1_1PlacementStatus_1secInstancePStatus">
+<title>Instance Placement Status</title>
+<para>An <ref refid="classHurricane_1_1Instance" kindref="compound">Instance</ref> can have three kind of placement status:<itemizedlist>
+<listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216" kindref="member">Instance::PlacementStatus::UNPLACED</ref> : the instance doesn&apos;t have a meaningful position. It shouldn&apos;t be materialized either. It&apos;s position therfore shouldn&apos;t be used.</para>
+</listitem><listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457" kindref="member">Instance::PlacementStatus::PLACED</ref> : the instance has be placed manually or by an automated tool. It is movable.</para>
+</listitem><listitem><para><ref refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7" kindref="member">Instance::PlacementStatus::FIXED</ref> : the instance is placed and mustn&apos;t be moved by automated tools. It can still be moved manually. </para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" line="43" column="13" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Instance.h" bodystart="43" bodyend="64"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a9d02cc191668237adc5de0958ede0c57" prot="private" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>_code</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a2b2e76e0e7d1930f186541a3be6ae82e" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1aa55af497f0752eb6069c554f71cfa42b" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1aaa3ab91c01cd57aabae3b664d5fcf2d0" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bf" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>Code</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa47be8a40f04081635fe24485ae7c6bd7" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>FIXED</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1aa907067c594076ed8422bf6c949c8731" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>getCode</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a375d2547ed3e8a127e34b0ee3ca14ad6" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>operator const Code &amp;</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1aec27004e6f0be85b5e62881ea9572f57" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfaf3589c11ecd7d5de63db24826b74d457" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>PLACED</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a29d2678343f4b712a9bbbb8f5460ec11" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>PlacementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a121a628ab6f7a86b99acacc0d874d97b" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>PlacementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1a73d042853802424ba2cf07d1e007e660" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>PlacementStatus</name></member>
+      <member refid="classHurricane_1_1Instance_1_1PlacementStatus_1af76cc0838783b3eb3a515eb3c3e0f7bfa3e19a0a1b3e8c8fd860164df7f935216" prot="public" virt="non-virtual"><scope>Hurricane::Instance::PlacementStatus</scope><name>UNPLACED</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

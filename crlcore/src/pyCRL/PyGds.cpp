@@ -38,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -63,19 +64,17 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyGds_save()" << endl;
 
-    Cell* cell = NULL;
-    
     HTRY
       PyObject* pyCell = NULL;
       if (PyArg_ParseTuple( args, "O:Gds.save", &pyCell )) {
         if (IsPyCell(pyCell)) {
           Gds::save( PYCELL_O(pyCell) );
         } else {
-          PyErr_SetString( ConstructorError, "Gds.load(): Bad parameter type (not a Cell)." );
+          PyErr_SetString( ConstructorError, "Gds.save(): Bad parameter type (not a Cell)." );
           return NULL;
         }
       } else {
-        PyErr_SetString( ConstructorError, "Gds.load(): Bad number of parameters." );
+        PyErr_SetString( ConstructorError, "Gds.save(): Bad number of parameters." );
         return NULL;
       }
     HCATCH
@@ -88,14 +87,14 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyGds_load()" << endl;
 
-    Library* library = NULL;
-    char*    path    = NULL;
+    char*     path  = NULL;
+    uint32_t  flags = 0;
     
     HTRY
       PyObject* pyLibrary = NULL;
-      if (PyArg_ParseTuple( args, "Os:Gds.load", &pyLibrary, &path )) {
+      if (PyArg_ParseTuple( args, "Os|I:Gds.load", &pyLibrary, &path, &flags )) {
         if (IsPyLibrary(pyLibrary)) {
-          Gds::load( PYLIBRARY_O(pyLibrary), string(path) );
+          Gds::load( PYLIBRARY_O(pyLibrary), string(path), flags );
         } else {
           PyErr_SetString( ConstructorError, "Gds.load(): Bad parameter type (not a Library)." );
           return NULL;
@@ -135,6 +134,14 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,Gds)
+
+
+  extern  void  PyGds_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix       ,"NoGdsPrefix");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary,"Layer_0_IsBoundary");
+  }
 
 
 #endif  // End of Shared Library Code Part.

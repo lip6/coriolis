@@ -178,23 +178,45 @@ namespace Anabatic {
   AutoHorizontal* AutoContact::getHorizontal2   () const { return NULL; }
   AutoVertical*   AutoContact::getVertical1     () const { return NULL; }
   AutoVertical*   AutoContact::getVertical2     () const { return NULL; }
+  bool            AutoContact::isOnPin          () const { return false; }
 
 
   void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
   {
+    cdebug_log(145,1) << "AutoContact::getDepthSpan() of " << this << endl;
     minDepth = (size_t)-1;
     maxDepth = 0;
 
     Component* anchor = getAnchor ();
     if (anchor) {
+      cdebug_log(145,0) << "* Anchor depth: "
+                        << Session::getRoutingGauge()->getLayerDepth(anchor->getLayer())<< endl;
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
       maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
     }
 
     for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
+      cdebug_log(145,0) << "* segment depth: "
+                        << Session::getRoutingGauge()->getLayerDepth(segment->getLayer())<< endl;
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
       maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
     }
+
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  AutoContact::updateLayer ()
+  {
+    size_t minDepth = (size_t)-1;
+    size_t maxDepth = 0;
+
+    getDepthSpan( minDepth, maxDepth );
+    setLayerAndWidth( maxDepth-minDepth, minDepth );
+    // if (minDepth == maxDepth)
+    //   setLayer( Session::getRoutingGauge()->getRoutingLayer(minDepth) );
+    // else
+    //   setLayer( Session::getRoutingGauge()->getContactLayer(minDepth) );
   }
 
 
@@ -212,14 +234,17 @@ namespace Anabatic {
       size_t     depth  = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
       DbU::Unit  length;
       if (segment->isLocal()) {
-        length = segment->getLength();
+        length = segment->getAnchoredLength();
         lengths[depth] += length;
 
         DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;
         if ( not segment->isUnbound() and (abs(length) > sideLength) )
-          cerr << Error("Suspicious length:%.2f of %s."
-                       ,DbU::getValueString(length).c_str()
-                       ,getString(segment).c_str()) << endl;
+          cerr << Error( "AutoContact::getLength(): Suspicious length %s (> %s) of %s.\n"
+                         "        (on: %s)"
+                       , DbU::getValueString(length).c_str()
+                       , DbU::getValueString(sideLength).c_str()
+                       , getString(segment).c_str()
+                       , getString(this).c_str()) << endl;
       } else {
         if (segment->isHorizontal()) {
           if (isSourceHook)
@@ -274,11 +299,11 @@ namespace Anabatic {
 
   void  AutoContact::invalidate ( Flags flags )
   {
+    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
       cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
       setFlags( CntInvalidated );
-      if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
       Session::invalidate( this );
 
       _invalidate( flags );
@@ -456,12 +481,13 @@ namespace Anabatic {
 
   void  AutoContact::setConstraintBox ( const Box& box )
   {
+    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox()
+                      << " from:" << box << endl;
     setCBXMin ( box.getXMin() );
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    cdebug_log(149,0) << "setConstraintBox() - " << this << " " << getConstraintBox()
-                      << " from:" << box << endl;
+    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox() << endl;
     cdebug_log(149,0) << "* " << _gcell << endl;
   }
 
@@ -554,15 +580,25 @@ namespace Anabatic {
 
   void  AutoContact::setLayerAndWidth ( size_t delta, size_t depth )
   {
+    cdebug_log(145,1) << "AutoContact::setLayerAndWidth() " << this << endl;
+    cdebug_log(145,0) << "delta:" << delta << " depth:" << depth << endl;
+
     if (delta == 0) {
       setLayer( Session::getRoutingLayer(depth) );
-      setSizes( Session::getWireWidth   (depth)
-              , Session::getWireWidth   (depth) );
+      if (Session::getDirection(depth) & Flags::Horizontal) {
+        setSizes( Session::getPWireWidth(depth)
+                , Session::getWireWidth (depth) );
+      } else {
+        setSizes( Session::getWireWidth (depth)
+                , Session::getPWireWidth(depth) );
+      }
     } else {
       setLayer( Session::getContactLayer(depth) );
       setSizes( Session::getViaWidth    (depth)
               , Session::getViaWidth    (depth) );
     }
+
+    cdebug_tabw(145,-1);
   }
 
 

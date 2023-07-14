@@ -121,6 +121,7 @@ extern "C" {
   ExtensionGetBoolFunction(isFixed               ,NetRoutingExtension)
   ExtensionGetBoolFunction(isUnconnected         ,NetRoutingExtension)
   ExtensionGetBoolFunction(isManualGlobalRoute   ,NetRoutingExtension)
+  ExtensionGetBoolFunction(isManualDetailRoute   ,NetRoutingExtension)
   ExtensionGetBoolFunction(isAutomaticGlobalRoute,NetRoutingExtension)
   ExtensionGetBoolFunction(isMixedPreRoute       ,NetRoutingExtension)
   ExtensionGetBoolFunction(isSymmetric           ,NetRoutingExtension)
@@ -197,6 +198,7 @@ extern "C" {
     { { "isFixed"               , (PyCFunction)PyNetRoutingExtension_isFixed               , METH_NOARGS |METH_CLASS , "To be documented." }
     , { "isUnconnected"         , (PyCFunction)PyNetRoutingExtension_isUnconnected         , METH_NOARGS |METH_CLASS , "To be documented." }
     , { "isManualGlobalRoute"   , (PyCFunction)PyNetRoutingExtension_isManualGlobalRoute   , METH_NOARGS |METH_CLASS , "To be documented." }
+    , { "isManualDetailRoute"   , (PyCFunction)PyNetRoutingExtension_isManualDetailRoute   , METH_NOARGS |METH_CLASS , "To be documented." }
     , { "isAutomaticGlobalRoute", (PyCFunction)PyNetRoutingExtension_isAutomaticGlobalRoute, METH_NOARGS |METH_CLASS , "To be documented." }
     , { "isMixedPreRoute"       , (PyCFunction)PyNetRoutingExtension_isMixedPreRoute       , METH_NOARGS |METH_CLASS , "To be documented." }
     , { "isSymmetric"           , (PyCFunction)PyNetRoutingExtension_isSymmetric           , METH_NOARGS |METH_CLASS , "To be documented." }

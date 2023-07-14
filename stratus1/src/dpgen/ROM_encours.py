@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -113,13 +112,13 @@ class dpgen_ROM ( Model ) :
     elif nword ==  512 : adrange =  9
     elif nword == 1024 : adrange = 10
     else :
-      print "Error : DPGEN_ROM"
-      print "The word number (nword := %d) ", nword, "can only takes values : 64, 128, 256, 512 or 1024.\n"
+      print( "Error : DPGEN_ROM" )
+      print( "The word number (nword := %d) ", nword, "can only takes values : 64, 128, 256, 512 or 1024.\n" )
       sys.exit ( 3 )
     
     if nbit % 4 != 0 or nbit > 64 or nbit < 4 :
-      print "Error : DPGEN_ROM\n"
-      print "The bus width (nbit := %d) ", nbit, "must be multiple of 4 and no larger than 64.\n"
+      print( "Error : DPGEN_ROM\n" )
+      print( "The bus width (nbit := %d) ", nbit, "must be multiple of 4 and no larger than 64.\n" )
       sys.exit ( 3 )
     
     ck     = LogicIn  (     "ck",       1 )
@@ -689,8 +688,8 @@ class dpgen_ROM ( Model ) :
 #  if nword > 128 : y2 = ( nbit + 9 ) * HCELL
 #  else             : y2 = ( nbit + 8 ) * HCELL
 #  
-#  if type == 0     : x2 = ( nword / 64 * 50 ) + 150
-#  else             : x2 = ( nword / 64 * 50 ) + 170
+#  if type == 0     : x2 = ( nword // 64 * 50 ) + 150
+#  else             : x2 = ( nword // 64 * 50 ) + 170
 #  
 #  # alimentations verticales ALU3
 #  LV_name.PHSEG ( CALU3,12, "vdd", 10, 0, 10, y2)
@@ -698,19 +697,19 @@ class dpgen_ROM ( Model ) :
 #  LV_name.PHSEG ( CALU3, 2, "vss", 30, 0, 30, y2)
 #  
 #  for j in range ( 0, nword, 64 ) :
-#    LV_name.PHSEG ( CALU3, 2, "vss", 55 + ( 50 * j / 64 ), 0, 55 + ( 50 * j / 64 ), y2 )
-#    LV_name.PHSEG ( CALU3, 2, "vss", 80 + ( 50 * j / 64 ), 0, 80 + ( 50 * j / 64 ), y2 )
+#    LV_name.PHSEG ( CALU3, 2, "vss", 55 + ( 50 * j // 64 ), 0, 55 + ( 50 * j // 64 ), y2 )
+#    LV_name.PHSEG ( CALU3, 2, "vss", 80 + ( 50 * j // 64 ), 0, 80 + ( 50 * j // 64 ), y2 )
 #  
 #  if type == 0 :
-#    LV_name.PHSEG ( CALU3, 2, "vss", 125 + ( nword / 64 * 50 ), 0, 125 + ( nword / 64 * 50 ), y1 )
-#    LV_name.PHSEG ( CALU3, 2, "vdd", 135 + ( nword / 64 * 50 ), 0, 135 + ( nword / 64 * 50 ), y1 )
-#    LV_name.PHSEG ( CALU3, 2, "vdd", 145 + ( nword / 64 * 50 ), 0, 145 + ( nword / 64 * 50 ), y1 )
+#    LV_name.PHSEG ( CALU3, 2, "vss", 125 + ( nword // 64 * 50 ), 0, 125 + ( nword // 64 * 50 ), y1 )
+#    LV_name.PHSEG ( CALU3, 2, "vdd", 135 + ( nword // 64 * 50 ), 0, 135 + ( nword // 64 * 50 ), y1 )
+#    LV_name.PHSEG ( CALU3, 2, "vdd", 145 + ( nword // 64 * 50 ), 0, 145 + ( nword // 64 * 50 ), y1 )
 #
 #  else :
-#    LV_name.PHSEG ( CALU3, 2, "vss", 135 + ( nword / 64 * 50 ), 0, 135 + ( nword / 64 * 50 ), y1 )
-#    LV_name.PHSEG ( CALU3, 2, "vdd", 145 + ( nword / 64 * 50 ), 0, 145 + ( nword / 64 * 50 ), y1 )
-#    LV_name.PHSEG ( CALU3, 2, "vss", 155 + ( nword / 64 * 50 ), 0, 155 + ( nword / 64 * 50 ), y2 )
-#    LV_name.PHSEG ( CALU3, 2, "vdd", 165 + ( nword / 64 * 50 ), 0, 165 + ( nword / 64 * 50 ), y2 )
+#    LV_name.PHSEG ( CALU3, 2, "vss", 135 + ( nword // 64 * 50 ), 0, 135 + ( nword // 64 * 50 ), y1 )
+#    LV_name.PHSEG ( CALU3, 2, "vdd", 145 + ( nword // 64 * 50 ), 0, 145 + ( nword // 64 * 50 ), y1 )
+#    LV_name.PHSEG ( CALU3, 2, "vss", 155 + ( nword // 64 * 50 ), 0, 155 + ( nword // 64 * 50 ), y2 )
+#    LV_name.PHSEG ( CALU3, 2, "vdd", 165 + ( nword // 64 * 50 ), 0, 165 + ( nword // 64 * 50 ), y2 )
 #  
 #  # alimemtations horizontales ALU2
 #  for i in range ( 0, nbit, 4 ) :
@@ -805,7 +804,7 @@ def ROM_VHDL () :
   global LV_ModelName
   global nword
 
-  print "ROM behavior not yet implemented"
+  print( "ROM behavior not yet implemented" )
 
 #  fileName = LV_ModelName + ".vbe"
 #  

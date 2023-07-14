@@ -16,7 +16,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
-#include "anabatic/Constants.h"
+#include "anabatic/PyStyleFlags.h"
 
 
 namespace Anabatic {
@@ -55,18 +55,40 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyAnabatic_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Anabatic"          /* m_name     */
+    , "Low level database for global & detailed routing."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyAnabatic_Methods  /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initAnabatic ()"
 
-  DL_EXPORT(void) initAnabatic () {
-    cdebug_log(32,0) << "initAnabatic()" << endl;
+  PyMODINIT_FUNC PyInit_Anabatic ( void )
+  {
+    cdebug_log(32,0) << "PyInit_Anabatic()" << endl;
 
-    PyObject* module = Py_InitModule( "Anabatic", PyAnabatic_Methods );
+    PyStyleFlags_LinkPyType();
+
+    PYTYPE_READY( StyleFlags );
+
+    PyObject* module = PyModule_Create( &PyAnabatic_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Anabatic module." << endl;
-      return;
+      return NULL;
     }
+
+    Py_INCREF( &PyTypeStyleFlags );
+    PyModule_AddObject( module, "StyleFlags", (PyObject*)&PyTypeStyleFlags );
 
     PyObject* dictionnary = PyModule_GetDict(module);
     PyObject* constant;
@@ -77,6 +99,9 @@ extern "C" {
     LoadObjectConstant( dictionnary,EngineLayerAssignByTrunk    ,"EngineLayerAssignByTrunk"     );
     LoadObjectConstant( dictionnary,EngineLayerAssignNoGlobalM2V,"EngineLayerAssignNoGlobalM2V" );
     LoadObjectConstant( dictionnary,EngineNoNetLayerAssign      ,"EngineNoNetLayerAssign"       );
+
+    PyStyleFlags_postModuleInit();
+    return module;
   }
 
   

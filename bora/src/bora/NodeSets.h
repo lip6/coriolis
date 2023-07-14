@@ -17,9 +17,11 @@
 #ifndef BORA_NODE_SETS_H
 #define BORA_NODE_SETS_H
 
+#include <algorithm>
 #include <cstddef>
 #include <limits>
 #include "BoxSet.h"
+#include "ParameterRange.h"
 
 namespace Hurricane {
   class Cell;
@@ -48,13 +50,11 @@ namespace Bora {
     //static const  size_t  NotFound = std::numeric_limits<size_t>()::max;
       static const  size_t  NotFound = (size_t)-1L;
     public:
-                                                   NodeSets          ( double start, double step, double count );
+                                                   NodeSets          ( ParameterRange *range );
                                                    NodeSets          ( const NodeSets* other );
                                                   ~NodeSets          ();
       static       NodeSets*                       create            ( Cell*              cell =NULL
-                                                                     , double             start=0.0
-                                                                     , double             step =0.0
-                                                                     , double             count=0.0
+                                                                     , ParameterRange*    range=NULL
                                                                      , CRL::RoutingGauge* rg   =NULL );
                    BoxSet*                         operator[]        ( size_t );
                    BoxSet*                         at                ( size_t );
@@ -72,21 +72,17 @@ namespace Bora {
                    size_t                          findIndex         ( DbU::Unit height, DbU::Unit width ) const;
                    BoxSet*                         find              ( DbU::Unit height, DbU::Unit width );
                    BoxSet*                         find              ( BoxSet* boxSet );
-                   BoxSet*                         find              ( int     nfing  );
+                   BoxSet*                         find              ( size_t  index );
                    void                            print             () const;
                    bool                            compare           ( NodeSets nodeSets2, unsigned int flags=NoFlags ) const;
                    void                            push_back         ( BoxSet* boxSet );
                    void                            push_back         ( std::vector<BoxSet*> vect, DbU::Unit height, DbU::Unit width, unsigned int type );
                    void                            push_back         ( DbU::Unit height, DbU::Unit width );
                    NodeSets*                       clone             ();
-      inline       double                          getStartParameter () const;
-      inline       double                          getStepParameter  () const;
-      inline       double                          getCountParameter () const;
+      inline       ParameterRange*                 getRange          () const;
     private:
       std::vector<BoxSet*> _boxSets;
-      int                  _start;
-      int                  _step;
-      int                  _count;
+      ParameterRange*      _range;
   };
 
 
@@ -97,9 +93,7 @@ namespace Bora {
   inline       size_t                         NodeSets::size              () const { return _boxSets.size() ; }
   inline       bool                           NodeSets::empty             () const { return _boxSets.empty(); }
   inline       void                           NodeSets::sort              ()       { std::sort( _boxSets.begin(),_boxSets.end(), compBoxSet() ); }
-  inline       double                         NodeSets::getStartParameter () const { return _start; }
-  inline       double                         NodeSets::getStepParameter  () const { return _step ; }
-  inline       double                         NodeSets::getCountParameter () const { return _count; }
+  inline       ParameterRange*                NodeSets::getRange          () const { return _range; }
 
 
 }  // Bora namespace.

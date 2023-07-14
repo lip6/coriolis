@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -20,7 +20,7 @@
 #include <boost/bind.hpp>
 #include <QApplication>
 #include <QPrinter>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Technology.h"
@@ -82,6 +82,7 @@ namespace Hurricane {
     setCentralWidget( _cellWidget );
     _palette->readGraphics ();
 
+    _cellWidget->setPixelThreshold( 1 );
     _cellWidget->setPrinter( true );
     _cellWidget->bindToPalette( _palette );
     _cellWidget->refresh();
@@ -92,21 +93,21 @@ namespace Hurricane {
   {
     _screenCellWidget = cellWidget;
 
-    array<string,14> labels = { "fallback"
-                              , "rubber"
-                              , "phantom"
-                              , "boundaries"
-                              , "marker"
-                              , "grid"
-                              , "spot"
-                              , "ghost"
-                              , "text.ruler"
-                              , "text.cell"
-                              , "text.instance"
-                              , "text.components"
-                              , "text.references"
-                              , "undef"
-                              };
+    array<string,14> labels = {{ string("fallback"        )
+                               , string("rubber"          )
+                               , string("phantom"         )
+                               , string("boundaries"      )
+                               , string("marker"          )
+                               , string("grid"            )
+                               , string("spot"            )
+                               , string("ghost"           )
+                               , string("text.ruler"      )
+                               , string("text.cell"       )
+                               , string("text.instance"   )
+                               , string("text.components" )
+                               , string("text.references" )
+                               , string("undef"           )
+                              }};
 
     for ( string label : labels )
       _cellWidget->setLayerVisible( label

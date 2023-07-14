@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_SESSION_H
-#define  KATANA_SESSION_H
-
+#pragma  once
 #include <set>
 #include <vector>
 #include <string>
@@ -65,66 +63,78 @@ namespace Katana {
     public:
       typedef  Anabatic::Session  Super;
     public:
-             static Session*            get                 ( const char* message=NULL );
-      inline static Super*              base                ();
-      inline static bool                isEmpty             ();
-      inline static KatanaEngine*       getKatanaEngine     ();
-             static Configuration*      getConfiguration    ();
-      inline static Net*                getBlockageNet      ();
-      inline static NegociateWindow*    getNegociateWindow  ();
-      inline static uint32_t            getRipupCost        ();
-      inline static Anabatic::GCell*    getGCellUnder       ( DbU::Unit, DbU::Unit );
-             static void                setInterrupt        ( bool );
-      inline static Interval&           toAxisInterval      ( Interval&, size_t depth );
-      inline static void                addInsertEvent      ( TrackMarker*  , Track* );
-      inline static void                addInsertEvent      ( TrackElement* , Track* );
-      inline static void                addRemoveEvent      ( TrackElement* );
-      inline static void                addMoveEvent        ( TrackElement* , Track* );
-      inline static void                addSortEvent        ( Track*, bool forced=false );
-      inline static void                addLockEvent        ( TrackElement* );
-      inline static size_t              revalidate          ();
-             static AutoContact*        lookup              ( Contact* );
-             static TrackElement*       lookup              ( Segment* );
-             static TrackElement*       lookup              ( AutoSegment* );
-             static void                addShortDogleg      ( TrackElement*, TrackElement* );
-             static TrackElement*       getDoglegPaired     ( TrackElement* );
-             static Session*            _open               ( KatanaEngine* );
-    private:                                                
-                    KatanaEngine*       _getKatanaEngine    ();
-                    Net*                _getBlockageNet     ();
-                    uint32_t            _getRipupCost       ();
-                    Anabatic::GCell*    _getGCellUnder      ( DbU::Unit, DbU::Unit );
-                    Interval&           _toAxisInterval     ( Interval&, size_t depth ) const;
-                    void                _doLockEvents       ();
-                    void                _doRemovalEvents    ();
-      virtual       size_t              _revalidate         ();
-                    bool                _isEmpty            () const;
-                    NegociateWindow*    _getNegociateWindow ();
-                    void                _addInsertEvent     ( TrackMarker*  , Track* );
-                    void                _addInsertEvent     ( TrackElement* , Track* );
-                    void                _addRemoveEvent     ( TrackElement* );
-                    void                _addMoveEvent       ( TrackElement* , Track* );
-                    void                _addSortEvent       ( Track*, bool forced );
-                    void                _addLockEvent       ( TrackElement* );
-      virtual       Record*             _getRecord          () const;
-      virtual       string              _getTypeName        () const;
+             static Session*            get                  ( const char* message=NULL );
+      inline static Super*              base                 ();
+      inline static bool                isEmpty              ();
+      inline static bool                disableStackedVias   ();
+             static uint32_t            getStage             ();
+      inline static KatanaEngine*       getKatanaEngine      ();
+             static Configuration*      getConfiguration     ();
+      inline static Net*                getBlockageNet       ();
+      inline static NegociateWindow*    getNegociateWindow   ();
+      inline static uint32_t            getRipupCost         ();
+      inline static Anabatic::GCell*    getGCellUnder        ( DbU::Unit, DbU::Unit );
+      inline static const std::vector<TrackElement*>&        
+                                        getIndirectInvalids  ();
+             static void                setInterrupt         ( bool );
+             static void                setStage             ( uint32_t );
+      inline static Interval&           toAxisInterval       ( Interval&, size_t depth );
+      inline static void                addIndirectInvalid   ( TrackElement* );
+      inline static void                addInsertEvent       ( TrackMarker*  , Track* );
+      inline static void                addInsertEvent       ( TrackElement* , Track*, DbU::Unit axis, bool check=true );
+      inline static void                addRemoveEvent       ( TrackElement* );
+      inline static void                addMoveEvent         ( TrackElement* , Track*, DbU::Unit axis );
+      inline static void                addSortEvent         ( Track*, bool forced=false );
+      inline static void                addLockEvent         ( TrackElement* );
+      inline static size_t              revalidate           ();
+             static AutoContact*        lookup               ( Contact* );
+             static TrackElement*       lookup               ( Segment* );
+             static TrackElement*       lookup               ( AutoSegment* );
+             static void                addShortDogleg       ( TrackElement*, TrackElement* );
+             static TrackElement*       getDoglegPaired      ( TrackElement* );
+             static Session*            _open                ( KatanaEngine* );
+    private:                                                 
+                    KatanaEngine*       _getKatanaEngine     ();
+                    Net*                _getBlockageNet      ();
+                    uint32_t            _getRipupCost        ();
+                    Anabatic::GCell*    _getGCellUnder       ( DbU::Unit, DbU::Unit );
+                    Interval&           _toAxisInterval      ( Interval&, size_t depth ) const;
+                    void                _doLockEvents        ();
+                    void                _doRemovalEvents     ( bool reschedule=false );
+      virtual       size_t              _revalidate          ();
+                    bool                _isEmpty             () const;
+                    bool                _disableStackedVias  ();
+                    NegociateWindow*    _getNegociateWindow  ();
+      inline        const std::vector<TrackElement*>&
+                                        _getIndirectInvalids ();
+      inline        void                _addIndirectInvalid  ( TrackElement* );
+                    void                _addInsertEvent      ( TrackMarker*  , Track* );
+                    void                _addInsertEvent      ( TrackElement* , Track*, DbU::Unit axis, bool check );
+                    void                _addRemoveEvent      ( TrackElement* );
+                    void                _addMoveEvent        ( TrackElement* , Track*, DbU::Unit axis );
+                    void                _addSortEvent        ( Track*, bool forced );
+                    void                _addLockEvent        ( TrackElement* );
+      virtual       Record*             _getRecord           () const;
+      virtual       string              _getTypeName         () const;
     protected:
     // Internal Classes.
       class Event {
         public:
-          inline Event ( TrackElement*, Track* );
+          inline Event ( TrackElement*, Track*, DbU::Unit );
           inline Event ( TrackMarker* , Track* );
         public:
           TrackElement* _segment;
           TrackMarker*  _marker;
           Track*        _track;
+          DbU::Unit     _axis;
       };
     protected:
     // Attributes.
-      vector<Event>  _insertEvents;
-      vector<Event>  _removeEvents;
-      vector<Event>  _lockEvents;
-      set<Track*>    _sortEvents;
+      vector<TrackElement*>  _indirectInvalids;
+      vector<Event>          _insertEvents;
+      vector<Event>          _removeEvents;
+      vector<Event>          _lockEvents;
+      vector<Track*>         _sortEvents;
     protected:
     // Constructors & Destructors.
                        Session     ( KatanaEngine* );
@@ -138,16 +148,18 @@ namespace Katana {
 
 
 // Inline Functions.
-  inline Session::Event::Event ( TrackElement* segment , Track* track )
+  inline Session::Event::Event ( TrackElement* segment , Track* track, DbU::Unit axis )
     : _segment(segment)
     , _marker (NULL)
     , _track  (track)
+    , _axis   (axis)
   { }
 
   inline Session::Event::Event ( TrackMarker* marker , Track* track )
     : _segment(NULL)
     , _marker (marker)
     , _track  (track)
+    , _axis   (0)
   { }
 
 
@@ -169,20 +181,26 @@ namespace Katana {
   inline Anabatic::GCell* Session::getGCellUnder ( DbU::Unit x, DbU::Unit y )
   { return get("getGCellUnder()")->_getGCellUnder(x,y); }
 
+  inline const std::vector<TrackElement*>& Session::getIndirectInvalids ()
+  { return get("getIndirectInvalids()")->_getIndirectInvalids(); }
+
   inline Interval& Session::toAxisInterval ( Interval& interval, size_t depth )
   { return get("getGCellUnder()")->_toAxisInterval(interval,depth); }
+
+  inline void  Session::addIndirectInvalid  ( TrackElement* element )
+  { get("addIndirectInvalid(TrackElement*)")->_addIndirectInvalid(element); }
 
   inline void  Session::addInsertEvent ( TrackMarker* marker, Track* track )
   { get("addInsertEvent(TrackMarker*)")->_addInsertEvent(marker,track); }
 
-  inline void  Session::addInsertEvent ( TrackElement* segment, Track* track )
-  { get("addInsertEvent(TrackElement*)")->_addInsertEvent(segment,track); }
+  inline void  Session::addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
+  { get("addInsertEvent(TrackElement*)")->_addInsertEvent(segment,track,axis,check); }
 
   inline void  Session::addRemoveEvent ( TrackElement* segment )
   { get("addRemoveEvent()")->_addRemoveEvent(segment); }
 
-  inline void  Session::addMoveEvent ( TrackElement* segment, Track* track )
-  { get("addMoveEvent()")->_addMoveEvent(segment,track); }
+  inline void  Session::addMoveEvent ( TrackElement* segment, Track* track, DbU::Unit axis )
+  { get("addMoveEvent()")->_addMoveEvent(segment,track,axis); }
 
   inline void  Session::addLockEvent ( TrackElement* segment )
   { get("addLockEvent()")->_addLockEvent(segment); }
@@ -196,7 +214,14 @@ namespace Katana {
   inline bool  Session::isEmpty ()
   { return get("isEmpty()")->_isEmpty(); }
 
+  inline bool  Session::disableStackedVias ()
+  { return get("disableStackedVias()")->_disableStackedVias(); }
+
+  inline const std::vector<TrackElement*>& Session::_getIndirectInvalids ()
+  { return _indirectInvalids; }
+
+  inline void  Session::_addIndirectInvalid  ( TrackElement* element )
+  { _indirectInvalids.push_back( element ); }
+
 
 }  // Katana namespace.
-
-#endif  // KATANA_SESSION_H

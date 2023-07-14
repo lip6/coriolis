@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -57,8 +56,11 @@ from st_generate import Generate
 import re, types, inspect
 
 ## Class of nets ##
-PORT = ( "st_net.SignalIn", "st_net.SignalOut", "st_net.SignalInOut" \
-       , "st_net.SignalUnknown", "st_net.TriState" \
+PORT = ( "<cass 'st_net.SignalIn'>"
+       , "<cass 'st_net.SignalOut'>"
+       , "<cass 'st_net.SignalInOut'>"
+       , "<cass 'st_net.SignalUnknown'>"
+       , "<cass 'st_net.TriState'>"
        )
 
 #####################
@@ -111,6 +113,8 @@ class net :
   
   ##### For buses #####
   def __getitem__ ( self, indice ) :
+    if isinstance(indice,slice):
+      return self.getslice( indice.start, indice.stop )
     if indice == -1:
         return Sig ( self, self._ind + self._arity - 1 )
     if ( indice < self._ind ) or ( indice >= ( self._ind + self._arity ) ) :
@@ -122,7 +126,7 @@ class net :
     
     return Sig ( self, indice )
     
-  def __getslice__ ( self, ind1, ind2 ) :
+  def getslice ( self, ind1, ind2 ) :
     if ind1 < ind2 :
       indmin = ind1
       indmax = ind2
@@ -154,7 +158,7 @@ class net :
     cell = CELLS[-1]
 
     ### Initialisation of net representing a constant ###
-    if type ( net ) == types.StringType :
+    if isinstance(net,str):
       from st_const import Constant
       
       if not ( cell._st_vdds ) or not ( cell._st_vsss ) : 
@@ -453,13 +457,13 @@ class net :
     cell._TAB_NETS_OUT += [Signal ( "sh_o%d" % num_net, inputNet._arity )]
 
     # Initialisation of shiftType
-    if direction is "left" :
-      if   type is "logical" : shiftType = 0x12
-      elif type is "arith"   : shiftType = 0xa
+    if direction == "left" :
+      if   type == "logical" : shiftType = 0x12
+      elif type == "arith"   : shiftType = 0xa
       else                   : shiftType = 0x6
     else :
-      if   type is "logical" : shiftType = 0x11
-      elif type is "arith"   : shiftType = 0x9
+      if   type == "logical" : shiftType = 0x11
+      elif type == "arith"   : shiftType = 0x9
       else                   : shiftType = 0x5
 
     inst_name = self._st_cell._shift.lower()
@@ -530,14 +534,14 @@ class net :
     maxPossibility = pow ( 2, self._arity ) - 1
 
     ### List ###
-    if   type ( nets ) == types.ListType :
+    if   isinstance(nets,list):
       if len ( nets ) !=  ( maxPossibility + 1 ) :
         raise Exception ( "\n[Stratus ERROR] Mux : when using a list, all the nets must be precised. Maybe one should use a dictionnary.\n" )
     
       return self.muxList ( nets )
 
     ### Dictionnary : Creation of the corresponding list ###
-    elif type ( nets ) == types.DictType :
+    elif isinstance(nets,dict):
 
       # Initialisation of the by default to 0 net if no default net given
       if "default" not in nets : nets["default"] = 0
@@ -868,7 +872,7 @@ class net :
 
     # Error :
     if re.search ( "[A-Z]", nom ) :
-      print "[Stratus Warning] : Upper case letters are not supported, the name", nom, "is lowered."
+      print( "[Stratus Warning] : Upper case letters are not supported, the name", nom, "is lowered." )
       nom = nom.lower ()
     if re.search ( " ", nom ) :
       chaine = re.search ( "st_net\.(.*)", str ( self.__class__ ) )
@@ -923,13 +927,13 @@ class net :
     else :
      #for i in range ( self._ind+self._arity, self._ind, -1 ):
       for i in range ( self._ind, self._ind+self._arity, 1 ):
-       #print 'create %s(%d)' % (self._name,i)
+       #print( 'create %s(%d)' % (self._name,i) )
         self.hur_net ( '%s(%d)' % (self._name,i), i )
 
   ##### hur_net one by one #####
   def hur_net ( self, name, ind ) :
     if ( self._alias ) and ( self._alias[ind] ) :
-      self._hur_net += [self._alias[ind].keys()[0]] # put the right hur_net
+      self._hur_net += [list(self._alias[ind].keys())[0]] # put the right hur_net
       return
     elif ( self._to_cat ) and ( self._to_cat[ind] ) :
       cat = self._to_cat[ind]
@@ -951,9 +955,9 @@ class net :
       elif self._direct ==  "UNKNOWN" : net.setDirection ( Net.Direction.UNDEFINED )
       
     if '_h_type' in self.__dict__ :
-      if   self._h_type ==  "POWER" : net.setType ( Net.Type.POWER  )
-      elif self._h_type == "GROUND" : net.setType ( Net.Type.GROUND )
-      elif self._h_type ==  "CLOCK" : net.setType ( Net.Type.CLOCK  )
+      if   self._h_type ==  "POWER" : net.setType ( Net.Type.POWER  ); net.setGlobal( True )
+      elif self._h_type == "GROUND" : net.setType ( Net.Type.GROUND ); net.setGlobal( True )
+      elif self._h_type ==  "CLOCK" : net.setType ( Net.Type.CLOCK  ); net.setGlobal( True )
     
     self._hur_net += [net]
 
@@ -973,7 +977,7 @@ class net :
         bitToMerge  = realNet._to_merge[i][1]
       
         if selfToMerge._hur_net == [] :
-          print "[Stratus Warning] HurricanePlug <= : net", selfToMerge._name, "has no hurricane net."
+          print( "[Stratus Warning] HurricanePlug <= : net", selfToMerge._name, "has no hurricane net." )
           return
 
         if realNet._hur_net == [] :

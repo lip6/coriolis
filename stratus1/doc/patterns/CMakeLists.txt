@@ -9,7 +9,7 @@
     add_latex_document ( patterns.tex )
  endif()
 
-                   set ( htmlInstallDir  share/doc/coriolis2/en/html/ )
+                   set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/patterns )
 
         make_directory ( "${LATEX_OUTPUT_PATH}/patterns" )

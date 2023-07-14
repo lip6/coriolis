@@ -1,0 +1,45 @@
+.TH "Observer< T >" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Observer< T > \- \fBObserver\fP Design Pattern, \fBObserver\fP part\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBBaseObserver\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBObserver\fP (const T *owner)"
+.br
+.ti -1c
+.RI "T * \fBgetOwner\fP () const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+class Katabatic::Observer< T >"
+\fBObserver\fP Design Pattern, \fBObserver\fP part\&. 
+
+\fBFirst, a warning about names:\fP although this class is named \fBObserver\fP, it is intended to be an attribute nested inside the whole object which is indeed, the true \fBObserver\fP\&. This nesting object is called, most of the time the \fBowner\fP in the following\&. But sometimes, for simplification it may also be called the \fBObserver\fP\&.
+.SH "Observer Implementation Notes"
+.PP
+To retrieve the \fIowner\fP from the \fBObserver\fP attribute, we uses the offset from the attribute in the \fIowner\fP\&. This offset is computed once and for all the first time the template constructor is called\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBObserver\fP (const T * owner)\fC [inline]\fP"
+The owner of the oberver is needed to compute, on the first creation only, the offset of the \fBObserver\fP attribute inside the \fCowner\fP complete object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "T * getOwner () const\fC [inline]\fP"
+\fBReturns:\fP The owner of the observer\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

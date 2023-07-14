@@ -153,8 +153,21 @@ namespace Katana {
 
       float edgeOccupancy = edge->getEstimateOccupancy() + (float)edge->getRealOccupancy();
 
-      if ((unsigned int)edgeOccupancy < edge->getCapacity())
+#define NORMAL_DENSITY_DISPLAY 1
+#if NORMAL_DENSITY_DISPLAY
+      if ((unsigned int)edgeOccupancy <= edge->getCapacity())
         occupancy = (uint32_t)( 255.0 * (edgeOccupancy / (float)edge->getCapacity()) );
+#endif
+#if HISTORIC_COST_DISPLAY
+      occupancy = (uint32_t)( 10.0 * edge->getHistoricCost() );
+#endif
+#if EDGE_OVERLOAD_DISPLAY
+      if ((unsigned int)edgeOccupancy <= edge->getCapacity())
+        occupancy = 0;
+      else
+        occupancy = (uint32_t)( 20.0 * ((unsigned int)edgeOccupancy - edge->getCapacity()) );
+#endif
+      if (occupancy > 254) occupancy = 254;
 
       QPainter& painter = widget->getPainter();
       if ((unsigned int)edgeOccupancy > edge->getCapacity()) {
@@ -174,9 +187,10 @@ namespace Katana {
       if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
 
     //QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
-      QString text  = QString("%1/%2 %3")
+      QString text  = QString("%1/%2[-%3] %4")
         .arg( edgeOccupancy )
         .arg( edge->getCapacity() )
+        .arg( edge->getReservedCapacity() )
         .arg( edge->getHistoricCost() );
       QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
       painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
@@ -243,6 +257,8 @@ namespace Katana {
   {
     KatanaEngine* katana = getForFramework( CreateEngine );
     katana->runGlobalRouter();
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_globalRoute() done." );
   }
 
 
@@ -252,6 +268,8 @@ namespace Katana {
 
     _viewer->clearToolInterrupt();
     katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_loadGlobalRouting() done." );
   }
 
 
@@ -260,6 +278,8 @@ namespace Katana {
     KatanaEngine* katana = getForFramework( NoFlags );
   //katana->balanceGlobalDensity();
     katana->layerAssign( Anabatic::EngineNoNetLayerAssign );
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_balanceGlobalDensity() done." );
   }
 
 

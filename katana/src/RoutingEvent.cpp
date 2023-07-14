@@ -19,8 +19,10 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Bug.h"
+#include "hurricane/Breakpoint.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/Net.h"
@@ -50,10 +52,12 @@ namespace Katana {
   using std::min;
   using std::ostringstream;
   using Hurricane::tab;
+  using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::BaseFlags;
+  using Hurricane::UpdateSession;
   using Hurricane::ForEachIterator;
   using Hurricane::Net;
   using Hurricane::Layer;
@@ -99,8 +103,16 @@ namespace Katana {
     if (    (lhs._segFlags & AutoSegment::SegFixedAxis) and not (rhs._segFlags & AutoSegment::SegFixedAxis)) return false;
     if (not (lhs._segFlags & AutoSegment::SegFixedAxis) and     (rhs._segFlags & AutoSegment::SegFixedAxis)) return true;
 
+    if (lhs._rpDistance > rhs._rpDistance) return true;
+    if (lhs._rpDistance < rhs._rpDistance) return false;
+
     if (lhs._layerDepth > rhs._layerDepth) return true;
     if (lhs._layerDepth < rhs._layerDepth) return false;
+
+    if (lhs._rpDistance == 0) {
+      if (lhs._length > rhs._length) return true;
+      if (lhs._length < rhs._length) return false;
+    }
 
     if (lhs._priority > rhs._priority) return false;
     if (lhs._priority < rhs._priority) return true;
@@ -126,6 +138,7 @@ namespace Katana {
 
   RoutingEvent::Key::Key ( const RoutingEvent* event )
     : _tracksNb    (event->getTracksNb())
+    , _rpDistance  (event->getSegment()->base()->getRpDistance())
     , _priority    (event->getPriority())
     , _eventLevel  (event->getEventLevel())
     , _segFlags    (event->getSegment()->base()->getFlags())
@@ -143,6 +156,7 @@ namespace Katana {
     if (not event) return;
 
     _tracksNb     = event->getTracksNb();
+    _rpDistance   = event->getSegment()->base()->getRpDistance();
     _priority     = event->getPriority();
     _eventLevel   = event->getEventLevel();
     _segFlags     = event->getSegment()->base()->getFlags();
@@ -159,21 +173,19 @@ namespace Katana {
 
 
   uint32_t  RoutingEvent::_idCounter  = 0;
-  uint32_t  RoutingEvent::_stage      = RoutingEvent::Negociate;
   uint32_t  RoutingEvent::_allocateds = 0;
   uint32_t  RoutingEvent::_processeds = 0;
   uint32_t  RoutingEvent::_cloneds    = 0;
 
 
-  uint32_t  RoutingEvent::getStage        () { return _stage; }
+  uint32_t  RoutingEvent::getStage        () { return Session::getStage(); }
   uint32_t  RoutingEvent::getAllocateds   () { return _allocateds; }
   uint32_t  RoutingEvent::getProcesseds   () { return _processeds; }
   uint32_t  RoutingEvent::getCloneds      () { return _cloneds; }
-  void      RoutingEvent::setStage        ( uint32_t stage ) { _stage = stage; }
   void      RoutingEvent::resetProcesseds () { _processeds = 0; }
 
 
-  RoutingEvent::RoutingEvent ( TrackElement* segment, uint32_t mode )
+  RoutingEvent::RoutingEvent ( TrackElement* segment )
     : _cloned              (false)
     , _processed           (false)
     , _disabled            (false)
@@ -191,7 +203,6 @@ namespace Katana {
     , _tracksNb            (0)
     , _tracksFree          (0)
     , _insertState         (0)
-    , _mode                (mode)
     , _rippleState         (0)
     , _eventLevel          (0)
     , _key                 (this)
@@ -215,7 +226,7 @@ namespace Katana {
   }
 
 
-  RoutingEvent* RoutingEvent::create ( TrackElement* segment, uint32_t mode )
+  RoutingEvent* RoutingEvent::create ( TrackElement* segment )
   {
     // if (not dynamic_cast<TrackSegment*>(segment)) {
     //   cerr << Error( "RoutingEvent::create() Can only create event from TrackSegment:\n"
@@ -223,7 +234,7 @@ namespace Katana {
     //                ) << endl;
     // }
 
-    RoutingEvent* event = new RoutingEvent ( segment, mode );
+    RoutingEvent* event = new RoutingEvent ( segment  );
     ++_allocateds;
 
     return event;
@@ -272,10 +283,6 @@ namespace Katana {
   { return getState() == DataNegociate::Unimplemented; }
 
 
-  void  RoutingEvent::setMode ( uint32_t mode )
-  { _mode = mode; }
-
-
   uint32_t  RoutingEvent::getState () const
   {
     DataNegociate* data = _segment->getDataNegociate();
@@ -299,7 +306,7 @@ namespace Katana {
 
   void  RoutingEvent::setAxisHintFromParent ()
   {
-    if (getStage() == Repair) return;
+    if (Session::getStage() == StageRepair) return;
 
     TrackElement* parent = _segment->getParent();
     if (not parent) return;
@@ -334,7 +341,7 @@ namespace Katana {
       return NULL;
     }
 
-    if ( (getStage() != Repair) and isUnimplemented() ) {
+    if ( (Session::getStage() != StageRepair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
       return NULL;
     }
@@ -356,11 +363,10 @@ namespace Katana {
     if (fork->_eventLevel < eventLevel)
       fork->_eventLevel = eventLevel;
 
-    if (getStage() == Repair) {
-      fork->setMode( RoutingEvent::Repair );
+    if (Session::getStage() == StageRepair) {
+      if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
+        _segment->getDataNegociate()->resetRipupCount();
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
-    } else if (getStage() == RoutingEvent::Pack) {
-      fork->setMode( RoutingEvent::Pack );
     }
 
     queue.repush( fork );
@@ -424,7 +430,7 @@ namespace Katana {
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
                      << ","  << getEventLevel()
-                     << ","  << setw(6) << getPriority()
+                     << ","  << tsetw(6) << getPriority()
                      << ": " << _segment << endl;
     _processeds++;
 
@@ -434,12 +440,12 @@ namespace Katana {
                       << " ripup:" << _segment->getDataNegociate()->getRipupCount()
                       << endl;
     cdebug_log(159,0) << "Level: " << getEventLevel()
-                      << ", area: " << _segment->getFreedomDegree() << endl;
+                      << ", p-slack: " << _segment->getFreedomDegree() << endl;
 
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    if (_mode != Pack) history.push( this );
+    if (Session::getStage() != StagePack) history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
@@ -450,18 +456,26 @@ namespace Katana {
       setProcessed();
       setTimeStamp( _processeds );
 
-      switch ( _mode ) {
-        case Negociate: _processNegociate( queue, history ); break;
-        case Pack:      _processPack     ( queue, history ); break;
-        case Repair:    _processRepair   ( queue, history ); break;
+      switch ( Session::getStage() ) {
+        case StageNegociate: _processNegociate( queue, history ); break;
+        case StagePack:      _processPack     ( queue, history ); break;
+        case StageRepair:    _processRepair   ( queue, history ); break;
+        case StageRealign:   _processRealign  ( queue, history ); break;
         default:
-          cerr << Bug( "RoutingEvent::process() - Unknown mode value:%d.", _mode ) << endl;
+          cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
           break;
       }
     }
     cdebug_tabw(159,-1);
 
     queue.repushInvalidateds();
+
+    // if (getProcesseds() == 48172 + 1) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 0, "Stopping before revalidating event 3107." );
+    //   UpdateSession::open();
+    // }
+    
     Session::revalidate();
     queue.commit();
 
@@ -587,10 +601,11 @@ namespace Katana {
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
     if (fsm.isSymmetric()) return;
 
-    cdebug_tabw(159,1);
-    for ( size_t i = 0 ; i < fsm.getCosts().size() ; i++ )
-      cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
-    cdebug_tabw(159,-1);
+
+    cdebug_log(159,0) << "| Candidate Tracks:" << endl;
+    size_t itrack = 0;
+    for ( itrack = 0 ; itrack < fsm.getCosts().size() ; itrack++ )
+      cdebug_log(159,0) << "| " << itrack << ":" << fsm.getCost(itrack) << endl;
 
     if (fsm.getCosts().size() and fsm.getCost(0)->isFree()) {
       cdebug_log(159,0) << "Insert in free space." << endl;
@@ -602,8 +617,10 @@ namespace Katana {
           cdebug_log(159,0) << "| " << perpandicular << endl;
           fsm.addAction( perpandicular, SegmentAction::SelfInsert );
           DataNegociate* data = perpandicular->getDataNegociate();
-          if (data and (data->getState() < DataNegociate::Repair))
+          if (data and (data->getState() < DataNegociate::Repair)) {
             data->setState( DataNegociate::Repair );
+            data->resetRipupCount();
+          }
         }
       }
       fsm.doActions();
@@ -611,16 +628,18 @@ namespace Katana {
     } else {
       switch ( fsm.getData()->getStateCount() ) {
         case 1:
-        // First try: minimize.
-          Manipulator(_segment,fsm).minimize();
-          fsm.addAction( _segment, SegmentAction::SelfInsert );
+        // First try: minimize or replace perpandiculars first.
+          if (Manipulator(_segment,fsm).minimize())
+            fsm.addAction( _segment, SegmentAction::SelfInsert );
+          else
+            Manipulator(_segment,fsm).repackPerpandiculars( Manipulator::PerpandicularsFirst );
           fsm.doActions();
           queue.commit();
           break;
         case 2:
         // Second try: failed re-inserted first.
-          Manipulator(_segment,fsm).repackPerpandiculars();
-          fsm.addAction( _segment, SegmentAction::SelfInsert );
+          Manipulator(_segment,fsm).repackPerpandiculars( 0 );
+        //fsm.addAction( _segment, SegmentAction::SelfInsert );
           fsm.doActions();
           queue.commit();
           break;
@@ -633,8 +652,37 @@ namespace Katana {
   }
 
 
+  void  RoutingEvent::_processRealign ( RoutingEventQueue& queue, RoutingEventHistory& history )
+  {
+    cdebug_log(159,0) << "* Mode:Realign." << endl;
+
+    SegmentFsm fsm ( this, queue, history );
+    if (fsm.getState() == SegmentFsm::MissingData   ) return;
+    if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
+    if (fsm.isSymmetric()) return;
+
+    cdebug_log(159,0) << "| Candidate Tracks:" << endl;
+    size_t itrack = 0;
+    for ( itrack = 0 ; itrack < fsm.getCosts().size() ; itrack++ )
+      cdebug_log(159,0) << "| " << itrack << ":" << fsm.getCost(itrack) << endl;
+
+    if (   fsm.getCosts().size()
+       and fsm.getCost(0)->isFree()
+       and (fsm.getCost(0)->getTrack() != getSegment()->getTrack())) {
+      cdebug_log(159,0) << "Insert in free space." << endl;
+      fsm.moveToTrack( 0 );
+      cdebug_log(155,0) << "          @" << DbU::getValueString(getSegment()->getAxis())
+                        << "  -> "       << DbU::getValueString(fsm.getCost(0)->getTrack()->getAxis()) << endl;
+      fsm.doActions();
+      queue.commit();
+    }
+  }
+
+
   void  RoutingEvent::revalidate ()
   {
+    if (_segment->isNonPref()) { _revalidateNonPref(); return; }
+    
     DebugSession::open( _segment->getNet(), 156, 160 );
 
     cdebug_log(159,1) << "RoutingEvent::revalidate() - " << this << endl;
@@ -649,13 +697,14 @@ namespace Katana {
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
-    if (RoutingEvent::getStage() == RoutingEvent::Repair) {
+    if (Session::getStage() == StageRepair) {
       if (_segment->isStrongTerminal(Flags::Propagate)) {
         cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
       } else if (  _segment->base()->getAutoSource()->isFixed()
                 or _segment->base()->getAutoTarget()->isFixed()) {
         cdebug_log(159,0) << "Not expanding on fixed segments:" << _constraints << endl;
-      } else if (   Session::getRoutingGauge()->isTwoMetals()
+      } else if (   (       Session::getKatanaEngine()->isChannelStyle()
+                    and not Session::getKatanaEngine()->isHybridStyle())
                 and _segment->base()->isHorizontal()) {
         cdebug_log(159,0) << "Not expanding on horizontal segments in channel mode:" << _constraints << endl;
       } else {
@@ -698,6 +747,72 @@ namespace Katana {
       cdebug_log(159,0) << "| Reverting to pure constraints." << endl;
       RoutingPlane* plane   = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
       Track*        track   = plane->getTrackByPosition(_constraints.getVMin());
+
+      if ( track and (track->getAxis() < _constraints.getVMin()) ) track = track->getNextTrack();
+      cdebug_log(159,0) << "| Nearest " << track << endl;
+      while ( track and (track->getAxis() <= _constraints.getVMax()) ) {
+        _tracksNb++;
+        track = track->getNextTrack();
+        cdebug_log(159,0) << "| Next " << track << endl;
+      }
+    }
+    cdebug_log(159,0) << "| _tracksNb " << _tracksNb << endl;
+    if (not _tracksNb) {
+      cdebug_log(159,0) << "| Pure constraints are too tight." << endl;
+      if (_segment->base())
+        _overConstrained =     _segment->base()->getAutoSource()->isTerminal()
+                           and _segment->base()->getAutoTarget()->isTerminal();
+    }
+    cdebug_log(159,0) << "| _tracksNb " << _tracksNb << endl;
+
+    _segment->computePriority();
+
+    cdebug_log(159,0) << _segment << " has " << (int)_tracksNb << " choices " << perpandicular << endl;
+    cdebug_tabw(159,-1);
+
+    DebugSession::close();
+  }
+
+
+  void  RoutingEvent::_revalidateNonPref ()
+  {
+    DebugSession::open( _segment->getNet(), 156, 160 );
+
+    cdebug_log(159,1) << "RoutingEvent::_revalidateNonPref() - " << this << endl;
+
+    setAxisHintFromParent();
+    cdebug_log(159,0) << "axisHint:" << DbU::getValueString(getAxisHint()) << endl;
+
+    _overConstrained = false;
+    _segment->base()->getConstraints( _constraints );
+    _segment->base()->getOptimal    ( _optimal );
+
+    cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
+    cdebug_log(159,0) << "| Raw Track Constraint: " << _constraints
+                      << " [" << _constraints.getVMin()
+                      <<  "," << _constraints.getVMax() << "]" << endl;
+
+    _tracksNb = 0;
+
+    Interval perpandicular = _constraints;
+    perpandicular.intersection( getPerpandicularFree() );
+    cdebug_log(159,0) << "| Perpandicular Free: " << perpandicular << endl;
+
+    size_t depth = Session::getRoutingGauge()->getLayerDepth( _segment->getLayer() );
+
+    depth += (depth+1 <= Session::getConfiguration()->getAllowedDepth()) ? 1 : -1;
+    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
+
+    if (not perpandicular.isEmpty()) {
+      Track* track = plane->getTrackByPosition( perpandicular.getVMin() );
+
+      if ( track and (track->getAxis() < perpandicular.getVMin()) ) track = track->getNextTrack();
+      for ( ; track and (track->getAxis() <= perpandicular.getVMax())
+            ; track = track->getNextTrack(), _tracksNb++ );
+    }
+    if (not _tracksNb) {
+      cdebug_log(159,0) << "| Reverting to pure constraints." << endl;
+      Track* track = plane->getTrackByPosition( _constraints.getVMin() );
 
       if ( track && (track->getAxis() < _constraints.getVMin()) ) track = track->getNextTrack();
       for ( ; track && (track->getAxis() <= _constraints.getVMax())

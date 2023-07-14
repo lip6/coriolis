@@ -18,22 +18,154 @@
 #include <sstream>
 #include <memory>
 #include <algorithm>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
+#include "anabatic/AutoContact.h"
 #include "katana/RoutingPlane.h"
 #include "katana/Track.h"
 #include "katana/TrackMarker.h"
 #include "katana/DataNegociate.h"
+#include "katana/KatanaEngine.h"
 
 
 namespace {
 
   using namespace std;
+  using Hurricane::DebugSession;
   using namespace CRL;
   using namespace Katana;
 
+
+  class GapSet {
+    public:
+                              GapSet       ( const Track* );
+      inline       size_t     size         () const;
+      inline const vector< pair<size_t,size_t> >&
+                              spans        () const;
+      inline const pair<size_t,size_t>&
+                              span         ( size_t ) const;
+      inline       DbU::Unit  sourceU      ( size_t ) const;
+      inline       DbU::Unit  targetU      ( size_t ) const;
+      inline       DbU::Unit  spansSourceU () const;
+      inline       DbU::Unit  spansTargetU () const;
+      inline       size_t     spansSourceI () const;
+      inline       size_t     spansTargetI () const;
+                   void       merge        ( size_t );
+                   void       swap         ( GapSet& );
+      inline       void       clear        ();
+    private:
+      const Track*                   _track;                 
+      DbU::Unit                      _halfSpacing;
+      vector< pair<size_t,size_t> >  _spans;
+  };
+
+
+  GapSet::GapSet ( const Track* track )
+    : _track(track)
+    , _halfSpacing(_track->getLayer()->getMinimalSpacing()/2)
+    , _spans()
+  { }
+
+  inline       size_t                         GapSet::size  () const { return _spans.size(); }
+  inline const vector< pair<size_t,size_t> >& GapSet::spans () const { return _spans; }
+  inline       void                           GapSet::clear ()
+  {
+    // cerr << "GapSet::clear()" << endl;
+    // for ( size_t i=0 ; i < _spans.size() ; ++i ) {
+    //   cerr << "  " << i << "=[" << DbU::getValueString(sourceU(i))
+    //        <<              " " <<  DbU::getValueString(targetU(i)) << "] " ;
+    // }
+    // cerr << endl;
+    _spans.clear();
+  }
+
+  inline size_t     GapSet::spansSourceI () const { return _spans.empty() ? 0 : _spans.front().first; }
+  inline size_t     GapSet::spansTargetI () const { return _spans.empty() ? 0 : _spans.back().second; }
+  inline DbU::Unit  GapSet::spansSourceU () const { return _spans.empty() ? 0 : sourceU(0); }
+  inline DbU::Unit  GapSet::spansTargetU () const { return _spans.empty() ? 0 : targetU(_spans.size()-1); }
+
+  void  GapSet::swap ( GapSet& other )
+  {
+    std::swap( _track      , other._track );
+    std::swap( _halfSpacing, other._halfSpacing );
+    std::swap( _spans      , other._spans );
+  }
+  
+  inline const pair<size_t,size_t>& GapSet::span ( size_t i ) const
+  {
+    static pair<size_t,size_t> nospan = make_pair(0,0);
+    return (i < _spans.size()) ? _spans[i] : nospan;
+  }
+
+  inline DbU::Unit  GapSet::sourceU  ( size_t i ) const
+  {
+    // if (_track->getSegment( _spans[i].first)->isNonPref()) {
+    //   cerr << "  Non-pref sourceU: " << DbU::getValueString(_track->getSegment( _spans[i].first )->getSourceU()) << endl;
+    //   cerr << "  " << _track->getSegment( _spans[i].first ) << endl;
+    // }
+    return (i<_spans.size()) ? _track->getSegment( _spans[i].first )->getSourceU()+_halfSpacing : 0;
+  }
+
+  inline DbU::Unit  GapSet::targetU  ( size_t i ) const
+  {
+    // if (_track->getSegment( _spans[i].second)->isNonPref()) {
+    //   cerr << "  Non-pref targetU: " << DbU::getValueString(_track->getSegment( _spans[i].second )->getTargetU()) << endl;
+    //   cerr << "  " << _track->getSegment( _spans[i].second ) << endl;
+    // }
+    return (i<_spans.size()) ? _track->getSegment( _spans[i].second )->getTargetU()-_halfSpacing : 0;
+  }
+
+
+  void  GapSet::merge ( size_t i )
+  {
+    TrackElement* element    = _track->getSegment( i );
+    DbU::Unit     segSourceU = element->getSourceU()+_halfSpacing;
+    DbU::Unit     segTargetU = element->getTargetU()-_halfSpacing;
+
+    if (_spans.empty()) {
+      cdebug_log(159,0) << "GapSet::merge() new range ["
+                        << DbU::getValueString(segSourceU) << " "
+                        << DbU::getValueString(segTargetU) << "] "
+                        << i
+                        << " " << _track->getSegment(i) << endl;
+      _spans.push_back( make_pair(i,i) );
+      return;
+    }
+
+    size_t     ispan      = 0;
+    cdebug_log(159,0) << "GapSet::merge() ["
+                      << DbU::getValueString(segSourceU) << " "
+                      << DbU::getValueString(segTargetU) << "] "
+                      << element << endl;
+    for ( ; ispan<_spans.size() ; ++ispan ) {
+      if (targetU(ispan) >= segSourceU) {
+        if (targetU(ispan) >= segTargetU) {
+          cdebug_log(159,0) << "GapSet::merge() already inside range" << endl;
+          return;
+        }
+        _spans[ispan].second = i;
+        cdebug_log(159,0) << "GapSet::merge() becomes range end" << endl;
+        break;
+      }
+    }
+    if (ispan == _spans.size()) {
+      _spans.push_back( make_pair(i,i) );
+      cdebug_log(159,0) << "GapSet::merge() new range" << endl;
+      return;
+    }
+    while ( ispan+1 < _spans.size() ) {
+      if (targetU(ispan) >= sourceU(ispan+1)) {
+        _spans[ispan].second = std::max( targetU(ispan), targetU(ispan+1) );
+        _spans.erase( _spans.begin()+ispan+1 );
+        cdebug_log(159,0) << "GapSet::merge() fuse with next range" << endl;
+      }
+    }
+  }
+
+  
 
   struct isDetachedSegment {
       bool operator() ( const TrackElement* s ) { return not s->getTrack(); };
@@ -42,6 +174,81 @@ namespace {
 
   // DbU::Unit  getPositionByIterator ( const vector<TrackElement*>& v, size_t i )
   // { return (*(v.begin()+i))->getSourceU(); }
+
+
+  bool  hasSameLayerTurn ( const Layer* layer, TrackElement* segment, Flags flags )
+  {
+    if (not segment or not segment->base()) return false;
+    AutoContact* contact = (flags & Flags::Source) ? segment->base()->getAutoSource()
+                                                   : segment->base()->getAutoTarget() ;
+    if (contact->getLayer() != layer) return false;
+    if (not contact->isTurn()) return false;
+  //AutoSegment* pp = contact->getPerpandicular( segment->base() );
+    return contact->getPerpandicular(segment->base())->getLength();
+  }
+
+
+  DbU::Unit  toFoundryGrid ( DbU::Unit u, DbU::SnapMode mode )
+  {
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    return DbU::getOnCustomGrid( u, oneGrid, mode );
+  }
+
+
+  void  expandToMinArea ( TrackElement*   minSegment
+                        , TrackElement*   maxSegment
+                        , const Interval& segSpan
+                        , DbU::Unit       minFree
+                        , DbU::Unit       maxFree )
+  {
+    DebugSession::open( minSegment->getNet(), 150, 160 );
+    cdebug_log(155,1) << "Track::expandMinArea() for:" << endl;
+    cdebug_log(155,0) << "minSegment:" << minSegment << endl;
+    cdebug_log(155,0) << "maxSegment:" << maxSegment << endl;
+
+    const Layer* layer      = minSegment->getLayer();
+    double       minArea    = layer->getMinimalArea();
+    DbU::Unit    minSpacing = layer->getMinimalSpacing();
+    DbU::Unit    minLength
+      = DbU::fromPhysical( minArea / DbU::toPhysical( minSegment->getWidth(), DbU::UnitPower::Micro )
+                         , DbU::UnitPower::Micro );
+    minLength = toFoundryGrid( minLength, DbU::Superior );
+    DbU::Unit segLength = segSpan.getSize() - minSpacing;
+    cdebug_log(155,0) << "minSpacing:" << DbU::getValueString(minSpacing) << endl;
+    cdebug_log(155,0) << " minLength:" << DbU::getValueString(minLength)  << endl;
+    cdebug_log(155,0) << " segLenght:" << DbU::getValueString(segLength)  << endl;
+
+    DbU::Unit sourceECap = minSegment->base()->getExtensionCap( Flags::Source|Flags::LayerCapOnly );
+    DbU::Unit targetECap = maxSegment->base()->getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+    cdebug_log(155,0) << "sourceECap:" << DbU::getValueString(sourceECap) << endl;
+    cdebug_log(155,0) << "targetECap:" << DbU::getValueString(targetECap) << endl;
+
+    if (segLength < minLength) {
+      DbU::Unit marginLeft  = segSpan.getVMin() - minFree;
+      DbU::Unit marginRight = maxFree - segSpan.getVMax();
+      DbU::Unit expandLeft  = toFoundryGrid( (minLength - segLength)/2 + sourceECap, DbU::Inferior );
+      DbU::Unit expandRight = toFoundryGrid( (minLength - segLength)/2 + targetECap, DbU::Superior );
+      if ((marginLeft >= expandLeft) and (marginRight >= expandRight)) {
+        minSegment->base()->setDuSource( minSegment->base()->getDuSource() - expandLeft  );
+        maxSegment->base()->setDuTarget( maxSegment->base()->getDuTarget() + expandRight );
+      } else {
+        if (marginLeft + marginRight >= expandLeft + expandRight) {
+          DbU::Unit shiftLeft = 0;
+          if (marginLeft >= expandLeft + expandRight)
+            shiftLeft = - expandRight;
+          else
+            shiftLeft = - marginLeft + expandLeft;
+          minSegment->base()->setDuSource( minSegment->base()->getDuSource() - expandLeft  + shiftLeft );
+          maxSegment->base()->setDuTarget( maxSegment->base()->getDuTarget() + expandRight + shiftLeft );
+        } else {
+          cerr << Error( "::expandToMinArea(): Cannot expand %s."
+                       , getString(minSegment).c_str() ) << endl;
+        }
+      }
+    }
+    cdebug_tabw(155,-1);
+    DebugSession::close();
+  }
 
 
 } // Anonymous namespace.
@@ -54,10 +261,13 @@ namespace Katana {
   using std::sort;
   using Hurricane::dbo_ptr;
   using Hurricane::tab;
+  using Hurricane::DebugSession;
   using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::Layer;
   using Hurricane::Net;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
 
 
 // -------------------------------------------------------------------
@@ -93,11 +303,14 @@ namespace Katana {
   {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
+    TrackSet dummy;
     for ( size_t i=0 ; i<_segments.size() ; i++ )
       if (_segments[i]) {
-        _segments[i]->detach();
-        if (not _segments[i]->getTrackCount())
+        _segments[i]->detach( dummy );
+        if (not _segments[i]->getTrackCount()) {
+        //cerr << "destroy " << _segments[i] << endl;
           _segments[i]->destroy();
+        }
       }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
@@ -120,6 +333,10 @@ namespace Katana {
 
   KatanaEngine* Track::getKatanaEngine () const
   { return _routingPlane->getKatanaEngine(); }
+
+
+  RoutingLayerGauge* Track::getLayerGauge () const
+  { return _routingPlane->getLayerGauge(); }
 
 
   uint32_t  Track::getDepth () const
@@ -158,6 +375,7 @@ namespace Katana {
     size_t    begin;
 
     getBeginIndex( position, begin, state );
+
     if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
     return getSegment(begin);
   }
@@ -177,14 +395,14 @@ namespace Katana {
 
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
-    for ( index-- ; index != npos ; index-- ) {
-      cdebug_log(140,0) << index << ":" << _segments[index] << endl;
-
-      if (_segments[index]->getNet() == net) continue;
-      return _segments[index];
-    }
+    cdebug_log(155,0) << "Track::getPrevious() " << index << " for " << net << endl;
+    if ((index == npos) or (index == 0)) return NULL;
+    do {
+      --index;
+      cdebug_log(155,0) << "| " << index << ":" << _segments[index] << endl;
+      if (_segments[index]->getNet() != net) return _segments[index];
+    } while ( index != 0 );
     index = npos;
-
     return NULL;
   }
 
@@ -200,16 +418,35 @@ namespace Katana {
   }
 
 
+  bool  Track::hasViaMarker ( Net* net, Interval span )
+  {
+    vector<TrackMarker*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), span.getVMin(), TrackMarker::Compare() );
+    size_t mbegin = lowerBound - _markers.begin();
+
+    for ( ;     (mbegin < _markers.size())
+            and (_markers[mbegin]->getSourceU() <= span.getVMax()) ; mbegin++ ) {
+      if (Session::disableStackedVias()
+         and (_markers[mbegin]->getNet() == net) ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
+    cdebug_log(155,0) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
+                      << " begin=" << begin << endl;
     if (_segments.empty()) {
       state = EmptyTrack;
       begin = 0;
       return;
     }
 
-    if (position < _min) {
-      cerr << Warning( " Position %s inferior to the lower bound of %s. Returning npos."
+    if (position < _min - getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s too far outside the lower bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = BeforeFirstElement;
@@ -217,8 +454,8 @@ namespace Katana {
       return;
     }
 
-    if (position > _max) {
-      cerr << Warning( " Position %s superior to the upper bound of %s. Returning npos."
+    if (position > _max + getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s is too far outside the upper bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = AfterLastElement;
@@ -244,10 +481,18 @@ namespace Katana {
     if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
       state = BeforeFirstElement;
     } else {
+      cdebug_log(155,0) << "  Expanding from begin=" << begin << endl;
       if (begin and not sameNetDelta) begin -= 1;
 
       size_t   usedBegin    = begin;
       Interval usedInterval = getOccupiedInterval( usedBegin );
+      cdebug_log(155,0) << "  Used interval " << usedInterval << endl;
+
+      if (usedInterval.isEmpty()) {
+        for ( size_t j=0 ; j<_segments.size() ; ++j ) {
+          cerr << j << ":" << _segments[j] << endl;
+        }
+      }
 
       if (position < usedInterval.getVMax())
         state = InsideElement;
@@ -258,7 +503,7 @@ namespace Katana {
           state = OutsideElement;
     }
   }
-
+  
 
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {
@@ -285,10 +530,16 @@ namespace Katana {
 
   TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-          size_t    begin    = Track::npos;
-          size_t    end      = Track::npos;
-    const Interval& interval = cost.getInterval();
+          size_t    begin        = Track::npos;
+          size_t    end          = Track::npos;
+    const Interval& interval     = cost.getInterval();
+          Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
+    if (not freeInterval.contains(interval)) {
+      cost.setFreeLength( 0 );
+    } else {
+      cost.setFreeLength( freeInterval.getSize() );
+    }
     getOverlapBounds( cost.getInterval(), begin, end );
     cost.setTrack( const_cast<Track*>(this), begin, end );
 
@@ -296,6 +547,10 @@ namespace Katana {
                       << " [" << DbU::getValueString(interval.getVMin())
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
+                      << endl;
+    cdebug_log(155,0) << "initial:" << &cost << endl;
+    cdebug_log(155,0) << "freeInterval [" << DbU::getValueString(freeInterval.getVMin())
+                      << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
 
     vector<TrackMarker*>::const_iterator lowerBound
@@ -305,6 +560,12 @@ namespace Katana {
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
+      if (Session::disableStackedVias()
+         and (_markers[mbegin]->getNet() == cost.getNet()) ) {
+        cost.setInfinite();
+        cdebug_tabw(155,-1);
+        return cost;
+      }
       if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
@@ -317,22 +578,52 @@ namespace Katana {
     }
 
     if (begin == npos) {
+      if (not _segments.empty()
+         and (_segments.back()->getNet() == cost.getNet())
+         and (cost.getRefElement()->getAxis() != getAxis())
+         ) {
+        Interval overlap = interval.getIntersection( _segments.back()->getCanonicalInterval() );
+        cdebug_log(155,0) << "overlap:" << overlap
+                          << " size:" << DbU::getValueString(overlap.getSize()) << endl;
+        if (overlap.getSize() > 0) {
+          cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
+          cost.incDeltaShared ( overlap.getSize() );
+        }
+      }
       cdebug_log(155,0) << "  begin == npos (after last TrackElement)." << endl;
+      cdebug_log(155,0) << "  current:" << &cost << endl;
       cdebug_tabw(155,-1);
       return cost;
     }
 
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
-      cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
+      cdebug_log(155,0) << "overlap:" << overlap
+                        << " size:" << DbU::getValueString(overlap.getSize()) << endl;
       if (overlap.getSize() == 0) continue;
       
-      if (_segments[begin]->getNet() == cost.getNet()) {
-        cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
+      if (    (_segments[begin]->getNet() == cost.getNet())
+         and ((cost.getRefElement()->getAxis() != getAxis())
+             or not _segments[begin]->isNonPref() ) ) {
+        if (  (_segments[begin] == cost.getRefElement())
+           or (_segments[begin] == cost.getSymElement())) {
+          cdebug_log(155,0) << "Segment istself in track, skip." << endl;
+          continue;
+        }
+        if (     cost.doIgnoreShort()
+           and (_segments[begin]->getLength() < 2*_segments[begin]->getPPitch())) {
+          cdebug_log(155,0) << "Overlap with same net and less than one p-pitch, skip." << endl;
+          continue;
+        }
+        cdebug_log(155,0) << "Same net overlap, increase delta shared ("
+                          <<            DbU::getValueString(_segments[begin]->getLength())
+                          << " > 2*" << DbU::getValueString(_segments[begin]->getPPitch())
+                          << ")" << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
       _segments[begin]->incOverlapCost( cost );
-      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << &cost << endl;
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
+      cdebug_log(155,0) << "| current cost:" << &cost << endl;
 
       if (cost.isInfinite()) break;
     }
@@ -412,13 +703,15 @@ namespace Katana {
 
   Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
-    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end << " " << net << endl;
-    cdebug_log(155,0) << _segments[begin] << endl;
+    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end
+                      << " state:" << state << " " << net << endl;
+    if (begin != Track::npos)
+      cdebug_log(155,0) << _segments[begin] << endl;
 
     DbU::Unit minFree = _min;
     cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
 
-    if (not (state & BeginIsTrackMin) ) {
+    if (not (state & BeginIsTrackMin) and (begin > 0)) {
       if (_segments[begin]->getNet() == net)
         getPrevious( begin, net );
 
@@ -433,15 +726,20 @@ namespace Katana {
  
       if (_segments[end]->getNet() == net) {
         getNext( end, net );
-
-        if (end == npos) {
-          end  = _segments.size() - 1;
-          setMaximalFlags( state, EndIsTrackMax );
+        if (end != npos) {
+          cdebug_log(155,0) << "| same net, end:" << end << " " << _segments[end] << endl;
         } else {
-          setMaximalFlags( state, EndIsSegmentMin );
+          cdebug_log(155,0) << "| same net, end:" << end << " (after last)" << endl;
         }
       }
+      if (end == npos) {
+        end  = _segments.size() - 1;
+        setMaximalFlags( state, EndIsTrackMax );
+      } else {
+        setMaximalFlags( state, EndIsSegmentMin );
+      }
       cdebug_log(155,0) << "end:" << end << " state:" << state << endl;
+      cdebug_log(155,0) << "end:" << _segments[end] << endl;
     }
 
     cdebug_tabw(155,-1);
@@ -474,14 +772,15 @@ namespace Katana {
                  ,getString(segment).c_str()) << endl;
     }
 
+    cdebug_log(159,0) << "Insert in [" << 0 << "] " << this << segment << endl;
     _segments.push_back( segment );
     _segmentsValid = false;
 
-    if (segment->isWide()) {
-      cdebug_log(155,0) << "Segment is wide." << endl;
+    if (segment->isWide() or segment->isNonPref()) {
+      cdebug_log(155,0) << "Segment is wide or non-pref, trackSpan:" << segment->getTrackSpan() << endl;
       Track* wtrack = getNextTrack();
       for ( size_t i=1 ; wtrack and (i<segment->getTrackSpan()) ; ++i ) {
-        cdebug_log(155,0) << "Insert in [" << i << "] " << wtrack << endl;
+        cdebug_log(159,0) << "Insert in [" << i << "] " << wtrack << segment << endl;
         wtrack->_segments.push_back ( segment );
         wtrack->_segmentsValid = false;
         wtrack = wtrack->getNextTrack();
@@ -502,19 +801,29 @@ namespace Katana {
 
   bool  Track::check ( uint32_t& overlaps, const char* message ) const
   {
+  //if ((getIndex() != 3556) or not isHorizontal()) return true;
+
     bool coherency = true;
     bool holes     = false;
 
     if (message) cerr << "     o  Checking Track - " << message << endl;
-    cdebug_log(155,0) << (void*)this << ":" << this << endl;
-
+    cdebug_log(155,0) << /*(void*)this << ":" <<*/ this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
-      Interval trackRange   ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
-                            , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
-      bool     inTrackRange = trackRange.contains( _axis );
-
       if (_segments[i]) {
+        bool inTrackRange = false;
+
+        if (_segments[i]->isNonPref()) {
+          DbU::Unit min = 0;
+          DbU::Unit max = 0;
+          _segments[i]->base()->getCanonical( min, max );
+          inTrackRange = Interval(min,max).contains( _axis );
+        } else {
+          Interval trackRange ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
+                              , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
+          inTrackRange = trackRange.contains( _axis );
+        }
+        
         if (i) {
           if (_segments[i-1] == _segments[i]) {
             cerr << "[CHECK] incoherency at " << i << " "
@@ -552,6 +861,8 @@ namespace Katana {
 
     if (not holes)
       coherency = (checkOverlap(overlaps) == 0) and coherency;
+
+    coherency = (checkMinArea() == 0) and coherency;
 
     return coherency;
   }
@@ -598,7 +909,7 @@ namespace Katana {
       case EndIsTrackMax:       return _max;
       case EndIsSegmentMin:     return _segments[index  ]->getSourceU ();
       case EndIsNextSegmentMin: if (index+1 >= getSize()) return _max;
-                                     return _segments[index+1]->getSourceU ();
+                                return _segments[index+1]->getSourceU ();
       case EndIsSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 
@@ -646,6 +957,7 @@ namespace Katana {
 
   Interval  Track::getOccupiedInterval ( size_t& begin ) const
   {
+    cdebug_log(155,0) << "Track::getOccupiedInterval() begin=" << begin << endl;
     if (begin == npos) return Interval();
 
     size_t  seed  = begin;
@@ -655,7 +967,7 @@ namespace Katana {
     Interval  mergedInterval;
     _segments[seed]->getCanonical( mergedInterval );
 
-    cdebug_log(155,0) << "| seed:" << _segments[seed] << endl;
+    cdebug_log(155,0) << "| seed:" << mergedInterval << " " << _segments[seed] << endl;
 
     size_t i = seed;
     while ( --i != npos ) {
@@ -663,7 +975,7 @@ namespace Katana {
 
       _segments[i]->getCanonical ( segmentInterval );
       if (segmentInterval.getVMax() >= mergedInterval.getVMin()) {
-        cdebug_log(155,0) << "| merge (prev):" << _segments[i] << endl;
+        cdebug_log(155,0) << "| merge (prev):" << segmentInterval << " " << _segments[i] << endl;
 
         mergedInterval.merge( segmentInterval );
         begin = i;
@@ -720,6 +1032,142 @@ namespace Katana {
   }
 
 
+  uint32_t  Track::repair () const
+  {
+  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::open( 150, 160 );
+    cdebug_log(159,0) << "Track::repair() " << this << endl;
+    
+    if (_segments.empty()) {
+      fillHole( getMin(), getMax() );
+    //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
+      return 0;
+    }
+    DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
+
+    DbU::Unit spacing = _segments[0]->getSourceU() - getMin();
+    if (spacing > 10*getLayerGauge()->getPitch())
+      fillHole( getMin(), _segments[0]->getSourceU() );
+
+    bool     netChange  = false;
+    uint32_t gaps       = 0;
+    GapSet   gapsetPrev ( this );
+    GapSet   gapsetCurr ( this );
+    for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
+      cdebug_log(159,0) << "[" << i << "] " << _segments[i] << endl;
+      if (_segments[i]->isNonPref()) continue;
+      netChange = false;
+      gapsetCurr.merge( i );
+      if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
+         /*or  _segments[i]->getLayer()->isBlockage()*/ ) {
+        netChange = true;
+        if (gapsetPrev.size() and gapsetCurr.size()) {
+          spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
+          if (spacing < minSpacing) {
+            spacing = minSpacing - spacing;
+            TrackElement* element = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ];
+            AutoSegment*  prev    = element->base();
+            if (prev and (prev->getDuTarget() >= spacing)) {
+              prev->setDuSource( prev->getDuSource() - spacing );
+              prev->setDuTarget( prev->getDuTarget() - spacing );
+              element->invalidate();
+              cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left):\n"
+                               "          %s"
+                             , getString(this).c_str()
+                             , getString(prev).c_str() ) << endl;
+            } else {
+              TrackElement* element = _segments[ gapsetCurr.span(0).first ];
+              AutoSegment*  curr    = element->base();
+              if (curr and (-curr->getDuSource() >= spacing)) {
+                curr->setDuSource( curr->getDuSource() + spacing );
+                curr->setDuTarget( curr->getDuTarget() + spacing );
+                element->invalidate();
+                cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right):\n"
+                                 "          %s"
+                               , getString(this).c_str()
+                               , getString(curr).c_str() ) << endl;
+              }
+            }
+          } else if (spacing > 10*getLayerGauge()->getPitch())
+            fillHole( gapsetPrev.spansTargetU(), gapsetCurr.spansSourceU() );
+        }
+      }
+
+      if ((i+2 == _segments.size()) and (_segments[i]->getNet() == _segments[i+1]->getNet()))
+        gapsetCurr.merge( i+1 );
+
+      if (netChange or (i+2 == _segments.size())) {
+        if (gapsetCurr.size() > 1) {
+          cdebug_log(159,0) << "potential gap around " << _segments[i] << endl;
+          for ( size_t j=0 ; j+1 < gapsetCurr.size() ; ++j ) {
+            cdebug_log(159,0) << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
+                              <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
+                              << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
+                              <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
+            spacing = gapsetCurr.sourceU(j+1) - gapsetCurr.targetU(j);
+            cdebug_log(159,0) << "| spacing=" << DbU::getValueString(spacing) << endl;
+            if (spacing < minSpacing) {
+              cdebug_log(159,0) << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
+                                <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
+                                << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
+                                <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
+              if (gapsetCurr.span(j+1).first >= _segments.size()) {
+                cerr << Bug("Track::repair(): Assersion gapsetCurr.span(j+1).first < _segments.size() is false.") << endl;
+              } else {
+                TrackElement* element = _segments[gapsetCurr.span(j+1).first];
+                AutoSegment*  first   = element->base();
+                
+                cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
+	            if (first == NULL) {
+		          cerr << Bug("Track::repair(): Base of first element is NULL, *unable* to correct gap.") << endl;
+                } else if (not first->isNonPref()) {
+                  for ( AutoSegment* segment : first->getAligneds() ) {
+                    if (segment->getSourcePosition() < first->getSourcePosition())
+                      first = segment;
+                  }
+                  spacing += first->getSourceU() - gapsetCurr.sourceU(j+1);
+                  cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
+                  cdebug_log(159,0) << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
+                //first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+                  first->setDuSource( first->getDuSource() - spacing );
+                  element->invalidate();
+	            }
+                ++gaps;
+                cerr << Warning( "Track::repair(): Closing same net gap in %s near:\n          %s"
+                               , getString(this).c_str()
+                               , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
+                cdebug_log(159,0) << first << endl;
+              }
+            } else if (spacing > 10*getLayerGauge()->getPitch())
+              fillHole( gapsetCurr.targetU(j), gapsetCurr.sourceU(j+1) );
+          }
+        }
+
+        gapsetPrev.swap( gapsetCurr );
+        gapsetCurr.clear();
+      }
+    }
+
+    Net*      lastNet     = NULL;
+    DbU::Unit lastTargetU = getMax();
+    for ( auto isegment = _segments.rbegin() ; isegment != _segments.rend() ; ++isegment ) {
+      if (not lastNet) {
+        lastNet     = (*isegment)->getNet();
+        lastTargetU = (*isegment)->getTargetU();
+      } else {
+        if (lastNet != (*isegment)->getNet()) break;
+        lastTargetU = max( lastTargetU, (*isegment)->getTargetU() );
+      }
+    }
+
+    spacing = getMax() - lastTargetU;
+    if (spacing > 10*getLayerGauge()->getPitch())
+      fillHole( lastTargetU, getMax() );
+
+  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
+    return gaps;
+  }
+
+
   uint32_t  Track::checkOverlap ( uint32_t& overlaps ) const
   {
     if ( !_segments.size() ) return 0;
@@ -746,12 +1194,14 @@ namespace Katana {
         j = i+1;
       }
 
-      if (   (j<_segments.size())
-          && (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
-        cerr << Error("Overlap in %s between:\n  %s\n  %s"
+      if (    (j<_segments.size())
+          and (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
+        cerr << Error("Overlap in %s between:\n  %s\n  %s\n  TargetU:%s SourceU:%s"
                      ,getString(this).c_str()
                      ,getString(_segments[i]).c_str()
-                     ,getString(_segments[j]).c_str()) << endl;
+                     ,getString(_segments[j]).c_str()
+                     ,DbU::getValueString(_segments[i]->getTargetU()).c_str()
+                     ,DbU::getValueString(_segments[j]->getSourceU()).c_str() ) << endl;
         overlaps++;
       }
     }
@@ -760,10 +1210,122 @@ namespace Katana {
   }
 
 
+  void  Track::fillHole ( DbU::Unit umin, DbU::Unit umax ) const
+  {
+    if (not getKatanaEngine()->getTrackFill()) return;
+    if (getIndex() % getKatanaEngine()->getTrackFill() != 0) return;
+    if (getLayerGauge()->getType() == Constant::PinOnly) return;
+    if (getLayerGauge()->getDepth() > getKatanaEngine()->getConfiguration()->getAllowedDepth()) return;
+
+    Net* fillNet = getKatanaEngine()->getCell()->getNet( "dummy_filler_net" );
+    if (not fillNet)
+      fillNet = Net::create( getKatanaEngine()->getCell(), "dummy_filler_net" );
+
+    DbU::Unit gapLength = umax - umin;
+    if (gapLength > 10*getLayerGauge()->getPitch()) {
+      if (isHorizontal())
+        Horizontal::create( fillNet
+                          , getLayer()
+                          , getAxis()
+                          , getLayerGauge()->getWireWidth()
+                          , umin +  2*getLayerGauge()->getPitch()
+                          , umax -  2*getLayerGauge()->getPitch()
+                          );
+      else
+        Vertical::create( fillNet
+                        , getLayer()
+                        , getAxis()
+                        , getLayerGauge()->getWireWidth()
+                        , umin +  2*getLayerGauge()->getPitch()
+                        , umax -  2*getLayerGauge()->getPitch()
+                        );
+    }
+  }
+
+
+  uint32_t  Track::checkMinArea () const
+  {
+    if (_segments.empty()) return 0;
+
+    uint32_t  nonMinArea    = 0;
+    DbU::Unit techMinLength = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
+    for ( size_t j=0 ; j<_segments.size() ; ++j ) {
+      if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
+        ++j;
+        continue;
+      }
+      if ((j   > 0)                and (_segments[j-1]->getNet() == _segments[j]->getNet())) continue;
+      if ((j+1 < _segments.size()) and (_segments[j+1]->getNet() == _segments[j]->getNet())) continue;
+      if (not _segments[j]->base()->isNearMinArea()) continue;
+      if (_segments[j]->base()->getSpanLength() < techMinLength) {
+        cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
+                     , getString(_segments[j]).c_str()
+                     , DbU::getValueString(_segments[j]->base()->getSpanLength()).c_str()
+                     , DbU::getValueString(techMinLength).c_str() ) << endl;
+        ++nonMinArea;
+      }
+    }
+    return nonMinArea;
+  }
+
+
+  void  Track::expandMinArea ()
+  {
+    if (_segments.empty()) return;
+
+    double minArea = getLayer()->getMinimalArea();
+    if (minArea == 0.0) return;
+    
+    DbU::Unit     prevSpanMin = getMin();
+    TrackElement* minSegment  = NULL;
+    TrackElement* maxSegment  = NULL;
+    Interval      span;
+    bool          hasTurn     = false;
+    for ( size_t j=0 ; j<_segments.size() ; ) {
+      if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
+        ++j;
+        continue;
+      }
+
+      if (not minSegment) {
+        minSegment  = _segments[j];
+        maxSegment  = _segments[j];
+        if (not span.isEmpty()) prevSpanMin = span.getVMax();
+        span.makeEmpty();
+        span = _segments[j]->getCanonicalInterval();
+        hasTurn =    hasSameLayerTurn( getLayer(), _segments[j], Flags::Source )
+                  or hasSameLayerTurn( getLayer(), _segments[j], Flags::Target );
+        ++j;
+        continue;
+      }
+      
+      if (   (_segments[j]->getNet() == minSegment->getNet())
+         and (span.getVMax() >= _segments[j]->getSourceU()) ) {
+        if (_segments[j]->getTargetU() > span.getVMax()) {
+          maxSegment = _segments[j];
+          span.merge( _segments[j]->getTargetU() );
+          hasTurn = hasTurn or hasSameLayerTurn( getLayer(), _segments[j], Flags::Target );
+        }
+        ++j;
+        continue;
+      }
+    
+      if (not hasTurn and minSegment->base())
+        expandToMinArea( minSegment, maxSegment, span, prevSpanMin, _segments[j]->getSourceU() );
+
+      minSegment = NULL;
+    }
+
+    if (not hasTurn and minSegment and minSegment->base())
+      expandToMinArea( minSegment, maxSegment, span, prevSpanMin, getMax() );
+  }
+
+
   string  Track::_getString () const
   {
     return "<" + _getTypeName() + " "
-               + getString(getLayer()) + " @"
+               + "[" + getString(_index) + "] "
+               + getString(getLayer()->getName()) + " @"
                + DbU::getValueString(_axis) + " ["
                + DbU::getValueString(_min) + ":"
                + DbU::getValueString(_max) + "] ["

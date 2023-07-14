@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_DIJKSTRA_H
-#define  ANABATIC_DIJKSTRA_H
-
+#pragma  once
 #include <set>
 #include <iomanip>
 #include "hurricane/Observer.h"
@@ -189,6 +187,7 @@ namespace Anabatic {
                      , iHorizontal   = (1<<7)
                      , iVertical     = (1<<8)
                      , iSet          = (1<<9)
+                     , Driver        = (1<<10)
                      };
     public:
       static         DbU::Unit       unreached;
@@ -200,6 +199,7 @@ namespace Anabatic {
              inline                  Vertex            ( GCell* );
            //inline                  Vertex            ( size_t id );
              inline                 ~Vertex            ();
+             inline  bool            isDriver          () const;
              inline  bool            isAnalog          () const;
              inline  bool            hasDoneAllRps     () const;
              inline  Contact*        hasGContact       ( Net* ) const;
@@ -220,6 +220,7 @@ namespace Anabatic {
                      Edge*           getFrom           () const;
              inline  Vertex*         getPredecessor    () const;
              inline  Vertex*         getNeighbor       ( Edge* ) const;
+             inline  void            setDriver         ( bool state );
              inline  void            setDistance       ( DbU::Unit );
              inline  void            setStamp          ( int );
              inline  void            setConnexId       ( int );
@@ -333,6 +334,7 @@ namespace Anabatic {
 
   inline Vertex*         Vertex::lookup         ( GCell* gcell ) { return gcell->getObserver<Vertex>(GCell::Observable::Vertex); }
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
+  inline bool            Vertex::isDriver       () const { return _flags & Driver; }
   inline bool            Vertex::isAnalog       () const { return _gcell->isAnalog(); }
   inline Box             Vertex::getBoundingBox () const { return _gcell->getBoundingBox(); }
   inline Edges           Vertex::getEdges       ( Flags sides ) const { return _gcell->getEdges(sides); }
@@ -367,6 +369,12 @@ namespace Anabatic {
   {
     GCell* gcell = edge->getOpposite( getGCell() );
     return (gcell) ? gcell->getObserver<Vertex>(GCell::Observable::Vertex) : NULL;
+  }
+
+  inline void  Vertex::setDriver ( bool state )
+  {
+    if (state) _flags |=  Driver;
+    else       _flags &= ~Driver;
   }
 
   inline bool  Vertex::CompareById::operator() ( const Vertex* lhs, const Vertex* rhs ) const
@@ -431,7 +439,7 @@ namespace Anabatic {
       class CompareByDistance {
         public:
                  inline      CompareByDistance ();
-                        bool operator()        ( const Vertex* lhs, const Vertex* rhs );
+                        bool operator()        ( const Vertex* lhs, const Vertex* rhs ) const;
           static inline void setQueue          ( PriorityQueue* );
         private:
           static PriorityQueue* _pqueue;
@@ -514,11 +522,13 @@ namespace Anabatic {
       inline       bool       isSourceVertex           ( Vertex* ) const;
       inline       Net*       getNet                   () const;
       inline       bool       isTargetVertex           ( Vertex* ) const;
+                   DbU::Unit  getAntennaGateMaxWL      () const;
       inline       DbU::Unit  getSearchAreaHalo        () const;
       template<typename DistanceT>                     
       inline       DistanceT* setDistance              ( DistanceT );
       inline       void       setSearchAreaHalo        ( DbU::Unit );
                    void       load                     ( Net* net ); 
+                   void       loadFixedGlobal          ( Net* net ); 
                    void       run                      ( Mode mode=Mode::Standart );
       inline const VertexSet& getSources               () const;
     private:                                           
@@ -593,6 +603,4 @@ namespace Anabatic {
 
 GETSTRING_POINTER_SUPPORT(Anabatic::Vertex);
 IOSTREAM_POINTER_SUPPORT(Anabatic::Vertex);
-INSPECTOR_PV_SUPPORT(Anabatic::Dijkstra::Mode);
-
-#endif  // ANABATIC_DIJKSTRA_H
+INSPECTOR_PR_SUPPORT(Anabatic::Dijkstra::Mode);

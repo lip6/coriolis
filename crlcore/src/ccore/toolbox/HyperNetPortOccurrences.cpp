@@ -356,7 +356,7 @@ CHyperNetDriverPortOccurrences::Locator::Locator(Occurrence hnrnoccurrence)
     if (hnrnoccurrence.getPath().isEmpty() and static_cast<Net*>(hnrnoccurrence.getEntity())->isExternal())
         _pinLocator = static_cast<Net*>(hnrnoccurrence.getEntity())->getPins().getSubSet(InputPin()).getLocator();
 
-    _plugOccurrenceLocator = HyperNet(hnrnoccurrence).getLeafPlugOccurrences().getSubSet(OutputPlugOccurrence()).getLocator();
+    _plugOccurrenceLocator = HyperNet(hnrnoccurrence).getTerminalNetlistPlugOccurrences().getSubSet(OutputPlugOccurrence()).getLocator();
 }
 
 CHyperNetDriverPortOccurrences::Locator::Locator(const Locator& locator)
@@ -380,7 +380,7 @@ Occurrence CHyperNetDriverPortOccurrences::Locator::getElement() const
 {
     if (_pinLocator.isValid())
         return _pinLocator.getElement();
-	return _plugOccurrenceLocator.getElement();
+    return _plugOccurrenceLocator.getElement();
 }
 
 Locator<Occurrence>* CHyperNetDriverPortOccurrences::Locator::getClone() const
@@ -491,7 +491,7 @@ CHyperNetReceiverPortOccurrences::Locator::Locator(Occurrence hnrnoccurrence)
     if (hnrnoccurrence.getPath().isEmpty() and static_cast<Net*>(hnrnoccurrence.getEntity())->isExternal())
         _pinLocator = static_cast<Net*>(hnrnoccurrence.getEntity())->getPins().getSubSet(OutputPin()).getLocator();
 
-    _plugOccurrenceLocator = HyperNet(hnrnoccurrence).getLeafPlugOccurrences().getSubSet(InputPlugOccurrence()).getLocator();
+    _plugOccurrenceLocator = HyperNet(hnrnoccurrence).getTerminalNetlistPlugOccurrences().getSubSet(InputPlugOccurrence()).getLocator();
 }
 
 CHyperNetReceiverPortOccurrences::Locator::Locator(const Locator& locator)
@@ -515,7 +515,7 @@ Occurrence CHyperNetReceiverPortOccurrences::Locator::getElement() const
 {
     if (_pinLocator.isValid())
         return _pinLocator.getElement();
-	return _plugOccurrenceLocator.getElement();
+    return _plugOccurrenceLocator.getElement();
 }
 
 Locator<Occurrence>* CHyperNetReceiverPortOccurrences::Locator::getClone() const

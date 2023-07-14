@@ -1,0 +1,35 @@
+.TH "SegmentObserver" 3 "Sun Nov 21 2021" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SegmentObserver \- Observer on the base AutoSegment\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBObserver< class >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBnotify\fP (unsigned int flags)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Observer on the base AutoSegment\&. 
+
+The observer that will be hooked into the observable in the associated canonical AutoSegment\&. Used to propagate the invalidation/revalidation events from AutoSegment toward \fBTrackSegment\fP\&.
+.PP
+As a secondary function, it is used by the \fBSession::lookup()\fP method to quicly retrieve \fBTrackSegment\fP from \fBKatabatic::AutoSegment\fP\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void notify (unsigned int flags)\fC [virtual]\fP"
+Implement the asymmetric invalidate/revalidate policy described in \fBKite::Session\fP\&. The invalidate is immediatly passed on while the revalidate is ignored\&. 
+.PP
+Reimplemented from \fBBaseObserver\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

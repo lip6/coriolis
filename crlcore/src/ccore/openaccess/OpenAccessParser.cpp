@@ -186,7 +186,7 @@ namespace {
                                 hCell = Cell::create(library, Name(cellNameString));
                                 hCell->setTerminal(false);
                                 if (!asDesignLibrary) 
-                                    hCell->setFlattenLeaf(true);
+                                    hCell->setTerminalNetlist(true);
                                 cerr << hCell << endl;
                                 if (asDesignLibrary) 
                                     _cell2OACellMap[hCell] = cell;

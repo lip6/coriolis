@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_SLICE
-#define HURRICANE_SLICE
-
+#pragma  once
 #include "hurricane/QuadTree.h"
 #include "hurricane/Components.h"
 #include "hurricane/Markers.h"
@@ -72,9 +70,9 @@ class Slice {
     public: const Layer* getLayer() const {return _layer;};
     public: const Box& getBoundingBox() const {return _quadTree.getBoundingBox();};
     public: Gos getGos() const {return _quadTree.getGos();};
-    public: Gos getGosUnder(const Box& area) const {return _quadTree.getGosUnder(area);};
+    public: Gos getGosUnder(const Box& area, DbU::Unit threshold=0) const {return _quadTree.getGosUnder(area,threshold);};
     public: Components getComponents() const;
-    public: Components getComponentsUnder(const Box& area) const;
+    public: Components getComponentsUnder(const Box& area, DbU::Unit threshold=0) const;
     public: Markers getMarkers() const;
     public: Markers getMarkersUnder(const Box& area) const;
 
@@ -105,9 +103,6 @@ class Slice {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Slice);
-
-
-#endif // HURRICANE_SLICE
 
 
 // ****************************************************************************************************

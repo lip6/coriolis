@@ -38,30 +38,12 @@ extern "C" {
 #define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
 #define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Instance,instance,function)
 
-#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)              \
-  constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
-  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
-  Py_DECREF ( constant );
-
 
 // +=================================================================+
 // |              "PyInstance" Python Module Code Part               |
 // +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
-      
-
-  extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object )
-  {
-    switch ( PyAny_AsLong(object) ) {
-      case Instance::PlacementStatus::UNPLACED : return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
-      case Instance::PlacementStatus::PLACED   : return ( Instance::PlacementStatus(Instance::PlacementStatus::PLACED) );
-      case Instance::PlacementStatus::FIXED    : return ( Instance::PlacementStatus(Instance::PlacementStatus::FIXED) );
-    }
-      
-    return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
-  }
-
 
   // Standart Accessors (Attributes).
 
@@ -108,7 +90,8 @@ extern "C" {
                                    , PyInt_AsPlacementStatus(arg4)
                                    );
       } else {
-        PyErr_SetString( ConstructorError, "Instance.create(): Bad type of parameter(s)." );
+        string message = "Instance.create(): Bad type of parameter(s), \"" + __cs.getObjectIds() + "\".";
+        PyErr_SetString( ConstructorError, message.c_str() );
         return NULL;
       }
     HCATCH
@@ -365,10 +348,10 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyInstance_isTerminal ,isTerminal ,PyInstance,Instance)
-  DirectGetBoolAttribute(PyInstance_isLeaf     ,isLeaf     ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isTerminal       ,isTerminal       ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isTerminalNetlist,isTerminalNetlist,PyInstance,Instance)
 
-  GetBoundStateAttribute(PyInstance_isPyBound              ,PyInstance,Instance)
+  GetBoundStateAttribute(PyInstance_isPyBound,PyInstance,Instance)
 
   
   // ---------------------------------------------------------------
@@ -387,7 +370,7 @@ extern "C" {
     , { "getUnconnectedPlugs"       , (PyCFunction)PyInstance_getUnconnectedPlugs       , METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
     , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
     , { "isTerminal"                , (PyCFunction)PyInstance_isTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
-    , { "isLeaf"                    , (PyCFunction)PyInstance_isLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
+    , { "isTerminalNetlist"         , (PyCFunction)PyInstance_isTerminalNetlist         , METH_NOARGS , "Returns true if the instance is a netlist terminal instance." }
     , { "isBound"                   , (PyCFunction)PyInstance_isPyBound                 , METH_NOARGS , "Returns true if the instance is bounded to the hurricane instance" }
     , { "setName"                   , (PyCFunction)PyInstance_setName                   , METH_VARARGS, "Allows to change the instance name." }
     , { "setTransformation"         , (PyCFunction)PyInstance_setTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }

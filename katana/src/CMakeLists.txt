@@ -2,13 +2,15 @@
 
 #              include( ${QT_USE_FILE} )
    include_directories( ${KATANA_SOURCE_DIR}/src
+                        ${ANABATIC_INCLUDE_DIR} 
+                        ${ETESIAN_INCLUDE_DIR} 
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${FLUTE_INCLUDE_DIR}
-                        ${WtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     katana/Constants.h
                                      katana/Block.h
@@ -18,6 +20,7 @@
                                      katana/TrackElement.h       katana/TrackElements.h
                                      katana/TrackSegment.h
                                      katana/TrackSegmentRegular.h
+                                     katana/TrackSegmentNonPref.h
                                      katana/TrackSegmentWide.h
                                      katana/TrackFixedSegment.h
                                      katana/TrackMarker.h
@@ -53,6 +56,7 @@
                                      TrackElements.cpp
                                      TrackSegment.cpp
                                      TrackSegmentRegular.cpp
+                                     TrackSegmentNonPref.cpp
                                      TrackSegmentWide.cpp
                                      TrackFixedSegment.cpp
                                      TrackMarker.cpp
@@ -73,6 +77,7 @@
                                      PreRouteds.cpp
                                      ProtectRoutingPads.cpp
                                      PreProcess.cpp
+                                     BloatProfile.cpp
                                      GlobalRoute.cpp
                                      SymmetricRoute.cpp
                                      KatanaEngine.cpp
@@ -85,7 +90,8 @@
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 
-                   set( depLibs      ${ANABATIC_LIBRARIES}
+                   set( depLibs      ${ETESIAN_LIBRARIES}
+                                     ${ANABATIC_LIBRARIES}
                                      ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_PYTHON_LIBRARIES}
@@ -95,6 +101,7 @@
                                      ${BOOKSHELF_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${COLOQUINTE_LIBRARIES}
                                      ${UTILITIES_LIBRARY}
                                      ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
@@ -102,7 +109,8 @@
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                     ${Python3_LIBRARIES}
+                                      -lutil
                                      ${LIBEXECINFO_LIBRARIES}
                       )
 

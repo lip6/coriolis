@@ -1,531 +1,77 @@
-\hypertarget{group__DbUGroup}{}\section{Db\+U/\+Unit description}
-\label{group__DbUGroup}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}}
+\hypertarget{group__DbUGroup}{}\doxysection{Db\+U/\+Unit description}
+\label{group__DbUGroup}\index{DbU/Unit description@{DbU/Unit description}}
 
 
 Fixed point numbers management.  
 
 
-\subsection*{Classes}
+\doxysubsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classHurricane_1_1DbU}{Hurricane\+::\+DbU}}
-\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} Unit managment ({\bfseries A\+PI}). \end{DoxyCompactList}\end{DoxyCompactItemize}
-\subsection*{Typedefs}
-\begin{DoxyCompactItemize}
-\item 
-typedef std\+::int64\+\_\+t \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Hurricane\+::\+Db\+U\+::\+Unit}}
-\end{DoxyCompactItemize}
-\subsection*{Enumerations}
-\begin{DoxyCompactItemize}
-\item 
-enum \mbox{\hyperlink{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}{Hurricane\+::\+Db\+U\+::\+String\+Mode}} \{ \newline
-\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233}{Hurricane\+::\+Db\+U\+::\+Db}} = (1$<$$<$0), 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c}{Hurricane\+::\+Db\+U\+::\+Grid}} = (1$<$$<$1), 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8}{Hurricane\+::\+Db\+U\+::\+Symbolic}} = (1$<$$<$2)
- \}
-\item 
-enum \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Hurricane\+::\+Db\+U\+::\+Unit\+Power}} \{ \newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557}{Hurricane\+::\+Db\+U\+::\+Pico}} = 1, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Hurricane\+::\+Db\+U\+::\+Nano}}, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb}{Hurricane\+::\+Db\+U\+::\+Micro}}, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be}{Hurricane\+::\+Db\+U\+::\+Milli}}, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6}{Hurricane\+::\+Db\+U\+::\+Unity}}, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74}{Hurricane\+::\+Db\+U\+::\+Kilo}}
- \}
-\item 
-enum \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Hurricane\+::\+Db\+U\+::\+Snap\+Mode}} \{ \newline
-\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3}{Hurricane\+::\+Db\+U\+::\+Inferior}} = 1, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Hurricane\+::\+Db\+U\+::\+Superior}} = 2, 
-\newline
-\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Hurricane\+::\+Db\+U\+::\+Nearest}} = 4
- \}
-\end{DoxyCompactItemize}
-\subsection*{Functions}
-\begin{DoxyCompactItemize}
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{Hurricane\+::\+Db\+U\+::from\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}{Hurricane\+::\+Db\+U\+::from\+Grid}} (double value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}{Hurricane\+::\+Db\+U\+::from\+Lambda}} (double value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{Hurricane\+::\+Db\+U\+::from\+Physical}} (double value, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}{Hurricane\+::\+Db\+U\+::to\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}{Hurricane\+::\+Db\+U\+::to\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}{Hurricane\+::\+Db\+U\+::to\+Lambda}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}{Hurricane\+::\+Db\+U\+::to\+Physical}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p)
-\item 
-static unsigned int \mbox{\hyperlink{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}{Hurricane\+::\+Db\+U\+::get\+Precision}} ()
-\item 
-static unsigned int \mbox{\hyperlink{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}{Hurricane\+::\+Db\+U\+::get\+Maximal\+Precision}} ()
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}{Hurricane\+::\+Db\+U\+::get\+Resolution}} ()
-\item 
-static void \mbox{\hyperlink{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}{Hurricane\+::\+Db\+U\+::set\+Grids\+Per\+Lambda}} (double grids\+Per\+Lambda, unsigned int flags=No\+Flags)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}{Hurricane\+::\+Db\+U\+::get\+Grids\+Per\+Lambda}} ()
-\item 
-static void \mbox{\hyperlink{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}{Hurricane\+::\+Db\+U\+::set\+String\+Mode}} (unsigned int mode, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p=\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano}})
-\item 
-static string \mbox{\hyperlink{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}{Hurricane\+::\+Db\+U\+::get\+Value\+String}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u, int mode=Smart\+Truncate)
-\item 
-static void \mbox{\hyperlink{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}{Hurricane\+::\+Db\+U\+::set\+Precision}} (unsigned int precision, unsigned int flags=No\+Flags)
-\item 
-static void \mbox{\hyperlink{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}{Hurricane\+::\+Db\+U\+::set\+Real\+Snap\+Grid\+Step}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}{Hurricane\+::\+Db\+U\+::get\+Real\+Snap\+Grid\+Step}} ()
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}{Hurricane\+::\+Db\+U\+::get\+On\+Real\+Snap\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
-\item 
-static void \mbox{\hyperlink{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}{Hurricane\+::\+Db\+U\+::set\+Symbolic\+Snap\+Grid\+Step}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}{Hurricane\+::\+Db\+U\+::get\+Symbolic\+Snap\+Grid\+Step}} ()
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}{Hurricane\+::\+Db\+U\+::get\+On\+Symbolic\+Snap\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}{Hurricane\+::\+Db\+U\+::get\+On\+Custom\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga9419025221579f4277475c65655be3dc}{Hurricane\+::\+Db\+U\+::get\+On\+Physical\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior}})
-\end{DoxyCompactItemize}
-\subsection*{Obsoleteds}
-\label{_amgrpf05125b8b6a468721054b36b1a1cfd62}%
- Due to their somewhat unclear naming convention, those functions have been renamed by the {\itshape to} / {\itshape from} variants. \begin{DoxyCompactItemize}
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gacd77957381fb93fc4203bdca215e0b48}{Hurricane\+::\+Db\+U\+::db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga1d4bac6e3b68c8cd44b345de3b425753}{Hurricane\+::\+Db\+U\+::grid}} (double value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaa1ba98acc939ff1c370c18544a5e0dce}{Hurricane\+::\+Db\+U\+::lambda}} (double value)
-\item 
-static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga4233772b1b3e68f3ec723c7509ea87ff}{Hurricane\+::\+Db\+U\+::get\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_gad4485d0d7b5fd7ae87b32f165155c0a2}{Hurricane\+::\+Db\+U\+::get\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\item 
-static double \mbox{\hyperlink{group__DbUGroup_gadea6b9a6e84243f70f3a5e2725b2c6d8}{Hurricane\+::\+Db\+U\+::get\+Lambda}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} Unit managment ({\bfseries{API}}). \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 Fixed point numbers management. 
 
-\hypertarget{group__DbUGroup_secDbUIntro}{}\subsection{Introduction}\label{group__DbUGroup_secDbUIntro}
-The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class provides the \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} type for modelling geometric length, that is abscissas, ordinates, widths, offsets and a set of functions to convert \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} to and from external coordinates.
+\hypertarget{group__DbUGroup_secDbUIntro}{}\doxysubsection{Introduction}\label{group__DbUGroup_secDbUIntro}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class provides the \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} type for modelling geometric length, that is abscissas, ordinates, widths, offsets and a set of functions to convert \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} to and from external coordinates.
 
-\begin{DoxyParagraph}{Remark\+: The DbU class contains only static methods, and is not meant to}
-be instanciated. The working type is \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class contains only static methods, and is not meant to be instanciated. The working type is \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}.
+\end{DoxyRemark}
 The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class manage three king of length \+: 
 \begin{DoxyItemize}
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}} \+: the working type. It is currently associated to a long integer and a precision/resolution. This way all numbers are bound to the same precision (unlike floating point numbers) preventing rounding errors. 
-\item {\bfseries Real} length \+: length, expressed in steps of founder grid. We have the straight relation ship \+: grid = unit $\ast$ resolution 
-\item {\bfseries Symbolic} length \+: length, expressed in lambdas. A lambda is an even multiple of the founder grid step. lambda = grid / lambda\+Per\+Grid 
-\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUPrecision}{}\subsection{Precision}\label{group__DbUGroup_secDbUPrecision}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}} \+: the working type. It is currently associated to a long integer and a precision/resolution. This way all numbers are bound to the same precision (unlike floating point numbers) preventing rounding errors. 
+\item {\bfseries{Real}} length \+: length, expressed in steps of founder grid. We have the straight relation ship \+: grid = unit $\ast$ resolution 
+\item {\bfseries{Symbolic}} length \+: length, expressed in lambdas. A lambda is an even multiple of the founder grid step. lambda = grid / lambda\+Per\+Grid 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUPrecision}{}\doxysubsection{Precision}\label{group__DbUGroup_secDbUPrecision}
 It is possible to choose (once for all) the precision with which unit values are stored.
 
 This precision represents the maximal number of decimal digits allowed (it applies globally to all units). Therefore for a precision of 3, the unit will represent a value of 0.\+001 and the founder grid value 23.\+54 will be represented by a unit equal to 23540.
 
 Related functions \+: 
 \begin{DoxyItemize}
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}{Db\+U\+::get\+Precision()}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}{Db\+U\+::get\+Maximal\+Precision()}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}{Db\+U\+::set\+Precision()}}} 
-\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUResolution}{}\subsection{Resolution}\label{group__DbUGroup_secDbUResolution}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a6169efbdd9b3d54a0bd8467c8f957fda}{Db\+U\+::get\+Precision()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a8756c9f0a32af5f601cd150e73b02c03}{Db\+U\+::get\+Maximal\+Precision()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ace9a8644e7e80dcaed2a8a95deeb1622}{Db\+U\+::set\+Precision()}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUResolution}{}\doxysubsection{Resolution}\label{group__DbUGroup_secDbUResolution}
 The resolution is associated to the precision. Indeed it represents the external value associated to the smallest unit, that is the value returned by get\+Grid(\+Unit\+::db(1)).
 
-Related functions \+: {\bfseries \mbox{\hyperlink{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}{Db\+U\+::get\+Resolution()}}}\hypertarget{group__DbUGroup_secDbUGridsPerLamba}{}\subsection{Grids per Lambda ratio}\label{group__DbUGroup_secDbUGridsPerLamba}
+Related functions \+: {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a120a60b09b344d01c583567a1e489d9e}{Db\+U\+::get\+Resolution()}}}}\hypertarget{group__DbUGroup_secDbUGridsPerLamba}{}\doxysubsection{Grids per Lambda ratio}\label{group__DbUGroup_secDbUGridsPerLamba}
 Set the ratio between grids and lambdas. This must be an even integer. Once sets, musn\textquotesingle{}t be changed.
 
 Related functions \+: 
 \begin{DoxyItemize}
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}{Db\+U\+::set\+Grids\+Per\+Lambda()}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}{Db\+U\+::get\+Grids\+Per\+Lambda()}}} 
-\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUGrid}{}\subsection{Grid}\label{group__DbUGroup_secDbUGrid}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ac93f9ba2a09105227e34bd05bcb1500c}{Db\+U\+::set\+Grids\+Per\+Lambda()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9a0359adbfafc356326f5c6adf57ff04}{Db\+U\+::get\+Grids\+Per\+Lambda()}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUGrid}{}\doxysubsection{Grid}\label{group__DbUGroup_secDbUGrid}
 Thoses function are closely related to editors. They allow to restrict to positions on a grid. We support three kind of grid, real, symbolic and user defined.
 
 
 \begin{DoxyItemize}
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}{Db\+U\+::get\+Real\+Snap\+Grid\+Step}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}{Db\+U\+::get\+On\+Real\+Snap\+Grid}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}{Db\+U\+::set\+Real\+Snap\+Grid\+Step}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}{Db\+U\+::get\+Symbolic\+Snap\+Grid\+Step}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}{Db\+U\+::get\+On\+Symbolic\+Snap\+Grid}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}{Db\+U\+::set\+Symbolic\+Snap\+Grid\+Step}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}{Db\+U\+::get\+On\+Custom\+Grid}}} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga9419025221579f4277475c65655be3dc}{Db\+U\+::get\+On\+Physical\+Grid}}} 
-\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUTranslators}{}\subsection{Translators}\label{group__DbUGroup_secDbUTranslators}
-Translate a \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} into grid or lambda length \+: 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a09e46fcca6aaca94851adfa196e10170}{Db\+U\+::get\+Real\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a8746e486f153aa37ee469c1604eba5c0}{Db\+U\+::get\+On\+Real\+Snap\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a202cc3aa3364c2224647a29dde047fae}{Db\+U\+::set\+Real\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a687a9134729b107c42fb7f69596c4c3b}{Db\+U\+::get\+Symbolic\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ad1b0c0f3680093cf5a63d901312c925d}{Db\+U\+::get\+On\+Symbolic\+Snap\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9ccd423c8f268ef54770f4663e6c9304}{Db\+U\+::set\+Symbolic\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a87323d9038656dceabffc37d45de408a}{Db\+U\+::get\+On\+Custom\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9419025221579f4277475c65655be3dc}{Db\+U\+::get\+On\+Physical\+Grid}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUTranslators}{}\doxysubsection{Translators}\label{group__DbUGroup_secDbUTranslators}
+Translate a \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} into grid or lambda length \+: 
 \begin{DoxyItemize}
-\item {\bfseries long \mbox{\hyperlink{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}{Db\+U\+::to\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)} 
-\item {\bfseries double \mbox{\hyperlink{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}{Db\+U\+::to\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)} 
-\item {\bfseries double \mbox{\hyperlink{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}{Db\+U\+::to\+Lambda}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)} 
-\item {\bfseries double \mbox{\hyperlink{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}{Db\+U\+::to\+Physical}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, Unit\+Power p)} 
+\item {\bfseries{long \mbox{\hyperlink{classHurricane_1_1DbU_aec07c6e7ae2a2a6f54e2a16b32c8bf26}{Db\+U\+::to\+Db}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_a318d673386c9424e07c12efd598c730d}{Db\+U\+::to\+Grid}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_a4923a9a443871282ad7d331be2a2a5d4}{Db\+U\+::to\+Lambda}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_ab901e9d5c12e878728178f113def6c45}{Db\+U\+::to\+Physical}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, Unit\+Power p)}} 
 \end{DoxyItemize}
 
-Translate a lambda length into a \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \+: 
+Translate a lambda length into a \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \+: 
 \begin{DoxyItemize}
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{Db\+U\+::from\+Db}} (long v)} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}{Db\+U\+::from\+Grid}} (double v)} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}{Db\+U\+::from\+Lambda}} (double v)} 
-\item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{Db\+U\+::from\+Physical}} (double v, Unit\+Power p)} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_aec69d65ec1651c2feea24c5931f4580b}{Db\+U\+::from\+Db}} (long v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a367e1d1b5ac1df076745550cba8a83c1}{Db\+U\+::from\+Grid}} (double v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a4b570755b19ea9ff0f2f258a221bd935}{Db\+U\+::from\+Lambda}} (double v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a11d4dbd9134a19bda35cbacde1cb2769}{Db\+U\+::from\+Physical}} (double v, Unit\+Power p)}} 
 \end{DoxyItemize}
-
-\subsection{Typedef Documentation}
-\mbox{\Hypertarget{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}\label{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Unit@{Unit}}
-\index{Unit@{Unit}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{Unit}{Unit}}
-{\footnotesize\ttfamily long \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Hurricane\+::\+Db\+U\+::\+Unit}}}
-
-The working \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} type for storing dimensions. 
-
-\subsection{Enumeration Type Documentation}
-\mbox{\Hypertarget{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}\label{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!String\+Mode@{String\+Mode}}
-\index{String\+Mode@{String\+Mode}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{String\+Mode}{StringMode}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}{Hurricane\+::\+Db\+U\+::\+String\+Mode}}}
-
-Select how units are to be printed by \mbox{\hyperlink{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}{get\+Value\+String()}}. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Db@{Db}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Db@{Db}}}\mbox{\Hypertarget{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233}\label{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233}} 
-Db&Units are printed \char`\"{}as is\char`\"{}, their true value as stored in the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Grid@{Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Grid@{Grid}}}\mbox{\Hypertarget{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c}\label{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c}} 
-Grid&Units are printed as founder grid steps. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Symbolic@{Symbolic}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Symbolic@{Symbolic}}}\mbox{\Hypertarget{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8}\label{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8}} 
-Symbolic&Units are printed as symbolic (lambdas). \\
-\hline
-
-\end{DoxyEnumFields}
-\mbox{\Hypertarget{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}\label{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Unit\+Power@{Unit\+Power}}
-\index{Unit\+Power@{Unit\+Power}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{Unit\+Power}{UnitPower}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Hurricane\+::\+Db\+U\+::\+Unit\+Power}}}
-
-This enumeration defines the power applicable to physical units. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Pico@{Pico}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Pico@{Pico}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557}} 
-Pico&10e-\/12 \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Nano@{Nano}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Nano@{Nano}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}} 
-Nano&10e-\/9 \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Micro@{Micro}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Micro@{Micro}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb}} 
-Micro&10e-\/6 \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Milli@{Milli}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Milli@{Milli}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be}} 
-Milli&10e-\/3 \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Unity@{Unity}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Unity@{Unity}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6}} 
-Unity&1 \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Kilo@{Kilo}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Kilo@{Kilo}}}\mbox{\Hypertarget{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74}\label{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74}} 
-Kilo&10e+3 \\
-\hline
-
-\end{DoxyEnumFields}
-\mbox{\Hypertarget{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}\label{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Snap\+Mode@{Snap\+Mode}}
-\index{Snap\+Mode@{Snap\+Mode}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{Snap\+Mode}{SnapMode}}
-{\footnotesize\ttfamily enum \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Hurricane\+::\+Db\+U\+::\+Snap\+Mode}}}
-
-This enumeration defines the rounding applicable to the grid management functions. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Inferior@{Inferior}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Inferior@{Inferior}}}\mbox{\Hypertarget{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3}\label{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3}} 
-Inferior&Round to the inferior grid point. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Superior@{Superior}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Superior@{Superior}}}\mbox{\Hypertarget{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}\label{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}} 
-Superior&Round to the superior grid point. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Nearest@{Nearest}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!Nearest@{Nearest}}}\mbox{\Hypertarget{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}\label{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}} 
-Nearest&Round nearest grid point, inferior or superior depending on the distance. \\
-\hline
-
-\end{DoxyEnumFields}
-
-
-\subsection{Function Documentation}
-\mbox{\Hypertarget{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}\label{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!from\+Db@{from\+Db}}
-\index{from\+Db@{from\+Db}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{from\+Db()}{fromDb()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::from\+Db (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the value {\ttfamily $<$value$>$} according to the current precision. This function do nothing apart from a cast. 
-
-Referenced by Hurricane\+::\+Db\+U\+::db().
-
-\mbox{\Hypertarget{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}\label{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!from\+Grid@{from\+Grid}}
-\index{from\+Grid@{from\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{from\+Grid()}{fromGrid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::from\+Grid (\begin{DoxyParamCaption}\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the {\itshape grid} value {\ttfamily $<$value$>$} according to the current precision. 
-
-Referenced by Hurricane\+::\+Db\+U\+::from\+Lambda(), Hurricane\+::\+Db\+U\+::from\+Physical(), and Hurricane\+::\+Db\+U\+::grid().
-
-\mbox{\Hypertarget{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}\label{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!from\+Lambda@{from\+Lambda}}
-\index{from\+Lambda@{from\+Lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{from\+Lambda()}{fromLambda()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::from\+Lambda (\begin{DoxyParamCaption}\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the {\itshape symbolic} value {\ttfamily $<$value$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::from\+Grid().
-
-
-
-Referenced by Hurricane\+::\+Db\+U\+::lambda().
-
-\mbox{\Hypertarget{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}\label{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!from\+Physical@{from\+Physical}}
-\index{from\+Physical@{from\+Physical}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{from\+Physical()}{fromPhysical()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::from\+Physical (\begin{DoxyParamCaption}\item[{double}]{value,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}}}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the {\itshape physical} value {\ttfamily $<$value$>$} with power {\ttfamily p}, according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::from\+Grid().
-
-\mbox{\Hypertarget{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}\label{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!to\+Db@{to\+Db}}
-\index{to\+Db@{to\+Db}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{to\+Db()}{toDb()}}
-{\footnotesize\ttfamily long Hurricane\+::\+Db\+U\+::to\+Db (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the external value associated to the unit {\ttfamily $<$unit$>$} according to the current precision. This function do nothing apart from a type cast. 
-
-Referenced by Hurricane\+::\+Db\+U\+::get\+Db().
-
-\mbox{\Hypertarget{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}\label{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!to\+Grid@{to\+Grid}}
-\index{to\+Grid@{to\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{to\+Grid()}{toGrid()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::to\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the value expressed as a number of founder grid steps associated to the unit {\ttfamily $<$unit$>$} according to the current precision. 
-
-Referenced by Hurricane\+::\+Db\+U\+::get\+Grid(), and Hurricane\+::\+Db\+U\+::to\+Lambda().
-
-\mbox{\Hypertarget{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}\label{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!to\+Lambda@{to\+Lambda}}
-\index{to\+Lambda@{to\+Lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{to\+Lambda()}{toLambda()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::to\+Lambda (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the symbolic value (expressed as a number lambdas) associated to the unit {\ttfamily $<$unit$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::to\+Grid().
-
-
-
-Referenced by Hurricane\+::\+Db\+U\+::get\+Lambda().
-
-\mbox{\Hypertarget{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}\label{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!to\+Physical@{to\+Physical}}
-\index{to\+Physical@{to\+Physical}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{to\+Physical()}{toPhysical()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::to\+Physical (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}}}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the physical value of {\ttfamily u}, expressed in the power {\ttfamily p}. \mbox{\Hypertarget{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}\label{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Precision@{get\+Precision}}
-\index{get\+Precision@{get\+Precision}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Precision()}{getPrecision()}}
-{\footnotesize\ttfamily unsigned Hurricane\+::\+Db\+U\+::get\+Precision (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-{\bfseries Returns\+:} the current precision (whose default is fixed to 1). \mbox{\Hypertarget{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}\label{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Maximal\+Precision@{get\+Maximal\+Precision}}
-\index{get\+Maximal\+Precision@{get\+Maximal\+Precision}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Maximal\+Precision()}{getMaximalPrecision()}}
-{\footnotesize\ttfamily unsigned Hurricane\+::\+Db\+U\+::get\+Maximal\+Precision (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-{\bfseries Returns\+:} the maximal precision allowed (currently fixed to 3). \mbox{\Hypertarget{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}\label{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Resolution@{get\+Resolution}}
-\index{get\+Resolution@{get\+Resolution}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Resolution()}{getResolution()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::get\+Resolution (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-{\bfseries Returns\+:} the current resolution. \mbox{\Hypertarget{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}\label{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Grids\+Per\+Lambda@{set\+Grids\+Per\+Lambda}}
-\index{set\+Grids\+Per\+Lambda@{set\+Grids\+Per\+Lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{set\+Grids\+Per\+Lambda()}{setGridsPerLambda()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Db\+U\+::set\+Grids\+Per\+Lambda (\begin{DoxyParamCaption}\item[{double}]{grids\+Per\+Lambda,  }\item[{unsigned int}]{flags = {\ttfamily NoFlags} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-{\bfseries Returns\+:} Sets how many founder grid steps makes one {\itshape lambda}. It must be an event integer otherwise an exception is thrown. \mbox{\Hypertarget{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}\label{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Grids\+Per\+Lambda@{get\+Grids\+Per\+Lambda}}
-\index{get\+Grids\+Per\+Lambda@{get\+Grids\+Per\+Lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Grids\+Per\+Lambda()}{getGridsPerLambda()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::get\+Grids\+Per\+Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-{\bfseries Returns\+:} How many founder grid steps makes one {\itshape lambda}. \mbox{\Hypertarget{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}\label{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+String\+Mode@{set\+String\+Mode}}
-\index{set\+String\+Mode@{set\+String\+Mode}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{set\+String\+Mode()}{setStringMode()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Db\+U\+::set\+String\+Mode (\begin{DoxyParamCaption}\item[{unsigned int}]{mode,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}}}]{p = {\ttfamily \mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Sets in which length the units are to be displayed by \mbox{\hyperlink{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}{get\+Value\+String()}}. Avalaibles modes are \+: \mbox{\Hypertarget{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}\label{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Value\+String@{get\+Value\+String}}
-\index{get\+Value\+String@{get\+Value\+String}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Value\+String()}{getValueString()}}
-{\footnotesize\ttfamily string Hurricane\+::\+Db\+U\+::get\+Value\+String (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}}}]{unit,  }\item[{int}]{mode = {\ttfamily SmartTruncate} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-\begin{DoxyReturn}{Returns}
-A character string representing the external value of {\ttfamily $<$unit$>$}. The value is converted in the length according to \mbox{\hyperlink{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}{set\+String\+Mode()}}\+: database, grid or symbolic.
-\end{DoxyReturn}
-\begin{DoxyParagraph}{Remark\+: This string is shorter than the one we could print from the }
-external value because non needed decimals are not drawn (nor the point if value is integer). 
-\end{DoxyParagraph}
-\mbox{\Hypertarget{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}\label{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Precision@{set\+Precision}}
-\index{set\+Precision@{set\+Precision}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{set\+Precision()}{setPrecision()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Db\+U\+::set\+Precision (\begin{DoxyParamCaption}\item[{unsigned int}]{precision,  }\item[{unsigned int}]{flags = {\ttfamily NoFlags} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Allows to set the precision at a requested value. This must be done at the begining of the program (before the creation of the first unit) and not changed for the following (unless mandatory and for a temporary period because all existing units would be misinterpreted).
-
-\begin{DoxyParagraph}{Remark\+: This function throws an exception if the requested precision }
-is greater than the maximal one. 
-\end{DoxyParagraph}
-\mbox{\Hypertarget{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}\label{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Real\+Snap\+Grid\+Step@{set\+Real\+Snap\+Grid\+Step}}
-\index{set\+Real\+Snap\+Grid\+Step@{set\+Real\+Snap\+Grid\+Step}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{set\+Real\+Snap\+Grid\+Step()}{setRealSnapGridStep()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Db\+U\+::set\+Real\+Snap\+Grid\+Step (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{step }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-Set the real (founder) grid step. \mbox{\Hypertarget{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}\label{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Real\+Snap\+Grid\+Step@{get\+Real\+Snap\+Grid\+Step}}
-\index{get\+Real\+Snap\+Grid\+Step@{get\+Real\+Snap\+Grid\+Step}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Real\+Snap\+Grid\+Step()}{getRealSnapGridStep()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+Real\+Snap\+Grid\+Step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Get the real (founder) grid step. \mbox{\Hypertarget{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}\label{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+On\+Real\+Snap\+Grid@{get\+On\+Real\+Snap\+Grid}}
-\index{get\+On\+Real\+Snap\+Grid@{get\+On\+Real\+Snap\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+On\+Real\+Snap\+Grid()}{getOnRealSnapGrid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+On\+Real\+Snap\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Db\+U\+::\+Snap\+Mode}}}]{mode = {\ttfamily \mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Get the snap point from the unit {\ttfamily u}, using the rounding mode {\ttfamily mode}. \mbox{\Hypertarget{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}\label{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Symbolic\+Snap\+Grid\+Step@{set\+Symbolic\+Snap\+Grid\+Step}}
-\index{set\+Symbolic\+Snap\+Grid\+Step@{set\+Symbolic\+Snap\+Grid\+Step}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{set\+Symbolic\+Snap\+Grid\+Step()}{setSymbolicSnapGridStep()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Db\+U\+::set\+Symbolic\+Snap\+Grid\+Step (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{step }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-Set the symbolic grid step. \mbox{\Hypertarget{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}\label{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Symbolic\+Snap\+Grid\+Step@{get\+Symbolic\+Snap\+Grid\+Step}}
-\index{get\+Symbolic\+Snap\+Grid\+Step@{get\+Symbolic\+Snap\+Grid\+Step}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Symbolic\+Snap\+Grid\+Step()}{getSymbolicSnapGridStep()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+Symbolic\+Snap\+Grid\+Step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Get the symbolic grid step. \mbox{\Hypertarget{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}\label{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+On\+Symbolic\+Snap\+Grid@{get\+On\+Symbolic\+Snap\+Grid}}
-\index{get\+On\+Symbolic\+Snap\+Grid@{get\+On\+Symbolic\+Snap\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+On\+Symbolic\+Snap\+Grid()}{getOnSymbolicSnapGrid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+On\+Symbolic\+Snap\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Db\+U\+::\+Snap\+Mode}}}]{mode = {\ttfamily \mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Get the snap point from the unit {\ttfamily u}, using the rounding mode {\ttfamily mode}. \mbox{\Hypertarget{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}\label{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+On\+Custom\+Grid@{get\+On\+Custom\+Grid}}
-\index{get\+On\+Custom\+Grid@{get\+On\+Custom\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+On\+Custom\+Grid()}{getOnCustomGrid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+On\+Custom\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{step,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Db\+U\+::\+Snap\+Mode}}}]{mode = {\ttfamily \mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-Get the snap point from the unit {\ttfamily u}, with grid step {\ttfamily step} using the rounding mode {\ttfamily mode}. 
-
-Referenced by Hurricane\+::\+Db\+U\+::get\+On\+Physical\+Grid().
-
-\mbox{\Hypertarget{group__DbUGroup_ga9419025221579f4277475c65655be3dc}\label{group__DbUGroup_ga9419025221579f4277475c65655be3dc}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+On\+Physical\+Grid@{get\+On\+Physical\+Grid}}
-\index{get\+On\+Physical\+Grid@{get\+On\+Physical\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+On\+Physical\+Grid()}{getOnPhysicalGrid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::get\+On\+Physical\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Db\+U\+::\+Snap\+Mode}}}]{mode = {\ttfamily \mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-Get the physical grid unit nearest to {\ttfamily u}, with {\ttfamily mode} rounding. using the rounding mode {\ttfamily mode}. 
-
-References Hurricane\+::\+Db\+U\+::get\+On\+Custom\+Grid(), and Hurricane\+::\+Db\+U\+::grid().
-
-\mbox{\Hypertarget{group__DbUGroup_gacd77957381fb93fc4203bdca215e0b48}\label{group__DbUGroup_gacd77957381fb93fc4203bdca215e0b48}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!db@{db}}
-\index{db@{db}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{db()}{db()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::db (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the value {\ttfamily $<$value$>$} according to the current precision. This function do nothing apart from a cast. 
-
-References Hurricane\+::\+Db\+U\+::from\+Db().
-
-\mbox{\Hypertarget{group__DbUGroup_ga1d4bac6e3b68c8cd44b345de3b425753}\label{group__DbUGroup_ga1d4bac6e3b68c8cd44b345de3b425753}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!grid@{grid}}
-\index{grid@{grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{grid()}{grid()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::grid (\begin{DoxyParamCaption}\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the {\itshape grid} value {\ttfamily $<$value$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::from\+Grid().
-
-
-
-Referenced by Hurricane\+::\+Db\+U\+::get\+On\+Physical\+Grid().
-
-\mbox{\Hypertarget{group__DbUGroup_gaa1ba98acc939ff1c370c18544a5e0dce}\label{group__DbUGroup_gaa1ba98acc939ff1c370c18544a5e0dce}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!lambda@{lambda}}
-\index{lambda@{lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{lambda()}{lambda()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} Hurricane\+::\+Db\+U\+::lambda (\begin{DoxyParamCaption}\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the unit corresponding to the {\itshape symbolic} value {\ttfamily $<$value$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::from\+Lambda().
-
-\mbox{\Hypertarget{group__DbUGroup_ga4233772b1b3e68f3ec723c7509ea87ff}\label{group__DbUGroup_ga4233772b1b3e68f3ec723c7509ea87ff}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Db@{get\+Db}}
-\index{get\+Db@{get\+Db}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Db()}{getDb()}}
-{\footnotesize\ttfamily long Hurricane\+::\+Db\+U\+::get\+Db (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the external value associated to the unit {\ttfamily $<$unit$>$} according to the current precision. This function do nothing apart from a type cast. 
-
-References Hurricane\+::\+Db\+U\+::to\+Db().
-
-\mbox{\Hypertarget{group__DbUGroup_gad4485d0d7b5fd7ae87b32f165155c0a2}\label{group__DbUGroup_gad4485d0d7b5fd7ae87b32f165155c0a2}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Grid@{get\+Grid}}
-\index{get\+Grid@{get\+Grid}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Grid()}{getGrid()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::get\+Grid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the value expressed as a number of founder grid steps associated to the unit {\ttfamily $<$unit$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::to\+Grid().
-
-\mbox{\Hypertarget{group__DbUGroup_gadea6b9a6e84243f70f3a5e2725b2c6d8}\label{group__DbUGroup_gadea6b9a6e84243f70f3a5e2725b2c6d8}} 
-\index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!get\+Lambda@{get\+Lambda}}
-\index{get\+Lambda@{get\+Lambda}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
-\subsubsection{\texorpdfstring{get\+Lambda()}{getLambda()}}
-{\footnotesize\ttfamily double Hurricane\+::\+Db\+U\+::get\+Lambda (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{u }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
-
-{\bfseries Returns\+:} the symbolic value (expressed as a number lambdas) associated to the unit {\ttfamily $<$unit$>$} according to the current precision. 
-
-References Hurricane\+::\+Db\+U\+::to\+Lambda().
-

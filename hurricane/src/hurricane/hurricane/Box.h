@@ -145,7 +145,7 @@ class JsonBox : public JsonObject {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Box);
+INSPECTOR_PR_SUPPORT(Hurricane::Box);
 
 
 #endif // HURRICANE_BOX

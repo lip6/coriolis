@@ -51,6 +51,7 @@ namespace Hurricane {
   }
 
 
+  void  Command::setCellWidget     ( CellWidget* widget ) { _cellWidget=widget; }
   void  Command::wheelEvent        ( QWheelEvent* ) { }
   void  Command::keyPressEvent     ( QKeyEvent*   ) { }
   void  Command::keyReleaseEvent   ( QKeyEvent*   ) { }

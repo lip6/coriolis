@@ -13,9 +13,7 @@
 // |  C++ Header  :  "./anabatic/NetBuilder.h"                       |
 // +-----------------------------------------------------------------+
 
-#ifndef  ANABATIC_NET_BUILDER_H
-#define  ANABATIC_NET_BUILDER_H
-
+#pragma  once
 #include <vector>
 #include <map>
 
@@ -41,6 +39,7 @@ namespace Anabatic {
   class AutoContact;
   class AutoSegment;
   class AnabaticEngine;
+  class NetData;
   
 
 // -------------------------------------------------------------------
@@ -48,31 +47,39 @@ namespace Anabatic {
 
   class ForkStack {
     public:
-      inline void         push       ( Hook* from, AutoContact* contact );
+      inline void         push       ( Hook* from, AutoContact* contact, uint64_t flags );
       inline void         pop        ();
       inline Hook*        getFrom    () const;
       inline AutoContact* getContact () const;
+      inline uint64_t     getFlags   () const;
+      inline void         setFlags   ( uint64_t );
     private:
       struct Element {
                  Hook*         _from;
                  AutoContact*  _contact;
-          inline               Element ( Hook* from, AutoContact* contact );
+                 uint64_t      _flags;
+          inline               Element ( Hook* from, AutoContact* contact, uint64_t flags );
       };
     private:
       list<Element>  _stack;
   };
 
 
-  inline              ForkStack::Element::Element ( Hook* from, AutoContact* contact ) : _from(from), _contact(contact) {}
+  inline              ForkStack::Element::Element ( Hook* from, AutoContact* contact, uint64_t flags ) : _from(from), _contact(contact), _flags(flags) {}
   inline void         ForkStack::pop              () { if (not _stack.empty()) _stack.pop_back(); }
   inline Hook*        ForkStack::getFrom          ()  const { return _stack.empty() ? NULL : _stack.back()._from; }
   inline AutoContact* ForkStack::getContact       ()  const { return _stack.empty() ? NULL : _stack.back()._contact; }
+  inline uint64_t     ForkStack::getFlags         ()  const { return _stack.empty() ? 0    : _stack.back()._flags; }
+  inline void         ForkStack::setFlags         ( uint64_t flags ) { if (not _stack.empty()) _stack.back()._flags |= flags; }
 
 
-  inline void  ForkStack::push ( Hook* from, AutoContact* contact )
+  inline void  ForkStack::push ( Hook* from, AutoContact* contact, uint64_t flags )
   {
-    cdebug_log(145,0) << "    Stacking " << from << " + " << contact << endl;
-    _stack.push_back( Element(from,contact) );
+    cdebug_log(145,0) << "  Stacking: " << endl;
+    cdebug_log(145,0) << "  + " << from << endl;
+    cdebug_log(145,0) << "  + " << contact << endl;
+    cdebug_log(145,0) << "  + " << flags << endl;
+    _stack.push_back( Element(from,contact,flags) );
   }
 
 
@@ -98,16 +105,20 @@ namespace Anabatic {
                          , WestBound       = (1 << 14)
                          , EastBound       = (1 << 15)
                          , Middle          = (1 << 16)
+                         , UseNonPref      = (1 << 17)
+                         , NoProtect       = (1 << 18)
+                         , ToUpperRouting  = (1 << 19)
+                         , HBothAccess     = HAccess|HAccessEW
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
                          };
-      enum TopologyFlag  { Global_Vertical_End   = 0x00000001
-                         , Global_Horizontal_End = 0x00000002
-                         , Global_Horizontal     = 0x00000004
-                         , Global_Vertical       = 0x00000008
-                         , Global_Turn           = 0x00000010
-                         , Global_Fork           = 0x00000020
-                         , Global_Fixed          = 0x00000040
+      enum TopologyFlag  { Global_Vertical_End   = (1 << 0)
+                         , Global_Horizontal_End = (1 << 1)
+                         , Global_Horizontal     = (1 << 2)
+                         , Global_Vertical       = (1 << 3)
+                         , Global_Turn           = (1 << 4)
+                         , Global_Fork           = (1 << 5)
+                         , Global_Fixed          = (1 << 6)
                          , Global_End            = Global_Vertical_End | Global_Horizontal_End
                          , Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork
                          };
@@ -146,19 +157,22 @@ namespace Anabatic {
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
-      inline  bool                          isTwoMetals            () const;
+      inline  bool                          isStrictChannel        () const;
+      inline  bool                          isUpperMetalRp         () const;
       inline  AnabaticEngine*               getAnabatic            () const;
       inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
               NetBuilder&                   setStartHook           ( AnabaticEngine*
                                                                    , Hook*        fromHook
-                                                                   , AutoContact* sourceContact=NULL );
+                                                                   , AutoContact* sourceContact=NULL
+                                                                   , uint64_t     sourceFlags=0 );
               void                          construct              ();
       inline  unsigned int                  getStateG              () const;
       inline  UConnexity                    getConnexity           () const;
       inline  UConnexity&                   getConnexity           ();
       inline  Net*                          getNet                 () const;
+      inline  NetData*                      getNetData             () const;
       inline  GCell*                        getGCell               () const;
       inline  AutoContact*                  getSourceContact       () const;
       inline  AutoContact*                  getSouthWestContact    () const;
@@ -166,6 +180,8 @@ namespace Anabatic {
       inline  AutoContact*                  getNorthEastContact    () const;
       inline  AutoContact*&                 getNorthEastContact    ();
       inline  Hook*                         getFromHook            () const;
+      inline  uint64_t                      getSourceFlags         () const;
+      inline  uint64_t                      getFlags               () const;
       inline  ForkStack&                    getForks               ();
       inline  vector<RoutingPad*>&          getRoutingPads         ();
       inline  map<Component*,AutoSegment*>& getRpLookup            ();
@@ -184,6 +200,7 @@ namespace Anabatic {
       inline  void                          clearSouths            ();
       inline  void                          clearEasts             ();
       inline  void                          clearWests             ();
+      inline  void                          setFlags               ( uint64_t );
       inline  void                          setFromHook            ( Hook* );
       inline  void                          setSouthWestContact    ( AutoContact* );
       inline  void                          setNorthEastContact    ( AutoContact* );
@@ -191,6 +208,7 @@ namespace Anabatic {
       inline  void                          swapCornerContacts     ();
       inline  void                          addToFixSegments       ( AutoSegment* );
               bool                          push                   ( Hook* to, AutoContact* contact, uint64_t flags=0 );
+              bool                          isInsideBlockage       ( GCell*, Component* ) const;
       virtual void                          doRp_AutoContacts      ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
       virtual AutoContact*                  doRp_Access            ( GCell*, Component*, uint64_t  flags ) = 0;
       virtual AutoContact*                  doRp_AccessPad         ( RoutingPad*, uint64_t flags );
@@ -202,6 +220,8 @@ namespace Anabatic {
       virtual bool                          _do_xG                 ();
       virtual bool                          _do_2G                 ();
       virtual bool                          _do_xG_1Pad            ();
+      virtual bool                          _do_1G_1PinM1          ();
+      virtual bool                          _do_2G_1PinM1          ();
       virtual bool                          _do_1G_1PinM2          ();
       virtual bool                          _do_xG_1PinM2          ();
       virtual bool                          _do_1G_1PinM3          ();
@@ -216,6 +236,12 @@ namespace Anabatic {
       virtual bool                          _do_xG_xM2             ();
       virtual bool                          _do_1G_1M3             ();
       virtual bool                          _do_xG_xM3             ();
+      virtual bool                          _do_1G_xM1_1PinM1      ();
+      virtual bool                          _do_1G_xM1_1PinM2      ();
+      virtual bool                          _do_2G_xM1_1PinM2      ();
+      virtual bool                          _do_1G_1M1_1PinM3      ();
+      virtual bool                          _do_2G_xM1_1PinM3      ();
+      virtual bool                          _do_3G_xM1_1PinM3      ();
       virtual bool                          _do_globalSegment      ();
       virtual void                          singleGCell            ( AnabaticEngine*, Net* );
               AutoContact*                  _doHChannel            ();
@@ -237,71 +263,107 @@ namespace Anabatic {
          + ((pads) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize)) \
          + ((pins) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize+PadsBSize))
 
-    //                     Connexity Name                    | G|M1|M2|M3|Pad|Pin|
-      enum ConnexityFlag { Conn_0G          = CONNEXITY_VALUE( 0, 0, 0, 0, 0 , 0 )
-                         , Conn_2G          = CONNEXITY_VALUE( 2, 0, 0, 0, 0 , 0 )
-                         , Conn_3G          = CONNEXITY_VALUE( 3, 0, 0, 0, 0 , 0 )
-                         , Conn_4G          = CONNEXITY_VALUE( 4, 0, 0, 0, 0 , 0 )
-                         , Conn_5G          = CONNEXITY_VALUE( 5, 0, 0, 0, 0 , 0 )
-                         , Conn_6G          = CONNEXITY_VALUE( 6, 0, 0, 0, 0 , 0 )
-                         , Conn_0G_2M1      = CONNEXITY_VALUE( 0, 2, 0, 0, 0 , 0 )
-                         , Conn_1G_1M1      = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 0 )
-                         , Conn_1G_2M1      = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )
-                         , Conn_1G_3M1      = CONNEXITY_VALUE( 1, 3, 0, 0, 0 , 0 )
-                         , Conn_1G_4M1      = CONNEXITY_VALUE( 1, 4, 0, 0, 0 , 0 )
-                         , Conn_1G_5M1      = CONNEXITY_VALUE( 1, 5, 0, 0, 0 , 0 )
-                         , Conn_1G_1M2      = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 0 )
-                         , Conn_1G_2M2      = CONNEXITY_VALUE( 1, 0, 2, 0, 0 , 0 )
-                         , Conn_1G_3M2      = CONNEXITY_VALUE( 1, 0, 3, 0, 0 , 0 )
-                         , Conn_1G_4M2      = CONNEXITY_VALUE( 1, 0, 4, 0, 0 , 0 )
-                         , Conn_1G_1M3      = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 0 )
-                         , Conn_1G_2M3      = CONNEXITY_VALUE( 1, 0, 0, 2, 0 , 0 )
-                         , Conn_1G_3M3      = CONNEXITY_VALUE( 1, 0, 0, 3, 0 , 0 )
-                         , Conn_1G_4M3      = CONNEXITY_VALUE( 1, 0, 0, 4, 0 , 0 )
-                         , Conn_1G_1M1_1M2  = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 0 )
-                         , Conn_1G_1M1_1M3  = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
-                         , Conn_2G_1M1      = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 0 )
-                         , Conn_2G_2M1      = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
-                         , Conn_2G_3M1      = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
-                         , Conn_2G_4M1      = CONNEXITY_VALUE( 2, 4, 0, 0, 0 , 0 )
-                         , Conn_2G_5M1      = CONNEXITY_VALUE( 2, 5, 0, 0, 0 , 0 )
-                         , Conn_2G_1M2      = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 0 )
-                         , Conn_2G_2M2      = CONNEXITY_VALUE( 2, 0, 2, 0, 0 , 0 )
-                         , Conn_2G_3M2      = CONNEXITY_VALUE( 2, 0, 3, 0, 0 , 0 )
-                         , Conn_2G_4M2      = CONNEXITY_VALUE( 2, 0, 4, 0, 0 , 0 )
-                         , Conn_2G_1M3      = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 0 )
-                         , Conn_2G_2M3      = CONNEXITY_VALUE( 2, 0, 0, 2, 0 , 0 )
-                         , Conn_2G_3M3      = CONNEXITY_VALUE( 2, 0, 0, 3, 0 , 0 )
-                         , Conn_2G_4M3      = CONNEXITY_VALUE( 2, 0, 0, 4, 0 , 0 )
-                         , Conn_2G_1M1_1M2  = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
-                         , Conn_3G_1M1      = CONNEXITY_VALUE( 3, 1, 0, 0, 0 , 0 )
-                         , Conn_3G_2M1      = CONNEXITY_VALUE( 3, 2, 0, 0, 0 , 0 )
-                         , Conn_3G_3M1      = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
-                         , Conn_3G_4M1      = CONNEXITY_VALUE( 3, 4, 0, 0, 0 , 0 )
-                         , Conn_3G_1M2      = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 0 )
-                         , Conn_3G_2M2      = CONNEXITY_VALUE( 3, 0, 2, 0, 0 , 0 )
-                         , Conn_3G_1M3      = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 0 )
-                         , Conn_3G_2M3      = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
-                         , Conn_3G_3M3      = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
-                         , Conn_3G_4M3      = CONNEXITY_VALUE( 3, 0, 0, 4, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
-                         , Conn_4G_1M1      = CONNEXITY_VALUE( 4, 1, 0, 0, 0 , 0 )
-                         , Conn_4G_2M1      = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
-                         , Conn_4G_3M1      = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
-                         , Conn_4G_4M1      = CONNEXITY_VALUE( 4, 4, 0, 0, 0 , 0 )
-                         , Conn_4G_1M2      = CONNEXITY_VALUE( 4, 0, 1, 0, 0 , 0 )
-                         , Conn_4G_1M3      = CONNEXITY_VALUE( 4, 0, 0, 1, 0 , 0 )
-                         , Conn_1G_1Pad     = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
-                         , Conn_2G_1Pad     = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
-                         , Conn_3G_1Pad     = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
-                         , Conn_1G_1PinM2   = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
-                         , Conn_2G_1PinM2   = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
-                         , Conn_3G_1PinM2   = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )
-                         , Conn_1G_1PinM3   = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 1 )
-                         , Conn_2G_1PinM3   = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
-                         , Conn_3G_1PinM3   = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
+    //                     Connexity Name                      | G|M1|M2|M3|Pad|Pin|
+      enum ConnexityFlag { Conn_0G            = CONNEXITY_VALUE( 0, 0, 0, 0, 0 , 0 )
+                         , Conn_2G            = CONNEXITY_VALUE( 2, 0, 0, 0, 0 , 0 )
+                         , Conn_3G            = CONNEXITY_VALUE( 3, 0, 0, 0, 0 , 0 )
+                         , Conn_4G            = CONNEXITY_VALUE( 4, 0, 0, 0, 0 , 0 )
+                         , Conn_5G            = CONNEXITY_VALUE( 5, 0, 0, 0, 0 , 0 )
+                         , Conn_6G            = CONNEXITY_VALUE( 6, 0, 0, 0, 0 , 0 )
+                         , Conn_0G_2M1        = CONNEXITY_VALUE( 0, 2, 0, 0, 0 , 0 )
+                         , Conn_1G_1M1        = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 0 )
+                         , Conn_1G_2M1        = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )
+                         , Conn_1G_3M1        = CONNEXITY_VALUE( 1, 3, 0, 0, 0 , 0 )
+                         , Conn_1G_4M1        = CONNEXITY_VALUE( 1, 4, 0, 0, 0 , 0 )
+                         , Conn_1G_5M1        = CONNEXITY_VALUE( 1, 5, 0, 0, 0 , 0 )
+                         , Conn_1G_6M1        = CONNEXITY_VALUE( 1, 6, 0, 0, 0 , 0 )
+                         , Conn_1G_7M1        = CONNEXITY_VALUE( 1, 7, 0, 0, 0 , 0 )
+                         , Conn_1G_8M1        = CONNEXITY_VALUE( 1, 8, 0, 0, 0 , 0 )
+                         , Conn_1G_9M1        = CONNEXITY_VALUE( 1, 9, 0, 0, 0 , 0 )
+                         , Conn_1G_1M2        = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 0 )
+                         , Conn_1G_2M2        = CONNEXITY_VALUE( 1, 0, 2, 0, 0 , 0 )
+                         , Conn_1G_3M2        = CONNEXITY_VALUE( 1, 0, 3, 0, 0 , 0 )
+                         , Conn_1G_4M2        = CONNEXITY_VALUE( 1, 0, 4, 0, 0 , 0 )
+                         , Conn_1G_1M3        = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 0 )
+                         , Conn_1G_2M3        = CONNEXITY_VALUE( 1, 0, 0, 2, 0 , 0 )
+                         , Conn_1G_3M3        = CONNEXITY_VALUE( 1, 0, 0, 3, 0 , 0 )
+                         , Conn_1G_4M3        = CONNEXITY_VALUE( 1, 0, 0, 4, 0 , 0 )
+                         , Conn_1G_1M1_1M2    = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 0 )
+                         , Conn_1G_1M1_1M3    = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 0 )
+                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
+                         , Conn_2G_1M1        = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 0 )
+                         , Conn_2G_2M1        = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
+                         , Conn_2G_3M1        = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
+                         , Conn_2G_4M1        = CONNEXITY_VALUE( 2, 4, 0, 0, 0 , 0 )
+                         , Conn_2G_5M1        = CONNEXITY_VALUE( 2, 5, 0, 0, 0 , 0 )
+                         , Conn_2G_6M1        = CONNEXITY_VALUE( 2, 6, 0, 0, 0 , 0 )
+                         , Conn_2G_7M1        = CONNEXITY_VALUE( 2, 7, 0, 0, 0 , 0 )
+                         , Conn_2G_8M1        = CONNEXITY_VALUE( 2, 8, 0, 0, 0 , 0 )
+                         , Conn_2G_9M1        = CONNEXITY_VALUE( 2, 9, 0, 0, 0 , 0 )
+                         , Conn_2G_1M2        = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 0 )
+                         , Conn_2G_2M2        = CONNEXITY_VALUE( 2, 0, 2, 0, 0 , 0 )
+                         , Conn_2G_3M2        = CONNEXITY_VALUE( 2, 0, 3, 0, 0 , 0 )
+                         , Conn_2G_4M2        = CONNEXITY_VALUE( 2, 0, 4, 0, 0 , 0 )
+                         , Conn_2G_1M3        = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 0 )
+                         , Conn_2G_2M3        = CONNEXITY_VALUE( 2, 0, 0, 2, 0 , 0 )
+                         , Conn_2G_3M3        = CONNEXITY_VALUE( 2, 0, 0, 3, 0 , 0 )
+                         , Conn_2G_4M3        = CONNEXITY_VALUE( 2, 0, 0, 4, 0 , 0 )
+                         , Conn_2G_1M1_1M2    = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 0 )
+                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
+                         , Conn_3G_1M1        = CONNEXITY_VALUE( 3, 1, 0, 0, 0 , 0 )
+                         , Conn_3G_2M1        = CONNEXITY_VALUE( 3, 2, 0, 0, 0 , 0 )
+                         , Conn_3G_3M1        = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
+                         , Conn_3G_4M1        = CONNEXITY_VALUE( 3, 4, 0, 0, 0 , 0 )
+                         , Conn_3G_5M1        = CONNEXITY_VALUE( 3, 5, 0, 0, 0 , 0 )
+                         , Conn_3G_6M1        = CONNEXITY_VALUE( 3, 6, 0, 0, 0 , 0 )
+                         , Conn_3G_7M1        = CONNEXITY_VALUE( 3, 7, 0, 0, 0 , 0 )
+                         , Conn_3G_8M1        = CONNEXITY_VALUE( 3, 8, 0, 0, 0 , 0 )
+                         , Conn_3G_9M1        = CONNEXITY_VALUE( 3, 9, 0, 0, 0 , 0 )
+                         , Conn_3G_1M2        = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 0 )
+                         , Conn_3G_2M2        = CONNEXITY_VALUE( 3, 0, 2, 0, 0 , 0 )
+                         , Conn_3G_1M3        = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 0 )
+                         , Conn_3G_2M3        = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
+                         , Conn_3G_3M3        = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
+                         , Conn_3G_4M3        = CONNEXITY_VALUE( 3, 0, 0, 4, 0 , 0 )
+                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
+                         , Conn_4G_1M1        = CONNEXITY_VALUE( 4, 1, 0, 0, 0 , 0 )
+                         , Conn_4G_2M1        = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
+                         , Conn_4G_3M1        = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
+                         , Conn_4G_4M1        = CONNEXITY_VALUE( 4, 4, 0, 0, 0 , 0 )
+                         , Conn_4G_5M1        = CONNEXITY_VALUE( 4, 5, 0, 0, 0 , 0 )
+                         , Conn_4G_6M1        = CONNEXITY_VALUE( 4, 6, 0, 0, 0 , 0 )
+                         , Conn_4G_7M1        = CONNEXITY_VALUE( 4, 7, 0, 0, 0 , 0 )
+                         , Conn_4G_8M1        = CONNEXITY_VALUE( 4, 8, 0, 0, 0 , 0 )
+                         , Conn_4G_9M1        = CONNEXITY_VALUE( 4, 9, 0, 0, 0 , 0 )
+                         , Conn_4G_1M2        = CONNEXITY_VALUE( 4, 0, 1, 0, 0 , 0 )
+                         , Conn_4G_1M3        = CONNEXITY_VALUE( 4, 0, 0, 1, 0 , 0 )
+                         , Conn_1G_1Pad       = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
+                         , Conn_2G_1Pad       = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
+                         , Conn_3G_1Pad       = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
+                         , Conn_1G_1PinM1     = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
+                         , Conn_2G_1PinM1     = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 1 )
+                         , Conn_1G_1PinM2     = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
+                         , Conn_2G_1PinM2     = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
+                         , Conn_3G_1PinM2     = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )
+                         , Conn_1G_1M1_1PinM1 = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
+                         , Conn_1G_2M1_1PinM1 = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 1 )
+                         , Conn_1G_1M1_1PinM2 = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 1 )
+                         , Conn_1G_2M1_1PinM2 = CONNEXITY_VALUE( 1, 2, 1, 0, 0 , 1 )
+                         , Conn_1G_3M1_1PinM2 = CONNEXITY_VALUE( 1, 3, 1, 0, 0 , 1 )
+                         , Conn_1G_4M1_1PinM2 = CONNEXITY_VALUE( 1, 4, 1, 0, 0 , 1 )
+                         , Conn_1G_5M1_1PinM2 = CONNEXITY_VALUE( 1, 5, 1, 0, 0 , 1 )
+                         , Conn_2G_1M1_1PinM2 = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 1 )
+                         , Conn_2G_2M1_1PinM2 = CONNEXITY_VALUE( 2, 2, 1, 0, 0 , 1 )
+                         , Conn_1G_1PinM3     = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 1 )
+                         , Conn_2G_1PinM3     = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
+                         , Conn_3G_1PinM3     = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
+                         , Conn_1G_1M1_1PinM3 = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 1 )
+                         , Conn_2G_1M1_1PinM3 = CONNEXITY_VALUE( 2, 1, 0, 1, 0 , 1 )
+                         , Conn_2G_2M1_1PinM3 = CONNEXITY_VALUE( 2, 2, 0, 1, 0 , 1 )
+                         , Conn_2G_3M1_1PinM3 = CONNEXITY_VALUE( 2, 3, 0, 1, 0 , 1 )
+                         , Conn_3G_1M1_1PinM3 = CONNEXITY_VALUE( 3, 1, 0, 1, 0 , 1 )
+                         , Conn_3G_2M1_1PinM3 = CONNEXITY_VALUE( 3, 2, 0, 1, 0 , 1 )
+                         , Conn_3G_3M1_1PinM3 = CONNEXITY_VALUE( 3, 3, 0, 1, 0 , 1 )
                          };
 
 #undef CONNEXITY_VALUE
@@ -313,6 +375,7 @@ namespace Anabatic {
              UConnexity                   _connexity;
              unsigned int                 _topology;
              Net*                         _net;
+             NetData*                     _netData;
              GCell*                       _gcell;
              AutoContact*                 _sourceContact;
              AutoContact*                 _southWestContact;
@@ -326,14 +389,13 @@ namespace Anabatic {
              map<Component*,AutoSegment*> _routingPadAutoSegments;
              vector<AutoSegment*>         _toFixSegments;
              unsigned int                 _degree;
-             bool                         _isTwoMetals;
-
-    // Sort classes.
-    public:
+             bool                         _isStrictChannel;
+             uint64_t                     _sourceFlags;
+             uint64_t                     _flags;
   };
 
 
-  inline bool                          NetBuilder::isTwoMetals            () const { return _isTwoMetals; }
+  inline bool                          NetBuilder::isStrictChannel        () const { return _isStrictChannel; }
   inline AnabaticEngine*               NetBuilder::getAnabatic            () const { return _anabatic; }
   inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
@@ -342,12 +404,15 @@ namespace Anabatic {
   inline unsigned int                  NetBuilder::getStateG              () const { return _connexity.fields.globals; }
   inline GCell*                        NetBuilder::getGCell               () const { return _gcell; }
   inline Net*                          NetBuilder::getNet                 () const { return _net; }
+  inline NetData*                      NetBuilder::getNetData             () const { return _netData; }
   inline AutoContact*                  NetBuilder::getSourceContact       () const { return _sourceContact; }
   inline AutoContact*                  NetBuilder::getSouthWestContact    () const { return _southWestContact; }
   inline AutoContact*&                 NetBuilder::getSouthWestContact    ()       { return _southWestContact; }
   inline AutoContact*                  NetBuilder::getNorthEastContact    () const { return _northEastContact; }
   inline AutoContact*&                 NetBuilder::getNorthEastContact    ()       { return _northEastContact; }
   inline Hook*                         NetBuilder::getFromHook            () const { return _fromHook; }
+  inline uint64_t                      NetBuilder::getSourceFlags         () const { return _sourceFlags; }
+  inline uint64_t                      NetBuilder::getFlags               () const { return _flags; }
   inline unsigned int                  NetBuilder::getTopology            () const { return _topology; }
   inline vector<RoutingPad*>&          NetBuilder::getRoutingPads         () { return _routingPads; }
   inline map<Component*,AutoSegment*>& NetBuilder::getRpLookup            () { return _routingPadAutoSegments; }
@@ -357,6 +422,7 @@ namespace Anabatic {
   inline Hook*                         NetBuilder::south                  ( size_t i ) const { return (i<_souths.size()) ? _souths[i] : NULL; }
   inline Hook*                         NetBuilder::east                   ( size_t i ) const { return (i<_easts .size()) ? _easts [i] : NULL; }
   inline Hook*                         NetBuilder::west                   ( size_t i ) const { return (i<_wests .size()) ? _wests [i] : NULL; }
+  inline void                          NetBuilder::setFlags               ( uint64_t flags ) { _flags |= flags; }
   inline void                          NetBuilder::setDegree              ( unsigned int degree ) { _degree = degree; }
   inline void                          NetBuilder::setFromHook            ( Hook* hook ) { _fromHook = hook; }
   inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }
@@ -377,5 +443,3 @@ namespace Anabatic {
   void  NetBuilder::load ( AnabaticEngine* engine, Net* net ) {  BuilderT()._load(engine,net); }
 
 }
-
-#endif  // ANABATIC_NET_BUILDER_H

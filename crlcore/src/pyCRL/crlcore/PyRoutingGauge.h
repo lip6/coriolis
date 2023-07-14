@@ -15,9 +15,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef __CRL_PY_ROUTINGGAUGE__
-#define __CRL_PY_ROUTINGGAUGE__
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/RoutingGauge.h"
 
@@ -63,6 +61,3 @@ declareVectorObject(RoutingLayerGauge);
 
 
 }  // Hurricane namespace.
-
-
-#endif  // __CRL_PY_ROUTINGGAUGE__

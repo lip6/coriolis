@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group__grpSynthHierarchy" kind="group">
+    <compoundname>grpSynthHierarchy</compoundname>
+    <title>Synthetic Class Hierarchy</title>
+    <briefdescription>
+<para>Simplificated class hierarchy. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><htmlonly>    &lt;p&gt;All the classes below are in the &lt;a href=&quot;namespaceHurricane.html&quot;&gt;Hurricane&lt;/a&gt; namespace.&lt;/p&gt;
+    &lt;p&gt;The inheritance tree has been splitted/simplificated.&lt;/p&gt;
+    &lt;b&gt;Legend :&lt;/b&gt;&lt;br&gt;
+    &lt;pre class=&quot;fragment&quot;&gt;
+      &lt;table class=&quot;classHierarchy&quot;&gt;
+        &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;#pagetop&quot;&gt;ClassA&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&amp;nbsp;&amp;nbsp;&lt;em&gt;ClassA&lt;/em&gt; is abstract&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;#pagetop&quot;&gt;ClassB&lt;/a&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&amp;nbsp;&amp;nbsp;&lt;em&gt;ClassB&lt;/em&gt; is instanciable&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/pre&gt;
+    &lt;br&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Exceptions&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Exception.html&quot;&gt;Exception&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Error.html&quot;&gt;Error&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Warning.html&quot;&gt;Warning&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Interruption.html&quot;&gt;Interruption&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Collections&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wvirtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Collection.html&quot;&gt;Collection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1GenericCollection.html&quot;&gt;GenericCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1SubSetCollection.html&quot;&gt;SubSetCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1SubTypeCollection.html&quot;&gt;SubTypeCollection&amp;lt;&amp;nbsp;SuperType, Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1ListCollection.html&quot;&gt;ListCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1VectorCollection.html&quot;&gt;VectorCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1MapCollection.html&quot;&gt;MapCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1SetCollection.html&quot;&gt;SetCollection&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Locators&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Locator.html&quot;&gt;Locator&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1GenericLocator.html&quot;&gt;GenericLocator&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Filters&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Filter.html&quot;&gt;Filter&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1GenericFilter.html&quot;&gt;GenericFilter&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1NotFilter.html&quot;&gt;NotFilter&amp;lt;&amp;nbsp;Type&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Common Objects&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Tabulation.html&quot;&gt;Tabulation&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;group__DbUGroup.html&quot;&gt;Unit&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Point.html&quot;&gt;Point&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Box.html&quot;&gt;Box&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Interval.html&quot;&gt;Interval&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Transformation.html&quot;&gt;Transformation&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Name.html&quot;&gt;Name&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Data Base Objects&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1DBo.html&quot;&gt;DBo&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1DataBase.html&quot;&gt;DataBase&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Technology.html&quot;&gt;Technology&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Layer.html&quot;&gt;Layer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1BasicLayer.html&quot;&gt;BasicLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1RegularLayer.html&quot;&gt;RegularLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1ViaLayer.html&quot;&gt;ViaLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1ContactLayer.html&quot;&gt;ContactLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1DiffusionLayer.html&quot;&gt;DiffusionLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1TransistorLayer.html&quot;&gt;TransistorLayer&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Library.html&quot;&gt;Library&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;!--
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Symbol.html&quot;&gt;Symbol&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      --&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Entity.html&quot;&gt;Entity&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Cell.html&quot;&gt;Cell&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Net.html&quot;&gt;Net&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Go.html&quot;&gt;Go&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;280&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Instance.html&quot;&gt;Instance&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;280&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Component.html&quot;&gt;Component&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1RoutingPad.html&quot;&gt;RoutingPad&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Plug.html&quot;&gt;Plug&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Contact.html&quot;&gt;Contact&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Polygon.html&quot;&gt;Polygon&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Diagonal.html&quot;&gt;Diagonal&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Segment.html&quot;&gt;Segment&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;420&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Vertical.html&quot;&gt;Vertical&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;420&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Horizontal.html&quot;&gt;Horizontal&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;350&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Pad.html&quot;&gt;Pad&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;280&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Rubber.html&quot;&gt;Rubber&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Quark.html&quot;&gt;Quark&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;!--
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1View.html&quot;&gt;View&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      --&gt;
+    &lt;/table&gt;
+    &lt;!--
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1MainView.html&quot;&gt;MainView&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;280&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Editor.html&quot;&gt;Editor&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1MapView.html&quot;&gt;MapView&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Command.html&quot;&gt;Command&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1ZoomCommand.html&quot;&gt;ZoomCommand&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1SelectCommand.html&quot;&gt;SelectCommand&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1SelectNetCommand.html&quot;&gt;SelectNetCommand&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    --&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Properties&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wvirtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Property.html&quot;&gt;Property&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wvirtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1PrivateProperty.html&quot;&gt;PrivateProperty&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1StandardPrivateProperty.html&quot;&gt;StandardPrivateProperty&amp;lt;&amp;nbsp;Value&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Selector.html&quot;&gt;Selector&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wvirtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1SharedProperty.html&quot;&gt;SharedProperty&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1StandardSharedProperty.html&quot;&gt;StandardSharedProperty&amp;lt;&amp;nbsp;Value&amp;nbsp;&amp;gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wvirtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Relation.html&quot;&gt;Relation&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;280&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1StandardRelation.html&quot;&gt;StandardRelation&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;210&quot;&gt;&lt;/td&gt;&lt;td class=&quot;wnormal&quot;&gt;&lt;a href=&quot;classHurricane_1_1UpdateSession.html&quot;&gt;UpdateSession&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Hooks&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;virtual&quot;&gt;&lt;a href=&quot;classHurricane_1_1Hook.html&quot;&gt;Hook&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Component_1_1BodyHook.html&quot;&gt;Component::BodyHook&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Contact_1_1AnchorHook.html&quot;&gt;Component::AnchorHook&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Segment_1_1SourceHook.html&quot;&gt;Component::SourceHook&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;140&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Segment_1_1TargetHook.html&quot;&gt;Component::TargetHook&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Pathes and Occurrences&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Path.html&quot;&gt;Path&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Occurrence.html&quot;&gt;Occurrence&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1HyperNet.html&quot;&gt;HyperNet&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+
+    &lt;h2 class=&quot;classHierarchy&quot;&gt;Fast Access Structures&lt;/h2&gt;
+    &lt;table class=&quot;classHierarchy&quot;&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1QuadTree.html&quot;&gt;Component::QuadTree&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Slice.html&quot;&gt;Component::Slice&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td width=&quot;70&quot;&gt;&lt;/td&gt;&lt;td class=&quot;normal&quot;&gt;&lt;a href=&quot;classHurricane_1_1Query.html&quot;&gt;Query&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+</htmlonly> </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

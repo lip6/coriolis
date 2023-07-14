@@ -39,5 +39,26 @@ namespace Analog {
     return _choices._values[ _value ];
   }
 
+  
+  std::string  ChoiceParameter::_getTypeName () const
+  { return "ChoiceParameter"; }
+
+
+  std::string  ChoiceParameter::_getString () const
+  {
+    string s = Super::_getString();
+    s.insert( s.size()-1, " "+getString(_value) );
+    return s;
+  }
+
+
+  Record* ChoiceParameter::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot( "_choices", &_choices ) );
+    record->add( getSlot( "_value"  , &_value   ) );
+    return record;
+  }
+
 
 }  // Analog namespace.

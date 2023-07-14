@@ -1,30 +1,30 @@
-\hypertarget{classHurricane_1_1Query}{}\section{Hurricane\+:\+:Query Class Reference}
-\label{classHurricane_1_1Query}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}}
+\hypertarget{classHurricane_1_1Query}{}\doxysection{Hurricane\+::Query Class Reference}
+\label{classHurricane_1_1Query}\index{Hurricane::Query@{Hurricane::Query}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Query}{Query}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Query}{Query}} description ({\bfseries{API}})  
 
 
-\subsection*{Public Types}
+\doxysubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
 enum \mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9}{Query\+Filter}} \{ \newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}{Do\+Master\+Cells}} = 1, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}{Do\+Terminal\+Cells}} = 2, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}{Do\+Components}} = 4, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}{Do\+Markers}} = 8, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}{Do\+Rubbers}} = 16, 
-\newline
-\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}{Do\+Extension\+Gos}} = 32, 
-\newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}{Do\+Master\+Cells}} = 1
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}{Do\+Terminal\+Cells}} = 2
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}{Do\+Components}} = 4
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}{Do\+Markers}} = 8
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}{Do\+Rubbers}} = 16
+, \newline
+\mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}{Do\+Extension\+Gos}} = 32
+, \newline
 \mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ad3d1832e33bbdd8fa1e07ce622c984ec}{Do\+All}}
  \}
 \end{DoxyCompactItemize}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1Query_a999eaaaf34672fb056df14629d3197d1}{Query}} ()
@@ -69,7 +69,7 @@ virtual void \mbox{\hyperlink{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0
 \item 
 virtual void \mbox{\hyperlink{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}{master\+Cell\+Callback}} ()=0
 \item 
-void \mbox{\hyperlink{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}{set\+Query}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell, const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&transformation, const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$basic\+Layer, Extension\+Slice\+::\+Mask extension\+Mask, Mask filter)
+void \mbox{\hyperlink{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}{set\+Query}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell, const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&transformation, const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$basic\+Layer, Extension\+Slice\+::\+Mask extension\+Mask, Mask filter, \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} threshold=0)
 \item 
 void \mbox{\hyperlink{classHurricane_1_1Query_a36378e1604e484450a3ccee0ececcff7}{set\+Cell}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell)
 \item 
@@ -91,10 +91,10 @@ virtual void \mbox{\hyperlink{classHurricane_1_1Query_a2ca5bf71c7b35e14c4a64488a
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Query}{Query}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Query}{Query}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Query_secQueryIntro}{}\subsection{Introduction}\label{classHurricane_1_1Query_secQueryIntro}
+\hypertarget{classHurricane_1_1Query_secQueryIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Query_secQueryIntro}
 The \mbox{\hyperlink{classHurricane_1_1Query}{Query}} is a part of the trans-\/hierarchical mechanism. A \mbox{\hyperlink{classHurricane_1_1Query}{Query}} performs a walktrough over all the Occurrences of objects under a determined area, thus providing a virtual flattening service. Please note that only placed objects (i.\+e. inserted in a \mbox{\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}}) are took into account.
 
 To use the \mbox{\hyperlink{classHurricane_1_1Query}{Query}} class the user has to create derived classes and overload the various callbacks. At least the following pure virtual methods must be overloaded\+:
@@ -102,7 +102,7 @@ To use the \mbox{\hyperlink{classHurricane_1_1Query}{Query}} class the user has 
 \item \mbox{\hyperlink{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}{Query\+::master\+Cell\+Callback()}}.
 \item \mbox{\hyperlink{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}{Query\+::go\+Callback()}}.
 \item \mbox{\hyperlink{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}{Query\+::extension\+Go\+Callback()}}.
-\end{DoxyItemize}\hypertarget{classHurricane_1_1Query_secQueryParameters}{}\subsection{sec\+Query\+Parameters}\label{classHurricane_1_1Query_secQueryParameters}
+\end{DoxyItemize}\hypertarget{classHurricane_1_1Query_secQueryParameters}{}\doxysubsection{sec\+Query\+Parameters}\label{classHurricane_1_1Query_secQueryParameters}
 A query walkthrough is defined by the following parameters\+:
 \begin{DoxyItemize}
 \item The starting hierarchical level\+: only objects with a hierarchical depth greater or equal will be explored. The top level \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} has a depth of {\itshape zero}, the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} of the instances a depth of {\itshape one} and so on.
@@ -115,180 +115,184 @@ A query walkthrough is defined by the following parameters\+:
 \item A Mask, to select which kind of \mbox{\hyperlink{classHurricane_1_1Go}{Go}} to process. 
 \end{DoxyItemize}
 
-\subsection{Member Enumeration Documentation}
+\doxysubsection{Member Enumeration Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Query\+Filter@{Query\+Filter}}
-\index{Query\+Filter@{Query\+Filter}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{Query\+Filter}{QueryFilter}}
+\index{Hurricane::Query@{Hurricane::Query}!QueryFilter@{QueryFilter}}
+\index{QueryFilter@{QueryFilter}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{QueryFilter}{QueryFilter}}
 {\footnotesize\ttfamily enum \mbox{\hyperlink{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9}{Hurricane\+::\+Query\+::\+Query\+Filter}}}
 
 Set of flags to specify on which types of objects the \mbox{\hyperlink{classHurricane_1_1Query}{Query}} must iterate. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Master\+Cells@{Do\+Master\+Cells}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Master\+Cells@{Do\+Master\+Cells}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoMasterCells@{DoMasterCells}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoMasterCells@{DoMasterCells}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a427b951cfef3fbeb3c2baa9abc4eae83}} 
 Do\+Master\+Cells&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}{Query\+::master\+Cell\+Callback()}}. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Terminal\+Cells@{Do\+Terminal\+Cells}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Terminal\+Cells@{Do\+Terminal\+Cells}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoTerminalCells@{DoTerminalCells}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoTerminalCells@{DoTerminalCells}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a2a1f9d4cf126b86694e05152a1b04ee9}} 
 Do\+Terminal\+Cells&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}{Query\+::master\+Cell\+Callback()}}, but only on leaf \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} of the hierarchy. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Components@{Do\+Components}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Components@{Do\+Components}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoComponents@{DoComponents}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoComponents@{DoComponents}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a7b591d72b86f94f90d212746ed8f9f56}} 
 Do\+Components&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}{Query\+::go\+Callback()}}. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Markers@{Do\+Markers}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Markers@{Do\+Markers}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoMarkers@{DoMarkers}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoMarkers@{DoMarkers}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ade01b12e4a2af3bfba0440caa557619a}} 
 Do\+Markers&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_a4ad5bf076073f107189d4b7ee48f040e}{Query\+::marker\+Callback()}}. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Rubbers@{Do\+Rubbers}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Rubbers@{Do\+Rubbers}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoRubbers@{DoRubbers}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoRubbers@{DoRubbers}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a3671f7b32f05ccbd1db6e6e94da040e4}} 
 Do\+Rubbers&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_acec322581e35c1556ce706aa5ea66aa3}{Query\+::rubber\+Callback()}}. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+Extension\+Gos@{Do\+Extension\+Gos}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+Extension\+Gos@{Do\+Extension\+Gos}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoExtensionGos@{DoExtensionGos}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoExtensionGos@{DoExtensionGos}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9a241d98f4f53e908f113669540ef4288c}} 
 Do\+Extension\+Gos&Activate the call of the \mbox{\hyperlink{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}{Query\+::extension\+Go\+Callback()}}. \\
 \hline
 
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Do\+All@{Do\+All}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Do\+All@{Do\+All}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ad3d1832e33bbdd8fa1e07ce622c984ec}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ad3d1832e33bbdd8fa1e07ce622c984ec}} 
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DoAll@{DoAll}!Hurricane::Query@{Hurricane::Query}}\index{Hurricane::Query@{Hurricane::Query}!DoAll@{DoAll}}}\mbox{\Hypertarget{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ad3d1832e33bbdd8fa1e07ce622c984ec}\label{classHurricane_1_1Query_a003517b82eaba58104d1749cf344eaa9ad3d1832e33bbdd8fa1e07ce622c984ec}} 
 Do\+All&Activate all the callbacks at once. \\
 \hline
 
 \end{DoxyEnumFields}
 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Query_a999eaaaf34672fb056df14629d3197d1}\label{classHurricane_1_1Query_a999eaaaf34672fb056df14629d3197d1}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!Query@{Query}}
-\index{Query@{Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{Query()}{Query()}}
+\index{Hurricane::Query@{Hurricane::Query}!Query@{Query}}
+\index{Query@{Query}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{Query()}{Query()}}
 {\footnotesize\ttfamily Hurricane\+::\+Query\+::\+Query (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Default constructor. Initialisation is done through \mbox{\hyperlink{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}{Query\+::set\+Query()}}. \mbox{\Hypertarget{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}\label{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!````~Query@{$\sim$\+Query}}
-\index{````~Query@{$\sim$\+Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{$\sim$\+Query()}{~Query()}}
+Default constructor. Initialisation is done through \mbox{\hyperlink{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}{Query\+::set\+Query()}}. \mbox{\Hypertarget{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}\label{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}} 
+\index{Hurricane::Query@{Hurricane::Query}!````~Query@{$\sim$Query}}
+\index{````~Query@{$\sim$Query}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{$\sim$Query()}{~Query()}}
 {\footnotesize\ttfamily Hurricane\+::\+Query\+::$\sim$\+Query (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 Default destructor. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Query_a7aac7fbdc96df19e7249bf8993eb355f}\label{classHurricane_1_1Query_a7aac7fbdc96df19e7249bf8993eb355f}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Start\+Level@{get\+Start\+Level}}
-\index{get\+Start\+Level@{get\+Start\+Level}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Start\+Level()}{getStartLevel()}}
+\index{Hurricane::Query@{Hurricane::Query}!getStartLevel@{getStartLevel}}
+\index{getStartLevel@{getStartLevel}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getStartLevel()}{getStartLevel()}}
 {\footnotesize\ttfamily unsigned int Hurricane\+::\+Query\+::get\+Start\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The hierarchical level from which we start to consider objects. \mbox{\Hypertarget{classHurricane_1_1Query_a3544d22dbb0685208c590cef09412796}\label{classHurricane_1_1Query_a3544d22dbb0685208c590cef09412796}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Stop\+Level@{get\+Stop\+Level}}
-\index{get\+Stop\+Level@{get\+Stop\+Level}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Stop\+Level()}{getStopLevel()}}
+\textbackslash{}sreturn The hierarchical level from which we start to consider objects. \mbox{\Hypertarget{classHurricane_1_1Query_a3544d22dbb0685208c590cef09412796}\label{classHurricane_1_1Query_a3544d22dbb0685208c590cef09412796}} 
+\index{Hurricane::Query@{Hurricane::Query}!getStopLevel@{getStopLevel}}
+\index{getStopLevel@{getStopLevel}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getStopLevel()}{getStopLevel()}}
 {\footnotesize\ttfamily unsigned int Hurricane\+::\+Query\+::get\+Stop\+Level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The hierarchical level from which we stop to consider objects. \mbox{\Hypertarget{classHurricane_1_1Query_afb81080617e5b4d3c2bedf1bf8b2ebd8}\label{classHurricane_1_1Query_afb81080617e5b4d3c2bedf1bf8b2ebd8}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Depth@{get\+Depth}}
-\index{get\+Depth@{get\+Depth}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Depth()}{getDepth()}}
+\textbackslash{}sreturn The hierarchical level from which we stop to consider objects. \mbox{\Hypertarget{classHurricane_1_1Query_afb81080617e5b4d3c2bedf1bf8b2ebd8}\label{classHurricane_1_1Query_afb81080617e5b4d3c2bedf1bf8b2ebd8}} 
+\index{Hurricane::Query@{Hurricane::Query}!getDepth@{getDepth}}
+\index{getDepth@{getDepth}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getDepth()}{getDepth()}}
 {\footnotesize\ttfamily size\+\_\+t Hurricane\+::\+Query\+::get\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The hierarchical depth of the current \mbox{\hyperlink{classHurricane_1_1Query}{Query}} walkthrough. \mbox{\Hypertarget{classHurricane_1_1Query_aabe2c0588f95c30a3acfec8fed269be4}\label{classHurricane_1_1Query_aabe2c0588f95c30a3acfec8fed269be4}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Transformation@{get\+Transformation}}
-\index{get\+Transformation@{get\+Transformation}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Transformation()}{getTransformation()}}
+\textbackslash{}sreturn The hierarchical depth of the current \mbox{\hyperlink{classHurricane_1_1Query}{Query}} walkthrough. \mbox{\Hypertarget{classHurricane_1_1Query_aabe2c0588f95c30a3acfec8fed269be4}\label{classHurricane_1_1Query_aabe2c0588f95c30a3acfec8fed269be4}} 
+\index{Hurricane::Query@{Hurricane::Query}!getTransformation@{getTransformation}}
+\index{getTransformation@{getTransformation}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getTransformation()}{getTransformation()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \& Hurricane\+::\+Query\+::get\+Transformation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The cumulative transformation of the master cell currently under exploration. \mbox{\Hypertarget{classHurricane_1_1Query_a666c44432d3f5717f2fee5f57a281bdd}\label{classHurricane_1_1Query_a666c44432d3f5717f2fee5f57a281bdd}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Area@{get\+Area}}
-\index{get\+Area@{get\+Area}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Area()}{getArea()}}
+\textbackslash{}sreturn The cumulative transformation of the master cell currently under exploration. 
+
+References Hurricane\+::\+Transformation\+::get\+Transformation().
+
+\mbox{\Hypertarget{classHurricane_1_1Query_a666c44432d3f5717f2fee5f57a281bdd}\label{classHurricane_1_1Query_a666c44432d3f5717f2fee5f57a281bdd}} 
+\index{Hurricane::Query@{Hurricane::Query}!getArea@{getArea}}
+\index{getArea@{getArea}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getArea()}{getArea()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \& Hurricane\+::\+Query\+::get\+Area (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The area to explore, expressed in the coordinates system of the current master cell under exploration. This is the starting area with the inverse of the current transformation applied. \mbox{\Hypertarget{classHurricane_1_1Query_ac683152bccef813184e572806e4c14f4}\label{classHurricane_1_1Query_ac683152bccef813184e572806e4c14f4}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Basic\+Layer@{get\+Basic\+Layer}}
-\index{get\+Basic\+Layer@{get\+Basic\+Layer}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Basic\+Layer()}{getBasicLayer()}}
+\textbackslash{}sreturn The area to explore, expressed in the coordinates system of the current master cell under exploration. This is the starting area with the inverse of the current transformation applied. \mbox{\Hypertarget{classHurricane_1_1Query_ac683152bccef813184e572806e4c14f4}\label{classHurricane_1_1Query_ac683152bccef813184e572806e4c14f4}} 
+\index{Hurricane::Query@{Hurricane::Query}!getBasicLayer@{getBasicLayer}}
+\index{getBasicLayer@{getBasicLayer}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getBasicLayer()}{getBasicLayer()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$ Hurricane\+::\+Query\+::get\+Basic\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} we are filtering with. \mbox{\Hypertarget{classHurricane_1_1Query_add13f7ff193df6ce5223f9761b6cba69}\label{classHurricane_1_1Query_add13f7ff193df6ce5223f9761b6cba69}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Master\+Cell@{get\+Master\+Cell}}
-\index{get\+Master\+Cell@{get\+Master\+Cell}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Master\+Cell()}{getMasterCell()}}
+\textbackslash{}sreturn The \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} we are filtering with. \mbox{\Hypertarget{classHurricane_1_1Query_add13f7ff193df6ce5223f9761b6cba69}\label{classHurricane_1_1Query_add13f7ff193df6ce5223f9761b6cba69}} 
+\index{Hurricane::Query@{Hurricane::Query}!getMasterCell@{getMasterCell}}
+\index{getMasterCell@{getMasterCell}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getMasterCell()}{getMasterCell()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Query\+::get\+Master\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-The master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} currently under exploration. \mbox{\Hypertarget{classHurricane_1_1Query_a459b9f175f77fce91963eeb192c6e018}\label{classHurricane_1_1Query_a459b9f175f77fce91963eeb192c6e018}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Instance@{get\+Instance}}
-\index{get\+Instance@{get\+Instance}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Instance()}{getInstance()}}
+\textbackslash{}sreturn The master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} currently under exploration. \mbox{\Hypertarget{classHurricane_1_1Query_a459b9f175f77fce91963eeb192c6e018}\label{classHurricane_1_1Query_a459b9f175f77fce91963eeb192c6e018}} 
+\index{Hurricane::Query@{Hurricane::Query}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getInstance()}{getInstance()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ Hurricane\+::\+Query\+::get\+Instance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-The \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} currently under exploration. \mbox{\Hypertarget{classHurricane_1_1Query_ae6be93b35a9174b2e7b656853f450021}\label{classHurricane_1_1Query_ae6be93b35a9174b2e7b656853f450021}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!get\+Path@{get\+Path}}
-\index{get\+Path@{get\+Path}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{get\+Path()}{getPath()}}
+\textbackslash{}sreturn The \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} currently under exploration. \mbox{\Hypertarget{classHurricane_1_1Query_ae6be93b35a9174b2e7b656853f450021}\label{classHurricane_1_1Query_ae6be93b35a9174b2e7b656853f450021}} 
+\index{Hurricane::Query@{Hurricane::Query}!getPath@{getPath}}
+\index{getPath@{getPath}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{getPath()}{getPath()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Path}{Path}} Hurricane\+::\+Query\+::get\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-The instanciation path between the instance currently under inspection and the top cell. \mbox{\Hypertarget{classHurricane_1_1Query_aeff0c9c1ef8b787a3f1460ea55db2947}\label{classHurricane_1_1Query_aeff0c9c1ef8b787a3f1460ea55db2947}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!has\+Go\+Callback@{has\+Go\+Callback}}
-\index{has\+Go\+Callback@{has\+Go\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{has\+Go\+Callback()}{hasGoCallback()}}
+\textbackslash{}sreturn The instanciation path between the instance currently under inspection and the top cell. \mbox{\Hypertarget{classHurricane_1_1Query_aeff0c9c1ef8b787a3f1460ea55db2947}\label{classHurricane_1_1Query_aeff0c9c1ef8b787a3f1460ea55db2947}} 
+\index{Hurricane::Query@{Hurricane::Query}!hasGoCallback@{hasGoCallback}}
+\index{hasGoCallback@{hasGoCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{hasGoCallback()}{hasGoCallback()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Query\+::has\+Go\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-Tells wether the \mbox{\hyperlink{classHurricane_1_1Go}{Go}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a4f121b05f722a661b88bb8a0dc981024}\label{classHurricane_1_1Query_a4f121b05f722a661b88bb8a0dc981024}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!has\+Marker\+Callback@{has\+Marker\+Callback}}
-\index{has\+Marker\+Callback@{has\+Marker\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{has\+Marker\+Callback()}{hasMarkerCallback()}}
+\textbackslash{}sreturn Tells wether the \mbox{\hyperlink{classHurricane_1_1Go}{Go}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a4f121b05f722a661b88bb8a0dc981024}\label{classHurricane_1_1Query_a4f121b05f722a661b88bb8a0dc981024}} 
+\index{Hurricane::Query@{Hurricane::Query}!hasMarkerCallback@{hasMarkerCallback}}
+\index{hasMarkerCallback@{hasMarkerCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{hasMarkerCallback()}{hasMarkerCallback()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Query\+::has\+Marker\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-Tells wether the Marker callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a5d49250d46dea1542bc3034f3eb1daee}\label{classHurricane_1_1Query_a5d49250d46dea1542bc3034f3eb1daee}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!has\+Rubber\+Callback@{has\+Rubber\+Callback}}
-\index{has\+Rubber\+Callback@{has\+Rubber\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{has\+Rubber\+Callback()}{hasRubberCallback()}}
+\textbackslash{}sreturn Tells wether the Marker callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a5d49250d46dea1542bc3034f3eb1daee}\label{classHurricane_1_1Query_a5d49250d46dea1542bc3034f3eb1daee}} 
+\index{Hurricane::Query@{Hurricane::Query}!hasRubberCallback@{hasRubberCallback}}
+\index{hasRubberCallback@{hasRubberCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{hasRubberCallback()}{hasRubberCallback()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Query\+::has\+Rubber\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-Tells wether the \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_abd8ff8d187e4499e625feb12c68e9b29}\label{classHurricane_1_1Query_abd8ff8d187e4499e625feb12c68e9b29}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!has\+Extension\+Go\+Callback@{has\+Extension\+Go\+Callback}}
-\index{has\+Extension\+Go\+Callback@{has\+Extension\+Go\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{has\+Extension\+Go\+Callback()}{hasExtensionGoCallback()}}
+\textbackslash{}sreturn Tells wether the \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_abd8ff8d187e4499e625feb12c68e9b29}\label{classHurricane_1_1Query_abd8ff8d187e4499e625feb12c68e9b29}} 
+\index{Hurricane::Query@{Hurricane::Query}!hasExtensionGoCallback@{hasExtensionGoCallback}}
+\index{hasExtensionGoCallback@{hasExtensionGoCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{hasExtensionGoCallback()}{hasExtensionGoCallback()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Query\+::has\+Extension\+Go\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-Tells wether the Extension\+Go callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a7ebb7b16bab183cd4508dc5639bd12ab}\label{classHurricane_1_1Query_a7ebb7b16bab183cd4508dc5639bd12ab}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!has\+Master\+Cell\+Callback@{has\+Master\+Cell\+Callback}}
-\index{has\+Master\+Cell\+Callback@{has\+Master\+Cell\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{has\+Master\+Cell\+Callback()}{hasMasterCellCallback()}}
+\textbackslash{}sreturn Tells wether the Extension\+Go callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a7ebb7b16bab183cd4508dc5639bd12ab}\label{classHurricane_1_1Query_a7ebb7b16bab183cd4508dc5639bd12ab}} 
+\index{Hurricane::Query@{Hurricane::Query}!hasMasterCellCallback@{hasMasterCellCallback}}
+\index{hasMasterCellCallback@{hasMasterCellCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{hasMasterCellCallback()}{hasMasterCellCallback()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Query\+::has\+Master\+Cell\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
 
-Tells wether the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}\label{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!go\+Callback@{go\+Callback}}
-\index{go\+Callback@{go\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{go\+Callback()}{goCallback()}}
+\textbackslash{}sreturn Tells wether the master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} callback is present and should be called. \mbox{\Hypertarget{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}\label{classHurricane_1_1Query_a59007148bd0afa0405801f341e7e4139}} 
+\index{Hurricane::Query@{Hurricane::Query}!goCallback@{goCallback}}
+\index{goCallback@{goCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{goCallback()}{goCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::go\+Callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Go}{Go}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-The method called on each encountered \mbox{\hyperlink{classHurricane_1_1Go}{Go}}. This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a4ad5bf076073f107189d4b7ee48f040e}\label{classHurricane_1_1Query_a4ad5bf076073f107189d4b7ee48f040e}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!marker\+Callback@{marker\+Callback}}
-\index{marker\+Callback@{marker\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{marker\+Callback()}{markerCallback()}}
+\textbackslash{}sreturn The method called on each encountered \mbox{\hyperlink{classHurricane_1_1Go}{Go}}. This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a4ad5bf076073f107189d4b7ee48f040e}\label{classHurricane_1_1Query_a4ad5bf076073f107189d4b7ee48f040e}} 
+\index{Hurricane::Query@{Hurricane::Query}!markerCallback@{markerCallback}}
+\index{markerCallback@{markerCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{markerCallback()}{markerCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::marker\+Callback (\begin{DoxyParamCaption}\item[{Marker $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
-The method called on each encountered Marker. A default implementation is provided, which does absolutely nothing. \mbox{\Hypertarget{classHurricane_1_1Query_acec322581e35c1556ce706aa5ea66aa3}\label{classHurricane_1_1Query_acec322581e35c1556ce706aa5ea66aa3}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!rubber\+Callback@{rubber\+Callback}}
-\index{rubber\+Callback@{rubber\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{rubber\+Callback()}{rubberCallback()}}
+\textbackslash{}sreturn The method called on each encountered Marker. A default implementation is provided, which does absolutely nothing. \mbox{\Hypertarget{classHurricane_1_1Query_acec322581e35c1556ce706aa5ea66aa3}\label{classHurricane_1_1Query_acec322581e35c1556ce706aa5ea66aa3}} 
+\index{Hurricane::Query@{Hurricane::Query}!rubberCallback@{rubberCallback}}
+\index{rubberCallback@{rubberCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{rubberCallback()}{rubberCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::rubber\+Callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
-The method called on each encountered \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}}. A default implementation is provided, which does absolutely nothing. \mbox{\Hypertarget{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}\label{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!extension\+Go\+Callback@{extension\+Go\+Callback}}
-\index{extension\+Go\+Callback@{extension\+Go\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{extension\+Go\+Callback()}{extensionGoCallback()}}
+\textbackslash{}sreturn The method called on each encountered \mbox{\hyperlink{classHurricane_1_1Rubber}{Rubber}}. A default implementation is provided, which does absolutely nothing. \mbox{\Hypertarget{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}\label{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0d2dfa68}} 
+\index{Hurricane::Query@{Hurricane::Query}!extensionGoCallback@{extensionGoCallback}}
+\index{extensionGoCallback@{extensionGoCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{extensionGoCallback()}{extensionGoCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::extension\+Go\+Callback (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Go}{Go}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-The method called on each encountered Extension\+Go. This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}\label{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!master\+Cell\+Callback@{master\+Cell\+Callback}}
-\index{master\+Cell\+Callback@{master\+Cell\+Callback}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{master\+Cell\+Callback()}{masterCellCallback()}}
+\textbackslash{}sreturn The method called on each encountered Extension\+Go. This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}\label{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}} 
+\index{Hurricane::Query@{Hurricane::Query}!masterCellCallback@{masterCellCallback}}
+\index{masterCellCallback@{masterCellCallback}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{masterCellCallback()}{masterCellCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::master\+Cell\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-The method called on each encountered master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is not passed as parameter as it is directly accessible through Query\+::get\+Cell(). This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}\label{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Query@{set\+Query}}
-\index{set\+Query@{set\+Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Query()}{setQuery()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Query (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation,  }\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer,  }\item[{Extension\+Slice\+::\+Mask}]{extension\+Mask,  }\item[{Mask}]{filter }\end{DoxyParamCaption})}
+\textbackslash{}sreturn The method called on each encountered master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is not passed as parameter as it is directly accessible through Query\+::get\+Cell(). This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}\label{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}} 
+\index{Hurricane::Query@{Hurricane::Query}!setQuery@{setQuery}}
+\index{setQuery@{setQuery}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setQuery()}{setQuery()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Query (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation,  }\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer,  }\item[{Extension\+Slice\+::\+Mask}]{extension\+Mask,  }\item[{Mask}]{filter,  }\item[{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{threshold = {\ttfamily 0} }\end{DoxyParamCaption})}
 
 
 \begin{DoxyParams}{Parameters}
@@ -306,57 +310,57 @@ The method called on each encountered master \mbox{\hyperlink{classHurricane_1_1
 \hline
 \end{DoxyParams}
 Initialize the basic parameters of the \mbox{\hyperlink{classHurricane_1_1Query}{Query}}. Those parameters can be changed individually afterwards with specific mutators. \mbox{\Hypertarget{classHurricane_1_1Query_a36378e1604e484450a3ccee0ececcff7}\label{classHurricane_1_1Query_a36378e1604e484450a3ccee0ececcff7}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Cell@{set\+Cell}}
-\index{set\+Cell@{set\+Cell}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Cell()}{setCell()}}
+\index{Hurricane::Query@{Hurricane::Query}!setCell@{setCell}}
+\index{setCell@{setCell}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setCell()}{setCell()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Cell (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the top \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} on which to perform the \mbox{\hyperlink{classHurricane_1_1Query}{Query}}. \mbox{\Hypertarget{classHurricane_1_1Query_ac41de6b1535c256c4929c075769890b1}\label{classHurricane_1_1Query_ac41de6b1535c256c4929c075769890b1}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Area@{set\+Area}}
-\index{set\+Area@{set\+Area}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Area()}{setArea()}}
+\index{Hurricane::Query@{Hurricane::Query}!setArea@{setArea}}
+\index{setArea@{setArea}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setArea()}{setArea()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Area (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{box }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the top area to query. \mbox{\Hypertarget{classHurricane_1_1Query_a885360fc2f351fc3612c7dda363b5131}\label{classHurricane_1_1Query_a885360fc2f351fc3612c7dda363b5131}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Transformation@{set\+Transformation}}
-\index{set\+Transformation@{set\+Transformation}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Transformation()}{setTransformation()}}
+\index{Hurricane::Query@{Hurricane::Query}!setTransformation@{setTransformation}}
+\index{setTransformation@{setTransformation}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setTransformation()}{setTransformation()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Transformation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the transformation applied to the top level \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Query_ac3718c4e2cd4d5e80af32558285481af}\label{classHurricane_1_1Query_ac3718c4e2cd4d5e80af32558285481af}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Basic\+Layer@{set\+Basic\+Layer}}
-\index{set\+Basic\+Layer@{set\+Basic\+Layer}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Basic\+Layer()}{setBasicLayer()}}
+\index{Hurricane::Query@{Hurricane::Query}!setBasicLayer@{setBasicLayer}}
+\index{setBasicLayer@{setBasicLayer}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setBasicLayer()}{setBasicLayer()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Basic\+Layer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 Change the \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} selector. \mbox{\Hypertarget{classHurricane_1_1Query_af7f83fd3aefe1b5654f9bdd3566fe0d4}\label{classHurricane_1_1Query_af7f83fd3aefe1b5654f9bdd3566fe0d4}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Extension\+Mask@{set\+Extension\+Mask}}
-\index{set\+Extension\+Mask@{set\+Extension\+Mask}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Extension\+Mask()}{setExtensionMask()}}
+\index{Hurricane::Query@{Hurricane::Query}!setExtensionMask@{setExtensionMask}}
+\index{setExtensionMask@{setExtensionMask}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setExtensionMask()}{setExtensionMask()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Extension\+Mask (\begin{DoxyParamCaption}\item[{Extension\+Slice\+::\+Mask}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the filtering mask for Extension\+Slice. \mbox{\Hypertarget{classHurricane_1_1Query_a457a0cda5ea5ad849a46aefce2514963}\label{classHurricane_1_1Query_a457a0cda5ea5ad849a46aefce2514963}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Filter@{set\+Filter}}
-\index{set\+Filter@{set\+Filter}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Filter()}{setFilter()}}
+\index{Hurricane::Query@{Hurricane::Query}!setFilter@{setFilter}}
+\index{setFilter@{setFilter}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setFilter()}{setFilter()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Filter (\begin{DoxyParamCaption}\item[{Mask}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the filtering mask for object types. \mbox{\Hypertarget{classHurricane_1_1Query_a8c4bc1bcfae942042ccb90a46b6fb510}\label{classHurricane_1_1Query_a8c4bc1bcfae942042ccb90a46b6fb510}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Start\+Level@{set\+Start\+Level}}
-\index{set\+Start\+Level@{set\+Start\+Level}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Start\+Level()}{setStartLevel()}}
+\index{Hurricane::Query@{Hurricane::Query}!setStartLevel@{setStartLevel}}
+\index{setStartLevel@{setStartLevel}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setStartLevel()}{setStartLevel()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Start\+Level (\begin{DoxyParamCaption}\item[{unsigned int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the starting depth level. \mbox{\Hypertarget{classHurricane_1_1Query_a70359c71d7dc7e3f17d0a29c8208c92f}\label{classHurricane_1_1Query_a70359c71d7dc7e3f17d0a29c8208c92f}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Stop\+Level@{set\+Stop\+Level}}
-\index{set\+Stop\+Level@{set\+Stop\+Level}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{set\+Stop\+Level()}{setStopLevel()}}
+\index{Hurricane::Query@{Hurricane::Query}!setStopLevel@{setStopLevel}}
+\index{setStopLevel@{setStopLevel}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{setStopLevel()}{setStopLevel()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Stop\+Level (\begin{DoxyParamCaption}\item[{unsigned int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Change the stoping depth level. \mbox{\Hypertarget{classHurricane_1_1Query_a2ca5bf71c7b35e14c4a64488a5e21bc6}\label{classHurricane_1_1Query_a2ca5bf71c7b35e14c4a64488a5e21bc6}} 
-\index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!do\+Query@{do\+Query}}
-\index{do\+Query@{do\+Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
-\subsubsection{\texorpdfstring{do\+Query()}{doQuery()}}
+\index{Hurricane::Query@{Hurricane::Query}!doQuery@{doQuery}}
+\index{doQuery@{doQuery}!Hurricane::Query@{Hurricane::Query}}
+\doxysubsubsection{\texorpdfstring{doQuery()}{doQuery()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::do\+Query (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
 
 Perform the actual \mbox{\hyperlink{classHurricane_1_1Query}{Query}}. 

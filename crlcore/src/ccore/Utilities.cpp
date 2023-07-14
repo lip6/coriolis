@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :   "./Utilities.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -23,8 +23,8 @@
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
-#include  "vlsisapd/utilities/Path.h"
-#include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/utilities/Path.h"
+#include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/Backtrace.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/viewer/Script.h"
@@ -319,26 +319,28 @@ namespace CRL {
     Utilities::Path pythonSitePackages ( PYTHON_SITE_PACKAGES );
     pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
     _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.toString()) );
-    Utilities::Path crlcoreDir  = pythonSitePackages / "crlcore";
-    Utilities::Path stratusDir  = pythonSitePackages / "stratus";
-    Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
-    Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
-    Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
+    // Utilities::Path crlcoreDir  = pythonSitePackages / "crlcore";
+    // Utilities::Path stratusDir  = pythonSitePackages / "stratus";
+    // Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
+    // Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
+    // Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
+    Utilities::Path etcDir      = _pathes["etc"];
 
+    Isobar::Script::addPath ( etcDir.toString() );
     Isobar::Script::addPath ( sysConfDir.toString() );
     Isobar::Script::addPath ( pythonSitePackages.toString() );
-    Isobar::Script::addPath ( crlcoreDir.toString() );
-    Isobar::Script::addPath ( stratusDir.toString() );
-    Isobar::Script::addPath ( cumulusDir.toString() );
-    Isobar::Script::addPath ( oroshiDir.toString() );
-    Isobar::Script::addPath ( karakazeDir.toString() );
+    // Isobar::Script::addPath ( crlcoreDir.toString() );
+    // Isobar::Script::addPath ( stratusDir.toString() );
+    // Isobar::Script::addPath ( cumulusDir.toString() );
+    // Isobar::Script::addPath ( oroshiDir.toString() );
+    // Isobar::Script::addPath ( karakazeDir.toString() );
 
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();
 
     Cfg::getParamBool  ("misc.catchCore"      ,false )->registerCb ( this, catchCoreChanged );
-    Cfg::getParamBool  ("misc.verboseLevel1"  ,true  )->registerCb ( this, verboseLevel1Changed );
-    Cfg::getParamBool  ("misc.verboseLevel2"  ,true  )->registerCb ( this, verboseLevel2Changed );
+    Cfg::getParamBool  ("misc.verboseLevel1"  ,false )->registerCb ( this, verboseLevel1Changed );
+    Cfg::getParamBool  ("misc.verboseLevel2"  ,false )->registerCb ( this, verboseLevel2Changed );
     Cfg::getParamBool  ("misc.info"           ,false )->registerCb ( this, infoChanged );
     Cfg::getParamBool  ("misc.paranoid"       ,false )->registerCb ( this, paranoidChanged );
     Cfg::getParamBool  ("misc.bug"            ,false )->registerCb ( this, bugChanged );
@@ -376,7 +378,7 @@ namespace CRL {
 
   void  System::_trapSig ( int sig )
   {
-    cerr << "\n\n[CRL ERROR] System::_trapSig():\n" << endl;
+    cerr << "\n\n[CRL ERROR] System::_trapSig(): sig=" << sig << "\n" << endl;
     cerr << "Program stack:\n" << Backtrace(true).textWhere() << endl;
 
     switch ( sig ) {
@@ -396,10 +398,25 @@ namespace CRL {
       // Ouch!! This may result from a program bug.
         cerr << "  An program internal bug have occur ";
 
-        if (sig == SIGFPE ) cerr << "(SIGFPE).";
+        if (sig == SIGABRT) cerr << "(SIGABRT).";
+        if (sig == SIGALRM) cerr << "(SIGALARM).";
         if (sig == SIGBUS ) cerr << "(SIGBUS).";
-        if (sig == SIGSEGV) cerr << "(SIGSEGV).";
+        if (sig == SIGCHLD) cerr << "(SIGCHLD).";
+        if (sig == SIGCONT) cerr << "(SIGCONT).";
+        if (sig == SIGFPE ) cerr << "(SIGFPE).";
+        if (sig == SIGHUP ) cerr << "(SIGHUP).";
+        if (sig == SIGILL ) cerr << "(SIGILL).";
+        if (sig == SIGINT ) cerr << "(SIGINT).";
+        if (sig == SIGIO  ) cerr << "(SIGIO).";
+        if (sig == SIGKILL) cerr << "(SIGKILL).";
         if (sig == SIGPIPE) cerr << "(SIGPIPE).";
+        if (sig == SIGQUIT) cerr << "(SIGQUIT).";
+        if (sig == SIGSEGV) cerr << "(SIGSEGV).";
+        if (sig == SIGSTOP) cerr << "(SIGSTOP).";
+        if (sig == SIGTSTP) cerr << "(SIGTSTP).";
+        if (sig == SIGSYS ) cerr << "(SIGSYS).";
+        if (sig == SIGTERM) cerr << "(SIGTERM).";
+        if (sig == SIGTRAP) cerr << "(SIGTRAP).";
 
         cerr << "\n  Please e-mail to <alliance-users@asim.lip6.fr>.\n"
              << "\n  program terminated ";
@@ -445,9 +462,8 @@ namespace CRL {
 
   void  System::_runPythonInit ()
   {
-    Cfg::Configuration* conf               = Cfg::Configuration::get ();
-    Utilities::Path     sysConfDir         = getPath("etc");
-    Utilities::Path     pythonSitePackages = getPath("pythonSitePackages");
+    Utilities::Path sysConfDir         = getPath("etc");
+    Utilities::Path pythonSitePackages = getPath("pythonSitePackages");
 
   //bool            systemConfFound = false;
     Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";

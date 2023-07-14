@@ -1,0 +1,152 @@
+\hypertarget{classKatabatic_1_1AutoContactHTee}{}\section{Auto\+Contact\+H\+Tee Class Reference}
+\label{classKatabatic_1_1AutoContactHTee}\index{Auto\+Contact\+H\+Tee@{Auto\+Contact\+H\+Tee}}
+
+
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} H-\/\+Tee (two H, one V)  
+
+
+
+
+Inheritance diagram for Auto\+Contact\+H\+Tee\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=182pt]{classKatabatic_1_1AutoContactHTee__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_ac9c9b04e245a1109e297510a3968b7ac}{get\+Opposite}} (const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$) const
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_ad99dd549214e43b6509fd8e3aefae919}{get\+Perpandicular}} (const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$) const
+\item 
+virtual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_a99fa8a78e97a29f2fb5730eaaa59acfc}{get\+Segment}} (unsigned int) const
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_a3e218f6934c51380fb15d0e2bd380071}{update\+Geometry}} ()
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_af5bf1f5e71204ef84346e4e036175431}{update\+Topology}} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee_a9b42579ac2487765c83e31f7ca3ee562}{create}} (\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$, \textbf{ Net} $\ast$, const \textbf{ Layer} $\ast$)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} H-\/\+Tee (two H, one V) 
+
+\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} to build an horizontal tee (two H, one V). 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_a9b42579ac2487765c83e31f7ca3ee562}\label{classKatabatic_1_1AutoContactHTee_a9b42579ac2487765c83e31f7ca3ee562}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!create@{create}}
+\index{create@{create}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} $\ast$ create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} $\ast$}]{gcell,  }\item[{\textbf{ Net} $\ast$}]{net,  }\item[{const \textbf{ Layer} $\ast$}]{layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em gcell} & The \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} into which create the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+{\em net} & The Net to which this \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} belongs. \\
+\hline
+{\em layer} & The Layer of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The created \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}}.
+\end{DoxyReturn}
+Create a new \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}}. 
+
+References Katabatic\+::\+Cnt\+In\+Creation\+Stage, and Contact\+::create().
+
+
+
+Referenced by G\+Cell\+Topology\+::\+\_\+do\+\_\+x\+G(), G\+Cell\+Topology\+::\+\_\+do\+\_\+x\+G\+\_\+1\+M1\+\_\+1\+M2(), and G\+Cell\+Topology\+::\+\_\+do\+\_\+x\+G\+\_\+x\+M1\+\_\+x\+M3().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_ac9c9b04e245a1109e297510a3968b7ac}\label{classKatabatic_1_1AutoContactHTee_ac9c9b04e245a1109e297510a3968b7ac}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!get\+Opposite@{get\+Opposite}}
+\index{get\+Opposite@{get\+Opposite}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{get\+Opposite()}{getOpposite()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Opposite (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{reference }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The other \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} the {\itshape same} direction as {\ttfamily reference}, this is only meaningful on \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} or \mbox{\hyperlink{classKatabatic_1_1AutoContactVTee}{Auto\+Contact\+V\+Tee}}. If there is no opposite, {\ttfamily N\+U\+LL} is returned. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a48ab1d3bdf85712e4784ef83ef136939}{Auto\+Contact}}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_ad99dd549214e43b6509fd8e3aefae919}\label{classKatabatic_1_1AutoContactHTee_ad99dd549214e43b6509fd8e3aefae919}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!get\+Perpandicular@{get\+Perpandicular}}
+\index{get\+Perpandicular@{get\+Perpandicular}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{get\+Perpandicular()}{getPerpandicular()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Perpandicular (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{reference }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} in the {\itshape perpandicular} direction to {\ttfamily reference}, this is only meaningful on Auto\+Contac\+Turn. It there is no unique perpandicular, {\ttfamily N\+U\+LL} is returned. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a994371005874f946cc0ac78005d38423}{Auto\+Contact}}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_a99fa8a78e97a29f2fb5730eaaa59acfc}\label{classKatabatic_1_1AutoContactHTee_a99fa8a78e97a29f2fb5730eaaa59acfc}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!get\+Segment@{get\+Segment}}
+\index{get\+Segment@{get\+Segment}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{get\+Segment()}{getSegment()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Segment (\begin{DoxyParamCaption}\item[{unsigned int}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The nth anchored \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}}. The index is significant\+:
+\begin{DoxyItemize}
+\item {\bfseries 0} \+: first horizontal ({\bfseries h1}).
+\item {\bfseries 1} \+: second horizontal ({\bfseries h2}).
+\item {\bfseries 2} \+: first vertical ({\bfseries b1}).
+\item {\bfseries 3} \+: second vertical ({\bfseries b2}).
+\end{DoxyItemize}
+
+Not all the indexes are filled for every \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}. For example {\ttfamily Turn} have {\bfseries h1} and {\bfseries b1}, and {\ttfamily H\+Tee} have {\bfseries h1}, {\bfseries h2} and {\bfseries v1}. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a50531ded68cc5206fe104b8d8bf3bd87}{Auto\+Contact}}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_a3e218f6934c51380fb15d0e2bd380071}\label{classKatabatic_1_1AutoContactHTee_a3e218f6934c51380fb15d0e2bd380071}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!update\+Geometry@{update\+Geometry}}
+\index{update\+Geometry@{update\+Geometry}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{update\+Geometry()}{updateGeometry()}}
+{\footnotesize\ttfamily void update\+Geometry (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Compute the new position of the \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} based on the \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} positions. The \mbox{\hyperlink{classKatabatic_1_1Session}{Session}} mechanism ensure that all \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} are set into their final positions before calling this updator. 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_af6a2454547eeb7f5a519970dcb467e90}{Auto\+Contact}}.
+
+
+
+References Auto\+Contact\+::base(), Debug\+Session\+::close(), Katabatic\+::\+Cnt\+Invalidated, Auto\+Contact\+::get\+Net(), Auto\+Contact\+::get\+X(), Auto\+Contact\+::get\+Y(), Auto\+Contact\+::has\+Bad\+Topology(), Go\+::invalidate(), Auto\+Contact\+::is\+Invalidated\+Cache(), Debug\+Session\+::open(), Auto\+Contact\+::set\+X(), and Auto\+Contact\+::set\+Y().
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoContactHTee_af5bf1f5e71204ef84346e4e036175431}\label{classKatabatic_1_1AutoContactHTee_af5bf1f5e71204ef84346e4e036175431}} 
+\index{Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}!update\+Topology@{update\+Topology}}
+\index{update\+Topology@{update\+Topology}!Katabatic\+::\+Auto\+Contact\+H\+Tee@{Katabatic\+::\+Auto\+Contact\+H\+Tee}}
+\subsubsection{\texorpdfstring{update\+Topology()}{updateTopology()}}
+{\footnotesize\ttfamily void update\+Topology (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Restore the topology (i.\+e. connexity) of the contact after any number of connected segments has changed layer (at least one, up to three).
+
+For any configuration, the connexity can be restored by making only one dogleg.
+
+We distinguish two kind of layer changes\+:
+\begin{DoxyEnumerate}
+\item The two horizontals ({\ttfamily h1} and {\ttfamily h2}) are still on the same layer (either they both moved or the vertical only has moved, see figures 2 \& 4). In that case, the dogleg is made on the vertical.
+\item The two horizontals no longer are on the same layer (figures 1 \& 3). In that case, the dogleg is made on the horizontal which is at the greater distance (in a layer sense) from the vertical.
+\end{DoxyEnumerate}
+
+ 
+
+Implements \mbox{\hyperlink{classKatabatic_1_1AutoContact_a690764ddc997fe9766a79c4b8e0c3e2f}{Auto\+Contact}}.
+
+
+
+References Debug\+Session\+::close(), Katabatic\+::\+Cnt\+Bad\+Topology, Routing\+Gauge\+::get\+Contact\+Layer(), Auto\+Contact\+::get\+Layer(), Routing\+Gauge\+::get\+Layer\+Depth(), Auto\+Contact\+::get\+Net(), Session\+::get\+Routing\+Gauge(), Routing\+Gauge\+::get\+Routing\+Layer(), Auto\+Contact\+::has\+Bad\+Topology(), Auto\+Contact\+::is\+Invalidated\+Cache(), Debug\+Session\+::open(), Auto\+Contact\+::set\+Layer(), and Auto\+Contact\+::show\+Topology\+Error().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Auto\+Contact\+H\+Tee.\+h\item 
+Auto\+Contact\+H\+Tee.\+cpp\item 
+Auto\+Contact\+H\+Tee.\+dox\end{DoxyCompactItemize}

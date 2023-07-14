@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -56,7 +55,7 @@ def InitBV () :
 
   mapping = Cfg.getParamString('stratus1.mappingName').asString()
   if not mapping:
-    print '[ERROR] \"stratus1.mappingName\" configuration variable has not been set.'
+    print( '[ERROR] \"stratus1.mappingName\" configuration variable has not been set.' )
   myP.Parse ( mapping )
   return
 

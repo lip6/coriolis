@@ -30,6 +30,7 @@ namespace  Hurricane {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
 
 
 extern "C" {
@@ -66,7 +67,7 @@ extern "C" {
     pattern = ds->getPattern().c_str();
     HCATCH
 
-    return PyString_FromString(pattern);
+    return PyUnicode_FromString(pattern);
   }
 
 

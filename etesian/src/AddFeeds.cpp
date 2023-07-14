@@ -66,6 +66,7 @@ namespace {
       inline SliceHoles*     getSliceHoles     () const;
       inline EtesianEngine*  getEtesian        () const;
       inline size_t          getSpinSlice0     () const;
+             DbU::Unit       getAverageChunk   () const;
              void            merge             ( DbU::Unit source, DbU::Unit target );
              void            addFeeds          ( size_t islice );
              void            fillHole          ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit ybottom, size_t yspin );
@@ -184,6 +185,41 @@ namespace {
   }
 
 
+  DbU::Unit  Slice::getAverageChunk () const
+  {
+    if (_chunks.empty()) return -1;
+
+    DbU::Unit  holeLength = 0;
+    list<Interval>::const_iterator ichunk     = _chunks.begin();
+    list<Interval>::const_iterator ichunknext = ichunk;
+    ++ichunknext;
+
+  // Hole before the first chunk.
+    if ((*ichunk).getVMin() > getXMin()) {
+      holeLength += (*ichunk).getVMin() - getXMin();
+    }
+
+    for ( ; ichunknext != _chunks.end() ; ++ichunk, ++ichunknext ) {
+      holeLength += (*ichunknext).getVMin() - (*ichunk).getVMax();
+    }
+
+  // Hole after the last chunk.
+    if ((*ichunk).getVMax() < getXMax()) {
+      holeLength +=  getXMax() - (*ichunk).getVMax();
+    }
+
+    Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
+    if (feed == NULL) {
+      cerr << Error("EtesianEngine: No feed has been registered, ignoring.") << endl;
+      return -1;
+    }
+
+    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
+
+    return ((getXMax() - getXMin()) * feedWidth) / holeLength;
+  }
+
+
   void  Slice::fillHole ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit ybottom, size_t yspin )
   {
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
@@ -199,7 +235,7 @@ namespace {
       if (xtie           >= xmax) break;
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
-        int pitch = (int)((xmax-xtie) / getEtesian()->getVerticalPitch());
+        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
         for ( ; pitch > 0 ; --pitch ) {
           feed = getEtesian()->getFeedCells().getFeed( pitch );
           if (feed == NULL) continue;
@@ -210,7 +246,7 @@ namespace {
         if (feed == NULL) break;
       }
 
-      Instance::create ( getEtesian()->getCell()
+      Instance::create ( getEtesian()->getBlockCell()
                        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
                        , feed
                        , getTransformation( feed->getAbutmentBox()
@@ -245,7 +281,7 @@ namespace {
 
   SliceHoles::SliceHoles ( EtesianEngine* etesian )
     : _etesian    (etesian)
-    , _cellAb     (etesian->getCell()->getAbutmentBox())
+    , _cellAb     (etesian->getBlockCell()->getAbutmentBox())
     , _sliceHeight(_etesian->getSliceHeight())
     , _slices     ()
   {
@@ -287,8 +323,11 @@ namespace {
 
   void  SliceHoles::addFeeds ()
   {
-    for ( size_t islice=0 ; islice<_slices.size() ; islice++ )
+    for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
+      cerr << setw(3) << islice << " | "
+           << DbU::getValueString(_slices[islice]->getAverageChunk()) << endl;
       _slices[islice]->addFeeds( islice );
+    }
   }
 
 
@@ -308,10 +347,12 @@ namespace Etesian {
     _ySpinSet     = false;
     _yspinSlice0  = 0;
 
-    Box topCellAb = getCell()->getAbutmentBox();
+    Box blockAb = getBlockCell()->getAbutmentBox();
+    if (not _placeArea.isEmpty())
+      blockAb = _placeArea;
 
-    if (not topCellAb.isEmpty()) {
-      for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    if (not blockAb.isEmpty()) {
+      for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
       {
         Instance*      instance       = static_cast<Instance*>(occurrence.getEntity());
         Cell*          masterCell     = instance->getMasterCell();
@@ -321,11 +362,11 @@ namespace Etesian {
         occurrence.getPath().getTransformation().applyOn( instanceTransf );
         instanceTransf.applyOn( instanceAb );
   
-        if (not topCellAb.contains(instanceAb)) continue;
+        if (not blockAb.contains(instanceAb)) continue;
   
         _ySpinSet = true;
   
-        int islice = (instanceAb.getYMin() - getCell()->getAbutmentBox().getYMin()) / getSliceHeight();
+        int islice = (instanceAb.getYMin() - blockAb.getYMin()) / getSliceHeight();
   
         switch ( instanceTransf.getOrientation() ) {
           case Transformation::Orientation::ID:
@@ -366,11 +407,27 @@ namespace Etesian {
     UpdateSession::open();
 
     SliceHoles sliceHoles ( this );
-    Box        topCellAb  = getCell()->getAbutmentBox();
+    Box        topCellAb  = getBlockCell()->getAbutmentBox();
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    if (getBlockInstance()) {
+      Transformation toBlockTransf = getBlockInstance()->getTransformation();
+      toBlockTransf.invert();
+      for ( Instance* instance : getCell()->getInstances() ) {
+        if (instance == getBlockInstance()) continue;
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          Box overlapAb = instance->getAbutmentBox();
+          toBlockTransf.applyOn( overlapAb );
+          overlapAb = topCellAb.getIntersection( overlapAb );
+          if (not overlapAb.isEmpty()) {
+            sliceHoles.merge( overlapAb );
+          }
+        }
+      }
+    }
+
+    for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();

@@ -29,14 +29,13 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cstring>
-#include  <cstdlib>
-#include  <limits>
-
-#include  "hurricane/DbU.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
+#include <cstring>
+#include <cstdlib>
+#include <limits>
+#include "hurricane/DbU.h"
+#include "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 
 
 namespace Hurricane {
@@ -160,7 +159,9 @@ namespace Hurricane {
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
+    if (not (flags & NoTechnoUpdate)
+       and DataBase::getDB()
+       and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
@@ -201,8 +202,7 @@ namespace Hurricane {
 
   void  DbU::setGridsPerLambda ( double gridsPerLambda, unsigned int flags )
   {
-    if (   ( rint(gridsPerLambda) != gridsPerLambda ) 
-        || ( remainder(gridsPerLambda,2.0) != 0.0   ) )
+    if ((rint(gridsPerLambda) != gridsPerLambda) /*or (remainder(gridsPerLambda,2.0) != 0.0)*/)
       throw Error ( "DbU::Unit::setGridPerLambdas(): \"gridsPerLambda\" (%f) must be an even integer."
                   , gridsPerLambda
                   );
@@ -211,7 +211,9 @@ namespace Hurricane {
 
     _gridsPerLambda = gridsPerLambda;
 
-    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
+    if (not (flags & NoTechnoUpdate)
+       and DataBase::getDB()
+       and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda(1) );
@@ -311,8 +313,8 @@ namespace Hurricane {
       unitSymbol = 'g';
       os << setprecision(1) << toGrid(u);
     } else if (_stringMode == Symbolic) {
-      unitSymbol = 'l';
-      os << setprecision(1) << toLambda(u);
+      unitSymbol = 'L';
+      os << setprecision(2) << toLambda(u);
     } else if (_stringMode == Physical) {
       unitSymbol = 'm';
       switch ( _stringModeUnitPower ) {
@@ -333,21 +335,27 @@ namespace Hurricane {
     } else {
       if (_stringMode != Db)
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
-
       os << u;
     }
 
     string s = os.str();
-    if (mode & SmartTruncate) {
-
+    if (_stringMode == Symbolic) {
+      size_t dot = s.rfind( '.' );
+      if (dot != string::npos) s.erase( dot + 2 );
+    } else if (mode & SmartTruncate) {
       size_t dot = s.rfind( '.' );
       if (dot != string::npos) {
-        size_t end = dot+1;
-        for ( ; end < s.size() ; ++end ) if (s[end] != '0') break;
-        if (end == s.size()) s.erase( dot );
+        size_t end     = dot;
+        size_t nonzero = end;
+        for ( ; end < s.size() ; ++end ) {
+          if (s[end] != '0') nonzero = end;
+        }
+        if (nonzero == dot) s.erase( dot );
+        else {
+          if (nonzero < s.size()) s.erase( nonzero+1 );
+        }
       }
     }
-
     if (unitPower != ' ') s += unitPower;
     s += unitSymbol;
 

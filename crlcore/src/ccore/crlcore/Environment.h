@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ENVIRONMENT_H
-#define  CRL_ENVIRONMENT_H
-
+#pragma  once
 #include <regex.h>
 #include <string>
 #include "hurricane/Commons.h"
@@ -55,6 +53,7 @@ namespace CRL {
       inline const std::string& getCLOCK               () const;
       inline const std::string& getBLOCKAGE            () const;
       inline const std::string& getPad                 () const;
+      inline const std::string& getRegister            () const;
       inline const std::string& getCATALOG             () const;
       inline SearchPath&        getLIBRARIES           ();
              std::string        getLIBRARYPath         ( size_t i );
@@ -64,6 +63,7 @@ namespace CRL {
              bool               isCLOCK                ( const char* name ) const;
              bool               isBLOCKAGE             ( const char* name ) const;
              bool               isPad                  ( const char* name ) const;
+             bool               isRegister             ( const char* name ) const;
     // Modifiers.
              void               validate               () const;
       inline void               setDisplayStyle        ( const char* );
@@ -78,8 +78,9 @@ namespace CRL {
              void               setCLOCK               ( const char* value );
              void               setBLOCKAGE            ( const char* value );
              void               setPad                 ( const char* value );
+             void               setRegister            ( const char* value );
       inline void               setCATALOG             ( const char* value );
-      inline void               setWORKING_LIBRARY     ( const char* value );
+             void               setWORKING_LIBRARY     ( const char* value );
              void               addSYSTEM_LIBRARY      ( const char* value, const char* libName, unsigned int mode=Append );
     // Methods.
              std::string        getPrint               () const;
@@ -92,26 +93,26 @@ namespace CRL {
              std::string        _CORIOLIS_TOP;
              std::string        _displayStyle;
              long               _SCALE_X;
-             std::string        _DISPLAY;
              std::string        _IN_LO;
              std::string        _IN_PH;
              std::string        _OUT_LO;
              std::string        _OUT_PH;
+             std::string        _CATALOG;
              std::string        _POWER;
              std::string        _GROUND;
              std::string        _CLOCK;
              std::string        _BLOCKAGE;
              std::string        _pad;
-             std::string        _CATALOG;
+             std::string        _register;
              SearchPath         _LIBRARIES;
-             regex_t            _PowerRegex;
-             regex_t            _GroundRegex;
-             regex_t            _ClockRegex;
-             regex_t            _BlockageRegex;
-             regex_t            _padRegex;
-             bool               _inConstructor;
+             regex_t*           _PowerRegex;
+             regex_t*           _GroundRegex;
+             regex_t*           _ClockRegex;
+             regex_t*           _BlockageRegex;
+             regex_t*           _padRegex;
+             regex_t*           _registerRegex;
     private:
-             void         _setRegex       ( regex_t* regex, const std::string& pattern, const char* name );
+             void         _setRegex       ( regex_t*& regex, const std::string& pattern, const char* name );
   };
 
 
@@ -128,6 +129,7 @@ namespace CRL {
   inline const std::string&     Environment::getCLOCK               () const { return _CLOCK; }
   inline const std::string&     Environment::getBLOCKAGE            () const { return _BLOCKAGE; }
   inline const std::string&     Environment::getPad                 () const { return _pad; }
+  inline const std::string&     Environment::getRegister            () const { return _register; }
   inline const std::string&     Environment::getCATALOG             () const { return _CATALOG; }
   inline       SearchPath&      Environment::getLIBRARIES           () { return _LIBRARIES; }
                                
@@ -138,7 +140,6 @@ namespace CRL {
   inline void                   Environment::setOUT_LO              ( const char* value ) { _OUT_LO = value; }
   inline void                   Environment::setOUT_PH              ( const char* value ) { _OUT_PH = value; }
   inline void                   Environment::setCATALOG             ( const char* value ) { _CATALOG = value; }
-  inline void                   Environment::setWORKING_LIBRARY     ( const char* value ) { _LIBRARIES.replace(value,"working",0); }
   inline std::string            Environment::_getTypeName           () const { return "Environment"; }
 
 
@@ -159,6 +160,3 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::Environment);
-
-
-#endif  // CRL_ENVIRONMENT_H

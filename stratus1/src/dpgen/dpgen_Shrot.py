@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -340,4 +339,4 @@ class DpgenShrot ( Model ) :
   ## VBE ##
   #########
   def Vbe ( self ) :
-    print "vbe of DpgenShrot not implemented"
+    print( "vbe of DpgenShrot not implemented" )

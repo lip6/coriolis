@@ -1,0 +1,3481 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Printable version of this Document Stratus.pdf Contents Printable version of this Document DpgenInv DpgenBuff DpgenNand2 DpgenNand3 Dpgennand4 DpgenAnd2 DpgenAnd3 DpgenAnd4 DpgenNor2 DpgenNor3...">
+        <meta name="keywords" content="">
+        <link rel="icon" href="../favicon.ico">
+
+        <title>Stratus : Datapath Generators - Coriolis VLSI CAD Tools [offline]</title>
+
+        <!-- Stylesheets -->
+        <link href="../theme/css/bootstrap.css" rel="stylesheet">
+        <link href="../theme/css/fonts.css"     rel="stylesheet">
+        <link href="../theme/css/nest.css"      rel="stylesheet">
+        <link href="../theme/css/pygment.css"   rel="stylesheet">
+        <link href="../theme/css/coriolis.css"  rel="stylesheet">
+        <!-- /Stylesheets -->
+
+        <script src="../theme/js/jquery.min.js"></script>
+        <script src="../theme/js/bootstrap.min.js"></script>
+
+        <!-- RSS Feeds -->
+        <!-- /RSS Feeds -->
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+    </head>
+
+    <body>
+      <!-- Header -->
+    <div class="header-container" style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/common/layout-motif-faded-4.png'); background-position: center; ">
+
+
+      <!--
+      <div class="container">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+            </div>
+            <ul class="nav navbar-nav">
+                   <li><a href="../pages/gitlab.html">Git</a></li>
+                   <li><a href="../pages/documentation.html">Documentation</a></li>
+              <li class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="caret"></span>Topics
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item " href="../pages/.html"></a></li>
+                  <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                  <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div> <!-- navbar container -->
+      -->
+
+      <!-- Static navbar -->
+      <div class="container">
+        <div class="header-nav">
+          <div class="header-logo">
+            <a class="pull-left" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+          </div>
+          <div class="nav pull-right">
+                <a href="../pages/gitlab.html">Git</a>
+                <a href="../pages/documentation.html">Documentation</a>
+          </div>
+          <div class="nav pull-right">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="caret"></span>Topics
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item " href="../pages/.html"></a></li>
+                <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Static navbar -->
+
+        <!-- Header -->
+    <div class="container header-wrapper">
+        <div class="row">
+              <div class="col-lg-12">
+                  <div class="header-content">
+                      <a href="https://www.lip6.fr/"><img class="mr20" height="60px" src="../images/common/LogoLIP6Blanc.png" alt="LIP6"></a>
+                      <a href="https://www.sorbonne-universite.fr/"><img class="mr20" height="60px" src="../images/common/logo-SU-blanc-700px.png" alt="Sorbonne Universite"></a>
+                      <a href="https://www.cnrs.fr/"><img class="mr20" height="60px" src="../images/common/LOGO-cnrs-white-large.png" alt="CNRS"></a>
+                      <h1 class="header-title text-uppercase">Stratus : Datapath Generators</h1>
+                      <div class="header-underline"></div>
+                  </div>
+              </div>
+        </div>
+    </div>
+        <!-- /Header -->
+
+        </div>
+        <!-- /Header -->
+
+
+        <!-- Content -->
+    <div class="container content">
+        <!-- -*- mode: rst; explicit-buffer-name: "DpGen_HTML.rst<pelican>" -*- -->
+<!-- -*- Mode: rst; explicit-buffer-name: "definition.rst<documentation/etc>" -*- -->
+<!-- HTML/LaTeX backends mixed macros. -->
+<!-- Acronyms & names. -->
+<!-- URLs -->
+<!-- Standard CAO/VLSI Concepts. -->
+<!-- Alliance & MBK Concepts -->
+<!-- Hurricane Concepts. -->
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#id2">Printable version of this Document</a></h2>
+<p><a class="reference external" href="${filename}/pdfs/Stratus.pdf">Stratus.pdf</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#printable-version-of-this-document" id="id2">Printable version of this Document</a></li>
+<li><a class="reference internal" href="#dpgeninv" id="id3">DpgenInv</a></li>
+<li><a class="reference internal" href="#dpgenbuff" id="id4">DpgenBuff</a></li>
+<li><a class="reference internal" href="#dpgennand2" id="id5">DpgenNand2</a></li>
+<li><a class="reference internal" href="#dpgennand3" id="id6">DpgenNand3</a></li>
+<li><a class="reference internal" href="#dpgennand4" id="id7">Dpgennand4</a></li>
+<li><a class="reference internal" href="#dpgenand2" id="id8">DpgenAnd2</a></li>
+<li><a class="reference internal" href="#dpgenand3" id="id9">DpgenAnd3</a></li>
+<li><a class="reference internal" href="#dpgenand4" id="id10">DpgenAnd4</a></li>
+<li><a class="reference internal" href="#dpgennor2" id="id11">DpgenNor2</a></li>
+<li><a class="reference internal" href="#dpgennor3" id="id12">DpgenNor3</a></li>
+<li><a class="reference internal" href="#dpgennor4" id="id13">DpgenNor4</a></li>
+<li><a class="reference internal" href="#dpgenor2" id="id14">DpgenOr2</a></li>
+<li><a class="reference internal" href="#dpgenor3" id="id15">DpgenOr3</a></li>
+<li><a class="reference internal" href="#dpgenor4" id="id16">DpgenOr4</a></li>
+<li><a class="reference internal" href="#dpgenxor2" id="id17">DpgenXor2</a></li>
+<li><a class="reference internal" href="#dpgenxnor2" id="id18">DpgenXnor2</a></li>
+<li><a class="reference internal" href="#dpgennmux2" id="id19">DpgenNmux2</a></li>
+<li><a class="reference internal" href="#dpgenmux2" id="id20">DpgenMux2</a></li>
+<li><a class="reference internal" href="#dpgennbuse" id="id21">DpgenNbuse</a></li>
+<li><a class="reference internal" href="#dpgenbuse" id="id22">DpgenBuse</a></li>
+<li><a class="reference internal" href="#dpgennand2mask" id="id23">DpgenNand2mask</a></li>
+<li><a class="reference internal" href="#dpgennor2mask" id="id24">DpgenNor2mask</a></li>
+<li><a class="reference internal" href="#dpgenxnor2mask" id="id25">DpgenXnor2mask</a></li>
+<li><a class="reference internal" href="#dpgenadsb2f" id="id26">DpgenAdsb2f</a></li>
+<li><a class="reference internal" href="#dpgenshift" id="id27">DpgenShift</a></li>
+<li><a class="reference internal" href="#dpgenshrot" id="id28">DpgenShrot</a></li>
+<li><a class="reference internal" href="#dpgennul" id="id29">DpgenNul</a></li>
+<li><a class="reference internal" href="#dpgenconst" id="id30">DpgenConst</a></li>
+<li><a class="reference internal" href="#dpgenrom2" id="id31">DpgenRom2</a></li>
+<li><a class="reference internal" href="#dpgenrom4" id="id32">DpgenRom4</a></li>
+<li><a class="reference internal" href="#dpgenram" id="id33">DpgenRam</a></li>
+<li><a class="reference internal" href="#dpgenrf1" id="id34">DpgenRf1</a></li>
+<li><a class="reference internal" href="#dpgenrf1d" id="id35">DpgenRf1d</a></li>
+<li><a class="reference internal" href="#dpgenfifo" id="id36">DpgenFifo</a></li>
+<li><a class="reference internal" href="#dpgendff" id="id37">DpgenDff</a></li>
+<li><a class="reference internal" href="#dpgendfft" id="id38">DpgenDfft</a></li>
+<li><a class="reference internal" href="#dpgensff" id="id39">DpgenSff</a></li>
+<li><a class="reference internal" href="#dpgensfft" id="id40">DpgenSfft</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="dpgeninv">
+<h2><a class="toc-backref" href="#id3">DpgenInv</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenInv – Inverter Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenInv', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits inverter with an output
+power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1, 2, 4 or 8</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_inv ( Model ) :
+
+  def Interface ( self ) :
+    self.i = SignalIn  ( &quot;i&quot;, 54 )
+    self.o = SignalOut ( &quot;o&quot;, 54 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenInv', 'inv_54'
+             , param = { 'nbit'     : 54
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'inv_54', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenbuff">
+<h2><a class="toc-backref" href="#id4">DpgenBuff</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenBuff – Buffer Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenBuff', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits inverter with an output
+power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2, 4 or 8</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_buff ( Model ) :
+
+  def Interface ( self ) :
+    self.i = SignalIn  ( &quot;i&quot;, 32 )
+    self.o = SignalOut ( &quot;o&quot;, 32 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenBuff', 'buff_32'
+             , param = { 'nbit'     : 32
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'buff_32', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennand2">
+<h2><a class="toc-backref" href="#id5">DpgenNand2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNand2 – Nand2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNand2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs NAND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 and i1 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nand2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNand2', 'nand2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nand2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennand3">
+<h2><a class="toc-backref" href="#id6">DpgenNand3</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNand3 – Nand3 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNand3', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits three inputs NAND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 and i1 and i2 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nand3 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 20 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 20 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 20 )
+    self.o   = SignalOut (   &quot;o&quot;, 20 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNand3', 'nand3_20'
+             , param = { 'nbit'     : 20
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nand3_20', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennand4">
+<h2><a class="toc-backref" href="#id7">Dpgennand4</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNand4 – Nand4 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNand4', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits four inputs NAND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i3</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 and i1 and i2 and i3 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nand4 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 9 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 9 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 9 )
+    self.in4 = SignalIn  ( &quot;in4&quot;, 9 )
+    self.o   = SignalOut (   &quot;o&quot;, 9 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNand4', 'nand4_9'
+             , param = { 'nbit'     : 9
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nand4_9', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'i3'  : self.in4
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenand2">
+<h2><a class="toc-backref" href="#id8">DpgenAnd2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenAnd2 – And2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenAnd2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs AND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 and i1
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_and2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.out = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenAnd2', 'and2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'and2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'q'   : self.out
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenand3">
+<h2><a class="toc-backref" href="#id9">DpgenAnd3</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenAnd3 – And3 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenAnd3', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits three inputs AND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional): Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False): In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False): In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 and i1 and i2
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_and3 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 16 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 16 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 16 )
+    self.out = SignalOut (   &quot;o&quot;, 16 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenAnd3', &quot;and3_16&quot;
+             , param = { 'nbit'     : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'and3_16', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'q'   : self.out
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref (0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenand4">
+<h2><a class="toc-backref" href="#id10">DpgenAnd4</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenAnd4 – And4 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenAnd4', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits four inputs AND with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first">Terminal Names :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i3</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 and i1 and i2 and i3
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_and4 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1   = SignalIn  ( &quot;in1&quot;, 2 )
+    self.in2   = SignalIn  ( &quot;in2&quot;, 2 )
+    self.in3   = SignalIn  ( &quot;in3&quot;, 2 )
+    self.in4   = SignalIn  ( &quot;in4&quot;, 2 )
+    self.out   = SignalOut (   &quot;o&quot;, 2 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenAnd4', 'and4_2'
+             , param = { 'nbit'     : 2
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'and4_2', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'i3'  : self.in4
+                          , 'q'   : self.out
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennor2">
+<h2><a class="toc-backref" href="#id11">DpgenNor2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNor2 – Nor2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNor2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs NOR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 or i1 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nor2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNor2', 'nor2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nor2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennor3">
+<h2><a class="toc-backref" href="#id12">DpgenNor3</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNor3 – Nor3 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNor3', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits three inputs NOR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 or i1 or i2 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nor3 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 3 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 3 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 3 )
+    self.o   = SignalOut ( &quot;out&quot;, 3 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNor3', 'nor3_3'
+             , param = { 'nbit'     : 3
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nor3_3', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennor4">
+<h2><a class="toc-backref" href="#id13">DpgenNor4</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNor4 – Nor4 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNor4', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits four inputs NOR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i3</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 or i1 or i2 or i3 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nor4 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 15 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 15 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 15 )
+    self.in4 = SignalIn  ( &quot;in4&quot;, 15 )
+    self.out = SignalOut (   &quot;o&quot;, 15 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNor4', 'nor4_15'
+             , param = { 'nbit'     : 15
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nor4_15', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'i3'  : self.in4
+                          , 'nq'  : self.out
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenor2">
+<h2><a class="toc-backref" href="#id14">DpgenOr2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenOr2 – Or2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenOr2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs OR with an output
+power of <tt class="docutils literal">drive</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the a map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, the <tt class="docutils literal">drive</tt> is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 or i1
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_or2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenOr2', 'or2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'or2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenor3">
+<h2><a class="toc-backref" href="#id15">DpgenOr3</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenOr3 – Or3 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenOr3', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits three inputs OR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 or i1 or i2
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_or3 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 5 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 5 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 5 )
+    self.o   = SignalOut (   &quot;o&quot;, 5 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenOr3', 'or3_5'
+             , param = { 'nbit'     : 5
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'or3_5', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenor4">
+<h2><a class="toc-backref" href="#id16">DpgenOr4</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenOr4 – Or4 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenOr4', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits four inputs OR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i2</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i3</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 or i1 or i2 or i3
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_or4 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 16 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 16 )
+    self.in3 = SignalIn  ( &quot;in3&quot;, 16 )
+    self.in4 = SignalIn  ( &quot;in4&quot;, 16 )
+    self.out = SignalOut (   &quot;o&quot;, 16 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenOr4', 'or4_16'
+             , param = { 'nbit'     : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'or4_16', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'i2'  : self.in3
+                          , 'i3'  : self.in4
+                          , 'q'   : self.out
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenxor2">
+<h2><a class="toc-backref" href="#id17">DpgenXor2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenXor2 – Xor2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenXor2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs XOR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optionnal, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optionnal, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= i0 xor i1
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_xor2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenXor2', 'xor2_8'
+             , param = { 'nbit' : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'xor2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenxnor2">
+<h2><a class="toc-backref" href="#id18">DpgenXnor2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenXnor2 – Xnor2 Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenXnor2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs XNOR with an
+output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>nq</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 1 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= not ( i0 xor i1 )
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_xnor2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenXnor2', 'xnor2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'xnor2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennmux2">
+<h2><a class="toc-backref" href="#id19">DpgenNmux2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNmux2 – Multiplexer Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNmux2', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs multiplexer named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : select ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>i1</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>nq</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= WITH cmd SELECT not i0 WHEN '0',
+                      not i1 WHEN '1';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nmux2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  (  &quot;in1&quot;, 5 )
+    self.in2 = SignalIn  (  &quot;in2&quot;, 5 )
+    self.cmd = SignalIn  (  &quot;cmd&quot;, 1 )
+    self.o   = SignalOut (    &quot;o&quot;, 5 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNmux2', 'nmux2_5'
+             , param = { 'nbit'     : 5
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nmux2_5', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenmux2">
+<h2><a class="toc-backref" href="#id20">DpgenMux2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenMux2 – Multiplexer Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenMux2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits two inputs multiplexer with
+an output power of <tt class="docutils literal">d</tt> named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : select ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>i1</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>q</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>nbit_cmd</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>drive</strong> (optional) : Defines the output power of the gates<ul>
+<li>Valid drive are : 2 or 4</li>
+<li>If this parameter is not defined, it’s value is the smallest
+one permitted</li>
+</ul>
+</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= WITH cmd SELECT i0 WHEN '0',
+                      i1 WHEN '1';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_mux2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1  = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2  = SignalIn  ( &quot;in2&quot;, 8 )
+    self.cmd  = SignalIn  ( &quot;cmd&quot;, 1 )
+    self.o    = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenMux2', 'mux2_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'mux2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'cmd' : self.cmd
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennbuse">
+<h2><a class="toc-backref" href="#id21">DpgenNbuse</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNbuse – Tristate Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNbuse', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : true
+                   , 'behavioral' : true
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits tristate with an
+complemented output named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : select ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>nq</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nts:BLOCK(cmd = '1') BEGIN
+    nq &lt;= GUARDED not(i0);
+END
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nbuse ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   &quot;i&quot;, 29 )
+    self.cmd = SignalIn  ( &quot;cmd&quot;, 1  )
+    self.o   = SignalOut (   &quot;o&quot;, 29 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNbuse', 'nbuse29'
+             , param = { 'nbit'     : 29
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nbuse29', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenbuse">
+<h2><a class="toc-backref" href="#id22">DpgenBuse</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenBuse – Tristate Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenBuse', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits tristate named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : select ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>q</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nts:BLOCK(cmd = '1') BEGIN
+    q &lt;= GUARDED i0;
+END
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_buse ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   &quot;i&quot;, 8 )
+    self.cmd = SignalIn  ( &quot;cmd&quot;, 1 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenBuse', 'buse_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'buse_8', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennand2mask">
+<h2><a class="toc-backref" href="#id23">DpgenNand2mask</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNand2mask – Programmable Mask Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNand2mask', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits conditionnal NAND mask named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : mask control ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>nq</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>const</strong> (mandatory) : Defines the constant (string beginning
+with 0b, 0x or 0o functions of the basis)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">zero</tt>, the mask is NOT applied,
+so the whole operator behaves like an inverter.</li>
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">one</tt>, the mask is applied, the
+output is the <em>complemented</em> result of the input value <em>ANDed</em>
+with the mask (suplied by <tt class="docutils literal">constVal</tt>).</li>
+<li>The constant <tt class="docutils literal">constVal</tt> is given to the macro-generator call,
+therefore the value cannot be changed afterward : it’s hard wired
+in the operator.</li>
+<li>A common error is to give a real constant for the <tt class="docutils literal">constVal</tt>
+argument. Be aware that it is a character string.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= WITH cmd SELECT not(i0)              WHEN '0',
+                      not(i0 and constVal) WHEN '1';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nand2mask ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   &quot;i&quot;, 32 )
+    self.cmd = SignalIn  ( &quot;cmd&quot;,  1 )
+    self.o   = SignalOut (   &quot;o&quot;, 32 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNand2mask', 'nand2mask_0x0000ffff'
+             , param = { 'nbit'     : 32
+                       , 'const'    : &quot;0x0000FFFF&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nand2mask_0x0000ffff', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennor2mask">
+<h2><a class="toc-backref" href="#id24">DpgenNor2mask</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNor2mask – Programmable Mask Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNor2mask', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits conditionnal NOR mask named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : mask control ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>nq</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>const</strong> (mandatory) : Defines the constant (string beginning
+with 0b, 0x or 0o functions of the basis)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">zero</tt>, the mask is NOT applied,
+so the whole operator behaves like an inverter.</li>
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">one</tt>, the mask is applied, the
+output is the <em>complemented</em> result of the input value <em>ORed</em> with
+the mask (suplied by <tt class="docutils literal">constVal</tt>).</li>
+<li>The constant <tt class="docutils literal">constVal</tt> is given to the macro-generator call,
+therefore the value cannot be changed afterward : it’s hard wired
+in the operator.</li>
+<li>A common error is to give a real constant for the <tt class="docutils literal">constVal</tt>
+argument. Be aware that it is a character string.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= WITH cmd SELECT not(i0)             WHEN '0',
+                      not(i0 or constVal) WHEN '1';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nor2mask ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   &quot;i&quot;, 8 )
+    self.cmd = SignalIn  ( &quot;cmd&quot;, 1 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNor2mask', 'nor2mask_000111'
+             , param = { 'nbit'     : 8
+                       , 'const'    : &quot;0b000111&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nor2mask_000111', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenxnor2mask">
+<h2><a class="toc-backref" href="#id25">DpgenXnor2mask</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenXnor2mask – Programmable Mask Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenXnor2mask', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits conditionnal XNOR mask named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>cmd</strong> : mask control ( 1 bit )</li>
+<li><strong>i0</strong> : input ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>nq</strong> : output ( <tt class="docutils literal">n</tt> bits )</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>const</strong> (mandatory) : Defines the constant (string beginning
+with 0b, 0x or 0o functions of the basis)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">zero</tt>, the mask is NOT applied,
+so the whole operator behaves like an inverter.</li>
+<li>If the <tt class="docutils literal">cmd</tt> signal is set to <tt class="docutils literal">one</tt>, the mask is applied, the
+output is the <em>complemented</em> result of the input value <em>XORed</em>
+with the mask (suplied by <tt class="docutils literal">constVal</tt>).</li>
+<li>The constant <tt class="docutils literal">constVal</tt> is given to the macro-generator call,
+therefore the value cannot be changed afterward : it’s hard wired
+in the operator.</li>
+<li>A common error is to give a real constant for the <tt class="docutils literal">constVal</tt>
+argument. Be aware that it is a character string.</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+nq &lt;= WITH cmd SELECT not(i0)              WHEN '0',
+                      not(i0 xor constVal) WHEN '1';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_xnor2mask ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   &quot;i&quot;, 8 )
+    self.cmd = SignalIn  ( &quot;cmd&quot;, 1 )
+    self.o   = SignalOut (   &quot;o&quot;, 8 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenXnor2mask', 'xnor2mask_0b000111'
+             , param = { 'nbit'     : 8
+                       , 'const'    : &quot;0b000111&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'xnor2mask_0b000111', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenadsb2f">
+<h2><a class="toc-backref" href="#id26">DpgenAdsb2f</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenAdsb2f – Adder/Substractor Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenAdsb2f', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits adder/substractor named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : First operand (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>i1</strong> : Second operand (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : Output operand (ouput, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>add_sub</strong> : Select addition or substraction (input, 1 bit)</li>
+<li><strong>c31</strong> : Sarry out. In unsigned mode, this is the overflow
+(output, 1 bit)</li>
+<li><strong>c30</strong> : Used to compute overflow in signed mode :
+<tt class="docutils literal">overflow = c31 xor c30</tt> (output, 1 bit)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">add_sub</tt> signal is set to <tt class="docutils literal">zero</tt>, an addition is
+performed, otherwise it’s a substraction.</li>
+<li>Operation can be either signed or unsigned. In unsigned mode
+<tt class="docutils literal">c31</tt> is the overflow ; in signed mode you have to compute
+overflow by <em>XORing</em> <tt class="docutils literal">c31</tt> and <tt class="docutils literal">c30</tt></li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_ADSB2F ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( &quot;in1&quot;, 8 )
+    self.in2 = SignalIn  ( &quot;in2&quot;, 8 )
+    self.out = SignalOut (   &quot;o&quot;, 8 )
+    self.as  = SignalIn  (  &quot;as&quot;, 1 )
+    self.c0  = SignalOut (  &quot;c0&quot;, 1 )
+    self.c1  = SignalOut (  &quot;c1&quot;, 1 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenAdsb2f', 'adder_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'adder_8', 'inst'
+                  , map = { 'i0'      : self.in1
+                          , 'i1'      : self.in2
+                          , 'add_sub' : self.as
+                          , 'q'       : self.out
+                          , 'c30'     : self.c0
+                          , 'c31'     : self.c1
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenshift">
+<h2><a class="toc-backref" href="#id27">DpgenShift</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenShift – Shifter Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenShift', modelname
+         , param = { 'nbit'     : n
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits shifter named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>op</strong> : select the kind of shift (input, 2 bits)</li>
+<li><strong>shamt</strong> : the shift amount (input, <tt class="docutils literal">Y</tt> bits)</li>
+<li><strong>i</strong> : value to shift (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>o</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">op[0]</tt> signal is set to <tt class="docutils literal">one</tt>, performs a right shift,
+performs a left shift otherwise.</li>
+<li>If the <tt class="docutils literal">op[1]</tt> signal is set to <tt class="docutils literal">one</tt>, performs an arithmetic
+shift (only meaningful in case of a right shift).</li>
+<li>shamt : specifies the shift amount. The width of this signal
+(<tt class="docutils literal">Y</tt>) is computed from the operator’s width : <tt class="docutils literal">Y = ceil(log2(n))</tt> - 1</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_shifter ( Model ) :
+
+  def Interface ( self ) :
+    self.instop    = SignalIn  (    &quot;instop&quot;, 2 )
+    self.instshamt = SignalIn  ( &quot;instshamt&quot;, 2 )
+    self.insti     = SignalIn  (     &quot;insti&quot;, 4 )
+    self.insto     = SignalOut (     &quot;insto&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenShifter', 'shifter_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'shifter_4', 'inst'
+                  , map = { 'op'    : self.instop
+                          , 'shamt' : self.instshamt
+                          , 'i'     : self.insti
+                          , 'o'     : self.insto
+                          , 'vdd'   : self.vdd
+                          , 'vss'   : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenshrot">
+<h2><a class="toc-backref" href="#id28">DpgenShrot</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenShrot – Shift/Rotation Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenShrot', modelname
+         , param = { 'nbit'     : n
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits shift/rotation operator
+named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>op</strong> : select the kind of shift/rotation (input, 3 bits)</li>
+<li><strong>shamt</strong> : the shift amount (input, <tt class="docutils literal">Y</tt> bits)</li>
+<li><strong>i</strong> : value to shift (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>o</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>If the <tt class="docutils literal">op[0]</tt> signal is set to <tt class="docutils literal">one</tt>, performs a right
+shift/rotation , otherwise left shift/rotation occurs.</li>
+<li>If the <tt class="docutils literal">op[1]</tt> signal is set to <tt class="docutils literal">one</tt>, performs an arithmetic
+shift (only meaningful in case of a right shift).</li>
+<li>If the <tt class="docutils literal">op[2]</tt> signal is set to <tt class="docutils literal">one</tt>, performs a rotation,
+otherwise performs a shift..</li>
+<li><tt class="docutils literal">shamt</tt> specifies the shift amount. The width of this signal
+(<tt class="docutils literal">Y</tt>) is computed from the operator’s width :
+<tt class="docutils literal">Y = ceil(log2(n))</tt> - 1</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_shrot ( Model ) :
+
+  def Interface ( self ) :
+    self.rotop     = SignalIn  (     &quot;rotop&quot;, 3 )
+    self.instshamt = SignalIn  ( &quot;instshamt&quot;, 2 )
+    self.insti     = SignalIn  (     &quot;insti&quot;, 4 )
+    self.insto     = SignalOut (     &quot;insto&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenShrot', 'shrot_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'shrot_4', 'inst'
+                  , map = { 'op'    : self.rotop
+                          , 'shamt' : self.instshamt
+                          , 'i'     : self.insti
+                          , 'o'     : self.insto
+                          , 'vdd'   : self.vdd
+                          , 'vss'   : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgennul">
+<h2><a class="toc-backref" href="#id29">DpgenNul</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenNul – Zero Detector Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenNul', modelname
+         , param = { 'nbit'     : n
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits zero detector named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>i0</strong> : value to check (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : null flag (1 bit)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+q &lt;= '1' WHEN ( i0 = X&quot;00000000&quot; ) ELSE '0';
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_nul ( Model ) :
+
+  def Interface ( self ) :
+    self.i = SignalIn  ( &quot;i&quot;, 4 )
+    self.o = SignalOut ( &quot;o&quot;, 1 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenNul', 'nul_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nul_4', 'inst'
+                   , map = { 'i0'  : self.i
+                           , 'nul' : self.o
+                           , 'vdd' : self.vdd
+                           , 'vss' : self.vss
+                           }
+                   )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenconst">
+<h2><a class="toc-backref" href="#id30">DpgenConst</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenConst – Constant Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenConst', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits constant named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>q</strong> : the constant (output, <tt class="docutils literal">n</tt> bit)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>const</strong> (mandatory) : Defines the constant (string beginning
+with 0b, 0x or 0o functions of the basis)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+q &lt;= constVal
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_const ( Model ) :
+
+  def Interface ( self ) :
+    self.o = SignalOut ( &quot;o&quot;, 32 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenConst', 'const_0x0000ffff'
+             , param = { 'nbit'     : 32
+                       , 'const'    : &quot;0x0000FFFF&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'const_0x0000ffff', 'inst'
+                  , map = { 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenrom2">
+<h2><a class="toc-backref" href="#id31">DpgenRom2</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenRom2 – 2 words ROM Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenRom2', modelname
+         , param = { 'nbit'     : n
+                   , 'val0'     : constVal0
+                   , 'val1'     : constVal1
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits 2 words optimized ROM named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>sel0</strong> : address of the value (input, 1 bit)</li>
+<li><strong>q</strong> : the selected word (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>val0</strong> (mandatory) : Defines the first word</li>
+<li><strong>val1</strong> (mandatory) : Defines the second word</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+q &lt;= WITH sel0 SELECT
+     constVal0  WHEN B&quot;0&quot;,
+     constVal1  WHEN B&quot;1&quot;;
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_rom2 ( Model ) :
+
+  def Interface ( self ) :
+    self.sel0 = SignalIn  (    &quot;sel0&quot;, 1 )
+    self.q    = SignalOut ( &quot;dataout&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenRom2', 'rom2_0b1010_0b1100'
+             , param = { 'nbit'     : 4
+                       , 'val0'     : &quot;0b1010&quot;
+                       , 'val1'     : &quot;0b1100&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rom2_0b1010_0b1100', 'inst'
+                  , map = { 'sel0' : self.sel0
+                          , 'q'    : self.q
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenrom4">
+<h2><a class="toc-backref" href="#id32">DpgenRom4</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenRom4 – 4 words ROM Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenRom4', modelname
+         , param = { 'nbit'     : n
+                   , 'val0'     : constVal0
+                   , 'val1'     : constVal1
+                   , 'val2'     : constVal2
+                   , 'val3'     : constVal3
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a <tt class="docutils literal">n</tt> bits 4 words optimized ROM named
+<tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>sel1</strong> : upper bit of the address of the value (input, 1 bit)</li>
+<li><strong>sel0</strong> : lower bit of the address of the value (input, 1 bit)</li>
+<li><strong>q</strong> : the selected word (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>val0</strong> (mandatory) : Defines the first word</li>
+<li><strong>val1</strong> (mandatory) : Defines the second word</li>
+<li><strong>val2</strong> (mandatory) : Defines the third word</li>
+<li><strong>val3</strong> (mandatory) : Defines the fourth word</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>Behavior</strong> :</p>
+<pre class="literal-block">
+q &lt;= WITH sel1 &amp; sel0 SELECT constVal0  WHEN B&quot;00&quot;,
+                             constVal1  WHEN B&quot;01&quot;,
+                             constVal2  WHEN B&quot;10&quot;,
+                             constVal3  WHEN B&quot;11&quot;;
+</pre>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_rom4 ( Model ) :
+
+  def Interface ( self ) :
+    self.sel0 = SignalIn  (    &quot;sel0&quot;, 1 )
+    self.sel1 = SignalIn  (    &quot;sel1&quot;, 1 )
+    self.q    = SignalOut ( &quot;dataout&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenRom4', 'rom4_0b1010_0b1100_0b1111_0b0001'
+             , param = { 'nbit'     : 4
+                       , 'val0'     : &quot;0b1010&quot;
+                       , 'val1'     : &quot;0b1100&quot;
+                       , 'val2'     : &quot;0b1111&quot;
+                       , 'val3'     : &quot;0b0001&quot;
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rom4_0b1010_0b1100_0b1111_0b0001', 'inst'
+                  , map = { 'sel0' : self.sel0
+                          , 'sel1' : self.sel1
+                          , 'q'    : self.q
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenram">
+<h2><a class="toc-backref" href="#id33">DpgenRam</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenRam – RAM Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenRam', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a RAM of <tt class="docutils literal">regNumber</tt> words of <tt class="docutils literal">n</tt>
+bits named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>ck</strong> : clock signal (input, 1 bit)</li>
+<li><strong>w</strong> : write requested (input, 1 bit)</li>
+<li><strong>selram</strong> : select the write bus (input, 1 bit)</li>
+<li><strong>ad</strong> : the address (input, <tt class="docutils literal">Y</tt> bits)</li>
+<li><strong>datain</strong> : write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>dataout</strong> : read bus (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>nword</strong> (mandatory) : Defines the size of the words</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_ram ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn  (      &quot;ck&quot;,  1 )
+    self.w       = SignalIn  (       &quot;w&quot;,  1 )
+    self.selram  = SignalIn  (  &quot;selram&quot;,  1 )
+    self.ad      = SignalIn  (      &quot;ad&quot;,  5 )
+    self.datain  = SignalIn  (  &quot;datain&quot;, 32 )
+    self.dataout = TriState ( &quot;dataout&quot;, 32 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenRam', 'ram_32_32'
+             , param = { 'nbit'     : 32
+                       , 'nword'    : 32
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'ram_32_32', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'w'       : self.w
+                          , 'selram'  : self.selram
+                          , 'ad'      : self.ad
+                          , 'datain'  : self.datain
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenrf1">
+<h2><a class="toc-backref" href="#id34">DpgenRf1</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenRf1, DpgenRf1r0 – Register File Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenRf1', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a register file of <tt class="docutils literal">regNumber</tt> words of
+<tt class="docutils literal">n</tt> bits without decoder named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>ckok</strong> : clock signal (input, 1 bit)</li>
+<li><strong>sel</strong> : select the write bus (input, 1 bit)</li>
+<li><strong>selr</strong> : the decoded read address (input, <tt class="docutils literal">regNumber</tt> bits)</li>
+<li><strong>selw</strong> : the decoded write address (input, <tt class="docutils literal">regNumber</tt> bits)</li>
+<li><strong>datain0</strong> : first write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>datain1</strong> : second write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>dataout</strong> : read bus (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the words (even,
+between 2 and 64)</li>
+<li><strong>nword</strong> (mandatory) : Defines the number of the words (even,
+between 4 and 32)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>datain0 and datain1 are the two write busses. Only one is used to
+actually write the register word, it is selected by the sel
+signal.</li>
+<li>When sel is set to zero datain0 is used to write the register
+word, otherwise it will be datain1</li>
+<li>selr, selw : this register file have no decoder, so selr have a
+bus width equal to <tt class="docutils literal">regNumber</tt>. One bit for each word</li>
+<li>The DpgenRf1r0 variant differs from the DpgenRf1 in that the
+register of address zero is stuck to zero. You can write into it,
+it will not change the value. When read, it will always return
+zero</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_rf1 ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn    (       &quot;ck&quot;,  1 )
+    self.sel     = SignalIn    (      &quot;sel&quot;,  1 )
+    self.selr    = SignalIn    (     &quot;selr&quot;, 16 )
+    self.selw    = SignalIn    (     &quot;selw&quot;, 16 )
+    self.datain0 = SignalIn    (  &quot;datain0&quot;,  4 )
+    self.datain1 = SignalIn    (  &quot;datain1&quot;,  4 )
+    self.dataout = SignalOut   (  &quot;dataout&quot;,  4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenRf1', 'rf1_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rf1_4_16', 'inst'
+                  , map =  { 'ck'      : self.ck
+                           , 'sel'     : self.sel
+                           , 'selr'    : self.selr
+                           , 'selw'    : self.selw
+                           , 'datain0' : self.datain0
+                           , 'datain1' : self.datain1
+                           , 'dataout' : self.dataout
+                           , 'vdd'     : self.vdd
+                           , 'vss'     : self.vss
+                           }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenrf1d">
+<h2><a class="toc-backref" href="#id35">DpgenRf1d</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenRf1d, DpgenRf1dr0 – Register File with Decoder
+Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenRf1d', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a register file of <tt class="docutils literal">regNumber</tt> words of
+<tt class="docutils literal">n</tt> bits with decoder named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>ck</strong> : clock signal (input, 1 bit)</li>
+<li><strong>sel</strong> : select the write bus (input, 1 bit)</li>
+<li><strong>wen</strong> : write enable (input, 1 bit)</li>
+<li><strong>ren</strong> : read enable (input, 1 bit)</li>
+<li><strong>adr</strong> : the read address (input, <tt class="docutils literal">Y</tt> bits)</li>
+<li><strong>adw</strong> : the write address (input, <tt class="docutils literal">Y</tt> bits)</li>
+<li><strong>datain0</strong> : first write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>datain1</strong> : second write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>dataout</strong> : read bus (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the words (even,
+between 2 and 64)</li>
+<li><strong>nword</strong> (mandatory) : Defines the number of the words (even,
+between 6 and 32)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>datain0 and datain1 are the two write busses. Only one is used to
+actually write the register word, it is selected by the sel
+signal.</li>
+<li>When sel is set to zero datain0 is used to write the register
+word, otherwise it will be datain1</li>
+<li>adr, adw : the width (Y) of those signals is computed from
+regNumber : <tt class="docutils literal">Y = log2(regNumber)</tt></li>
+<li>wen and ren : write enable and read enable, allows reading and
+writing when sets to <tt class="docutils literal">one</tt></li>
+<li>The DpgenRf1dr0 variant differs from the DpgenRf1d in that the
+register of address zero is stuck to zero. You can write into it,
+it will not change the value. When read, it will always return
+zero</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_rf1d ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn  (       &quot;ck&quot;, 1 )
+    self.sel     = SignalIn  (      &quot;sel&quot;, 1 )
+    self.wen     = SignalIn  (      &quot;wen&quot;, 1 )
+    self.ren     = SignalIn  (      &quot;ren&quot;, 1 )
+    self.adr     = SignalIn  (      &quot;adr&quot;, 4 )
+    self.adw     = SignalIn  (      &quot;adw&quot;, 4 )
+    self.datain0 = SignalIn  (  &quot;datain0&quot;, 4 )
+    self.datain1 = SignalIn  (  &quot;datain1&quot;, 4 )
+    self.dataout = SignalOut (  &quot;dataout&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenRf1d', 'rf1d_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rf1d_4_16', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'sel'     : self.sel
+                          , 'wen'     : self.wen
+                          , 'ren'     : self.ren
+                          , 'adr'     : self.adr
+                          , 'adw'     : self.adw
+                          , 'datain0' : self.datain0
+                          , 'datain1' : self.datain1
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgenfifo">
+<h2><a class="toc-backref" href="#id36">DpgenFifo</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenFifo – Fifo Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenFifo', modelname
+         , param = { 'nbit'       : n
+                   , 'nword'      : regNumber
+                   , 'physical'   : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a FIFO of <tt class="docutils literal">regNumber</tt> words of <tt class="docutils literal">n</tt>
+bits named <tt class="docutils literal">modelname</tt>.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>ck</strong> : clock signal (input, 1 bit)</li>
+<li><strong>reset</strong> : reset signal (input, 1 bit)</li>
+<li><strong>r</strong> : read requested (input, 1 bit)</li>
+<li><strong>w</strong> : write requested (input, 1 bit)</li>
+<li><strong>rok</strong> : read acknowledge (output, 1 bit)</li>
+<li><strong>wok</strong> : write acknowledge (output, 1 bit)</li>
+<li><strong>sel</strong> : select the write bus (input, 1 bit)</li>
+<li><strong>datain0</strong> : first write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>datain1</strong> : second write bus (input, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>dataout</strong> : read bus (output, <tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the words (even,
+between 2 and 64)</li>
+<li><strong>nword</strong> (mandatory) : Defines the number of words (even, between
+4 and 32)</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>datain0 and datain1 : the two write busses. Only one is used to
+actually write the FIFO, it is selected by the sel signal.</li>
+<li>sel : when set to <tt class="docutils literal">zero</tt> the datain0 is used to write the
+register word, otherwise it will be datain1.</li>
+<li>r, rok : set r when a word is requested, rok tells that a word has
+effectively been popped (rok == not empty).</li>
+<li>w, wok : set w when a word is pushed, wok tells that the word has
+effectively been pushed (wok == not full).</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_fifo ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn    (       &quot;ck&quot;, 1 )
+    self.reset   = SignalIn    (    &quot;reset&quot;, 1 )
+    self.r       = SignalIn    (        &quot;r&quot;, 1 )
+    self.w       = SignalIn    (        &quot;w&quot;, 1 )
+    self.rok     = SignalInOut (      &quot;rok&quot;, 1 )
+    self.wok     = SignalInOut (      &quot;wok&quot;, 1 )
+    self.sel     = SignalIn    (      &quot;sel&quot;, 1 )
+    self.datain0 = SignalIn    (  &quot;datain0&quot;, 4 )
+    self.datain1 = SignalIn    (  &quot;datain1&quot;, 4 )
+    self.dataout = SignalOut   (  &quot;dataout&quot;, 4 )
+
+    self.vdd   = VddIn ( &quot;vdd&quot; )
+    self.vss   = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenFifo', 'fifo_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'fifo_4_16', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'reset'   : self.reset
+                          , 'r'       : self.r
+                          , 'w'       : self.w
+                          , 'rok'     : self.rok
+                          , 'wok'     : self.wok
+                          , 'sel'     : self.sel
+                          , 'datain0' : self.datain0
+                          , 'datain1' : self.datain1
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgendff">
+<h2><a class="toc-backref" href="#id37">DpgenDff</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenDff – Dynamic Flip-Flop Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenDff', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a n bits dynamic flip-flop named
+<tt class="docutils literal">modelname</tt>. The two latches of this flip-flop are dynamic, i.e.
+the data is stored in a capacitor.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>wen</strong> : write enable (1 bit)</li>
+<li><strong>ck</strong> : clock signal (1 bit)</li>
+<li><strong>i0</strong> : data input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>When wen is set to <tt class="docutils literal">one</tt>, enables the writing of the flip-flop</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_dff ( Model ) :
+
+  def Interface ( self ) :
+    self.ck  = SignalIn  (  &quot;ck&quot;, 1 )
+    self.wen = SignalIn  ( &quot;wen&quot;, 1 )
+    self.i   = SignalIn  (   &quot;i&quot;, 4 )
+    self.o   = SignalOut (   &quot;o&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenDff', 'dff_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'dff_4', 'inst'
+                  , map = { &quot;wen&quot; : self.wen
+                          , &quot;ck&quot;  : self.ck
+                          , &quot;i0&quot;  : self.i
+                          ,  &quot;q&quot;  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgendfft">
+<h2><a class="toc-backref" href="#id38">DpgenDfft</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenDfft – Dynamic Flip-Flop with Scan-Path
+Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenDfft', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a n bits dynamic flip-flop with scan-path
+named <tt class="docutils literal">modelname</tt>. The two latches of this flip-flop are dynamic,
+i.e. the data is stored in a capacitor.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>scan</strong> : scan-path mode (input, 1 bit)</li>
+<li><strong>scin</strong> : scan path in (input, 1 bit)</li>
+<li><strong>wen</strong> : write enable (1 bit)</li>
+<li><strong>ck</strong> : clock signal (1 bit)</li>
+<li><strong>i0</strong> : data input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>When scan is set to <tt class="docutils literal">one</tt>, it enables the scan-path mode. Note
+that in scan-path mode, the wen signal is not effective</li>
+<li>scin is the input of the scan-path. This terminal is different
+from <tt class="docutils literal">i0[0]</tt>. The scout is q[N-1] (in the following example this
+is <tt class="docutils literal">q[31]</tt>)</li>
+<li>When wen is set to <tt class="docutils literal">one</tt> enables the writing of the flip-flop</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_dfft ( Model ) :
+
+  def Interface ( self ) :
+    self.scan = SignalIn  ( &quot;scin&quot;, 1 )
+    self.scin = SignalIn  ( &quot;scan&quot;, 1 )
+    self.ck   = SignalIn  (   &quot;ck&quot;, 1 )
+    self.wen  = SignalIn  (  &quot;wen&quot;, 1 )
+    self.i    = SignalIn  (    &quot;i&quot;, 4 )
+    self.o    = SignalOut (    &quot;o&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenDfft', 'dfft_4'
+             , param = { 'nbit' : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'dfft_4', 'inst'
+                  , map = { &quot;wen&quot;  : self.wen
+                          , &quot;ck&quot;   : self.ck
+                          , &quot;scan&quot; : self.scan
+                          , &quot;scin&quot; : self.scin
+                          , &quot;i0&quot;   : self.i
+                          ,  &quot;q&quot;   : self.o
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgensff">
+<h2><a class="toc-backref" href="#id39">DpgenSff</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenSff – Static Flip-Flop Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenSff', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a n bits static flip-flop named
+<tt class="docutils literal">modelname</tt>. The two latches of this flip-flop are static, i.e.
+each one is made of two interters looped together.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>wen</strong> : write enable (1 bit)</li>
+<li><strong>ck</strong> : clock signal (1 bit)</li>
+<li><strong>i0</strong> : data input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>When wen is set to <tt class="docutils literal">one</tt>, enables the writing of the flip-flop</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_sff ( Model ) :
+
+  def Interface ( self ) :
+    self.ck  = SignalIn  (  &quot;ck&quot;, 1 )
+    self.wen = SignalIn  ( &quot;wen&quot;, 1 )
+    self.i   = SignalIn  (   &quot;i&quot;, 4 )
+    self.o   = SignalOut (   &quot;o&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenSff', 'sff_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'sff_4', 'inst'
+                  , map = { &quot;wen&quot; : self.wen
+                          , &quot;ck&quot;  : self.ck
+                          , &quot;i0&quot;  : self.i
+                          ,  &quot;q&quot;  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+<div class="section" id="dpgensfft">
+<h2><a class="toc-backref" href="#id40">DpgenSfft</a></h2>
+<ul>
+<li><p class="first"><strong>Name</strong> : DpgenSfft – Static Flip-Flop with Scan-Path
+Macro-Generator</p>
+</li>
+<li><p class="first"><strong>Synopsys</strong> :</p>
+<pre class="literal-block">
+Generate ( 'DpgenSfft', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+</pre>
+</li>
+<li><p class="first"><strong>Description</strong> : Generates a n bits static flip-flop with scan-path
+named <tt class="docutils literal">modelname</tt>. The two latches of this flip-flop are static
+i.e. each one is made of two interters looped togethers.</p>
+</li>
+<li><p class="first"><strong>Terminal Names</strong> :</p>
+<ul class="simple">
+<li><strong>scan</strong> : scan-path mode (input, 1 bit)</li>
+<li><strong>scin</strong> : scan path in (input, 1 bit)</li>
+<li><strong>wen</strong> : write enable (1 bit)</li>
+<li><strong>ck</strong> : clock signal (1 bit)</li>
+<li><strong>i0</strong> : data input (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>q</strong> : output (<tt class="docutils literal">n</tt> bits)</li>
+<li><strong>vdd</strong> : power</li>
+<li><strong>vss</strong> : ground</li>
+</ul>
+</li>
+<li><p class="first"><strong>Parameters</strong> : Parameters are given in the a map <tt class="docutils literal">param</tt>.</p>
+<ul class="simple">
+<li><strong>nbit</strong> (mandatory) : Defines the size of the generator</li>
+<li><strong>physical</strong> (optional, default value : False) : In order to
+generate a layout</li>
+<li><strong>behavioral</strong> (optional, default value : False) : In order to
+generate a behavior</li>
+</ul>
+</li>
+<li><p class="first"><strong>How it works</strong> :</p>
+<ul class="simple">
+<li>When scan is set to <tt class="docutils literal">one</tt>, it enables the scan-path mode. Note
+that in scan-path mode, the wen signal is not effective</li>
+<li>scin : the input of the scan-path. This terminal is different from
+<tt class="docutils literal">i0[0]</tt>. The scout is <tt class="docutils literal">q[N</tt>-<tt class="docutils literal">1]</tt> (in the following example
+this is <tt class="docutils literal">q[3]</tt>)</li>
+<li>When wen is set to <tt class="docutils literal">one</tt>, it enables the writing of the
+flip-flop</li>
+</ul>
+</li>
+<li><p class="first"><strong>Example</strong> :</p>
+<pre class="literal-block">
+from stratus import *
+
+class inst_sfft ( Model ) :
+
+  def Interface ( self ) :
+    self.scan = SignalIn  ( &quot;scin&quot;, 1 )
+    self.scin = SignalIn  ( &quot;scan&quot;, 1 )
+    self.ck   = SignalIn  (   &quot;ck&quot;, 1 )
+    self.wen  = SignalIn  (  &quot;wen&quot;, 1 )
+    self.i    = SignalIn  (   &quot;in&quot;, 4 )
+    self.o    = SignalOut (  &quot;out&quot;, 4 )
+
+    self.vdd = VddIn ( &quot;vdd&quot; )
+    self.vss = VssIn ( &quot;vss&quot; )
+
+  def Netlist ( self ) :
+    Generate ( 'DpgenSfft', 'sfft_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'sfft_4', 'inst'
+                  , map = { &quot;wen&quot;  : self.wen
+                          , &quot;ck&quot;   : self.ck
+                          , &quot;scan&quot; : self.scan
+                          , &quot;scin&quot; : self.scin
+                          , &quot;i0&quot;   : self.i
+                          ,  &quot;q&quot;   : self.o
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</pre>
+</li>
+</ul>
+</div>
+
+    </div>
+        <!-- /Content --> 
+
+        <!-- Footer -->
+        <div class="footer gradient-2">
+            <div class="container footer-container ">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Social</div>
+                        <ul class="list-unstyled">
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-2">
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Links</div>
+                        <ul class="list-unstyled">
+                            <li><a href="https://coriolis.lip6.fr/" target="_blank">Alliance/Coriolis</a></li>
+                            <li><a href="https://www-soc.lip6.fr/" target="_blank">CIAN Team Website</a></li>
+                            <li><a href="https://f-si.org" target="_blank">Free Silicon Foundation</a></li>
+                        </ul>
+                    </div> 
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
+                        <p class="pull-right text-right">
+                            <small><em>Proudly powered by <a href="http://docs.getpelican.com/" target="_blank">pelican</a></em></small><br/>
+			    <small><em><span class="sc">NEST</span> theme by <a href="https://github.com/molivier" target="_blank">molivier</a></em></small><br/>
+                            <small>Copyright © 2020-2020 Sorbonne Universite</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Footer -->
+    </body>
+</html>

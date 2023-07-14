@@ -18,7 +18,9 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/RoutingPad.h"
@@ -53,18 +55,37 @@ namespace {
 
   void  NegociateOverlapCost ( const TrackElement* segment, TrackCost& cost )
   {
-    cdebug_log(9000,0) << "Deter| NegociateOverlapCost() " << segment << endl;
+    cdebug_log(159,1) << "NegociateOverlapCost() " << segment << endl;
     Interval intersect = segment->getCanonicalInterval();
 
-    if (not intersect.intersect(cost.getInterval())) return;
-
-    if (segment->isBlockage() or segment->isFixed()) {
-      cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
-      cost.setInfinite   ();
-      cost.setOverlap    ();
-      cost.setHardOverlap();
-      cost.setBlockage   ();
+    if (not intersect.intersect(cost.getInterval())) {
+      cdebug_tabw(159,-1);
       return;
+    }
+
+    if (segment->getNet() != cost.getNet()) {
+      cdebug_log(159,0) << segment->getNet() << " vs. " << cost.getNet() << endl;
+      if (   segment->isBlockage()
+         or (segment->isFixed()
+            and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
+        cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
+        cost.setInfinite   ();
+        cost.setOverlap    ();
+        cost.setHardOverlap();
+        cost.setBlockage   ();
+        cdebug_tabw(159,-1);
+        return;
+      }
+
+      if (segment->isNonPrefOnVSmall()) {
+        cdebug_log(159,0) << "Infinite cost from (NonPref on VSmall): " << segment << endl;
+        cost.setInfinite   ();
+        cost.setOverlap    ();
+        cost.setHardOverlap();
+        cost.setBlockage   ();
+        cdebug_tabw(159,-1);
+        return;
+      }
     }
 
     if (cost.getInterval().getVMax() > intersect.getVMax()) cost.setLeftOverlap();
@@ -73,19 +94,52 @@ namespace {
     if (not intersect.contains(cost.getInterval()))
       intersect.intersection( cost.getInterval() );
     else {
-      cost.setLonguestOverlap( intersect.getSize() );
+      DbU::Unit beginOverlap = cost.getInterval().getVMin() - intersect.getVMin();
+      DbU::Unit   endOverlap = intersect.getVMax() - cost.getInterval().getVMax();
+
+      cost.setLonguestOverlap( std::min( beginOverlap, endOverlap ) );
       cost.setGlobalEnclosed();
     }
 
     DataNegociate* data = segment->getDataNegociate();
-    if (not data) return;
+    if (not data) {
+      cdebug_tabw(159,-1);
+      return;
+    }
+
+    TrackElement*  refSegment = cost.getRefElement();
+    DataNegociate* refData    = refSegment->getDataNegociate();
+    AutoSegment*   refBase    = refSegment->base();
+    AutoSegment*      base    =    segment->base();
+
+    if (base and refBase and refData) {
+      if (   (   base->getRpDistance() == 0)
+         and (refBase->getRpDistance() >  0)
+         and (refData->getState()      >  DataNegociate::RipupPerpandiculars)
+         and (   data->getState()      == DataNegociate::RipupPerpandiculars)
+         and (   data->getRipupCount() >  4)) {
+        cost.setAtRipupLimit();
+      }
+
+      if (   refSegment->isNonPref()
+         and segment->isUnbreakable()
+         and (data->getState()      >= DataNegociate::Minimize)
+         and (data->getStateCount() >= 2) ) {
+        cost.setAtRipupLimit();
+      }
+    }
 
     cost.mergeRipupCount( data->getRipupCount() );
-    if ( segment->isLocal() ) {
+    if (segment->isLocal()) {
       cost.mergeDataState( data->getState() );
       if (data->getState() >=  DataNegociate::LocalVsGlobal) {
         cdebug_log(159,0) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
+        cost.setAtRipupLimit();
       }
+    }
+
+    if (data->getState() == DataNegociate::MaximumSlack) {
+      cost.setAtRipupLimit();
     }
 
     if (segment->isGlobal()) {
@@ -95,6 +149,7 @@ namespace {
         cost.setInfinite   ();
         cost.setOverlap    ();
         cost.setHardOverlap();
+        cdebug_tabw(159,-1);
         return;
       }
     }
@@ -110,6 +165,28 @@ namespace {
 
     cdebug_log(159,0) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
     cost.incDelta( intersect.getSize() );
+
+    // if (segment->base()->getId() == 70433) {
+    //   cdebug_log(159,0) << "| G:" << cost.isForGlobal()
+    //                     << " L:" << segment->isLocal()
+    //                     << " rpD:" << segment->base()->getRpDistance()
+    //                     << " state:" << data->getState()
+    //                     << " (Dogleg:" << DataNegociate::Dogleg
+    //                     << ") ripup:" << data->getRipupCount()
+    //                     << endl;
+    // }
+
+    if (   cost.isForGlobal()
+       and segment->isLocal()
+       and (segment->base()->getRpDistance() <  2)
+       and (data->getState()      >= DataNegociate::Dogleg)
+     //and (data->getRipupCount() >  Session::getConfiguration()->getRipupLimit(Configuration::LocalRipupLimit) - 2)
+       ) {
+      cost.setInfinite();
+      cdebug_log(159,0) << "Infinite cost from (RP access)" << segment << endl;
+    }
+      
+    cdebug_tabw(159,-1);
   }
 
 
@@ -122,17 +199,19 @@ namespace {
     for( Net* net : nw->getCell()->getNets() ) {
       if (net->getType() == Net::Type::POWER ) continue;
       if (net->getType() == Net::Type::GROUND) continue;
-      if (net->getType() == Net::Type::CLOCK ) continue;
+    //if (net->getType() == Net::Type::CLOCK ) continue;
       if (af->isBLOCKAGE(net->getName())) continue;
 
       for( RoutingPad* rp : net->getRoutingPads() ) {
-        size_t depth = rg->getLayerDepth(rp->getLayer());
-        if (depth == 0) {
-          TrackMarker::create( rp, 1 );
-        //if (isVH) TrackMarker::create( rp, 2 );
+        size_t depth   = rg->getLayerDepth(rp->getLayer());
+        size_t rlDepth = depth - rg->getFirstRoutingLayer();
+        if (rlDepth == 0) {
+          TrackMarker::create( rp, depth+1 );
+        //if (isVH) TrackMarker::create( rp, depth+2 );
         }
-        if (depth == 1) {
-          TrackMarker::create( rp, 1 );
+        if (rlDepth == 1) {
+          if (depth+1 < rg->getDepth())
+            TrackMarker::create( rp, depth+1 );
         }
       }
     }
@@ -183,11 +262,13 @@ namespace Katana {
   using std::left;
   using std::right;
   using std::setprecision;
+  using Hurricane::Breakpoint;
   using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::DebugSession;
+  using Hurricane::UpdateSession;
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
@@ -208,7 +289,7 @@ namespace Katana {
     , _segments    ()
     , _eventQueue  ()
     , _eventHistory()
-    , _eventLoop   (10,50)
+    , _eventLoop   (10,70)
   { }
 
 
@@ -235,7 +316,7 @@ namespace Katana {
   {
     _gcells = gcells;
 
-    if (not Session::getKatanaEngine()->isChannelMode()) loadRoutingPads( this );
+    if (not Session::getKatanaEngine()->isChannelStyle()) loadRoutingPads( this );
     Session::revalidate();
 
     for ( auto element : Session::getKatanaEngine()->_getAutoSegmentLut() ) {
@@ -263,45 +344,73 @@ namespace Katana {
 
   TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, Flags flags )
   {
+    DebugSession::open( autoSegment->getNet(), 159, 160 );
+
     cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
+    RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
+    Track*        refTrack  = plane->getTrackByPosition( autoSegment->getAxis() );
+    Track*        insTrack  = NULL;
+    size_t        trackSpan = 1;
 
   // Special case: fixed AutoSegments must not interfere with blockages.
   // Ugly: uses of getExtensionCap().
     if (autoSegment->isFixed()) {
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
-      Track*        track = plane->getTrackByPosition( autoSegment->getAxis() );
+      if (Session::isChannelStyle() and autoSegment->isReduced()) {
+        cdebug_log(159,0) << "* Fixed segment is reduced, ignore " << autoSegment << endl;
+        cdebug_tabw(159,-1);
+        return NULL;
+      }
+
       size_t        begin;
       size_t        end;
       Interval      fixedSpan;
       Interval      blockageSpan;
 
-      autoSegment->getCanonical( fixedSpan );
-      fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
-
-      track->getOverlapBounds( fixedSpan, begin, end );
-      for ( ; (begin < end) ; begin++ ) {
-
-        TrackElement* other = track->getSegment(begin);
-        cdebug_log(159,0) << "| overlap: " << other << endl;
-
-        if (not other->isBlockage()) continue;
-
-        other->getCanonical( blockageSpan );
-        blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
-
-        cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
-
-        if (not fixedSpan.intersect(blockageSpan)) continue;
-
-      // Overlap between fixed & blockage.
-        cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
-        Session::destroyRequest( autoSegment );
-
-        cerr << Warning( "Overlap between fixed %s and blockage at %s."
-                       , getString(autoSegment).c_str()
-                       , getString(blockageSpan).c_str() ) << endl;
+      if (Session::isChannelStyle() and autoSegment->isNonPref()) {
+        cdebug_log(159,0) << "Fixed in non-preferred direction, do not attempt to set on track." << endl;
         cdebug_tabw(159,-1);
+        DebugSession::close();
         return NULL;
+      }
+      if (not refTrack) {
+        string message = "NULL refTrack for " + getString(autoSegment) + " brace for crashing!";
+        Breakpoint::stop( 0, message );
+      }
+      
+      if (refTrack->getAxis() != autoSegment->getAxis()) { 
+        trackSpan = 2;
+        refTrack  = plane->getTrackByPosition( autoSegment->getAxis(), Constant::Inferior );
+        insTrack  = refTrack;
+      }
+
+      Track* track = refTrack;
+      for ( size_t ispan=0 ; track and (ispan < trackSpan) ; ++ispan, track=track->getNextTrack() ) {
+        autoSegment->getCanonical( fixedSpan );
+        fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
+
+        track->getOverlapBounds( fixedSpan, begin, end );
+        for ( ; (begin < end) ; begin++ ) {
+          TrackElement* other = track->getSegment(begin);
+          cdebug_log(159,0) << "| overlap: " << other << endl;
+
+          if (not other->isBlockage()) continue;
+
+          other->getCanonical( blockageSpan );
+          blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
+
+          cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
+          if (not fixedSpan.intersect(blockageSpan)) continue;
+
+        // Overlap between fixed & blockage.
+          cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
+        //Session::destroyRequest( autoSegment );
+          cerr << Warning( "Overlap between fixed %s and blockage at %s."
+                         , getString(autoSegment).c_str()
+                         , getString(blockageSpan).c_str() ) << endl;
+          cdebug_tabw(159,-1);
+          DebugSession::close();
+          return NULL;
+        }
       }
     }
 
@@ -309,7 +418,7 @@ namespace Katana {
     autoSegment = autoSegment->getCanonical( span );
 
     bool           created;
-    TrackElement*  trackSegment  = TrackSegment::create( autoSegment, NULL, created );
+    TrackElement*  trackSegment = TrackSegment::create( autoSegment, insTrack, created );
 
     if (not (flags & Flags::LoadingStage))
       cdebug_log(159,0) << "* lookup: " << autoSegment << endl;
@@ -317,37 +426,46 @@ namespace Katana {
     if (created) {
       cdebug_log(159,0) << "* " << trackSegment << endl;
 
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
-      Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
-      Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
+      if (trackSegment->isNonPref()) {
+        _segments.push_back( trackSegment );
+        cdebug_log(159,0) << "Non-preferred direction, do not attempt to set on track." << endl;
+        cdebug_tabw(159,-1);
+        DebugSession::close();
+        return trackSegment;
+      }
 
-      Interval      constraints;
+      Interval uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
+      Interval constraints;
       autoSegment->getConstraints( constraints );
-      uside.intersection( constraints );
-
       cdebug_log(159,0) << "* Constraints " << constraints << endl;
-      cdebug_log(159,0) << "* Nearest " << track << endl;
 
-      if (not track)
-        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s."
+      uside.intersection( constraints );
+      cdebug_log(159,0) << "* Constraints+U-side " << constraints << endl;
+      cdebug_log(159,0) << "* Nearest " << refTrack << endl;
+
+      if (not refTrack)
+        throw Error( "NegociateWindow::createTrackSegment(): No track near axis of %s."
                    , getString(autoSegment).c_str() );
 
-      if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
-      if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
-
-      if (not track)
-        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s (after adjust)." 
+      if (not insTrack) {
+        insTrack = refTrack;
+        if (refTrack->getAxis() > uside.getVMax()) insTrack = refTrack->getPreviousTrack();
+        if (refTrack->getAxis() < uside.getVMin()) insTrack = refTrack->getNextTrack();
+      }
+      if (not insTrack)
+        throw Error( "NegociateWindow::createTrackSegment(): No track near axis of %s (after adjust)." 
                    , getString(autoSegment).c_str() );
 
       cdebug_log(159,0) << "* GCell U-side " << uside << endl;
       cdebug_log(159,0) << "* " << plane << endl;
-      cdebug_log(159,0) << "* " << track << endl;
+      cdebug_log(159,0) << "* " << insTrack << endl;
 
-      trackSegment->setAxis( track->getAxis(), AutoSegment::SegAxisSet );
+      if (trackSpan == 1)
+        trackSegment->setAxis( insTrack->getAxis(), AutoSegment::SegAxisSet );
       trackSegment->invalidate();
 
-      if (trackSegment->isFixed()) {
-        Session::addInsertEvent( trackSegment, track );
+      if (trackSegment->isFixed() and not trackSegment->getTrack()) {
+        Session::addInsertEvent( trackSegment, insTrack, refTrack->getAxis() );
       } else {
         _segments.push_back( trackSegment );
       }
@@ -358,6 +476,7 @@ namespace Katana {
     }
 
     cdebug_tabw(159,-1);
+    DebugSession::close();
 
     return trackSegment;
   }
@@ -365,6 +484,7 @@ namespace Katana {
 
   double  NegociateWindow::computeWirelength ()
   {
+    bool isSymbolic = getKatanaEngine()->getConfiguration()->getRoutingGauge()->isSymbolic();
     set<TrackElement*> accounteds;
     double totalWL = 0.0;
 
@@ -385,7 +505,10 @@ namespace Katana {
             if (accounteds.find(trackSegment) != accounteds.end()) continue;
 
             accounteds.insert( trackSegment );
-            gcellWL += DbU::getLambda( trackSegment->getLength() );
+            if (isSymbolic)
+              gcellWL += DbU::getLambda( trackSegment->getLength() );
+            else
+              gcellWL += DbU::toPhysical( trackSegment->getLength(), DbU::UnitPower::Nano );
           }
         }
       }
@@ -394,6 +517,7 @@ namespace Katana {
       totalWL += gcellWL;
     }
 
+    if (not isSymbolic) totalWL /= 1000.0;
     return totalWL;
   }
 
@@ -434,8 +558,7 @@ namespace Katana {
   void  NegociateWindow::_pack ( size_t& count, bool last )
   {
     uint64_t limit     = _katana->getEventsLimit();
-    uint32_t pushStage = RoutingEvent::getStage();
-    RoutingEvent::setStage( RoutingEvent::Pack );
+    _katana->setStage( StagePack );
 
     RoutingEventQueue  packQueue;
   //for ( size_t i = (count > 600) ? count-600 : 0
@@ -478,8 +601,6 @@ namespace Katana {
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
   // Count will be wrong!
-
-    RoutingEvent::setStage( pushStage );
   }
 
 
@@ -502,7 +623,7 @@ namespace Katana {
     if (cdebug.enabled(9000)) _eventQueue.dump();
 
     size_t count = 0;
-    RoutingEvent::setStage( RoutingEvent::Negociate );
+    _katana->setStage( StageNegociate );
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
@@ -512,7 +633,7 @@ namespace Katana {
           ofprofile << setw(10) << right << count << " ";
           for ( size_t i=0 ; i<6 ; ++i ) {
             if (i == depth)
-              ofprofile << setw(10) << right << setprecision(2) << event->getPriority  () << " ";
+              ofprofile << setw(10) << right << setprecision(2) << event->getPriority() << " ";
             else
               ofprofile << setw(10) << right << setprecision(2) << 0.0 << " ";
           }
@@ -531,66 +652,78 @@ namespace Katana {
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getEventLevel() << ":" << event->getPriority()
+               << ":" << DbU::getValueString(event->getSegment()->getLength()) << "> "
                << event->getSegment()
                << endl;
         cmess2.flush();
       }
 
+    //if (RoutingEvent::getProcesseds() == 14473)
+    //  Breakpoint::stop( 0, "Before processing RoutingEvent 14473." );
+
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
+
+      // if (event->getSegment()->getNet()->getId() == 239546) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing an event from Net id:239546\n" << event;
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );
     //} 
 
+      // if (RoutingEvent::getProcesseds() == 65092) {
+      //   UpdateSession::close();
+      //   Breakpoint::stop( 0, "Overlap has happened" );
+      //   UpdateSession::open();
+      // }
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
   //_pack( count, true );
-    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
+      _negociateRepair();
 
-  //if (not _katana->isChannelMode() ) {
-      cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
-      cmess1 << "     o  Repair Stage." << endl;
-
-      cdebug_log(159,0) << "Loadind Repair queue." << endl;
-      RoutingEvent::setStage( RoutingEvent::Repair );
-      for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
-        RoutingEvent* event = _eventHistory.getNth(i);
-
-        if (not event->isCloned() and event->isUnimplemented()) {
-          event->reschedule( _eventQueue, 0 );
+      if (_katana->getConfiguration()->runRealignStage()) {
+        cmess1 << "     o  Realign Stage." << endl;
+        
+        cdebug_log(159,0) << "Loadind realign queue." << endl;
+        _katana->setStage( StageRealign );
+        for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+          RoutingEvent* event = _eventHistory.getNth(i);
+          if (not event->isCloned() and event->getSegment()->canRealign())
+            event->reschedule( _eventQueue, 0 );
         }
-      }
-      _eventQueue.commit();
-      cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
-             << _eventQueue.size() << ">" << endl;
-
-      count = 0;
-    //_eventQueue.prepareRepair();
-      while ( not _eventQueue.empty() and not isInterrupted() ) {
-        RoutingEvent* event = _eventQueue.pop();
-
-        if (tty::enabled()) {
-          cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
-                 << RoutingEvent::getProcesseds() << tty::reset
-                 << " remains:" << right << setw(8) << setfill('0')
-                 << _eventQueue.size() << ">"
-                 << setfill(' ') << tty::reset << tty::cr;
-          cmess2.flush();
-        } else {
-          cmess2 << "        <repair.event:" << setw(8) << setfill('0')
-                 << RoutingEvent::getProcesseds() << setfill(' ') << " "
-                 << event->getEventLevel() << ":" << event->getPriority() << "> "
-                 << event->getSegment()
-                 << endl;
-          cmess2.flush();
+        _eventQueue.commit();
+        cmess2 << "        <realign.queue:" <<  right << setw(8) << setfill('0')
+               << _eventQueue.size() << ">" << setfill(' ') << endl;
+        count = 0;
+        while ( not _eventQueue.empty() and not isInterrupted() ) {
+          RoutingEvent* event = _eventQueue.pop();
+          if (tty::enabled()) {
+            cmess2 << "        <realign.event:" << tty::bold << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << tty::reset
+                   << " remains:" << right << setw(8) << setfill('0')
+                   << _eventQueue.size() << ">"
+                   << setfill(' ') << tty::reset << tty::cr;
+            cmess2.flush();
+          } else {
+            cmess2 << "        <realign.event:" << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                   << event->getEventLevel() << ":" << event->getPriority() << "> "
+                   << event->getSegment()
+                   << endl;
+            cmess2.flush();
+          }
+          event->process( _eventQueue, _eventHistory, _eventLoop );
+          count++;
+          if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
         }
 
-        event->process( _eventQueue, _eventHistory, _eventLoop );
-
-        count++;
-        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+        _negociateRepair();
       }
 
       if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
@@ -613,6 +746,58 @@ namespace Katana {
   }
 
 
+  void  NegociateWindow::_negociateRepair ()
+  {
+    cdebug_log(159,1) << "NegociateWindow::_negociateRepair() - " << _segments.size() << endl;
+
+    uint64_t limit = _katana->getEventsLimit();
+    uint64_t count = 0;
+    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
+
+    cmess1 << "     o  Repair Stage." << endl;
+    cdebug_log(159,0) << "Loadind Repair queue." << endl;
+
+    _katana->setStage( StageRepair );
+    for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+      RoutingEvent* event = _eventHistory.getNth(i);
+      if (not event->isCloned() and (event->getState() >= DataNegociate::Unimplemented)) {
+        event->setState( DataNegociate::Repair );
+        event->reschedule( _eventQueue, 0 );
+      }
+    }
+    _eventQueue.commit();
+    cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
+           << _eventQueue.size() << ">" << setfill(' ') << endl;
+
+    while ( not _eventQueue.empty() and not isInterrupted() ) {
+      RoutingEvent* event = _eventQueue.pop();
+
+      if (tty::enabled()) {
+        cmess2 << "        <repair.event:" << tty::bold << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << tty::reset
+               << " remains:" << right << setw(8) << setfill('0')
+               << _eventQueue.size() << ">"
+               << setfill(' ') << tty::reset << tty::cr;
+        cmess2.flush();
+      } else {
+        cmess2 << "        <repair.event:" << setw(8) << setfill('0')
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
+               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getSegment()
+               << endl;
+        cmess2.flush();
+      }
+
+      event->process( _eventQueue, _eventHistory, _eventLoop );
+
+      count++;
+      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+    }
+
+    cdebug_tabw(159,-1);
+  }
+
+
   void  NegociateWindow::run ( Flags flags )
   {
     cdebug_log(159,1) << "NegociateWindow::run()" << endl;
@@ -630,6 +815,7 @@ namespace Katana {
     
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();
+      _katana->_computeCagedConstraints();
       Session::revalidate();
     }
 
@@ -652,7 +838,12 @@ namespace Katana {
     if (flags & Flags::PreRoutedStage) {
       _katana->setFixedPreRouted();
     }
+    Session::revalidate();
 
+    for ( RoutingPlane* plane : _katana->getRoutingPlanes() ) {
+      for ( Track* track : plane->getTracks() )
+        track->repair();
+    }
     Session::revalidate();
     Session::get()->isEmpty();
 
@@ -673,11 +864,11 @@ namespace Katana {
     cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
     _katana->printCompletion();
 
-    addMeasure<size_t>( getCell(), "Events" , RoutingEvent::getProcesseds(), 12 );
-    addMeasure<size_t>( getCell(), "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
+    _katana->addMeasure<size_t>( "Events" , RoutingEvent::getProcesseds(), 12 );
+    _katana->addMeasure<size_t>( "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
 
     Histogram* densityHistogram = new Histogram ( 1.0, 0.1, 2 );
-    addMeasure<Histogram>( getCell(), "GCells Density Histogram", densityHistogram );
+    _katana->addMeasure<Histogram>( "GCells Density Histogram", densityHistogram );
 
     densityHistogram->setFileExtension( ".density.histogram" );
     densityHistogram->setMainTitle    ( "GCell Densities" );

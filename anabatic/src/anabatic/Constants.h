@@ -14,13 +14,14 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_CONSTANTS_H
-#define  ANABATIC_CONSTANTS_H
-
+#pragma  once
 #include "hurricane/Flags.h"
 
 namespace Anabatic {
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::Flags".
 
   class Flags : public Hurricane::BaseFlags {
     public:
@@ -43,6 +44,7 @@ namespace Anabatic {
       static const BaseFlags  ChannelRow          ; // = (1 << 13);
       static const BaseFlags  HRailGCell          ; // = (1 << 14);
       static const BaseFlags  VRailGCell          ; // = (1 << 15);
+      static const BaseFlags  GoStraight          ; // = (1 << 16);
     // Flags for Edge objects states only.                      
       static const BaseFlags  NullCapacity        ; // = (1 <<  5);
       static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);
@@ -52,10 +54,13 @@ namespace Anabatic {
       static const BaseFlags  DestroyGCell        ; // = (1 <<  7);
       static const BaseFlags  DestroyBaseContact  ; // = (1 <<  8);
       static const BaseFlags  DestroyBaseSegment  ; // = (1 <<  9);
+      static const BaseFlags  DisableCanonize     ; // = (1 << 10);
     // Flags for NetDatas objects states only.                      
-      static const BaseFlags  GlobalRouted        ; // = (1 <<  5);
+      static const BaseFlags  GlobalFixed         ; // = (1 <<  5);
       static const BaseFlags  GlobalEstimated     ; // = (1 <<  6);
-      static const BaseFlags  ExcludeRoute        ; // = (1 <<  7);
+      static const BaseFlags  GlobalRouted        ; // = (1 <<  7);
+      static const BaseFlags  DetailRouted        ; // = (1 <<  8);
+      static const BaseFlags  ExcludeRoute        ; // = (1 <<  9);
     // Masks.                                      
       static const BaseFlags  WestSide            ; // = Horizontal|Target;
       static const BaseFlags  EastSide            ; // = Horizontal|Source;
@@ -99,6 +104,13 @@ namespace Anabatic {
       static const BaseFlags  CheckLowUpDensity   ;
       static const BaseFlags  NoUpdate            ;
       static const BaseFlags  NorthPath           ;
+      static const BaseFlags  UseNonPref          ;
+      static const BaseFlags  Force               ;
+      static const BaseFlags  LayerCapOnly        ;
+      static const BaseFlags  NoMinLength         ;
+      static const BaseFlags  NoSegExt            ;
+      static const BaseFlags  NullLength          ;
+      static const BaseFlags  OnVSmall            ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );
@@ -111,6 +123,39 @@ namespace Anabatic {
 
   Flags::Flags (                  uint64_t   flags ) : BaseFlags(flags) { }
   Flags::Flags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::StyleFlags".
+
+  class StyleFlags : public Hurricane::BaseFlags {
+    public:
+      static const BaseFlags  NoStyle; // =  0;
+      static const BaseFlags  HV     ; // = (1 <<  0);
+      static const BaseFlags  VH     ; // = (1 <<  1);
+      static const BaseFlags  OTH    ; // = (1 <<  2);
+      static const BaseFlags  Channel; // = (1 <<  3);
+      static const BaseFlags  Hybrid ; // = (1 <<  4);
+    public:
+      inline               StyleFlags   ( std::string );
+      inline               StyleFlags   ( uint64_t flags = NoStyle );
+      inline               StyleFlags   ( const Hurricane::BaseFlags& );
+      virtual             ~StyleFlags   ();
+      static  StyleFlags   toFlag       ( std::string );
+              StyleFlags   from         ( std::string );
+      virtual std::string  asString     () const;
+      virtual std::string  _getTypeName () const;
+      virtual std::string  _getString   () const;
+  };
+
+
+  StyleFlags::StyleFlags (             std::string textFlags ) : BaseFlags(NoStyle) { from(textFlags); }
+  StyleFlags::StyleFlags (                  uint64_t   flags ) : BaseFlags(flags) { }
+  StyleFlags::StyleFlags ( const Hurricane::BaseFlags& flags ) : BaseFlags(flags) { }
+
+
+// -------------------------------------------------------------------
+// Misc. enums.
 
 
   enum FlagsMode       { FlagsFunction = 1
@@ -145,6 +190,4 @@ namespace Anabatic {
 }  // Anabatic namespace.
 
 
-INSPECTOR_PV_SUPPORT(Anabatic::Flags)
-
-#endif  // ANABATIC_CONSTANTS_H
+INSPECTOR_PR_SUPPORT(Anabatic::Flags);

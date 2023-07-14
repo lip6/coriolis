@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_CELL_H
-#define HURRICANE_CELL_H
-
+#pragma  once
 #include <limits>
 #include "hurricane/Flags.h"
 #include "hurricane/Observer.h"
@@ -74,7 +72,7 @@ class Cell : public Entity {
 
     public: class Flags : public BaseFlags {
       public:
-        enum Flag { NoFlags                 = (1 <<  0)
+        enum Flag { NoFlags                 =  0
                   , BuildRings              = (1 <<  1)
                   , BuildClockRings         = (1 <<  2)
                   , BuildSupplyRings        = (1 <<  3)
@@ -87,16 +85,17 @@ class Cell : public Entity {
                   , CellChanged             = (1 << 11)
                   , CellDestroyed           = (1 << 12)
                   // Cell states
-                  , Terminal                = (1 << 20)
-                  , FlattenLeaf             = (1 << 21)
-                  , Pad                     = (1 << 22)
-                  , Feed                    = (1 << 23)
-                  , FlattenedNets           = (1 << 24)
-                  , Placed                  = (1 << 25)
-                  , Routed                  = (1 << 26)
-                  , MergedQuadTree          = (1 << 27)
-                  , SlavedAb                = (1 << 28)
-                  , Materialized            = (1 << 29) 
+                  , TerminalNetlist         = (1 << 20)
+                  , Pad                     = (1 << 21)
+                  , Feed                    = (1 << 22)
+                  , Diode                   = (1 << 23)
+                  , PowerFeed               = (1 << 24)
+                  , FlattenedNets           = (1 << 25)
+                  , AbstractedSupply        = (1 << 26) 
+                  , Placed                  = (1 << 27)
+                  , Routed                  = (1 << 28)
+                  , SlavedAb                = (1 << 29)
+                  , Materialized            = (1 << 30) 
                   };
 
       public:
@@ -390,7 +389,6 @@ class Cell : public Entity {
     public: void _insertSlice(ExtensionSlice*);
     public: void _removeSlice(ExtensionSlice*);
     public: void _slaveAbutmentBox(Cell*);
-    public: void _changeQuadTree(Cell*);
     public: void _setShuntedPath(Path path) { _shuntedPath=path; }
     protected: void _setAbutmentBox(const Box& abutmentBox);
 
@@ -412,6 +410,7 @@ class Cell : public Entity {
     public: string getHierarchicalName() const;
     public: const Name& getName() const {return _name;};
     public: const Flags& getFlags() const { return _flags; } 
+    public: Flags& getFlags() { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
     public: Entity* getEntity(const Signature&) const;
     public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
@@ -420,7 +419,7 @@ class Cell : public Entity {
     public: Instances getFixedInstances() const;
     public: Instances getUnplacedInstances() const;
     public: Instances getNotUnplacedInstances() const;
-    public: Instances getInstancesUnder(const Box& area) const;
+    public: Instances getInstancesUnder(const Box& area, DbU::Unit threshold=0) const;
     public: Instances getPlacedInstancesUnder(const Box& area) const;
     public: Instances getFixedInstancesUnder(const Box& area) const;
     public: Instances getUnplacedInstancesUnder(const Box& area) const;
@@ -430,11 +429,11 @@ class Cell : public Entity {
     public: Instances getTerminalInstancesUnder(const Box& area) const;
     public: Instances getNonTerminalInstances() const;
     public: Instances getNonTerminalInstancesUnder(const Box& area) const;
-    public: Instances getLeafInstances() const;
-    public: Instances getLeafInstancesUnder(const Box& area) const;
-    public: Instances getNonLeafInstances() const;
-    public: Instances getNonLeafInstancesUnder(const Box& area) const;
-    public: Net* getNet(const Name& name) const;
+    public: Instances getTerminalNetlistInstances() const;
+    public: Instances getTerminalNetlistInstancesUnder(const Box& area) const;
+    public: Instances getNonTerminalNetlistInstances() const;
+    public: Instances getNonTerminalNetlistInstancesUnder(const Box& area) const;
+    public: Net* getNet(const Name& name, bool useAlias=true) const;
     public: DeepNet* getDeepNet( Path, const Net* ) const;
     public: Nets getNets() const {return _netMap.getElements();};
     public: Nets getGlobalNets() const;
@@ -459,12 +458,12 @@ class Cell : public Entity {
     public: Components getComponents(const Layer::Mask& mask = ~0) const;
     public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getOccurrences(unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
-    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
+    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max(), DbU::Unit threshold=0) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
     public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences getLeafInstanceOccurrences() const;
-    public: Occurrences getLeafInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences getNonLeafInstanceOccurrences() const;
+    public: Occurrences getTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
+    public: Occurrences getTerminalNetlistInstanceOccurrencesUnder(const Box& area) const;
+    public: Occurrences getNonTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
     public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
     public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;
@@ -483,15 +482,17 @@ class Cell : public Entity {
 // **********
 
     public: bool isCalledBy(Cell* cell) const;
-    public: bool isTerminal() const {return _flags.isset(Flags::Terminal);};
-    public: bool isFlattenLeaf() const {return _flags.isset(Flags::FlattenLeaf);};
-    public: bool isLeaf() const;
+    public: bool isTerminal() const {return _instanceMap.isEmpty();};
+    public: bool isTerminalNetlist() const {return _flags.isset(Flags::TerminalNetlist);};
     public: bool isUnique() const;
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
     public: bool isFeed() const {return _flags.isset(Flags::Feed);};
+    public: bool isDiode() const {return _flags.isset(Flags::Diode);};
+    public: bool isPowerFeed() const {return _flags.isset(Flags::PowerFeed);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
+    public: bool isAbstractedSupply() const {return _flags.isset(Flags::AbstractedSupply);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
     public: bool isNetAlias(const Name& name) const;
@@ -503,13 +504,16 @@ class Cell : public Entity {
     public: void setAbutmentBox(const Box& abutmentBox);
     public: void slaveAbutmentBox(Cell*);
     public: void unslaveAbutmentBox(Cell*);
-    public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
-    public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
-    public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
-    public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
-    public: void setRouted(bool isRouted) {_flags.set(Flags::Routed,isRouted);};
+    public: void setTerminalNetlist(bool state) { _flags.set(Flags::TerminalNetlist,state); };
+    public: void setPad(bool state) {_flags.set(Flags::Pad,state);};
+    public: void setFeed(bool state) {_flags.set(Flags::Feed,state);};
+    public: void setDiode(bool state) {_flags.set(Flags::Diode,state);};
+    public: void setPowerFeed(bool state) {_flags.set(Flags::PowerFeed,state);};
+    public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
+    public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
+    public: void flattenNets(const Instance* instance, const std::set<std::string>& excludeds, uint64_t flags=Flags::BuildRings);
     public: void createRoutingPadRings(uint64_t flags=Flags::BuildRings);
     public: void setFlags(uint64_t flags) { _flags |= flags; }
     public: void resetFlags(uint64_t flags) { _flags &= ~flags; }
@@ -520,8 +524,8 @@ class Cell : public Entity {
     public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
-    public: void notify(unsigned flags);
-
+    public: void notify(unsigned flags);  
+    public: void destroyPhysical();
 };
 
 
@@ -588,9 +592,7 @@ INSPECTOR_P_SUPPORT(Hurricane::Cell::NetMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::PinMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::SliceMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
-
-
-#endif // HURRICANE_CELL_H
+INSPECTOR_PR_SUPPORT(Hurricane::Cell::SlavedsRelation);
 
 
 // ****************************************************************************************************

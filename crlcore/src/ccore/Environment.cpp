@@ -64,92 +64,129 @@ namespace CRL {
     , _OUT_LO             ("vst")
     , _OUT_PH             ("ap")
     , _CATALOG            ("CATAL")
-    , _inConstructor      (true)
+    , _POWER              ("vdd")
+    , _GROUND             ("vss")
+    , _CLOCK              ("^ck$")
+    , _BLOCKAGE           ("^blockage$")
+    , _pad                (".*_px$")
+    , _register           (".*dff.*")
+    , _LIBRARIES          ()
+    , _PowerRegex         (new regex_t)
+    , _GroundRegex        (new regex_t)
+    , _ClockRegex         (new regex_t)
+    , _BlockageRegex      (new regex_t)
+    , _padRegex           (new regex_t)
+    , _registerRegex      (new regex_t)
   {
-    setPOWER    ( "vdd" );
-    setGROUND   ( "vss" );
-    setCLOCK    ( "^ck$" );
-    setBLOCKAGE ( "^obs$" );
-    setPad      ( "^.*_px$" );
+    setPOWER   ( _POWER   .c_str() );
+    setGROUND  ( _GROUND  .c_str() );
+    setCLOCK   ( _CLOCK   .c_str() );
+    setBLOCKAGE( _BLOCKAGE.c_str() );
+    setPad     ( _pad     .c_str() );
+    setRegister( _register.c_str() );
 
-    _LIBRARIES.append ( ".", "working" );
-
-    _inConstructor = false;
+    _LIBRARIES.append( ".", "working" );
   }
 
 
   Environment::~Environment ()
   {
-    regfree ( &_PowerRegex    );
-    regfree ( &_GroundRegex   );
-    regfree ( &_ClockRegex    );
-    regfree ( &_BlockageRegex );
-    regfree ( &_padRegex      );
+    regfree( _PowerRegex    );
+    regfree( _GroundRegex   );
+    regfree( _ClockRegex    );
+    regfree( _BlockageRegex );
+    regfree( _padRegex      );
+    regfree( _registerRegex );
+    delete _PowerRegex;
+    delete _GroundRegex;
+    delete _ClockRegex;
+    delete _BlockageRegex;
+    delete _padRegex;
+    delete _registerRegex;
   }
 
 
   bool  Environment::isPOWER ( const char* name ) const
   {
-    return regexec ( &_PowerRegex, name, 0, NULL, 0 ) == 0;
+    if (not _PowerRegex) return false;
+    return regexec( _PowerRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isGROUND ( const char* name ) const
   {
-    return regexec ( &_GroundRegex, name, 0, NULL, 0 ) == 0;
+    if (not _GroundRegex) return false;
+    return regexec ( _GroundRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isCLOCK ( const char* name ) const
   {
-    return regexec ( &_ClockRegex, name, 0, NULL, 0 ) == 0;
+    if (not _ClockRegex) return false;
+    return regexec( _ClockRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isBLOCKAGE ( const char* name ) const
   {
-    return regexec ( &_BlockageRegex, name, 0, NULL, 0 ) == 0;
+    if (not _BlockageRegex) return false;
+    return regexec ( _BlockageRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isPad ( const char* name ) const
   {
-    return regexec ( &_padRegex, name, 0, NULL, 0 ) == 0;
+    if (not _padRegex) return false;
+    return regexec ( _padRegex, name, 0, NULL, 0 ) == 0;
+  }
+
+
+  bool  Environment::isRegister ( const char* name ) const
+  {
+    if (not _registerRegex) return false;
+    return regexec ( _registerRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   void  Environment::setPOWER ( const char* value )
   {
     _POWER = value;
-    _setRegex ( &_PowerRegex , _POWER , "Power" );
+    _setRegex ( _PowerRegex , _POWER , "Power" );
   }
 
 
   void  Environment::setGROUND ( const char* value )
   {
     _GROUND = value;
-    _setRegex ( &_GroundRegex , _GROUND , "Ground" );
+    _setRegex ( _GroundRegex , _GROUND , "Ground" );
   }
 
 
   void  Environment::setCLOCK ( const char* value )
   {
     _CLOCK = value;
-    _setRegex ( &_ClockRegex , _CLOCK , "Clock" );
+    _setRegex ( _ClockRegex , _CLOCK , "Clock" );
   }
 
 
   void  Environment::setBLOCKAGE ( const char* value )
   {
     _BLOCKAGE = value;
-    _setRegex ( &_BlockageRegex , _BLOCKAGE , "Blockage" );
+    _setRegex ( _BlockageRegex , _BLOCKAGE , "Blockage" );
   }
 
 
   void  Environment::setPad ( const char* value )
   {
     _pad = value;
-    _setRegex ( &_padRegex , _pad , "Pad" );
+    _setRegex ( _padRegex , _pad , "Pad" );
+  }
+
+
+  void  Environment::setRegister ( const char* value )
+  {
+    _register = value;
+    _setRegex ( _registerRegex , _register , "Register" );
   }
 
 
@@ -186,21 +223,20 @@ namespace CRL {
       << Dots::asString( "        - Clock Signal"    , _CLOCK    )  << "\n"
       << Dots::asString( "        - Blockages"       , _BLOCKAGE )  << "\n"
       << "     o  Special Cells.\n"
-      << Dots::asString( "        - Pads"            , _pad      )  << "\n\n";
+      << Dots::asString( "        - Pads"            , _pad      )  << "\n"
+      << Dots::asString( "        - Registers"       , _register )  << "\n\n";
 
     return s.str();
   }
 
 
-  void  Environment::_setRegex ( regex_t* regex, const string& pattern, const char* name )
+  void  Environment::_setRegex ( regex_t*& regex, const string& pattern, const char* name )
   {
     char regexError[1024];
     int  regexCode;
 
-    if ( !_inConstructor ) regfree ( regex );
-
-    if ( ( regexCode = regcomp(regex,getString(pattern).c_str(),REG_EXTENDED|REG_NOSUB) ) ) {
-      regerror ( regexCode, regex, regexError, 1024 );
+    if ( (regexCode = regcomp(regex,getString(pattern).c_str(),REG_EXTENDED|REG_NOSUB)) ) {
+      regerror( regexCode, regex, regexError, 1024 );
       throw Error ( badRegex, name, regexError );
     }
   }
@@ -248,26 +284,40 @@ namespace CRL {
     return value;
   }
 
+  void  Environment::setWORKING_LIBRARY ( const char* value )
+  {
+    _LIBRARIES.replace( value, "working", 0 );
+    AllianceFramework::get()->createLibrary( _LIBRARIES[0].getPath(), AllianceFramework::CreateLibrary );
+  }
+
 
   void  Environment::addSYSTEM_LIBRARY ( const char* value, const char* libName, unsigned int mode )
   {
+    AllianceFramework* af     = AllianceFramework::get();
+    unsigned int       afMode = AllianceFramework::CreateLibrary;
+    size_t             ilib   = 0;
+    
+    if (mode == Append) afMode |= AllianceFramework::AppendLibrary;
+    
     if ((mode == Prepend) or (mode == Append)) {
       size_t duplicate = _LIBRARIES.hasLib(libName);
       if (duplicate != SearchPath::npos) _LIBRARIES.remove( duplicate );
 
-      if (mode == Prepend) _LIBRARIES.prepend(value,libName);
-      if (mode == Append ) _LIBRARIES.append (value,libName);
-      return;
+      if (mode == Prepend) ilib = _LIBRARIES.prepend(value,libName);
+      if (mode == Append ) ilib = _LIBRARIES.append (value,libName);
+    } else {
+      string newLibName = libName;
+      for ( ; ilib < _LIBRARIES.getSize() ; ++ilib ) {
+        if (newLibName == _LIBRARIES[ilib].getName()) {
+          _LIBRARIES.replace ( value, newLibName, ilib );
+          break;
+        }
+      }
+      if (ilib == _LIBRARIES.getSize())
+        _LIBRARIES.append (value,libName);
     }
 
-    string newLibName = libName;
-    for ( size_t i=0 ; i < _LIBRARIES.getSize() ; ++i ) {
-      if ( newLibName == _LIBRARIES[i].getName() ) {
-        _LIBRARIES.replace ( value, newLibName, i );
-        return;
-      }
-    }
-    _LIBRARIES.append (value,libName);
+    af->createLibrary( _LIBRARIES[ilib].getPath(), afMode );
   }
 
 
@@ -297,6 +347,7 @@ namespace CRL {
     record->add ( getSlot ( "_CLOCK"              , &_CLOCK               ) );
     record->add ( getSlot ( "_BLOCKAGE"           , &_BLOCKAGE            ) );
     record->add ( getSlot ( "_pad"                , &_pad                 ) );
+    record->add ( getSlot ( "_register"           , &_register            ) );
     record->add ( getSlot ( "_LIBRARIES"          , &_LIBRARIES           ) );
     return record;
   }

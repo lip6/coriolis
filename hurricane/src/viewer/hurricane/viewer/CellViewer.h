@@ -14,14 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_CELL_VIEWER_H
-#define  HURRICANE_CELL_VIEWER_H
-
+#pragma  once
 #include <list>
 #include <map>
 #include <functional>
 #include <boost/any.hpp>
-
 #include <QIcon>
 #include <QMainWindow>
 class QEvent;
@@ -29,17 +26,16 @@ class QKeyEvent;
 class QAction;
 class QMenu;
 class QPrinter;
-
-#include  "hurricane/Commons.h"
-#include  "hurricane/Observer.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/MoveCommand.h"
-#include  "hurricane/viewer/ZoomCommand.h"
-#include  "hurricane/viewer/RulerCommand.h"
-#include  "hurricane/viewer/SelectCommand.h"
-#include  "hurricane/viewer/HierarchyCommand.h"
-#include  "hurricane/viewer/CellWidget.h"
+#include "hurricane/Commons.h"
+#include "hurricane/Observer.h"
+#include "hurricane/Name.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/viewer/MoveCommand.h"
+#include "hurricane/viewer/ZoomCommand.h"
+#include "hurricane/viewer/RulerCommand.h"
+#include "hurricane/viewer/SelectCommand.h"
+#include "hurricane/viewer/HierarchyCommand.h"
+#include "hurricane/viewer/CellWidget.h"
 
 
 namespace Hurricane {
@@ -91,6 +87,7 @@ namespace Hurricane {
                                     CellViewer                ( QWidget* parent=NULL );
       virtual                      ~CellViewer                ();
       inline  bool                  isToolInterrupted         () const;
+              void                  refreshTitle              ();
               QMenu*                createDebugMenu           ();
               bool                  hasMenu                   ( const QString& path ) const;
               bool                  hasMenuAction             ( const QString& path ) const;
@@ -120,6 +117,8 @@ namespace Hurricane {
                                                               , QString             beforePath="" );
       inline  void                  setEnableRedrawInterrupt  ( bool );
       inline  void                  setApplicationName        ( const QString& );
+      inline  void                  setPixelThreshold         ( int );
+      inline  void                  setDbuMode                ( int );
       inline  Observer<CellViewer>* getCellObserver           ();
               Cell*                 getCell                   () const;
       virtual void                  setCell                   ( Cell* );
@@ -133,6 +132,7 @@ namespace Hurricane {
               void                  unselect                  ( Occurrence& );
               void                  unselectAll               ();
       inline  void                  setLayerVisible           ( const Name& layer, bool visible );
+              void                  reframe                   ( const Box& , bool historyEnable=true );
               void                  runScript                 ( QString scriptPath );
       virtual CellViewer*           vcreate                   () const;
       virtual std::string           _getString                () const;
@@ -141,6 +141,7 @@ namespace Hurricane {
               void                  doGoto                    ();
               void                  changeSelectionMode       ();
               void                  setShowSelection          ( bool );
+              void                  setCumulativeSelection    ( bool );
               void                  setState                  ( shared_ptr<CellWidget::State>& );
               void                  removeHistory             ( Cell* );
               void                  openHistoryCell           ();
@@ -166,7 +167,6 @@ namespace Hurricane {
               void                  cellPostModificated       ();
     protected:                      
               void                  createMenus               ();
-              void                  refreshTitle              ();
               void                  refreshHistory            ();
               void                  rebuildHistory            ();
     private:                        
@@ -217,8 +217,14 @@ namespace Hurricane {
   inline void                  CellViewer::emitCellPreModificated  () { emit cellPreModificated(); }
   inline void                  CellViewer::emitCellPostModificated () { emit cellPostModificated(); }
 
+  inline  void  CellViewer::setPixelThreshold ( int threshold )
+  { _cellWidget->setPixelThreshold( threshold ); }
+
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }
+
+  inline void  CellViewer::setDbuMode ( int mode )
+  { _cellWidget->setDbuMode(mode); }
 
 
 } // Hurricane namespace.
@@ -226,6 +232,3 @@ namespace Hurricane {
 
 GETSTRING_POINTER_SUPPORT(Hurricane::CellViewer)
 IOSTREAM_POINTER_SUPPORT(Hurricane::CellViewer)
-
-
-#endif

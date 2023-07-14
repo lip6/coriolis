@@ -41,7 +41,6 @@ namespace Analog {
     CommonGatePair* cg = new CommonGatePair(library,name,type);
     cg->_postCreate      (deviceName);
     cg->createConnections(bulkConnected);
-    cg->setTerminal( true );
     UpdateSession::close();
     return cg;
   }
@@ -103,5 +102,17 @@ namespace Analog {
   Name  CommonGatePair::getDeviceName () const
   { return (isBulkConnected()) ? _cgBulkConnectedName : _cgBulkUnconnectedName; }
 
+
+  string  CommonGatePair::_getTypeName () const
+  { return "CommonGatePair"; }
+  
+
+  Record*  CommonGatePair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cgBulkConnectedName"  , _cgBulkConnectedName   ) );
+    record->add( getSlot("_cgBulkUnconnectedName", _cgBulkUnconnectedName ) );
+    return record;
+  }
 
 }  // Analog namespace.

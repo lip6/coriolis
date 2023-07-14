@@ -179,7 +179,9 @@ namespace Hurricane {
                            ,_gds2Layer     (gds2Layer)
                            ,_gds2Datatype  (gds2Datatype)
                            ,_blockageLayer (NULL)
+                           ,_routingLayer  (NULL)
                            ,_realName      ("<not associated>")
+                           ,_hasGds        (false)
   { }
 
 
@@ -205,8 +207,20 @@ namespace Hurricane {
   { return _blockageLayer; }
  
 
+  BasicLayer* BasicLayer::getRoutingLayer () const
+  { return _routingLayer; }
+
+
   BasicLayers BasicLayer::getBasicLayers () const
   { return BasicLayer_BasicLayers(this); }
+
+
+  const Layer* BasicLayer::getTop () const
+  { return this; }
+
+
+  const Layer* BasicLayer::getBottom () const
+  { return this; }
 
 
   void BasicLayer::_postCreate ()
@@ -270,6 +284,7 @@ namespace Hurricane {
       record->add(getSlot("_material"     , &_material));
       record->add(getSlot("_realName"     , &_realName));
       record->add(getSlot("_blockageLayer",  _blockageLayer));
+      record->add(getSlot("_routingLayer" ,  _routingLayer));
       record->add(getSlot("_gds2Layer"    ,  _gds2Layer));
       record->add(getSlot("_gds2Datatype" ,  _gds2Datatype));
     }

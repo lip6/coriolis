@@ -17,6 +17,8 @@
 #include "hurricane/analog/PyDevice.h"
 #include "crlcore/PyRoutingGauge.h"
 #include "bora/PyDSlicingNode.h"
+#include "bora/PyStepParameterRange.h"
+#include "bora/PyMatrixParameterRange.h"
 
 
 namespace  Bora {
@@ -53,40 +55,50 @@ extern "C" {
 
   static PyObject* PyDSlicingNode_create ( PyObject* , PyObject* args )
   {
-    PyObject*     pyInstance     = NULL;    
-    PyObject*     pyCell         = NULL;
-    PyObject*     pyRoutingGauge = NULL;
-    double        start          = 0.0;
-    double        step           = 0.0;
-    double        count          = 0.0;
-    DSlicingNode* node           = NULL;
+    PyObject*     pyInstance       = NULL;    
+    PyObject*     pyCell           = NULL;
+    PyObject*     pyRoutingGauge   = NULL;
+    PyObject*     pyParameterRange = NULL;
+    DSlicingNode* node             = NULL;
 
     HTRY
-      if (not PyArg_ParseTuple( args,"SOddd|O:DSlicingNode.create"
+      if (not PyArg_ParseTuple( args,"OOO|O:DSlicingNode.create"
                               , &pyInstance
                               , &pyCell
-                              , &start
-                              , &step
-                              , &count
+                              , &pyParameterRange
                               , &pyRoutingGauge ) ) {
-        PyErr_SetString ( ConstructorError, "DSlicingNode.create(): Invalid/bad number of parameters ." );
+        PyErr_SetString ( ConstructorError, "DSlicingNode.create(): Invalid/bad number of parameters." );
         return NULL;
       }
       if (not IsPyCell(pyCell)) {
-        PyErr_SetString( ConstructorError, "DSlicingNode.create(): First argument *must* be of type Cell." );
+        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Second argument *must* be of type Cell." );
+        return NULL;
+      }
+      if (   (pyParameterRange != Py_None)
+         and not IsPyStepParameterRange(pyParameterRange)
+         and not IsPyMatrixParameterRange(pyParameterRange)) {
+        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Third argument *must* be of type StepParameterRange or MatrixParameterRange." );
         return NULL;
       }
       if (pyRoutingGauge and not IsPyRoutingGauge(pyRoutingGauge)) {
-        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Fifth argument *must* be of type RoutingGauge." );
+        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Fourth argument *must* be of type RoutingGauge." );
         return NULL;
       }
 
-      Cell*         cell     = PYCELL_O( pyCell );
-      Instance*     instance = cell->getInstance( PyString_AsString(pyInstance) );
-    //Device*       device   = dynamic_cast<Device*>( instance->getMasterCell() );
-      RoutingGauge* rg       = (pyRoutingGauge) ? PYROUTINGGAUGE_O(pyRoutingGauge) : NULL;
+      Cell*     cell     = PYCELL_O( pyCell );
+      Instance* instance = cell->getInstance( PyString_AsString(pyInstance) );
+      if (not instance) {
+        ostringstream message;
+        message << "DSlicingNode.create(): Cell \"" << cell->getName()
+                << "\" has no instance named \"" << PyString_AsString(pyInstance) << "\".";
+        PyErr_SetString( ConstructorError, message.str().c_str() );
+        return NULL;
+      }
+      
+      ParameterRange* range = ParameterRangeCast( pyParameterRange );
+      RoutingGauge*   rg    = (pyRoutingGauge) ? PYROUTINGGAUGE_O(pyRoutingGauge) : NULL;
 
-      node = DSlicingNode::create( NodeSets::create( instance->getMasterCell(), start, step, count, rg )
+      node = DSlicingNode::create( NodeSets::create( instance->getMasterCell(), range, rg )
                                  , UnknownAlignment
                                  , instance );
     HCATCH
@@ -95,8 +107,8 @@ extern "C" {
   }
 
 
-  DirectGetIntAttribute(PyDSlicingNode_getNFing,getNFing,PyDSlicingNode,DSlicingNode)
-  DirectSetIntAttribute(PyDSlicingNode_setNFing,setNFing,PyDSlicingNode,DSlicingNode)
+  DirectGetIntAttribute(PyDSlicingNode_getBoxSetIndex,getBoxSetIndex,PyDSlicingNode,DSlicingNode)
+  DirectSetIntAttribute(PyDSlicingNode_setBoxSetIndex,setBoxSetIndex,PyDSlicingNode,DSlicingNode)
   // Standart Destroy (Attribute).
 
 
@@ -104,10 +116,10 @@ extern "C" {
   // PyDSlicingNode Attribute Method table.
 
   PyMethodDef PyDSlicingNode_Methods[] =
-    { { "create"            , (PyCFunction)PyDSlicingNode_create   , METH_VARARGS|METH_STATIC
+    { { "create"            , (PyCFunction)PyDSlicingNode_create        , METH_VARARGS|METH_STATIC
                             , "Create a new DSlicingNode." }
-    , { "getNFing"          , (PyCFunction)PyDSlicingNode_getNFing , METH_NOARGS , "To be documented." }
-    , { "setNFing"          , (PyCFunction)PyDSlicingNode_setNFing , METH_VARARGS, "To be documented." }
+    , { "getBoxSetIndex"    , (PyCFunction)PyDSlicingNode_getBoxSetIndex, METH_NOARGS , "To be documented." }
+    , { "setBoxSetIndex"    , (PyCFunction)PyDSlicingNode_setBoxSetIndex, METH_VARARGS, "To be documented." }
     , { NULL, NULL, 0, NULL }  /* sentinel */
     };
 

@@ -5,6 +5,7 @@
                         ${CRLCORE_SOURCE_DIR}/src/ccore/bookshelf
                         ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                         ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
                         ${CONFIGURATION_INCLUDE_DIR}
                         ${HURRICANE_INCLUDE_DIR}
@@ -48,7 +49,7 @@
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                      -lutil
                       )
 
                install( TARGETS      libmanager DESTINATION lib${LIB_SUFFIX} )

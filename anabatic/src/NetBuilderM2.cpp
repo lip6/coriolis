@@ -61,6 +61,10 @@ namespace Anabatic {
 
   NetBuilderM2::~NetBuilderM2 () { }
 
+
+  string  NetBuilderM2::getStyle ()
+  { return "2RL-"; }
+
   
   void  NetBuilderM2::doRp_AutoContacts ( GCell*        gcell
                                         , Component*    rp
@@ -187,7 +191,7 @@ namespace Anabatic {
     contact2 ->setFlags( CntFixed );
 
     AutoSegment* fixed  = AutoSegment::create( rpContact, contact1, Flags::Vertical   );
-    AutoSegment* dogleg = AutoSegment::create( contact1 , contact2, Flags::Horizontal );
+    AutoSegment* dogleg = AutoSegment::create( contact1 , contact2, Flags::Horizontal|Flags::UseNonPref );
     fixed ->setFlags( AutoSegment::SegFixed );
     dogleg->setFlags( AutoSegment::SegFixed );
 
@@ -318,7 +322,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
   
     // HARDCODED VALUE.
-      if ( (getTopology() & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
+      if ( (getTopology() & Global_Fixed) and (globalSegment->getAnchoredLength() < 2*Session::getSliceHeight()) )
         addToFixSegments( globalSegment );
         
       if (getConnexity().fields.globals < 2) {

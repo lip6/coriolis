@@ -209,8 +209,8 @@ inline Hurricane::Record* getRecord<Hurricane::Transformation::Orientation::Code
                                    }
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Transformation);
-INSPECTOR_PV_SUPPORT(Hurricane::Transformation::Orientation);
+INSPECTOR_PR_SUPPORT(Hurricane::Transformation);
+INSPECTOR_PR_SUPPORT(Hurricane::Transformation::Orientation);
 IOSTREAM_POINTER_SUPPORT(Hurricane::Transformation::Orientation::Code);
 
 #endif // HURRICANE_TRANSFORMATION

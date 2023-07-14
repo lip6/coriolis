@@ -39,6 +39,7 @@ namespace  CRL {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
   using Isobar::__cs;
   using Isobar::PyCell_Link;
 

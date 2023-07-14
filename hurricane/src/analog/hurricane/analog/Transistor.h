@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_TRANSISTOR_H
-#define ANALOG_TRANSISTOR_H
-
+#pragma once
 #include "hurricane/analog/TransistorFamily.h"
 
 namespace Analog {
@@ -32,12 +30,13 @@ namespace Analog {
                                                 , bool bulkConnected );
       virtual Hurricane::Name getDeviceName     () const;
               unsigned int    getRestriction    ( Hurricane::Net* net ) const;
-              bool            isSame            (Transistor* ts);
+              bool            isSame            ( Transistor* );
   
     protected:
                               Transistor        ( Hurricane::Library* , const Hurricane::Name& , const Type& );
       virtual void            _postCreate       ( const Hurricane::Name& deviceName );
       virtual void            createConnections ( bool bulkConnected );
+      virtual std::string     _getTypeName      () const;
     private:
       static const Hurricane::Name  _transistorBulkConnectedName;
       static const Hurricane::Name  _transistorBulkUnconnectedName;
@@ -47,4 +46,5 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif // ANALOG_TRANSISTOR_H
+
+INSPECTOR_P_SUPPORT(Analog::Transistor);

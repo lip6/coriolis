@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) UPMC 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |           Alliance / Hurricane  Interface                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./toolbox/ToVhdlName.h"                   |
 // +-----------------------------------------------------------------+
@@ -29,17 +29,24 @@ namespace CRL {
   using Hurricane::Instance;
 
 
-  Name NamingScheme::vlogToVhdl ( const Name& vlogName )
+  Name NamingScheme::vhdlToVlog ( const Name& vhdlName )
+  {
+    string  vlogName;
+
+    for ( size_t i=0 ; i<vhdlName.size() ; ++i ) {
+      char translated = vhdlName[i];
+      if (translated == '(' ) translated = '[';
+      if (translated == ')' ) translated = ']';
+      vlogName += translated;
+    }
+    return Name(vlogName);
+  }
+
+
+  Name NamingScheme::vlogToVhdl ( const Name& vlogName, uint32_t flags )
   {
     string  vhdlName;
-
-  // VHDL reserved keywords (scalar).
-    if (vlogName == Name("in"   )) return "in_v";
-    if (vlogName == Name("out"  )) return "out_v";
-    if (vlogName == Name("inout")) return "inout_v";
-    if (vlogName == Name("true" )) return "bool_true";
-    if (vlogName == Name("false")) return "bool_false";
-    if (vlogName == Name("undef")) return "bool_undef";
+    string  loweredName;
 
     size_t parCount    = 0;
     size_t posLeftPar  = 0;
@@ -49,6 +56,9 @@ namespace CRL {
       if (vlogName[i] == '[') { ++parCount; posLeftPar=i; }
       if (vlogName[i] == ')') { posRightPar=i; }
       if (vlogName[i] == ']') { posRightPar=i; }
+      loweredName.push_back( tolower(vlogName[i]) );
+      if ( (flags & UniquifyUpperCase) and (vlogName[i] != tolower(vlogName[i])) )
+         loweredName.push_back( 'u' );
     }
     char leftPar  = (parCount > 1) ? '_' : '(';
     char rightPar = (parCount > 1) ? '_' : ')';
@@ -62,23 +72,36 @@ namespace CRL {
       }
     }
 
-    for ( size_t i=0 ; i<vlogName.size() ; ++i ) {
-      char translated = tolower( vlogName[i] );
+  // VHDL reserved keywords (scalar).
+    if (loweredName == "in"   ) return "in_v";
+    if (loweredName == "out"  ) return "out_v";
+    if (loweredName == "ref"  ) return "ref_v";
+    if (loweredName == "inout") return "inout_v";
+    if (loweredName == "true" ) return "bool_true";
+    if (loweredName == "false") return "bool_false";
+    if (loweredName == "undef") return "bool_undef";
+
+    string refName = (flags & NoLowerCase) ? getString(vlogName) : loweredName;
+    for ( size_t i=0 ; i<refName.size() ; ++i ) {
+      char translated = refName[i];
 
       if ( vhdlName.empty() and (isdigit(translated)) )
         vhdlName += 'n';
 
-      if (translated == '\\') translated = '_';
-      if (translated == '.' ) translated = '_';
-      if (translated == '$' ) translated = '_';
-      if (translated == '?' ) translated = '_';
-      if (translated == ':' ) translated = '_';
-      if (translated == '[' ) translated = leftPar;
-      if (translated == ']' ) translated = rightPar;
+      if (translated == '\\' ) translated = '_';
+      if (translated == '/'  ) translated = '_';
+      if (translated == '.'  ) translated = '_';
+      if (translated == '%'  ) translated = '_';
+      if (translated == '$'  ) translated = '_';
+      if (translated == '?'  ) translated = '_';
+      if (translated == '\'' ) translated = '_';
+      if (translated == ':'  ) translated = '_';
+      if (translated == '['  ) translated = leftPar;
+      if (translated == ']'  ) translated = rightPar;
 
       if (translated == '_') {
         if (vhdlName.empty()      ) continue;
-        if (i == vlogName.size()-1) break;
+        if (i == refName.size()-1) break;
         if (vhdlName.back() == '_') continue;
       }
 
@@ -86,18 +109,18 @@ namespace CRL {
     }
 
   // VHDL reserved keywords (vector).
-    if (vhdlName.substr(0,3) == "in("   ) vhdlName.insert(2,"_v");
-    if (vhdlName.substr(0,4) == "out("  ) vhdlName.insert(3,"_v");
-    if (vhdlName.substr(0,6) == "inout(") vhdlName.insert(5,"_v");
-    if (vhdlName             == "true"  ) vhdlName.insert(0,"value_");
-    if (vhdlName             == "false" ) vhdlName.insert(0,"value_");
-    if (vhdlName             == "undef" ) vhdlName.insert(0,"value_");
+    if (loweredName.substr(0,3) == "in("   ) vhdlName.insert(2,"_v");
+    if (loweredName.substr(0,4) == "out("  ) vhdlName.insert(3,"_v");
+    if (loweredName.substr(0,6) == "inout(") vhdlName.insert(5,"_v");
+    if (loweredName             == "true"  ) vhdlName.insert(0,"value_");
+    if (loweredName             == "false" ) vhdlName.insert(0,"value_");
+    if (loweredName             == "undef" ) vhdlName.insert(0,"value_");
 
     return Name(vhdlName);
   }
 
 
-  void  NamingScheme::toVhdl ( Cell* topCell, unsigned int flags )
+  void  NamingScheme::toVhdl ( Cell* topCell, uint32_t flags )
   {
     if (not topCell) return;
 
@@ -107,11 +130,11 @@ namespace CRL {
 
     if (converter == nullptr) return;
 
-    topCell->setName( converter(topCell->getName()) );
+    topCell->setName( converter(topCell->getName(),flags) );
 
     vector<Net*> nets;
     for ( Net* net : topCell->getNets() ) nets.push_back( net );
-    for ( auto net : nets ) net->setName( converter( net->getName() ) );
+    for ( auto net : nets ) net->setName( converter( net->getName(), flags ) );
       
     vector<Instance*>               instances;
     set<Cell*,Entity::CompareById>  models;
@@ -119,7 +142,7 @@ namespace CRL {
       instances.push_back( inst );
       models.insert( inst->getMasterCell() );
     }
-    for ( auto inst : instances ) inst->setName( converter( inst->getName() ) );
+    for ( auto inst : instances ) inst->setName( converter( inst->getName(), flags ) );
 
     if (flags & Recursive)
       for ( auto model : models ) {
@@ -128,17 +151,18 @@ namespace CRL {
   }
 
 
-  NamingScheme::NamingScheme ( unsigned int flags )
-    : _converter(nullptr)
+  NamingScheme::NamingScheme ( uint32_t flags )
+    : _flags    (flags)
+    , _converter(nullptr)
   {
-    if (flags & FromVerilog) _converter = vlogToVhdl;
+    if (_flags & FromVerilog) _converter = vlogToVhdl;
   }
 
 
   Name  NamingScheme::convert ( const Name& name ) const
   {
     if (_converter == nullptr) return name;
-    return _converter(name);
+    return _converter(name,_flags);
   }
 
 

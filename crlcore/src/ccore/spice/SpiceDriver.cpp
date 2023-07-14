@@ -1,147 +1,84 @@
-// ****************************************************************************************************
-// File: CSpiceDriver.cpp
-// Authors: Wu YiFei
-// Date   : 26/11/2006 
-// ****************************************************************************************************
 
-#include  "SpiceDriver.h"
-//#include "Nets.h"
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) SU 2021-2021, All Rights Reserved
+//
+// +-----------------------------------------------------------------+ 
+// |                   C O R I O L I S                               |
+// |           S P I C E  / Hurricane  Interface                     |
+// |                                                                 |
+// |  Author      :                    Jean-Paul CHAPUT              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :   "./spice/SpiceDriver.cpp"                      |
+// +-----------------------------------------------------------------+
+
+
+#include <ctime>
+#include <cmath>
+#include <cstdio>
+#include <cfenv>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+using namespace std;
+
+#include "hurricane/configuration/Configuration.h"
+#include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Diagonal.h"
+#include "hurricane/Rectilinear.h"
+#include "hurricane/Polygon.h"
+#include "hurricane/Pad.h"
+#include "hurricane/Net.h"
+#include "hurricane/NetExternalComponents.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Instance.h"
+using namespace Hurricane;
+
+#include "crlcore/Utilities.h"
+#include "crlcore/NetExtension.h"
+#include "crlcore/ToolBox.h"
+#include "crlcore/Spice.h"
+#include "crlcore/SpiceBit.h"
+#include "crlcore/SpiceEntity.h"
+using namespace CRL;
+
 
 
 namespace CRL {
 
-using namespace Hurricane;
 
-// *************************************************************************************************
-// Class CSpiceDriver Implementations.                           
-// *************************************************************************************************
-CSpiceDriver::CSpiceDriver(Cell* cell)
-// ************************************
-:_cell(cell)
-,_netToIndexMap(new map<Net*, unsigned int>)
-{
-}
+// -------------------------------------------------------------------
+// Class  :  "CRL::Spice".
 
+  bool  Spice::save ( Cell* cell, uint64_t flags )
+  {
+    ::Spice::Entity* spiceEntity = ::Spice::EntityExtension::create( cell, flags );
 
-CSpiceDriver::~CSpiceDriver()
-// *************************
-{
-  delete _netToIndexMap; 
-} 
+    string cellFile = getString(cell->getName()) + ".spi";
+    ofstream cellStream ( cellFile );
+    spiceEntity->toEntity( cellStream );
+    cellStream.close();
+
+    return true;
+  }
 
 
-void CSpiceDriver::_DriveLogicalViewOfDevice(ofstream& outfile) 
-// ************************************************************
-{
-  
-}  
+  void  Spice::clearProperties ()
+  {
+    ::Spice::EntityExtension::destroyAll();
+  }
 
 
-void CSpiceDriver::_DumpSubckt(ofstream& outfile)
-// ********************************
-{
-  unsigned int netIndex = 0 ;
-  unsigned int portCount = 0;
-
-//Net * net = NULL;
-
-  outfile << ".subckt " << getString(_cell->getName()) << " ";
-
-  for_each_net(net, _cell->getNets())
-    (*_netToIndexMap)[net] = ++netIndex; 
-    if(net->isExternal()) {
-      if((++portCount)%25==0) {
-        outfile << endl;
-	outfile << "+ ";
-      }
-
-      outfile << netIndex << " "; 
-    }
-  end_for  
-
-  outfile << endl;
-}  
-
-
-void CSpiceDriver::_DumpNetDefinition(ofstream& outfile)
-// ****************************************************
-{
-   map<Net*, unsigned int>::iterator i = _netToIndexMap->begin(),
-      j = _netToIndexMap->end();
-
-   while(i!=j){
-     outfile << "* NET " << (*i).second << " = " << getString(((*i).first)->getName()) << endl;
-     i++;
-   }
-}  
-
-
-void CSpiceDriver::_DumpInstanciation(ofstream& outfile)
-// *****************************************************
-{
-  // if _cell is Device 
-  // use _DriveLogicalViewOfDevice()
-  // *******************************
-  /* to do */
-
-  // else if _cell is Cell 
-  // **********************
-//Instance * ins = NULL;
-//Net * masterNet = NULL;
-  Net * net = NULL;
-  Cell * masterCell = NULL;
-  unsigned int plugCount = 0;
-  for_each_instance(ins, _cell->getInstances())
-    outfile << "x" << getString(ins->getName()) << " "; 
-    masterCell = ins->getMasterCell();
-    for_each_net(masterNet, masterCell->getNets())
-      if(masterNet->isExternal()){
-        net=ins->getPlug(masterNet)->getNet();
-        if(!net){//there is a plug not connected.
-	  cout << "Warning : plug " + getString(masterNet->getName()) + " of instance "
-	     + getString(ins->getName()) + " is not connected in model "
-	     + getString(_cell->getName()) << endl;  
-	}else{
-	  if((++plugCount)%25==0){ // many character ,  must changer a new line
-	    outfile<< endl ;
-	    outfile<< "+ "; 
-	  }
-          outfile << (*_netToIndexMap)[net] << " " ;
-	}
-
-      } 
-    end_for
-
-    outfile<< getString(masterCell->getName()) << endl;
-    plugCount = 0;   
-  end_for
-
-  // else (either Device Or Cell)
-  // throw Error()
-  // ****************************
-
-}  
-
-
-void CSpiceDriver::_DumpEnds(ofstream& outfile)
-// ********************************************
-{
-  outfile << ".ends " << getString(_cell->getName()) << endl;
-}  
-
-
-void CSpiceDriver::Drive(const string cellpath)
-// *********************************************
-{
-   ofstream outfile(cellpath.c_str());
-    
-   _DumpSubckt(outfile);
-   _DumpNetDefinition(outfile);
-   _DumpInstanciation(outfile);
-   _DumpEnds(outfile);
-
-}  
-
-
-} // END OF NAMESPACE CRL
-
+}  // CRL namespace.

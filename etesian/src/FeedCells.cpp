@@ -32,14 +32,33 @@ namespace Etesian {
   using Hurricane::DbU;
 
 
+  void  FeedCells::useTie ( Cell* cell )
+  {
+    if (cell == NULL) return;
+
+    DbU::Unit pitch = _etesian->getSliceStep();
+
+    if (cell->getAbutmentBox().getWidth() % pitch != 0)
+      cerr << Warning( "FeedCells::useTie(): \"%s\" has not a width (%s) multiple of pitch (%s)."
+                     , getString(cell->getName()).c_str()
+                     , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
+                     , DbU::getValueString(pitch).c_str()
+                     ) << endl;
+
+  //int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
+
+    _tieCell = cell;
+  }
+
+
   void  FeedCells::useFeed ( Cell* cell )
   {
     if ( cell == NULL ) return;
 
-    DbU::Unit pitch = _etesian->getVerticalPitch();
+    DbU::Unit pitch = _etesian->getSliceStep();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
-      cerr << Warning( "FeedCells::addFeed(): &lt;%s&gt; has not a width (%s) multiple of pitch (%s)."
+      cerr << Warning( "FeedCells::useFeed(): \"%s\" has not a width (%s) multiple of pitch (%s)."
                      , getString(cell->getName()).c_str()
                      , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
                      , DbU::getValueString(pitch).c_str()
@@ -48,7 +67,7 @@ namespace Etesian {
     int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
     
     if (getFeed(pitchNb) != NULL) {
-      cerr << Warning( "FeedCells::addFeed(): &lt;%s&gt; duplicate feed for width %d."
+      cerr << Warning( "FeedCells::addFeed(): \"%s\" duplicate feed for width %d."
                      , getString(cell->getName()).c_str()
                      , pitchNb
                      ) << endl;
@@ -79,6 +98,16 @@ namespace Etesian {
     if (ifeed == _feedCells.end()) return NULL;
 
     return (*ifeed).second;
+  }
+
+
+  Cell* FeedCells::getFeedByWidth ( DbU::Unit width ) const
+  {
+    for ( auto item : _feedCells ) {
+      if (item.second->getAbutmentBox().getWidth() == width)
+        return item.second;
+    }
+    return NULL;
   }
 
 

@@ -64,4 +64,7 @@ namespace Hurricane {
   }
 
 
+  void* const  Slot::getPData () const
+  { return NULL; }
+
 } // End of Hurricane namespace.

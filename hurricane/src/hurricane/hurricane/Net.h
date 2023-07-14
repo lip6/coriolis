@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_NET
-#define HURRICANE_NET
-
+#pragma  once
 #include <functional>
 #include "hurricane/Entity.h"
 #include "hurricane/Nets.h"
@@ -210,18 +208,19 @@ class Net : public Entity {
 // Predicates
 // **********
 
-    public: virtual bool isDeepNet  () const {return false;};
-    public:         bool isGlobal   () const {return _isGlobal;};
-    public:         bool isExternal () const {return _isExternal;};
-    public:         bool isAutomatic() const {return _isAutomatic;};
-    public:         bool isBlockage () const {return (_type == Type::BLOCKAGE);};
-    public:         bool isFused    () const {return (_type == Type::FUSED);};
-    public:         bool isLogical  () const {return (_type == Type::LOGICAL);};
-    public:         bool isClock    () const {return (_type == Type::CLOCK);};
-    public:         bool isPower    () const {return (_type == Type::POWER);};
-    public:         bool isGround   () const {return (_type == Type::GROUND);};
-    public:         bool isSupply   () const {return (isPower() || isGround());};
-    public:         bool hasAlias   (const Name& name) const;
+    public: virtual bool          isDeepNet  () const {return false;};
+    public:         bool          isGlobal   () const {return _isGlobal;};
+    public:         bool          isExternal () const {return _isExternal;};
+    public:         bool          isAutomatic() const {return _isAutomatic;};
+    public:         bool          isBlockage () const {return (_type == Type::BLOCKAGE);};
+    public:         bool          isFused    () const {return (_type == Type::FUSED);};
+    public:         bool          isLogical  () const {return (_type == Type::LOGICAL);};
+    public:         bool          isClock    () const {return (_type == Type::CLOCK);};
+    public:         bool          isPower    () const {return (_type == Type::POWER);};
+    public:         bool          isGround   () const {return (_type == Type::GROUND);};
+    public:         bool          isSupply   () const {return (isPower() || isGround());};
+    public:         bool          hasAlias   (const Name& ) const;
+    public:         NetAliasHook* getAlias   (const Name& ) const;
 
 // Updators
 // ********
@@ -237,7 +236,7 @@ class Net : public Entity {
     public: void setRoutingState(uint32_t state);
     public: void materialize();
     public: void unmaterialize();
-    public: bool addAlias(const Name& name);
+    public: bool addAlias(const Name& name, bool isExternal=false);
     public: bool removeAlias(const Name& name);
     public: void merge(Net* net);
     public: Net* getClone(Cell* cloneCell);
@@ -252,6 +251,7 @@ class Net : public Entity {
     public: virtual void _toJsonSignature(JsonWriter*) const;
     public: virtual void _toJsonCollections(JsonWriter*) const;
     public: virtual string _getTypeName() const {return _TName("Net");};
+    public: string _getFlagsAsString() const;
     public: virtual string _getString() const;
     public: virtual Record* _getRecord() const;
     public: NetMainName& _getMainName() { return _mainName; }
@@ -430,8 +430,8 @@ inline Hurricane::Record* getRecord<const Hurricane::Net::Direction::Code*>
 INSPECTOR_P_SUPPORT(Hurricane::Net);
 INSPECTOR_P_SUPPORT(Hurricane::Net::ComponentSet);
 INSPECTOR_P_SUPPORT(Hurricane::Net::RubberSet);
-INSPECTOR_PV_SUPPORT(Hurricane::Net::Type);
-INSPECTOR_PV_SUPPORT(Hurricane::Net::Direction);
+INSPECTOR_PR_SUPPORT(Hurricane::Net::Type);
+INSPECTOR_PR_SUPPORT(Hurricane::Net::Direction);
 IOSTREAM_POINTER_SUPPORT(Hurricane::Net::Type::Code);
 IOSTREAM_VALUE_SUPPORT(Hurricane::Net::Type::Code);
 IOSTREAM_POINTER_SUPPORT(Hurricane::Net::Direction::Code);
@@ -444,9 +444,10 @@ namespace Hurricane {
 // Because sometimes it didn't happens (?).
   const SlotTemplate<Net*> dummyNetSlot ( string("dummyNetSlot"), NULL );
 
-}
 
-#endif // HURRICANE_NET
+  typedef  std::set<Net*,DBo::CompareById>  NetSet;
+
+}
 
 
 // ****************************************************************************************************

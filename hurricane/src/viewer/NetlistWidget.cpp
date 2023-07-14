@@ -70,7 +70,7 @@ namespace Hurricane {
 
     QHeaderView* horizontalHeader = _view->horizontalHeader();
     horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
-    horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 300 : 150 );
+    horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 150 : 75 );
     horizontalHeader->setStretchLastSection( true );
 
     QHeaderView* verticalHeader = _view->verticalHeader();
@@ -151,24 +151,18 @@ namespace Hurricane {
       _forceReselect = false;
     }
 
-    SelectedNetSet::iterator remove;
-    SelectedNetSet::iterator isel  = _selecteds.begin ();
+    SelectedNetSet::iterator isel = _selecteds.begin ();
     while ( isel != _selecteds.end() ) {
-      switch ( isel->getAccesses() ) {
-        case 1:  break;
-        case 64:
-          emit netSelected ( Occurrence(isel->getNet()) );
-          break;
-        case 0:
-          emit netUnselected ( Occurrence(isel->getNet()) );
-          remove = isel;
-          ++isel;
-          _selecteds.erase ( remove );
-          continue;
-        default:
-          cerr << Bug("NetlistWidget::updateSelecteds(): invalid code %d"
-                     ,isel->getAccesses()) << endl;
+      SelectedNetSet::iterator remove = isel++;
+      if ( remove->getAccesses() == 0 ) {
+        emit netUnselected ( Occurrence(remove->getNet()) );
+        _selecteds.erase ( remove );
       }
+    }
+    isel = _selecteds.begin ();
+    while ( isel != _selecteds.end() ) {
+      if ( isel->getAccesses() == 64 )
+        emit netSelected ( Occurrence(isel->getNet()) );
       ++isel;
     }
 
@@ -178,7 +172,7 @@ namespace Hurricane {
 
   void  NetlistWidget::textFilterChanged ()
   {
-    _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
+    _sortModel->setFilterRegExp( _filterPatternLineEdit->text() );
   //updateSelecteds ();
   }
 

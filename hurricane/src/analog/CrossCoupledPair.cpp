@@ -42,7 +42,6 @@ namespace Analog {
     CrossCoupledPair* ccp = new CrossCoupledPair(library,name,type);
     ccp->_postCreate(deviceName);
     ccp->createConnections(bulkConnected);
-    ccp->setTerminal( true );
     UpdateSession::close();
     return ccp;
   }
@@ -97,6 +96,19 @@ namespace Analog {
   
   Name  CrossCoupledPair::getDeviceName () const
   { return (isBulkConnected()) ? _ccpBulkConnectedName : _ccpBulkUnconnectedName; }
+
+
+  string  CrossCoupledPair::_getTypeName () const
+  { return "CrossCoupledPair"; }
+  
+
+  Record*  CrossCoupledPair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_ccpBulkConnectedName"  ,  _ccpBulkConnectedName   ) );
+    record->add( getSlot("_ccpBulkUnconnectedName",  _ccpBulkUnconnectedName ) );
+    return record;
+  }
 
 
 }  // Analog namespace.

@@ -50,9 +50,9 @@ namespace CRL {
                                 SearchPath     ();
     public:                                    
       inline void               reset          ();
-      inline void               append         ( const std::string& path, const std::string& name="" );
-             void               prepend        ( const std::string& path, const std::string& name="");
-             void               replace        ( const std::string& path, const std::string&, size_t index );
+      inline size_t             append         ( const std::string& path, const std::string& name="" );
+             size_t             prepend        ( const std::string& path, const std::string& name="");
+             size_t             replace        ( const std::string& path, const std::string&, size_t index );
              void               remove         ( size_t index );
              size_t             locate         ( const std::string&        file
                                                ,       std::ios::openmode  mode =std::ios::in
@@ -92,8 +92,9 @@ namespace CRL {
   inline bool               SearchPath::hasSelected  () const { return _index != npos; }
   inline std::string        SearchPath::_getTypeName () const { return _TName("SearchPath"); }
 
-  inline void  SearchPath::append ( const std::string& path, const std::string& name ) {
+  inline size_t  SearchPath::append ( const std::string& path, const std::string& name ) {
     _paths.push_back ( Element ( path, name.empty()?extractLibName(path):name ) );
+    return _paths.size()-1;
   }
 
   inline SearchPath::Element::Element ( const std::string& path, const std::string& name )
@@ -111,7 +112,7 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::SearchPath);
-INSPECTOR_V_SUPPORT(CRL::SearchPath::Element);
+INSPECTOR_PR_SUPPORT(CRL::SearchPath::Element);
 
 
 #endif  // CRL_SEARCH_PATH_H

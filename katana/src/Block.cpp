@@ -1,7 +1,7 @@
 // -*- mode: C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -18,6 +18,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Cell.h"
 #include "anabatic/Edge.h"
@@ -37,6 +38,7 @@ namespace Katana {
   using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::SubTypeCollection;
+  using Hurricane::UpdateSession;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
@@ -46,6 +48,16 @@ namespace Katana {
 
 // -------------------------------------------------------------------
 // Class  :  "Katana::Row".
+
+
+  Row::Row ( Block* block, DbU::Unit y )
+    : _block        (block)
+    , _isHybrid     (block->getKatana()->isHybridStyle())
+    , _y            (y)
+    , _occurrences  ()
+    , _southWest    (NULL)
+    , _channelHeight(1)
+  { }
 
 
   void  Row::add  ( DbU::Unit x, Occurrence occurrence )
@@ -104,8 +116,14 @@ namespace Katana {
       throw Error( "Row::createChannel(): NULL southWest GCell." );
     if (_occurrences.empty())
       throw Error( "Row::createChannel(): No instances in row." );
-    if (southWest->getXMin() != (*_occurrences.begin()).first)
-      throw Error( "Row::createChannel(): South-west GCell XMin and Row X min differs." );
+    if (southWest->getXMin() != (*_occurrences.begin()).first) {
+      UpdateSession::close();
+      throw Error( "Row::createChannel(): South-west GCell XMin and Row X min differs.\n"
+                   "        * southWest=%s\n"
+                   "        * first=%s\n"
+                 , getString(southWest).c_str()
+                 , DbU::getValueString((*_occurrences.begin()).first).c_str() );
+    }
     if (southWest->getYMin() != _y)
       throw Error( "Row::createChannel(): South-west GCell YMIn and Row Y min differs (%s vs. %s)."
                  , DbU::getValueString(southWest->getYMin()).c_str()
@@ -129,17 +147,21 @@ namespace Katana {
       }
     }
 
-    southWest->setType( Anabatic::Flags::StdCellRow );
-    if (channel) channel->setType( Anabatic::Flags::ChannelRow );
+    if (not _isHybrid) {
+      southWest->setType( Anabatic::Flags::StdCellRow );
+      if (channel) channel->setType( Anabatic::Flags::ChannelRow );
+    }
 
     DbU::Unit xmax = getCell()->getAbutmentBox().getXMax() - sliceHeight;
     DbU::Unit xcut = _southWest->getXMin() + sliceHeight;
     for ( ; xcut < xmax ; xcut += sliceHeight ) {
       southWest = southWest->vcut( xcut );
-      southWest->setType( Anabatic::Flags::StdCellRow );
+      if (not _isHybrid)
+        southWest->setType( Anabatic::Flags::StdCellRow );
       if (channel) {
         channel = channel->vcut( xcut );
-        channel->setType( Anabatic::Flags::ChannelRow );
+        if (not _isHybrid)
+          channel->setType( Anabatic::Flags::ChannelRow );
         channel->getWestEdge()->setFlags( Flags::InfiniteCapacity );
       }
     }
@@ -188,14 +210,14 @@ namespace Katana {
 
   uint32_t  Row::computeChannelHeight ()
   {
-    _channelHeight = 2;
+    _channelHeight = 4;
 
     GCell* gcell = getSouthWest()->getNorth();
     while ( gcell ) {
-      _channelHeight = std::max( _channelHeight, (uint32_t)gcell->getNetCount() );
-      // Edge* east = gcell->getEastEdge();
-      // if (east)
-      //   _channelHeight = std::max( _channelHeight, east->getRealOccupancy() );
+    //_channelHeight = std::max( _channelHeight, (uint32_t)gcell->getNetCount() );
+      Edge* east = gcell->getEastEdge();
+      if (east)
+        _channelHeight = std::max( _channelHeight, east->getRealOccupancy() );
       gcell = gcell->getEast();
     }
 
@@ -224,8 +246,8 @@ namespace Katana {
     : _katana(katana)
     , _cell  (cell)
     , _rows  ()
-  { 
-    for ( Occurrence occurrence : _cell->getLeafInstanceOccurrences() ) {
+  {
+    for ( Occurrence occurrence : _cell->getTerminalNetlistInstanceOccurrences() ) {
       add( occurrence );
     }
     _katana->addBlock( this );
@@ -303,7 +325,8 @@ namespace Katana {
     Session::close();
     _katana->openSession();
 
-    for ( Row* row : _rows ) row->routingPadsSubBreak();
+    if (not _katana->isHybridStyle())
+      for ( Row* row : _rows ) row->routingPadsSubBreak();
 
     if (not sessionReUse) Session::close();
   }
@@ -313,6 +336,8 @@ namespace Katana {
   {
     cmess1 << "  o  Sizing routing channels." << endl;
 
+    Breakpoint::stop( 1, "About to compute/resize channel heights." );
+    
     bool sessionReUse = Session::isOpen();
     if (not sessionReUse) _katana->openSession();
 

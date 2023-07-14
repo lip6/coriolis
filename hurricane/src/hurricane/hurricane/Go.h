@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_GO
-#define HURRICANE_GO
-
+#pragma  once
 #include "hurricane/Entity.h"
 #include "hurricane/Gos.h"
 #include "hurricane/Transformation.h"
@@ -56,6 +54,7 @@ class Go : public Entity {
 // ************
 
     protected: Go();
+    protected: virtual ~Go();
 
 // Predicates
 // **********
@@ -98,9 +97,6 @@ class Go : public Entity {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Go);
-
-
-#endif // HURRICANE_GO
 
 
 // ****************************************************************************************************

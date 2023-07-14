@@ -71,7 +71,7 @@ namespace Analog {
   void Device::_postCreate ( const Name& deviceName )
   {
     Super::_postCreate();
-    setTerminal( true );
+    setTerminalNetlist( true );
   
     _subDevicesLibrary = Library::create( getLibrary(), getName() );
     _anonymous = Net::create( this, anonymousNetName );
@@ -80,7 +80,8 @@ namespace Analog {
     DeviceDescriptor*         dd        = tech->getDeviceDescriptor( deviceName );
     DeviceDescriptor::Layouts ddLayouts = dd->getLayouts();
 
-    for ( auto ddLayout : ddLayouts ) _layouts.insert( ddLayout );
+    for ( auto ddLayout : ddLayouts )
+      _layouts.insert( ddLayout );
   
     Choices layouts;
     for ( auto layout : _layouts ) layouts << getString(layout.first);
@@ -96,7 +97,7 @@ namespace Analog {
   }
 
 
-  Parameter* Device::getParameter ( const string& parameterId )
+  Parameter* Device::getParameter ( const string& parameterId ) const
   {
     for ( Parameter* parameter : _parameterSet) {
       if (parameter->getName() == parameterId)

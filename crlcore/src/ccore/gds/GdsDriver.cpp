@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2018-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2018-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -15,6 +15,9 @@
 
 
 #include <ctime>
+#include <cmath>
+#include <cstdio>
+#include <cfenv>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -24,9 +27,11 @@
 #include <vector>
 using namespace std;
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Diagonal.h"
@@ -34,6 +39,7 @@ using namespace std;
 #include "hurricane/Polygon.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Net.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Instance.h"
@@ -53,6 +59,10 @@ namespace {
 
   bool hasLayout ( const Cell* cell )
   {
+    for ( Instance* instance : cell->getInstances() ) {
+      if (instance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED)
+        return true;
+    }
     for ( Net* net : cell->getNets() ) {
       for ( Component* component : net->getComponents() ) {
         if (dynamic_cast<Plug*>(component) == NULL) return true;
@@ -60,6 +70,115 @@ namespace {
     }
     return false;
   } 
+
+
+  bool  isOnGrid ( Instance* instance )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    Point     position = instance->getTransformation().getTranslation();
+    if (position.getX() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Tx %s is not on grid (%s)"
+                   , getString(instance).c_str()
+                   , getString(instance->getCell()).c_str()
+                   , DbU::getValueString(position.getX()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (position.getY() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Ty %s is not on grid (%s)"
+                   , getString(instance).c_str()
+                   , getString(instance->getCell()).c_str()
+                   , DbU::getValueString(position.getY()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    return error;
+  }
+
+
+  bool  isOnGrid ( Component* component, const Box& bb )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    if (bb.getXMin() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        X-Min %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getXMin()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getXMax() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        X-Max %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getXMax()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getYMin() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Y-Min %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getYMin()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getYMax() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Y-Max %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getYMax()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    return error;
+  }
+
+
+  bool  isOnGrid ( Component* component, const vector<Point>& points )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    for ( size_t i=0 ; i<points.size() ; ++i ) {
+      if (points[i].getX() % oneGrid) {
+        error = true;
+        cerr << Error( "isOnGrid(): On %s of %s,\n"
+                       "        Point [%d] X %s is not on grid (%s)"
+                     , getString(component).c_str()
+                     , getString(component->getCell()).c_str()
+                     , i
+                     , DbU::getValueString(points[i].getX()).c_str()
+                     , DbU::getValueString(oneGrid).c_str()
+                     ) << endl;
+      }
+      if (points[i].getY() % oneGrid) {
+        error = true;
+        cerr << Error( "isOnGrid(): On %s of %s,\n"
+                       "        Point [%d] Y %s is not on grid (%s)"
+                     , getString(component).c_str()
+                     , getString(component->getCell()).c_str()
+                     , i
+                     , DbU::getValueString(points[i].getY()).c_str()
+                     , DbU::getValueString(oneGrid).c_str()
+                     ) << endl;
+      }
+    }
+    return error;
+  }
 
 
 // -------------------------------------------------------------------
@@ -131,7 +250,7 @@ namespace {
       static const uint16_t  BitArray        = 0x0001;
       static const uint16_t  TwoByteInteger  = 0x0002;  // Signed, 16 bits.
       static const uint16_t  FourByteInteger = 0x0003;  // Signed, 32 bits.
-      static const uint16_t  FourByteReal    = 0x0004;  // Unused.
+    //static const uint16_t  FourByteReal    = 0x0004;  // Unused.
       static const uint16_t  EightByteReal   = 0x0005;
       static const uint16_t  String          = 0x0006;
     // Record Types.
@@ -144,55 +263,55 @@ namespace {
       static const uint16_t  STRNAME         = 0x0600 | String;
       static const uint16_t  ENDSTR          = 0x0700 | NoData;
       static const uint16_t  BOUNDARY        = 0x0800 | NoData;
-      static const uint16_t  PATH            = 0x0900 | NoData;
+    //static const uint16_t  PATH            = 0x0900 | NoData;
       static const uint16_t  SREF            = 0x0a00 | NoData;
-      static const uint16_t  AREF            = 0x0b00 | NoData;
+    //static const uint16_t  AREF            = 0x0b00 | NoData;
       static const uint16_t  TEXT            = 0x0c00 | NoData;
       static const uint16_t  LAYER           = 0x0d00 | TwoByteInteger;
       static const uint16_t  DATATYPE        = 0x0e00 | TwoByteInteger;
-      static const uint16_t  WIDTH           = 0x0f00 | FourByteInteger;
+    //static const uint16_t  WIDTH           = 0x0f00 | FourByteInteger;
       static const uint16_t  XY              = 0x1000 | FourByteInteger;
       static const uint16_t  ENDEL           = 0x1100 | NoData;
       static const uint16_t  SNAME           = 0x1200 | String;
-      static const uint16_t  COLROW          = 0x1300 | TwoByteInteger;
-      static const uint16_t  TEXTNODE        = 0x1400 | NoData;  // Unused.
-      static const uint16_t  NODE            = 0x1500 | NoData;
+    //static const uint16_t  COLROW          = 0x1300 | TwoByteInteger;
+    //static const uint16_t  TEXTNODE        = 0x1400 | NoData;  // Unused.
+    //static const uint16_t  NODE            = 0x1500 | NoData;
       static const uint16_t  TEXTTYPE        = 0x1600 | TwoByteInteger;
       static const uint16_t  PRESENTATION    = 0x1700 | BitArray;
-      static const uint16_t  SPACING         = 0x1800 | NoData;  // Discontinued.
+    //static const uint16_t  SPACING         = 0x1800 | NoData;  // Discontinued.
       static const uint16_t  STRING          = 0x1900 | String;
       static const uint16_t  STRANS          = 0x1a00 | BitArray;
-      static const uint16_t  MAG             = 0x1b00 | EightByteReal;
+    //static const uint16_t  MAG             = 0x1b00 | EightByteReal;
       static const uint16_t  ANGLE           = 0x1c00 | EightByteReal;
-      static const uint16_t  REFLIBS         = 0x1f00 | String;
-      static const uint16_t  FONTS           = 0x2000 | String;
-      static const uint16_t  PATHTYPE        = 0x2100 | TwoByteInteger;
-      static const uint16_t  GENERATIONS     = 0x2200 | TwoByteInteger;
-      static const uint16_t  ATTRTABLE       = 0x2300 | String;
-      static const uint16_t  STYPTABLE       = 0x2400 | String;          // Unreleased.
-      static const uint16_t  STRTYPE         = 0x2500 | TwoByteInteger;  // Unreleased.
-      static const uint16_t  ELFLAGS         = 0x2600 | BitArray;
-      static const uint16_t  ELKEY           = 0x2700 | FourByteInteger; // Unreleased.
-      static const uint16_t  LINKTYPE        = 0x2800 | TwoByteInteger;  // Unreleased.
-      static const uint16_t  LINKKEYS        = 0x2900 | FourByteInteger; // Unreleased.
-      static const uint16_t  NODETYPE        = 0x2a00 | TwoByteInteger;
+    //static const uint16_t  REFLIBS         = 0x1f00 | String;
+    //static const uint16_t  FONTS           = 0x2000 | String;
+    //static const uint16_t  PATHTYPE        = 0x2100 | TwoByteInteger;
+    //static const uint16_t  GENERATIONS     = 0x2200 | TwoByteInteger;
+    //static const uint16_t  ATTRTABLE       = 0x2300 | String;
+    //static const uint16_t  STYPTABLE       = 0x2400 | String;          // Unreleased.
+    //static const uint16_t  STRTYPE         = 0x2500 | TwoByteInteger;  // Unreleased.
+    //static const uint16_t  ELFLAGS         = 0x2600 | BitArray;
+    //static const uint16_t  ELKEY           = 0x2700 | FourByteInteger; // Unreleased.
+    //static const uint16_t  LINKTYPE        = 0x2800 | TwoByteInteger;  // Unreleased.
+    //static const uint16_t  LINKKEYS        = 0x2900 | FourByteInteger; // Unreleased.
+    //static const uint16_t  NODETYPE        = 0x2a00 | TwoByteInteger;
       static const uint16_t  PROPATTR        = 0x2b00 | TwoByteInteger;
       static const uint16_t  PROPVALUE       = 0x2c00 | String;
-      static const uint16_t  BOX             = 0x2d00 | NoData;
-      static const uint16_t  BOXTYPE         = 0x2e00 | TwoByteInteger;
-      static const uint16_t  PLEX            = 0x2f00 | FourByteInteger;
-      static const uint16_t  BGNEXTN         = 0x3000 | FourByteInteger; // CustomPlus.
-      static const uint16_t  ENDEXTN         = 0x3100 | FourByteInteger; // CustomPlus.
-      static const uint16_t  TAPENUM         = 0x3200 | TwoByteInteger;
-      static const uint16_t  TAPECODE        = 0x3300 | TwoByteInteger;
-      static const uint16_t  STRCLASS        = 0x3400 | BitArray;        // CustomPlus.
-      static const uint16_t  RESERVED        = 0x3500 | FourByteInteger; // Future use.
-      static const uint16_t  FORMAT          = 0x3600 | TwoByteInteger;
-      static const uint16_t  MASK            = 0x3700 | String;          // Filtered format.
-      static const uint16_t  ENDMASKS        = 0x3800 | NoData;          // Filtered format.
-      static const uint16_t  LIBDIRSIZE      = 0x3900 | TwoByteInteger;
-      static const uint16_t  SRFNAME         = 0x3a00 | String;
-      static const uint16_t  LIBSECUR        = 0x3b00 | TwoByteInteger;
+    //static const uint16_t  BOX             = 0x2d00 | NoData;
+    //static const uint16_t  BOXTYPE         = 0x2e00 | TwoByteInteger;
+    //static const uint16_t  PLEX            = 0x2f00 | FourByteInteger;
+    //static const uint16_t  BGNEXTN         = 0x3000 | FourByteInteger; // CustomPlus.
+    //static const uint16_t  ENDEXTN         = 0x3100 | FourByteInteger; // CustomPlus.
+    //static const uint16_t  TAPENUM         = 0x3200 | TwoByteInteger;
+    //static const uint16_t  TAPECODE        = 0x3300 | TwoByteInteger;
+    //static const uint16_t  STRCLASS        = 0x3400 | BitArray;        // CustomPlus.
+    //static const uint16_t  RESERVED        = 0x3500 | FourByteInteger; // Future use.
+    //static const uint16_t  FORMAT          = 0x3600 | TwoByteInteger;
+    //static const uint16_t  MASK            = 0x3700 | String;          // Filtered format.
+    //static const uint16_t  ENDMASKS        = 0x3800 | NoData;          // Filtered format.
+    //static const uint16_t  LIBDIRSIZE      = 0x3900 | TwoByteInteger;
+    //static const uint16_t  SRFNAME         = 0x3a00 | String;
+    //static const uint16_t  LIBSECUR        = 0x3b00 | TwoByteInteger;
     public:
                        GdsRecord  ( uint16_t type );
                        GdsRecord  ( uint16_t type, int16_t );
@@ -313,18 +432,32 @@ namespace {
 
   void  GdsRecord::toStream ( ostream& stream ) const
   {
+    // static size_t count = 0;
+    
     uint16_t length = (uint16_t)( _bytes.size()+2 );
     const unsigned char* bytearray = reinterpret_cast<const unsigned char*>( &length );
+
+    // char buffer[512];
+    // sprintf( buffer, "0x%02x", bytearray[1] );
+    // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+    // sprintf( buffer, "0x%02x", bytearray[0] );
+    // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+
   // Little endian (x86).
     stream.put( bytearray[1] );
     stream.put( bytearray[0] );
 
-    for ( char byte : _bytes ) stream.put( byte );
+    for ( unsigned char byte : _bytes ) {
+      // uint32_t b = byte;
+      // sprintf( buffer, "0x%02x", b );
+      // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+      stream.put( byte );
+    }
   }
 
 
   ostream& operator<< ( ostream& o, const GdsRecord& r ) { r .toStream( o ); return o; }
-  ostream& operator<< ( ostream& o, const GdsRecord* r ) { r->toStream( o ); return o; }
+//ostream& operator<< ( ostream& o, const GdsRecord* r ) { r->toStream( o ); return o; }
 
 
 // -------------------------------------------------------------------
@@ -337,25 +470,31 @@ namespace {
       static const  GdsRecord  ENDEL;
       static const  GdsRecord  ENDSTR;
       static const  GdsRecord  SREF;
+      static const  GdsRecord  TEXT;
     public:
-                               GdsStream  ( string filename );
-                              ~GdsStream  ();
-             inline int32_t    toGdsDbu   ( DbU::Unit ) const;
-      static inline GdsRecord  PROPATTR   ( int16_t );
-      static inline GdsRecord  DATATYPE   ( int16_t );
-      static inline GdsRecord  PROPVALUE  ( string );
-      static inline GdsRecord  STRNAME    ( string );
-      static inline GdsRecord  STRNAME    ( const Name& );
-      static inline GdsRecord  LIBNAME    ( string );
-      static inline GdsRecord  SNAME      ( string );
-      static inline GdsRecord  SNAME      ( const Name& );
-                    GdsStream& operator<< ( const GdsRecord& );
-                    GdsStream& operator<< ( const BasicLayer* );
-                    GdsStream& operator<< ( const Box& );
-                    GdsStream& operator<< ( const Points );
-                    GdsStream& operator<< ( const vector<Point>& points );
-                    GdsStream& operator<< ( const Cell* );
-                    GdsStream& operator<< ( const Transformation& );
+                               GdsStream    ( string filename );
+                              ~GdsStream    ();
+             inline int32_t    toGdsDbu     ( DbU::Unit ) const;
+      static inline GdsRecord  PROPATTR     ( int16_t );
+      static inline GdsRecord  DATATYPE     ( int16_t );
+      static inline GdsRecord  TEXTTYPE     ( int16_t );
+      static inline GdsRecord  LAYER        ( int16_t );
+      static inline GdsRecord  PRESENTATION ( int16_t );
+      static inline GdsRecord  PROPVALUE    ( string );
+      static inline GdsRecord  STRNAME      ( string );
+      static inline GdsRecord  STRNAME      ( const Name& );
+      static inline GdsRecord  LIBNAME      ( string );
+      static inline GdsRecord  SNAME        ( string );
+      static inline GdsRecord  SNAME        ( const Name& );
+      static inline GdsRecord  STRING       ( const Name& );
+      static inline GdsRecord  STRING       ( const string );
+                    GdsStream& operator<<   ( const GdsRecord& );
+                    GdsStream& operator<<   ( const Box& );
+                    GdsStream& operator<<   ( const Points );
+                    GdsStream& operator<<   ( const Point& point );
+                    GdsStream& operator<<   ( const vector<Point>& points );
+                    GdsStream& operator<<   ( const Cell* );
+                    GdsStream& operator<<   ( const Transformation& );
     private:
       ofstream  _ostream;
       double    _dbuPerUu;
@@ -368,16 +507,23 @@ namespace {
   const  GdsRecord  GdsStream::ENDEL    = GdsRecord(GdsRecord::ENDEL);
   const  GdsRecord  GdsStream::ENDSTR   = GdsRecord(GdsRecord::ENDSTR);
   const  GdsRecord  GdsStream::SREF     = GdsRecord(GdsRecord::SREF);
+  const  GdsRecord  GdsStream::TEXT     = GdsRecord(GdsRecord::TEXT);
 
-  inline GdsRecord  GdsStream::PROPATTR  ( int16_t v )     { return GdsRecord(GdsRecord::PROPATTR,v); }
-  inline GdsRecord  GdsStream::DATATYPE  ( int16_t v )     { return GdsRecord(GdsRecord::DATATYPE,v); }
-  inline GdsRecord  GdsStream::PROPVALUE ( string s )      { return GdsRecord(GdsRecord::PROPVALUE,s); }
-  inline GdsRecord  GdsStream::STRNAME   ( string s )      { return GdsRecord(GdsRecord::STRNAME,s); }
-  inline GdsRecord  GdsStream::STRNAME   ( const Name& n ) { return GdsRecord(GdsRecord::STRNAME,getString(n)); }
-  inline GdsRecord  GdsStream::LIBNAME   ( string s )      { return GdsRecord(GdsRecord::LIBNAME,s); }
-  inline GdsRecord  GdsStream::SNAME     ( string s )      { return GdsRecord(GdsRecord::SNAME,s); }
-  inline GdsRecord  GdsStream::SNAME     ( const Name& n ) { return GdsRecord(GdsRecord::SNAME,getString(n)); }
-  inline int32_t    GdsStream::toGdsDbu  ( DbU::Unit v )   const { return DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU; }
+  inline GdsRecord  GdsStream::PROPATTR     ( int16_t v )      { return GdsRecord(GdsRecord::PROPATTR,v); }
+  inline GdsRecord  GdsStream::DATATYPE     ( int16_t v )      { return GdsRecord(GdsRecord::DATATYPE,v); }
+  inline GdsRecord  GdsStream::TEXTTYPE     ( int16_t v )      { return GdsRecord(GdsRecord::TEXTTYPE,v); }
+  inline GdsRecord  GdsStream::LAYER        ( int16_t v )      { return GdsRecord(GdsRecord::LAYER,v); }
+  inline GdsRecord  GdsStream::PRESENTATION ( int16_t v )      { return GdsRecord(GdsRecord::PRESENTATION,v); }
+  inline GdsRecord  GdsStream::PROPVALUE    ( string s )       { return GdsRecord(GdsRecord::PROPVALUE,s); }
+  inline GdsRecord  GdsStream::STRNAME      ( string s )       { return GdsRecord(GdsRecord::STRNAME,s); }
+  inline GdsRecord  GdsStream::STRNAME      ( const Name& n )  { return GdsRecord(GdsRecord::STRNAME,getString(n)); }
+  inline GdsRecord  GdsStream::LIBNAME      ( string s )       { return GdsRecord(GdsRecord::LIBNAME,s); }
+  inline GdsRecord  GdsStream::SNAME        ( string s )       { return GdsRecord(GdsRecord::SNAME,s); }
+  inline GdsRecord  GdsStream::SNAME        ( const Name& n )  { return GdsRecord(GdsRecord::SNAME,getString(n)); }
+  inline GdsRecord  GdsStream::STRING       ( const Name& n )  { return GdsRecord(GdsRecord::STRING,getString(n)); }
+  inline GdsRecord  GdsStream::STRING       ( const string s ) { return GdsRecord(GdsRecord::STRING,s); }
+  inline int32_t    GdsStream::toGdsDbu     ( DbU::Unit v )   const
+  { return uint32_t( std::lrint( DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU )); }
 
 
   GdsStream::GdsStream ( string filename )
@@ -385,7 +531,8 @@ namespace {
     , _dbuPerUu (Cfg::getParamDouble("gdsDriver.dbuPerUu" ,0.001)->asDouble())  // 1000
     , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
   {
-    _ostream.open( filename, ios_base::out );
+    std::fesetround( FE_TONEAREST );
+    _ostream.open( filename, ios_base::out|ios_base::binary );
 
     GdsRecord record ( GdsRecord::HEADER );
     record.push( (uint16_t)600 );
@@ -413,7 +560,7 @@ namespace {
 
   // Generate a GDSII which coordinates are relatives to the um.
   // Bug correction courtesy of M. Koefferlein (KLayout).
-    double gridPerUu = DbU::getPhysicalsPerGrid() / 1e-6;
+  //double gridPerUu = DbU::getPhysicalsPerGrid() / 1e-6;
 
     record = GdsRecord( GdsRecord::UNITS );
     record.push( _dbuPerUu );
@@ -435,18 +582,22 @@ namespace {
   { _ostream << record; return *this; }
 
 
+#if 0
   GdsStream& GdsStream::operator<< ( const BasicLayer* layer )
   {
+    cdebug_log(101,0) << "LAYER" << endl;
     GdsRecord record ( GdsRecord::LAYER );
     record.push( (int16_t)layer->getGds2Layer() );
     _ostream << record;
 
+    cdebug_log(101,0) << "DATATYPE" << endl;
     record = GdsRecord( GdsRecord::DATATYPE );
     record.push( (int16_t)layer->getGds2Datatype() );
     _ostream << record;
 
     return *this;
   }
+#endif
 
 
   GdsStream& GdsStream::operator<< ( const Transformation& transf )
@@ -527,6 +678,7 @@ namespace {
 
   GdsStream& GdsStream::operator<< ( Points points )
   {
+  //cerr << "GdsStream::operator<<(Points&) " << points.getSize() << endl;
     GdsRecord record ( GdsRecord::XY );
     Point first = points.getFirst();
     for ( Point p : points ) {
@@ -540,8 +692,19 @@ namespace {
   }
 
 
+  GdsStream& GdsStream::operator<< ( const Point& point )
+  {
+    GdsRecord record ( GdsRecord::XY );
+    record.push( (int32_t)toGdsDbu(point.getX()) );
+    record.push( (int32_t)toGdsDbu(point.getY()) );
+    _ostream << record;
+    return *this;
+  }
+
+
   GdsStream& GdsStream::operator<< ( const vector<Point>& points )
   {
+  //cerr << "GdsStream::operator<<(vector<Points>&) " << points.size() << endl;
     GdsRecord record ( GdsRecord::XY );
     for ( Point p : points ) {
       record.push( (int32_t)toGdsDbu(p.getX()) );
@@ -559,6 +722,10 @@ namespace {
   // Temporay patch for "amsOTA".
     if (cell->getName() == "control_r") return *this;
     if (not hasLayout(cell)) return *this;
+
+  //cerr << "GdsStream::operator<<(Cell*): " << getString(cell) << endl;
+
+    Technology* tech = DataBase::getDB()->getTechnology();
     
     time_t t   = time( 0 );
     tm*    now = localtime( &t );
@@ -583,6 +750,7 @@ namespace {
     for ( Instance* instance : cell->getInstances() ) {
       if (instance->getMasterCell()->getName() == "control_r") continue;
       if (not hasLayout(instance->getMasterCell())) continue;
+    //cerr << "| " << getString(instance) << endl;
 
       if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) continue;
 
@@ -590,6 +758,7 @@ namespace {
       (*this) << SNAME( instance->getMasterCell()->getName() );
       (*this) << instance->getTransformation();
       (*this) << ENDEL;
+      isOnGrid( instance );
     }
 
     for ( Net* net : cell->getNets() ) {
@@ -601,8 +770,10 @@ namespace {
 
           for ( const vector<Point>& subpolygon : subpolygons ) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
-              (*this) << layer;
+              (*this) << LAYER(layer->getGds2Layer());
+              (*this) << DATATYPE(layer->getGds2Datatype());
               (*this) << subpolygon;
               (*this) << ENDEL;
             }
@@ -611,29 +782,78 @@ namespace {
           Rectilinear* rectilinear  = dynamic_cast<Rectilinear*>(component);
           if (rectilinear) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
-              (*this) << layer;
+              (*this) << LAYER(layer->getGds2Layer());
+              (*this) << DATATYPE(layer->getGds2Datatype());
               (*this) << rectilinear->getPoints();
               (*this) << ENDEL;
+              isOnGrid( component, rectilinear->getPoints() );
             }
           } else {
             Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
             if (diagonal) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
                 (*this) << BOUNDARY;
-                (*this) << layer;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
                 (*this) << diagonal->getContour();
                 (*this) << ENDEL;
               }
             } else if (  dynamic_cast<Horizontal*>(component)
                       or dynamic_cast<Vertical  *>(component)
                       or dynamic_cast<Contact   *>(component)
-                      or dynamic_cast<Pad       *>(component)) {
+                      or dynamic_cast<Pad       *>(component)
+                      or dynamic_cast<Pin       *>(component)) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
+                Box bb = component->getBoundingBox(layer);
+                if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
+                  continue;
                 (*this) << BOUNDARY;
-                (*this) << layer;
-                (*this) << component->getBoundingBox(layer);
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
+                (*this) << bb;
                 (*this) << ENDEL;
+                isOnGrid( component, bb );
+
+                const BasicLayer* exportLayer = layer;
+                if (NetExternalComponents::isExternal(component)) {
+                  string layerName = getString( layer->getName() );
+                  if ((layerName.size() > 4) and (layerName.substr(layerName.size()-4) != ".pin")) {
+                    exportLayer = tech->getBasicLayer( layerName+".pin" );
+                    if (not exportLayer) exportLayer = layer;
+                  }
+                  (*this) << BOUNDARY;
+                  (*this) << LAYER(exportLayer->getGds2Layer());
+                  (*this) << DATATYPE(exportLayer->getGds2Datatype());
+                  (*this) << bb;
+                  (*this) << ENDEL;
+                }
+
+                if (NetExternalComponents::isExternal(component) or dynamic_cast<Pin*>(component)) {
+                  string name = getString( component->getNet()->getName() );
+                  if (name.size() > 511) {
+                    cerr << getString(
+                              Warning( "GdsStream::operator<<(): Truncate Net name to 511 first characters,\n"
+                                       "           on \"%s\"."
+                                     , name.c_str() )) << endl;
+                    name.erase( 511 );
+                  }
+                // PRESENTATION: 0b000101 means font:00, vpres:01 (center), hpres:01 (center)
+                  cdebug_log(101,0) << "TEXT" << endl;
+                  (*this) << TEXT;
+                  (*this) << LAYER(exportLayer->getGds2Layer());
+                  cdebug_log(101,0) << "TEXTTYPE" << endl;
+                  (*this) << TEXTTYPE( 0 );
+                  cdebug_log(101,0) << "TEXTYPE end record" << endl;
+                  (*this) << PRESENTATION( 5 );
+                  (*this) << bb.getCenter();
+                  (*this) << STRING( name );
+                  (*this) << ENDEL;
+                  cdebug_log(101,0) << "TEXT ENDEL" << endl;
+                }
               }
             }
           }
@@ -663,7 +883,9 @@ namespace CRL {
     GdsStream gstream ( cellFile );
 
     DepthOrder cellOrder ( cell );
-    for ( auto element : cellOrder.getCellDepths() ) gstream << element.first;
+    for ( auto element : cellOrder.getCellDepths() ) {
+      gstream << element.first;
+    }
 
     return true;
   }

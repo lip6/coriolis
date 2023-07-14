@@ -1,34 +1,25 @@
 #!/usr/bin/python
 
 import sys
-from   Hurricane import *
-from   CRL       import *
-
-
-def toDbU ( l ): return DbU.fromLambda(l)
-
-
-def doBreak ( level, message ):
-    UpdateSession.close()
-    Breakpoint.stop( level, message )
-    UpdateSession.open()
+from   Hurricane import DataBase, DbU, Point, Box, Net, Vertical, Horizontal, Diagonal
+from   CRL       import AllianceFramework, Catalog, Gds
+from   helpers   import l
+from   helpers.overlay import UpdateSession
 
 
 def buildDiagonals ( editor ):
-    DbU.setPolygonStep( toDbU(1.0) )
+    """Check the Diagonal segments of Hurricane."""
+    DbU.setPolygonStep( l(1.0) )
     
-    UpdateSession.open()
+    with UpdateSession():
+        cell = AllianceFramework.get().createCell( 'diagonal' )
+        cell.setTerminalNetlist( True )
 
-    cell = AllianceFramework.get().createCell( 'diagonal' )
-    cell.setTerminal( True )
-
-    cell.setAbutmentBox( Box( toDbU(-5.0), toDbU(-5.0), toDbU(65.0), toDbU(75.0) ) )
+    cell.setAbutmentBox( Box( l(-5.0), l(-5.0), l(65.0), l(75.0) ) )
 
     if editor:
-      UpdateSession.close()
-      editor.setCell( cell )
-      editor.fit()
-      UpdateSession.open()
+        editor.setCell( cell )
+        editor.fit()
     
     technology = DataBase.getDB().getTechnology()
     metal1     = technology.getLayer( "metal1"     ) 
@@ -45,45 +36,42 @@ def buildDiagonals ( editor ):
     contpoly   = technology.getLayer( "CONT_POLY"  )
     ntie       = technology.getLayer( "NTIE"       )
 
-
-    net = Net.create( cell, 'my_net' )
-    net.setExternal( True )
-
-    Diagonal.create( net, metal2
-                   , Point( toDbU(20.0), toDbU(10.0) )
-                   , Point( toDbU(10.0), toDbU(20.0) )
-                   , toDbU(4.0)
-                   )
-    Vertical.create( net, metal2, toDbU(10.0), toDbU(4.0), toDbU(20.0), toDbU(30.0) )
-    Diagonal.create( net, metal2
-                   , Point( toDbU(10.0), toDbU(30.0) )
-                   , Point( toDbU(20.0), toDbU(40.0) )
-                   , toDbU(4.0)
-                   )
-    Horizontal.create( net, metal2, toDbU(40.0), toDbU(4.0), toDbU(20.0), toDbU(30.0) )
-    Diagonal.create( net, metal2
-                   , Point( toDbU(30.0), toDbU(40.0) )
-                   , Point( toDbU(40.0), toDbU(30.0) )
-                   , toDbU(4.0)
-                   )
-    Vertical.create( net, metal2, toDbU(40.0), toDbU(4.0), toDbU(30.0), toDbU(20.0) )
-    Diagonal.create( net, metal2
-                   , Point( toDbU(40.0), toDbU(20.0) )
-                   , Point( toDbU(30.0), toDbU(10.0) )
-                   , toDbU(4.0)
-                   )
-    Horizontal.create( net, metal2, toDbU(10.0), toDbU(4.0), toDbU(30.0), toDbU(20.0) )
-
-    UpdateSession.close()
+    with UpdateSession():
+        net = Net.create( cell, 'my_net' )
+        net.setExternal( True )
+        
+        Diagonal.create( net, metal2
+                       , Point( l(20.0), l(10.0) )
+                       , Point( l(10.0), l(20.0) )
+                       , l(4.0)
+                       )
+        Vertical.create( net, metal2, l(10.0), l(4.0), l(20.0), l(30.0) )
+        Diagonal.create( net, metal2
+                       , Point( l(10.0), l(30.0) )
+                       , Point( l(20.0), l(40.0) )
+                       , l(4.0)
+                       )
+        Horizontal.create( net, metal2, l(40.0), l(4.0), l(20.0), l(30.0) )
+        Diagonal.create( net, metal2
+                       , Point( l(30.0), l(40.0) )
+                       , Point( l(40.0), l(30.0) )
+                       , l(4.0)
+                       )
+        Vertical.create( net, metal2, l(40.0), l(4.0), l(30.0), l(20.0) )
+        Diagonal.create( net, metal2
+                       , Point( l(40.0), l(20.0) )
+                       , Point( l(30.0), l(10.0) )
+                       , l(4.0)
+                       )
+        Horizontal.create( net, metal2, l(10.0), l(4.0), l(30.0), l(20.0) )
 
     Gds.save( cell )
-    return
 
 
-def ScriptMain ( **kw ):
+def scriptMain ( **kw ):
+    """The mandatory function to be called by Coriolis CGT/Unicorn."""
     editor = None
-    if kw.has_key('editor') and kw['editor']:
-      editor = kw['editor']
-
+    if 'editor' in kw and kw['editor']:
+        editor = kw['editor']
     buildDiagonals( editor )
     return True 

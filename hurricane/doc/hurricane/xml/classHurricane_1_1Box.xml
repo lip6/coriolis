@@ -1,0 +1,1023 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Box" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Box</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Box_1a3f79ce602aafef63258e77917211fd41" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::_xMin</definition>
+        <argsstring></argsstring>
+        <name>_xMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="37" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Box_1adb17fb46455310814470f60be48ccf99" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::_yMin</definition>
+        <argsstring></argsstring>
+        <name>_yMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="38" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Box_1a3d6d56333b4f711613756b70dc4a3425" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::_xMax</definition>
+        <argsstring></argsstring>
+        <name>_xMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="39" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Box_1a4abf248b8e4d55b637760119d05ff747" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::_yMax</definition>
+        <argsstring></argsstring>
+        <name>_yMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="40" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Box_1a445dd24bf83759bb47fc483fc7da024f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>()</argsstring>
+        <name>Box</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default constructor : the returned box is empty. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="45" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1af53adb323e9e89eef4e96da9efc33fe9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y)</argsstring>
+        <name>Box</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds a box of null size centered on the point defined by <computeroutput>&lt;x&gt;</computeroutput> and <computeroutput>&lt;y&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="47" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a2f2aa57fa9486b508fca2a060648d04a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>(const Point &amp;point)</argsstring>
+        <name>Box</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds a box of null size centered on the point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="48" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a101cd5a10d6cf229ccedccbb5417ed55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>(const DbU::Unit &amp;x1, const DbU::Unit &amp;y1, const DbU::Unit &amp;x2, const DbU::Unit &amp;y2)</argsstring>
+        <name>Box</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the minimal box enclosing the two points defined by the coordinates <computeroutput>&lt;x1&gt;</computeroutput>, <computeroutput>&lt;y1&gt;</computeroutput> and <computeroutput>&lt;x2&gt;</computeroutput>, <computeroutput>&lt;y2&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="49" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a47f434b4dbda6af14a354722f66a47da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>(const Point &amp;point1, const Point &amp;point2)</argsstring>
+        <name>Box</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the minimal box enclosing the two points. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="50" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1af9a7605270bf1ebb38723fba5b9d9236" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Box::Box</definition>
+        <argsstring>(const Box &amp;box)</argsstring>
+        <name>Box</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Copy constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="52" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a01abf59b3d3e99e694a7d4789f1bb978" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::operator=</definition>
+        <argsstring>(const Box &amp;box)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Assignment operator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="57" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a2a363ad0fdfda5a2f56b1b62a8665703" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::operator==</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Equality operator.</para>
+<para><simplesect kind="remark"><para>Two empty boxes are always different. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="59" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a77a0e8c424c246973c455ce8e3ada8fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::operator!=</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Difference operator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="60" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ad5122ef7dda8a58c1dacddb57cd4ccfb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Box::getXMin</definition>
+        <argsstring>() const</argsstring>
+        <name>getXMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the XMin value : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="65" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a542c383466845aeca0e32f51b77c7439" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Box::getYMin</definition>
+        <argsstring>() const</argsstring>
+        <name>getYMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the YMin value : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="66" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a77b9db757080544fcede3e670cee8c5c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Box::getXMax</definition>
+        <argsstring>() const</argsstring>
+        <name>getXMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the XMax value : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="67" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a06e1a86a06dacfca6d3403c16affc7e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const DbU::Unit &amp; Hurricane::Box::getYMax</definition>
+        <argsstring>() const</argsstring>
+        <name>getYMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the YMax value : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="68" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a95f35cd33966aad61bb43662306ccf98" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getXCenter</definition>
+        <argsstring>() const</argsstring>
+        <name>getXCenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the abscissa of the box center : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="70" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="70" bodyend="70"/>
+        <referencedby refid="classHurricane_1_1Box_1ac18c8725989166d1b101de29531e4f6e" compoundref="Box_8h" startline="72" endline="72">getCenter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a659820726e3862a70158b6f5b7644da0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getYCenter</definition>
+        <argsstring>() const</argsstring>
+        <name>getYCenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the ordinate of the box center : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="71" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="71" bodyend="71"/>
+        <referencedby refid="classHurricane_1_1Box_1ac18c8725989166d1b101de29531e4f6e" compoundref="Box_8h" startline="72" endline="72">getCenter</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ac18c8725989166d1b101de29531e4f6e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Box::getCenter</definition>
+        <argsstring>() const</argsstring>
+        <name>getCenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box center point : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="72" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="72" bodyend="72"/>
+        <references refid="classHurricane_1_1Box_1a95f35cd33966aad61bb43662306ccf98" compoundref="Box_8h" startline="70" endline="70">getXCenter</references>
+        <references refid="classHurricane_1_1Box_1a659820726e3862a70158b6f5b7644da0" compoundref="Box_8h" startline="71" endline="71">getYCenter</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ac2ceb261562c7ff1635b1afff0a1a0d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Box::getCornerBL</definition>
+        <argsstring>() const</argsstring>
+        <name>getCornerBL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="73" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a7d8d98a85a0453849f9106f1168bafab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Box::getCornerTL</definition>
+        <argsstring>() const</argsstring>
+        <name>getCornerTL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="74" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a680145749fde805fe7b06728f840d385" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Box::getCornerTR</definition>
+        <argsstring>() const</argsstring>
+        <name>getCornerTR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="75" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1acf3484335fda90b17eeb768cd2905f91" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Box::getCornerBR</definition>
+        <argsstring>() const</argsstring>
+        <name>getCornerBR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="76" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ae2cc9cf0b17e6443a88b475bbd36e4c9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>getWidth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box width : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="78" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="78" bodyend="78"/>
+        <referencedby refid="classHurricane_1_1Box_1a8aa689ad799e4c78bfefb0328e7d9081" compoundref="Box_8h" startline="79" endline="79">getHalfWidth</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a8aa689ad799e4c78bfefb0328e7d9081" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getHalfWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>getHalfWidth</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the half box width : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="79" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="79" bodyend="79"/>
+        <references refid="classHurricane_1_1Box_1ae2cc9cf0b17e6443a88b475bbd36e4c9" compoundref="Box_8h" startline="78" endline="78">getWidth</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a7b15b9488d49da1fc666c0383fb213ab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>getHeight</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the box height : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="80" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="80" bodyend="80"/>
+        <referencedby refid="classHurricane_1_1Box_1a5c94554a78398c4a5c7dedd024926abb" compoundref="Box_8h" startline="81" endline="81">getHalfHeight</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a5c94554a78398c4a5c7dedd024926abb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::getHalfHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>getHalfHeight</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the half box height : meaningful only for a non empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="81" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="81" bodyend="81"/>
+        <references refid="classHurricane_1_1Box_1a7b15b9488d49da1fc666c0383fb213ab" compoundref="Box_8h" startline="80" endline="80">getHeight</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a2670058f109dfae32d284db249e533bc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Box::getUnion</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>getUnion</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the smallest enclosing box containing the boxes <computeroutput>&lt;this&gt;</computeroutput> and <computeroutput>&lt;box&gt;</computeroutput>. The returned box may be empty if both are. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="83" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a610f9c63bc5636ef304f4768215ffb12" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Box::getIntersection</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>getIntersection</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> box representing the overlapping area. This box is empty if either one of the two boxes is empty or if they are disjoint. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="85" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1add2ec4912afd38cdd13a83ec865ced0f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::manhattanDistance</definition>
+        <argsstring>(const Point &amp;pt) const</argsstring>
+        <name>manhattanDistance</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>pt</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="86" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a01deca570ea26a92cf4253da28ed1d43" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+        <definition>DbU::Unit Hurricane::Box::manhattanDistance</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>manhattanDistance</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="87" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1af8b269603b5c173891a484214ca50266" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::isEmpty</definition>
+        <argsstring>() const</argsstring>
+        <name>isEmpty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the box is empty, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="92" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a0df4d580a3dc1eb23d839c0f53cdee8b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::isFlat</definition>
+        <argsstring>() const</argsstring>
+        <name>isFlat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the box is non void and if we have either ((XMin==XMax) an (YMin&lt;YMax)) or ((XMin&lt;XMax) and (YMin==YMax)). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="93" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a3d073c5bc3d0ea1b4f21937e36be001f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::isPonctual</definition>
+        <argsstring>() const</argsstring>
+        <name>isPonctual</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the box is reduced to a point, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="94" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ae18dd30ffbf0b75714ece480f21e2898" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::contains</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y) const</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the box is non empty and contains the point defined by the coordinates <computeroutput>&lt;x&gt;</computeroutput>, <computeroutput>&lt;y&gt;</computeroutput> else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="96" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a19ad23904fbfe2afb3683affeb2cac7e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::contains</definition>
+        <argsstring>(const Point &amp;point) const</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the box is non empty and contains the point <computeroutput>&lt;point&gt;</computeroutput>, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="97" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ac567c569f23643e58867afee80f6920a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::contains</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the two boxes are non empty and if the box <computeroutput>&lt;this&gt;</computeroutput> contains the box <computeroutput>&lt;box&gt;</computeroutput>, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="98" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ae76b57bf6399b29021813da8d3f306ec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::intersect</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>intersect</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the two boxes are non empty and if they overlap, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="100" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a70d832443d97cb40ec7cb4f0f959a977" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Box::isConstrainedBy</definition>
+        <argsstring>(const Box &amp;box) const</argsstring>
+        <name>isConstrainedBy</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the two boxes are non empty, if the box <computeroutput>&lt;this&gt;</computeroutput> contains the box <computeroutput>&lt;box&gt;</computeroutput> and if those two boxes have at least a common border side, else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="102" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a0717b1b105f65f8284c9b4e36df3a766" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::makeEmpty</definition>
+        <argsstring>()</argsstring>
+        <name>makeEmpty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Transforms the box into an empty one. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="107" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a90207e7ca8044a6afc72674cc6ae366e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::inflate</definition>
+        <argsstring>(const DbU::Unit &amp;d)</argsstring>
+        <name>inflate</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands (or contracts) the box, if not empty, in each direction of the quantity <computeroutput>&lt;d&gt;</computeroutput>. This quantity might be negative enough to transform it into an empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="109" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a6b97ea9d54fbf4dae52459073cdf4b5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::inflate</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</argsstring>
+        <name>inflate</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands (or contracts) the box, if not empty, horizontaly of the quantity <computeroutput>&lt;dx&gt;</computeroutput> and vertically of the quatity <computeroutput>&lt;dy&gt;</computeroutput>. Those quantities might be negative enough to transform it into an empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="110" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1afd1baf9f272878a87c2525f0fa2eab71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::inflate</definition>
+        <argsstring>(const DbU::Unit &amp;dxMin, const DbU::Unit &amp;dyMin, const DbU::Unit &amp;dxMax, const DbU::Unit &amp;dyMax)</argsstring>
+        <name>inflate</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dxMin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dyMin</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dxMax</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dyMax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands (or contracts) the box, if not empty, on the left of the quantity <computeroutput>&lt;dxMin&gt;</computeroutput>, on the bottom of the quantity <computeroutput>&lt;dyMin&gt;</computeroutput>, on the right of the quantity <computeroutput>&lt;dxMax&gt;</computeroutput> and on the top of the quantity <computeroutput>&lt;dyMax&gt;</computeroutput>. Those quantities might be negative enough to transform it into an empty box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="111" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ac68f25dd751855db9b45fb9d23f2e892" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>Box Hurricane::Box::getInflated</definition>
+        <argsstring>(const DbU::Unit &amp;d) const</argsstring>
+        <name>getInflated</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="112" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1aeb3f5d0b7d6c24a8f5c614717f155289" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box&amp; Hurricane::Box::shrinkByFactor</definition>
+        <argsstring>(double factor)</argsstring>
+        <name>shrinkByFactor</name>
+        <param>
+          <type>double</type>
+          <declname>factor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="113" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ab77fe56f9350f06cc872bbb4f83835da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::merge</definition>
+        <argsstring>(const DbU::Unit &amp;x, const DbU::Unit &amp;y)</argsstring>
+        <name>merge</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands the box in order that it encloses the point defined by coordinates <computeroutput>&lt;x&gt;</computeroutput> and <computeroutput>&lt;y&gt;</computeroutput>. If the box was initially empty it becomes reduced to the enclosed point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="115" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1af1f7dfe8984c2d26fbca78b21358ee2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::merge</definition>
+        <argsstring>(const Point &amp;point)</argsstring>
+        <name>merge</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands the box in order that it encloses the point <computeroutput>&lt;point&gt;</computeroutput>. If the box was initially empty it becomes reduced to the enclosed point. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="116" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1ad97e73e91dd36404eb0dde9d44ff2fd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::merge</definition>
+        <argsstring>(const DbU::Unit &amp;x1, const DbU::Unit &amp;y1, const DbU::Unit &amp;x2, const DbU::Unit &amp;y2)</argsstring>
+        <name>merge</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>x2</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>y2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands the box in order that it encloses the points defined by coordinates <computeroutput>&lt;x1&gt;</computeroutput>, <computeroutput>&lt;y1&gt;</computeroutput> and <computeroutput>&lt;x2&gt;</computeroutput>, <computeroutput>&lt;y2&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="117" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a0bdfa52a3f5f6639680ba7dbc52c21d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::merge</definition>
+        <argsstring>(const Box &amp;box)</argsstring>
+        <name>merge</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+          <declname>box</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Expands the box in order that it encloses, if not empty, the box <computeroutput>&lt;box&gt;</computeroutput>. If the box <computeroutput>&lt;this&gt;</computeroutput> was initially empty it becomes reduced to the enclosed box. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="118" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1aa689be4b37c83412f3dc95fc23c82156" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> &amp;</type>
+        <definition>Box &amp; Hurricane::Box::translate</definition>
+        <argsstring>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</argsstring>
+        <name>translate</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dx</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+          <declname>dy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>translates the box, if not empty, of the quantities <computeroutput>&lt;dx&gt;</computeroutput> and <computeroutput>&lt;dy&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="120" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a277b77704073cfb1aed8d9afed5260b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Box::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="126" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="126" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1af4e6a6fe0f2ba69b875990b5ccf60a4d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>string</type>
+        <definition>string Hurricane::Box::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="127" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a474177581f40e4e2898ab9905018397b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Record *</type>
+        <definition>Record* Hurricane::Box::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="128" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Box_1a9eebfb9aa969328aeb516b5e130d97d2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Box::toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>toJson</name>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="129" column="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Box_1secBoxIntro">
+<title>Introduction</title>
+<para>Those objects represent rectangular boxes. They are defined by the values <bold>XMin</bold>, <bold>YMin</bold>, <bold>XMax</bold> and <bold>YMax</bold> which are representatives only when the box is not empty. A box is considered empty whenever it is not initialized or when it doesn&apos;t represent a real area like the intersection of two disjoint boxes.</para>
+</sect1>
+<sect1 id="classHurricane_1_1Box_1secBoxModifierRemark">
+<title>Remark on Modifiers</title>
+<para>All the function described in the modifiers section returns a reference on the modified box, providing so the capability to apply to it a new modification as illustrated in the following example : <programlisting><codeline><highlight class="normal">Box<sp/>box1(0,<sp/>0,<sp/>100,<sp/>100);</highlight></codeline>
+<codeline><highlight class="normal">Box<sp/>box2(20,<sp/>20,<sp/>50,<sp/>150;</highlight></codeline>
+<codeline><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(box1.inflate(3).merge(box2.translate(10,<sp/>10).inflate(-1,<sp/>1)).contains(20,<sp/>20))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>//<sp/>do<sp/>we<sp/>reach<sp/>here<sp/>?<sp/>that<sp/>is<sp/>the<sp/>question<sp/>!</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</sect1>
+    </detaileddescription>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" line="31" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Box.h" bodystart="31" bodyend="131"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Box_1a474177581f40e4e2898ab9905018397b" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Box_1af4e6a6fe0f2ba69b875990b5ccf60a4d" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Box_1a277b77704073cfb1aed8d9afed5260b2" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Box_1a3d6d56333b4f711613756b70dc4a3425" prot="private" virt="non-virtual"><scope>Hurricane::Box</scope><name>_xMax</name></member>
+      <member refid="classHurricane_1_1Box_1a3f79ce602aafef63258e77917211fd41" prot="private" virt="non-virtual"><scope>Hurricane::Box</scope><name>_xMin</name></member>
+      <member refid="classHurricane_1_1Box_1a4abf248b8e4d55b637760119d05ff747" prot="private" virt="non-virtual"><scope>Hurricane::Box</scope><name>_yMax</name></member>
+      <member refid="classHurricane_1_1Box_1adb17fb46455310814470f60be48ccf99" prot="private" virt="non-virtual"><scope>Hurricane::Box</scope><name>_yMin</name></member>
+      <member refid="classHurricane_1_1Box_1a445dd24bf83759bb47fc483fc7da024f" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1af53adb323e9e89eef4e96da9efc33fe9" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1a2f2aa57fa9486b508fca2a060648d04a" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1a101cd5a10d6cf229ccedccbb5417ed55" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1a47f434b4dbda6af14a354722f66a47da" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1af9a7605270bf1ebb38723fba5b9d9236" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>Box</name></member>
+      <member refid="classHurricane_1_1Box_1ae18dd30ffbf0b75714ece480f21e2898" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>contains</name></member>
+      <member refid="classHurricane_1_1Box_1a19ad23904fbfe2afb3683affeb2cac7e" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>contains</name></member>
+      <member refid="classHurricane_1_1Box_1ac567c569f23643e58867afee80f6920a" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>contains</name></member>
+      <member refid="classHurricane_1_1Box_1ac18c8725989166d1b101de29531e4f6e" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getCenter</name></member>
+      <member refid="classHurricane_1_1Box_1ac2ceb261562c7ff1635b1afff0a1a0d7" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getCornerBL</name></member>
+      <member refid="classHurricane_1_1Box_1acf3484335fda90b17eeb768cd2905f91" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getCornerBR</name></member>
+      <member refid="classHurricane_1_1Box_1a7d8d98a85a0453849f9106f1168bafab" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getCornerTL</name></member>
+      <member refid="classHurricane_1_1Box_1a680145749fde805fe7b06728f840d385" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getCornerTR</name></member>
+      <member refid="classHurricane_1_1Box_1a5c94554a78398c4a5c7dedd024926abb" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getHalfHeight</name></member>
+      <member refid="classHurricane_1_1Box_1a8aa689ad799e4c78bfefb0328e7d9081" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getHalfWidth</name></member>
+      <member refid="classHurricane_1_1Box_1a7b15b9488d49da1fc666c0383fb213ab" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getHeight</name></member>
+      <member refid="classHurricane_1_1Box_1ac68f25dd751855db9b45fb9d23f2e892" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getInflated</name></member>
+      <member refid="classHurricane_1_1Box_1a610f9c63bc5636ef304f4768215ffb12" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getIntersection</name></member>
+      <member refid="classHurricane_1_1Box_1a2670058f109dfae32d284db249e533bc" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getUnion</name></member>
+      <member refid="classHurricane_1_1Box_1ae2cc9cf0b17e6443a88b475bbd36e4c9" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getWidth</name></member>
+      <member refid="classHurricane_1_1Box_1a95f35cd33966aad61bb43662306ccf98" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getXCenter</name></member>
+      <member refid="classHurricane_1_1Box_1a77b9db757080544fcede3e670cee8c5c" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getXMax</name></member>
+      <member refid="classHurricane_1_1Box_1ad5122ef7dda8a58c1dacddb57cd4ccfb" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getXMin</name></member>
+      <member refid="classHurricane_1_1Box_1a659820726e3862a70158b6f5b7644da0" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getYCenter</name></member>
+      <member refid="classHurricane_1_1Box_1a06e1a86a06dacfca6d3403c16affc7e8" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getYMax</name></member>
+      <member refid="classHurricane_1_1Box_1a542c383466845aeca0e32f51b77c7439" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>getYMin</name></member>
+      <member refid="classHurricane_1_1Box_1a90207e7ca8044a6afc72674cc6ae366e" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>inflate</name></member>
+      <member refid="classHurricane_1_1Box_1a6b97ea9d54fbf4dae52459073cdf4b5f" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>inflate</name></member>
+      <member refid="classHurricane_1_1Box_1afd1baf9f272878a87c2525f0fa2eab71" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>inflate</name></member>
+      <member refid="classHurricane_1_1Box_1ae76b57bf6399b29021813da8d3f306ec" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>intersect</name></member>
+      <member refid="classHurricane_1_1Box_1a70d832443d97cb40ec7cb4f0f959a977" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>isConstrainedBy</name></member>
+      <member refid="classHurricane_1_1Box_1af8b269603b5c173891a484214ca50266" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>isEmpty</name></member>
+      <member refid="classHurricane_1_1Box_1a0df4d580a3dc1eb23d839c0f53cdee8b" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>isFlat</name></member>
+      <member refid="classHurricane_1_1Box_1a3d073c5bc3d0ea1b4f21937e36be001f" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>isPonctual</name></member>
+      <member refid="classHurricane_1_1Box_1a0717b1b105f65f8284c9b4e36df3a766" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>makeEmpty</name></member>
+      <member refid="classHurricane_1_1Box_1add2ec4912afd38cdd13a83ec865ced0f" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>manhattanDistance</name></member>
+      <member refid="classHurricane_1_1Box_1a01deca570ea26a92cf4253da28ed1d43" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>manhattanDistance</name></member>
+      <member refid="classHurricane_1_1Box_1ab77fe56f9350f06cc872bbb4f83835da" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Box_1af1f7dfe8984c2d26fbca78b21358ee2b" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Box_1ad97e73e91dd36404eb0dde9d44ff2fd7" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Box_1a0bdfa52a3f5f6639680ba7dbc52c21d7" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Box_1a77a0e8c424c246973c455ce8e3ada8fb" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>operator!=</name></member>
+      <member refid="classHurricane_1_1Box_1a01abf59b3d3e99e694a7d4789f1bb978" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Box_1a2a363ad0fdfda5a2f56b1b62a8665703" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>operator==</name></member>
+      <member refid="classHurricane_1_1Box_1aeb3f5d0b7d6c24a8f5c614717f155289" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>shrinkByFactor</name></member>
+      <member refid="classHurricane_1_1Box_1a9eebfb9aa969328aeb516b5e130d97d2" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1Box_1aa689be4b37c83412f3dc95fc23c82156" prot="public" virt="non-virtual"><scope>Hurricane::Box</scope><name>translate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

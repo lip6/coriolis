@@ -45,12 +45,20 @@ Occurrence::Occurrence(const Entity* entity, const Path& path)
   : _entity(const_cast<Entity*>(entity))
   , _sharedPath(path._getSharedPath())
 {
-  if (!_entity) {
-    throw Error("Can't create " + _TName("Occurrence") + " : null entity");
-  }
-  if (_sharedPath)
+  if (not _entity)
+    throw Error( "Occurrence::Occurrence(): NULL Entity." );
+
+  if (_sharedPath) {
     if (_entity->getCell() != _sharedPath->getMasterCell())
-      throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
+      throw Error( "Occurrence::Occurrence(): Entity incompatible with the path.\n"
+                   "        * Entity %s, master cell %s\n"
+                   "        * Path %s, master cell %s"
+                 , getString(entity).c_str()
+                 , getString(entity->getCell()).c_str()
+                 , getString(path).c_str()
+                 , getString(_sharedPath->getMasterCell()).c_str()
+                 );
+  }
 }
 
 Occurrence::Occurrence(const Occurrence& occurrence)
@@ -88,23 +96,47 @@ bool Occurrence::operator!=(const Occurrence& occurrence) const
 bool Occurrence::operator<(const Occurrence& occurrence) const
 // ********************************************************
 {
-  if (not _entity and not occurrence._entity) return false;
-  if (not _entity) return true;
-  if (not occurrence._entity) return false;
+  cdebug_log(0,0) << "Occurrence::operator<()" << endl;
+  cdebug_log(0,0) << "| lhs=" << *this << endl;
+  cdebug_log(0,0) << "| rhs=" << occurrence << endl;
+  if ((not _sharedPath) xor (not occurrence._sharedPath)) return not _sharedPath;
+  if ((not _entity    ) xor (not occurrence._entity    )) return not _entity;
+  if (_entity and (_entity->getId() != occurrence._entity->getId()))
+    return _entity->getId() < occurrence._entity->getId();
+  if (not _sharedPath) return false;
 
-  if (_entity->getId() < occurrence._entity->getId()) return true;
-  if (_entity->getId() > occurrence._entity->getId()) return false;
+  // if (not _sharedPath) return true;
+  // if (not occurrence._sharedPath) return false;
+  // if (not _sharedPath and not occurrence._sharedPath) return false;
+  // if (not _sharedPath) return true;
+  // if (not occurrence._sharedPath) return false;
 
-  if (not _sharedPath and not occurrence._sharedPath) return false;
-  if (not _sharedPath) return true;
-  if (not occurrence._sharedPath) return false;
+  // if (not _entity and not occurrence._entity) return false;
+  // if (not _entity) return true;
+  // if (not occurrence._entity) return false;
 
-  return _sharedPath->getId() < occurrence._sharedPath->getId();
+  // if (_entity->getId() < occurrence._entity->getId()) return true;
+  // if (_entity->getId() > occurrence._entity->getId()) return false;
+
+  return _sharedPath->getHash() < occurrence._sharedPath->getHash();
   
 //return ((_entity  < occurrence._entity) or 
 //       ((_entity == occurrence._entity) and (_sharedPath < occurrence._sharedPath)));
 }
 
+bool Occurrence::isBelowTerminalNetlist() const
+// ********************************************
+{
+  SharedPath* tail = _sharedPath;
+  while ( tail ) {
+    Instance* instance = tail->getHeadInstance();
+    tail = tail->getTailSharedPath();
+    
+    if (tail and instance->isTerminalNetlist()) return true;
+  }
+  return false;
+}
+  
 Cell* Occurrence::getOwnerCell() const
 // **********************************
 {
@@ -253,11 +285,12 @@ string Occurrence::_getString() const
 string Occurrence::getCompactString() const
 // ****************************************
 {
-  string s = "<";
+  string s;
   if (_entity) {
     s += getString(getOwnerCell()->getName());
     s += ":";
-    if (_sharedPath) s += getString(_sharedPath->getName()) + ":";
+    if (_sharedPath) s += getString(_sharedPath->getName());
+    s += ":";
     Instance* instance = dynamic_cast<Instance*>(_entity);
     if (instance) {
       s += "I."+getString(instance->getName());
@@ -270,7 +303,6 @@ string Occurrence::getCompactString() const
       }
     }
   }
-  s += ">";
   return s;
 }
 

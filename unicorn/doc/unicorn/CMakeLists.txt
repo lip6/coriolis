@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: # "CMakeLists.txt<unicorn/doc/unicorn>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/unicorn )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/unicorn )
                set ( latexInstallDir share/doc/coriolis2/en/latex/unicorn )
                set ( doxExtras       closed.png
                                      open.png

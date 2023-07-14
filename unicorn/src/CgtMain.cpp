@@ -22,9 +22,9 @@ using namespace std;
 #include <boost/program_options.hpp>
 namespace bopts = boost::program_options;
 
-#include "vlsisapd/utilities/Path.h"
-#include "vlsisapd/bookshelf/Exception.h"
-#include "vlsisapd/configuration/Configuration.h"
+// #include "vlsisapd/bookshelf/Exception.h"
+#include "hurricane/configuration/Configuration.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
@@ -49,7 +49,7 @@ using namespace Hurricane;
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/Hierarchy.h"
 #include "crlcore/ToolBox.h"
-#include "crlcore/Ispd04Bookshelf.h"
+//#include "crlcore/Ispd04Bookshelf.h"
 #include "crlcore/Iccad04Lefdef.h"
 #include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
@@ -57,10 +57,9 @@ using namespace CRL;
 
 #include "katana/GraphicKatanaEngine.h"
 #include "etesian/GraphicEtesianEngine.h"
-#include "knik/GraphicKnikEngine.h"
-#include "kite/GraphicKiteEngine.h"
-#include "equinox/GraphicEquinoxEngine.h"
-#include "solstice/GraphicSolsticeEngine.h"
+#include "katana/GraphicKatanaEngine.h"
+//#include "equinox/GraphicEquinoxEngine.h"
+//#include "solstice/GraphicSolsticeEngine.h"
 #include "unicorn/UnicornGui.h"
 using namespace Unicorn;
 
@@ -70,8 +69,8 @@ using namespace Unicorn;
 
 int main ( int argc, char *argv[] )
 {
-  int   returnCode  = 0;
-  bool  kiteSuccess = true;
+  int   returnCode = 0;
+  bool  katanaSuccess = true;
 
   try {
     bool          destroyDatabase;
@@ -102,7 +101,7 @@ int main ( int argc, char *argv[] )
       ( "info,i"             , bopts::bool_switch()
                              , "Lots of informational messages.")
       ( "show-conf"          , bopts::bool_switch()
-                             , "Print Kite configuration settings.")
+                             , "Print Katana configuration settings.")
       ( "conf"               , bopts::value<string>()
                              , "An XML configuration file." )
       ( "core-dump,D"        , bopts::bool_switch()
@@ -133,11 +132,11 @@ int main ( int argc, char *argv[] )
                              , "The maximum number of iterations (events) that the router is"
                                "allowed to perform." )
       ( "detailed-route,R"   , bopts::bool_switch(&detailedRoute)->default_value(false)
-                             , "Run the detailed router (Kite).")
+                             , "Run the detailed router (Katana).")
       ( "dump-measures,M"    , bopts::bool_switch(&dumpMeasures)->default_value(false)
                              , "Dump statistical measurements on the disk.")
       ( "cell,c"             , bopts::value<string>()
-                             , "The name of the cell to load, whithout extension." )
+                             , "The name of the cell to load, without extension." )
       ( "save-design,s"      , bopts::value<string>()
                              , "Save the routed design.")
       ( "export-def"         , bopts::bool_switch(&exportDef)->default_value(false)
@@ -145,9 +144,9 @@ int main ( int argc, char *argv[] )
       ( "import-def"         , bopts::value<string>()
                              , "Import the design in DEF format.")
       ( "importk-ispd04-bk"  , bopts::value<string>()
-                             , "The name of the ISPD04 benchmark to import (Bookshelf .aux), whithout extension." )
+                             , "The name of the ISPD04 benchmark to import (Bookshelf .aux), without extension." )
       ( "import-iccad04-def" , bopts::value<string>()
-                             , "The name of the ICCAD04 benchmark to import (LEF/DEF), whithout extension." )
+                             , "The name of the ICCAD04 benchmark to import (LEF/DEF), without extension." )
       ( "save-import"        , bopts::bool_switch(&saveImport)->default_value(false)
                              , "Save of the imported design immediatly after loading.");
 
@@ -218,9 +217,9 @@ int main ( int argc, char *argv[] )
                                  );
     }
 
-    if ( (cell == NULL) and arguments.count("import-ispd04-bk") ) {
-      cell = Ispd04::load ( arguments["import-ispd04-bk"].as<string>().c_str() );
-    }
+    // if ( (cell == NULL) and arguments.count("import-ispd04-bk") ) {
+    //   cell = Ispd04::load ( arguments["import-ispd04-bk"].as<string>().c_str() );
+    // }
 
     if ( saveImport and (cell != NULL) ) {
       cmess1 << "  o  Immediate write back of <" << cell->getName() << ">" << endl;
@@ -238,10 +237,10 @@ int main ( int argc, char *argv[] )
       Cfg::getParamInt("metis.numberOfInstancesStopCriterion")->setInt ( partitionSizeStop );
 
     if ( arguments.count("edge") )
-      Cfg::getParamPercentage("kite.edgeCapacity")->setPercentage ( edgeCapacity );
+      Cfg::getParamPercentage("katana.edgeCapacity")->setPercentage ( edgeCapacity );
 
     if ( arguments.count("events-limit") )
-      Cfg::getParamInt("kite.eventsLimit")->setInt ( eventsLimit );
+      Cfg::getParamInt("katana.eventsLimit")->setInt ( eventsLimit );
 
     UnicornGui::getBanner().setName    ( "cgt" );
     UnicornGui::getBanner().setPurpose ( "Coriolis Graphical Tool" );
@@ -250,8 +249,7 @@ int main ( int argc, char *argv[] )
     cmess1 << "        Tool Credits" << endl;
     cmess1 << "        Hurricane .................... Remy Escassut & Christian Masson" << endl;
     cmess1 << "        Etesian - Placer .............................. Gabriel Gouvine" << endl;
-    cmess1 << "        Knik - Global Router ............................ Damien Dupuis" << endl;
-    cmess1 << "        Kite - Detailed Router ....................... Jean-Paul Chaput" << endl;
+    cmess1 << "        Katana - Detailed Router ...................... Jean-Paul Chaput" << endl;
     cmess1 << "        " << endl;
 
     cmess1 << "        Contributors" << endl;
@@ -310,11 +308,8 @@ int main ( int argc, char *argv[] )
       dbo_ptr<UnicornGui> unicorn ( UnicornGui::create() );
       unicorn->setApplicationName ( QObject::tr("cgt") );
 
-    //unicorn->registerTool ( Mauka::GraphicMaukaEngine::grab() );
       unicorn->registerTool ( Katana::GraphicKatanaEngine::grab() );
       unicorn->registerTool ( Etesian::GraphicEtesianEngine::grab() );
-    //unicorn->registerTool ( Knik::GraphicKnikEngine::grab() );
-      unicorn->registerTool ( Kite::GraphicKiteEngine::grab() );
     //unicorn->setEnableRedrawInterrupt ( true );
     //unicorn->registerTool ( Equinox::GraphicEquinoxEngine::grab() );
     //unicorn->registerTool ( Solstice::GraphicSolsticeEngine::grab() );
@@ -375,29 +370,29 @@ int main ( int argc, char *argv[] )
 
       if ( detailedRoute and not (loadGlobal or globalRoute) ) globalRoute = true;
 
-      bool runKiteTool = loadGlobal or globalRoute or detailedRoute;
+      bool runKatanaTool = loadGlobal or globalRoute or detailedRoute;
 
-      if ( runKiteTool ) {
+      if ( runKatanaTool ) {
       //cell->flattenNets ( not arguments.count("global") );
 
-        unsigned int globalFlags = (loadGlobal) ? Kite::KtLoadGlobalRouting
-                                                : Kite::KtBuildGlobalRouting;
+        // unsigned int globalFlags = (loadGlobal) ? Katana::LoadGlobalRouting
+        //                                         : Katana::BuildGlobalRouting;
 
-        Kite::KiteEngine* kite = Kite::KiteEngine::create ( cell );
-        if ( showConf ) kite->printConfiguration ();
+        Katana::KatanaEngine* katana = Katana::KatanaEngine::create ( cell );
+        if ( showConf ) katana->printConfiguration ();
         
-        kite->runGlobalRouter ( globalFlags );
-        if ( saveGlobal ) kite->saveGlobalSolution ();
+        katana->runGlobalRouter ( Katana::Flags::NoFlags );
+        // if ( saveGlobal ) katana->saveGlobalSolution ();
 
         if ( detailedRoute ) {
-          kite->loadGlobalRouting ( Katabatic::EngineLoadGrByNet );
-          kite->layerAssign       ( Katabatic::EngineNoNetLayerAssign );
-          kite->runNegociate      ();
-          kiteSuccess = kite->getToolSuccess ();
-          kite->finalizeLayout ();
+          katana->loadGlobalRouting ( Anabatic::EngineLoadGrByNet );
+          katana->layerAssign       ( Anabatic::EngineNoNetLayerAssign );
+          katana->runNegociate      ();
+          katanaSuccess = katana->isDetailedRoutingSuccess ();
+          katana->finalizeLayout ();
           if ( dumpMeasures )
-            kite->dumpMeasures ();
-          kite->destroy ();
+            katana->dumpMeasures ();
+          katana->destroy ();
 
           if ( arguments.count("save-design") ) {
             cell->setName ( arguments["save-design"].as<string>().c_str() );
@@ -405,7 +400,7 @@ int main ( int argc, char *argv[] )
           }
         }
 
-        returnCode = (kiteSuccess) ? 0 : 1;
+        returnCode = (katanaSuccess) ? 0 : 1;
       }
     }
 
@@ -425,10 +420,10 @@ int main ( int argc, char *argv[] )
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
-  catch ( Bookshelf::Exception& e ) {
-    cerr << e.what() << endl;
-    exit ( 1 );
-  }
+  // catch ( Bookshelf::Exception& e ) {
+  //   cerr << e.what() << endl;
+  //   exit ( 1 );
+  // }
   catch ( exception& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );

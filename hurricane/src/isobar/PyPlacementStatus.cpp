@@ -66,19 +66,19 @@ extern "C" {
 
   PythonOnlyDeleteMethod(PlacementStatus)
 
-  DirectReprMethod(PyPlacementStatus_Repr, PyPlacementStatus,   Instance::PlacementStatus)
-  DirectStrMethod (PyPlacementStatus_Str,  PyPlacementStatus,   Instance::PlacementStatus)
-  DirectCmpMethod (PyPlacementStatus_Cmp,  IsPyPlacementStatus, PyPlacementStatus)
-  DirectHashMethod(PyPlacementStatus_Hash, PyPlacementStatus)
+  DirectReprMethod      (PyPlacementStatus_Repr, PyPlacementStatus,   Instance::PlacementStatus)
+  DirectStrMethod       (PyPlacementStatus_Str,  PyPlacementStatus,   Instance::PlacementStatus)
+  DirectCmpByValueMethod(PyPlacementStatus_Cmp,  IsPyPlacementStatus, PyPlacementStatus)
+  DirectHashMethod      (PyPlacementStatus_Hash, PlacementStatus)
 
   extern void  PyPlacementStatus_LinkPyType() {
     cdebug_log(20,0) << "PyPlacementStatus_LinkType()" << endl;
-    PyTypePlacementStatus.tp_dealloc = (destructor) PyPlacementStatus_DeAlloc;
-    PyTypePlacementStatus.tp_compare = (cmpfunc)    PyPlacementStatus_Cmp;
-    PyTypePlacementStatus.tp_repr    = (reprfunc)   PyPlacementStatus_Repr;
-    PyTypePlacementStatus.tp_str     = (reprfunc)   PyPlacementStatus_Str;
-    PyTypePlacementStatus.tp_hash    = (hashfunc)   PyPlacementStatus_Hash;
-    PyTypePlacementStatus.tp_methods = PyPlacementStatus_Methods;
+    PyTypePlacementStatus.tp_dealloc     = (destructor) PyPlacementStatus_DeAlloc;
+    PyTypePlacementStatus.tp_richcompare = (richcmpfunc)PyPlacementStatus_Cmp;
+    PyTypePlacementStatus.tp_repr        = (reprfunc)   PyPlacementStatus_Repr;
+    PyTypePlacementStatus.tp_str         = (reprfunc)   PyPlacementStatus_Str;
+    PyTypePlacementStatus.tp_hash        = (hashfunc)   PyPlacementStatus_Hash;
+    PyTypePlacementStatus.tp_methods     = PyPlacementStatus_Methods;
   }
 
 
@@ -101,7 +101,15 @@ extern "C" {
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::PLACED  ,"PLACED");
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::FIXED   ,"FIXED");
   }
+
+
+#endif  // Shared Library Code Part.
+
+}  // extern "C".
   
+
+#if !defined(__PYTHON_MODULE__)
+
 
   extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
     switch ( PyAny_AsLong(object) ) {
@@ -114,9 +122,7 @@ extern "C" {
   }
 
 
-#endif  // Shared Library Code Part.
-
-}  // extern "C".
+#endif
 
 }  // Isobar namespace.
  

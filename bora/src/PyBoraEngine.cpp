@@ -39,6 +39,7 @@ namespace  Bora {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyCell;
@@ -103,8 +104,6 @@ extern "C" {
 
   static PyObject* PyBoraEngine_updatePlacement ( PyBoraEngine* self, PyObject* args )
   {
-    unsigned int bsIndex = 0;
-
     METHOD_HEAD( "BoraEngine.updatePlacement()" )
     HTRY
       PyObject* arg0;

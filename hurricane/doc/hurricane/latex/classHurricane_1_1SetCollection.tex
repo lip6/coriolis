@@ -1,5 +1,5 @@
-\hypertarget{classHurricane_1_1SetCollection}{}\section{Hurricane\+:\+:Set\+Collection$<$ Element, Compare $>$ Class Template Reference}
-\label{classHurricane_1_1SetCollection}\index{Hurricane\+::\+Set\+Collection$<$ Element, Compare $>$@{Hurricane\+::\+Set\+Collection$<$ Element, Compare $>$}}
+\hypertarget{classHurricane_1_1SetCollection}{}\doxysection{Hurricane\+::Set\+Collection$<$ Element, Compare $>$ Class Template Reference}
+\label{classHurricane_1_1SetCollection}\index{Hurricane::SetCollection$<$ Element, Compare $>$@{Hurricane::SetCollection$<$ Element, Compare $>$}}
 
 
 \mbox{\hyperlink{namespaceHurricane}{Hurricane}} \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} wrapper around a std\+::set.  
@@ -7,21 +7,27 @@
 
 
 
-Inheritance diagram for Hurricane\+:\+:Set\+Collection$<$ Element, Compare $>$\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Set\+Collection$<$ Element, Compare $>$\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=202pt]{classHurricane_1_1SetCollection__inherit__graph}
+\includegraphics[width=203pt]{classHurricane_1_1SetCollection__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
-\begin{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{Indent}\textbf{ Collection Collection}\par
+{\em \hypertarget{Collection_8h_secCollectionUtilitarians}{}\doxysubsection{Utilitarians}\label{Collection_8h_secCollectionUtilitarians}
+{\bfseries{Collection\+::\+Fill}} {\bfseries{Collection\+::\+Fill}} {\bfseries{Collection\+::\+Fill}} \begin{DoxyRemark}{Remarks}
+The elements are added to the container in the order with which the collection is visited. So the same order will appear in a list or a vector, but for a set they will be inserted according to the set ordering method. 
+\end{DoxyRemark}
+}\begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classHurricane_1_1SetCollection_a3ee200fd00f3a6951906209c11c03e34}{Set\+Collection}} (const Element\+Set $\ast$element\+Set=N\+U\+LL)
+\mbox{\hyperlink{classHurricane_1_1SetCollection_a3ee200fd00f3a6951906209c11c03e34}{Set\+Collection}} (const Element\+Set $\ast$element\+Set=NULL)
 \end{DoxyCompactItemize}
+\end{Indent}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 \subsubsection*{template$<$class Element, class Compare = less$<$\+Element$>$$>$\newline
 class Hurricane\+::\+Set\+Collection$<$ Element, Compare $>$}
 
@@ -29,15 +35,15 @@ class Hurricane\+::\+Set\+Collection$<$ Element, Compare $>$}
 
 Automatically wrap a \mbox{\hyperlink{namespaceHurricane}{Hurricane}} \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} around a stl\+::set. 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1SetCollection_a3ee200fd00f3a6951906209c11c03e34}\label{classHurricane_1_1SetCollection_a3ee200fd00f3a6951906209c11c03e34}} 
-\index{Hurricane\+::\+Set\+Collection@{Hurricane\+::\+Set\+Collection}!Set\+Collection@{Set\+Collection}}
-\index{Set\+Collection@{Set\+Collection}!Hurricane\+::\+Set\+Collection@{Hurricane\+::\+Set\+Collection}}
-\subsubsection{\texorpdfstring{Set\+Collection()}{SetCollection()}}
+\index{Hurricane::SetCollection$<$ Element, Compare $>$@{Hurricane::SetCollection$<$ Element, Compare $>$}!SetCollection@{SetCollection}}
+\index{SetCollection@{SetCollection}!Hurricane::SetCollection$<$ Element, Compare $>$@{Hurricane::SetCollection$<$ Element, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{SetCollection()}{SetCollection()}}
 {\footnotesize\ttfamily template$<$class Element , class Compare  = less$<$\+Element$>$$>$ \\
 \mbox{\hyperlink{classHurricane_1_1SetCollection}{Hurricane\+::\+Set\+Collection}}$<$ Element, Compare $>$\+::\mbox{\hyperlink{classHurricane_1_1SetCollection}{Set\+Collection}} (\begin{DoxyParamCaption}\item[{const Element\+Set $\ast$}]{element\+Set = {\ttfamily NULL} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Constructor from a S\+TL set, the set must not be de-\/allocated. 
+Constructor from a STL set, the set must not be de-\/allocated. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

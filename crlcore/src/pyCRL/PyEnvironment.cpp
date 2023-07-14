@@ -36,6 +36,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -137,32 +138,35 @@ extern "C" {
     if ( self->ACCESS_OBJECT == NULL )
       return PyString_FromString("<PyObject unbound>");
 
-    string s = "<Environment Alliance>";
-    return PyString_FromString(s.c_str());
+    ostringstream s;
+    s << "<Alliance Environment " << (void*)self->ACCESS_OBJECT << ">";
+    return PyString_FromString(s.str().c_str());
   }
 
   
   // Standart Accessors (Attributes).
-  DirectGetStringAttribute(PyEnvironment_getCORIOLIS_TOP       ,getCORIOLIS_TOP       ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getDisplayStyle       ,getDisplayStyle       ,PyEnvironment,Environment)
-  DirectGetLongAttribute  (PyEnvironment_getSCALE_X            ,getSCALE_X            ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getIN_LO              ,getIN_LO              ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getIN_PH              ,getIN_PH              ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getOUT_LO             ,getOUT_LO             ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getOUT_PH             ,getOUT_PH             ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getPOWER              ,getPOWER              ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getGROUND             ,getGROUND             ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getCLOCK              ,getCLOCK              ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getBLOCKAGE           ,getBLOCKAGE           ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getPad                ,getPad                ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getCATALOG            ,getCATALOG            ,PyEnvironment,Environment)
-  DirectGetStringAttribute(PyEnvironment_getPrint              ,getPrint              ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getCORIOLIS_TOP,getCORIOLIS_TOP,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getDisplayStyle,getDisplayStyle,PyEnvironment,Environment)
+  DirectGetLongAttribute  (PyEnvironment_getSCALE_X     ,getSCALE_X     ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getIN_LO       ,getIN_LO       ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getIN_PH       ,getIN_PH       ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getOUT_LO      ,getOUT_LO      ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getOUT_PH      ,getOUT_PH      ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getPOWER       ,getPOWER       ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getGROUND      ,getGROUND      ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getCLOCK       ,getCLOCK       ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getBLOCKAGE    ,getBLOCKAGE    ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getPad         ,getPad         ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getRegister    ,getRegister    ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getCATALOG     ,getCATALOG     ,PyEnvironment,Environment)
+  DirectGetStringAttribute(PyEnvironment_getPrint       ,getPrint       ,PyEnvironment,Environment)
 
   DirectIsAFromCStringAttribute(PyEnvironment_isPOWER   ,isPOWER   ,PyEnvironment,Environment)
   DirectIsAFromCStringAttribute(PyEnvironment_isGROUND  ,isGROUND  ,PyEnvironment,Environment)
   DirectIsAFromCStringAttribute(PyEnvironment_isCLOCK   ,isCLOCK   ,PyEnvironment,Environment)
   DirectIsAFromCStringAttribute(PyEnvironment_isBLOCKAGE,isBLOCKAGE,PyEnvironment,Environment)
   DirectIsAFromCStringAttribute(PyEnvironment_isPad     ,isPad     ,PyEnvironment,Environment)
+  DirectIsAFromCStringAttribute(PyEnvironment_isRegister,isRegister,PyEnvironment,Environment)
 
   // Standart Mutators (Attributes).
   DirectSetCStringAttribute(PyEnvironment_setDisplayStyle   ,setDisplayStyle   ,PyEnvironment,Environment)
@@ -176,6 +180,7 @@ extern "C" {
   DirectSetCStringAttribute(PyEnvironment_setCLOCK          ,setCLOCK          ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setBLOCKAGE       ,setBLOCKAGE       ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setPad            ,setPad            ,PyEnvironment,Environment)
+  DirectSetCStringAttribute(PyEnvironment_setRegister       ,setRegister       ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setCATALOG        ,setCATALOG        ,PyEnvironment,Environment)
   DirectSetCStringAttribute(PyEnvironment_setWORKING_LIBRARY,setWORKING_LIBRARY,PyEnvironment,Environment)
 
@@ -225,6 +230,8 @@ extern "C" {
                                 , "Checks if a name is a blockage net name." }
     , { "isPad"                 , (PyCFunction)PyEnvironment_isPad                 , METH_VARARGS
                                 , "Checks if a name is a pad cell name." }
+    , { "isRegister"            , (PyCFunction)PyEnvironment_isRegister            , METH_VARARGS
+                                , "Checks if a name is a register cell name." }
     , { "validate"              , (PyCFunction)PyEnvironment_validate              , METH_NOARGS
                                 , "Validate the coherency of the settings (raise an exception)." }
     , { "setDisplayStyle"       , (PyCFunction)PyEnvironment_setDisplayStyle       , METH_VARARGS
@@ -249,6 +256,8 @@ extern "C" {
                                 , "Sets the blockage net recognition regular expression." }
     , { "setPad"                , (PyCFunction)PyEnvironment_setPad                , METH_VARARGS
                                 , "Sets the pad cell recognition regular expression." }
+    , { "setRegister"           , (PyCFunction)PyEnvironment_setRegister           , METH_VARARGS
+                                , "Sets the register cell recognition regular expression." }
     , { "setCATALOG"            , (PyCFunction)PyEnvironment_setCATALOG            , METH_VARARGS
                                 , "Sets the name of the per library catalog file." }
     , { "setWORKING_LIBRARY"    , (PyCFunction)PyEnvironment_setWORKING_LIBRARY    , METH_VARARGS
@@ -262,7 +271,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(Environment)
-  DirectHashMethod(PyEnvironment_Hash, PyEnvironment)
+  DirectHashMethod(PyEnvironment_Hash, Environment)
 
   extern void  PyEnvironment_LinkPyType() {
     cdebug_log(30,0) << "PyEnvironment_LinkType()" << endl;

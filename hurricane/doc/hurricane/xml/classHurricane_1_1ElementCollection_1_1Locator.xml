@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1ElementCollection_1_1Locator" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::ElementCollection::Locator</compoundname>
+    <basecompoundref refid="classHurricane_1_1Locator" prot="public" virt="non-virtual">Hurricane::Locator&lt; ElType &gt;</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>class ElType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1ElementCollection_1_1Locator_1a5acda468226d3fc6da499fa17c678d2c" prot="protected" static="no" mutable="no">
+        <type>const ElType</type>
+        <definition>const ElType Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::_element</definition>
+        <argsstring></argsstring>
+        <name>_element</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="375" column="33" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="375" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1ElementCollection_1_1Locator_1a16b6cb94ed9e76bf2a3654e34280e6b6" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::_done</definition>
+        <argsstring></argsstring>
+        <name>_done</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="376" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="376" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1a5f9929d42d0535db6a333a39c3160223" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::Locator</definition>
+        <argsstring>(const ElType _element)</argsstring>
+        <name>Locator</name>
+        <param>
+          <type>const ElType</type>
+          <declname>_element</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="380" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="380" bodyend="380"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1ac04f0bd5d185b97c678ea89d0e0808ef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::Locator</definition>
+        <argsstring>(const Locator &amp;locator)</argsstring>
+        <name>Locator</name>
+        <param>
+          <type>const Locator &amp;</type>
+          <declname>locator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="381" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="381" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1a5381f045bd0e4d1ba9977687c1d684a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>ElType</type>
+        <definition>virtual ElType Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::getElement</definition>
+        <argsstring>() const</argsstring>
+        <name>getElement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="385" column="42" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="385" bodyend="385"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1acb5b97beebfd1763b5703683f424b957" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>Locator&lt; ElType &gt; *</type>
+        <definition>virtual Locator&lt;ElType&gt;* Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::getClone</definition>
+        <argsstring>() const</argsstring>
+        <name>getClone</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="386" column="33" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="386" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1ad1938a0cb5d1a17e94908dc8d61c55d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::isValid</definition>
+        <argsstring>() const</argsstring>
+        <name>isValid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="387" column="42" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="387" bodyend="387"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1ac1f8bd8febca75f3431bb58087c08a5b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::progress</definition>
+        <argsstring>()</argsstring>
+        <name>progress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="388" column="42" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="388" bodyend="388"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1ElementCollection_1_1Locator_1a12e64eb39fc6565f2c87c81ecff95b03" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="392" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="392" bodyend="397"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>Hurricane::Locator&lt; ElType &gt;</label>
+        <link refid="classHurricane_1_1Locator"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>Hurricane::Locator&lt; ElType &gt;</label>
+        <link refid="classHurricane_1_1Locator"/>
+      </node>
+      <node id="1">
+        <label>Hurricane::ElementCollection&lt; Type &gt;::Locator&lt; ElType &gt;</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" line="371" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Collection.h" bodystart="371" bodyend="399"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1a16b6cb94ed9e76bf2a3654e34280e6b6" prot="protected" virt="non-virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>_done</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1a5acda468226d3fc6da499fa17c678d2c" prot="protected" virt="non-virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>_element</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1a12e64eb39fc6565f2c87c81ecff95b03" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Locator_1a1b35e491cc50b29c1211ed81f71c0004" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1acb5b97beebfd1763b5703683f424b957" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1a5381f045bd0e4d1ba9977687c1d684a9" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>getElement</name></member>
+      <member refid="classHurricane_1_1Locator_1a24f16e4010b8978adc9ceef57281f684" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>getLocator</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1ad1938a0cb5d1a17e94908dc8d61c55d7" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>isValid</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1a5f9929d42d0535db6a333a39c3160223" prot="public" virt="non-virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1ac04f0bd5d185b97c678ea89d0e0808ef" prot="public" virt="non-virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1Locator_1a9ea8740165cec25c217a424ccb11294a" prot="protected" virt="non-virtual" ambiguityscope="Locator&lt; ElType &gt;::"><scope>Hurricane::ElementCollection::Locator</scope><name>Locator</name></member>
+      <member refid="classHurricane_1_1Locator_1a3d577933c0c10324b9ba0f1e2988942d" prot="private" virt="non-virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1ElementCollection_1_1Locator_1ac1f8bd8febca75f3431bb58087c08a5b" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>progress</name></member>
+      <member refid="classHurricane_1_1Locator_1a21286beba819c39472c58aa511686355" prot="public" virt="virtual"><scope>Hurricane::ElementCollection::Locator</scope><name>~Locator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

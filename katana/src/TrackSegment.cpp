@@ -17,6 +17,7 @@
 #include <sstream>
 #include <limits>
 #include "hurricane/Bug.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Net.h"
@@ -28,6 +29,7 @@
 #include "katana/DataNegociate.h"
 #include "katana/RoutingPlane.h"
 #include "katana/TrackSegmentRegular.h"
+#include "katana/TrackSegmentNonPref.h"
 #include "katana/TrackSegmentWide.h"
 #include "katana/Track.h"
 #include "katana/Session.h"
@@ -42,6 +44,7 @@ namespace Katana {
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
+  using Hurricane::DebugSession;
   using Hurricane::Error;
   using Hurricane::BasicLayer;
   using Hurricane::Net;
@@ -129,21 +132,37 @@ namespace Katana {
 
   TrackElement* TrackSegment::create ( AutoSegment* segment, Track* track, bool& created )
   {
+    DebugSession::open( segment->getNet(), 159, 160 );
+
     created = false;
+
+    bool useNonPref = (segment->getDirection() xor Session::getDirection(segment->getLayer()));
 
     DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
     TrackElement* trackElement     = Session::lookup( segment->base() );
     if (not trackElement) { 
-      if (segment->base()->getWidth() <= defaultWireWidth)
-        trackElement = new TrackSegmentRegular( segment, track );
-      else
-        trackElement = new TrackSegmentWide   ( segment, track );
+      if (useNonPref) {
+        trackElement = new TrackSegmentNonPref( segment );
+        if (track)
+          cerr << Error( "TrackSegment::create(): Must not set track when creating a non-preferred element.\n"
+                         "        (on %s)", getString(segment).c_str() ) << endl;
+      } else {
+        if (segment->isFixed() and track and (segment->getAxis() != track->getAxis()))
+          trackElement = new TrackSegmentWide( segment, track );
+        else if (segment->base()->getWidth() <= defaultWireWidth)
+          trackElement = new TrackSegmentRegular( segment, track );
+        else
+          trackElement = new TrackSegmentWide( segment, track );
+      }
 
       trackElement->_postCreate();
       trackElement->invalidate();
       created = true;
-      cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
+      cdebug_log(159,0) << "TrackSegment::create(): " << "nonPref:" << useNonPref
+                        << " " << trackElement << endl;
     }
+
+    DebugSession::close();
 
     return trackElement;
   }
@@ -157,13 +176,15 @@ namespace Katana {
   bool           TrackSegment::isFixedAxis          () const { return _base->isFixedAxis(); }
   bool           TrackSegment::isHorizontal         () const { return _base->isHorizontal(); }
   bool           TrackSegment::isVertical           () const { return _base->isVertical(); }
-  bool           TrackSegment::isLocal              () const { return not _base->isWeakGlobal() and not _base->isGlobal(); }
+  bool           TrackSegment::isLocal              () const { return not _base->isGlobal() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
+  bool           TrackSegment::isWeakGlobal         () const { return _base->isWeakGlobal(); }
+  bool           TrackSegment::isUnbreakable        () const { return _base->isUnbreakable() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
   bool           TrackSegment::isDrag               () const { return _base->isDrag(); }
   bool           TrackSegment::isStrongTerminal     ( Flags flags ) const { return _base->isStrongTerminal(flags); }
-  bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
+  bool           TrackSegment::isStrap              () const { return _base->isStrap() and not _base->isWeakGlobal(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
   bool           TrackSegment::isShortDogleg        () const { return _flags & TElemShortDogleg; }
@@ -174,6 +195,7 @@ namespace Katana {
   bool           TrackSegment::isWide               () const { return _base->isWide(); }
   bool           TrackSegment::isShortNet           () const { return _base->isShortNet(); }
   bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
+  bool           TrackSegment::isNonPrefOnVSmall    () const { return _base->isNonPrefOnVSmall(); }
 // Predicates.
   bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
 // Accessors.
@@ -192,7 +214,6 @@ namespace Katana {
   uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
-  TrackElement*  TrackSegment::getCanonical         ( Interval& i ) { return Session::lookup( _base->getCanonical(i)->base() ); }
   TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
@@ -256,6 +277,16 @@ namespace Katana {
 
     size_t  begin = _track->find( this );
     size_t  end   = begin;
+
+    if (begin == Track::npos) {
+      cerr << Error( "TrackSegment::getFreeInterval(): Segment not found in it's assigned track.\n"
+                   "        * %s\n"
+                   "        * %s\n"
+                   , getString(_track).c_str()
+                   , getString(this).c_str()
+                   ) << endl;
+      return Interval(false);
+    }
 
     return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
   }
@@ -389,13 +420,20 @@ namespace Katana {
   {
     if (track) {
       DbU::Unit axis = track->getAxis();
-      if (getTrackSpan() > 1) {
+      if (isWide()) {
         DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
         axis += (pitch * (getTrackSpan() - 1)) / 2;
-
+        
         cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
+      if (isNonPref()) {
+        axis = getAxis();
+        
+        cdebug_log(155,0) << "TrackSegment::setTrack(): Non-preferred, keep @" << DbU::getValueString(axis)
+                          << " trackSpan:" << getTrackSpan() << endl;
+      }
+      
       addTrackCount( getTrackSpan() );
       setAxis( axis, AutoSegment::SegAxisSet );
     }
@@ -407,45 +445,77 @@ namespace Katana {
   { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
-  void  TrackSegment::detach ()
+  // void  TrackSegment::detach ()
+  // {
+  //   cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
+
+  //   setTrack( NULL );
+  //   setFlags( TElemLocked );
+  //   addTrackCount( -1 );
+  // }
+
+
+  void  TrackSegment::detach ( TrackSet& removeds )
   {
-    cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
-
-    setTrack( NULL );
-    setFlags( TElemLocked );
-    addTrackCount( -1 );
-  }
-
-
-  void  TrackSegment::detach ( set<Track*>& removeds )
-  {
-    cdebug_log(159,0) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << ">" << endl;
+    cdebug_log(159,1) << "TrackSegment::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
+                      << getTrackSpan() << endl;
 
     Track* wtrack = getTrack();
     for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
-      
       removeds.insert( wtrack );
+      cdebug_log(159,0) << "| " << wtrack << endl;
+      
       wtrack = wtrack->getNextTrack();
     }
+  //addTrackCount( -getTrackSpan() );
+    addTrackCount( -1  );
 
-    detach();
+  //detach();
+    setTrack( NULL );
+    setFlags( TElemLocked );
+
+    cdebug_tabw(159,-1);
   }
 
 
   void  TrackSegment::revalidate ()
   {
+    DebugSession::open( getNet(), 159, 160 );
+
     unsetFlags( TElemCreated ); 
     cdebug_log(159,0) << "revalidate() - " << this << endl;
 
-    _base->getCanonical( _sourceU, _targetU );
+    if (isNonPref()) {
+      Interval perpandicularSpan ( getAxis() );
+      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
 
-    if (_track) Session::addSortEvent( _track, true );
+      _sourceU = perpandicularSpan.getVMin();
+      _targetU = perpandicularSpan.getVMax();
+    }
+    else
+      _base->getCanonical( _sourceU, _targetU );
+
+    if (isNonPref()) updateTrackSpan();
+
+    if (_track) {
+      Track* wtrack = getTrack();
+      for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+        Session::addSortEvent( wtrack, true );
+        wtrack = wtrack->getNextTrack();
+      }
+    }
     unsetFlags( TElemInvalidated );
+
+    DebugSession::close();
   }
 
 
   void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
   {
+    if (_data) {
+      if (axis == getAxis()) _data->incSameRipup();
+      else _data->resetSameRipup();
+    }
     _base->setAxis( axis, flags );
     invalidate();
   }
@@ -551,6 +621,16 @@ namespace Katana {
 
   float  TrackSegment::getMaxUnderDensity ( Flags flags ) const
   { return _base->getMaxUnderDensity( flags ); }
+  
+
+  bool  TrackSegment::canRealign () const
+  {
+    if (isGlobal() or isNonPref() /*or isReduced()*/) return false;
+    for ( TrackElement* perpandicular : const_cast<TrackSegment*>(this)->getPerpandiculars() ) {
+      if (perpandicular->isReduced()) return false;
+    }
+    return true;
+  }
 
 
   bool  TrackSegment::canPivotUp ( float reserve, Flags flags ) const
@@ -568,6 +648,7 @@ namespace Katana {
   bool  TrackSegment::canSlacken () const
   {
     cdebug_log(159,0) << "TrackSegment::canSlacken() doglegLevel:" << getDoglegLevel() << endl;
+    if (isNonPref()) return false;
     return (not isSlackened() and (getDoglegLevel() <= 3)) ? _base->canSlacken(Flags::Propagate) : false;
   }
 
@@ -781,6 +862,23 @@ namespace Katana {
 
     cdebug_log(159,0) << "Source: " << *gcells.begin () << endl;
     cdebug_log(159,0) << "Target: " << *gcells.rbegin() << endl;
+
+    AutoContact* acSource = base()->getAutoSource();
+    AutoContact* acTarget = base()->getAutoTarget();
+    if (gcells[0] == doglegGCell) {
+      if (acSource->isHDogleg() or acSource->isVDogleg()) {
+        cdebug_log(159,0) << "false: Source perpandicular already has a dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
+    if (gcells[gcells.size()-1] == doglegGCell) {
+      if (acTarget->isHDogleg() or acTarget->isVDogleg()) {
+        cdebug_log(159,0) << "false: Target perpandicular already has a dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
 
     bool isGCellInside = false;
     for ( size_t igcell=0 ; igcell<gcells.size() ; ++igcell ) {
@@ -996,7 +1094,17 @@ namespace Katana {
     DbU::Unit min;
     DbU::Unit max;
     base()->checkPositions();
-    base()->getCanonical( min, max );
+
+    if (isNonPref()) {
+      Interval perpandicularSpan ( getAxis() );
+      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
+
+      min = perpandicularSpan.getVMin();
+      max = perpandicularSpan.getVMax();
+    }
+    else
+      _base->getCanonical( min, max );
+
     if (getSourceU() != min) {
       cerr << "[CHECK] " << this << " has bad source position "
            << "cache:" << DbU::getValueString(getSourceU()) << " vs. "
@@ -1024,7 +1132,8 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              +  " "   + getString(_dogLegLevel)
+              +  " "   + getString(_dogLegLevel) + " "
+              + ((isNonPref()      ) ? "P" : "-")
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")

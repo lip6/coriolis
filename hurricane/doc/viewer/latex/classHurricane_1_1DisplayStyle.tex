@@ -1,11 +1,11 @@
-\hypertarget{classHurricane_1_1DisplayStyle}{}\section{Hurricane\+:\+:Display\+Style Class Reference}
-\label{classHurricane_1_1DisplayStyle}\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
+\hypertarget{classHurricane_1_1DisplayStyle}{}\doxysection{Hurricane\+::Display\+Style Class Reference}
+\label{classHurricane_1_1DisplayStyle}\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
 
 
 A complete set of Drawin\+Styles to uses with the \mbox{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}}.  
 
 
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ac2923e24d8a17aba8f83803a807058bd}{Display\+Style}} (const \textbf{ Name} \&name)
@@ -16,17 +16,17 @@ const \textbf{ Name} \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_a8e83fc2
 \item 
 const std\+::string \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_a809203d15181d6295e138a2aab729d5f}{get\+Description}} () const
 \item 
-const H\+S\+Vr \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}{get\+Darkening}} () const
+const HSVr \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}{get\+Darkening}} () const
 \item 
 const \textbf{ Name} \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_af4efb49cf791189ba5f53fbbdd7c6675}{get\+Group}} (const \textbf{ Name} \&key) const
 \item 
 const std\+::string \& \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab347efa0a703fd8fe012715102aba53b}{get\+Pattern}} (const \textbf{ Name} \&key) const
 \item 
-Q\+Color \mbox{\hyperlink{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}{get\+Color}} (const \textbf{ Name} \&key, const H\+S\+Vr \&) const
+QColor \mbox{\hyperlink{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}{get\+Color}} (const \textbf{ Name} \&key, const HSVr \&) const
 \item 
-Q\+Pen \mbox{\hyperlink{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}{get\+Pen}} (const \textbf{ Name} \&key, const H\+S\+Vr \&) const
+QPen \mbox{\hyperlink{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}{get\+Pen}} (const \textbf{ Name} \&key, const HSVr \&) const
 \item 
-Q\+Brush \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}{get\+Brush}} (const \textbf{ Name} \&key, const H\+S\+Vr \&) const
+QBrush \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}{get\+Brush}} (const \textbf{ Name} \&key, const HSVr \&) const
 \item 
 float \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ac4a7a7bfede6747aad9980fd7f375b8d}{get\+Threshold}} (const \textbf{ Name} \&key) const
 \item 
@@ -40,140 +40,140 @@ void \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ae21071635857843536511f21da
 \item 
 void \mbox{\hyperlink{classHurricane_1_1DisplayStyle_a603dbd5d6973a8897a85513acdfda2d0}{inherit\+From}} (const \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$base)
 \item 
-void \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab17b746af2c529c62a902d0cb992be34}{set\+Darkening}} (const H\+S\+Vr \&)
+void \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab17b746af2c529c62a902d0cb992be34}{set\+Darkening}} (const HSVr \&)
 \item 
 void \mbox{\hyperlink{classHurricane_1_1DisplayStyle_aef2473891e0de472850f95cbd71b2cf4}{add\+Drawing\+Style}} (const \textbf{ Name} \&group\+Key, const \textbf{ Name} \&key, const std\+::string \&pattern, int red, int green, int blue, int border\+Width, float threshold, bool go\+Matched=true)
 \end{DoxyCompactItemize}
-\subsection*{Static Public Member Functions}
+\doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static Q\+Color \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab19987c4a2d971163749b7ab56b5597b}{darken}} (const Q\+Color \&color, const Display\+Style\+::\+H\+S\+Vr \&darkening)
+static QColor \mbox{\hyperlink{classHurricane_1_1DisplayStyle_ab19987c4a2d971163749b7ab56b5597b}{darken}} (const QColor \&color, const Display\+Style\+::\+HSVr \&darkening)
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
+\doxysubsection{Detailed Description}
 A complete set of Drawin\+Styles to uses with the \mbox{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}}. 
 
 For a synthetic explanation, have a look to \+:
 
 Except in configuration parsers that have to builds them Display\+Styles shoudn\textquotesingle{}t be manipulated directly but used through the \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} methods. 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ac2923e24d8a17aba8f83803a807058bd}\label{classHurricane_1_1DisplayStyle_ac2923e24d8a17aba8f83803a807058bd}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!Display\+Style@{Display\+Style}}
-\index{Display\+Style@{Display\+Style}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{Display\+Style()}{DisplayStyle()}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!DisplayStyle@{DisplayStyle}}
+\index{DisplayStyle@{DisplayStyle}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{DisplayStyle()}{DisplayStyle()}}
 {\footnotesize\ttfamily Hurricane\+::\+Display\+Style\+::\+Display\+Style (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{name }\end{DoxyParamCaption})}
 
 Construct a \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} named {\itshape name}. The \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} is populated with a minimal sets of Drawing\+Styles which allows it to be used straight (in \mbox{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}}) but to the cost of very ugly rendering. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ada5e04aa32eba45ff5c7567cd432f0e7}\label{classHurricane_1_1DisplayStyle_ada5e04aa32eba45ff5c7567cd432f0e7}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!````~Display\+Style@{$\sim$\+Display\+Style}}
-\index{````~Display\+Style@{$\sim$\+Display\+Style}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{$\sim$\+Display\+Style()}{~DisplayStyle()}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!````~DisplayStyle@{$\sim$DisplayStyle}}
+\index{````~DisplayStyle@{$\sim$DisplayStyle}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{$\sim$DisplayStyle()}{~DisplayStyle()}}
 {\footnotesize\ttfamily Hurricane\+::\+Display\+Style\+::$\sim$\+Display\+Style (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 The standart destructor. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab19987c4a2d971163749b7ab56b5597b}\label{classHurricane_1_1DisplayStyle_ab19987c4a2d971163749b7ab56b5597b}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!darken@{darken}}
-\index{darken@{darken}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{darken()}{darken()}}
-{\footnotesize\ttfamily Q\+Color Hurricane\+::\+Display\+Style\+::darken (\begin{DoxyParamCaption}\item[{const Q\+Color \&}]{color,  }\item[{const Display\+Style\+::\+H\+S\+Vr \&}]{darkening }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!darken@{darken}}
+\index{darken@{darken}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{darken()}{darken()}}
+{\footnotesize\ttfamily QColor Hurricane\+::\+Display\+Style\+::darken (\begin{DoxyParamCaption}\item[{const QColor \&}]{color,  }\item[{const Display\+Style\+::\+HSVr \&}]{darkening }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-{\bfseries Returns\+:} The {\itshape color} with the darkening factor {\ttfamily darkening} applied. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a8e83fc27dc7d3f4037d2a3adafe6f770}\label{classHurricane_1_1DisplayStyle_a8e83fc27dc7d3f4037d2a3adafe6f770}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Name@{get\+Name}}
-\index{get\+Name@{get\+Name}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\bfseries{Returns\+:}} The {\itshape color} with the darkening factor {\ttfamily darkening} applied. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a8e83fc27dc7d3f4037d2a3adafe6f770}\label{classHurricane_1_1DisplayStyle_a8e83fc27dc7d3f4037d2a3adafe6f770}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getName@{getName}}
+\index{getName@{getName}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getName()}{getName()}}
 {\footnotesize\ttfamily const \textbf{ Name} \& Hurricane\+::\+Display\+Style\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The name of this \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a809203d15181d6295e138a2aab729d5f}\label{classHurricane_1_1DisplayStyle_a809203d15181d6295e138a2aab729d5f}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Description@{get\+Description}}
-\index{get\+Description@{get\+Description}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Description()}{getDescription()}}
+{\bfseries{Returns\+:}} The name of this \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a809203d15181d6295e138a2aab729d5f}\label{classHurricane_1_1DisplayStyle_a809203d15181d6295e138a2aab729d5f}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getDescription@{getDescription}}
+\index{getDescription@{getDescription}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getDescription()}{getDescription()}}
 {\footnotesize\ttfamily const std\+::string \& Hurricane\+::\+Display\+Style\+::get\+Description (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The long description of this \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}\label{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Darkening@{get\+Darkening}}
-\index{get\+Darkening@{get\+Darkening}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Darkening()}{getDarkening()}}
-{\footnotesize\ttfamily const Display\+Style\+::\+H\+S\+Vr \& Hurricane\+::\+Display\+Style\+::get\+Darkening (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+{\bfseries{Returns\+:}} The long description of this \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}\label{classHurricane_1_1DisplayStyle_ab3e8eaedf1567526e5615addb525fc73}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getDarkening@{getDarkening}}
+\index{getDarkening@{getDarkening}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getDarkening()}{getDarkening()}}
+{\footnotesize\ttfamily const Display\+Style\+::\+HSVr \& Hurricane\+::\+Display\+Style\+::get\+Darkening (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The darkening factor. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_af4efb49cf791189ba5f53fbbdd7c6675}\label{classHurricane_1_1DisplayStyle_af4efb49cf791189ba5f53fbbdd7c6675}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Group@{get\+Group}}
-\index{get\+Group@{get\+Group}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Group()}{getGroup()}}
+{\bfseries{Returns\+:}} The darkening factor. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_af4efb49cf791189ba5f53fbbdd7c6675}\label{classHurricane_1_1DisplayStyle_af4efb49cf791189ba5f53fbbdd7c6675}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getGroup@{getGroup}}
+\index{getGroup@{getGroup}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getGroup()}{getGroup()}}
 {\footnotesize\ttfamily const \textbf{ Name} \& Hurricane\+::\+Display\+Style\+::get\+Group (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The group owning the Drawing\+Style of which key is {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab347efa0a703fd8fe012715102aba53b}\label{classHurricane_1_1DisplayStyle_ab347efa0a703fd8fe012715102aba53b}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Pattern@{get\+Pattern}}
-\index{get\+Pattern@{get\+Pattern}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Pattern()}{getPattern()}}
+{\bfseries{Returns\+:}} The group owning the Drawing\+Style of which key is {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab347efa0a703fd8fe012715102aba53b}\label{classHurricane_1_1DisplayStyle_ab347efa0a703fd8fe012715102aba53b}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getPattern@{getPattern}}
+\index{getPattern@{getPattern}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getPattern()}{getPattern()}}
 {\footnotesize\ttfamily const string \& Hurricane\+::\+Display\+Style\+::get\+Pattern (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The pattern associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}\label{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Color@{get\+Color}}
-\index{get\+Color@{get\+Color}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Color()}{getColor()}}
-{\footnotesize\ttfamily const Q\+Color \& Hurricane\+::\+Display\+Style\+::get\+Color (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const H\+S\+Vr \&}]{darkening }\end{DoxyParamCaption}) const}
+{\bfseries{Returns\+:}} The pattern associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}\label{classHurricane_1_1DisplayStyle_a42be63b69aa05b6fd3e25c89a90f0267}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getColor@{getColor}}
+\index{getColor@{getColor}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getColor()}{getColor()}}
+{\footnotesize\ttfamily const QColor \& Hurricane\+::\+Display\+Style\+::get\+Color (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const HSVr \&}]{darkening }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The Q\+Color associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}\label{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Pen@{get\+Pen}}
-\index{get\+Pen@{get\+Pen}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Pen()}{getPen()}}
-{\footnotesize\ttfamily const Q\+Pen \& Hurricane\+::\+Display\+Style\+::get\+Pen (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const H\+S\+Vr \&}]{darkening }\end{DoxyParamCaption}) const}
+{\bfseries{Returns\+:}} The QColor associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}\label{classHurricane_1_1DisplayStyle_aaa3e98aa185fed644943f1c89a49b7d0}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getPen@{getPen}}
+\index{getPen@{getPen}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getPen()}{getPen()}}
+{\footnotesize\ttfamily const QPen \& Hurricane\+::\+Display\+Style\+::get\+Pen (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const HSVr \&}]{darkening }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The Q\+Pen associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}\label{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Brush@{get\+Brush}}
-\index{get\+Brush@{get\+Brush}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Brush()}{getBrush()}}
-{\footnotesize\ttfamily const Q\+Brush \& Hurricane\+::\+Display\+Style\+::get\+Brush (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const H\+S\+Vr \&}]{darkening }\end{DoxyParamCaption}) const}
+{\bfseries{Returns\+:}} The QPen associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}\label{classHurricane_1_1DisplayStyle_ad2f4f9eb2323888cab0fbc8ea5433777}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getBrush@{getBrush}}
+\index{getBrush@{getBrush}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getBrush()}{getBrush()}}
+{\footnotesize\ttfamily const QBrush \& Hurricane\+::\+Display\+Style\+::get\+Brush (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const HSVr \&}]{darkening }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The Q\+Brush associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ac4a7a7bfede6747aad9980fd7f375b8d}\label{classHurricane_1_1DisplayStyle_ac4a7a7bfede6747aad9980fd7f375b8d}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Threshold@{get\+Threshold}}
-\index{get\+Threshold@{get\+Threshold}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Threshold()}{getThreshold()}}
+{\bfseries{Returns\+:}} The QBrush associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ac4a7a7bfede6747aad9980fd7f375b8d}\label{classHurricane_1_1DisplayStyle_ac4a7a7bfede6747aad9980fd7f375b8d}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getThreshold@{getThreshold}}
+\index{getThreshold@{getThreshold}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getThreshold()}{getThreshold()}}
 {\footnotesize\ttfamily const float Hurricane\+::\+Display\+Style\+::get\+Threshold (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The display threshold associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ad85904fb9c823e5f0193461a5e4f9a1a}\label{classHurricane_1_1DisplayStyle_ad85904fb9c823e5f0193461a5e4f9a1a}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!get\+Drawing\+Groups@{get\+Drawing\+Groups}}
-\index{get\+Drawing\+Groups@{get\+Drawing\+Groups}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{get\+Drawing\+Groups()}{getDrawingGroups()}}
+{\bfseries{Returns\+:}} The display threshold associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ad85904fb9c823e5f0193461a5e4f9a1a}\label{classHurricane_1_1DisplayStyle_ad85904fb9c823e5f0193461a5e4f9a1a}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!getDrawingGroups@{getDrawingGroups}}
+\index{getDrawingGroups@{getDrawingGroups}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{getDrawingGroups()}{getDrawingGroups()}}
 {\footnotesize\ttfamily const vector$<$ Drawing\+Group $\ast$ $>$ \& Hurricane\+::\+Display\+Style\+::get\+Drawing\+Groups (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} The vector of groups. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ac7a76fdc5cf9e9a74840b9846bd390fc}\label{classHurricane_1_1DisplayStyle_ac7a76fdc5cf9e9a74840b9846bd390fc}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!find@{find}}
-\index{find@{find}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{find()}{find()}}
+{\bfseries{Returns\+:}} The vector of groups. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ac7a76fdc5cf9e9a74840b9846bd390fc}\label{classHurricane_1_1DisplayStyle_ac7a76fdc5cf9e9a74840b9846bd390fc}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!find@{find}}
+\index{find@{find}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{find()}{find()}}
 {\footnotesize\ttfamily Drawing\+Style $\ast$ Hurricane\+::\+Display\+Style\+::find (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The Drawing\+Style associated with key {\itshape key}. If no Drawing\+Style matches {\itshape key}, the {\itshape default} Drawing\+Style is returned. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a9288b2780ffd5fccf94a41b597ed2efd}\label{classHurricane_1_1DisplayStyle_a9288b2780ffd5fccf94a41b597ed2efd}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!qt\+Allocate@{qt\+Allocate}}
-\index{qt\+Allocate@{qt\+Allocate}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{qt\+Allocate()}{qtAllocate()}}
+{\bfseries{Returns\+:}} The Drawing\+Style associated with key {\itshape key}. If no Drawing\+Style matches {\itshape key}, the {\itshape default} Drawing\+Style is returned. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a9288b2780ffd5fccf94a41b597ed2efd}\label{classHurricane_1_1DisplayStyle_a9288b2780ffd5fccf94a41b597ed2efd}} 
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!qtAllocate@{qtAllocate}}
+\index{qtAllocate@{qtAllocate}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{qtAllocate()}{qtAllocate()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::qt\+Allocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
 Triggers the allocation of Qt pens \& brushes. Should not be used directly but only through \mbox{\hyperlink{classHurricane_1_1Graphics_a08e5240382c4bc97fd84b6fa0e7d8b8e}{Graphics\+::enable()}}. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ae21071635857843536511f21da5533c7}\label{classHurricane_1_1DisplayStyle_ae21071635857843536511f21da5533c7}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!set\+Description@{set\+Description}}
-\index{set\+Description@{set\+Description}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{set\+Description()}{setDescription()}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!setDescription@{setDescription}}
+\index{setDescription@{setDescription}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{setDescription()}{setDescription()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::set\+Description (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{description }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 Sets the Display style informative text. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_a603dbd5d6973a8897a85513acdfda2d0}\label{classHurricane_1_1DisplayStyle_a603dbd5d6973a8897a85513acdfda2d0}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!inherit\+From@{inherit\+From}}
-\index{inherit\+From@{inherit\+From}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{inherit\+From()}{inheritFrom()}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!inheritFrom@{inheritFrom}}
+\index{inheritFrom@{inheritFrom}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{inheritFrom()}{inheritFrom()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::inherit\+From (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$}]{base }\end{DoxyParamCaption})}
 
 Clone the {\itshape base} \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} into the current one. Any previous settings are eraseds. The base style is {\itshape duplicated} into this one. Further modification of {\itshape base} after this point will have no effect on the current style. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_ab17b746af2c529c62a902d0cb992be34}\label{classHurricane_1_1DisplayStyle_ab17b746af2c529c62a902d0cb992be34}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!set\+Darkening@{set\+Darkening}}
-\index{set\+Darkening@{set\+Darkening}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{set\+Darkening()}{setDarkening()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::set\+Darkening (\begin{DoxyParamCaption}\item[{const H\+S\+Vr \&}]{ }\end{DoxyParamCaption})}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!setDarkening@{setDarkening}}
+\index{setDarkening@{setDarkening}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{setDarkening()}{setDarkening()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::set\+Darkening (\begin{DoxyParamCaption}\item[{const HSVr \&}]{ }\end{DoxyParamCaption})}
 
 Sets the darkening factor. \mbox{\Hypertarget{classHurricane_1_1DisplayStyle_aef2473891e0de472850f95cbd71b2cf4}\label{classHurricane_1_1DisplayStyle_aef2473891e0de472850f95cbd71b2cf4}} 
-\index{Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}!add\+Drawing\+Style@{add\+Drawing\+Style}}
-\index{add\+Drawing\+Style@{add\+Drawing\+Style}!Hurricane\+::\+Display\+Style@{Hurricane\+::\+Display\+Style}}
-\subsubsection{\texorpdfstring{add\+Drawing\+Style()}{addDrawingStyle()}}
+\index{Hurricane::DisplayStyle@{Hurricane::DisplayStyle}!addDrawingStyle@{addDrawingStyle}}
+\index{addDrawingStyle@{addDrawingStyle}!Hurricane::DisplayStyle@{Hurricane::DisplayStyle}}
+\doxysubsubsection{\texorpdfstring{addDrawingStyle()}{addDrawingStyle()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Display\+Style\+::add\+Drawing\+Style (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{group\+Key,  }\item[{const \textbf{ Name} \&}]{key,  }\item[{const std\+::string \&}]{pattern,  }\item[{int}]{red,  }\item[{int}]{green,  }\item[{int}]{blue,  }\item[{int}]{border\+Width,  }\item[{float}]{threshold,  }\item[{bool}]{go\+Matched = {\ttfamily true} }\end{DoxyParamCaption})}
 
 

@@ -197,16 +197,19 @@ namespace Hurricane {
                                ,_enclosure(0)
                                ,_extentionCap(0)
                                ,_extentionWidth(0)
-  { }
+  {
+  }
 
 
-  RegularLayer* RegularLayer::create ( Technology*     technology
-                                     , const Name&     name
+  RegularLayer* RegularLayer::create ( Technology* technology
+                                     , const Name& name
+                                     , BasicLayer* layer
                                      )
   {
-    RegularLayer* regularLayer = new RegularLayer(technology, name);
+    RegularLayer* regularLayer = new RegularLayer( technology, name );
 
     regularLayer->_postCreate();
+    regularLayer->setBasicLayer( layer );
 
     return regularLayer;
   }
@@ -232,7 +235,7 @@ namespace Hurricane {
   { return getTechnology()->getLayer(_basicLayer->getMask()); } 
 
 
-  DbU::Unit  RegularLayer::getEnclosure () const
+  DbU::Unit  RegularLayer::getEnclosure ( uint32_t ) const
   { return _enclosure; }
 
 
@@ -244,7 +247,7 @@ namespace Hurricane {
   { return _extentionWidth; }
 
 
-  DbU::Unit  RegularLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  RegularLayer::getEnclosure ( const BasicLayer* layer, uint32_t ) const
   {
     return (layer == _basicLayer) ? _enclosure : 0;
   }
@@ -281,7 +284,7 @@ namespace Hurricane {
   }
 
 
-  void  RegularLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
+  void  RegularLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t )
   {
     if ( _basicLayer == layer ) _enclosure = enclosure;
   }
@@ -396,8 +399,7 @@ namespace Hurricane {
 
       if (stack.issetFlags(JsonWriter::TechnoMode)) {
       // Actual creation.
-        layer = RegularLayer::create( techno, name );
-        layer->setBasicLayer    ( basicLayer );
+        layer = RegularLayer::create( techno, name, basicLayer );
         layer->setSymbolic      ( isSymbolic );
         layer->setMinimalSize   ( minimalSize );
         layer->setMinimalSpacing( minimalSpacing );

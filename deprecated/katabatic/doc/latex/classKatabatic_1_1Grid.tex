@@ -1,0 +1,158 @@
+\hypertarget{classKatabatic_1_1Grid}{}\section{Grid$<$ G\+CellT $>$ Class Template Reference}
+\label{classKatabatic_1_1Grid}\index{Grid$<$ G\+Cell\+T $>$@{Grid$<$ G\+Cell\+T $>$}}
+
+
+Template Class for Regular \mbox{\hyperlink{classKatabatic_1_1Grid}{Grid}}.  
+
+
+
+
+Inheritance diagram for Grid$<$ G\+CellT $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{classKatabatic_1_1Grid__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a98650c11b4aa0c6107c4d890dff61587}{get\+G\+Cell}} (unsigned int index) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a0ee3cd2fb8c66458b0d00e39826921da}{get\+G\+Cell}} (const \textbf{ Point} p) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a1beb5c490b2e651eab49178297b6cda2}{get\+G\+Cell}} (const \textbf{ Point} p1, const \textbf{ Point} p2) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_ae5041816e75468b69bb0bbf24a4e8eca}{get\+G\+Cell\+Left}} (const G\+CellT $\ast$gcell) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a0e9bba0feb437dca932d59703298358e}{get\+G\+Cell\+Right}} (const G\+CellT $\ast$gcell) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a3a22f2bce9124765eb937b78c90059a0}{get\+G\+Cell\+Up}} (const G\+CellT $\ast$gcell) const
+\item 
+G\+CellT $\ast$ \mbox{\hyperlink{classKatabatic_1_1Grid_a4288eb8b1357d9800341b82df6b23944}{get\+G\+Cell\+Down}} (const G\+CellT $\ast$gcell) const
+\item 
+\textbf{ Generic\+Collection}$<$ G\+CellT $\ast$ $>$ \mbox{\hyperlink{classKatabatic_1_1Grid_a24b4ab5b46b56ee744cf4c368a114d95}{get\+G\+Cells}} ()
+\item 
+\textbf{ Generic\+Collection}$<$ G\+CellT $\ast$ $>$ \mbox{\hyperlink{classKatabatic_1_1Grid_aa8d0393323104d48c089a8429b254689}{get\+G\+Cells\+Column}} (unsigned int column, unsigned int row\+Start, unsigned int row\+Stop)
+\item 
+\textbf{ Generic\+Collection}$<$ G\+CellT $\ast$ $>$ \mbox{\hyperlink{classKatabatic_1_1Grid_a35e2075302cdb696945f05c5bcc817a0}{get\+G\+Cells\+Row}} (unsigned int row, unsigned int column\+Start, unsigned int column\+Stop)
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classKatabatic_1_1Grid_a1b772cc784f7110caca47acb76dcec62}{Grid}} (const \textbf{ Box} \&)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename G\+CellT$>$\newline
+class Katabatic\+::\+Grid$<$ G\+Cell\+T $>$}
+
+Template Class for Regular \mbox{\hyperlink{classKatabatic_1_1Grid}{Grid}}. 
+
+Contains all general purpose methods depending on the \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} type and geometrical computations. The internal storage is still not implemented in this class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a1b772cc784f7110caca47acb76dcec62}\label{classKatabatic_1_1Grid_a1b772cc784f7110caca47acb76dcec62}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!Grid@{Grid}}
+\index{Grid@{Grid}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{Grid()}{Grid()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1Grid}{Grid}} (\begin{DoxyParamCaption}\item[{const \textbf{ Box} \&}]{bb }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+\mbox{\hyperlink{classKatabatic_1_1Grid}{Grid}} constructor. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a98650c11b4aa0c6107c4d890dff61587}\label{classKatabatic_1_1Grid_a98650c11b4aa0c6107c4d890dff61587}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell@{get\+G\+Cell}}
+\index{get\+G\+Cell@{get\+G\+Cell}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell()}{getGCell()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell (\begin{DoxyParamCaption}\item[{unsigned int}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The grid object at linear index {\ttfamily index} in the vector. If {\ttfamily index} is out of bounds, return {\ttfamily N\+U\+LL}. 
+
+Referenced by G\+Cell\+Topology\+::do\+Rp\+\_\+\+Access\+Pad(), G\+Cell\+Topology\+::do\+Rp\+\_\+\+Auto\+Contacts(), and anonymous\+\_\+namespace\{\+Load\+Gr\+By\+Net.\+cpp\}\+::single\+G\+Cell().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a0ee3cd2fb8c66458b0d00e39826921da}\label{classKatabatic_1_1Grid_a0ee3cd2fb8c66458b0d00e39826921da}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell@{get\+G\+Cell}}
+\index{get\+G\+Cell@{get\+G\+Cell}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell()}{getGCell()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell (\begin{DoxyParamCaption}\item[{const \textbf{ Point}}]{p }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The grid object which is under position {\ttfamily p}. \mbox{\Hypertarget{classKatabatic_1_1Grid_a1beb5c490b2e651eab49178297b6cda2}\label{classKatabatic_1_1Grid_a1beb5c490b2e651eab49178297b6cda2}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell@{get\+G\+Cell}}
+\index{get\+G\+Cell@{get\+G\+Cell}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell()}{getGCell()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell (\begin{DoxyParamCaption}\item[{const \textbf{ Point}}]{p1,  }\item[{const \textbf{ Point}}]{p2 }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The grid object which is under position {\ttfamily p1} and {\ttfamily p2}. Not very clear though. \mbox{\Hypertarget{classKatabatic_1_1Grid_ae5041816e75468b69bb0bbf24a4e8eca}\label{classKatabatic_1_1Grid_ae5041816e75468b69bb0bbf24a4e8eca}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell\+Left@{get\+G\+Cell\+Left}}
+\index{get\+G\+Cell\+Left@{get\+G\+Cell\+Left}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell\+Left()}{getGCellLeft()}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell\+Left (\begin{DoxyParamCaption}\item[{const G\+CellT $\ast$}]{gcell }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The left neighbor of {\ttfamily gcell}, {\ttfamily N\+U\+LL} if it is the leftmost one. 
+
+Referenced by G\+Cell\+::get\+Left().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a0e9bba0feb437dca932d59703298358e}\label{classKatabatic_1_1Grid_a0e9bba0feb437dca932d59703298358e}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell\+Right@{get\+G\+Cell\+Right}}
+\index{get\+G\+Cell\+Right@{get\+G\+Cell\+Right}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell\+Right()}{getGCellRight()}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell\+Right (\begin{DoxyParamCaption}\item[{const G\+CellT $\ast$}]{gcell }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The rigth neighbor of {\ttfamily gcell}, {\ttfamily N\+U\+LL} if it is the rightmost one. 
+
+Referenced by G\+Cell\+::get\+Right().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a3a22f2bce9124765eb937b78c90059a0}\label{classKatabatic_1_1Grid_a3a22f2bce9124765eb937b78c90059a0}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell\+Up@{get\+G\+Cell\+Up}}
+\index{get\+G\+Cell\+Up@{get\+G\+Cell\+Up}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell\+Up()}{getGCellUp()}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell\+Up (\begin{DoxyParamCaption}\item[{const G\+CellT $\ast$}]{gcell }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The upper neighbor of {\ttfamily gcell}, {\ttfamily N\+U\+LL} if it is the uppermost one. 
+
+Referenced by G\+Cell\+::get\+Up().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a4288eb8b1357d9800341b82df6b23944}\label{classKatabatic_1_1Grid_a4288eb8b1357d9800341b82df6b23944}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cell\+Down@{get\+G\+Cell\+Down}}
+\index{get\+G\+Cell\+Down@{get\+G\+Cell\+Down}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cell\+Down()}{getGCellDown()}}
+{\footnotesize\ttfamily C\+GellT $\ast$ get\+G\+Cell\+Down (\begin{DoxyParamCaption}\item[{const G\+CellT $\ast$}]{gcell }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The down neighbor of {\ttfamily gcell}, {\ttfamily N\+U\+LL} if it is the downmost one. 
+
+Referenced by G\+Cell\+::get\+Down().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a24b4ab5b46b56ee744cf4c368a114d95}\label{classKatabatic_1_1Grid_a24b4ab5b46b56ee744cf4c368a114d95}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cells@{get\+G\+Cells}}
+\index{get\+G\+Cells@{get\+G\+Cells}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cells()}{getGCells()}}
+{\footnotesize\ttfamily \textbf{ Generic\+Collection}$<$ C\+GellT $\ast$ $>$ get\+G\+Cells (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A G\+CellT Hurricane collection built upon the linear G\+CellT vector of the grid. \mbox{\Hypertarget{classKatabatic_1_1Grid_aa8d0393323104d48c089a8429b254689}\label{classKatabatic_1_1Grid_aa8d0393323104d48c089a8429b254689}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cells\+Column@{get\+G\+Cells\+Column}}
+\index{get\+G\+Cells\+Column@{get\+G\+Cells\+Column}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cells\+Column()}{getGCellsColumn()}}
+{\footnotesize\ttfamily \textbf{ Generic\+Collection}$<$ C\+GellT $\ast$ $>$ get\+G\+Cells\+Column (\begin{DoxyParamCaption}\item[{unsigned int}]{column,  }\item[{unsigned int}]{row\+Start,  }\item[{unsigned int}]{row\+Stop }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A G\+CellT Hurricane collection that contains the part of {\ttfamily column} starting from {\ttfamily row\+Start} to {\ttfamily row\+Stop} inclusive. 
+
+Referenced by Katabatic\+Engine\+::create\+Detailed\+Grid().
+
+\mbox{\Hypertarget{classKatabatic_1_1Grid_a35e2075302cdb696945f05c5bcc817a0}\label{classKatabatic_1_1Grid_a35e2075302cdb696945f05c5bcc817a0}} 
+\index{Katabatic\+::\+Grid@{Katabatic\+::\+Grid}!get\+G\+Cells\+Row@{get\+G\+Cells\+Row}}
+\index{get\+G\+Cells\+Row@{get\+G\+Cells\+Row}!Katabatic\+::\+Grid@{Katabatic\+::\+Grid}}
+\subsubsection{\texorpdfstring{get\+G\+Cells\+Row()}{getGCellsRow()}}
+{\footnotesize\ttfamily \textbf{ Generic\+Collection}$<$ C\+GellT $\ast$ $>$ get\+G\+Cells\+Row (\begin{DoxyParamCaption}\item[{unsigned int}]{row,  }\item[{unsigned int}]{column\+Start,  }\item[{unsigned int}]{column\+Stop }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A G\+CellT Hurricane collection that contains the part of {\ttfamily row} starting from {\ttfamily column\+Start} to {\ttfamily column\+Stop} inclusive. 
+
+Referenced by Katabatic\+Engine\+::create\+Detailed\+Grid().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Grid.\+h\item 
+Grid.\+dox\end{DoxyCompactItemize}

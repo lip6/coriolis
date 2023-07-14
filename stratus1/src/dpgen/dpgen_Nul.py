@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -252,7 +251,7 @@ class DpgenNul ( Model ) :
               sModel = "a2_x4"
               
               thisMap['q'] = self._nul
-              if thisMap.has_key('nq') : del thisMap['nq']
+              if 'nq' in thisMap : del thisMap['nq']
             else :
               sModel = "no2_x4"
               thisMap['nq'] = self._nul
@@ -263,7 +262,7 @@ class DpgenNul ( Model ) :
               if depth % 2 : sModel = "a2_x2"
               else         : sModel = "o2_x2"
   
-              if thisMap.has_key('nq') : del thisMap['nq']
+              if 'nq' in thisMap : del thisMap['nq']
               thisMap['q'] = nul[cell_index]
 
         thisMap['vdd'] = self._vdd

@@ -1,11 +1,12 @@
-# -*- mode:Python; explicit-buffer-name: "io.py<crlcore/helpers>" -*-
+
+# -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2012-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |          Alliance / Hurricane  Interface                        |
 # |                                                                 |
 # |  Author      :                    Jean-Paul Chaput              |
 # |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
@@ -18,116 +19,69 @@ import os
 import os.path
 import re
 import traceback
-from   PyQt4.QtCore import Qt
-from   PyQt4.QtGui  import QSizePolicy
-from   PyQt4.QtGui  import QDialog
-from   PyQt4.QtGui  import QPalette
-from   PyQt4.QtGui  import QColor
-from   PyQt4.QtGui  import QFont
-from   PyQt4.QtGui  import QFontMetrics
-from   PyQt4.QtGui  import QWidget
-from   PyQt4.QtGui  import QFrame
-from   PyQt4.QtGui  import QLabel
-from   PyQt4.QtGui  import QPixmap
-from   PyQt4.QtGui  import QPushButton
-from   PyQt4.QtGui  import QTextEdit
-from   PyQt4.QtGui  import QVBoxLayout
-from   PyQt4.QtGui  import QHBoxLayout
-from   PyQt4.QtGui  import QAction
-from   PyQt4.QtGui  import QKeySequence
-import helpers
-from   Hurricane    import UpdateSession
-import Viewer
+from   ..          import Cfg
+from   ..Hurricane import UpdateSession
+from   ..Viewer    import Graphics, ErrorWidget
 
 
-# -------------------------------------------------------------------
-# Class  :  "ErrorWidget".
+def textStackTrace ( trace, showIndent=True, scriptPath=None ):
+    indent = ''
+    if showIndent: indent = '        '
+    s = ''
+    if scriptPath:
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+      
+        if showIndent: s += '[ERROR] '
+        s += 'An exception occured while loading the Python script module:\n'
+        s += indent + '\"{}\"\n' % (filename)
+        s += indent + 'You should check for simple python errors in this module.\n\n'
+
+    s += indent + 'Python stack trace:\n'
+    maxdepth = len( trace )
+    for depth in range( maxdepth ):
+        filename, line, function, code = trace[ maxdepth-depth-1 ]
+        if len(filename) > 58:
+            filename = filename[-58:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+       #s += indent + '[%02d] %45s:%-5d in \"{}()\"' % ( maxdepth-depth-1, filename, line, function )
+        s += indent + '#{} in {:>25}() at {}:{}\n'.format( depth, function, filename, line )
+    return s
 
 
-class ErrorWidget ( QDialog ):
+def showStackTrace ( trace ):
+    print( textStackTrace( trace, True ))
+    return
 
-  def __init__ ( self, e ):
-    QWidget.__init__ ( self, None )
 
-    self.setWindowTitle( 'Error' )
+def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    s = ''
+    if scriptPath:
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+        else:
+            filename = scriptPath
+        s += '[ERROR] An exception occured while loading the Python script module:\n'
+        s += '        \"{}\"\n'.format(filename)
+        s += '        You should check for simple python errors in this module.\n'
+    if isinstance(e,ErrorMessage):
+        trace = e.trace
+        s += textStackTrace( trace )
+        if e:
+            s += '        Error was:\n'
+            s += '          {}\n'.format(e)
+    else:
+        #trace = traceback.extract_tb( sys.exc_info()[2] )
+        print( traceback.format_exc() )
+    if tryContinue:
+        s += '        Trying to continue anyway...'
+    return s
 
-    message = QLabel( e.getLinesAsString() )
-    message.setAlignment( Qt.AlignLeft )
-    message.setFont( QFont('Courier',10,QFont.Bold) )
 
-    error = QLabel( '[ERROR]' )
-    error.setAlignment( Qt.AlignLeft )
-    font = error.font()
-    font.setWeight( QFont.Bold )
-    error.setFont( font )
-
-    self._tryCont = QPushButton()
-    self._tryCont.setSizePolicy( QSizePolicy.Fixed, QSizePolicy.Fixed )
-    self._tryCont.setText      ( 'Try to continue' )
-    self._abort = QPushButton()
-    self._abort.setSizePolicy( QSizePolicy.Fixed, QSizePolicy.Fixed )
-    self._abort.setText      ( 'Abort' )
-    self._abort.setDefault   ( True )
-
-    traceFont    = QFont('Courier',10,QFont.Normal)
-    lineHeight   = QFontMetrics( traceFont ).height()
-    traceText    = helpers.textStackTrace( e.trace, False, e.scriptPath )
-    lineCount    = traceText.count( '\n' ) + 2
-    minimumWidth = 400
-    if Viewer.Graphics.isHighDpi(): minimumWidth = 2100
-    self._trace = QTextEdit()
-    self._trace.setReadOnly    ( True );
-    self._trace.setLineWrapMode( QTextEdit.NoWrap );
-    self._trace.setMinimumSize ( minimumWidth, lineCount*lineHeight );
-    self._trace.setFont        ( traceFont )
-    self._trace.setText        ( traceText )
-
-    buttonLayout = QHBoxLayout()
-    buttonLayout.addStretch( 1 )
-    buttonLayout.addWidget ( self._tryCont )
-    buttonLayout.addStretch( 1 )
-    buttonLayout.addWidget ( self._abort )
-    buttonLayout.addStretch( 1 )
-
-    vLayout = QVBoxLayout()
-    vLayout.addWidget ( error )
-    vLayout.addStretch( 1 )
-    vLayout.addWidget ( message )
-    vLayout.addStretch( 1 )
-    vLayout.addWidget ( self._trace )
-    vLayout.addStretch( 1 )
-    vLayout.addLayout ( buttonLayout )
-
-    pixmap = QPixmap( ':/images/angry-birds-red.png' )
-    pixmap = pixmap.scaledToWidth( 150 )
-    icon = QLabel()
-    icon.setPixmap( pixmap )
-
-    hLayout = QHBoxLayout()
-    hLayout.addWidget( icon )
-    hLayout.addLayout( vLayout )
-    self.setLayout( hLayout )
-
-    self._tryCont.clicked.connect( self.accept )
-    self._abort  .clicked.connect( self.reject )
-
-    self._exitAction = QAction( '&Exit', self )
-    self._exitAction.setStatusTip( 'Exit Coriolis' )
-    self._exitAction.setShortcut ( QKeySequence('CTRL+Q') )
-    self._exitAction.triggered.connect( self.reject )
-    self.addAction( self._exitAction )
-
-    self._closeAction = QAction( '&Close', self )
-    self._closeAction.setStatusTip( 'Try to continue' )
-    self._closeAction.setShortcut ( QKeySequence('CTRL+W') )
-    self._closeAction.triggered.connect( self.reject )
-    self.addAction( self._closeAction )
-    
-    return  
-
-  def closeEvent ( self, event ):
-    self.setResult( QDialog.Rejected )
-    event.accept()
+def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    print( textPythonTrace( scriptPath, e, tryContinue ))
     return
 
 
@@ -139,104 +93,105 @@ class ErrorMessage ( Exception ):
     def __init__ ( self, code, *arguments ):
         self.scriptPath = None
         self.trace      = traceback.extract_stack()
-        self._code      = code
-        self._errors    = [ 'Malformed call to ErrorMessage()'
-                          , '%s' % str(arguments) ]
+        self.code       = code
+        self.errors     = [ 'Malformed call to ErrorMessage().'
+                          , 'args:"{}"'.format(arguments) ]
 
+        if not isinstance(self.code,int):
+            self.errors = [ 'Malformed call to ErrorMessage(), first argument (code) must be an integer.'
+                          , 'code:"{}"'.format(code)
+                          , 'args:"{}"'.format(arguments) ]
+            return
+          
         text = None
         if len(arguments) == 1:
-          if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
-          else:
-            self._errors = arguments[0]
-        elif len(arguments) > 1:
-          sys.stdout.flush()
-          text = list(arguments)
-
-        if text:
-          self._errors = []
-          while len(text[0]) == 0: del text[0]
-
-          lstrip = 0
-          if text[0].startswith('[ERROR]'): lstrip = 8 
-
-          for line in text:
-            if line[0:lstrip] == ' '*lstrip or \
-              line[0:lstrip-1] == '[ERROR]':
-              self._errors += [ line[lstrip:] ]
+            if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
             else:
-              self._errors += [ line.lstrip() ]
-          sys.stdout.flush()
+                self.errors = arguments[0]
+        elif len(arguments) > 1:
+            sys.stdout.flush()
+            text = list(arguments)
+        if text:
+            self.errors = []
+            while len(text) == 0: del text[0]
+            
+            lstrip = 0
+            if text[0].startswith('[ERROR]'): lstrip = 8 
+            
+            for line in text:
+                if line[0:lstrip] == ' '*lstrip or \
+                    line[0:lstrip-1] == '[ERROR]':
+                    self.errors += [ line[lstrip:] ]
+                else:
+                    self.errors += [ line.lstrip() ]
+            sys.stdout.flush()
         return
 
     def __str__ ( self ):
-        if not isinstance(self._errors,list):
-            return "[ERROR] %s" % self._errors
-
+        if not isinstance(self.errors,list):
+            return "[ERROR] %s" % self.errors
         formatted = "\n"
-        for i in range(len(self._errors)):
-            if i == 0: formatted += "[ERROR] %s" % self._errors[i]
-            else:      formatted += "        %s" % self._errors[i]
-            if i+1 < len(self._errors): formatted += "\n"
+        for i in range(len(self.errors)):
+            if i == 0: formatted += "[ERROR] %s" % self.errors[i]
+            else:      formatted += "        %s" % self.errors[i]
+            if i+1 < len(self.errors): formatted += "\n"
         return formatted
 
     def getLinesAsString ( self ):
-        if not isinstance(self._errors,list): return self._errors
-
+        if not isinstance(self.errors,list): return self.errors
         lines = ''
-        for line in self._errors: lines += line + '\n'
+        for line in self.errors: lines += line + '\n'
         return lines
     
     def addMessage ( self, message ):
-        if not isinstance(self._errors,list):
-            self._errors = [ self._errors ]
+        if not isinstance(self.errors,list):
+            self.errors = [ self.errors ]
         if isinstance(message,list):
             for line in message:
-                self._errors += [ line ]
+                self.errors += [ line ]
         else:
-            self._errors += [ message ]
+            self.errors += [ message ]
         return
 
     def terminate ( self ):
-        print self
-        sys.exit( self._code )
-
-    def _getCode ( self ): return self._code
-
-    code = property(_getCode)
+        print( self )
+        sys.exit( self.code )
 
     @staticmethod
     def show ( code, *arguments ):
         e = ErrorMessage( code, *arguments )
-        if Viewer.Graphics.get().isEnabled():
-          tryCont = ErrorWidget( e ).exec_()
-          if not tryCont: raise e 
-        else:
-          raise e
+        if not Graphics.get().isEnabled():
+            raise e
+        tryCont = ErrorWidget.run( e.getLinesAsString()
+                                 , textStackTrace( e.trace, False, e.scriptPath ))
+        if not tryCont: raise e 
         return
 
 
+# -------------------------------------------------------------------
+# Function  :  "catch()".
+#
+# Try to smartly display any exception on the TTY and the graphic
+# display, if available.
+
 def catch ( errorObject ):
     if isinstance(errorObject,ErrorMessage):
-      em = errorObject
+        em = errorObject
     else:
-      em            = ErrorMessage( 2, errorObject )
-      em.trace      = traceback.extract_tb( sys.exc_info()[2] )
-      em.scriptPath = __file__
-
-    if Viewer.Graphics.get().isEnabled():
-      tryCont = ErrorWidget( em ).exec_()
-    print em
-    print helpers.textStackTrace( em.trace, True, em.scriptPath )
-
+        em            = ErrorMessage( 2, errorObject )
+        em.trace      = traceback.extract_tb( sys.exc_info()[2] )
+       #em.scriptPath = __file__
+    print( em )
+    print( textStackTrace( em.trace, True, em.scriptPath ))
+    if Graphics.get().isEnabled():
+        ErrorWidget.run( em.getLinesAsString()
+                       , textStackTrace( em.trace, False, em.scriptPath ))
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return
-
-    
 
 
 # -------------------------------------------------------------------
 # Class  :  "WarningMessage".
-
 
 class WarningMessage ( Exception ):
 
@@ -254,3 +209,21 @@ class WarningMessage ( Exception ):
             else:      formatted += "          %s" % self._warnings[i]
             if i+1 < len(self._warnings): formatted += "\n"
         return formatted
+
+
+# -------------------------------------------------------------------
+# Function  :  "vprint()".
+#
+# Small wrap around print to make use of the verbosity levels.
+
+def isVL ( level ):
+    confLevel = 0
+    if Cfg.getParamBool('misc.verboseLevel1').asBool(): confLevel = 1
+    if Cfg.getParamBool('misc.verboseLevel2').asBool(): confLevel = 2
+   #print( 'level {} <= confLevel {}'.format(level,confLevel))
+    return level <= confLevel
+
+
+def vprint ( level, message ):
+    if isVL(level): print( message )
+    return

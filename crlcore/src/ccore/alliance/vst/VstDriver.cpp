@@ -15,6 +15,7 @@
 
 
 #include <cstddef>
+#include <cstdio>
 #include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -36,19 +37,47 @@ namespace CRL {
   using namespace std;
 
 
-  void  vstDriver ( const string cellPath, Cell *cell, unsigned int &saveState )
+  void  vstDriver ( const string cellPath, Cell *cell, unsigned int& saveState )
   {
+    NamingScheme ns (NamingScheme::FromVerilog);
+    unsigned int entityFlags = Vhdl::Entity::EntityMode /* | Vhdl::Entity::IeeeMode */;
+    if (saveState & Catalog::State::VstUseConcat        ) entityFlags |= Vhdl::Entity::VstUseConcat;
+    if (saveState & Catalog::State::VstNoLowerCase      ) entityFlags |= Vhdl::Entity::VstNoLowerCase;
+    if (saveState & Catalog::State::VstNoLinkage        ) entityFlags |= Vhdl::Entity::VstNoLinkage;
+    if (saveState & Catalog::State::VstUniquifyUpperCase) {
+      entityFlags |= Vhdl::Entity::VstUniquifyUpperCase;
+      ns.setUniquifyUpperCase( true );
+    }
+    
   //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
-    Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell
-                                                            , Vhdl::Entity::EntityMode
-                                                          //| Vhdl::Entity::IeeeMode
-                                                            );
-    string        celltest   = cellPath;
-    ofstream      ccelltest  ( celltest.c_str() );
+    Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, entityFlags );
 
-    vhdlEntity->toEntity( ccelltest );
-    ccelltest << endl;
-    ccelltest.close();
+    string celltest = cellPath;
+    if (not (saveState & Catalog::State::VstNoLowerCase)) {
+      size_t  slash = cellPath.find_last_of( "/" );
+      size_t  dot   = cellPath.find_last_of( "." );
+      string  path  = "";
+      string  file  = "";
+      string  ext   = cellPath.substr( dot+1 );
+      if (slash != string::npos) {
+        path = cellPath.substr( 0, slash );
+        file = cellPath.substr( slash+1, dot-slash-1 );
+      } else {
+        file = cellPath;
+      }
+      file     = getString( ns.convert(file) );
+      celltest = path + '/' + file + '.' + ext;
+
+      if (cellPath != celltest) remove( cellPath.c_str() );
+    }
+    ofstream cellStream ( celltest.c_str() );
+
+    vhdlEntity->toEntity( cellStream );
+    cellStream << endl;
+    cellStream.close();
+
+  //Vhdl::EntityExtension::destroy( cell );
+    Vhdl::EntityExtension::destroyAll();
   }
 
 

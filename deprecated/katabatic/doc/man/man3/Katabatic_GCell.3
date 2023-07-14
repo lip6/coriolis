@@ -1,0 +1,758 @@
+.TH "GCell" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GCell \- Routing Global Cell\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits ExtensionGo\&.
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBCompareByDensity\fP"
+.br
+.RI "\fBGCell\fP Density Comparison Functor\&. "
+.ti -1c
+.RI "class \fBCompareByIndex\fP"
+.br
+.RI "\fBGCell\fP Index Comparison Functor\&. "
+.ti -1c
+.RI "class \fBKey\fP"
+.br
+.RI "\fBGCell\fP \fBKey\fP - Density Cache\&. "
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef set< \fBGCell\fP *, \fBCompareByIndex\fP > \fBSetIndex\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual const \fBName\fP & \fBgetName\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisSaturated\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisSaturated\fP (unsigned int depth) const"
+.br
+.ti -1c
+.RI "bool \fBisValid\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisAboveDensity\fP (float threshold) const"
+.br
+.ti -1c
+.RI "bool \fBhasFreeTrack\fP (size_t depth, float reserve) const"
+.br
+.ti -1c
+.RI "\fBGCellGrid\fP * \fBgetGCellGrid\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetDepth\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetIndex\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetRow\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetColumn\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetLeft\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetRight\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetUp\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetDown\fP () const"
+.br
+.ti -1c
+.RI "virtual void \fBtranslate\fP (const \fBDbU::Unit\fP &, const \fBDbU::Unit\fP &)"
+.br
+.ti -1c
+.RI "virtual \fBBox\fP \fBgetBoundingBox\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetX\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetY\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetXMax\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetYMax\fP () const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetSide\fP (unsigned int) const"
+.br
+.ti -1c
+.RI "float \fBgetHCapacity\fP () const"
+.br
+.ti -1c
+.RI "float \fBgetVCapacity\fP () const"
+.br
+.ti -1c
+.RI "float \fBgetDensity\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "float \fBgetCDensity\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "float \fBgetWDensity\fP (unsigned int depth, unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetBlockage\fP (unsigned int depth) const"
+.br
+.ti -1c
+.RI "float \fBgetFragmentation\fP (unsigned int depth) const"
+.br
+.ti -1c
+.RI "float \fBgetFeedthroughs\fP (unsigned int depth) const"
+.br
+.ti -1c
+.RI "float \fBgetGlobalsCount\fP (unsigned int depth) const"
+.br
+.ti -1c
+.RI "const vector< \fBAutoSegment\fP * > & \fBgetHSegments\fP () const"
+.br
+.ti -1c
+.RI "const vector< \fBAutoSegment\fP * > & \fBgetVSegments\fP () const"
+.br
+.ti -1c
+.RI "const vector< \fBAutoContact\fP * > & \fBgetContacts\fP () const"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetHStartSegments\fP ()"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetVStartSegments\fP ()"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetHStopSegments\fP ()"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetVStopSegments\fP ()"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetStartSegments\fP (unsigned int direction)"
+.br
+.ti -1c
+.RI "\fBAutoSegments\fP \fBgetStopSegments\fP (unsigned int direction)"
+.br
+.ti -1c
+.RI "size_t \fBgetRoutingPads\fP (set< \fBRoutingPad\fP *> &)"
+.br
+.ti -1c
+.RI "const \fBKey\fP & \fBgetKey\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBcheckDensity\fP () const"
+.br
+.ti -1c
+.RI "bool \fBcheckEdgeSaturation\fP (size_t hreserved, size_t vreserved) const"
+.br
+.ti -1c
+.RI "void \fBaddBlockage\fP (unsigned int depth, \fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBaddHSegment\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "void \fBaddVSegment\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "void \fBaddContact\fP (\fBAutoContact\fP *)"
+.br
+.ti -1c
+.RI "void \fBremoveVSegment\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "void \fBremoveHSegment\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "void \fBremoveContact\fP (\fBAutoContact\fP *)"
+.br
+.ti -1c
+.RI "void \fBupdateContacts\fP ()"
+.br
+.ti -1c
+.RI "size_t \fBupdateDensity\fP ()"
+.br
+.ti -1c
+.RI "void \fBupdateKey\fP (unsigned int depth)"
+.br
+.ti -1c
+.RI "void \fBrpDesaturate\fP (set< \fBNet\fP *> &)"
+.br
+.ti -1c
+.RI "bool \fBstepDesaturate\fP (unsigned int depth, set< \fBNet\fP *> &, \fBAutoSegment\fP *&moved, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "bool \fBstepNetDesaturate\fP (unsigned int depth, set< \fBNet\fP *> &globalNets, \fBSetIndex\fP &invalidateds)"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static size_t \fBgetAllocateds\fP ()"
+.br
+.ti -1c
+.RI "static \fBDbU::Unit\fP \fBgetTopRightShrink\fP ()"
+.br
+.ti -1c
+.RI "static const \fBName\fP & \fBgetStaticName\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Routing Global Cell\&. 
+
+
+.SH "GCell Description"
+.PP
+Please note that there are two kind of Global Cells (or \fBGCell\fP for short):
+.IP "\(bu" 2
+The \fBGCell\fP used by the global router Knik\&.
+.IP "\(bu" 2
+The \fBGCell\fP used by the detailed router (\fBKatabatic\fP & Kite)\&. Although the information they hold is obviously related, they are two separate kind of objects\&.
+.PP
+.PP
+The area of the design to be routed is divided in a regular grid of rectangular area, the \fBGCellGrid\fP\&. Each rectangular area is a \fBGCell\fP\&.
+.PP
+The \fBGCell\fP contains the following informations:
+.IP "\(bu" 2
+The AutoSegments that begins or ends in it\&. The list of segments is not avalaible directly but through the AutoContacts that are owned by the \fBGCell\fP\&.
+.IP "\(bu" 2
+The AutoSegments that go straight \fIthrough\fP it (or \fIover\fP it)\&. Horizontal & Vertical segments are stored in two separeted list\&. Those two lists are sorted by layer depth (the deepest layers first)\&.
+.IP "\(bu" 2
+A lot of synthetic information about the density of tracks used in the \fBGCell\fP\&.
+.PP
+.PP
+AutoContacts are affected to GCells, the area of the \fBGCell\fP is the one into which the \fBAutoContact\fP is allowed to be placed\&. It is this that way that the respect of the global routing choosen by Knik is enforced\&. See the \fBAutoContact\fP constraint box\&.
+.PP
+When tracks are aligned with the \fBGCell\fP boundaries they one exactly on the boundary can belong to the \fBGCell\fP on either side of the boundary\&. But we want a clear and mutually exclusive ownership of each \fBGCell\fP area\&. So, we choose that one \fBGCell\fP do not own the topmost and rightmost track\&. And to implement it, we shrink top and right coordinates by the amount of \fBGCell::getTopRightShrink()\fP, which must be less than the track spacing\&.
+.SS "Saturation & Density Computation"
+At any depth (i\&.e\&. layer), in the preferred routing direction, a \fBGCell\fP can pass a finite length of wire\&. For example on an horizontal preferred layer: \[ WL_{max} = width(GCell) \times Htracks(GCell) \] Then the density, is the ratio between $WL_{max}$ and the actually used wirelength: \[ Wdensity(depth) = \frac{WL_{used}(depth)}{WL_{max}(depth)} \] Normally, the ratio musn't exceed 1\&.0, but the occupied wire length computation, for now, doesn't merge overlapping wires belonging to the same net, so the ratio may be slightly inaccurate\&. Thus in some pathological cases may be greater than 1\&.0 whithout truly been overloaded\&.
+.PP
+A Cell is considered as \fIsaturated\fP if the overall density is above the saturation ratio given by \fBSession::getSaturateRatio()\fP\&.
+.PP
+Contact density is calculated as follow: \[ Cont_{density} = \frac{|Contacts|}{Htracks \times Vtracks \times 4} \] It is a ratio over the number of actual contacts in the \fBGCell\fP and the maximal number\&. The maximal number being the product of the number of tracks in both direction and 4 stands for the hardwired number of layers (the depth)\&.
+.PP
+Should not be hardwired\&.\&.\&. \fITo be corrected in future versions\&.\fP
+.SS "Feedthrough Computation"
+The feedtrough value is an estimate is of how many complete tracks have been used on a given layer of the \fBGCell\fP\&. It varies between zero and the number of track on the \fBGCell\fP (complete saturation)\&. As an estimate, it doesn't tell you the actual number of free track, but how many you \fImay expect\fP assuming the routing is reasonably well done\&.
+.PP
+Computation is done as follow: Wire typeEstimated Cost Straight wire (feedthrough) \fB1\&.0\fP Beginning or ending global wire \fB0\&.5\fP Local wire\&. \fB1/3\fP Blockage wire The exact percentage of the track 
+.SS "Track Computation"
+The number of track that can go through a \fBGCell\fP in the horizontal direction is computed as follow: \[ Htracks = \frac{heigth(GCell)}{Vpitch} + 1 \]
+.PP
+The pitch is assumed to be the same for every layer and is hardwired to 5\&.0 lambda\&.
+.PP
+This is a bad architectural choice\&. The informations pertaining to routing should be held at Kite level, not be hardwired and the pitch should be made variable with the layer\&.\&.\&. \fITo be corrected in future versions\fP\&.
+.SH "GCell Lazy Evaluation"
+.PP
+To save processing time, the densities are not recomputed every time a segment is modified (added, removed or moved)\&. Instead a lazy evaluation mechanism is used\&. Densities are recomputed each time a density is queried \fIand\fP the lazy evaluation \fInot\fP explicitly disabled (flag NoUpdate)\&.
+.SH "GCell Sorting Key"
+.PP
+In order to perform a lexicographical sort on the tuple $(density(depth),id)$ of a \fBGCell\fP, a specific slave object \fBGCell::Key\fP is introduced\&. It is the density on one specific depth, not the average density\&.
+.SH "GCell Desaturation / Layer Assignment"
+.PP
+In addition to it's geometrical and density functionality, the \fBGCell\fP provides \fIdesaturation\fP capabilities\&. Desaturation is the operation of moving up feedthough \fBAutoSegment\fP from the bottom layers towards the upper ones in order to balance the densities in the different densities\&. Thoses operations provides building blocks for the layer assignment stage which is provided by the Kabatic tool\&.
+.PP
+Two strategies are avalaibles, moving one global \fBAutoSegment\fP at a time with \fBGCell::stepDesaturate()\fP or, when one \fBAutoSegment\fP is moved up, move up the whole net trunk with \fBGCell::stepNetDesaturate()\fP\&.
+.SH "GCell Implantation"
+.PP
+\fBGCell\fP derives from Hurricane::ExtensionGo to allow a graphical rendering of the routing density\&. 
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef set< \fBGCell\fP *, \fBCompareByIndex\fP > \fBSetIndex\fP"
+Shorthand for a set of \fBGCell\fP sorted on their index\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t getAllocateds ()\fC [static]\fP"
+\fBReturns:\fP The number of allocated GCells\&. 
+.SS "\fBDbU::Unit\fP getTopRightShrink ()\fC [static]\fP"
+\fBReturns:\fP The amount of shrink on the top and right boundaries\&. 
+.SS "const \fBName\fP & getStaticName ()\fC [static]\fP"
+\fBReturns:\fP The name of the Go slice: \fC'Katabatic::GCell'\fP\&.
+.PP
+\fBSee also:\fP
+.RS 4
+Hurricane::ExtensionGo 
+.RE
+.PP
+
+.SS "const \fBName\fP & getName () const\fC [virtual]\fP"
+\fBReturns:\fP The name of the Go slice: \fC'Katabatic::GCell'\fP\&.
+.PP
+\fBSee also:\fP
+.RS 4
+Hurricane::ExtensionGo 
+.RE
+.PP
+
+.PP
+Referenced by GCell::checkDensity()\&.
+.SS "bool isSaturated () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if at least one layer exceed a saturation of \fC1\&.0\fP (more wirelength that it can hold)\&. 
+.PP
+Referenced by GCell::checkDensity(), GCell::stepDesaturate(), and GCell::updateDensity()\&.
+.SS "bool isSaturated (unsigned int depth) const"
+\fBReturns:\fP \fBtrue\fP if the saturation ratio of layer \fCdepth\fP is over the threshold defined for the GCells\&. 
+.PP
+References GCell::getDensity(), and Session::getSaturateRatio()\&.
+.SS "bool isValid () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if all the AutoContact/AutoSegment of the \fBGCell\fP are valids\&. 
+.PP
+Referenced by GCell::checkDensity(), GCell::getCDensity(), GCell::getDensity(), GCell::getFeedthroughs(), GCell::getFragmentation(), GCell::getGlobalsCount(), GCell::getWDensity(), GCell::hasFreeTrack(), GCell::isAboveDensity(), and GCell::updateDensity()\&.
+.SS "bool isAboveDensity (float threshold) const"
+\fBReturns:\fP \fBtrue\fP if the overall saturation ratio greater than \fCthreshold\fP\&. 
+.PP
+References GCell::getDensity(), GCell::isValid(), and GCell::updateDensity()\&.
+.SS "bool hasFreeTrack (size_t depth, float reserve) const"
+\fBReturns:\fP \fBtrue\fP if there should be enough wire length to pass a wire completly trough this \fBGCell\fP\&. 
+.PP
+References GCell::getHCapacity(), GCell::getIndex(), RoutingGauge::getLayerDepth(), Layer::getName(), Session::getRoutingGauge(), RoutingGauge::getRoutingLayer(), GCell::getVCapacity(), GCell::isValid(), Katabatic::KbHorizontal, Katabatic::KbVertical, and GCell::updateDensity()\&.
+.SS "\fBGCellGrid\fP * getGCellGrid () const\fC [inline]\fP"
+\fBReturns:\fP The \fBGrid\fP of which \fBGCell\fP is part of\&. 
+.PP
+Referenced by GCell::checkEdgeSaturation(), GCell::getDensity(), GCell::getDown(), GCell::getLeft(), GCell::getRight(), GCell::getUp(), and GCell::stepNetDesaturate()\&.
+.SS "unsigned int getDepth () const\fC [inline]\fP"
+\fBReturns:\fP The depth (i\&.e\&. number of routing layers) of the \fBGCell\fP\&. 
+.SS "unsigned int getIndex () const\fC [inline]\fP"
+\fBReturns:\fP The linear index of the \fBGCell\fP in the \fBGCellGrid\fP vector\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCellGrid\fP for the meaning of the index\&. 
+.RE
+.PP
+
+.PP
+Referenced by AutoSegment::canMoveUp(), GCell::hasFreeTrack(), and GCell::stepDesaturate()\&.
+.SS "unsigned int getRow () const"
+\fBReturns:\fP The row of the \fBGCell\fP in the \fBGCellGrid\fP\&. 
+.PP
+References BaseGrid::getRow()\&.
+.PP
+Referenced by GCell::checkDensity(), and AutoSegment::computeOptimal()\&.
+.SS "unsigned int getColumn () const"
+\fBReturns:\fP The Column of the \fBGCell\fP in the \fBGCellGrid\fP\&. 
+.PP
+References BaseGrid::getColumn()\&.
+.PP
+Referenced by GCell::checkDensity(), and AutoSegment::computeOptimal()\&.
+.SS "\fBGCell\fP * getLeft () const"
+\fBReturns:\fP The left neighbor of the \fBGCell\fP (\fCNULL\fP if it is the leftmost \fBGCell\fP)\&. 
+.PP
+References GCell::getGCellGrid(), and Grid< GCellT >::getGCellLeft()\&.
+.PP
+Referenced by AutoVertical::canMoveULeft(), and AutoVertical::moveULeft()\&.
+.SS "\fBGCell\fP * getRight () const"
+\fBReturns:\fP The right neighbor of the \fBGCell\fP (\fCNULL\fP if it is the rightmost \fBGCell\fP)\&. 
+.PP
+References GCell::getGCellGrid(), and Grid< GCellT >::getGCellRight()\&.
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoHorizontal::_postCreate(), AutoHorizontal::_preDestroy(), AutoHorizontal::canMoveULeft(), AutoHorizontal::canMoveURight(), AutoVertical::canMoveURight(), GCell::checkEdgeSaturation(), AutoHorizontal::getGCells(), AutoSegment::makeDogleg(), AutoHorizontal::moveULeft(), AutoHorizontal::moveURight(), and AutoVertical::moveURight()\&.
+.SS "\fBGCell\fP * getUp () const"
+\fBReturns:\fP The top neighbor of the \fBGCell\fP (\fCNULL\fP if it is the topmost \fBGCell\fP)\&. 
+.PP
+References GCell::getGCellGrid(), and Grid< GCellT >::getGCellUp()\&.
+.PP
+Referenced by AutoVertical::_makeDogleg(), AutoVertical::_postCreate(), AutoVertical::_preDestroy(), AutoVertical::canMoveULeft(), AutoHorizontal::canMoveURight(), AutoVertical::canMoveURight(), GCell::checkEdgeSaturation(), AutoVertical::getGCells(), AutoSegment::makeDogleg(), AutoVertical::moveULeft(), AutoHorizontal::moveURight(), and AutoVertical::moveURight()\&.
+.SS "\fBGCell\fP * getDown () const"
+\fBReturns:\fP The bottom neighbor of the \fBGCell\fP (\fCNULL\fP if it is the bottommost \fBGCell\fP)\&. 
+.PP
+References Grid< GCellT >::getGCellDown(), and GCell::getGCellGrid()\&.
+.PP
+Referenced by AutoHorizontal::canMoveULeft(), and AutoHorizontal::moveULeft()\&.
+.SS "void translate (const \fBDbU::Unit\fP &, const \fBDbU::Unit\fP &)\fC [virtual]\fP"
+Required to exists as a \fBHurricane::Go\fP derived class\&. But must never be used\&.\&.\&. 
+.SS "\fBBox\fP getBoundingBox () const\fC [virtual]\fP"
+\fBReturns:\fP The bounding box of the \fBGCell\fP, with the top right shrink applied\&. 
+.PP
+Referenced by AutoSegment::AutoSegment(), AutoSegment::computeOptimal(), and AutoContactTerminal::getNativeConstraintBox()\&.
+.SS "\fBDbU::Unit\fP getX () const\fC [inline]\fP"
+\fBReturns:\fP The lower left X coordinate of the \fBGCell\fP box\&. 
+.PP
+References Box::getXMin()\&.
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoHorizontal::_postCreate(), AutoHorizontal::_preDestroy(), AutoContact::getCBXMax(), AutoContact::getCBXMin(), AutoSegment::getOrigin(), AutoContact::setCBXMax(), and AutoContact::setCBXMin()\&.
+.SS "\fBDbU::Unit\fP getY () const\fC [inline]\fP"
+\fBReturns:\fP The lower left Y coordinate of the \fBGCell\fP box\&. 
+.PP
+References Box::getYMin()\&.
+.PP
+Referenced by AutoVertical::_makeDogleg(), AutoVertical::_postCreate(), AutoVertical::_preDestroy(), AutoContact::getCBYMax(), AutoContact::getCBYMin(), AutoSegment::getOrigin(), AutoContact::setCBYMax(), and AutoContact::setCBYMin()\&.
+.SS "\fBDbU::Unit\fP getXMax () const\fC [inline]\fP"
+\fBReturns:\fP The upper right X coordinate of the \fBGCell\fP box (top right shrink applied)\&. 
+.PP
+References Box::getXMax()\&.
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoSegment::getExtremity(), and AutoContact::setCBXMax()\&.
+.SS "\fBDbU::Unit\fP getYMax () const\fC [inline]\fP"
+\fBReturns:\fP The upper right Y coordinate of the \fBGCell\fP box (top right shrink applied)\&. 
+.PP
+References Box::getYMax()\&.
+.PP
+Referenced by AutoVertical::_makeDogleg(), AutoSegment::getExtremity(), and AutoContact::setCBYMax()\&.
+.SS "\fBInterval\fP getSide (unsigned int direction) const"
+\fBReturns:\fP The interval corresponding to the side position of the \fBGCell\fP box, in \fCdirection\fP\&. 
+.PP
+References Box::getXMax(), Box::getXMin(), Box::getYMax(), Box::getYMin(), Katabatic::KbHorizontal, and Katabatic::KbVertical\&.
+.PP
+Referenced by AutoHorizontal::_canSlacken(), AutoVertical::_canSlacken(), AutoSegment::makeDogleg(), AutoHorizontal::moveULeft(), AutoVertical::moveULeft(), AutoHorizontal::moveURight(), AutoVertical::moveURight(), and AutoSegment::toConstraintAxis()\&.
+.SS "float getHCapacity () const"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The number of track that can go through the \fBGCell\fP in the horizontal direction\&. For a detailed explanation of the computation see \fBTrack Computation\fP\&. 
+.RE
+.PP
+
+.PP
+References Box::getHeight()\&.
+.PP
+Referenced by GCell::hasFreeTrack(), and GCell::updateDensity()\&.
+.SS "float getVCapacity () const"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The number of track that can go through the \fBGCell\fP in the vertical direction\&. For a detailed explanation of the computation see \fBTrack Computation\fP\&. 
+.RE
+.PP
+
+.PP
+References Box::getWidth()\&.
+.PP
+Referenced by GCell::hasFreeTrack(), and GCell::updateDensity()\&.
+.SS "float getDensity (unsigned int flags = \fC0\fP) const"
+\fBReturns:\fP The average density of the \fBGCell\fP, for all the depths\&.
+.PP
+\fBSaturation & Density Computation\fP, \fBGCell Lazy Evaluation\fP\&. 
+.PP
+References GCellGrid::AverageHDensity, GCellGrid::AverageHVDensity, GCellGrid::AverageVDensity, GCellGrid::getDensityMode(), GCell::getGCellGrid(), GCell::isValid(), GCellGrid::MaxDensity, GCellGrid::MaxHDensity, GCellGrid::MaxHVDensity, GCellGrid::MaxVDensity, and GCell::updateDensity()\&.
+.PP
+Referenced by GCell::isAboveDensity(), and GCell::isSaturated()\&.
+.SS "float getCDensity (unsigned int flags = \fC0\fP) const\fC [inline]\fP"
+\fBReturns:\fP The density of contacts\&.
+.PP
+\fBSaturation & Density Computation\fP, \fBGCell Lazy Evaluation\fP\&. 
+.PP
+References GCell::isValid(), and GCell::updateDensity()\&.
+.SS "float getWDensity (unsigned int depth, unsigned int flags = \fC0\fP) const\fC [inline]\fP"
+\fBReturns:\fP The density of wires at \fCdepth\fP\&.
+.PP
+\fBSaturation & Density Computation\fP, \fBGCell Lazy Evaluation\fP\&. 
+.PP
+References GCell::isValid(), and GCell::updateDensity()\&.
+.PP
+Referenced by AutoHorizontal::canMoveULeft(), AutoVertical::canMoveULeft(), AutoHorizontal::canMoveURight(), and AutoVertical::canMoveURight()\&.
+.SS "\fBDbU::Unit\fP getBlockage (unsigned int depth) const\fC [inline]\fP"
+\fBReturns:\fP The total length of blockage wire on layer at \fCdepth\fP\&. 
+.SS "float getFragmentation (unsigned int depth) const\fC [inline]\fP"
+\fBReturns:\fP The longest free fragment size on layer \fCdepth\fP (in percent)\&. 
+.PP
+References GCell::isValid(), and GCell::updateDensity()\&.
+.PP
+Referenced by AutoSegment::canMoveUp()\&.
+.SS "float getFeedthroughs (unsigned int depth) const\fC [inline]\fP"
+\fBReturns:\fP The estimate number of \fIoccupied\fP tracks on layer \fCdepth\fP\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBFeedthrough Computation\fP 
+.RE
+.PP
+
+.PP
+References GCell::isValid(), and GCell::updateDensity()\&.
+.SS "float getGlobalsCount (unsigned int depth) const\fC [inline]\fP"
+\fBReturns:\fP The number of global wires that go completly through the \fBGCell\fP at layer \fCdepth\fP\&. This do not includes the global wires that begins or ends in the \fBGCell\fP\&. 
+.PP
+References GCell::isValid(), and GCell::updateDensity()\&.
+.SS "const vector< \fBAutoSegment\fP * > & getHSegments () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The vector of all horizontal AutoSegments that completly goes through the \fBGCell\fP\&. 
+.RE
+.PP
+
+.SS "const vector< \fBAutoSegment\fP * > & getVSegments () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The vector of all vertical AutoSegments that completly goes through the \fBGCell\fP\&. 
+.RE
+.PP
+
+.SS "const vector< \fBAutoContact\fP * > & getContacts () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The vector of all AutoContacts owned by the \fBGCell\fP\&. 
+.RE
+.PP
+
+.SS "\fBAutoSegments\fP getHStartSegments ()"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the horizontal AutoSegments that starts from this \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+References Katabatic::KbHorizontal, and Katabatic::KbSource\&.
+.PP
+Referenced by GCell::getStartSegments()\&.
+.SS "\fBAutoSegments\fP getVStartSegments ()"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the vertical AutoSegments that starts from this \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+References Katabatic::KbSource, and Katabatic::KbVertical\&.
+.PP
+Referenced by GCell::getStartSegments()\&.
+.SS "\fBAutoSegments\fP getHStopSegments ()"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the horizontal AutoSegments that stops in this \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+References Katabatic::KbHorizontal, and Katabatic::KbTarget\&.
+.PP
+Referenced by GCell::getStopSegments()\&.
+.SS "\fBAutoSegments\fP getVStopSegments ()"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the vertical AutoSegments that stops in this \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+References Katabatic::KbTarget, and Katabatic::KbVertical\&.
+.PP
+Referenced by GCell::getStopSegments()\&.
+.SS "\fBAutoSegments\fP getStartSegments (unsigned int direction)\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the horizontal or vertical AutoSegments that starts from this \fBGCell\fP according to \fCdirection\fP\&. 
+.RE
+.PP
+
+.PP
+References GCell::getHStartSegments(), GCell::getVStartSegments(), and Katabatic::KbHorizontal\&.
+.SS "\fBAutoSegments\fP getStopSegments (unsigned int direction)\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A Collection of the horizontal or vertical AutoSegments that stops in this \fBGCell\fP according to \fCdirection\fP\&. 
+.RE
+.PP
+
+.PP
+References GCell::getHStopSegments(), GCell::getVStopSegments(), and Katabatic::KbHorizontal\&.
+.SS "size_t getRoutingPads (set< \fBRoutingPad\fP *> & rps)"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The size of the RoutingPad set\&.
+.RE
+.PP
+Fills the \fCrps\fP set with all the RoutingPads that appears in this \fBGCell\fP\&. (looks at all the anchors of the owned \fBAutoContact\fP) 
+.PP
+Referenced by GCell::rpDesaturate()\&.
+.SS "const \fBKey\fP & getKey () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The sorting key of the \fBGCell\fP\&.
+.RE
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCell Sorting Key\fP 
+.RE
+.PP
+
+.SS "size_t checkDensity () const"
+
+.PP
+\fBReturns:\fP
+.RS 4
+\fC1\fP if the \fBGCell\fP is saturated, 0 otherwise\&.
+.RE
+.PP
+Check, if the \fBGCell\fP is saturated, layer by layer\&. Issue a warning if that is the case\&. 
+.PP
+References Session::doWarnGCellOverload(), GCell::getColumn(), GCell::getName(), Session::getRoutingGauge(), GCell::getRow(), Session::isInDemoMode(), GCell::isSaturated(), GCell::isValid(), and GCell::updateDensity()\&.
+.PP
+Referenced by GCell::updateDensity()\&.
+.SS "bool checkEdgeSaturation (size_t hreserved, size_t vreserved) const"
+
+.PP
+\fBReturns:\fP
+.RS 4
+\fBtrue\fP if the Up/Right edge is over the \fCthreshold\fP\&.
+.RE
+.PP
+Check if the number of AutoSegments crossing the Up & Right edges of the \fBGCell\fP exceed \fCthreshold\fP\&. The \fCthresold\fP must be expressed as a percentage of the full capacity of the edges\&. The overload is computed as a whole and not depth by depth\&. 
+.PP
+References GCell::getGCellGrid(), GCellGrid::getHEdgeCapacity(), GCell::getRight(), GCell::getUp(), GCellGrid::getVEdgeCapacity(), AutoSegment::isLocal(), and Session::lookup()\&.
+.SS "void addBlockage (unsigned int depth, \fBDbU::Unit\fP length)"
+Adds \fClength\fP of wire blockage to layer \fCdepth\fP\&. 
+.PP
+References DbU::getValueString()\&.
+.SS "void addHSegment (\fBAutoSegment\fP * segment)\fC [inline]\fP"
+Adds \fCsegment\fP to the list of horizontal feedthroughs\&. 
+.PP
+Referenced by AutoHorizontal::_postCreate(), AutoVertical::moveULeft(), and AutoVertical::moveURight()\&.
+.SS "void addVSegment (\fBAutoSegment\fP * segment)\fC [inline]\fP"
+Adds \fCsegment\fP to the list of vertical feedthroughs\&. 
+.PP
+Referenced by AutoVertical::_postCreate(), AutoHorizontal::moveULeft(), and AutoHorizontal::moveURight()\&.
+.SS "void addContact (\fBAutoContact\fP * contact)\fC [inline]\fP"
+Adds \fCcontact\fP to the list of contacts owned by this \fBGCell\fP\&. 
+.PP
+Referenced by AutoContact::setGCell()\&.
+.SS "void removeVSegment (\fBAutoSegment\fP * segment)"
+Removes \fCsegment\fP to the list of vertical feedthroughs\&. 
+.PP
+Referenced by AutoVertical::_makeDogleg(), AutoVertical::_preDestroy(), AutoHorizontal::moveULeft(), and AutoHorizontal::moveURight()\&.
+.SS "void removeHSegment (\fBAutoSegment\fP * segment)"
+Removes \fCsegment\fP to the list of horizontal feedthroughs\&. 
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoHorizontal::_preDestroy(), AutoVertical::moveULeft(), and AutoVertical::moveURight()\&.
+.SS "void removeContact (\fBAutoContact\fP * contact)"
+Removes \fCcontact\fP to the list of contacts owned by this \fBGCell\fP\&. 
+.PP
+References AutoContact::base()\&.
+.SS "void updateContacts ()"
+Force a geometry update on all the \fBAutoContact\fP of the \fBGCell\fP\&. 
+.SS "size_t updateDensity ()"
+\fBReturns:\fP \fBtrue\fP if the \fBGCell\fP is saturated\&.
+.PP
+Update the various densities of the \fBGCell\fP\&. No actual computation is performed if the \fBGCell\fP is \fInot\fP invalidated\&. 
+.PP
+References GCell::checkDensity(), GCell::getHCapacity(), Box::getHeight(), RoutingGauge::getLayerDepth(), Session::getRoutingGauge(), GCell::getVCapacity(), Box::getWidth(), Box::getXMax(), Box::getXMin(), Box::getYMax(), Box::getYMin(), GCell::isSaturated(), GCell::isValid(), Katabatic::KbHorizontal, and Katabatic::KbVertical\&.
+.PP
+Referenced by GCell::checkDensity(), GCell::getCDensity(), GCell::getDensity(), GCell::getFeedthroughs(), GCell::getFragmentation(), GCell::getGlobalsCount(), GCell::getWDensity(), GCell::hasFreeTrack(), GCell::isAboveDensity(), GCell::stepDesaturate(), and GCell::stepNetDesaturate()\&.
+.SS "void updateKey (unsigned int depth)\fC [inline]\fP"
+Update the \fBGCell\fP key with the new density at layer \fCdepth\fP\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCell Sorting Key\fP\&. 
+.RE
+.PP
+
+.PP
+References GCell::Key::update()\&.
+.SS "bool rpDesaturate (set< \fBNet\fP *> & nets)"
+If the number of RoutingPad in the first routing layer exceed the \fBSession::getSaturateRp()\fP threshold, force a desaturation of layer \fCdepth\fP 1 until it is below 0\&.5\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCell Desaturation / Layer Assignment\fP 
+.RE
+.PP
+
+.PP
+References Session::getRoutingLayer(), GCell::getRoutingPads(), Session::getSaturateRp(), Katabatic::KbForceMove, and GCell::stepDesaturate()\&.
+.SS "bool stepDesaturate (unsigned int depth, set< \fBNet\fP *> & globalNets, \fBAutoSegment\fP *& moved, unsigned int flags = \fC0\fP)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdepth\fP The depth to desaturate\&. 
+.br
+\fIglobalNets\fP The set of Nets of which at least one segment has been moved up\&. 
+.br
+\fImoved\fP The moved up \fBAutoSegment\fP\&. 
+.br
+\fIflags\fP If KbForceMove is set, force one \fBAutoSegment\fP to move up, event if the \fBGCell\fP is not saturated in the relevant depth\&.
+.RE
+.PP
+\fBReturns:\fP \fBtrue\fP if an \fBAutoSegment\fP has actually been moved up\&.
+.PP
+Perform the atomic desaturation, that is move up one \fBAutoSegment\fP from layer \fCdepth\fP to layer \fCdepth+2\fP, longuests AutoSegments are moved first\&. Only global feedthrough AutoSegments are candidates to be moved up\&. The Net owning the moved up segment is added to the \fCglobalNets\fP set\&. If the \fBGCell\fP is not saturated on layer \fCdepth\fP, nothing is done\&. If the \fCforced\fP flag is set, one global \fBAutoSegment\fP is moved up regardless of the saturation status\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCell Desaturation / Layer Assignment\fP 
+.RE
+.PP
+
+.PP
+References GCell::getIndex(), RoutingGauge::getLayerDepth(), Session::getRoutingGauge(), GCell::isSaturated(), Katabatic::KbForceMove, Katabatic::KbHorizontal, Katabatic::KbVertical, and GCell::updateDensity()\&.
+.PP
+Referenced by GCell::rpDesaturate()\&.
+.SS "bool stepNetDesaturate (unsigned int depth, set< \fBNet\fP *> & globalNets, \fBGCell::SetIndex\fP & invalidateds)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdepth\fP The depth to desaturate\&. 
+.br
+\fIglobalNets\fP The set of Nets of which at least one segment has been moved up\&. 
+.br
+\fIinvalidateds\fP The set of \fBGCell\fP ids that have been invalidateds\&.
+.RE
+.PP
+\fBReturns:\fP \fBtrue\fP if a Net has been moved up\&.
+.PP
+Perform a desaturation by whole Net trunk\&. Select the longest feedthrough \fBAutoSegment\fP in layer \fCdepth\fP, then attempt to move up the whole Net (all it's global AutoSegments are moved up)\&.
+.PP
+\fBSee also:\fP
+.RS 4
+\fBGCell Desaturation / Layer Assignment\fP 
+.RE
+.PP
+
+.PP
+References GCell::getGCellGrid(), RoutingGauge::getLayerDepth(), Session::getRoutingGauge(), Katabatic::KbHorizontal, Katabatic::KbVertical, and GCell::updateDensity()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

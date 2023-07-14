@@ -46,7 +46,7 @@
                                  )
  endif()
 
-                   set ( htmlInstallDir  share/doc/coriolis2/en/html/ )
+                   set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/dpgen )
 
 

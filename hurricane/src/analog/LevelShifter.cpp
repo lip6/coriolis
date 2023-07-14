@@ -42,7 +42,6 @@ namespace Analog {
     LevelShifter* ls = new LevelShifter( library, name, type );
     ls->_postCreate( deviceName );
     ls->createConnections( bulkConnected );
-    ls->setTerminal( true );
     UpdateSession::close();
     return ls;
   }
@@ -100,6 +99,19 @@ namespace Analog {
   
   Name  LevelShifter::getDeviceName () const
   { return (isBulkConnected()) ? _lsBulkConnectedName : _lsBulkUnconnectedName; }
+
+
+  string  LevelShifter::_getTypeName () const
+  { return "LevelShifter"; }
+  
+
+  Record*  LevelShifter::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_lsBulkConnectedName"  , _lsBulkConnectedName   ) );
+    record->add( getSlot("_lsBulkUnconnectedName", _lsBulkUnconnectedName ) );
+    return record;
+  }
 
 
 }  // Analog namespace.

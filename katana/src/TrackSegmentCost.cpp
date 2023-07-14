@@ -78,7 +78,7 @@ namespace Katana {
     cdebug_log(159,1) << "TrackSegmentCost::update() - " << trackSegment << endl;
 
     vector<AutoSegment*>  collapseds;
-    vector<AutoSegment*>  perpandiculars;
+    vector< tuple<AutoSegment*,Flags> >  perpandiculars;
     map<DbU::Unit,int>    attractorSpins;
 
     AutoSegment::getTopologicalInfos ( trackSegment->base()
@@ -93,28 +93,31 @@ namespace Katana {
 
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       Interval      interval;
-      TrackElement* perpandicular;
+      AutoSegment*  basePerpand   = tuple::get<0>( perpandiculars[i] );
+      TrackElement* perpandicular = NULL;
 
-      if ( perpandiculars[i]->isCanonical() ) {
-        perpandicular = Session::lookup ( perpandiculars[i]->base() );
+      if ( basePerpand->isCanonical() ) {
+        perpandicular = Session::lookup ( basePerpand->base() );
         if ( perpandicular )
           perpandicular->getCanonical ( interval );
       } else {
-        perpandicular = Session::lookup ( perpandiculars[i]->getCanonical(interval)->base() );
+        perpandicular = Session::lookup ( basePerpand->getCanonical(interval)->base() );
       }
 
       if ( not perpandicular ) {
-        cerr << Bug("Not a TrackSegment: %s:%s\n      (perpandicular: %s:%s)"
-                   ,getString((void*)perpandiculars[i]->getCanonical(interval)->base()).c_str()
-                   ,getString(perpandiculars[i]->getCanonical(interval)).c_str()
-                   ,getString((void*)perpandiculars[i]->base()).c_str()
-                   ,getString(perpandiculars[i]).c_str()
-                   ) << endl;
+        if (Session::isChannelStyle()
+           and not (basePerpand->isReduced() or basePerpand->isNonPref()))
+          cerr << Bug("Not a TrackSegment: %s:%s\n      (perpandicular: %s:%s)"
+                     ,getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
+                     ,getString(basePerpand->getCanonical(interval)).c_str()
+                     ,getString((void*)basePerpand->base()).c_str()
+                     ,getString(basePerpand).c_str()
+                     ) << endl;
         continue;
       }
       interval.inflate ( DbU::lambda(-1.5) );
 
-      cdebug_log(159,0)   << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug_log(159,0)   << "| perpandicular: " << basePerpand << endl;
       cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
       cdebug_log(159,0)   << "interval: " << interval << endl;
 
@@ -126,10 +129,7 @@ namespace Katana {
       }
 
       if (  ( interval.getVMin() != trackSegment->getAxis() )
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
-                                           ,false
-                                           ,perpandicular->isHorizontal()
-                                           ) ) {
+         or AutoSegment::isTopologicalBound(basePerpand,false,perpandicular->isHorizontal()) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find ( interval.getVMin() );
         if ( iattractor == attractorSpins.end() ) {
           attractorSpins.insert ( make_pair(interval.getVMin(),-1) );
@@ -140,10 +140,7 @@ namespace Katana {
       }
 
       if (  ( interval.getVMax() != trackSegment->getAxis() )
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
-                                           ,true
-                                           ,perpandicular->isHorizontal()
-                                           ) ) {
+         or AutoSegment::isTopologicalBound(basePerpand,true,perpandicular->isHorizontal()) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find ( interval.getVMax() );
         if ( iattractor == attractorSpins.end() ) {
           attractorSpins.insert ( make_pair(interval.getVMax(),1) );

@@ -34,6 +34,7 @@
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 
 namespace Hurricane {
@@ -57,6 +58,7 @@ namespace Hurricane {
                  , _nextOfTechnologyLayerMap(NULL)
                  , _symbolic(false)
                  , _blockage(false)
+                 , _minimalArea(0.0)
   {
     if ( !_technology )
       throw Error ( "Can't create " + _TName("Layer") + " : null technology" );
@@ -71,6 +73,14 @@ namespace Hurricane {
 
   const Layer* Layer::getBlockageLayer () const
   { return NULL; }
+
+
+  const Layer* Layer::getRoutingLayer () const
+  { return NULL; }
+
+
+  const Layer* Layer::getCut () const
+  { return NULL; } 
 
 
   const Layer* Layer::getTop () const
@@ -133,6 +143,10 @@ namespace Hurricane {
   { return 0; }
 
 
+  double  Layer::getMinimalArea () const
+  { return _minimalArea; }
+
+
   bool Layer::contains ( const Layer* layer ) const
   {
     return ( layer && ((_mask & layer->getMask()) == layer->getMask()) );
@@ -163,14 +177,24 @@ namespace Hurricane {
 
   void Layer::setMinimalSize ( const DbU::Unit& minimalSize )
   {
+    if (minimalSize == 0)
+      cerr << Warning( "Layer::setMinimalSize(): Suspicious zero size for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
     _minimalSize = minimalSize;
   }
 
 
   void Layer::setMinimalSpacing ( const DbU::Unit& minimalSpacing )
   {
+    if (minimalSpacing == 0)
+      cerr << Warning( "Layer::setMinimalSpacing(): Suspicious zero size for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
     _minimalSpacing = minimalSpacing;
   }
+
+
+  void Layer::setMinimalArea ( double area )
+  { _minimalArea = area; }
 
 
   void  Layer::setEnclosure ( const BasicLayer*, DbU::Unit, uint32_t )

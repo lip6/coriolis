@@ -29,13 +29,10 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_DBU_H
-#define  HURRICANE_DBU_H
-
-
-#include  <cstdint>
-#include  <cmath>
-#include  "hurricane/Commons.h"
+#pragma  once
+#include <cstdint>
+#include <cmath>
+#include "hurricane/Commons.h"
 
 
 namespace Hurricane {
@@ -78,6 +75,8 @@ namespace Hurricane {
       static inline Unit                fromGrid                ( double value );
       static inline Unit                fromLambda              ( double value );
       static inline Unit                fromPhysical            ( double value, UnitPower p );
+      static inline Unit                fromMicrons             ( double value );
+      static inline Unit                fromNanos               ( double value );
     // Old naming scheme (was not very clear).
       static inline Unit                db                      ( Unit value );
       static inline Unit                grid                    ( double value );
@@ -108,6 +107,8 @@ namespace Hurricane {
       static inline void                setSymbolicSnapGridStep ( DbU::Unit step );
       static        DbU::Unit           getOnCustomGrid         ( DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest );
       static inline DbU::Unit           getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode=Superior );
+      static inline DbU::Unit           toCeil                  ( DbU::Unit u, DbU::Unit step );
+      static inline DbU::Unit           toFloor                 ( DbU::Unit u, DbU::Unit step );
     // Conversions.
       static inline Unit                toDb                    ( Unit u );
       static inline double              toGrid                  ( Unit u );
@@ -116,6 +117,8 @@ namespace Hurricane {
       static inline double              toLambda                ( double u );
       static inline double              toPhysical              ( Unit u, UnitPower p );
       static inline double              toPhysical              ( double u, UnitPower p );
+      static inline double              toMicrons               ( Unit u );
+      static inline double              toNanos                 ( Unit u );
     // Old naming scheme (not very clear).
       static inline Unit                getDb                   ( Unit u );
       static inline double              getGrid                 ( Unit u );
@@ -161,6 +164,8 @@ namespace Hurricane {
   inline DbU::Unit  DbU::fromGrid                ( double value )               { checkGridBound    (value);   return (Unit)rint( value/_resolution ); }
   inline DbU::Unit  DbU::fromLambda              ( double value )               { checkLambdaBound  (value);   return fromGrid(value*_gridsPerLambda); }
   inline DbU::Unit  DbU::fromPhysical            ( double value, UnitPower p )  { checkPhysicalBound(value,p); return fromGrid((value*getUnitPower(p))/_physicalsPerGrid); }
+  inline DbU::Unit  DbU::fromMicrons             ( double value )               { return fromPhysical(value,UnitPower::Micro); }
+  inline DbU::Unit  DbU::fromNanos               ( double value )               { return fromPhysical(value,UnitPower::Nano); }
   inline DbU::Unit  DbU::toDb                    ( DbU::Unit u )                { return u; }
   inline double     DbU::toGrid                  ( DbU::Unit u )                { return _resolution*(double)u; }
   inline double     DbU::toGrid                  ( double u )                   { return _resolution*u; }
@@ -168,6 +173,8 @@ namespace Hurricane {
   inline double     DbU::toLambda                ( double u )                   { return toGrid(u)/_gridsPerLambda; }
   inline double     DbU::toPhysical              ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
   inline double     DbU::toPhysical              ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
+  inline double     DbU::toMicrons               ( Unit u )                     { return toPhysical(u,UnitPower::Micro); }
+  inline double     DbU::toNanos                 ( Unit u )                     { return toPhysical(u,UnitPower::Nano); }
   inline DbU::Unit  DbU::getPolygonStep          ()                             { return _polygonStep; }
 
 // Old converter naming scheme.
@@ -187,6 +194,12 @@ namespace Hurricane {
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
   inline void       DbU::setPolygonStep          ( DbU::Unit step )             { _polygonStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }
+
+  inline DbU::Unit  DbU::toCeil ( DbU::Unit u, DbU::Unit step )
+  { DbU::Unit modulo = u % step; return (modulo) ? (u + step - modulo) : u; }
+  
+  inline DbU::Unit  DbU::toFloor ( DbU::Unit u, DbU::Unit step )
+  { DbU::Unit modulo = u % step; return (modulo) ? (u - modulo) : u; }
 
 
 } // End of Hurricane namespace.
@@ -255,6 +268,3 @@ inline Hurricane::Record* getRecord ( const std::vector<Hurricane::DbU::Unit>* v
   }
   return record;
 }
-
-
-#endif  // HURRICANE_DBU_H

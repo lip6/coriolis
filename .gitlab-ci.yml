@@ -1,0 +1,54 @@
+linux:
+  image: python:3.8
+  # make a docker daemon available for cibuildwheel to use
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    # See https://github.com/docker-library/docker/pull/166
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - curl -sSL https://get.docker.com/ | sh
+    - python -m pip install cibuildwheel==2.11.3
+    - cibuildwheel --output-dir wheelhouse
+  parallel:
+    matrix:
+      - CIBW_BUILD: [cp38-manylinux*, cp39-manylinux*, cp310-manylinux*, cp311-manylinux*]
+        CIBW_ARCHS_LINUX: [auto64]
+  artifacts:
+    paths:
+      - wheelhouse/
+
+dist:
+  image: python:3.8
+  needs:
+    - job: linux
+      artifacts: true
+  except:
+  - merge_requests
+  variables:
+    TWINE_PASSWORD: '${CI_JOB_TOKEN}'
+    TWINE_USERNAME: 'gitlab-ci-token'
+    TWINE_REPOSITORY_URL: 'https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/pypi'
+  script:
+    - python -m pip install --upgrade build twine
+    - python -m twine check --strict wheelhouse/*
+    - python -m twine upload --verbose wheelhouse/*
+
+
+#windows:
+#  image: mcr.microsoft.com/windows/servercore:1809
+#  before_script:
+#    - choco install python -y --version 3.8.6
+#    - choco install git.install -y
+#    - py -m pip install cibuildwheel==2.11.3
+#  script:
+#    - py -m cibuildwheel --output-dir wheelhouse --platform windows
+#  artifacts:
+#    paths:
+#      - wheelhouse/
+#  tags:
+#    - windows

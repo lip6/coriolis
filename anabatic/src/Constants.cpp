@@ -14,15 +14,21 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/Error.h"
 #include "anabatic/Constants.h"
 
 
 namespace Anabatic {
 
+  using std::hex;
   using std::string;
   using std::ostringstream;
   using Hurricane::BaseFlags;
+  using Hurricane::Error;
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::Flags".
 
   const BaseFlags  Flags::NoFlags             =  0;
 // Flags used for both objects states & functions arguments.
@@ -43,6 +49,7 @@ namespace Anabatic {
   const BaseFlags  Flags::ChannelRow          = (1L << 13);
   const BaseFlags  Flags::HRailGCell          = (1L << 14);
   const BaseFlags  Flags::VRailGCell          = (1L << 15);
+  const BaseFlags  Flags::GoStraight          = (1L << 16);
 // Flags for Edge objects states only.                      
   const BaseFlags  Flags::NullCapacity        = (1L <<  5);
   const BaseFlags  Flags::InfiniteCapacity    = (1L <<  6);
@@ -52,10 +59,13 @@ namespace Anabatic {
   const BaseFlags  Flags::DestroyGCell        = (1L <<  7);
   const BaseFlags  Flags::DestroyBaseContact  = (1L <<  8);
   const BaseFlags  Flags::DestroyBaseSegment  = (1L <<  9);
+  const BaseFlags  Flags::DisableCanonize     = (1L << 10);
 // Flags for NetDatas objects states only.                      
-  const BaseFlags  Flags::GlobalRouted        = (1L <<  5);
+  const BaseFlags  Flags::GlobalFixed         = (1L <<  5);
   const BaseFlags  Flags::GlobalEstimated     = (1L <<  6);
-  const BaseFlags  Flags::ExcludeRoute        = (1L <<  7);
+  const BaseFlags  Flags::GlobalRouted        = (1L <<  7);
+  const BaseFlags  Flags::DetailRouted        = (1L <<  8);
+  const BaseFlags  Flags::ExcludeRoute        = (1L <<  9);
 // Masks.                                      
   const BaseFlags  Flags::WestSide            = Horizontal|Target;
   const BaseFlags  Flags::EastSide            = Horizontal|Source;
@@ -116,6 +126,13 @@ namespace Anabatic {
   const BaseFlags  Flags::CheckLowUpDensity   = (1L << 31);
   const BaseFlags  Flags::NoUpdate            = (1L << 32);
   const BaseFlags  Flags::NorthPath           = (1L << 33);
+  const BaseFlags  Flags::UseNonPref          = (1L << 34);
+  const BaseFlags  Flags::Force               = (1L << 35);
+  const BaseFlags  Flags::LayerCapOnly        = (1L << 36);
+  const BaseFlags  Flags::NoMinLength         = (1L << 37);
+  const BaseFlags  Flags::NoSegExt            = (1L << 38);
+  const BaseFlags  Flags::NullLength          = (1L << 39);
+  const BaseFlags  Flags::OnVSmall            = (1L << 40);
 
 
   Flags::~Flags ()
@@ -169,6 +186,7 @@ namespace Anabatic {
     return s.str();
   }
 
+
   string  Flags::_getTypeName () const
   { return "Anabatic::Flags"; }
 
@@ -183,12 +201,13 @@ namespace Anabatic {
     s += (_flags & (uint64_t)DeviceGCell  ) ? 'd' : '-';
     s += (_flags & (uint64_t)HChannelGCell) ? 'c' : '-';
     s += (_flags & (uint64_t)VChannelGCell) ? 'c' : '-';
-    s += (_flags & (uint64_t)HRailGCell   ) ? 'r' : '-';
-    s += (_flags & (uint64_t)VRailGCell   ) ? 'r' : '-';
-    s += (_flags & (uint64_t)StrutGCell   ) ? 's' : '-';
-    s += (_flags & (uint64_t)MatrixGCell  ) ? 'm' : '-';
-    s += (_flags & (uint64_t)StdCellRow   ) ? 'S' : '-';
+    s += (_flags & (uint64_t)HRailGCell   ) ? 'H' : '-';
+    s += (_flags & (uint64_t)VRailGCell   ) ? 'V' : '-';
+    s += (_flags & (uint64_t)StrutGCell   ) ? 'S' : '-';
+    s += (_flags & (uint64_t)MatrixGCell  ) ? 'M' : '-';
+    s += (_flags & (uint64_t)StdCellRow   ) ? 'R' : '-';
     s += (_flags & (uint64_t)ChannelRow   ) ? 'C' : '-';
+    s += (_flags & (uint64_t)GoStraight   ) ? 'g' : '-';
     s += ",";
     s += (_flags & (uint64_t)Invalidated  ) ? 'i' : '-';
     s += (_flags & (uint64_t)DestroyGCell ) ? 'D' : '-';
@@ -198,5 +217,70 @@ namespace Anabatic {
     return s;
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::StyleFlags".
+
+  
+  const BaseFlags  StyleFlags::NoStyle =  0;
+  const BaseFlags  StyleFlags::HV      = (1L <<  0);
+  const BaseFlags  StyleFlags::VH      = (1L <<  1);
+  const BaseFlags  StyleFlags::OTH     = (1L <<  2);
+  const BaseFlags  StyleFlags::Channel = (1L <<  3);
+  const BaseFlags  StyleFlags::Hybrid  = (1L <<  4);
+
+
+  StyleFlags::~StyleFlags ()
+  { }
+
+
+  StyleFlags  StyleFlags::toFlag ( std::string textFlag )
+  {
+    if (textFlag == "HV")      return HV;
+    if (textFlag == "VH")      return VH;
+    if (textFlag == "OTH")     return OTH;
+    if (textFlag == "Channel") return Channel;
+    if (textFlag == "Hybrid")  return Hybrid;
+    if (textFlag == "NoStyle") return NoStyle;
+    std::cerr << Error( "StyleFlags::toFlag(): Unknown flag value \"%s\"", textFlag.c_str() ) << std::endl;
+    return NoStyle;
+  }
+
+
+  StyleFlags  StyleFlags::from ( std::string textFlags )
+  {
+    size_t start = 0;
+    size_t stop  = textFlags.find( '|' );
+    while ( stop != string::npos ) {
+      *this |= toFlag( textFlags.substr( start, stop-start-1 ));
+      start = stop + 1;
+      stop  = textFlags.find( '|', start );
+    }
+    *this |= toFlag( textFlags.substr( stop+1 ));
+    return *this;
+  }
+
+
+  string  StyleFlags::asString () const
+  {
+    ostringstream s;
+
+    if (_flags & (uint64_t)HV)      { s << (s.tellp() ? "|" : "") << "HV"; }
+    if (_flags & (uint64_t)VH)      { s << (s.tellp() ? "|" : "") << "VH"; }
+    if (_flags & (uint64_t)OTH)     { s << (s.tellp() ? "|" : "") << "OTH"; }
+    if (_flags & (uint64_t)Channel) { s << (s.tellp() ? "|" : "") << "Channel"; }
+    if (_flags & (uint64_t)Hybrid ) { s << (s.tellp() ? "|" : "") << "Hybrid"; }
+    s << " (0x" << hex << _flags << ")";
+    return s.str();
+  }
+
+
+  string  StyleFlags::_getTypeName () const
+  { return "Anabatic::StyleFlags"; }
+
+
+  string StyleFlags::_getString () const
+  { return asString(); }
+  
 
 }  // Anabatic namespace.

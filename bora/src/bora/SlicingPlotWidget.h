@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2015-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -10,12 +10,16 @@
 // |  Authors     :          Jean-Paul Chaput, Eric LAO              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./bora/DSlicingNode.h"                         |
+// |  C++ Header  :  "./bora/SlicingPlotWidget.h"                    |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  BORA_SLICING_PLOT_WIDGET_H
-#define  BORA_SLICING_PLOT_WIDGET_H
+#pragma once
+//Work sround for older qwt releases
+#include <QtGlobal>
+#if QT_VERSION >= 0x050400
+ #define QT_STATIC_CONST static const
+#endif
 
 #include <vector>
 #include <qwt_plot.h>
@@ -49,7 +53,11 @@ namespace Bora {
                void  setViewer           ( CellViewer* );
                void  setDatas            ();
     public slots:
+#if QWT_VERSION < 0x060000
+               void  onPointSelect       ( const QwtDoublePoint& );
+#else
                void  onPointSelect       ( const QPointF& );
+#endif
                void  updateSelectedPoint ( double x, double y );
     signals:
                void  updatePlacement     ( BoxSet* );
@@ -72,5 +80,3 @@ namespace Bora {
 
 
 } // Bora namespace.
-
-#endif  // BORA_SLICING_PLOT_WIDGET_H

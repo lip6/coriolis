@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_OBSERVER_H
-#define  HURRICANE_OBSERVER_H
-
+#pragma  once
 #include <vector>
 #include <array>
 #include "hurricane/Error.h"
@@ -168,5 +166,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-#endif

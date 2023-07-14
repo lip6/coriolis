@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1SharedProperty_1_1Orphaned" kind="class" language="C++" prot="private">
+    <compoundname>Hurricane::SharedProperty::Orphaned</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1SharedProperty_1_1Orphaned_1ac9c0e0f2108dbd5dedb762ec3fdbe63f" prot="public" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1SharedProperty" kindref="compound">SharedProperty</ref> *</type>
+        <definition>SharedProperty* Hurricane::SharedProperty::Orphaned::_property</definition>
+        <argsstring></argsstring>
+        <name>_property</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="392" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="392" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1SharedProperty_1_1Orphaned_1a4fcc92a0db08def09fb7a2afb4c172b5" prot="public" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int Hurricane::SharedProperty::Orphaned::_refcount</definition>
+        <argsstring></argsstring>
+        <name>_refcount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="393" column="27" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1SharedProperty_1_1Orphaned_1ac93cbb0c23290da427a678f27a256484" prot="public" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int Hurricane::SharedProperty::Orphaned::_count</definition>
+        <argsstring></argsstring>
+        <name>_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="394" column="27" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="394" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1SharedProperty_1_1Orphaned_1a5da69be355c0e4133ad1e4c301802412" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::SharedProperty::Orphaned::Orphaned</definition>
+        <argsstring>(SharedProperty *)</argsstring>
+        <name>Orphaned</name>
+        <param>
+          <type><ref refid="classHurricane_1_1SharedProperty" kindref="compound">SharedProperty</ref> *</type>
+          <defname>property</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="390" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="427" bodyend="429"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::SharedProperty::Orphaned</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>_property</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Property</label>
+        <link refid="classHurricane_1_1Property"/>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_baseName</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::SharedProperty</label>
+        <link refid="classHurricane_1_1SharedProperty"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" line="388" column="7" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Property.h" bodystart="388" bodyend="395"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1SharedProperty_1_1Orphaned_1ac93cbb0c23290da427a678f27a256484" prot="public" virt="non-virtual"><scope>Hurricane::SharedProperty::Orphaned</scope><name>_count</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1_1Orphaned_1ac9c0e0f2108dbd5dedb762ec3fdbe63f" prot="public" virt="non-virtual"><scope>Hurricane::SharedProperty::Orphaned</scope><name>_property</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1_1Orphaned_1a4fcc92a0db08def09fb7a2afb4c172b5" prot="public" virt="non-virtual"><scope>Hurricane::SharedProperty::Orphaned</scope><name>_refcount</name></member>
+      <member refid="classHurricane_1_1SharedProperty_1_1Orphaned_1a5da69be355c0e4133ad1e4c301802412" prot="public" virt="non-virtual"><scope>Hurricane::SharedProperty::Orphaned</scope><name>Orphaned</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

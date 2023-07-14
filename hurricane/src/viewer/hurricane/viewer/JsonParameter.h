@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,11 +14,9 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_JSON_PARAMETER_H
-#define  HURRICANE_JSON_PARAMETER_H
-
-#include "vlsisapd/configuration/Parameter.h"
-#include "vlsisapd/configuration/Configuration.h"
+#pragma  once
+#include "hurricane/configuration/Parameter.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Commons.h"
 
 
@@ -62,5 +60,3 @@ namespace Hurricane {
 
 
 }  // Hurricane namespace.
-
-#endif  // HURRICANE_JSON_PARAMETER_H

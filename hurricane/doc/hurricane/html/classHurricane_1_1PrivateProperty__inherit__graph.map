@@ -1,4 +1,6 @@
 <map id="Hurricane::PrivateProperty" name="Hurricane::PrivateProperty">
-<area shape="rect" id="node3" href="$classHurricane_1_1StandardPrivateProperty.html" title="StandardPrivateProperty description (API) " alt="" coords="5,155,200,197"/>
-<area shape="rect" id="node2" href="$classHurricane_1_1Property.html" title="Property description (API) " alt="" coords="35,5,169,32"/>
+<area shape="rect" id="node1" title="PrivateProperty description (API)" alt="" coords="117,80,293,107"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1StandardPrivateProperty.html" title="StandardPrivateProperty description (API)" alt="" coords="5,155,200,196"/>
+<area shape="rect" id="node4" href="$classIsobar_1_1PyHolderProperty.html" title="A Property to contain PyAttributesHolder." alt="" coords="224,162,395,189"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1Property.html" title="Property description (API)" alt="" coords="137,5,273,32"/>
 </map>

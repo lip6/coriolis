@@ -31,20 +31,21 @@ namespace Hurricane {
 
   class SharedName {
       friend class Name;
-
     public:
-      inline unsigned int  getId        () const;
-             const string& _getSString  () const { return _string; };
-             string        _getTypeName () const { return _TName("SharedName"); };
-             string        _getString   () const;
-             Record*       _getRecord   () const;
-    private:
-                           SharedName   ( const string& );
-                           SharedName   ( const SharedName& );
-                          ~SharedName   ();
-             SharedName&   operator=    ( const SharedName& );
-             void          capture      ();
-             void          release      ();
+      static void           dump         ();
+    public:
+      inline unsigned long  getHash      () const;
+             const string&  _getSString  () const { return _string; };
+             string         _getTypeName () const { return _TName("SharedName"); };
+             string         _getString   () const;
+             Record*        _getRecord   () const;
+    private:               
+                            SharedName   ( const string& );
+                            SharedName   ( const SharedName& );
+                           ~SharedName   ();
+             SharedName&    operator=    ( const SharedName& );
+             void           capture      ();
+             void           release      ();
 
     private:
       struct SharedNameMapComparator {
@@ -54,14 +55,13 @@ namespace Hurricane {
 
     private:
       static SharedNameMap* _SHARED_NAME_MAP;
-      static unsigned int   _idCounter;
-             unsigned int   _id;
+             unsigned long  _hash;
              int            _count;
              string         _string;
   };
 
 
-  inline  unsigned int  SharedName::getId () const { return _id; }
+  inline  unsigned long  SharedName::getHash () const { return _hash; }
 
 
 } // End of Hurricane namespace.

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile>
+<tagfile doxygen_version="1.9.1">
   <compound kind="class">
     <name>CRL::AcmSigda</name>
     <filename>classCRL_1_1AcmSigda.html</filename>
@@ -14,6 +14,7 @@
   <compound kind="class">
     <name>CRL::AllianceFramework</name>
     <filename>classCRL_1_1AllianceFramework.html</filename>
+    <base>Hurricane::DBo</base>
     <member kind="enumeration">
       <type></type>
       <name>InstancesCountFlags</name>
@@ -75,13 +76,6 @@
       <anchorfile>classCRL_1_1AllianceFramework.html</anchorfile>
       <anchor>a0ec1cd09dec34dfecfec22927b92cc25a8d9678631764327cbfe81f8184fa9e05</anchor>
       <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>destroy</name>
-      <anchorfile>classCRL_1_1AllianceFramework.html</anchorfile>
-      <anchor>a7877a201b66f2ade7621810acd842f47</anchor>
-      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>string</type>
@@ -487,13 +481,6 @@
     <filename>classCRL_1_1CatalogExtension.html</filename>
     <member kind="function" static="yes">
       <type>static bool</type>
-      <name>isFlattenLeaf</name>
-      <anchorfile>classCRL_1_1CatalogExtension.html</anchorfile>
-      <anchor>af6487fb6007e34163773d8e8d15013a1</anchor>
-      <arglist>(const Cell *)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static bool</type>
       <name>isFeed</name>
       <anchorfile>classCRL_1_1CatalogExtension.html</anchorfile>
       <anchor>a5feda5d6fba490a71e3742361ec7b4a1</anchor>
@@ -547,13 +534,6 @@
       <anchorfile>classCRL_1_1CatalogExtension.html</anchorfile>
       <anchor>ab9475735032d500f4d4a8cf980864b3e</anchor>
       <arglist>(const Cell *, unsigned int mask, bool value)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static bool</type>
-      <name>setFlattenLeaf</name>
-      <anchorfile>classCRL_1_1CatalogExtension.html</anchorfile>
-      <anchor>a00772e9c455d0e44caf132ee724b958d</anchor>
-      <arglist>(const Cell *, bool value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static bool</type>
@@ -1063,13 +1043,6 @@
       <arglist>(size_t depth) const</arglist>
     </member>
     <member kind="function">
-      <type>unsigned int</type>
-      <name>getLayerDirection</name>
-      <anchorfile>classCRL_1_1RoutingGauge.html</anchorfile>
-      <anchor>ab237249b41f605947765118cd1c59635</anchor>
-      <arglist>(size_t depth) const</arglist>
-    </member>
-    <member kind="function">
       <type>const Layer *</type>
       <name>getRoutingLayer</name>
       <anchorfile>classCRL_1_1RoutingGauge.html</anchorfile>
@@ -1081,6 +1054,13 @@
       <name>getContactLayer</name>
       <anchorfile>classCRL_1_1RoutingGauge.html</anchorfile>
       <anchor>a4b603c0fd5f21db1c93d8a747ec1f4ba</anchor>
+      <arglist>(size_t depth) const</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getLayerDirection</name>
+      <anchorfile>classCRL_1_1RoutingGauge.html</anchorfile>
+      <anchor>ab237249b41f605947765118cd1c59635</anchor>
       <arglist>(size_t depth) const</arglist>
     </member>
     <member kind="function">
@@ -1238,8 +1218,8 @@
       <type>static RoutingLayerGauge *</type>
       <name>create</name>
       <anchorfile>classCRL_1_1RoutingLayerGauge.html</anchorfile>
-      <anchor>afe17db013bf6a933c2af4e847bfd7918</anchor>
-      <arglist>(const Layer *layer, Constant::Direction direction, Constant::LayerGaugeType type, unsigned int depth, double density, DbU::Unit offset, DbU::Unit pitch, DbU::Unit wireWidth, DbU::Unit viaWidth, DbU::Unit obsDw)</arglist>
+      <anchor>afb41e7be2a6d258a691aacbe7a78154f</anchor>
+      <arglist>(const Layer *layer, Constant::Direction direction, Constant::LayerGaugeType type, unsigned int depth, double density, DbU::Unit offset, DbU::Unit pitch, DbU::Unit wireWidth, DbU::Unit pwireWidth, DbU::Unit viaWidth, DbU::Unit obsDw)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -1254,21 +1234,21 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>append</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>af358bdb1e940f08137f887f70eb641e3</anchor>
       <arglist>(const std::string &amp;path, const std::string &amp;name=&quot;&quot;)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>prepend</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>af39d78a63d880e90ae6f947abf1fe322</anchor>
       <arglist>(const std::string &amp;path, const std::string &amp;name=&quot;&quot;)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>replace</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>a6cd1524e1048f246682cd5ef40145d67</anchor>
@@ -1342,12 +1322,6 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>FlattenLeaf</name>
-      <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
-      <anchor>a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
       <name>Feed</name>
       <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
       <anchor>a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1</anchor>
@@ -1393,12 +1367,6 @@
       <name>Views</name>
       <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
       <anchor>a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>FlattenLeaf</name>
-      <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
-      <anchor>a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -1465,13 +1433,6 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>isFlattenLeaf</name>
-      <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
-      <anchor>a14f0d3b8c2e62ad51c78cb8cac4ebbf6</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
       <name>isFeed</name>
       <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
       <anchor>a53c89121d49a7fc9f8a09093a35d32c4</anchor>
@@ -1525,13 +1486,6 @@
       <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
       <anchor>a73a3866e9da359611638b2d725a79613</anchor>
       <arglist>(unsigned int mask, bool value)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>setFlattenLeaf</name>
-      <anchorfile>classCRL_1_1Catalog_1_1State.html</anchorfile>
-      <anchor>a4fba9a5ea27f5a36e41f0246124a3095</anchor>
-      <arglist>(bool value)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -1681,15 +1635,15 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>Default</name>
-      <anchorfile>namespaceConstant.html</anchorfile>
-      <anchor>ab2e46a17cc373a268c5c24fa0e2067e5ac83c789478a5dfedee2496415c62c1fb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
       <name>PinOnly</name>
       <anchorfile>namespaceConstant.html</anchorfile>
       <anchor>ab2e46a17cc373a268c5c24fa0e2067e5a816e7f6e3fb44de0c2da893f32a6748e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Default</name>
+      <anchorfile>namespaceConstant.html</anchorfile>
+      <anchor>ab2e46a17cc373a268c5c24fa0e2067e5ac83c789478a5dfedee2496415c62c1fb</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -1727,18 +1681,18 @@
   <compound kind="namespace">
     <name>CRL</name>
     <filename>namespaceCRL.html</filename>
-    <class kind="class">CRL::AcmSigda</class>
-    <class kind="class">CRL::AllianceFramework</class>
-    <class kind="class">CRL::AllianceLibrary</class>
+    <class kind="class">CRL::Environment</class>
     <class kind="class">CRL::Banner</class>
     <class kind="class">CRL::Catalog</class>
     <class kind="class">CRL::CatalogExtension</class>
-    <class kind="class">CRL::Environment</class>
-    <class kind="class">CRL::GraphicTool</class>
-    <class kind="class">CRL::RoutingGauge</class>
-    <class kind="class">CRL::RoutingLayerGauge</class>
     <class kind="class">CRL::SearchPath</class>
+    <class kind="class">CRL::AllianceLibrary</class>
+    <class kind="class">CRL::RoutingLayerGauge</class>
+    <class kind="class">CRL::RoutingGauge</class>
+    <class kind="class">CRL::AllianceFramework</class>
+    <class kind="class">CRL::AcmSigda</class>
     <class kind="class">CRL::ToolEngine</class>
+    <class kind="class">CRL::GraphicTool</class>
     <member kind="typedef">
       <type>GenericCollection&lt; ToolEngine * &gt;</type>
       <name>ToolEngines</name>

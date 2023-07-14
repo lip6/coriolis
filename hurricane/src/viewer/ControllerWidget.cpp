@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,26 +14,26 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QAction>
-#include  <QFrame>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-#include  <QCheckBox>
-#include  <QComboBox>
-#include  <vlsisapd/configuration/Configuration.h>
-#include  <vlsisapd/configuration/ConfigurationWidget.h>
-#include  <hurricane/DataBase.h>
-#include  <hurricane/Cell.h>
-#include  <hurricane/viewer/Graphics.h>
-#include  <hurricane/viewer/CellWidget.h>
-#include  <hurricane/viewer/GraphicsWidget.h>
-#include  <hurricane/viewer/PaletteWidget.h>
-#include  <hurricane/viewer/DisplayFilterWidget.h>
-#include  <hurricane/viewer/NetlistWidget.h>
-#include  <hurricane/viewer/HierarchyWidget.h>
-#include  <hurricane/viewer/SelectionWidget.h>
-#include  <hurricane/viewer/InspectorWidget.h>
-#include  <hurricane/viewer/ControllerWidget.h>
+#include <QAction>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QComboBox>
+#include <hurricane/configuration/Configuration.h>
+#include <hurricane/configuration/ConfigurationWidget.h>
+#include <hurricane/DataBase.h>
+#include <hurricane/Cell.h>
+#include <hurricane/viewer/Graphics.h>
+#include <hurricane/viewer/CellWidget.h>
+#include <hurricane/viewer/GraphicsWidget.h>
+#include <hurricane/viewer/PaletteWidget.h>
+#include <hurricane/viewer/DisplayFilterWidget.h>
+#include <hurricane/viewer/NetlistWidget.h>
+#include <hurricane/viewer/HierarchyWidget.h>
+#include <hurricane/viewer/SelectionWidget.h>
+#include <hurricane/viewer/InspectorWidget.h>
+#include <hurricane/viewer/ControllerWidget.h>
 
 
 namespace Hurricane {
@@ -218,32 +218,32 @@ namespace Hurricane {
 
   void  TabNetlist::setSyncNetlist ( bool state )
   {
-    if ( state and getCellWidget() ) {
-      _netlistBrowser->setCell<SimpleNetInformations> ( getCellWidget()->getCell() );
+    if (state and getCellWidget()) {
+      _netlistBrowser->setCell<SimpleNetInformations>( getCellWidget()->getCell() );
     } else {
-      _netlistBrowser->setCell<SimpleNetInformations> ( NULL );
+      _netlistBrowser->setCell<SimpleNetInformations>( NULL );
     }
   }
 
 
   void  TabNetlist::setSyncSelection ( bool state )
   {
-    if ( state and getCellWidget() and _syncNetlist->isChecked() ) {
+    if (state and getCellWidget() and _syncNetlist->isChecked()) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if ( not _cwCumulativeSelection ) {
+      if (not _cwCumulativeSelection) {
         getCellWidget()->openRefreshSession ();
         getCellWidget()->unselectAll ();
         getCellWidget()->closeRefreshSession ();
       }
-      getCellWidget()->setShowSelection ( true );
-      connect ( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
-      connect ( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
-      _netlistBrowser->updateSelecteds ();
+      getCellWidget()->setShowSelection( true );
+      connect( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
+      connect( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
+      _netlistBrowser->updateSelecteds();
     } else {
-      getCellWidget()->setShowSelection ( false );
-      getCellWidget()->setCumulativeSelection ( _cwCumulativeSelection );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(select  (Occurrence)) );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(unselect(Occurrence)) );
+      getCellWidget()->setShowSelection( false );
+      getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
+      _netlistBrowser->disconnect( getCellWidget(), SLOT(select  (Occurrence)) );
+      _netlistBrowser->disconnect( getCellWidget(), SLOT(unselect(Occurrence)) );
     }
   }
 
@@ -269,13 +269,13 @@ namespace Hurricane {
 
   void  TabNetlist::cellPreModificate ()
   {
-    _netlistBrowser->setCell<SimpleNetInformations> ( NULL );
+    _netlistBrowser->setCell<SimpleNetInformations>( NULL );
   }
 
 
   void  TabNetlist::cellPostModificate ()
   {
-    setSyncNetlist ( _syncNetlist->isChecked() );
+    setSyncNetlist( _syncNetlist->isChecked() );
   }
 
 
@@ -605,7 +605,7 @@ namespace Hurricane {
 
     Graphics::getGraphics()->addObserver( &_observer );
                                         
-    resize( Graphics::toHighDpi(620), Graphics::toHighDpi(500) );
+    resize( Graphics::toHighDpi(1000), Graphics::toHighDpi(700) );
   }
 
 
@@ -657,6 +657,19 @@ namespace Hurricane {
       (static_cast<ControllerTab*>(widget(i)))->graphicsUpdated ();
   }
 
+
+  void  ControllerWidget::insertTabAfter ( const QString& ref, QWidget* tab, const QString& label )
+  {
+    for ( int itab=0 ; true; ++itab ) {
+      QWidget* refTab = widget( itab );
+      if (not refTab) break;
+      if (refTab->objectName() != ref) continue;
+      insertTab( itab, tab, label );
+      return;
+    }
+    addTab( tab, label );
+  }
+  
 
 // -------------------------------------------------------------------
 // Class  :  "ControllerWidget::GraphicsObserver".

@@ -71,14 +71,15 @@ extern "C" {
                            ,Converter,&arg1
                            ,Converter,&arg2
                            )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
+        PyErr_SetString ( ConstructorError, "Pad.create(): Invalid number of parameters for Pad constructor." );
         return NULL;
     }
 
     if ( __cs.getObjectIds() == ":ent:layer:box") {
       pad = Pad::create(PYNET_O(arg0), PYLAYER_O(arg1), *PYBOX_O(arg2));
     } else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Pad constructor." );
+      cerr << "Sign:  " <<  __cs.getObjectIds() << endl;
+      PyErr_SetString ( ConstructorError, "Pad.create(): Bad parameters types Pad constructor." );
       return NULL;
     }
 

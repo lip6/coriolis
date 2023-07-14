@@ -41,6 +41,7 @@ namespace  Hurricane {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
 
 
 extern "C" {
@@ -374,7 +375,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(DisplayStyle)
-  DirectHashMethod(PyDisplayStyle_Hash, PyDisplayStyle)
+  DirectHashMethod(PyDisplayStyle_Hash, DisplayStyle)
 
   extern void  PyDisplayStyle_LinkPyType() {
     cdebug_log(20,0) << "PyDisplayStyle_LinkType()" << endl;

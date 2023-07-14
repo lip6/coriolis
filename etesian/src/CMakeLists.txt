@@ -8,10 +8,14 @@
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes      etesian/Configuration.h
+                                      etesian/Placement.h
                                       etesian/FeedCells.h
+                                      etesian/BufferCells.h
+                                      etesian/BloatCells.h
+                                      etesian/BloatProperty.h
                                       etesian/EtesianEngine.h
                                       etesian/GraphicEtesianEngine.h
                       )               
@@ -20,8 +24,14 @@
                       )
                    set( mocIncludes   etesian/GraphicEtesianEngine.h )
                    set( cpps          Configuration.cpp
+		                      HFNS.cpp
                                       AddFeeds.cpp
+                                      Placement.cpp
+                                      FlattenPower.cpp
                                       FeedCells.cpp
+                                      BufferCells.cpp
+                                      BloatCells.cpp
+                                      BloatProperty.cpp
                                       EtesianEngine.cpp
                                       GraphicEtesianEngine.cpp
                       )
@@ -48,7 +58,8 @@
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
                                       ${LIBXML2_LIBRARIES}
-                                      ${PYTHON_LIBRARIES} -lutil
+                                      ${Python3_LIBRARIES}
+                                       -lutil
                                       ${LIBEXECINFO_LIBRARIES}
                       )
 

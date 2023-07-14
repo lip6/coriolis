@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_INSTANCE_H
-#define HURRICANE_INSTANCE_H
-
+#pragma  once
 #include "hurricane/Go.h"
 #include "hurricane/Plug.h"
 #include "hurricane/SharedPath.h"
@@ -137,7 +135,7 @@ class Instance : public Go {
     public: bool isPlaced() const {return _placementStatus == PlacementStatus::PLACED;};
     public: bool isFixed() const {return _placementStatus == PlacementStatus::FIXED;};
     public: bool isTerminal() const;
-    public: bool isLeaf() const;
+    public: bool isTerminalNetlist() const;
     public: bool isUnique() const;
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
@@ -147,11 +145,12 @@ class Instance : public Go {
 
     public: static InstanceFilter getIsUnderFilter(const Box& area);
     public: static InstanceFilter getIsTerminalFilter();
-    public: static InstanceFilter getIsLeafFilter();
+    public: static InstanceFilter getIsTerminalNetlistFilter();
     public: static InstanceFilter getIsUnplacedFilter();
     public: static InstanceFilter getIsPlacedFilter();
     public: static InstanceFilter getIsFixedFilter();
     public: static InstanceFilter getIsNotUnplacedFilter();
+    public: static InstanceFilter getPruneMasterFilter( uint64_t );
 
 // Updators
 // ********
@@ -243,14 +242,14 @@ inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::
                                      return record;
                                    }
 
-template<>
-inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::Code>
-                                   ( const Hurricane::Instance::PlacementStatus::Code object )
-                                   {
-                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
-                                     record->add(getSlot("Code", (unsigned int)object));
-                                     return record;
-                                   }
+// template<>
+// inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::Code>
+//                                    ( const Hurricane::Instance::PlacementStatus::Code object )
+//                                    {
+//                                      Hurricane::Record* record = new Hurricane::Record(getString(object));
+//                                      record->add(getSlot("Code", (unsigned int)object));
+//                                      return record;
+//                                    }
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Instance);
@@ -263,8 +262,6 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane:
   w->key( key );
   w->write( getString(status.getCode()) );
 }
-
-#endif // HURRICANE_INSTANCE
 
 
 // ****************************************************************************************************

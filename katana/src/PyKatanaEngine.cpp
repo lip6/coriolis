@@ -49,6 +49,7 @@ namespace  Katana {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyNet;
@@ -122,7 +123,7 @@ extern "C" {
     if (katana == NULL) {
       katana = KatanaEngine::create(cell);
       if (cmess1.enabled())
-        katana->getKatanaConfiguration()->print(cell);
+        katana->getConfiguration()->print(cell);
     } else
       cerr << Warning("%s already has a Katana engine.",getString(cell).c_str()) << endl;
     HCATCH
@@ -195,19 +196,25 @@ extern "C" {
   }
 
 
-  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self )
+  PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
 
     HTRY
       METHOD_HEAD("KatanaEngine.runGlobalRouter()")
-      if (katana->getViewer()) {
-        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana) )) {
-          PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
-          return NULL;
+      uint64_t  flags = 0;
+      if (PyArg_ParseTuple(args,"L:KatanaEngine.runGlobalRouter", &flags)) {
+        if (katana->getViewer()) {
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana,flags) )) {
+            PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
+            return NULL;
+          }
+        } else {
+          katana->runGlobalRouter( flags );
         }
       } else {
-        katana->runGlobalRouter();
+        PyErr_SetString(ConstructorError, "KatanaEngine.runGlobalRouter(): Invalid number/bad type of parameter.");
+        return NULL;
       }
     HCATCH
 
@@ -318,47 +325,56 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  DirectVoidToolMethod(KatanaEngine,katana,printConfiguration)
-  DirectVoidToolMethod(KatanaEngine,katana,finalizeLayout)
-  DirectVoidMethod(KatanaEngine,katana,dumpMeasures)
-  DirectGetBoolAttribute(PyKatanaEngine_getToolSuccess,getToolSuccess,PyKatanaEngine,KatanaEngine)
+  DirectVoidToolMethod  (KatanaEngine,katana,printConfiguration)
+  DirectVoidToolMethod  (KatanaEngine,katana,finalizeLayout)
+  DirectVoidToolMethod  (KatanaEngine,katana,resetRouting)
+  DirectVoidMethod      (KatanaEngine,katana,dumpMeasures)
+  DirectGetBoolAttribute(PyKatanaEngine_isGlobalRoutingSuccess,isGlobalRoutingSuccess,PyKatanaEngine,KatanaEngine)
+  DirectGetBoolAttribute(PyKatanaEngine_isDetailedRoutingSuccess,isDetailedRoutingSuccess,PyKatanaEngine,KatanaEngine)
+  DirectGetUIntAttribute(PyKatanaEngine_getSuccessState,getSuccessState,PyKatanaEngine,KatanaEngine)
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyKatanaEngine_destroy,PyKatanaEngine)
 
 
   PyMethodDef PyKatanaEngine_Methods[] =
-    { { "get"                  , (PyCFunction)PyKatanaEngine_get                  , METH_VARARGS|METH_STATIC
-                               , "Returns the Katana engine attached to the Cell, None if there isnt't." }
-    , { "create"               , (PyCFunction)PyKatanaEngine_create               , METH_VARARGS|METH_STATIC
-                               , "Create a Katana engine on this cell." }
-    , { "setViewer"            , (PyCFunction)PyKatanaEngine_setViewer            , METH_VARARGS
-                               , "Associate a Viewer to this KatanaEngine." }
-    , { "digitalInit"          , (PyCFunction)PyKatanaEngine_digitalInit          , METH_NOARGS
-                               , "Setup Katana for digital routing." }
-    , { "exclude"              , (PyCFunction)PyKatanaEngine_exclude              , METH_VARARGS
-                               , "Exclude a net from routing." }
-    , { "printConfiguration"   , (PyCFunction)PyKatanaEngine_printConfiguration   , METH_NOARGS
-                               , "Display on the console the configuration of Katana." }
-    , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS
-                               , "Returns True if the detailed routing has been successful." }
-    , { "runGlobalRouter"      , (PyCFunction)PyKatanaEngine_runGlobalRouter      , METH_NOARGS
-                               , "Run the global router (Katana)." }
-    , { "loadGlobalRouting"    , (PyCFunction)PyKatanaEngine_loadGlobalRouting    , METH_VARARGS
-                               , "Load global routing into the detailed router." }
-    , { "layerAssign"          , (PyCFunction)PyKatanaEngine_layerAssign          , METH_VARARGS
-                               , "Run the layer assigment stage." }
-    , { "runNegociatePreRouted", (PyCFunction)PyKatanaEngine_runNegociatePreRouted, METH_NOARGS
-                               , "Run the negociation stage for pre-routed of the detailed router." }
-    , { "runNegociate"         , (PyCFunction)PyKatanaEngine_runNegociate         , METH_VARARGS
-                               , "Run the negociation stage of the detailed router." }
-    , { "finalizeLayout"       , (PyCFunction)PyKatanaEngine_finalizeLayout       , METH_NOARGS
-                               , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
-    , { "dumpMeasures"         , (PyCFunction)PyKatanaEngine_dumpMeasures         , METH_NOARGS
-                               , "Dump to disk lots of statistical informations about the routing." }
-    , { "destroy"              , (PyCFunction)PyKatanaEngine_destroy              , METH_NOARGS
-                               , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL}    /* sentinel */
+    { { "get"                      , (PyCFunction)PyKatanaEngine_get                     , METH_VARARGS|METH_STATIC
+                                   , "Returns the Katana engine attached to the Cell, None if there isnt't." }
+    , { "create"                   , (PyCFunction)PyKatanaEngine_create                  , METH_VARARGS|METH_STATIC
+                                   , "Create a Katana engine on this cell." }
+    , { "setViewer"                , (PyCFunction)PyKatanaEngine_setViewer               , METH_VARARGS
+                                   , "Associate a Viewer to this KatanaEngine." }
+    , { "digitalInit"              , (PyCFunction)PyKatanaEngine_digitalInit             , METH_NOARGS
+                                   , "Setup Katana for digital routing." }
+    , { "exclude"                  , (PyCFunction)PyKatanaEngine_exclude                 , METH_VARARGS
+                                   , "Exclude a net from routing." }
+    , { "printConfiguration"       , (PyCFunction)PyKatanaEngine_printConfiguration      , METH_NOARGS
+                                   , "Display on the console the configuration of Katana." }
+    , { "getSuccessState"          , (PyCFunction)PyKatanaEngine_getSuccessState         , METH_NOARGS
+                                   , "Returns the success statuses of both global & detailed routing." }
+    , { "isGlobalRoutingSuccess"   , (PyCFunction)PyKatanaEngine_isGlobalRoutingSuccess  , METH_NOARGS
+                                   , "Returns True if the global routing has been successful." }
+    , { "isDetailedRoutingSuccess" , (PyCFunction)PyKatanaEngine_isDetailedRoutingSuccess, METH_NOARGS
+                                   , "Returns True if the detailed routing has been successful." }
+    , { "runGlobalRouter"          , (PyCFunction)PyKatanaEngine_runGlobalRouter         , METH_VARARGS
+                                   , "Run the global router (Katana)." }
+    , { "loadGlobalRouting"        , (PyCFunction)PyKatanaEngine_loadGlobalRouting       , METH_VARARGS
+                                   , "Load global routing into the detailed router." }
+    , { "layerAssign"              , (PyCFunction)PyKatanaEngine_layerAssign             , METH_VARARGS
+                                   , "Run the layer assigment stage." }
+    , { "runNegociatePreRouted"    , (PyCFunction)PyKatanaEngine_runNegociatePreRouted   , METH_NOARGS
+                                   , "Run the negociation stage for pre-routed of the detailed router." }
+    , { "runNegociate"             , (PyCFunction)PyKatanaEngine_runNegociate            , METH_VARARGS
+                                   , "Run the negociation stage of the detailed router." }
+    , { "finalizeLayout"           , (PyCFunction)PyKatanaEngine_finalizeLayout          , METH_NOARGS
+                                   , "Revert to a pure Hurricane database, remove router's additionnal data structures." }
+    , { "resetRouting"             , (PyCFunction)PyKatanaEngine_resetRouting            , METH_NOARGS
+                                   , "Remove all router's work, revert to placed only design." }
+    , { "dumpMeasures"             , (PyCFunction)PyKatanaEngine_dumpMeasures            , METH_NOARGS
+                                   , "Dump to disk lots of statistical informations about the routing." }
+    , { "destroy"                  , (PyCFunction)PyKatanaEngine_destroy                 , METH_NOARGS
+                                   , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}        /* sentinel */
     };
 
 
@@ -384,6 +400,10 @@ extern "C" {
     PyKatanaFlags_postModuleInit();
 
     PyDict_SetItemString( PyTypeKatanaEngine.tp_dict, "Flags", (PyObject*)&PyTypeKatanaFlags );
+
+    PyObject* constant = NULL;
+    LoadObjectConstant( PyTypeKatanaEngine.tp_dict, KatanaEngine::GlobalRoutingSuccess  , "GlobalRoutingSuccess"   )
+    LoadObjectConstant( PyTypeKatanaEngine.tp_dict, KatanaEngine::DetailedRoutingSuccess, "DetailedRoutingSuccess" )
   }
 
 

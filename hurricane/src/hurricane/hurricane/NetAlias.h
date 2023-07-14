@@ -52,6 +52,7 @@ namespace Hurricane {
               bool          isAttached    () const;
       virtual bool          isMaster      () const = 0;
       virtual bool          isSlave       () const = 0;
+      virtual bool          isExternal    () const = 0;
       virtual Name          getName       () const = 0;
       virtual Net*          getNet        () const = 0;
               NetAliasHook* getNext       () const;
@@ -60,6 +61,7 @@ namespace Hurricane {
               void          attach        ( NetAliasHook* );
               void          detach        ();
               void          detachAll     ();
+      virtual void          setExternal   ( bool ) = 0;
       inline  void          toJson        ( JsonWriter* ) const;
       virtual std::string   _getString    () const = 0;
       virtual Record*       _getRecord    () const;
@@ -81,9 +83,11 @@ namespace Hurricane {
     public:
       virtual bool         isMaster    () const;
       virtual bool         isSlave     () const;
+      virtual bool         isExternal  () const;
       virtual Name         getName     () const;
       virtual Net*         getNet      () const;
       virtual std::string  _getString  () const;
+      virtual void         setExternal ( bool state );
               void         clear       ();
     public:
                            NetMainName ( Net* );
@@ -108,19 +112,22 @@ namespace Hurricane {
     public:
       virtual bool          isMaster     () const;
       virtual bool          isSlave      () const;
+      virtual bool          isExternal   () const;
       virtual Name          getName      () const;
       virtual Net*          getNet       () const;
       virtual void          toJson       ( JsonWriter* ) const;
+      virtual void          setExternal  ( bool );
       virtual std::string   _getString   () const;
       virtual Record*       _getRecord   () const;
     public:
-                            NetAliasName ( Name );
+                            NetAliasName ( Name, bool isExternal=false );
       virtual              ~NetAliasName ();
     private:
                             NetAliasName ( const NetAliasName& );
               NetAliasName& operator=    ( const NetAliasName& );
     private:
       Name  _name;
+      bool  _isExternal;
   };
 
 

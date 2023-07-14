@@ -40,36 +40,36 @@ namespace Hurricane {
     const Entity* lhsEntity = lhs->getOccurrence().getEntity();
     const Entity* rhsEntity = rhs->getOccurrence().getEntity();
 
-    const Component* lhsComponent = dynamic_cast<const Component*> ( lhsEntity );
-    const Component* rhsComponent = dynamic_cast<const Component*> ( rhsEntity );
-    if (  lhsComponent &&  rhsComponent ) return lhs < rhs; // lhs & rhs are Components.
-    if (  lhsComponent && !rhsComponent ) return true;      // lhs only is an Component.
-    if ( !lhsComponent &&  rhsComponent ) return false;     // rhs only is an Component.
+    const Component* lhsComponent = dynamic_cast<const Component*>( lhsEntity );
+    const Component* rhsComponent = dynamic_cast<const Component*>( rhsEntity );
+    if (    lhsComponent and     rhsComponent) return lhs < rhs; // lhs & rhs are Components.
+    if (    lhsComponent and not rhsComponent) return true;      // lhs only is an Component.
+    if (not lhsComponent and     rhsComponent) return false;     // rhs only is an Component.
 
-    const Instance* lhsInstance = dynamic_cast<const Instance*> ( lhsEntity );
-    const Instance* rhsInstance = dynamic_cast<const Instance*> ( rhsEntity );
+    const Instance* lhsInstance = dynamic_cast<const Instance*>( lhsEntity );
+    const Instance* rhsInstance = dynamic_cast<const Instance*>( rhsEntity );
   //cerr << "Instance LHS: " << (void*)lhsInstance << " RHS: " << (void*)rhsInstance << endl;
 
-    if (  lhsInstance &&  rhsInstance ) return lhs < rhs; // lhs & rhs are Instances.
-    if (  lhsInstance && !rhsInstance ) return true;      // lhs only is an Instance.
-    if ( !lhsInstance &&  rhsInstance ) return false;     // rhs only is an Instance.
+    if (    lhsInstance and     rhsInstance) return lhs < rhs; // lhs & rhs are Instances.
+    if (    lhsInstance and not rhsInstance) return true;      // lhs only is an Instance.
+    if (not lhsInstance and     rhsInstance) return false;     // rhs only is an Instance.
 
-    const Rubber* lhsRubber = dynamic_cast<const Rubber*> ( lhsEntity );
-    const Rubber* rhsRubber = dynamic_cast<const Rubber*> ( rhsEntity );
-    if (  lhsRubber &&  rhsRubber ) return lhs < rhs; // lhs & rhs are Rubbers.
-    if (  lhsRubber && !rhsRubber ) return true;      // lhs only is an Rubber.
-    if ( !lhsRubber &&  rhsRubber ) return false;     // rhs only is an Rubber.
+    const Rubber* lhsRubber = dynamic_cast<const Rubber*>( lhsEntity );
+    const Rubber* rhsRubber = dynamic_cast<const Rubber*>( rhsEntity );
+    if (    lhsRubber and     rhsRubber) return lhs < rhs; // lhs & rhs are Rubbers.
+    if (    lhsRubber and not rhsRubber) return true;      // lhs only is an Rubber.
+    if (not lhsRubber and     rhsRubber) return false;     // rhs only is an Rubber.
 
-    const ExtensionGo* lhsExtensionGo = dynamic_cast<const ExtensionGo*> ( lhsEntity );
-    const ExtensionGo* rhsExtensionGo = dynamic_cast<const ExtensionGo*> ( rhsEntity );
-    if (  lhsExtensionGo &&  rhsExtensionGo ) {             // lhs & rhs are ExtensionGos.
-      if ( lhsExtensionGo->getName() == rhsExtensionGo->getName() )
+    const ExtensionGo* lhsExtensionGo = dynamic_cast<const ExtensionGo*>( lhsEntity );
+    const ExtensionGo* rhsExtensionGo = dynamic_cast<const ExtensionGo*>( rhsEntity );
+    if (lhsExtensionGo and  rhsExtensionGo) {             // lhs & rhs are ExtensionGos.
+      if (lhsExtensionGo->getName() == rhsExtensionGo->getName())
         return lhs < rhs;
 
       return lhsExtensionGo->getName() < rhsExtensionGo->getName();
     }
-    if (  lhsExtensionGo && !rhsExtensionGo ) return true;  // lhs only is an ExtensionGo.
-    if ( !lhsExtensionGo &&  rhsExtensionGo ) return false; // rhs only is an ExtensionGo.
+    if (    lhsExtensionGo and not rhsExtensionGo) return true;  // lhs only is an ExtensionGo.
+    if (not lhsExtensionGo and     rhsExtensionGo) return false; // rhs only is an ExtensionGo.
 
     return lhs < rhs;
   }
@@ -79,7 +79,7 @@ namespace Hurricane {
 // Class :  "Hurricane::Selector".
 
 
-  const Name  Selector::_propertyName = _PName ( "Selector" );
+  const Name  Selector::_propertyName = Name( "Selector" );
 
 
   Selector::Selector () : PrivateProperty()
@@ -88,10 +88,10 @@ namespace Hurricane {
 
 
   string  Selector::_getTypeName () const
-  { return _TName("Selector"); }
+  { return "Selector"; }
 
 
-  const Name&  Selector::getPropertyName ()
+  const Name& Selector::getPropertyName ()
   { return _propertyName; }
 
 
@@ -99,30 +99,18 @@ namespace Hurricane {
   { return Selector::getPropertyName(); }
 
 
-  Occurrence  Selector::getOccurrence () const
-  {
-	DBo* owner = getOwner();
-	if (!owner) return Occurrence();
-
-    Quark* quark = dynamic_cast<Quark*>(owner);
-	assert ( quark );
-
-	return quark->getOccurrence();
-  }
-
-
   Selector* Selector::create ( Occurrence& occurrence )
   {
-	if ( !occurrence.isValid() )
-      throw Error ( "Can't create " + _TName("Selector") + " : invalid occurrence" );
+	if (not occurrence.isValid())
+      throw Error( "Selector::create(): Can't create Selector, invalid occurrence" );
 
-	if ( occurrence.getProperty(Selector::getPropertyName()) )
-      throw Error ( "Can't create " + _TName("Selector") + " : already exists" );
+	if (occurrence.getProperty(Selector::getPropertyName()))
+      throw Error( "Selector::create(): Can't create Selector, already exists" );
 
 	Selector* selector = new Selector();
 
 	selector->_postCreate();
-	occurrence.put ( selector );
+	occurrence.put( selector );
 
 	return selector;
   }
@@ -130,61 +118,147 @@ namespace Hurricane {
 
   void Selector::_preDestroy()
   {
-    set<CellWidget*>::iterator it = _cellWidgets.begin ();
-    for ( ; it != _cellWidgets.end() ; it++ )
-      detachFrom ( *it, true );
-
+    while ( not _cellWidgets.empty() )
+      detachFrom( _cellWidgets.begin()->first, true );
 	PrivateProperty::_preDestroy();
   }
 
 
   string  Selector::_getString() const
   {
-	return "<" + _TName("Selector") + " " + getString(getOccurrence()) + ">";
+	return "<Selector " + getString(getOccurrence()) + ">";
   }
 
 
   Record* Selector::_getRecord () const
   {
 	Record* record = PrivateProperty::_getRecord();
-	if ( record )
+	if (record)
       record->add(getSlot("_cellWidgets", &_cellWidgets));
 
 	return record;
   }
 
 
+  const Quark* Selector::getQuark () const
+  {
+    const Quark* owner = dynamic_cast<const Quark*>( getOwner() );
+    if (not owner) {
+      cerr << Error( "Selector::getQuark(): Selector Property is not owned by a Quark." ) << endl;
+      return NULL;
+    }
+    return owner;
+  }
+
+
+  Occurrence  Selector::getOccurrence () const
+  {
+    const Quark* quark = getQuark();
+    return (quark) ? quark->getOccurrence() : Occurrence();
+  }
+
+
+  Path  Selector::getPath () const
+  {
+    const Quark* quark = getQuark();
+    return (quark) ? quark->getOccurrence().getPath() : Path();
+  }
+
+
+  Entity* Selector::getEntity () const
+  {
+    const Quark* quark = getQuark();
+    return (quark) ? quark->getOccurrence().getEntity() : NULL;
+  }
+
+
+
   bool  Selector::isAttachedTo ( CellWidget* widget ) const
   {
-	if ( !widget )
-      throw Error ( "Can't attach selector : null CellWidget." );
+	if (not widget)
+      throw Error( "Selector::isAttachedTo(): NULL widget argument." );
 
-    if ( _cellWidgets.find(widget) == _cellWidgets.end() )
-      return false;
-
-    return true;
+    return (_cellWidgets.find(widget) != _cellWidgets.end());
   }
 
 
   void  Selector::attachTo ( CellWidget* widget )
   {
-	if ( !widget )
-      throw Error ( "Can't attach selector : null CellWidget." );
+	if (not widget)
+      throw Error( "Selector::attachTo(): Cannot attach, NULL widget argument." );
 
-	_cellWidgets.insert ( widget );
-	widget->getSelectorSet().insert ( this );
+	_cellWidgets.insert( make_pair(widget,Selected) );
+	widget->getSelectorSet().insert( this );
   }
 
 
   void  Selector::detachFrom ( CellWidget* widget, bool inDeletion )
   {
-	if ( !widget )
-		throw Error ( "Can't detach selector : null CellWidget" );
+	if (not widget)
+      throw Error( "Selector::detachFrom(): Cannot detach, NULL widget argument." );
 
-	widget->getSelectorSet().erase ( this );
-	_cellWidgets.erase ( widget );
+	widget->detach( this );
+	_cellWidgets.erase( widget );
 
-	if ( !inDeletion && _cellWidgets.empty() ) destroy();
+	if (not inDeletion and _cellWidgets.empty()) destroy();
+  }
+
+
+  uint32_t  Selector::getFlags ( CellWidget* widget ) const
+  {
+    map<CellWidget*,uint32_t>::const_iterator iw = _cellWidgets.find( widget );
+    if (iw == _cellWidgets.end()) {
+      cerr << Error( "Selector::getFlags(): %s is not attached to %s."
+                   , getString(this).c_str()
+                   , getString(widget).c_str()
+                   ) << endl;
+      return 0;
+    }
+    return (*iw).second;
+  }
+
+  
+  void  Selector::setFlags ( CellWidget* widget , uint32_t flags )
+  {
+    map<CellWidget*,uint32_t>::iterator iw = _cellWidgets.find( widget );
+    if (iw == _cellWidgets.end()) {
+      cerr << Error( "Selector::setFlags(): %s is not attached to %s."
+                   , getString(this).c_str()
+                   , getString(widget).c_str()
+                   ) << endl;
+      return;
+    }
+    (*iw).second |= flags;
+  }
+
+  
+  void  Selector::resetFlags ( CellWidget* widget , uint32_t flags )
+  {
+    map<CellWidget*,uint32_t>::iterator iw = _cellWidgets.find( widget );
+    if (iw == _cellWidgets.end()) {
+      cerr << Error( "Selector::resetFlags(): %s is not attached to %s."
+                   , getString(this).c_str()
+                   , getString(widget).c_str()
+                   ) << endl;
+      return;
+    }
+    (*iw).second &= ~flags;
+  }
+
+  
+  void  Selector::toggle ( CellWidget* widget )
+  {
+    map<CellWidget*,uint32_t>::iterator iw = _cellWidgets.find( widget );
+    if (iw == _cellWidgets.end()) {
+      cerr << Error( "Selector::toggle(): %s is not attached to %s."
+                   , getString(this).c_str()
+                   , getString(widget).c_str()
+                   ) << endl;
+      return;
+    }
+    if ((*iw).second & Selected) (*iw).second &= ~Selected;
+    else                         (*iw).second |=  Selected;
+    (*iw).second |= ToggledByController;
   }
 
 

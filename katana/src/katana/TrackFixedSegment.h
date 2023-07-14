@@ -65,13 +65,13 @@ namespace Katana {
       virtual void           forcePriority          ( float );
       virtual void           computePriority        ();
       virtual void           computeAlignedPriority ();
+      virtual void           detach                 ( TrackSet& );
       virtual Record*        _getRecord             () const;
       virtual string         _getString             () const;
       virtual string         _getTypeName           () const;
     protected:
     // Attributes.
-      static Net*     _blockageNet;
-             Segment* _segment;
+              Segment* _segment;
     protected:
     // Constructors & Destructors.
                                  TrackFixedSegment ( Track*, Segment* ) ;

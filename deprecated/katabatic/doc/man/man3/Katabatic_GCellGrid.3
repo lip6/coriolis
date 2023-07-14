@@ -1,0 +1,178 @@
+.TH "GCellGrid" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GCellGrid \- \fBGCell\fP \fBGrid\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBGrid< GCell >\fP\&.
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBDensityMode\fP { \fBAverageHVDensity\fP =1, \fBAverageHDensity\fP =2, \fBAverageVDensity\fP =3, \fBMaxHVDensity\fP =4, \fBMaxVDensity\fP =5, \fBMaxHDensity\fP =6, \fBMaxDensity\fP =7 }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCell\fP * \fBgetCell\fP () const"
+.br
+.ti -1c
+.RI "\fBKatabaticEngine\fP * \fBgetKatabatic\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetDensityMode\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBgetHEdgeCapacity\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBgetVEdgeCapacity\fP () const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetUSide\fP (unsigned int) const"
+.br
+.ti -1c
+.RI "size_t \fBcheckDensity\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBupdateDensity\fP ()"
+.br
+.ti -1c
+.RI "void \fBupdateContacts\fP (unsigned int flags=\fBKbOpenSession\fP)"
+.br
+.ti -1c
+.RI "void \fBsetDensityMode\fP (unsigned int)"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fB_postCreate\fP ()"
+.br
+.ti -1c
+.RI "void \fB_preDestroy\fP ()"
+.br
+.in -1c
+.SS "Static Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBGCellGrid\fP * \fBcreate\fP (\fBKatabaticEngine\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBGCell\fP \fBGrid\fP\&. 
+
+The \fBGCell\fP \fBGrid\fP of \fBKatabatic\fP\&. Although the base template class \fBGrid\fP support irregular grid, the \fBGCellGrid\fP is regular, following the Knik global router GCells\&. Only the topmost row and leftmost column may have different height or width to cope with the design real size\&.
+.PP
+Due to the regular nature of the grid, the horizontal & vertical edges capacities are all identical, and initialized from the \fBKatabatic\fP Configuration\&.
+.PP
+The grid is build from the Knik global routing, so obviously a KnikEngine must be attached to the Cell when building the \fBGCellGrid\fP\&. An error is thrown otherwise\&. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBDensityMode\fP"
+Various ways of computing the overall density of a \fBGCell\fP\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIAverageHVDensity \fP\fP
+The average density all depths accounted\&. 
+.TP
+\fB\fIAverageHDensity \fP\fP
+The average density of horizontal layers\&. 
+.TP
+\fB\fIAverageVDensity \fP\fP
+The average density of horizontal layers\&. 
+.TP
+\fB\fIMaxHVDensity \fP\fP
+The maximum of the average horizontal & vertical densities taken as a whole\&. 
+.TP
+\fB\fIMaxVDensity \fP\fP
+The maximum of the average vertical densities taken depth by depth\&. 
+.TP
+\fB\fIMaxHDensity \fP\fP
+The maximum of the average horizontal densities taken depth by depth\&. 
+.TP
+\fB\fIMaxDensity \fP\fP
+The maximum of the average horizontal & vertical densities taken depth by depth\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBCell\fP * getCell () const"
+\fBReturns:\fP The associated Cell\&. 
+.PP
+Referenced by GCellGrid::_postCreate()\&.
+.SS "\fBKatabaticEngine\fP * getKatabatic () const\fC [inline]\fP"
+\fBReturns:\fP The associated \fBKatabaticEngine\fP\&. 
+.SS "unsigned int getDensityMode () const\fC [inline]\fP"
+\fBReturns:\fP The computation mode of the \fBGCell\fP densities\&. 
+.PP
+Referenced by GCell::getDensity()\&.
+.SS "size_t getHEdgeCapacity () const\fC [inline]\fP"
+\fBReturns:\fP The horizontal edge capacity\&. As the matrix is regular it is identical for all horizontal edges\&. 
+.PP
+Referenced by GCell::checkEdgeSaturation()\&.
+.SS "size_t getVEdgeCapacity () const\fC [inline]\fP"
+\fBReturns:\fP The vertical edge capacity\&. As the matrix is regular it is identical for all vertical edges\&. 
+.PP
+Referenced by GCell::checkEdgeSaturation()\&.
+.SS "\fBInterval\fP getUSide (unsigned int direction) const"
+\fBReturns:\fP The side of the whole grid in \fCdirection\fP\&. 
+.PP
+References Box::getXMax(), Box::getXMin(), Box::getYMax(), Box::getYMin(), Katabatic::KbHorizontal, and Katabatic::KbVertical\&.
+.SS "size_t checkDensity () const"
+\fBReturns:\fP The number of \fBGCell\fP saturateds\&.
+.PP
+Check all GCells for saturations\&. 
+.PP
+References Grid< GCell >::getGCells()\&.
+.SS "size_t updateDensity ()"
+\fBReturns:\fP The number of \fBGCell\fP saturateds\&.
+.PP
+Force a density update on all the GCells\&. 
+.PP
+References Grid< GCell >::getGCells()\&.
+.SS "void updateContacts (unsigned int flags = \fC\fBKbOpenSession\fP\fP)"
+Force an update on all \fBAutoContact\fP on all the GCells\&. if \fCopenSession\fP is \fBtrue\fP, enclose the update in a \fBSession\fP\&. 
+.PP
+References Session::close(), Grid< GCell >::getGCells(), Katabatic::KbOpenSession, and Session::open()\&.
+.PP
+Referenced by KatabaticEngine::refresh()\&.
+.SS "void setDensityMode (unsigned int mode)\fC [inline]\fP"
+Sets the density computation mode\&. 
+.SS "void _postCreate ()\fC [protected]\fP, \fC [virtual]\fP"
+Perform the \fBGCell\fP & \fBGCell\fP vector allocation\&.
+.IP "\(bu" 2
+Read the horizontal and vertical cut lines from Knik and translate them into \fBBaseGrid::Axis\fP\&.
+.IP "\(bu" 2
+From the \fBBaseGrid::Axis\fP, deduces the exact positions of the GCells and allocate them\&.
+.IP "\(bu" 2
+The \fBGCell\fP allocation is done in a 'row by row' fashion consistent with \fBBaseGrid\fP implicit assumptions\&. 
+.PP
+
+.PP
+Reimplemented from \fBBaseGrid\fP\&.
+.PP
+References BaseGrid::Axis::addGraduation(), GCellGrid::getCell(), BaseGrid::getColumns(), BaseGrid::getRows(), BaseGrid::Axis::getSize(), and BaseGrid::Axis::sort()\&.
+.SS "void _preDestroy ()\fC [protected]\fP, \fC [virtual]\fP"
+The GCells are deleted at this point\&. 
+.PP
+Reimplemented from \fBBaseGrid\fP\&.
+.SS "\fBGCellGrid\fP * create (\fBKatabaticEngine\fP * ktbt)\fC [static]\fP, \fC [protected]\fP"
+API-space contructor\&. 
+.PP
+References grid()\&.
+.PP
+Referenced by KatabaticEngine::createDetailedGrid()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

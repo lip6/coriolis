@@ -96,21 +96,19 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
 };
 
-class Instance_IsLeafFilter : public Filter<Instance*> {
-// *******************************************************
-
-    public: Instance_IsLeafFilter() {};
-
-    public: Instance_IsLeafFilter(const Instance_IsLeafFilter& filter) {};
-
-    public: Instance_IsLeafFilter& operator=(const Instance_IsLeafFilter& filter) {return *this;};
-
-    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsLeafFilter(*this);};
-
-    public: virtual bool accept(Instance* instance) const {return instance->isLeaf();};
-
-    public: virtual string _getString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
-
+class Instance_IsTerminalNetlistFilter : public Filter<Instance*>
+{
+    public:
+                                                Instance_IsTerminalNetlistFilter () {};
+                                                Instance_IsTerminalNetlistFilter ( const Instance_IsTerminalNetlistFilter& filter ) {};
+              Instance_IsTerminalNetlistFilter& operator=             ( const Instance_IsTerminalNetlistFilter& filter )
+                                                  { return *this; };
+      virtual Filter<Instance*>*                getClone              () const
+                                                  { return new Instance_IsTerminalNetlistFilter( *this ); };
+      virtual bool                              accept                ( Instance* instance ) const
+                                                  { return instance->isTerminalNetlist(); };
+      virtual string                            _getString            () const
+                                                  { return "<" + _TName("Instance::IsTerminalNetlistFilter") + ">"; };
 };
 
 class Instance_IsUnplacedFilter : public Filter<Instance*> {
@@ -162,6 +160,24 @@ class Instance_IsFixedFilter : public Filter<Instance*> {
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsFixedFilter>");};
 
+};
+
+
+class Instance_PruneMasterFilter : public Filter<Instance*>
+{
+    public:
+                                         Instance_PruneMasterFilter ( Cell::Flags flags ) : _flags(flags) {};
+                                         Instance_PruneMasterFilter ( const Instance_PruneMasterFilter& filter ) : _flags(filter._flags) {};
+              Instance_PruneMasterFilter& operator=                 ( const Instance_PruneMasterFilter& filter )
+                                           { _flags = filter._flags; return *this; };
+      virtual Filter<Instance*>*         getClone () const
+                                           { return new Instance_PruneMasterFilter( *this ); };
+      virtual bool                       accept ( Instance* instance ) const
+                                           { return instance->getMasterCell()->getFlags().isset(_flags); };
+      virtual string                     _getString () const
+                                           { return "<" + _TName("Instance::PruneMasterFilter") + getString(_flags) + ">"; };
+  private:
+    Cell::Flags _flags;
 };
 
 // ****************************************************************************************************
@@ -277,10 +293,10 @@ bool Instance::isTerminal() const
     return getMasterCell()->isTerminal();
 }
 
-bool Instance::isLeaf() const
-// **************************
+bool Instance::isTerminalNetlist() const
+// *************************************
 {
-    return getMasterCell()->isLeaf();
+    return getMasterCell()->isTerminalNetlist();
 }
 
 bool Instance::isUnique() const
@@ -314,10 +330,10 @@ InstanceFilter Instance::getIsTerminalFilter()
     return Instance_IsTerminalFilter();
 }
 
-InstanceFilter Instance::getIsLeafFilter()
-// *******************************************
+InstanceFilter Instance::getIsTerminalNetlistFilter()
+// **************************************************
 {
-    return Instance_IsLeafFilter();
+    return Instance_IsTerminalNetlistFilter();
 }
 
 InstanceFilter Instance::getIsUnplacedFilter()
@@ -342,6 +358,13 @@ InstanceFilter Instance::getIsNotUnplacedFilter()
 // **********************************************
 {
     return !Instance_IsUnplacedFilter();
+}
+
+
+InstanceFilter Instance::getPruneMasterFilter( uint64_t flags )
+// ************************************************************
+{
+  return Instance_PruneMasterFilter( flags );
 }
 
 void Instance::materialize()
@@ -574,7 +597,6 @@ Instance* Instance::getClone(Cell* cloneCell) const
 void Instance::_postCreate()
 // *************************
 {
-    _cell->setTerminal(false);
     _cell->_getInstanceMap()._insert(this);
     _masterCell->_getSlaveInstanceSet()._insert(this);
 
@@ -596,7 +618,8 @@ void Instance::_postCreate()
 void Instance::_preDestroy()
 // ************************
 {
-  for ( SharedPath* sharedPath : _getSharedPathes() ) delete sharedPath;
+  SharedPathes pathes = _getSharedPathes();
+  while ( pathes.getFirst() ) delete pathes.getFirst();
 
   Inherit::_preDestroy();
 
@@ -628,8 +651,8 @@ Record* Instance::_getRecord() const
         record->add(getSlot("MasterCell", _masterCell));
         record->add(getSlot("Transformation", &_transformation));
         record->add(getSlot("PlacementStatus", &_placementStatus));
-        record->add(getSlot("XCenter", DbU::getValueString(getAbutmentBox().getXCenter())));
-        record->add(getSlot("YCenter", DbU::getValueString(getAbutmentBox().getYCenter())));
+      //record->add(getSlot("XCenter", DbU::getValueString(getAbutmentBox().getXCenter())));
+      //record->add(getSlot("YCenter", DbU::getValueString(getAbutmentBox().getYCenter())));
         record->add(getSlot("Plugs", &_plugMap));
         record->add(getSlot("SharedPathes", &_sharedPathMap));
     }
@@ -709,7 +732,7 @@ const SharedPath* Instance::SharedPathMap::_getKey(SharedPath* sharedPath) const
 unsigned Instance::SharedPathMap::_getHashValue(const SharedPath* tailSharedPath) const
 // ************************************************************************************
 {
-  return (tailSharedPath) ? (tailSharedPath->getId()/8) : 0;
+  return (tailSharedPath) ? (tailSharedPath->getHash()/8) : 0;
 }
 
 SharedPath* Instance::SharedPathMap::_getNextElement(SharedPath* sharedPath) const

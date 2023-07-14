@@ -38,9 +38,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/ViaLayer.h"
 #include "hurricane/Error.h"
-#include "hurricane/UnitRule.h"
 #include "hurricane/PhysicalRule.h"
-#include "hurricane/TwoLayersPhysicalRule.h"
 
 
 namespace {
@@ -64,6 +62,8 @@ namespace {
   inline string  quote ( Name   field ) { return "'"+getString(field)+"'"; }
 
 
+#if THIS_IS_DISABLED
+
   void printRule ( const PhysicalRule* rule )
   {
     cout << "  - name  = " << rule->getName() 
@@ -75,9 +75,7 @@ namespace {
   void printRules ( const Technology::PhysicalRules& rules )
   { for ( PhysicalRule* rule : rules ) printRule( rule ); }
 
-
-  void printRules ( const Technology::TwoLayersRulesSet& rules )
-  { for ( TwoLayersPhysicalRule* rule : rules ) printRule( rule ); }
+#endif
 
 
 }  // Anonymous namespace.
@@ -139,6 +137,7 @@ namespace Hurricane {
     , _name          (name)
     , _layerMap      ()
     , _layerMaskMap  ()
+    , _layerAliases  ()
     , _unitRules     ()
     , _noLayerRules  ()
     , _oneLayerRules ()
@@ -164,25 +163,41 @@ namespace Hurricane {
   }
 
 
-  BasicLayer* Technology::getBasicLayer ( const Name& name ) const
+  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useSymbolic ) const
   {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<BasicLayer*>(layer)) ? (BasicLayer*)layer : NULL;
+    Layer* layer = NULL;
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( mask );
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( mask );
+    for ( ; lb != ub ; lb++ ) {
+      layer = lb->second;
+      if (not useSymbolic or layer->isSymbolic()) return layer;
+    }
+    return layer;
   }
+
+
+  Layer* Technology::getLayer ( const Name& name ) const
+  {
+    Layer* layer = _layerMap.getElement(name);
+    if (layer) return layer;
+
+    auto ialias = _layerAliases.find( name );
+    if (ialias != _layerAliases.end()) return ialias->second;
+
+    return nullptr;
+  }
+
+
+  BasicLayer* Technology::getBasicLayer ( const Name& name ) const
+  { return dynamic_cast<BasicLayer*>(getLayer( name )); }
 
 
   RegularLayer* Technology::getRegularLayer ( const Name& name ) const
-  {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<RegularLayer*>(layer)) ? (RegularLayer*)layer : NULL;
-  }
+  { return dynamic_cast<RegularLayer*>(getLayer( name )); }
 
 
   ViaLayer* Technology::getViaLayer ( const Name& name ) const
-  {
-    Layer* layer = getLayer(name);
-    return (layer and dynamic_cast<ViaLayer*>(layer)) ? (ViaLayer*)layer : NULL;
-  }
+  { return dynamic_cast<ViaLayer*>(getLayer( name )); }
 
 
   BasicLayers Technology::getBasicLayers () const
@@ -199,19 +214,6 @@ namespace Hurricane {
 
   ViaLayers Technology::getViaLayers () const
   { return SubTypeCollection<Layer*, ViaLayer*>(getLayers()); }
-
-
-  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useSymbolic ) const
-  {
-    Layer* layer = NULL;
-    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( mask );
-    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( mask );
-    for ( ; lb != ub ; lb++ ) {
-      layer = lb->second;
-      if (not useSymbolic or layer->isSymbolic()) return layer;
-    }
-    return layer;
-  }
 
 
   Layer* Technology::getMetalAbove ( const Layer* layer, bool useSymbolic ) const
@@ -337,6 +339,25 @@ namespace Hurricane {
         lb->second->setSymbolic( false );
     }
     return found;
+  }
+
+
+  bool  Technology::addLayerAlias ( const Name& reference, const Name& alias )
+  {
+    if (getLayer(alias)) {
+      cerr << Error( "Technology::addAlias(): Alias name \"%s\" already defined."
+                   , getString(alias).c_str() ) << endl;
+      return false;
+    }
+    Layer* referenceLayer = getLayer( reference );
+    if (not referenceLayer) {
+      cerr << Error( "Technology::addAlias(): Reference layer \"%s\" does not exists (yet?)."
+                   , getString(reference).c_str() ) << endl;
+      return false;
+    }
+
+    _layerAliases.insert( make_pair( alias, referenceLayer ));
+    return true;
   }
 
 
@@ -471,9 +492,9 @@ namespace Hurricane {
   
     for ( auto layerRuleSet : _twoLayersRules ) {
       for ( auto rule : layerRuleSet.second ) {
-        string                 flags   = "Length";
-        TwoLayersPhysicalRule* twoRule = dynamic_cast<TwoLayersPhysicalRule*>(rule);
-        if (twoRule and not twoRule->isSymetric())
+        string        flags   = "Length";
+        PhysicalRule* twoRule = dynamic_cast<PhysicalRule*>(rule);
+        if (twoRule and not twoRule->isSymmetric())
           flags += "|Asymmetric";
   
         o << "    ("
@@ -489,36 +510,40 @@ namespace Hurricane {
   }
   
   
-  UnitRule  Technology::getUnitRule ( const string& ruleNameStr ) const
+  PhysicalRule* Technology::getUnitRule ( string ruleNameStr ) const
   {
-    Name     ruleName ( ruleNameStr );
-    UnitRule search   ( ruleName, 0, "" );
+    Name         ruleName ( ruleNameStr );
+    PhysicalRule search   ( ruleName, "" );
   
     UnitRules::iterator irule = _unitRules.find( &search );
     if (irule == _unitRules.end()) {
       throw Error( "Technology::getUnitRule(): No rule named \"%s\"." , ruleNameStr.c_str() );
     }
-    return **irule;
+    return *irule;
   }
   
   
-  PhysicalRule  Technology::getPhysicalRule ( const string& ruleNameStr ) const
+  PhysicalRule* Technology::getPhysicalRule ( string ruleNameStr ) const
   {
     Name         ruleName ( ruleNameStr );
-    PhysicalRule search   ( ruleName, 0, "" );
+    PhysicalRule search   ( ruleName, "" );
   
     PhysicalRules::iterator irule = _noLayerRules.find( &search );
     if (irule == _noLayerRules.end()) {
       throw Error( "Technology::getPhysicalRule(): No rule named \"%s\"." , ruleNameStr.c_str() );
     }
-    return **irule;
+    return *irule;
   }
   
   
-  PhysicalRule  Technology::getPhysicalRule ( const string& ruleNameStr, const string& layerStr ) const
+  PhysicalRule* Technology::getPhysicalRule ( string ruleNameStr, string layerStr ) const
   {
     Name         layerName ( layerStr );
     const Layer* layer     = getLayer( layerName );
+
+    if (not layer)
+      throw Error( "Technology::getPhysicalRule(): Layer \"%s\" is not defined (yet?)."
+                 , layerStr.c_str() );
   
     OneLayerRules::const_iterator ilayer = _oneLayerRules.find( layer );
     if (ilayer == _oneLayerRules.end())
@@ -527,7 +552,7 @@ namespace Hurricane {
   
     const PhysicalRules& rules    = ilayer->second;
     Name                 ruleName ( ruleNameStr );
-    PhysicalRule         search   ( ruleName, 0, "" );
+    PhysicalRule         search   ( ruleName, "" );
   
     PhysicalRules::iterator irule = rules.find( &search );
     if (irule == rules.end())
@@ -535,13 +560,13 @@ namespace Hurricane {
                  , ruleNameStr.c_str()
                  , getString(layer->getName()).c_str() );
   
-    return **irule;
+    return *irule;
   }
   
   
-  PhysicalRule  Technology::getPhysicalRule ( const string& ruleNameStr
-                                            , const string& layer1Str
-                                            , const string& layer2Str ) const
+  PhysicalRule* Technology::getPhysicalRule ( string ruleNameStr
+                                            , string layer1Str
+                                            , string layer2Str ) const
   {
     Name         layer1Name ( layer1Str );
     Name         layer2Name ( layer2Str );
@@ -551,23 +576,23 @@ namespace Hurricane {
     LayerPair searchLayerPair(layer1, layer2);
     TwoLayersRules::const_iterator ilp = _twoLayersRules.find( searchLayerPair );
     if (ilp != _twoLayersRules.end()) {
-      const TwoLayersRulesSet& rules    = ilp->second;
-      Name                     ruleName ( ruleNameStr );
-      TwoLayersPhysicalRule    search   ( ruleName, 0, "", true );
+      const PhysicalRules& rules    = ilp->second;
+      Name                 ruleName ( ruleNameStr );
+      PhysicalRule         search   ( ruleName, "" );
   
-      TwoLayersRulesSet::const_iterator irule = rules.find( &search );
-      if (irule != rules.end()) return **irule;
+      PhysicalRules::const_iterator irule = rules.find( &search );
+      if (irule != rules.end()) return *irule;
     }
   
     LayerPair reverseSearchLayerPair ( layer2, layer1 );
     ilp = _twoLayersRules.find( reverseSearchLayerPair );
     if (ilp != _twoLayersRules.end()) {
-      const TwoLayersRulesSet& rules    = ilp->second;
-      Name                     ruleName ( ruleNameStr );
-      TwoLayersPhysicalRule    search   ( ruleName, 0, "", true );
+      const PhysicalRules& rules    = ilp->second;
+      Name          ruleName ( ruleNameStr );
+      PhysicalRule  search   ( ruleName, "" );
       
-      TwoLayersRulesSet::const_iterator irule = rules.find( &search );
-      if (irule != rules.end() and (*irule)->isSymetric() ) return **irule;
+      PhysicalRules::const_iterator irule = rules.find( &search );
+      if (irule != rules.end() and (*irule)->isSymmetric() ) return *irule;
     }
   
     throw Error( "Technology::getPhysicalRule(): No rule named \"%s\" for pair (%s,%s)."
@@ -575,68 +600,76 @@ namespace Hurricane {
   }
   
   
-  void Technology::addUnitRule ( const string&   name
-                               ,       double    value
-                               , const string&   reference )
+  PhysicalRule* Technology::addUnitRule ( string name
+                                        , string reference )
   {
-    Name     ruleName ( name );
-    UnitRule search   ( ruleName, 0, "" );
+    Name         ruleName ( name );
+    PhysicalRule search   ( ruleName, "" );
   
     UnitRules::iterator irule = _unitRules.find( &search );
     if (irule != _unitRules.end())
       throw Error( "Technology::addUnitRule(): Attempt to redefine rule \"%s\"." , name.c_str() );
   
-    _unitRules.insert( new UnitRule ( ruleName, value, reference ) ); 
+    PhysicalRule* rule = new PhysicalRule ( ruleName, reference );
+    _unitRules.insert( rule ); 
+    return rule;
   }
   
   
-  void Technology::addPhysicalRule ( const string&   name
-                                   ,       DbU::Unit value
-                                   , const string&   reference )
+  PhysicalRule* Technology::addPhysicalRule ( string name, string reference )
   {
     Name         ruleName ( name );
-    PhysicalRule search   ( ruleName, 0, "" );
+    PhysicalRule search   ( ruleName, "" );
   
     PhysicalRules::iterator irule = _noLayerRules.find( &search );
     if (irule != _noLayerRules.end())
       throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\"." , name.c_str() );
   
-    _noLayerRules.insert( new PhysicalRule ( ruleName, value, reference ) ); 
+    PhysicalRule* rule = new PhysicalRule ( ruleName, reference );
+    _noLayerRules.insert( rule ); 
+
+    return rule;
   }
   
   
-  void Technology::addPhysicalRule ( const string&   ruleNameStr
-                                   , const string&   layerStr
-                                   ,       DbU::Unit value
-                                   , const string&   reference )
+  void Technology::_addPhysicalRule ( string layerStr, PhysicalRule* rule )
   {
-    Name ruleName  ( ruleNameStr );
     Name layerName ( layerStr );
   
-    const Layer* layer = getLayer( layerName );
+    const Layer*            layer  = getLayer( layerName );
     OneLayerRules::iterator ilayer = _oneLayerRules.find(layer);
     if (ilayer == _oneLayerRules.end()) {
       pair<OneLayerRules::iterator, bool> result =
         _oneLayerRules.insert( OneLayerRules::value_type( layer, PhysicalRules()) );
-      result.first->second.insert( new PhysicalRule(ruleName,value,reference) );
+      result.first->second.insert( rule );
     } else {
       PhysicalRules& rules  = ilayer->second;
-      PhysicalRule   search ( ruleName, 0, "" );
+      PhysicalRule   search ( rule->getName(), "" );
       if (rules.find(&search) != rules.end()) {
-        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\"." , ruleNameStr.c_str() );
+        string ruleName = getString( rule->getName() );
+        delete rule;
+        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\" for layer \"%s\"."
+                   , ruleName.c_str(), layerStr.c_str() );
       }
-  
-      rules.insert( new PhysicalRule(ruleName,value,reference) );
+      rules.insert( rule );
     }
   }
   
   
-  void Technology::addPhysicalRule ( const string&   ruleNameStr
-                                   , const string&   layer1Str
-                                   , const string&   layer2Str
-                                   ,       bool      symetric
-                                   ,       DbU::Unit value
-                                   , const string&   reference )
+  PhysicalRule* Technology::addPhysicalRule ( string ruleNameStr
+                                            , string layerStr
+                                            , string reference )
+  {
+    PhysicalRule* rule = new PhysicalRule ( ruleNameStr, reference );
+    _addPhysicalRule( layerStr, rule );
+    return rule;
+  }
+  
+  
+  PhysicalRule* Technology::addPhysicalRule ( string ruleNameStr
+                                            , string layer1Str
+                                            , string layer2Str
+                                            , string reference )
   {
     Name ruleName   ( ruleNameStr );
     Name layer1Name ( layer1Str );
@@ -645,21 +678,36 @@ namespace Hurricane {
     const Layer* layer1    = getLayer(layer1Name);
     const Layer* layer2    = getLayer(layer2Name);
     LayerPair    layerPair ( layer1, layer2 );
-  
-    TwoLayersRules::iterator ilp = _twoLayersRules.find( layerPair );
+
+    if (not layer1)
+        throw Error( "Technology::addPhysicalRule(): Unknown layer1 rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
+    if (not layer2)
+        throw Error( "Technology::addPhysicalRule(): Unknown layer2 rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
+
+    PhysicalRule* rule = new PhysicalRule ( ruleName, reference );
+    TwoLayersRules::iterator ilp  = _twoLayersRules.find( layerPair );
     if (ilp == _twoLayersRules.end()) {
       pair<TwoLayersRules::iterator, bool> result =
-        _twoLayersRules.insert( TwoLayersRules::value_type(layerPair,TwoLayersRulesSet()) );
+        _twoLayersRules.insert( TwoLayersRules::value_type(layerPair,PhysicalRules()) );
   
-      result.first->second.insert( new TwoLayersPhysicalRule(ruleName,value,reference,symetric) );
+      result.first->second.insert( rule );
     } else {
-      TwoLayersRulesSet&    rules  = ilp->second;
-      TwoLayersPhysicalRule search ( ruleName, 0, "", true );
+      PhysicalRules& rules  = ilp->second;
+      PhysicalRule   search ( ruleName, "" );
       if (rules.find(&search) != rules.end()) {
-        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\"." , ruleNameStr.c_str() );
+        delete rule;
+        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\" for (\"%s\",\"%s\")."
+                   , ruleNameStr.c_str(), layer1Str.c_str(), layer2Str.c_str()
+                   );
       }
-      rules.insert( new TwoLayersPhysicalRule(ruleName,value,reference,symetric) );
+      rules.insert( rule );
     }
+
+    return rule;
   }
 
 
@@ -738,7 +786,7 @@ namespace Hurricane {
 
 
   unsigned Technology::LayerMap::_getHashValue ( Name name ) const
-  { return name._getSharedName()->getId() / 8; }
+  { return name._getSharedName()->getHash() / 8; }
 
 
   Layer* Technology::LayerMap::_getNextElement ( Layer* layer ) const

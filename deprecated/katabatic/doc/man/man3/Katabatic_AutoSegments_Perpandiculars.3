@@ -1,0 +1,59 @@
+.TH "AutoSegments_Perpandiculars" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoSegments_Perpandiculars \- All perpandicular \fBAutoSegment\fP to a set of aligneds\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBCollection< Type >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAutoSegments_Perpandiculars\fP (\fBAutoSegment\fP *master)"
+.br
+.ti -1c
+.RI "\fBAutoSegments_Perpandiculars\fP (const \fBAutoSegments_Perpandiculars\fP &)"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHC\fP * \fBgetClone\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHL\fP * \fBgetLocator\fP () const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+All perpandicular \fBAutoSegment\fP to a set of aligneds\&. 
+
+A Collection to iterate over all the \fBAutoSegment\fP perpandicular to the set of aligned \fBAutoSegment\fP of \fCmaster\fP\&.
+.PP
+\fBRemark: This Collection is canonical aware (work on the aligned set)\&.\fP
+.RS 4
+
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAutoSegments_Perpandiculars\fP (\fBAutoSegment\fP * master)\fC [inline]\fP"
+Create a collection of all the \fBAutoSegment\fP perpandicular to the aligned set of \fCmaster\fP\&. 
+.SS "\fBAutoSegments_Perpandiculars\fP (const \fBAutoSegments_Perpandiculars\fP & autosegments)\fC [inline]\fP"
+Copy constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAutoSegmentHC\fP * getClone () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+.SS "\fBAutoSegmentHC\fP * getLocator () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection Locator\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

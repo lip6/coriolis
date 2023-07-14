@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_CELL_WIDGET_H
-#define  HURRICANE_CELL_WIDGET_H
-
+#pragma  once
 #include <math.h>
 #include <vector>
 #include <functional>
@@ -135,6 +133,7 @@ namespace Hurricane {
       inline  Query::Mask               getQueryFilter             () const ;
               void                      bindToPalette              ( PaletteWidget* );
               void                      detachFromPalette          ();
+              void                      detach                     ( Selector*);
               void                      bindCommand                ( Command* );
               void                      unbindCommand              ( Command* );
               void                      resetCommands              ();
@@ -152,6 +151,7 @@ namespace Hurricane {
       inline  bool                      showBoundaries             () const;
       inline  bool                      showSelection              () const;
       inline  bool                      cumulativeSelection        () const;
+      inline  void                      setPixelThreshold          ( int );
       inline  void                      setDbuMode                 ( int );
       inline  void                      setUnitPower               ( DbU::UnitPower );
       inline  void                      setRubberShape             ( RubberShape );
@@ -167,6 +167,7 @@ namespace Hurricane {
       inline  const DisplayStyle::HSVr& getDarkening               () const;
       inline  void                      copyToPrinter              ( int xpaper, int ypaper, QPrinter*, PainterCb_t& );
       inline  void                      copyToImage                ( QImage*, PainterCb_t& );
+      inline  int                       getPixelThreshold          () const;
       inline  const float&              getScale                   () const;
       inline  const QPoint&             getMousePosition           () const;
       inline  void                      updateMousePosition        ();
@@ -183,6 +184,7 @@ namespace Hurricane {
       inline  void                      setPen                     ( const QPen& , size_t plane=PlaneId::Working );
               void                      drawBox                    ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                      drawBox                    ( const Box& );
+              void                      drawBoxBorder              ( const Box& );
               void                      drawLine                   ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit, bool mode=true );
               void                      drawLine                   ( const Point&, const Point&, bool mode=true );
               void                      drawText                   ( const Point&, const char*, unsigned int flags=0, int angle=0 );
@@ -249,7 +251,8 @@ namespace Hurricane {
               void                      mousePositionChanged       ( const Point& position );
               void                      selectionModeChanged       ();
               void                      selectionChanged           ( const SelectorSet& );
-              void                      selectionToggled           ( Occurrence );
+              void                      selectionToggled           ( Selector* );
+              void                      unlinkSelector             ( Selector* );
               void                      showBoundariesToggled      ( bool );
     protected:
       virtual void                      paintEvent                 ( QPaintEvent* );
@@ -262,10 +265,16 @@ namespace Hurricane {
       inline  DrawingPlanes&            getDrawingPlanes           ();
            // void                      select                     ( const Net* );
               void                      select                     ( Occurrence );
+              void                      select                     ( Occurrences );
+              void                      selectSet                  ( const OccurrenceSet& );
+              void                      selectSet                  ( const ComponentSet& );
               bool                      isSelected                 ( Occurrence );
               void                      selectOccurrencesUnder     ( Box selectArea );
            // void                      unselect                   ( const Net* );
               void                      unselect                   ( Occurrence );
+              void                      unselect                   ( Occurrences );
+              void                      unselectSet                ( const ComponentSet& );
+              void                      unselectSet                ( const OccurrenceSet& );
               void                      unselectAll                ();
               void                      toggleSelection            ( Occurrence );
               void                      setShowSelection           ( bool state );
@@ -533,10 +542,10 @@ namespace Hurricane {
                                                   ~SelectorCriterions ();
           inline void                              setCellWidget      ( CellWidget* );
           inline const vector<SelectorCriterion*>& getCriterions      () const;
-                 SelectorCriterion*                add                ( const Net* net );
+                 SelectorCriterion*                add                ( Occurrence netOccurrence );
                  SelectorCriterion*                add                ( Box area );
           inline SelectorCriterion*                add                ( SelectorCriterion* );
-                 bool                              remove             ( const Net* net );
+                 bool                              remove             ( Occurrence netOccurrence );
                  void                              clear              ();
                  void                              invalidate         ();
                  void                              revalidate         ();
@@ -638,7 +647,6 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static  int                        _initialSide;
               vector<Qt::CursorShape>    _cursors;
     //        MapView*                   _mapView;
               Technology*                _technology;
@@ -663,6 +671,7 @@ namespace Hurricane {
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
               int                        _textFontHeight;
+              int                        _pixelThreshold;
 
       friend class RedrawManager;
   };
@@ -990,9 +999,9 @@ namespace Hurricane {
   {
     _dbuMode = mode;
     switch ( _dbuMode ) {
-      case DbU::Symbolic: _cursorStep = DbU::lambda(0.5); break;
-      case DbU::Grid:     _cursorStep = DbU::grid  (1.0); break;
-      case DbU::Physical: _cursorStep = DbU::grid  (1.0); break;
+      case DbU::Symbolic: _cursorStep = DbU::fromLambda(0.5); break;
+      case DbU::Grid:     _cursorStep = DbU::fromGrid  (1.0); break;
+      case DbU::Physical: _cursorStep = DbU::fromGrid  (1.0); break;
     }
   }
 
@@ -1110,6 +1119,14 @@ namespace Hurricane {
 
   inline const float& CellWidget::State::getScale () const
   { return _scaleHistory[_ihistory]._scale; }
+
+
+  inline  void  CellWidget::setPixelThreshold ( int pixelThreshold )
+  { _pixelThreshold = pixelThreshold; }
+
+
+  inline  int  CellWidget::getPixelThreshold () const
+  { return _pixelThreshold; }
 
 
   inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
@@ -1468,6 +1485,3 @@ namespace Hurricane {
 
 GETSTRING_POINTER_SUPPORT(Hurricane::CellWidget);
 IOSTREAM_POINTER_SUPPORT(Hurricane::CellWidget);
-
-
-#endif  // HURRICANE_CELL_WIDGET

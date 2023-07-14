@@ -47,11 +47,11 @@ namespace {
 
   class SortAcByXY {
     public:
-      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 );
+      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const;
   };
 
 
-  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 )
+  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const
   {
     DbU::Unit x1 = contact1->getX();
     DbU::Unit x2 = contact2->getX();
@@ -120,9 +120,9 @@ namespace {
 
   void  propagateCagedConstraints ( TrackElement* segment, set<TrackElement*>& faileds )
   {
-    if (not segment->isFixed()) return;
+    cdebug_log(159,0) << "propagateCagedConstraints(): " << segment << endl;
 
-    cdebug_log(159,0) << "Propagate caging: " << segment << endl;
+    if (not segment->isFixed()) return;
 
     Track*                 track         = segment->getTrack();
   //Flags                  direction     = Session::getRoutingGauge()->getLayerDirection(segment->getLayer());
@@ -142,7 +142,7 @@ namespace {
   // Computing constraints from fixed only TrackElements (caging).
     TrackElement* parallel;
     size_t i = track->find( segment );
-    while ( i > 0 ) {
+    while ( (i != Track::npos) and (i > 0) ) {
       parallel = track->getSegment( --i );
       if (not parallel) continue;
       if (parallel->getTargetU() < uside.getVMin()) break;
@@ -183,8 +183,9 @@ namespace {
         TrackElement* parallel;
         for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
           parallel = Session::lookup( osegment );
-          cdebug_log(159,0) << "* " << parallel << endl;
+          if (not parallel) continue;
 
+          cdebug_log(159,0) << "* " << parallel << endl;
           if (parallel->isFixed ()) continue;
           if (parallel->isGlobal()) continue;
           getPerpandiculars( parallel, source, direction, perpandiculars );
@@ -208,7 +209,6 @@ namespace {
     Interval constraints ( minConstraint, maxConstraint );
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       cdebug_log(159,0) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
-      cerr << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
       if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
         cdebug_log(159,0) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
@@ -257,7 +257,7 @@ namespace {
 
     Configuration* configuration = Session::getConfiguration();
     const Layer*   metal2        = configuration->getRoutingLayer( 1 );
-    const Layer*   metal3        = configuration->getRoutingLayer( 2 );
+  //const Layer*   metal3        = configuration->getRoutingLayer( 2 );
     Net*           neighborNet   = NULL;
     RoutingPlane*  metal3plane   = track->getRoutingPlane()->getTop();
 
@@ -282,12 +282,6 @@ namespace {
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)
            or (freeInterval.getVMax() - segment->getTargetU() < ppitch*3) ) {
           cparanoid << "[INFO] Caged terminal: " << segment << endl;
-          if (  (segment->getLayer () != metal2)
-             or (segment->getLength() >= ppitch)
-             or (segment->getNet   () == neighborNet) ) {
-            neighborNet = segment->getNet();
-            continue;
-          }
 
           Anabatic::AutoContact* support     = NULL;
           Anabatic::AutoContact* turn        = NULL;
@@ -298,6 +292,19 @@ namespace {
             support = segment->base()->getAutoTarget();
             turn    = segment->base()->getAutoSource();
           }
+
+          DbU::Unit supportLength = support->getConstraintBox().getWidth();
+          cdebug_log(159,0) << "Support length (rp): " << DbU::getValueString(supportLength) << endl;
+
+          if (  (segment->getLayer () != metal2)
+           //or (segment->getLength() >= ppitch)
+             or (supportLength        >= ppitch)
+             or (segment->getNet   () == neighborNet) ) {
+            neighborNet = segment->getNet();
+            continue;
+          }
+
+          cdebug_log(159,0) << "Protect " << segment << endl;
 
           RoutingPad* rp          = dynamic_cast<RoutingPad*>(support->getAnchor());
           Track*      metal3track = metal3plane->getTrackByPosition( rp->getSourcePosition().getX() );
@@ -321,6 +328,7 @@ namespace {
           }
           lastMovedUp = segment->getSourceU();
           
+#if NOT_NEEDED_AFTER_6502_OPTIM
           Anabatic::AutoContact* source
             = Anabatic::AutoContactTerminal::create( support->getGCell()
                                                     , rp
@@ -342,6 +350,7 @@ namespace {
           AutoSegment* fixedSegment = AutoSegment::create( source, target, Flags::Vertical );
           fixedSegment->setFlags( AutoSegment::SegFixed );
           Session::getNegociateWindow()->createTrackSegment( fixedSegment, Flags::LoadingStage );
+#endif
         }
 
         neighborNet = segment->getNet();
@@ -352,6 +361,7 @@ namespace {
   }
 
 
+#if THIS_IS_DISABLED
   void  metal2protect ( AutoContactTerminal* contact )
   {
     const Layer*  metal2         = Session::getRoutingLayer(1);
@@ -386,6 +396,7 @@ namespace {
     cdebug_log(145,0) << "X:" << DbU::getValueString(position.getX())
                       << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
   }
+#endif
 
 
 } // End of local namespace.
@@ -415,7 +426,6 @@ namespace Katana {
     }
 
   //DebugSession::close();
-    
     Session::revalidate ();
   }
 

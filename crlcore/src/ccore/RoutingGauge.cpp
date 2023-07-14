@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -56,23 +56,29 @@ namespace CRL {
 
 
   RoutingGauge::RoutingGauge ( const char* name )
-    : _name       (name)
-    , _layerGauges()
-    , _viaLayers  ()
-    , _technology (DataBase::getDB()->getTechnology())
-    , _isSymbolic (true)
+    : _name             (name)
+    , _layerGauges      ()
+    , _viaLayers        ()
+    , _technology       (DataBase::getDB()->getTechnology())
+    , _isSymbolic       (true)
+    , _isSuperPitched   (true)
+    , _firstRoutingLayer(0)
+    , _usableLayers     (0)
   { }
 
 
   RoutingGauge::RoutingGauge ( const RoutingGauge& gauge )
-    : _name       (gauge._name)
-    , _layerGauges()
-    , _viaLayers  ()
-    , _technology (gauge._technology)
-    , _isSymbolic (gauge._isSymbolic)
+    : _name             (gauge._name)
+    , _layerGauges      ()
+    , _viaLayers        ()
+    , _technology       (gauge._technology)
+    , _isSymbolic       (gauge._isSymbolic)
+    , _isSuperPitched   (gauge._isSuperPitched)
+    , _firstRoutingLayer(0)
+    , _usableLayers     (0)
   {
   // Make a deep copy of the map.
-    for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ )
+    for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ ) {
       addLayerGauge ( RoutingLayerGauge::create 
                       ( gauge._layerGauges[i]->getLayer()
                       , gauge._layerGauges[i]->getDirection()
@@ -82,9 +88,11 @@ namespace CRL {
                       , gauge._layerGauges[i]->getOffset()
                       , gauge._layerGauges[i]->getPitch()
                       , gauge._layerGauges[i]->getWireWidth()
+                      , gauge._layerGauges[i]->getPWireWidth()
                       , gauge._layerGauges[i]->getViaWidth()
                       , gauge._layerGauges[i]->getObstacleDw() )
                     );
+    }
   }
 
 
@@ -120,25 +128,69 @@ namespace CRL {
   }
 
 
+  bool  RoutingGauge::hasLayer ( const Layer* layer ) const
+  { return (getLayerGauge(layer) != NULL) or (getViaDepth(layer) != nlayerdepth); }
+
+
+  RoutingLayerGauge* RoutingGauge::getPowerSupplyGauge () const
+  {
+    size_t i = _layerGauges.size();
+    if (i == 0) return NULL;
+    do {
+      --i;
+      if (_layerGauges[i]->getType() == Constant::PowerSupply)
+        return _layerGauges[i];
+    } while ( i > 0);
+    return NULL;
+  }
+
+
+  RoutingLayerGauge* RoutingGauge::getFirstRoutingGauge () const
+  {
+    for ( RoutingLayerGauge* rlg : _layerGauges ) {
+      if (rlg->getType() == Constant::LayerGaugeType::Default)
+        return rlg;
+    }
+    return nullptr;
+  }
+
+
   RoutingLayerGauge* RoutingGauge::getHorizontalGauge () const
   {
-    for ( RoutingLayerGauge* gauge : _layerGauges ) {
-    //if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isHorizontal() )
-      if (gauge->isHorizontal())
-        return gauge;
+    RoutingLayerGauge* pinOnly = NULL;
+    for ( size_t i=_firstRoutingLayer ; i<_layerGauges.size() ; ++i ) {
+      RoutingLayerGauge* gauge = _layerGauges[i];
+      if (gauge->isHorizontal()) {
+        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+          return gauge;
+        else if (not pinOnly)
+          pinOnly = gauge;
+      }
     }
-    return NULL;
+    return pinOnly;
   }
 
 
   RoutingLayerGauge* RoutingGauge::getVerticalGauge () const
   {
-    for ( RoutingLayerGauge* gauge : _layerGauges ) {
-    //if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isVertical() )
-      if (gauge->isVertical())
-        return gauge;
+    RoutingLayerGauge* pinOnly = NULL;
+    for ( size_t i=_firstRoutingLayer ; i<_layerGauges.size() ; ++i ) {
+      RoutingLayerGauge* gauge = _layerGauges[i];
+      if (gauge->isVertical()) {
+        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+          return gauge;
+        else if (not pinOnly)
+          pinOnly = gauge;
+      }
     }
-    return NULL;
+    return pinOnly;
+  }
+  
+ 
+  RoutingLayerGauge* RoutingGauge::getLayerGauge ( size_t depth ) const
+  {
+    if ( depth >= _layerGauges.size() ) return NULL;
+    return _layerGauges[depth];
   }
 
 
@@ -149,6 +201,20 @@ namespace CRL {
         return _layerGauges[i];
     }
     return NULL;
+  }
+
+
+  const Layer* RoutingGauge::getRoutingLayer ( size_t depth ) const
+  {
+    if ( depth >= _layerGauges.size() ) return NULL;
+    return _layerGauges[depth]->getLayer();
+  }
+
+
+  Layer* RoutingGauge::getContactLayer ( size_t depth ) const
+  {
+    if ( depth >= _viaLayers.size() ) return NULL;
+    return _viaLayers[depth];
   }
 
 
@@ -178,8 +244,9 @@ namespace CRL {
     if (viaLayer) bottomLayer = viaLayer->getBottom();
 
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
-      if (_layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask())
+      if (_layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask()) {
         return i;
+      }
     }
     return nlayerdepth;
   }
@@ -188,31 +255,46 @@ namespace CRL {
   size_t  RoutingGauge::getLayerDepth ( const Layer* layer ) const
   {
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
-      if (_layerGauges[i]->getLayer()->getMask() == layer->getMask())
+      if (_layerGauges[i]->getLayer()->getMask() == layer->getMask()) {
         return i;
+      }
     }
     return nlayerdepth;
   }
 
 
-  RoutingLayerGauge* RoutingGauge::getLayerGauge ( size_t depth ) const
+  DbU::Unit  RoutingGauge::getPitch ( const Layer* layer ) const
   {
-    if ( depth >= _layerGauges.size() ) return NULL;
-    return _layerGauges[depth];
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getPitch() : 0;
   }
 
 
-  const Layer* RoutingGauge::getRoutingLayer ( size_t depth ) const
+  DbU::Unit  RoutingGauge::getOffset ( const Layer* layer ) const
   {
-    if ( depth >= _layerGauges.size() ) return NULL;
-    return _layerGauges[depth]->getLayer();
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getOffset() : 0;
   }
 
 
-  Layer* RoutingGauge::getContactLayer ( size_t depth ) const
+  DbU::Unit  RoutingGauge::getWireWidth ( const Layer* layer ) const
   {
-    if ( depth >= _viaLayers.size() ) return NULL;
-    return _viaLayers[depth];
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getWireWidth() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getPWireWidth ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getPWireWidth() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getViaWidth ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getViaWidth() : 0;
   }
 
 
@@ -229,6 +311,7 @@ namespace CRL {
                                 , getString(_name).c_str() );
 
     _layerGauges.push_back( layerGauge );
+    layerGauge->setRoutingGauge( this );
 
     size_t gaugeSize = _layerGauges.size();
     if (gaugeSize > 1) {
@@ -236,11 +319,30 @@ namespace CRL {
                                                   , _layerGauges[gaugeSize-1]->getLayer()
                                                   , _layerGauges[gaugeSize-1]->getLayer()->isSymbolic() );
       if (not viaLayer) {
-        cerr << Error( "Can't find a VIA between Gauge layers %s and %s."
+        cerr << Error( "RoutingGauge::addLayerGauge(): Can't find a VIA between Gauge layers %s and %s."
                      , getString(_layerGauges[gaugeSize-2]).c_str()
                      , getString(_layerGauges[gaugeSize-1]).c_str() ) << endl;
       }
       _viaLayers.push_back( viaLayer );
+    }
+
+    if ((gaugeSize > 3) and _isSuperPitched) {
+      float r = ((float)layerGauge->getPitch() / (float)_layerGauges[gaugeSize-3]->getPitch());
+      if (fabsf(roundf(r) - r) > 0.00001f)
+        _isSuperPitched = false;
+    }
+
+    if (  (layerGauge->getType() == Constant::LayerGaugeType::BottomPowerSupply)
+       or (layerGauge->getType() == Constant::LayerGaugeType::Unusable)) {
+      if (_usableLayers) {
+        cerr << Error( "RoutingGauge::addLayerGauge(): BottomPowerSupply & Unusable must be at the bottom {}."
+                     , getString(layerGauge).c_str() ) << endl;
+      } else {
+        ++_firstRoutingLayer;
+      }
+    } else {
+      if (layerGauge->getType() == Constant::LayerGaugeType::Default)
+        ++_usableLayers;
     }
   }
 
@@ -276,20 +378,23 @@ namespace CRL {
   string  RoutingGauge::_getString () const
   {
     ostringstream  os;
-    os << "<" << "RoutingGauge " << _name << ">";
-
-    return ( os.str() );
+    os << "<" << "RoutingGauge " << _name
+       << " firstRL=" << _firstRoutingLayer
+       << " usables=" << _usableLayers << ">";
+    return os.str();
   }
 
 
   Record* RoutingGauge::_getRecord ( Record* record ) const
   {
-    if ( record == NULL )
+    if (not record)
       record = new Record ( getString(this) );
 
-    record->add ( getSlot("_name"      , _name       ) );
-    record->add ( getSlot("_gauges"    ,&_layerGauges) );
-    record->add ( getSlot("_isSymbolic", _isSymbolic ) );
+    record->add( getSlot("_name"           , _name          ));
+    record->add( getSlot("_gauges"        ,&_layerGauges    ));
+    record->add( getSlot("_isSymbolic"    , _isSymbolic     ));
+    record->add( getSlot("_isSuperPitched", _isSuperPitched ));
+    record->add( getSlot("_usableLayers"  , _usableLayers   ));
     return ( record );
   }
 

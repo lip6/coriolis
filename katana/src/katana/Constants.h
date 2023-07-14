@@ -14,12 +14,16 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_CONSTANTS_H
-#define  KATANA_CONSTANTS_H
-
+#pragma  once
 #include "anabatic/Constants.h"
 
 namespace Katana {
+
+  
+  static const uint32_t  StageNegociate = 1;
+  static const uint32_t  StagePack      = 2;
+  static const uint32_t  StageRepair    = 3;
+  static const uint32_t  StageRealign   = 4;
 
 
   class Flags : public Anabatic::Flags {
@@ -39,6 +43,12 @@ namespace Katana {
       static const Hurricane::BaseFlags  SlowMotion;
       static const Hurricane::BaseFlags  PreRoutedStage;
       static const Hurricane::BaseFlags  PairSymmetrics;
+      static const Hurricane::BaseFlags  ShowFailedNets;
+      static const Hurricane::BaseFlags  ShowFailedGSegments;
+      static const Hurricane::BaseFlags  ShowOverloadedEdges;
+      static const Hurricane::BaseFlags  ShowOverloadedGCells;
+      static const Hurricane::BaseFlags  ShowBloatedInstances;
+      static const Hurricane::BaseFlags  ProtectSelf;
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );
@@ -54,6 +64,4 @@ namespace Katana {
 } // Katana namespace.
 
 
-INSPECTOR_PV_SUPPORT(Katana::Flags)
-
-#endif  // KATANA_CONSTANTS_H
+INSPECTOR_PR_SUPPORT(Katana::Flags);

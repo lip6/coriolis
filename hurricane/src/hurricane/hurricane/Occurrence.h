@@ -79,6 +79,7 @@ class Occurrence {
 // **********
 
     public: bool isValid() const {return (_entity != NULL);};
+    public: bool isBelowTerminalNetlist() const;
     public: bool hasProperty() const;
 
 // Updators
@@ -119,6 +120,10 @@ class JsonOccurrence : public JsonObject {
   public: virtual JsonOccurrence* clone(unsigned long) const;
   public: virtual void toData(JsonStack&); 
 };
+
+
+  typedef  std::set<Occurrence>  OccurrenceSet;
+
 
 } // End of Hurricane namespace.
 

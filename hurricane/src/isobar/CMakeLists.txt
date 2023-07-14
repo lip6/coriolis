@@ -4,11 +4,12 @@
    include_directories( ${HURRICANE_SOURCE_DIR}/src/hurricane
                         ${HURRICANE_SOURCE_DIR}/src/viewer
                         ${HURRICANE_SOURCE_DIR}/src/isobar
+                        ${HURRICANE_SOURCE_DIR}/src/configuration3
                         ${Boost_INCLUDE_DIRS}
-                        ${CONFIGURATION_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( pyCpps     ProxyProperty.cpp
+                                   PythonAttributes.cpp
                                    PyBreakpoint.cpp
                                    PyInterval.cpp
                                    PyBox.cpp
@@ -46,6 +47,7 @@
                                    PyNetExternalComponents.cpp
                                    PyNetRoutingState.cpp
                                    PyNetRoutingProperty.cpp
+                                   PyPythonAttributes.cpp
                                    PyOccurrence.cpp
                                    PyOccurrenceCollection.cpp
                                    PyHook.cpp
@@ -64,6 +66,7 @@
                                    PyReference.cpp
                                    PyReferenceCollection.cpp
                                    PyRoutingPad.cpp
+                                   PyRoutingPadCollection.cpp
                                    PySegment.cpp
                                    PySegmentCollection.cpp
                                    PyTechnology.cpp
@@ -84,6 +87,7 @@
                                    PyTwoLayersPhysicalRule.cpp
                       )	    
                    set( pyIncludes hurricane/isobar/ProxyProperty.h
+                                   hurricane/isobar/PythonAttributes.h
                                    hurricane/isobar/PyBreakpoint.h
                                    hurricane/isobar/PyInterval.h
                                    hurricane/isobar/PyBox.h
@@ -96,6 +100,7 @@
                                    hurricane/isobar/PyEntity.h
                                    hurricane/isobar/PyHorizontal.h
                                    hurricane/isobar/PyHurricane.h
+                                  #hurricane/isobar/PyHurricane2.h
                                    hurricane/isobar/PyHyperNet.h
                                    hurricane/isobar/PyPlacementStatus.h
                                    hurricane/isobar/PyInstance.h
@@ -121,6 +126,7 @@
                                    hurricane/isobar/PyNetExternalComponents.h
                                    hurricane/isobar/PyNetRoutingState.h
                                    hurricane/isobar/PyNetRoutingProperty.h
+                                   hurricane/isobar/PyPythonAttributes.h
                                    hurricane/isobar/PyOccurrence.h
                                    hurricane/isobar/PyOccurrenceCollection.h
                                    hurricane/isobar/PyHook.h
@@ -139,6 +145,7 @@
                                    hurricane/isobar/PyReference.h
                                    hurricane/isobar/PyReferenceCollection.h
                                    hurricane/isobar/PyRoutingPad.h
+                                   hurricane/isobar/PyRoutingPadCollection.h
                                    hurricane/isobar/PySegment.h
                                    hurricane/isobar/PySegmentCollection.h
                                    hurricane/isobar/PyTechnology.h
@@ -160,8 +167,9 @@
                       )
 
                    set( depLibs    hurricane
+                                   ${Python3_LIBRARIES}
                                    ${Boost_LIBRARIES}
-                                   ${PYTHON_LIBRARIES}
+                                   
                       )
 
      add_python_module( "${pyCpps}"

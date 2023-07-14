@@ -1,0 +1,390 @@
+.TH "RoutingEvent" 3 "Sun Nov 21 2021" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RoutingEvent \- Atomic Placement Request for a \fBTrackSegment\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBKey\fP"
+.br
+.RI "\fBRoutingEvent\fP cached key for maps\&. "
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBMode\fP { \fBNegociate\fP =1, \fBPack\fP =2, \fBRepair\fP =3 }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRoutingEvent\fP * \fBclone\fP () const"
+.br
+.ti -1c
+.RI "void \fBdestroy\fP ()"
+.br
+.ti -1c
+.RI "bool \fBisCloned\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisValid\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisUnimplemented\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisProcessed\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisDisabled\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisForcedToHint\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisRipedByLocal\fP () const"
+.br
+.ti -1c
+.RI "bool \fBgetMode\fP () const"
+.br
+.ti -1c
+.RI "bool \fBcanMinimize\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetState\fP () const"
+.br
+.ti -1c
+.RI "const \fBKey\fP & \fBgetKey\fP () const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetSegment\fP () const"
+.br
+.ti -1c
+.RI "const vector< \fBTrackElement\fP * > & \fBgetPerpandiculars\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetAxisHint\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetAxisHistory\fP () const"
+.br
+.ti -1c
+.RI "long \fBgetAxisWeight\fP (\fBDbU::Unit\fP) const"
+.br
+.ti -1c
+.RI "const \fBInterval\fP & \fBgetConstraints\fP () const"
+.br
+.ti -1c
+.RI "const \fBInterval\fP & \fBgetOptimal\fP () const"
+.br
+.ti -1c
+.RI "float \fBgetPriority\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetTracksNb\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetInsertState\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetEventLevel\fP () const"
+.br
+.ti -1c
+.RI "void \fBrevalidate\fP ()"
+.br
+.ti -1c
+.RI "void \fBupdateKey\fP ()"
+.br
+.ti -1c
+.RI "void \fBprocess\fP (\fBRoutingEventQueue\fP &, \fBRoutingEventHistory\fP &, \fBRoutingEventLoop\fP &)"
+.br
+.ti -1c
+.RI "void \fBsetSegment\fP (\fBTrackElement\fP *)"
+.br
+.ti -1c
+.RI "\fBRoutingEvent\fP * \fBreschedule\fP (\fBRoutingEventQueue\fP &, unsigned int eventLevel)"
+.br
+.ti -1c
+.RI "void \fBsetMode\fP (unsigned int)"
+.br
+.ti -1c
+.RI "void \fBsetState\fP (unsigned int)"
+.br
+.ti -1c
+.RI "void \fBsetAxisHintFromParent\fP ()"
+.br
+.ti -1c
+.RI "void \fBincInsertState\fP ()"
+.br
+.ti -1c
+.RI "void \fBresetInsertState\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetEventLevel\fP (unsigned int)"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static unsigned int \fBgetStage\fP ()"
+.br
+.ti -1c
+.RI "static size_t \fBgetAllocateds\fP ()"
+.br
+.ti -1c
+.RI "static size_t \fBgetProcesseds\fP ()"
+.br
+.ti -1c
+.RI "static void \fBresetProcesseds\fP ()"
+.br
+.ti -1c
+.RI "static void \fBsetStage\fP (unsigned int)"
+.br
+.ti -1c
+.RI "static \fBRoutingEvent\fP * \fBcreate\fP (\fBTrackElement\fP *, unsigned int mode=\fBNegociate\fP)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Atomic Placement Request for a \fBTrackSegment\fP\&. 
+
+The trackFrees attribute has to be reviewed not sure it's still useful\&.
+.PP
+Cached key for stable sorting, see \fBRoutingEvent::Key\fP\&. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBMode\fP"
+The working mode of the router, affect how events are to be handled\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fINegociate \fP\fP
+This is the normal mode of operation, topological modifications and ripup are enableds\&. 
+.TP
+\fB\fIPack \fP\fP
+First post-processing step\&. For each segment, tries to find a more compact position for a segment, but without riping any others\&. 
+.TP
+\fB\fIRepair \fP\fP
+Second post-processing step, try to find a suitable location for a segment more aggressively\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "unsigned int getStage ()\fC [static]\fP"
+\fBReturns:\fP The stage the router is in (see \fBRoutingEvent::Mode\fP)\&. 
+.PP
+Referenced by SegmentAction::doAction(), Manipulator::repackPerpandiculars(), RoutingEvent::reschedule(), RoutingEvent::revalidate(), SegmentFsm::SegmentFsm(), and RoutingEvent::setAxisHintFromParent()\&.
+.SS "size_t getAllocateds ()\fC [static]\fP"
+\fBReturns:\fP The number of \fBRoutingEvent\fP currently allocateds\&. 
+.SS "size_t getProcesseds ()\fC [static]\fP"
+\fBReturns:\fP The number of \fBRoutingEvent\fP that have been processeds since the last call to \fBRoutingEvent::resetProcesseds()\fP\&. 
+.PP
+Referenced by NegociateWindow::printStatistics(), RoutingEvent::process(), and RoutingEventLoop::update()\&.
+.SS "void resetProcesseds ()\fC [static]\fP"
+\fBReturns:\fP Reset the number of processeds events\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+.SS "unsigned int setStage (unsigned int mode)\fC [static]\fP"
+Sets the router's stage (see \fBRoutingEvent::Mode\fP)\&. 
+.SS "\fBRoutingEvent\fP * create (\fBTrackElement\fP * element, unsigned int mode = \fC\fBNegociate\fP\fP)\fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIelement\fP The element for which to create the event\&. 
+.br
+\fImode\fP The mode into which this event will be valid\&.
+.RE
+.PP
+\fBRoutingEvent\fP constructor\&. 
+.PP
+Referenced by RoutingEventQueue::add(), and RoutingEventQueue::load()\&.
+.SS "\fBRoutingEvent\fP * clone () const"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A clone of the event\&.
+.RE
+.PP
+Cloning an event is slightly different from copying it (which is forbidden)\&. There can be multiple events for one \fCelement\fP but only one must be active at a time\&. This is a cheap way of implementing the rescheduling mechanism\&. The original event remains the active one, but it's cloned flag is raised\&. The cloned event is created inactive and with a null \fIeventLevel\fP\&. 
+.PP
+Referenced by RoutingEvent::reschedule()\&.
+.SS "void destroy ()"
+The destructor\&. 
+.SS "bool isCloned () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if this event has been cloned at least once\&. 
+.SS "bool isValid () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the cached informations from the \fIelement\fP are valid (i\&.e\&. the element has not been changed)\&. 
+.SS "bool isUnimplemented () const"
+\fBReturns:\fP \fBtrue\fP if the event has tried to use an unimplemented feature\&. 
+.PP
+Referenced by Manipulator::canRipup(), and RoutingEvent::reschedule()\&.
+.SS "bool isProcessed () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the event has been processed\&. 
+.PP
+Referenced by RoutingEvent::process(), and RoutingEvent::reschedule()\&.
+.SS "bool isDisabled () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the event is \fBnot\fP the active one\&. It should be discarted by the algorithm\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "bool isForcedToHint () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP the \fIelement\fP must be placed exacltly on the given axis hint\&. 
+.SS "bool isRipedByLocal () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP the \fIelement\fP (global) has been riped up to place a local one\&. 
+.SS "unsigned int getMode () const\fC [inline]\fP"
+\fBReturns:\fP the mode the event must be taken into account to\&. 
+.SS "bool canMinimize () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP the \fIelement\fP could still be minimized\&. 
+.PP
+Referenced by Manipulator::minimize()\&.
+.SS "unsigned int getState () const"
+\fBReturns:\fP the mode the router is currently in\&. 
+.PP
+Referenced by RoutingEvent::isUnimplemented()\&.
+.SS "const \fBKey\fP & getKey () const\fC [inline]\fP"
+\fBReturns:\fP The \fIkey\fP to use in map & queue for this event\&. 
+.SS "\fBTrackElement\fP * getSegment () const\fC [inline]\fP"
+\fBReturns:\fP The associated segment\&. 
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory(), SegmentFsm::conflictSolveByPlaceds(), SegmentFsm::desaturate(), SegmentFsm::doActions(), SegmentFsm::insertInTrack(), Manipulator::ripupPerpandiculars(), SegmentFsm::SegmentFsm(), SegmentFsm::slackenTopology(), and SegmentFsm::solveFullBlockages()\&.
+.SS "const vector< \fBTrackElement\fP * > & getPerpandiculars () const\fC [inline]\fP"
+\fBReturns:\fP A vector of cached perpandiculars to the associated segment\&. 
+.PP
+Referenced by Manipulator::minimize(), Manipulator::repackPerpandiculars(), and Manipulator::ripupPerpandiculars()\&.
+.SS "\fBDbU::Unit\fP getAxisHint () const\fC [inline]\fP"
+\fBReturns:\fP The preferred position for the segment axis\&. 
+.PP
+Referenced by RoutingEvent::getAxisWeight(), RoutingEvent::revalidate(), Manipulator::ripple(), and SegmentFsm::SegmentFsm()\&.
+.SS "\fBDbU::Unit\fP getAxisHistory () const\fC [inline]\fP"
+\fBReturns:\fP The previous position of the segment axis (before it's current position)\&. 
+.SS "\fBDbU::Unit\fP getAxisWeight (\fBDbU::Unit\fP axis) const\fC [inline]\fP"
+\fBReturns:\fP The distance between \fCaxis\fP and the preferred position\&. 
+.PP
+Referenced by SegmentFsm::SegmentFsm()\&.
+.SS "const \fBInterval\fP & getConstraints () const\fC [inline]\fP"
+\fBReturns:\fP The range of legal positions for the axis\&. 
+.PP
+Referenced by Manipulator::minimize(), Manipulator::ripupPerpandiculars(), and SegmentFsm::SegmentFsm()\&.
+.SS "const \fBInterval\fP & getOptimal () const\fC [inline]\fP"
+\fBReturns:\fP The range of positions for the optimal axis (cached)\&. 
+.PP
+Referenced by SegmentFsm::SegmentFsm()\&.
+.SS "unsigned int getPriority () const\fC [inline]\fP"
+\fBReturns:\fP The priority of the event, it quantify the degree of freedom of the segment\&. Currently it's computed from the length of the segment and it's slack: \[ priority = (slack(segment)+1.0) \times (length(segment)+1.0) \] A high priority means that the segment will be harder to place thus it will be scheduled first\&. With this function, longer segments will be placed first\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "unsigned int getTracksNb () const\fC [inline]\fP"
+\fBReturns:\fP The number of tracks avalaibles for the segment to be placed\&. 
+.PP
+Referenced by SegmentFsm::SegmentFsm()\&.
+.SS "unsigned int getInsertState () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The kind of track insertion that will be intended\&. It's a counter whose values have the following meaning:
+.IP "\(bu" 2
+\fB1\fP : normal insert\&.
+.IP "\(bu" 2
+\fB2\fP : shrink the segment to it's minimum before inserting\&.
+.IP "\(bu" 2
+\fB3\fP : attempt to ripup conflicting others before inserting\&. 
+.PP
+.RE
+.PP
+
+.PP
+Referenced by SegmentFsm::insertInTrack()\&.
+.SS "unsigned int getEventLevel () const\fC [inline]\fP"
+\fBReturns:\fP The event level of the event, used to tweak the order inside the event queue\&. It differs from the priority in the sense that it isn't a topologicaly based value, but manipulated by the algorithm\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "void revalidate ()"
+Perform an event revalidation\&. 
+.PP
+Referenced by SegmentFsm::SegmentFsm(), and RoutingEvent::updateKey()\&.
+.SS "void updateKey ()\fC [inline]\fP"
+Update the key with the new values from the event, the key \fImust\fP not be inserted in the queue when this method is called\&. 
+.SS "void process (\fBRoutingEventQueue\fP & queue, \fBRoutingEventHistory\fP & history, \fBRoutingEventLoop\fP & loop)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIqueue\fP The main event queue\&. 
+.br
+\fIhistory\fP The event's history list\&. 
+.br
+\fIloop\fP The loop detector\&.
+.RE
+.PP
+Process the event, that is:
+.IP "\(bu" 2
+First, check if there is no looping, if any, do not process the event but dicard it (marked as unimplemented)\&.
+.IP "\(bu" 2
+Second, attempt to place the associated segment\&. Pass it to the relevant function, according to the router's mode (\fC_processNegociate()\fP, \fCprocessPack()\fP or \fC_processRepair()\fP )\&. Once processed, the event is added to both \fChistory\fP (for the record) and \fCloop\fP to check if we are not looping\&. 
+.PP
+
+.SS "void setSegment (\fBTrackElement\fP * element)"
+Change the associated \fCsegment\fP\&. Used only by \fBTrackSegment::swapTrack()\fP\&. 
+.PP
+Referenced by TrackSegment::swapTrack()\&.
+.SS "\fBRoutingEvent\fP * reschedule (\fBRoutingEventQueue\fP & queue, unsigned int eventLevel)"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The newly reinserted event\&. Depending on the cases it could be itself\&.
+.RE
+.PP
+Insert or reinsert an event in the scheduler\&. The \fCeventLevel\fP parameter only allows to increase the level (if it is less than the current level of the event, it will be ignored)\&.
+.PP
+\fBCloning Management\&.\fP As an event could be cloned, if we try to re-insert a disabled original, we must first lookup the currently cloned active event\&. This is done through the associated \fCsegment\fP which must always be associated with the active event (if any)\&.
+.PP
+\fBUnimplemented Protection\&.\fP If the unimplemented flag is set the reschedule is cancelled (\fCNULL\fP is returned)\&.
+.PP
+\fBUnprocessed Event\&.\fP The event is still in queue, waiting to be processed, then just repush it in the queue with it's new level\&.
+.PP
+\fBProcessed Event\&.\fP Clone the already processed one, activate it and push it on the queue\&.
+.PP
+\fBRouter's Mode\&.\fP The mode is also updated\&. 
+.PP
+Referenced by SegmentAction::doAction(), and RoutingEvent::reschedule()\&.
+.SS "void setMode (unsigned int mode)"
+Set the mode in which the event must be processed (see \fBRoutingEvent::Mode\fP)\&. 
+.PP
+Referenced by SegmentAction::doAction(), and RoutingEvent::reschedule()\&.
+.SS "void setState (unsigned int state)"
+Proxy mutator for \fBDataNegociate::setState()\fP\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "void setAxisHintFromParent ()"
+Sets the axis hint from it's parent segment\&. The parentage is found through the \fBTrackSegment\fP parentage\&. 
+.PP
+Referenced by RoutingEvent::revalidate()\&.
+.SS "void incInsertState ()\fC [inline]\fP"
+Increment the insertion state\&.
+.PP
+\fBSee also:\fP  \fBRoutingEvent::getInsertState()\fP\&. 
+.PP
+Referenced by SegmentFsm::insertInTrack()\&.
+.SS "void resetInsertState ()\fC [inline]\fP"
+Reset the insertion state\&.
+.PP
+\fBSee also:\fP  \fBRoutingEvent::getInsertState()\fP\&. 
+.PP
+Referenced by SegmentFsm::slackenTopology()\&.
+.SS "void setEventLevel (unsigned int level)\fC [inline]\fP"
+Set the event level (user-controlled re-ordering)\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

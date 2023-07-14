@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :   "./katana/RoutingEvent.h"                      |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_ROUTING_EVENT_H
-#define  KATANA_ROUTING_EVENT_H
-
+#pragma  once
 #include <set>
 #include <vector>
 #include <cstdlib>
@@ -66,7 +64,8 @@ namespace Katana {
                 Key    ( const RoutingEvent* );
           void  update ( const RoutingEvent* );
         private:
-          unsigned int  _tracksNb:16;
+          unsigned int  _tracksNb  :16;
+          unsigned int  _rpDistance: 4;
           float         _priority;
           uint32_t      _eventLevel;
           uint32_t      _segFlags;
@@ -93,17 +92,13 @@ namespace Katana {
     friend class Compare;
 
     public:
-      enum Mode { Negociate=1, Pack=2, Repair=3 };
-
-    public:
       static  uint32_t                     getStage              ();
       static  uint32_t                     getAllocateds         ();
       static  uint32_t                     getProcesseds         ();
       static  uint32_t                     getCloneds            ();
       static  void                         resetProcesseds       ();
-      static  void                         setStage              ( uint32_t );
     public:                                                      
-      static  RoutingEvent*                create                ( TrackElement*, uint32_t mode=Negociate );
+      static  RoutingEvent*                create                ( TrackElement* );
               RoutingEvent*                clone                 () const;
               void                         destroy               ();
       inline  bool                         isCloned              () const;
@@ -135,6 +130,7 @@ namespace Katana {
       inline  uint32_t                     getInsertState        () const;
       inline  uint32_t                     getEventLevel         () const;
               void                         revalidate            ();
+              void                         _revalidateNonPref    ();
       inline  void                         updateKey             ();
               void                         process               ( RoutingEventQueue&
                                                                  , RoutingEventHistory&
@@ -142,7 +138,6 @@ namespace Katana {
                                                                  );
               void                         setSegment            ( TrackElement* );
               RoutingEvent*                reschedule            ( RoutingEventQueue&, uint32_t eventLevel );
-              void                         setMode               ( uint32_t );
               void                         setState              ( uint32_t );
       inline  void                         setTimeStamp          ( uint32_t );
       inline  void                         setProcessed          ( bool state=true );
@@ -161,11 +156,12 @@ namespace Katana {
               void                         _processNegociate     ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processPack          ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processRepair        ( RoutingEventQueue&, RoutingEventHistory& );
+              void                         _processRealign       ( RoutingEventQueue&, RoutingEventHistory& );
               Record*                      _getRecord            () const;
               string                       _getString            () const;
               string                       _getTypeName          () const;
     private:                                                 
-                                           RoutingEvent          ( TrackElement*, uint32_t mode );
+                                           RoutingEvent          ( TrackElement* );
                                           ~RoutingEvent          ();
 
     protected:
@@ -194,7 +190,6 @@ namespace Katana {
       unsigned int          _tracksNb        :16;
       unsigned int          _tracksFree      :16;
       unsigned int          _insertState     : 6;
-      unsigned int          _mode            : 4;
       unsigned int          _rippleState     : 4;
       uint32_t              _eventLevel;
     //vector<TrackElement*> _perpandiculars;
@@ -211,7 +206,6 @@ namespace Katana {
   inline bool                          RoutingEvent::isOverConstrained       () const { return _overConstrained; }
   inline uint32_t                      RoutingEvent::getId                   () const { return _id; }
   inline uint32_t                      RoutingEvent::getTimeStamp            () const { return _timeStamp; }
-  inline bool                          RoutingEvent::getMode                 () const { return _mode; }
   inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }
@@ -285,6 +279,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::RoutingEvent);
-
-
-#endif  // KATANA_ROUTING_EVENT_H

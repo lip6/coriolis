@@ -88,8 +88,17 @@ namespace Anabatic {
 
   AutoSegment* AutoContactTurn::getPerpandicular ( const AutoSegment* reference ) const
   {
+    cdebug_log(149,0) << _getTypeName() << "::getPerpandicular() " << this
+                      << " to:" << reference << endl;
+    cdebug_log(149,0) << "| _horizontal1:" << _horizontal1 << endl;
+    cdebug_log(149,0) << "| _vertical1  :" << _vertical1   << endl;
+
     if (reference == _horizontal1) return _vertical1;
     if (reference == _vertical1  ) return _horizontal1;
+
+    cdebug_log(149,0) << _getTypeName() << "::getPerpandicular() " << this
+                      << " to:" << reference << " failed." << endl;
+
     return NULL;
   }
 
@@ -117,6 +126,9 @@ namespace Anabatic {
 
   void  AutoContactTurn::cacheDetach ( AutoSegment* segment )
   {
+    cdebug_log(149,0) << _getTypeName() << "::cacheDetach() " << this
+                      << " from:" << segment << endl;
+
     if      (segment == _horizontal1) _horizontal1 = NULL;
     else if (segment == _vertical1)   _vertical1   = NULL;
     else return;
@@ -127,6 +139,9 @@ namespace Anabatic {
 
   void  AutoContactTurn::cacheAttach ( AutoSegment* segment )
   {
+    cdebug_log(149,0) << _getTypeName() << "::cacheAttach() " << this
+                      << " to:" << segment << endl;
+
     if (segment->getDirection() == Flags::Horizontal) {
       if (_horizontal1) {
         cerr << Bug( "%s::cacheAttach() On %s,\n"
@@ -239,7 +254,7 @@ namespace Anabatic {
       RoutingGauge* rg           = Session::getRoutingGauge();
       size_t        depthH1      = rg->getLayerDepth( getHorizontal1()->getLayer() );
       size_t        depthV1      = rg->getLayerDepth( getVertical1  ()->getLayer() );
-      size_t        depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
+      size_t        depthContact = (depthH1 <= depthV1) ? depthH1 : depthH1-1;
       size_t        delta        = abssub ( depthH1, depthV1 );
 
       unsetFlags( CntWeakTerminal );
@@ -247,8 +262,10 @@ namespace Anabatic {
         showTopologyError( "Sheared Turn, layer delta exceed 3." );
         setFlags( CntBadTopology );
       } else {
-        if (delta == 3) {
-          if (_horizontal1->isInvalidatedLayer()) {
+        if (delta > 1) {
+          bool updateH1 = (_horizontal1->isInvalidatedLayer() and not _horizontal1->isNonPref())
+                          or _vertical1->isNonPref();
+          if (updateH1) {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
             cdebug_log(145,0) << "Update h1: " << _horizontal1 << endl;
@@ -259,7 +276,7 @@ namespace Anabatic {
           }
           depthH1      = rg->getLayerDepth( _horizontal1->getLayer() );
           depthV1      = rg->getLayerDepth( _vertical1->getLayer() );
-          depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
+          depthContact = (depthH1 <= depthV1) ? depthH1 : depthH1-1;
           delta        = abssub ( depthH1, depthV1 );
         }
 

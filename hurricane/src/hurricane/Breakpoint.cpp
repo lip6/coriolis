@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,45 +31,10 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Breakpoint.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# include  "hurricane/Breakpoint.h"
-
-
-namespace {
-
-
-  using namespace std;
-  using namespace Hurricane;
-
-
-  bool  simpleStopCb ( const string& message )
-  {
-    cerr << "[STOP] " << message << endl;
-
-    char answer = '?';
-    while ( answer == '?' ) {
-      cerr << "       Type <y> to continue, <n> to abort: (y) ";
-      cerr.flush ();
-
-      cin >> answer;
-      switch ( answer ) {
-        case 'Y':
-        case 'y': answer = 'y'; break;
-        case 'N':
-        case 'n': answer = 'n'; break;
-        default:  answer = '?';
-      }
-    }
-    return (answer == 'y');
-  }
-
-
-} // End of anonymous namespace.
+#include  "hurricane/Breakpoint.h"
 
 
 namespace Hurricane {
@@ -133,12 +97,33 @@ namespace Hurricane {
 
   bool  Breakpoint::_stop ( unsigned int level, const string& message )
   {
-    if ( _stopCb && ( level >= _stopLevel ) )
+    if ( _stopCb && ( level <= _stopLevel ) )
       return _stopCb ( message );
 
     return false;
   }
 
+
+  bool  Breakpoint::simpleStopCb ( const string& message )
+  {
+    cerr << "[STOP] " << message << endl;
+
+    char answer = '?';
+    while ( answer == '?' ) {
+      cerr << "       Type <y> to continue, <n> to abort: (y) ";
+      cerr.flush ();
+
+      cin >> answer;
+      switch ( answer ) {
+        case 'Y':
+        case 'y': answer = 'y'; break;
+        case 'N':
+        case 'n': answer = 'n'; break;
+        default:  answer = '?';
+      }
+    }
+    return (answer == 'y');
+  }
 
 
 

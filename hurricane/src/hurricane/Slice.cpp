@@ -64,11 +64,11 @@ Components Slice::getComponents() const
     return SubTypeCollection<Go*, Component*>(_quadTree.getGos());
 }
 
-Components Slice::getComponentsUnder(const Box& area) const
-// ********************************************************
+Components Slice::getComponentsUnder(const Box& area, DbU::Unit threshold) const
+// *****************************************************************************
 {
     // return _quadTree.getGosUnder(area).getSubSet<Component*>();
-    return SubTypeCollection<Go*, Component*>(_quadTree.getGosUnder(area));
+    return SubTypeCollection<Go*, Component*>(_quadTree.getGosUnder(area,threshold));
 }
 
 Markers Slice::getMarkers() const

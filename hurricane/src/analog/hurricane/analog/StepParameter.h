@@ -10,12 +10,10 @@
 // |  Authors     :                Christophe Alexandre              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/analog/Choices.h"                  |
+// |  C++ Header  :  "./hurricane/analog/StepParameter.h"            |
 // +-----------------------------------------------------------------+
 
-#ifndef ANALOG_STEP_PARAMETER_H
-#define ANALOG_STEP_PARAMETER_H
-
+#pragma once
 #include "hurricane/analog/Parameter.h"
 
 
@@ -23,13 +21,18 @@ namespace Analog {
 
   class StepParameter : public Parameter {
     public:
-      inline       StepParameter ( std::string id, long min, long max, long step );
-      inline  long getMin        () const;
-      inline  long getMax        () const;
-      inline  long getStep       () const;
-      inline  long getValue      () const;
-      inline  operator long      () const;
-      inline  void setValue      ( long );
+      typedef Parameter  Super;
+    public:
+      inline               StepParameter ( std::string id, long min, long max, long step );
+      inline  long         getMin        () const;
+      inline  long         getMax        () const;
+      inline  long         getStep       () const;
+      inline  long         getValue      () const;
+      inline  operator long              () const;
+      inline  void         setValue      ( long );
+      virtual std::string  _getTypeName  () const;
+      virtual std::string  _getString    () const;
+      virtual Record*      _getRecord    () const;
     private:
       long  _min;
       long  _max;
@@ -49,4 +52,5 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif // ANALOG_STEP_PARAMETER_H
+
+INSPECTOR_PR_SUPPORT(Analog::StepParameter);

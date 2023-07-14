@@ -1,1 +1,0 @@
-technology  = 'symbolic/cmos'

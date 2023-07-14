@@ -191,13 +191,15 @@ namespace CRL {
   bool  ToolEngine::_inDestroyAll = false;
 
 
-  ToolEngine::ToolEngine ( Cell* cell )
+  ToolEngine::ToolEngine ( Cell* cell, bool verbose )
     : Super()
+    , _verbose                  (verbose)
     , _cell                     (cell)
     , _placementModificationFlag(0)
     , _routingModificationFlag  (0)
     , _inRelationDestroy        (false)
     , _timer                    ()
+    , _passNumber               (0)
   { }
 
 
@@ -218,11 +220,13 @@ namespace CRL {
 
     put( enginesRelation );
 
-    cmess1 << "  o  Creating ToolEngine<" << getName() << "> for Cell <"
-           << _cell->getName() << ">" << endl;
-
-    cmess1 << Dots::asString( "     - Initial memory"
-                            , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
+    if (_verbose) {
+      cmess1 << "  o  Creating ToolEngine<" << getName() << "> for Cell <"
+             << _cell->getName() << ">" << endl;
+      
+      cmess1 << Dots::asString( "     - Initial memory"
+                              , Timer::getStringMemory(Timer::getMemorySize()) ) << endl;
+    }
   }
 
 
@@ -267,10 +271,10 @@ namespace CRL {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
-        record->add ( getSlot ( "Cell"                     , _cell                      ) );
-        record->add ( getSlot ( "Name"                     , getName()                  ) );
-        record->add ( getSlot ( "placementModificationFlag", _placementModificationFlag ) );
-        record->add ( getSlot ( "routingModificationFlag"  , _routingModificationFlag   ) );
+        record->add ( getSlot ( "_cell"                     , _cell                      ) );
+      //record->add ( getSlot ( "Name"                      , getName()                  ) );
+        record->add ( getSlot ( "_placementModificationFlag", _placementModificationFlag ) );
+        record->add ( getSlot ( "_routingModificationFlag"  , _routingModificationFlag   ) );
     }
     return record;
   }

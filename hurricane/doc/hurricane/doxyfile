@@ -183,8 +183,7 @@ TAB_SIZE               = 2
 
 ALIASES                = "function=\fn  " \
                          "important=\par Important:\n  " \
-                         "caution=\par Caution:\n  " \
-                         "remark=\par Remark:\n  " \
+                         "caution=\par Caution: " \
                          "sample=\par Sample:\n  " \
                          "Return=<b>Returns:</b>  " \
                          "unsigned=\c unsigned  " \
@@ -642,6 +641,8 @@ INPUT                  = Generalities.dox \
                          DBo.dox \
                          ../../src/hurricane/hurricane/DataBase.h \
                          DataBase.dox \
+                         ../../src/hurricane/hurricane/PhysicalRule.h \
+                         PhysicalRule.dox \
                          ../../src/hurricane/hurricane/Technology.h \
                          Technology.dox \
                          ../../src/hurricane/hurricane/Layers.h \
@@ -739,7 +740,9 @@ INPUT                  = Generalities.dox \
                          ../../src/hurricane/hurricane/Query.h \
                          Query.dox \
                          ../../src/hurricane/hurricane/UpdateSession.h \
-                         UpdateSession.dox
+                         UpdateSession.dox \
+                         ../../src/isobar/hurricane/isobar/PythonAttributes.h \
+                         PythonAttributes.dox
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

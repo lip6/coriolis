@@ -26,13 +26,17 @@
 
 
 .. Acronyms & names.
+.. |NDA|                            replace:: :sc:`nda`
 .. |OS|                             replace:: :sc:`os`
+.. |FOSS|                           replace:: :sc:`foss`
 .. |GNU|                            replace:: :sc:`gnu`
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
 .. |UPMC|                           replace:: :sc:`upmc`
 .. |SorbonneUniversite|             replace:: :sc:`Sorbonne Université`
 .. |SU|                             replace:: :sc:`su`
+.. |CIAN|                           replace:: :sc:`cian`
+.. |LIP6|                           replace:: :sc:`lip6`
 .. |Bull|                           replace:: :sc:`Bull`
 .. |Cadence|                        replace:: :sc:`Cadence`
 .. |Si2|                            replace:: :sc:`Si2`
@@ -48,6 +52,7 @@
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
 .. |SL7|                            replace:: :sc:`Scientific Linux 7`
 .. |Scientific Linux|               replace:: :sc:`Scientific Linux`
+.. |CentOS|                         replace:: :sc:`CentOS`
 .. |RedHat|                         replace:: :sc:`RedHat`
 .. |Fedora|                         replace:: :sc:`Fedora`
 .. |FC13|                           replace:: :sc:`fc13`
@@ -55,7 +60,11 @@
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
-.. |Blif|                           replace:: :sc:`blif`
+.. |TSMC|                           replace:: :sc:`tsmc`
+.. |AMS|                            replace:: :sc:`ams`
+.. |XFAB|                           replace:: :sc:`xfab`
+.. |XH035|                          replace:: :cb:`XH035`
+.. |ROHM|                           replace:: :sc:`rohm`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -69,15 +78,32 @@
 .. |Masson|                         replace:: :sc:`Masson`
 .. |Sroka|                          replace:: :sc:`Sroka`
 .. |Yifei|                          replace:: :sc:`Yifei`
+.. |Mead|                           replace:: :sc:`Mead`
+.. |Conway|                         replace:: :sc:`Conway`
+.. |Petley|                         replace:: :sc:`Petley`
+.. |FloresGomez|                    replace:: :sc:`Flores Gomez`
+.. |SNX|                            replace:: :sc:`snx`
 
-.. |VLSI|                           replace:: :sc:`vlsi`
+.. |ASIC|                           replace:: :sc:`asic`
+.. |EDA|                            replace:: :sc:`eda`
+.. |RTL|                            replace:: :sc:`rtl`
+.. |HSL|                            replace:: :sc:`hsl`
+.. |FHS|                            replace:: :sc:`fhs`
+.. |IEEE|                           replace:: :sc:`ieee`
 .. |ANSI|                           replace:: :sc:`ansi`
 .. |MIPS|                           replace:: :sc:`mips`
+.. |EDI|                            replace:: :sc:`edi`
+.. |Yosys|                          replace:: :sc:`Yosys`
+.. |nMigen|                         replace:: :sc:`nMigen`
+.. |NanoRoute|                      replace:: :sc:`NanoRoute`
+.. |Pharosc|                        replace:: :sc:`Pharosc`
 .. |Am2901|                         replace:: :sc:`Am2901`
+.. |CAIRO|                          replace:: :sc:`cairo`
+.. |CAIRO+|                         replace:: :sc:`cairo+`
 .. |Hurricane|                      replace:: :sc:`Hurricane`
 .. |CRL|                            replace:: :sc:`crl`
 .. |Alliance|                       replace:: :sc:`Alliance`
-.. |Yosys|                          replace:: :sc:`Yosys`
+.. |StaCS|                          replace:: :sc:`StaCS`
 .. |GenLib|                         replace:: :sc:`GenLib`
 .. |Nero|                           replace:: :sc:`Nero`
 .. |Druc|                           replace:: :cb:`Druc`
@@ -112,14 +138,20 @@
 .. |pdf|                            replace:: :sc:`pdf`
 .. |UTF-8|                          replace:: :sc:`utf-8`
 .. |Python|                         replace:: :sc:`Python`
+.. |DoIt|                           replace:: :sc:`DoIt`
+.. |TCL|                            replace:: :sc:`tcl`
 .. |Linux|                          replace:: :sc:`Linux`
 .. |MacPorts|                       replace:: :sc:`MacPorts`
 .. |devtoolset|                     replace:: :cb:`devtoolset`
 .. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
+.. |Qwt|                            replace:: :sc:`qwt`
 .. |PyQt|                           replace:: :sc:`PyQt`
 .. |PyQt4|                          replace:: :sc:`PyQt4`
 .. |PyQt5|                          replace:: :sc:`PyQt5`
+.. |UID|                            replace:: :sc:`uid`
+.. |GID|                            replace:: :sc:`gid`
+.. |root|                           replace:: :cb:`root`
 .. |tty|                            replace:: :cb:`tty`
 .. |svn|                            replace:: :cb:`svn`
 .. |git|                            replace:: :cb:`git`
@@ -127,7 +159,13 @@
 .. |gdb|                            replace:: :cb:`gdb`
 .. |valgrind|                       replace:: :cb:`valgrind`
 .. |cmake|                          replace:: :cb:`cmake`
+.. |bison|                          replace:: :cb:`bison`
+.. |flex|                           replace:: :cb:`flex`
 .. |struct|                         replace:: :cb:`struct`
+.. |Makefile|                       replace:: :cb:`Makefile`
+.. |dodo|                           replace:: :cb:`dodo`
+.. |man|                            replace:: :cb:`man`
+
 
 .. |KeyUp|                          replace:: :fboxtt:`Up`
 .. |KeyDown|                        replace:: :fboxtt:`Down`
@@ -172,24 +210,44 @@
 .. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
 .. _FreePDK45:                      https://www.eda.ncsu.edu/wiki/FreePDK45:Contents
 .. _Yosys:                          http://www.clifford.at/yosys/
+.. _GHDL:                           https://github.com/ghdl/ghdl
+.. _Si2:                            http://www.si2.org/
+.. _DoIt:                           https://pydoit.org/contents.html
+
+.. _GPL:                            http://www.gnu.org/copyleft/gpl.txt
+.. _LGPL:                           https://www.gnu.org/licenses/lgpl-3.0.html
+.. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
+.. _Tokai University:               http://www.u-tokai.ac.jp/international/
+.. _Shimizu Lab:                    http://labo.nshimizu.com/
+.. _Smartlabs:                      http://www.smartlabsinc.com/
+.. _Don Bosco University:           http://www.udb.edu.sv/
+.. _MyCMP:                          https://www.mycmp.fr/
 
 .. Standard CAO/VLSI Concepts.
 .. |netlist|                        replace:: *netlist*
 .. |netlists|                       replace:: *netlists*
 .. |layout|                         replace:: *layout*
 .. |layouts|                        replace:: *layouts*
+.. |VLSI|                           replace:: :sc:`vlsi`
+.. |DRC|                            replace:: :sc:`drc`
+.. |LVX|                            replace:: :sc:`lvx`
+.. |CIF|                            replace:: :sc:`cif`
+.. |GDS|                            replace:: :sc:`gds`
+.. |GDSII|                          replace:: :sc:`gdsii`
 .. |CMOS|                           replace:: :sc:`cmos`
 .. |VHDL|                           replace:: :sc:`vhdl`
+.. |Verilog|                        replace:: :sc:`Verilog`
 .. |NWELL|                          replace:: :sc:`nwell`
 .. |POWER|                          replace:: :sc:`power`
 .. |GROUND|                         replace:: :sc:`ground`
 
-.. MBK Concepts
+.. Alliance & MBK Concepts
 .. |MBK|                            replace:: :sc:`mbk`
 .. |LOFIG|                          replace:: :cb:`Lofig`
 .. |PHFIG|                          replace:: :cb:`Phfig`
 .. |SxLib|                          replace:: :sc:`SxLib`
 .. |RDS|                            replace:: :sc:`rds`
+.. |s2r|                            replace:: :cb:`s2r`
 
 .. Hurricane Concepts.
 .. |hypernet|                       replace:: *hypernet*
@@ -200,5 +258,6 @@
 .. |Collections|                    replace:: *Collections*
 .. |ap|                             replace:: :cb:`ap`
 .. |vst|                            replace:: :cb:`vst`
+.. |blif|                           replace:: :cb:`blif`
 .. |kgr|                            replace:: :cb:`kgr`
 .. |dot_conf|                       replace:: :cb:`.conf`

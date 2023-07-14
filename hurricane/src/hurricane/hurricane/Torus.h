@@ -67,6 +67,6 @@ namespace Hurricane {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Torus);
+INSPECTOR_PR_SUPPORT(Hurricane::Torus);
 
 #endif  // HURRICANE_TORUS_H

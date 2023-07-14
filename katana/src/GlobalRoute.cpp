@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "GlobalRoute.cpp<katana>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,11 +15,16 @@
 
 
 #include "flute.h"
+#include "hurricane/utilities/Dots.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Cell.h"
+#include "hurricane/viewer/CellViewer.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/Histogram.h"
 #include "anabatic/Dijkstra.h"
+#include "etesian/BloatProperty.h"
 #include "katana/Block.h"
 #include "katana/RoutingPlane.h"
 #include "katana/KatanaEngine.h"
@@ -27,6 +32,7 @@
 
 namespace {
 
+  using std::cout;
   using std::cerr;
   using std::endl;
   using std::dec;
@@ -34,14 +40,20 @@ namespace {
   using std::setfill;
   using std::left;
   using std::right;
+  using std::set;
   using Hurricane::DbU;
   using Hurricane::Interval;
+  using Hurricane::DBo;
   using Hurricane::Net;
+  using Hurricane::Segment;
+  using Utilities::Dots;
   using Anabatic::Flags;
   using Anabatic::Edge;
   using Anabatic::GCell;
   using Anabatic::Vertex;
   using Anabatic::AnabaticEngine;
+  using Etesian::BloatExtension;
+  using namespace Katana;
 
 
   class DigitalDistance {
@@ -63,10 +75,18 @@ namespace {
   inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
 
 
-  DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
+  DbU::Unit  DigitalDistance::operator() ( const Vertex* source, const Vertex* target, const Edge* edge ) const
   {
     if (source->getGCell()->isStdCellRow() and target->getGCell()->isStdCellRow())
       return Vertex::unreachable;
+
+    cdebug_log(112,0) << "DigitalDistance::operator(): " << edge
+                      << " isGostraight():" << source->getGCell()->isGoStraight() << endl;
+    if (    source->getGCell()->isGoStraight()
+       and  source->getFrom()
+       and (source->getFrom()->isHorizontal() xor edge->isHorizontal())) 
+      return Vertex::unreachable;
+    cdebug_log(112,0) << "Not a go straight" << endl;
 
     if (edge->getCapacity() <= 0) {
       if (target->getGCell()->isStdCellRow()
@@ -77,9 +97,11 @@ namespace {
          and source->hasValidStamp() and (source->getConnexId() >= 0) )
         return 0;
       
+      cdebug_log(112,0) << "Negative or null edge capacity: " << edge->getCapacity() << endl;
       return Vertex::unreachable;
     }
 
+    cdebug_log(112,0) << "Computing distance" << endl;
     float congestionCost = 1.0;
     float congestion     = ((float)edge->getRealOccupancy() + edge->getEstimateOccupancy())
                          /  (float)edge->getCapacity();
@@ -93,7 +115,6 @@ namespace {
        /*and not source->hasGContact(_net)*/ ) {
       viaCost += 2.5;
     }
-
     
     float realCongestion = (float)edge->getRealOccupancy() /  (float)edge->getCapacity();
     float historicCost   = edge->getHistoricCost();
@@ -117,7 +138,8 @@ namespace {
                       << DbU::getValueString(source->getDistance()) << " + ("
                       << congestionCost << " + "
                       << viaCost << " + "
-                      << edge->getHistoricCost() << ") * "
+                    //<< edge->getHistoricCost() << ") * "
+                      << historicCost << ") * "
                       << DbU::getValueString(edgeDistance) << " * "
                       << hvScaling
                       << endl;
@@ -164,11 +186,169 @@ namespace {
   }
   
 
+  void  selectNets ( KatanaEngine* katana, set<const Net*,Net::CompareByName>& nets )
+  {
+    if (katana->getViewer()) {
+      cmess2 << "  o  Selecting failed nets (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      katana->getViewer()->setShowSelection( false );
+      katana->getViewer()->setCumulativeSelection( true );
+
+      for ( const Net* net : nets ) {
+        Occurrence netOcc ( net );
+        katana->getViewer()->select( netOcc );
+        dots.dot();
+      }
+
+      dots.finish( Dots::Reset );
+      katana->getViewer()->setShowSelection( true );
+    }
+  }
+
+
+  void  selectSegments ( KatanaEngine* katana, set<Segment*,DBo::CompareById>& segments )
+  {
+    if (katana->getViewer()) {
+      cmess2 << "  o  Selecting overflowed edges (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      katana->getViewer()->setShowSelection( false );
+      katana->getViewer()->setCumulativeSelection( true );
+
+    // for ( const Net* net : nets ) {
+    //   Occurrence netOcc ( net );
+    //   getViewer()->select( netOcc );
+    // }
+
+      for ( const Segment* segment : segments ) {
+        Occurrence occurrence ( segment );
+        katana->getViewer()->select( occurrence );
+
+        dots.dot();
+      }
+
+      dots.finish( Dots::Reset );
+      katana->getViewer()->setShowSelection( true );
+    }
+  }
+  
+
+  void  selectOverloadedGCells ( KatanaEngine* katana )
+  {
+    CellViewer* viewer = katana->getViewer();
+    
+    if (viewer) {
+      cmess2 << "  o  Selecting overloaded GCells (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      viewer->setShowSelection( false );
+      viewer->setCumulativeSelection( true );
+
+      for ( GCell* gcell : katana->getGCells() ) {
+        Edge* eastEdge   = gcell->getEastEdge ();
+        Edge* northEdge  = gcell->getNorthEdge();
+        bool  overloaded = false;
+
+        if (eastEdge) {
+          if (eastEdge->getRealOccupancy() > eastEdge->getCapacity()) {
+            overloaded = true;
+          }
+          // else if (eastEdge->getHistoricCost() > 3.0) {
+          //   overloaded = true;
+          // }
+        }
+
+        if (northEdge) {
+          if (northEdge->getRealOccupancy() > northEdge->getCapacity()) {
+            overloaded = true;
+          }
+          // else if (northEdge->getHistoricCost() > 3.0) {
+          //   overloaded = true;
+          // }
+        }
+
+        if (overloaded) {
+          Occurrence gcellOcc ( gcell );
+          viewer->select( gcellOcc );
+          dots.dot();
+        }
+      }
+
+      dots.finish( Dots::Reset );
+      viewer->setShowSelection( true );
+    }
+  }
+  
+
+  void  selectOverloadedEdges ( KatanaEngine* katana )
+  {
+    CellViewer* viewer = katana->getViewer();
+    
+    if (viewer) {
+      cmess2 << "  o  Selecting overloaded Edges (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      viewer->setShowSelection( false );
+      viewer->setCumulativeSelection( true );
+
+      for ( GCell* gcell : katana->getGCells() ) {
+        for ( Edge* edge : gcell->getEdges( Flags::NorthSide|Flags::EastSide ) ) {
+          if (edge->getRealOccupancy() > edge->getCapacity()) {
+            Occurrence edgeOcc ( edge );
+            viewer->select( edgeOcc );
+            dots.dot();
+          }
+        }
+      }
+
+      dots.finish( Dots::Reset );
+      viewer->setShowSelection( true );
+    }
+  }
+  
+
+  void  selectBloatedInstances ( KatanaEngine* katana )
+  {
+    CellViewer* viewer = katana->getViewer();
+    
+    if (viewer) {
+      cmess2 << "  o  Selecting bloated instances (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      viewer->setShowSelection( false );
+      viewer->setCumulativeSelection( true );
+
+      for( Occurrence occurrence : katana->getCell()->getTerminalNetlistInstanceOccurrences() ) {
+        if (BloatExtension::get(occurrence)) {
+          viewer->select( occurrence );
+
+          dots.dot();
+        }
+      }
+
+      dots.finish( Dots::Reset );
+      viewer->setShowSelection( true );
+    }
+  }
+  
+
 }  // Anonymous namespace.
 
 
 namespace Katana {
 
+  using Utilities::Dots;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
@@ -181,6 +361,7 @@ namespace Katana {
   using Hurricane::RoutingPad;
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
+  using CRL::Histogram;
   using Anabatic::EngineState;
   using Anabatic::Dijkstra;
   using Anabatic::NetData;
@@ -208,7 +389,7 @@ namespace Katana {
 
     startMeasures();
 
-    if (isChannelMode()) createChannels();
+    if (isChannelStyle()) createChannels();
 
     if (getGCells().size() == 1) {
       cmess1 << "  o  Building regular grid..." << endl;
@@ -216,13 +397,19 @@ namespace Katana {
     } else {
       cmess1 << "  o  Reusing existing grid." << endl;
     }
-    cmess1 << Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
+    cmess1 << ::Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
 
     setupNetDatas();
+    computeEdgeCapacities( getHTracksReservedLocal()
+                         , getVTracksReservedLocal()
+                         , getTermSatThreshold()
+                         , getTermSatReservedLocal() 
+                         );
 
+#if UNIFORM_EDGE_CAPACITY
     for ( GCell* gcell : getGCells() ) {
       if (not gcell->isMatrix()) continue;
 
@@ -231,6 +418,7 @@ namespace Katana {
         else                      edge->reserveCapacity( getVTracksReservedLocal() );
       }
     }
+#endif
   }
 
 
@@ -262,9 +450,9 @@ namespace Katana {
         updateEstimateDensityOfPath( this, targets[0], targets[1], weight );
         return;
       default:
-        { int  accuracy = 3;
-          int* xs       = new int [targets.size()];
-          int* ys       = new int [targets.size()];
+        { int      accuracy = 3;
+          int64_t* xs       = new int64_t [targets.size()];
+          int64_t* ys       = new int64_t [targets.size()];
 
           for ( size_t itarget=0 ; itarget<targets.size() ; ++itarget ) {
             Point center =  targets[itarget]->getCenter();
@@ -304,27 +492,20 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::runGlobalRouter ()
+  void  KatanaEngine::runGlobalRouter ( Flags flags )
   {
     if (getState() >= EngineState::EngineGlobalLoaded)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
-    openSession();
-
-    annotateGlobalGraph();
-    for ( NetData* netData : getNetOrdering() ) {
-      if (netData->isGlobalRouted() or netData->isExcluded()) continue;
-
-      updateEstimateDensity( netData, 1.0 );
-      netData->setGlobalEstimated( true );
-    }
-
-    // Session::close();
-    // Breakpoint::stop( 1, "After global routing estimation." );
-    // openSession();
+    if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
+    Breakpoint::stop( 100, "Bloated cells from previous placement iteration." );
 
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;
+
+    openSession();
+
+    annotateGlobalGraph();
 
     float   edgeHInc         = getConfiguration()->getEdgeHInc();
     size_t  globalIterations = getConfiguration()->getGlobalIterations();;
@@ -337,11 +518,15 @@ namespace Katana {
                                             , getConfiguration()->getEdgeHScaling() ));
     const vector<Edge*>& ovEdges = getOvEdges();
 
-    if (isChannelMode())
+    if (isChannelStyle())
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*10 );
+    else
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
 
-    size_t iteration = 0;
-    size_t netCount  = 0;
+    bool     globalEstimated = false;
+    size_t   iteration       = 0;
+    size_t   netCount        = 0;
+    uint64_t edgeOverflowWL  = 0;
     do {
       cmess2 << "     [" << setfill(' ') << setw(3) << iteration << "] nets:";
 
@@ -359,7 +544,29 @@ namespace Katana {
         distance->setNet( netData->getNet() );
         dijkstra->load( netData->getNet() );
         dijkstra->run();
+        netData->setGlobalRouted( true );
         ++netCount;
+
+        // if (netData->getNet()->getName() == Name("mips_r3000_1m_dp_shift32_rshift_se_msb")) {
+        //   Session::close();
+        //   Breakpoint::stop( 1, "After global routing of \"mips_r3000_1m_dp_shift32_rshift_se_msb\"." );
+        //   openSession();
+        // }
+
+        if (useGlobalEstimate()) {
+        // Triggers the global routing when we reach nets of less than 11 terminals.
+        // High degree nets are routed straight (without taking account the smalls).
+        // See the SparsityOrder comparison function.
+          if ( (netData->getRpCount() < 11) and not globalEstimated ) {
+            for ( NetData* netData2 : getNetOrdering() ) {
+              if (netData2->isGlobalRouted() or netData2->isExcluded()) continue;
+
+              updateEstimateDensity( netData2, 1.0 );
+              netData2->setGlobalEstimated( true );
+            }
+            globalEstimated = true;
+          }
+        }
       }
       cmess2 << left << setw(6) << netCount;
 
@@ -377,12 +584,17 @@ namespace Katana {
     //Breakpoint::stop( 1, "Before riping up overflowed edges." );
     //openSession();
 
-      netCount = 0;
+      edgeOverflowWL = 0;
+      netCount       = 0;
       if (iteration < globalIterations - 1) {
+        for ( Edge* edge : ovEdges ) {
+          edgeOverflowWL += edge->getRealOccupancy() - edge->getCapacity();
+        }
+        
         size_t iEdge = 0;
         while ( iEdge < ovEdges.size() ) {
-          Edge* edge = ovEdges[iEdge];
-          netCount += edge->ripup();
+          Edge* edge  = ovEdges[iEdge];
+          netCount   += edge->ripup();
 
           if (iEdge >= ovEdges.size()) break;
           if (ovEdges[iEdge] == edge) {
@@ -394,15 +606,15 @@ namespace Katana {
           }
         }
 
-        dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
+        dijkstra->setSearchAreaHalo( (getSearchHalo() + 3*(iteration/3)) * Session::getSliceHeight() );
       }
 
-      cmess2 << " ovE:" << setw(4) << overflow;
+      cmess2 << " ovE:" << setw(4) << overflow << " ovWL:" << setw(5) << edgeOverflowWL;
 
       cmess2 << " ripup:" << setw(4) << netCount << right;
       suspendMeasures();
-      cmess2 << " " << setw(5) << Timer::getStringTime  (getTimer().getCombTime())
-             << " " << setw(6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;
+      cmess2 << " " << setw(7) << Timer::getStringMemory(getTimer().getIncrease())
+             << " " << setw(6) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
 
       ++iteration;
@@ -411,21 +623,80 @@ namespace Katana {
     stopMeasures();
     printMeasures( "Dijkstra" );
 
+    uint32_t hoverflow = 0;
+    uint32_t voverflow = 0;
     if (not ovEdges.empty()) {
-      set< const Net*, Net::CompareByName > nets;
+      Histogram  ovHistogram ( 0.0, 1.0, 1 );
+      ovHistogram.setTitle ( "Overflowed", 0 );
+      ovHistogram.setColor ( "green"     , 0 );
+      ovHistogram.setIndent( "       "   , 0 );
 
-      cerr << "  o  Global routing did not complete, overflowed edges:" << endl;
+      set<const Net*,Net::CompareByName>  nets;
+      set<Segment*  ,DBo::CompareById  >  segments;
+
+      cerr << "  o  Global routing did not complete." << endl;
       for ( size_t iEdge = 0 ; iEdge<ovEdges.size() ; ++iEdge ) {
-        cerr << "    " << dec << setw(4) << (iEdge+1) << "| " << ovEdges[iEdge] << endl;
-        for ( Segment* segment : ovEdges[iEdge]->getSegments() )
-          nets.insert( segment->getNet() );
+        unsigned int edgeOverflow = ovEdges[iEdge]->getRealOccupancy() - ovEdges[iEdge]->getCapacity();
+        ovHistogram.addSample( (float)edgeOverflow, 0 );
+        if (ovEdges[iEdge]->isHorizontal()) hoverflow += edgeOverflow;
+        else                                voverflow += edgeOverflow;
+
+        if (edgeOverflow > 0) {
+          const vector<Segment*> ovSegs = ovEdges[iEdge]->getSegments();
+          for ( size_t iSeg=ovEdges[iEdge]->getCapacity() ; iSeg<ovSegs.size() ; ++iSeg ) {
+            Net* net     = ovSegs[iSeg]->getNet();
+            auto netData = getNetDatas().find( net->getId() );
+
+            if (netData == getNetDatas().end()) continue;
+            if ((*netData).second->getRpCount() > 20) {
+              cmess2 << "     - Not showing " << net << " too much terminals ("
+                     << (*netData).second->getRpCount() << ")." << endl;
+              continue;
+            }
+
+            nets.insert( net );
+          }
+        }
       }
 
-      cerr << "  o  Conflicting nets:" << endl;
-      size_t count = 0;
-      for ( const Net* net : nets )
-        cerr << "    " << dec << setw(4) << (++count) << "| " << net->getName() << endl;
+    //cerr << "  o  Conflicting nets:" << endl;
+    //size_t count = 0;
+    //for ( const Net* net : nets )
+    //  cerr << "    " << dec << setw(4) << (++count) << "| " << net->getName() << endl;
+
+      cmess2 << ::Dots::asUInt  ("     - Unsatisfied nets"          ,nets    .size()) << endl;
+      cmess2 << ::Dots::asUInt  ("     - Unsatisfied segments"      ,segments.size()) << endl;
+      cmess2 << ::Dots::asUInt  ("     - Overflowed edges"          ,ovEdges .size()) << endl;
+
+      ostringstream result;
+      float ratio = ((float)hoverflow / (float)(hoverflow+voverflow)) * 100.0;
+      result.str( "" );
+      result << setprecision(4) << ratio << "% [" << hoverflow << "]";
+      cmess2 << ::Dots::asString( "     - H-overflow length", result.str() ) << endl;
+
+      ratio = ((float)voverflow / (float)(hoverflow+voverflow)) * 100.0;
+      result.str( "" );
+      result << setprecision(4) << ratio << "% [" << voverflow << "]";
+      cmess2 << ::Dots::asString( "     - V-overflow length", result.str() ) << endl;
+
+      cmess2 << "  o  Overflowed edges Histogram." << endl;
+      cmess2 << ovHistogram.toString(0) << endl;
+
+      addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
+      addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
+
+      if (not Session::isChannelStyle())
+        _buildBloatProfile();
+
+      if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );
+      if (flags & Flags::ShowFailedGSegments ) selectSegments        ( this, segments );
+      if (flags & Flags::ShowOverloadedEdges ) selectOverloadedEdges ( this );
+      if (flags & Flags::ShowOverloadedGCells) selectOverloadedGCells( this );
+      if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
     }
+
+    addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
+    addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
     if (getBlock(0)) {
       getBlock(0)->resizeChannels();
@@ -435,13 +706,21 @@ namespace Katana {
     delete dijkstra;
 
     Session::close();
-    if (isChannelMode()) {
+    if (isChannelStyle()) {
       setupRoutingPlanes();
       setupPowerRails();
       protectRoutingPads();
     }
 
     setState( EngineState::EngineGlobalLoaded );
+    setGlobalRoutingSuccess( ovEdges.empty() );
+
+    // for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
+    //   if (occurrence.getEntity()->getId() == 25202) {
+    //     cerr << "REFERENCE INSTANCE" << endl;
+    //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;
+    //   }
+    // }
   }
 
 
@@ -466,7 +745,7 @@ namespace Katana {
           } else {
             if (component->getLayer() == cLayer) {
               Contact* contact = static_cast<Contact*>( component );
-              size_t   gslaves = 0;
+            //size_t   gslaves = 0;
 
               for ( Component* slave : contact->getSlaveComponents().getSubSet<Segment*>() ) {
                 if (slave->getLayer() == vLayer) { ++viaCount; break; }

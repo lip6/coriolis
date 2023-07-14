@@ -1,0 +1,823 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Pin" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Pin</compoundname>
+    <basecompoundref refid="classHurricane_1_1Contact" prot="public" virt="non-virtual">Hurricane::Contact</basecompoundref>
+    <innerclass refid="classHurricane_1_1Pin_1_1AccessDirection" prot="public">Hurricane::Pin::AccessDirection</innerclass>
+    <innerclass refid="classHurricane_1_1Pin_1_1PlacementStatus" prot="public">Hurricane::Pin::PlacementStatus</innerclass>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Pin_1af9e189540b9118df57f875d108c34cbd" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Contact" kindref="compound">Contact</ref></type>
+        <definition>typedef Contact Hurricane::Pin::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="43" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Pin_1a54ef13a7af3871219d50cdbc8a590138" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::Pin::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="121" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Pin_1ac0b0d25ba50f981fe85c803520aa2db1" prot="private" static="no" mutable="no">
+        <type>AccessDirection</type>
+        <definition>AccessDirection Hurricane::Pin::_accessDirection</definition>
+        <argsstring></argsstring>
+        <name>_accessDirection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="122" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Pin_1a5154aeae24b1b41787dd95d8506fba95" prot="private" static="no" mutable="no">
+        <type>PlacementStatus</type>
+        <definition>PlacementStatus Hurricane::Pin::_placementStatus</definition>
+        <argsstring></argsstring>
+        <name>_placementStatus</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="123" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Pin_1abcf888dcff3ef4217a48d987ba65d88a" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Pin" kindref="compound">Pin</ref> *</type>
+        <definition>Pin* Hurricane::Pin::_nextOfCellPinMap</definition>
+        <argsstring></argsstring>
+        <name>_nextOfCellPinMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="124" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a0a8972cb03fed668be27c8b6c1d057f4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Pin::Pin</definition>
+        <argsstring>(Net *, const Name &amp;, const AccessDirection &amp;, const PlacementStatus &amp;, const Layer *, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)</argsstring>
+        <name>Pin</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const AccessDirection &amp;</type>
+        </param>
+        <param>
+          <type>const PlacementStatus &amp;</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>width</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>height</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="80" column="7"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a0b16bdc7dfd8d5862b9933f254cab881" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Pin::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1Component_1ac1b58b179c8358a044e22e52d3d0f5f2">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="110" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1abe5907ffd74e9fbbd3a103392390f088" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Pin::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1Contact_1a74bcc156eb87d0062d7a4fedd2f6ec82">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="111" column="32"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Pin_1ad608ce7224a9799c8c12783dcb171393" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Pin" kindref="compound">Pin</ref> *</type>
+        <definition>static Pin* Hurricane::Pin::create</definition>
+        <argsstring>(Net *, const Name &amp;, const AccessDirection &amp;, const PlacementStatus &amp;, const Layer *, DbU::Unit x, DbU::Unit y, DbU::Unit width=0, DbU::Unit height=0)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const AccessDirection &amp;</type>
+        </param>
+        <param>
+          <type>const PlacementStatus &amp;</type>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Layer" kindref="compound">Layer</ref> *</type>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>y</declname>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>width</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type><ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref></type>
+          <declname>height</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="91" column="18"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Pin_1aeaf8256c954875cd4d7139bd48c641af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>const Name&amp; Hurricane::Pin::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="102" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="102" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1ae9dcb50a4b089989f0270f29b14930cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const AccessDirection &amp;</type>
+        <definition>const AccessDirection&amp; Hurricane::Pin::getAccessDirection</definition>
+        <argsstring>() const</argsstring>
+        <name>getAccessDirection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="103" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1ac37117211c87dc7ea44dbb43991b249c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const PlacementStatus &amp;</type>
+        <definition>const PlacementStatus&amp; Hurricane::Pin::getPlacementStatus</definition>
+        <argsstring>() const</argsstring>
+        <name>getPlacementStatus</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="104" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1aa1e8ffea3b9678368a23ef4dd883e5d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Pin::isUnplaced</definition>
+        <argsstring>() const</argsstring>
+        <name>isUnplaced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="105" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a49260cade5ad0eaf723ffa8753983d2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Pin::isPlaced</definition>
+        <argsstring>() const</argsstring>
+        <name>isPlaced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="106" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1ac5234b75e3cb0d6cdaac10590d06474a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Pin::isFixed</definition>
+        <argsstring>() const</argsstring>
+        <name>isFixed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="107" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="107" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1aacf388f08734b4f7131d811508140f40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Pin::setPlacementStatus</definition>
+        <argsstring>(const PlacementStatus &amp;)</argsstring>
+        <name>setPlacementStatus</name>
+        <param>
+          <type>const PlacementStatus &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="108" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a923cbc921680f8271598e40d4b183ed5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Hurricane::Pin::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1Contact_1ae97f12bd23391bc4ea7da45da312d97f">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="115" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a8aa73003721501acdce4ae0beb08afd3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string Hurricane::Pin::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Contact_1a416b545257fe839342e6800954d3950e">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="116" column="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a4fda8208f2112817eb65fc15a5f2b678" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Pin::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Contact_1a83561c9de47379ba88e52cedc5b75411">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="117" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a325b4d8a074fbcb75cbbe6f49dd64255" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Pin" kindref="compound">Pin</ref> *</type>
+        <definition>Pin* Hurricane::Pin::_getNextOfCellPinMap</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfCellPinMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="118" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a894a8388ea97a74496aac8a92cd713f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Pin::_setNextOfCellPinMap</definition>
+        <argsstring>(Pin *pin)</argsstring>
+        <name>_setNextOfCellPinMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Pin" kindref="compound">Pin</ref> *</type>
+          <declname>pin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="119" column="32" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="119" bodyend="119"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classHurricane_1_1Pin_1a1cd7232264df68bea175a6041659d06b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Pin::_postCheck</definition>
+        <argsstring>()</argsstring>
+        <name>_postCheck</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="113" column="32"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Pin" kindref="compound">Pin</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="5">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Pin</label>
+        <link refid="classHurricane_1_1Pin"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Contact</label>
+        <link refid="classHurricane_1_1Contact"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Component</label>
+        <link refid="classHurricane_1_1Component"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="10">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="12">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="18">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Hurricane::Rubber</label>
+        <link refid="classHurricane_1_1Rubber"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_nextOfNetRubberSet</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_hook</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="20">
+        <label>Hurricane::Hook</label>
+        <link refid="classHurricane_1_1Hook"/>
+        <childnode refid="20" relation="usage">
+          <edgelabel>_nextHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Go</label>
+        <link refid="classHurricane_1_1Go"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_nextOfQuadTreeGoSet</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>Hurricane::Pin</label>
+        <link refid="classHurricane_1_1Pin"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfCellPinMap</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Contact</label>
+        <link refid="classHurricane_1_1Contact"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_layer</edgelabel>
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>_anchorHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="19">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>Hurricane::Layer</label>
+        <link refid="classHurricane_1_1Layer"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="19" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="22" relation="usage">
+          <edgelabel>_nextOfTechnologyLayerMap</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="16">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="13">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="21">
+        <label>Hurricane::Component::BodyHook</label>
+        <link refid="classHurricane_1_1Component_1_1BodyHook"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::Component</label>
+        <link refid="classHurricane_1_1Component"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_rubber</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_net</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>_nextOfNetComponentSet</edgelabel>
+        </childnode>
+        <childnode refid="21" relation="usage">
+          <edgelabel>_bodyHook</edgelabel>
+        </childnode>
+      </node>
+      <node id="15">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+        <childnode refid="16" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+        <childnode refid="18" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="23">
+        <label>Hurricane::Contact::AnchorHook</label>
+        <link refid="classHurricane_1_1Contact_1_1AnchorHook"/>
+        <childnode refid="20" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" line="41" column="3" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Pin.h" bodystart="41" bodyend="125"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Pin_1ac0b0d25ba50f981fe85c803520aa2db1" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_accessDirection</name></member>
+      <member refid="classHurricane_1_1Contact_1a97e62eb221f8d246d74725c9658e3231" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_anchorHook</name></member>
+      <member refid="classHurricane_1_1Component_1ab0d425e5bdd711381c5af935b90080b8" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_bodyHook</name></member>
+      <member refid="classHurricane_1_1Contact_1aa7a4bedc577801bf3a72f55b91416c19" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_checkMinSize</name></member>
+      <member refid="classHurricane_1_1Contact_1a6292e67ec4499d4c5f3d660db4124b22" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_dx</name></member>
+      <member refid="classHurricane_1_1Contact_1a392fff79a8201bfb273545396192594b" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_dy</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Pin_1a325b4d8a074fbcb75cbbe6f49dd64255" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_getNextOfCellPinMap</name></member>
+      <member refid="classHurricane_1_1Component_1a75ac62079c9392f9f3f0fda0a761313b" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_getNextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1ad3617f5af214619cfe286091dab6a863" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_getNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Entity_1a01be68d1d059eb4cdb160d12c0db7a5e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_getQuark</name></member>
+      <member refid="classHurricane_1_1Pin_1a4fda8208f2112817eb65fc15a5f2b678" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Pin_1a8aa73003721501acdce4ae0beb08afd3" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Pin_1a923cbc921680f8271598e40d4b183ed5" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1Contact_1adc12f91177ae9283e2a7cc42cd5f381a" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_height</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Contact_1a8336a7cc38d6ff7f0dfc2f9a643d753a" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_layer</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Pin_1a54ef13a7af3871219d50cdbc8a590138" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1Component_1abdfe98424461809df82573591b312e36" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_net</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Pin_1abcf888dcff3ef4217a48d987ba65d88a" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_nextOfCellPinMap</name></member>
+      <member refid="classHurricane_1_1Component_1a1c39eeb71b3cf8c992c16535732b86ab" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_nextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1a68cf61b178784fc0677cdcc3722a9d08" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_nextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Pin_1a5154aeae24b1b41787dd95d8506fba95" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_placementStatus</name></member>
+      <member refid="classHurricane_1_1Pin_1a1cd7232264df68bea175a6041659d06b" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_postCheck</name></member>
+      <member refid="classHurricane_1_1Pin_1a0b16bdc7dfd8d5862b9933f254cab881" prot="protected" virt="virtual"><scope>Hurricane::Pin</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Pin_1abe5907ffd74e9fbbd3a103392390f088" prot="protected" virt="virtual"><scope>Hurricane::Pin</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Go_1a08ecbf04c2664589cf27a34ec60f6ab7" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_quadTree</name></member>
+      <member refid="classHurricane_1_1Component_1aab69d4a8ce88502b51dfb09b242b998c" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_rubber</name></member>
+      <member refid="classHurricane_1_1Component_1aec198c632c18463f39806160398b3530" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_setNet</name></member>
+      <member refid="classHurricane_1_1Pin_1a894a8388ea97a74496aac8a92cd713f4" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_setNextOfCellPinMap</name></member>
+      <member refid="classHurricane_1_1Component_1afd1006d474ea6ff5e3c3318321479df9" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_setNextOfNetComponentSet</name></member>
+      <member refid="classHurricane_1_1Go_1a2eb3430c581f3b4913150a8e17adf541" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_setNextOfQuadTreeGoSet</name></member>
+      <member refid="classHurricane_1_1Component_1a784e50b9179a9c2d8c484952b44faa28" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_setRubber</name></member>
+      <member refid="classHurricane_1_1Contact_1a10467590d224452ce2f653e9f2601ff7" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1Component_1a652c62ea03baba8b80852f743c3bc1c2" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Contact_1a1491404b1fa754dde55166990ecf6b61" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>_width</name></member>
+      <member refid="classHurricane_1_1Go_1a1057be4198a7b64c32a2ac3c7d560014" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>autoMaterializationIsDisabled</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Component_1a3194dd34e5d6a060216097dcf7de6be0" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Component</name></member>
+      <member refid="classHurricane_1_1Contact_1afdda055b6216e9fbbc304386882e8caf" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Contact</name></member>
+      <member refid="classHurricane_1_1Contact_1abf06a080f629728a902abb8a0088f9e3" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Contact</name></member>
+      <member refid="classHurricane_1_1Pin_1ad608ce7224a9799c8c12783dcb171393" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Contact_1ab66989c2dce4d398f1f7647aca50d983" prot="public" virt="non-virtual" ambiguityscope="Hurricane::Contact::"><scope>Hurricane::Pin</scope><name>create</name></member>
+      <member refid="classHurricane_1_1Contact_1a2e555edb8984b599c391f16db105c1f5" prot="public" virt="non-virtual" ambiguityscope="Hurricane::Contact::"><scope>Hurricane::Pin</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1Go_1a0d49d22a3788e8001e58152e62b9f3cc" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>disableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1Contact_1a3fc0bb36a8d6716d1ead2658dc770d44" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>disableCheckMinSize</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Go_1ab0b1ca3c606247e1ebd7cab8fa828b04" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>enableAutoMaterialization</name></member>
+      <member refid="classHurricane_1_1Contact_1a69c6de13ced7f27031b83b4bffd4885e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>enableCheckMinSize</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Entity_1a97cf0d2e193d947f4e312d471657c06d" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Entity</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Component_1a70f428c6a48d27b74096fe06a3713001" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>forceId</name></member>
+      <member refid="classHurricane_1_1Pin_1ae9dcb50a4b089989f0270f29b14930cb" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getAccessDirection</name></member>
+      <member refid="classHurricane_1_1Contact_1ab0b327b306bf7ebda634f59d8d0cfd8f" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getAnchor</name></member>
+      <member refid="classHurricane_1_1Contact_1a300306b006397377bc9a54ea783c1150" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getAnchorHook</name></member>
+      <member refid="classHurricane_1_1Component_1a19f06d7cad163bab3b97a13f4736c9d1" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getBodyHook</name></member>
+      <member refid="classHurricane_1_1Contact_1ad4608a9c59ad83d5df64520c4ba674c9" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Contact_1a0162202e882770f0dd696f08d0b25ece" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Component_1aded90232be0978bcb9166d5bbd4d76a1" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Component_1a508eb472c5e171d35e51d606a9a680ab" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getCenter</name></member>
+      <member refid="classHurricane_1_1Component_1a4acf996c03b0b94a186fad653ba578a6" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getConnexComponents</name></member>
+      <member refid="classHurricane_1_1Component_1a764806dff055eddf8a32569f831cc4ab" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getContour</name></member>
+      <member refid="classHurricane_1_1Contact_1a8a5c4475668b6c6730ed5265e5447553" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getDx</name></member>
+      <member refid="classHurricane_1_1Contact_1af674c59fcaf1f5214d54a558fe30e41a" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getDy</name></member>
+      <member refid="classHurricane_1_1Contact_1aebd3ff8e1368617ab750b20ae9ffb59b" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getHalfHeight</name></member>
+      <member refid="classHurricane_1_1Contact_1a4a5136f4e8299435e50db7da28172ca1" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getHalfWidth</name></member>
+      <member refid="classHurricane_1_1Contact_1a07a4ecc7ea2479e2d63f5f31d9325dde" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getHeight</name></member>
+      <member refid="classHurricane_1_1Contact_1a13c7ae7a22313e90c3e3d692de029ae7" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getHooks</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Component_1a8680f2756892366db8642bfcfd7ce097" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getIsUnderFilter</name></member>
+      <member refid="classHurricane_1_1Contact_1a1a6b381fe3db43698b2926102ef6efff" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getLayer</name></member>
+      <member refid="classHurricane_1_1Component_1a39f58433a66668e2e9e14894429b6f77" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getMContour</name></member>
+      <member refid="classHurricane_1_1Pin_1aeaf8256c954875cd4d7139bd48c641af" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1Component_1a1556ef77d6b89bfc17698d52ebde9791" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getNet</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Pin_1ac37117211c87dc7ea44dbb43991b249c" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getPlacementStatus</name></member>
+      <member refid="classHurricane_1_1Component_1a4e8ac66e0ec335209f0d036412ac0f57" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getPoint</name></member>
+      <member refid="classHurricane_1_1Component_1ab9b1e6aa46becfd18e9cf2bc70a2499d" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getPointsSize</name></member>
+      <member refid="classHurricane_1_1Contact_1a0089ea242b26534cf069a7f5a5a5ccce" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getPosition</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Component_1ab701515debfdf1bf4142d4d917aaab1d" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getRubber</name></member>
+      <member refid="classHurricane_1_1Component_1af6d6b7c6b3cb18754cfa02bc5fb1e754" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getSlaveComponents</name></member>
+      <member refid="classHurricane_1_1Contact_1a794ce7c3aa5ffe894c1231f7c5ac3c52" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>getWidth</name></member>
+      <member refid="classHurricane_1_1Contact_1a9bd79e7ff3c136c1fb75df034eeb1ec1" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getX</name></member>
+      <member refid="classHurricane_1_1Contact_1a2da5bc01cd43d56d5f86172fa23adba1" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>getY</name></member>
+      <member refid="classHurricane_1_1Go_1a9fe76630495793d6567f9fb69b53686b" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Go</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Pin_1af9e189540b9118df57f875d108c34cbd" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Component_1a8334b04428fcc163deee2f07bf89e2bb" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>invalidate</name></member>
+      <member refid="classHurricane_1_1Pin_1ac5234b75e3cb0d6cdaac10590d06474a" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>isFixed</name></member>
+      <member refid="classHurricane_1_1Component_1a794ff898d08ba8e68da23c49eac8d6e4" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>isManhattanized</name></member>
+      <member refid="classHurricane_1_1Go_1a0fd2574d3e2e0157230209acdc1b8aa6" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>isMaterialized</name></member>
+      <member refid="classHurricane_1_1Component_1a7ee98963963123d78b1eb70f81f32904" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>isNonRectangle</name></member>
+      <member refid="classHurricane_1_1Pin_1a49260cade5ad0eaf723ffa8753983d2e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>isPlaced</name></member>
+      <member refid="classHurricane_1_1Pin_1aa1e8ffea3b9678368a23ef4dd883e5d2" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>isUnplaced</name></member>
+      <member refid="classHurricane_1_1Component_1a0b8fd3c2af7624646e02d9804f318e9c" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>materialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Pin</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1Pin_1a0a8972cb03fed668be27c8b6c1d057f4" prot="protected" virt="non-virtual"><scope>Hurricane::Pin</scope><name>Pin</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1Contact_1a82f29c6b48b0c5a51fe3c1678d71876c" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setDx</name></member>
+      <member refid="classHurricane_1_1Contact_1ac5dadc06ae38c1ff287f031864f58850" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setDy</name></member>
+      <member refid="classHurricane_1_1Contact_1a6480b6a75cc098d3227f27080a2cb42b" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setHeight</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1Contact_1aec627634d5b6cfc5079a02b1b518b50e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setLayer</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Contact_1a5c8cb75debcbe10aedc092e2089a975c" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setOffset</name></member>
+      <member refid="classHurricane_1_1Pin_1aacf388f08734b4f7131d811508140f40" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setPlacementStatus</name></member>
+      <member refid="classHurricane_1_1Contact_1ae44d4d7655428705f13dca34c7167690" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setPosition</name></member>
+      <member refid="classHurricane_1_1Contact_1aedcc63fe54538939c03fe81a16b0bae0" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setPosition</name></member>
+      <member refid="classHurricane_1_1Contact_1a1bded13596d448c6bb9c93271fffe5fd" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setSizes</name></member>
+      <member refid="classHurricane_1_1Contact_1a08d14ce6cdf3696e472f4a621b936afe" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setWidth</name></member>
+      <member refid="classHurricane_1_1Contact_1a5b2338675993259feabb641fd9a1996e" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setX</name></member>
+      <member refid="classHurricane_1_1Contact_1a232a49a5dd180e9ff8dfb2bd2a67f2cd" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>setY</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Contact_1af80a2071a6c55584c91c8ffa0ca0a1d5" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>translate</name></member>
+      <member refid="classHurricane_1_1Component_1af005fecbd3106d707a2d33c7aad930ea" prot="public" virt="virtual"><scope>Hurricane::Pin</scope><name>unmaterialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Pin</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Pin</scope><name>~DBo</name></member>
+      <member refid="classHurricane_1_1Entity_1a4bbd1e777d515f98fde3d4601f3adb89" prot="protected" virt="virtual"><scope>Hurricane::Pin</scope><name>~Entity</name></member>
+      <member refid="classHurricane_1_1Go_1ae9061a10db10066b1b1266fd525dd6ae" prot="protected" virt="virtual"><scope>Hurricane::Pin</scope><name>~Go</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -66,6 +66,10 @@ namespace Anabatic {
 
   NetBuilderVH::~NetBuilderVH () { }
 
+
+  string  NetBuilderVH::getStyle ()
+  { return "VH,3RL+"; }
+
   
   void  NetBuilderVH::doRp_AutoContacts ( GCell*        gcell
                                         , Component*    rp
@@ -85,7 +89,6 @@ namespace Anabatic {
     size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
     Flags        direction      = Session::getDirection ( rpDepth );
     DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
-    DbU::Unit    gridPosition   = 0;
 
     getPositions( rp, sourcePosition, targetPosition );
 
@@ -114,56 +117,8 @@ namespace Anabatic {
       }
     }
 
-#if 0
-  // Quasi-punctual M1 terminal.
-    if (flags & VSmall) {
-      Box                ab             = rp->getCell()->getBoundingBox();
-      RoutingLayerGauge* gaugeMetal3    = Session::getLayerGauge( 2 );
-      DbU::Unit          metal3axis     = gaugeMetal3->getTrackPosition( ab.getYMin()
-                                                                       , ab.getYMax()
-                                                                       , sourcePosition.getY()
-                                                                       , Constant::Nearest );
-      DbU::Unit          viaSideProtect = Session::getViaWidth((size_t)0);
-
-      AutoContact* sourceVia12 = AutoContactTerminal::create( sourceGCell
-                                                            , rp
-                                                            , Session::getContactLayer(0)
-                                                            , sourcePosition
-                                                            , viaSideProtect, viaSideProtect
-                                                            );
-      AutoContact* targetVia12 = AutoContactTerminal::create( targetGCell
-                                                            , rp
-                                                            , Session::getContactLayer(0)
-                                                            , targetPosition
-                                                            , viaSideProtect, viaSideProtect
-                                                            );
-      AutoContact* sourceVia23 = AutoContactTurn::create( sourceGCell, net, Session::getContactLayer(1) );
-      AutoContact* targetVia23 = AutoContactTurn::create( targetGCell, net, Session::getContactLayer(1) );
-      sourceVia23->setY( metal3axis );
-      targetVia23->setY( metal3axis );
-      sourceVia23->setX( sourcePosition.getX() );
-      targetVia23->setX( targetPosition.getX() );
-
-      AutoSegment* segmentS = AutoSegment::create( sourceVia12, sourceVia23, Flags::Vertical );
-      AutoSegment* segmentT = AutoSegment::create( targetVia12, targetVia23, Flags::Vertical );
-      AutoSegment* segmentM = AutoSegment::create( sourceVia23, targetVia23, Flags::Horizontal );
-
-      sourceVia12->setFlags( CntFixed );
-      sourceVia23->setFlags( CntFixed );
-      targetVia12->setFlags( CntFixed );
-      targetVia23->setFlags( CntFixed );
-      segmentS->setFlags( AutoSegment::SegFixed );
-      segmentT->setFlags( AutoSegment::SegFixed );
-      segmentM->setFlags( AutoSegment::SegFixed );
-
-      cdebug_log(145,0) << "Hard protect: " << rp << endl;
-      cdebug_log(145,0) << "X:" << DbU::getValueString(sourcePosition.getX())
-                        << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
-    }
-#endif
-
   // Non-M1 terminal or punctual M1 protections.
-    if ( (rpDepth != 0) or ((sourcePosition == targetPosition) and (gridPosition == 0)) ) {
+    if ( (rpDepth != 0) or (sourcePosition == targetPosition) ) {
       map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
       if (irp == getRpLookup().end()) {
         AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
@@ -205,6 +160,10 @@ namespace Anabatic {
                                             );
     }
 
+    if ( (rpDepth > 0) and not Session::getRoutingGauge()->isSuperPitched() ) {
+      rpLayer = Session::getContactLayer( rpDepth );
+    }
+
     if (not source and not target) {
       source = target = AutoContactTerminal::create( gcell
                                                    , rp
@@ -223,28 +182,43 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
 
-    AutoContact* rpContactSource;
-    AutoContact* rpContactTarget;
+    AutoContact* rpContactSource = NULL;
+    AutoContact* rpContactTarget = NULL;
+    const Layer* rpLayer         = rp->getLayer();
+    size_t       rpDepth         = Session::getLayerDepth( rp->getLayer() );
 
     flags |= checkRoutingPadSize( rp );
 
     doRp_AutoContacts( gcell, rp, rpContactSource, rpContactTarget, flags );
 
-    if (not (flags & (HAccess|HAccessEW))) {
-      AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
-      AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
-      AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  );
-      AutoSegment::create( subContact1,     subContact2, Flags::Horizontal );
-      rpContactSource = subContact2;
-    } else {
-      if (flags & VSmall) {
+    if (rpDepth % 2 == 0) { // RP should be vertical (M1, M3).
+      if (not (flags & (HAccess|HAccessEW))) {
+        AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
+        AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
+        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  , rpDepth+2 );
+        AutoSegment::create( subContact1,     subContact2, Flags::Horizontal, rpDepth+1  );
+        rpContactSource = subContact2;
+      } else {
+        if (flags & VSmall) {
+          AutoContact* subContact1 = NULL;
+          if (flags & HAccessEW)
+            subContact1 = AutoContactHTee::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
+          else
+            subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
+      
+          AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+          rpContactSource = subContact1;
+        }
+      }
+    } else { // RP should be horizontal (M2).
+      if (flags & (HAccess|HAccessEW)) {
         AutoContact* subContact1 = NULL;
         if (flags & HAccessEW)
-          subContact1 = AutoContactHTee::create( gcell, rp->getNet(), Session::getContactLayer(1) );
+          subContact1 = AutoContactHTee::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
         else
-          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
-
-        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(rpDepth+1) );
+        
+        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical, rpDepth+1 );
         rpContactSource = subContact1;
       }
     }
@@ -521,6 +495,12 @@ namespace Anabatic {
   }
 
 
+  bool  NetBuilderVH::_do_2G ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::_do_2G()" << endl;
+    return _do_xG();
+  }
+
   bool  NetBuilderVH::_do_xG ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG()" << endl;
@@ -571,7 +551,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
   
     // HARDCODED VALUE.
-      if ( (getTopology() & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
+      if ( (getTopology() & Global_Fixed) and (globalSegment->getAnchoredLength() < 2*Session::getSliceHeight()) )
         addToFixSegments( globalSegment );
         
       if (getConnexity().fields.globals < 2) {

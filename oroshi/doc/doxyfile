@@ -107,10 +107,14 @@ WARN_LOGFILE           =
 # Configuration options related to the input files
 
 INPUT                  = \
-  ../python/Stack.py          \
-  ../python/WIP_Transistor.py \
-  ../python/WIP_DP.py         \
-  ../python/WIP_CSP.py
+  ../python/stack.py             \
+  ../python/wip_transistor.py    \
+  ../python/wip_dp.py            \
+  ../python/wip_csp.py           \
+  ../python/capacitorunit.py     \
+  ../python/capacitormatrix.py   \
+  ../python/capacitorrouted.py   \
+  ../python/capacitorvrtracks.py
 
 FILE_PATTERNS          = *.py
 

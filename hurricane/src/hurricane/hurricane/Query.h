@@ -29,10 +29,9 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_QUERY_H
-#define  HURRICANE_QUERY_H
-
+#pragma  once
 #include <vector>
+#include <iomanip>
 #include "hurricane/Commons.h"
 #include "hurricane/Box.h"
 #include "hurricane/Transformation.h"
@@ -115,9 +114,11 @@ namespace Hurricane {
       inline  const Transformation& getTopTransformation () const;
       inline  unsigned int          getStartLevel        () const;
       inline  unsigned int          getStopLevel         () const;
+      inline  Cell::Flags           getStopCellFlags     () const;
       inline  Cell*                 getMasterCell        ();
       inline  Instance*             getInstance          ();
       inline  const Box&            getArea              () const;
+      inline  DbU::Unit             getThreshold         () const;
       inline  const Transformation& getTransformation    () const;
       inline  const Path&           getPath              () const;
     //inline  const Tabulation&     getTab               () const;
@@ -125,8 +126,10 @@ namespace Hurricane {
       inline  void                  setTopCell           ( Cell*                 cell );
       inline  void                  setTopArea           ( const Box&            area );
       inline  void                  setTopTransformation ( const Transformation& transformation );
+      inline  void                  setThreshold         ( DbU::Unit             threshold );
       inline  void                  setStartLevel        ( unsigned int          level );
       inline  void                  setStopLevel         ( unsigned int          level );
+      inline  void                  setStopCellFlags     ( Cell::Flags );
       inline  void                  init                 ();
       inline  void                  updateTransformation ();
       inline  bool                  levelDown            ();
@@ -134,15 +137,19 @@ namespace Hurricane {
       inline  void                  levelProgress        ();
       inline  bool                  levelCompleted       ();
       inline  void                  progress             ( bool init=false );
+      inline  size_t                getInstanceCount     () const;
 
     protected:
     // Internal: Attributes.
     //        Tabulation            _tab;
               Cell*                 _topCell;
               Box                   _topArea;
+              DbU::Unit             _threshold;
               Transformation        _topTransformation;
               unsigned int          _startLevel;
               unsigned int          _stopLevel;
+              Cell::Flags           _stopCellFlags;
+              size_t                _instanceCount;
 
     private:
     // Internal: Constructors.
@@ -157,12 +164,15 @@ namespace Hurricane {
   inline  Cell*                 QueryStack::getTopCell           () { return _topCell; }
   inline  const Box&            QueryStack::getTopArea           () const { return _topArea; }
   inline  const Transformation& QueryStack::getTopTransformation () const { return _topTransformation; }
+  inline  DbU::Unit             QueryStack::getThreshold         () const { return _threshold; }
   inline  unsigned int          QueryStack::getStartLevel        () const { return _startLevel; }
   inline  unsigned int          QueryStack::getStopLevel         () const { return _stopLevel; }
+  inline  Cell::Flags           QueryStack::getStopCellFlags     () const { return _stopCellFlags; }
   inline  const Box&            QueryStack::getArea              () const { return back()->_area; }
   inline  const Transformation& QueryStack::getTransformation    () const { return back()->_transformation; }
   inline  const Path&           QueryStack::getPath              () const { return back()->_path; }
 //inline  const Tabulation&     QueryStack::getTab               () const { return _tab; }
+  inline  size_t                QueryStack::getInstanceCount     () const { return _instanceCount; }
 
 
   inline Instance* QueryStack::getInstance ()
@@ -183,18 +193,21 @@ namespace Hurricane {
   inline  void  QueryStack::setTopCell           ( Cell*                 cell )           { _topCell = cell; }
   inline  void  QueryStack::setTopArea           ( const Box&            area )           { _topArea = area; }
   inline  void  QueryStack::setTopTransformation ( const Transformation& transformation ) { _topTransformation = transformation; }
+  inline  void  QueryStack::setThreshold         ( DbU::Unit             threshold )      { _threshold = threshold; }
   inline  void  QueryStack::setStartLevel        ( unsigned int          level )          { _startLevel = level; }
   inline  void  QueryStack::setStopLevel         ( unsigned int          level )          { _stopLevel = level; }
+  inline  void  QueryStack::setStopCellFlags     ( Cell::Flags           flags )          { _stopCellFlags = flags; }
 
 
   inline  void  QueryStack::init ()
   {
-    while ( !empty() ) levelUp();
+    _instanceCount = 0;
+    while (not empty()) levelUp();
 
-    push_back ( new QueryState(NULL,_topArea,_topTransformation,Path()) );
+    push_back( new QueryState(NULL,_topArea,_topTransformation,Path()) );
   //_tab++;
 
-    progress ( true );
+    progress( true );
   }
 
 
@@ -204,6 +217,8 @@ namespace Hurricane {
     QueryState* parent   = *(rbegin()+1);
     Instance*   instance = child->_locator->getElement();
 
+  //cerr << "Processing " << instance << endl;
+
     child->_area           = parent->_area;
     child->_transformation = instance->getTransformation ();
 
@@ -212,14 +227,18 @@ namespace Hurricane {
 
   //child->_path = Path ( Path(parent->_path,instance->getCell()->getShuntedPath()) , instance );
     child->_path = Path ( parent->_path, instance );
+  //cerr << "QueryStack::updateTransformation() " << child->_path << endl;
   }
 
 
   inline  bool  QueryStack::levelDown ()
   {
-    if ( size() > _stopLevel ) return false;
+    if (size() > _stopLevel) return false;
+    if (getMasterCell()->getFlags().isset(_stopCellFlags)) return false;
 
-    Locator<Instance*>* locator = getMasterCell()->getInstancesUnder(getArea()).getLocator();
+  //cerr << "QueryStack::levelDown(): t:" << DbU::getValueString(getThreshold()) << endl;
+    Locator<Instance*>* locator =
+      getMasterCell()->getInstancesUnder(getArea(),getThreshold()).getLocator();
 
     if ( locator->isValid() ) {
       push_back ( new QueryState ( locator ) );
@@ -231,6 +250,7 @@ namespace Hurricane {
     } else
       delete locator;
 
+  //cerr << "  Aborting level down" << endl;
     return false;
   }
 
@@ -252,33 +272,35 @@ namespace Hurricane {
 
   inline  void  QueryStack::levelProgress ()
   {
-    if ( levelCompleted() ) return;
+    if (levelCompleted()) return;
 
-    back()->_locator->progress ();
-    if ( !back()->_locator->isValid() ) return;
+    back()->_locator->progress();
+    if (not back()->_locator->isValid()) return;
 
-    updateTransformation ();
+  //cerr << "  stack:" << std::setw(3) << _instanceCount << ":" << getPath() << endl;
+    ++_instanceCount;
+    updateTransformation();
   }
 
 
   inline  void  QueryStack::progress ( bool init )
   {
-    if ( !init ) levelProgress ();
+    if (not init) levelProgress ();
     else {
-      if ( !levelDown() && ( size() > _startLevel ) )
+      if (not levelDown() and (size() > _startLevel))
         return;
     }
 
-    while ( !empty() ) {
-      if ( levelCompleted() ) {
+    while (not empty()) {
+      if (levelCompleted()) {
         levelUp ();
       } else {
-        if ( levelDown() ) continue;
+        if (levelDown()) continue;
       }
 
-      if ( size() > _startLevel ) return;
-      if ( empty() ) break;
-      levelProgress ();
+      if (size() > _startLevel) return;
+      if (empty()) break;
+      levelProgress();
     }
   }
 
@@ -311,9 +333,11 @@ namespace Hurricane {
     // Accessors.
       inline  unsigned int          getStartLevel          () const;
       inline  unsigned int          getStopLevel           () const;
+      inline  Cell::Flags           getStopCellFlags       () const;
       inline  size_t                getDepth               () const;
       inline  const Transformation& getTransformation      () const;
       inline  const Box&            getArea                () const;
+      inline  DbU::Unit             getThreshold           () const;
       inline  const BasicLayer*     getBasicLayer          () const;
       inline  Cell*                 getMasterCell          ();
       inline  Instance*             getInstance            ();
@@ -336,15 +360,18 @@ namespace Hurricane {
                                                            , const BasicLayer*     basicLayer
                                                            , ExtensionSlice::Mask  extensionMask
                                                            , Mask                  filter
+                                                           , DbU::Unit             threshold=0
                                                            );
       inline  void                  setCell                ( Cell*                 cell );
       inline  void                  setArea                ( const Box&            area );
+      inline  void                  setThreshold           ( DbU::Unit             threshold );
       inline  void                  setTransformation      ( const Transformation& transformation );
       virtual void                  setBasicLayer          ( const BasicLayer*     basicLayer );
       inline  void                  setExtensionMask       ( ExtensionSlice::Mask  mode );
       inline  void                  setFilter              ( Mask                  mode );
       inline  void                  setStartLevel          ( unsigned int          level );
       inline  void                  setStopLevel           ( unsigned int          level );
+      inline  void                  setStopCellFlags       ( Cell::Flags );
       virtual void                  doQuery                ();
 
     protected:
@@ -360,14 +387,17 @@ namespace Hurricane {
 
   inline  void  Query::setCell           ( Cell*                 cell )           { _stack.setTopCell(cell); }
   inline  void  Query::setArea           ( const Box&            area )           { _stack.setTopArea(area); }
+  inline  void  Query::setThreshold      ( DbU::Unit             threshold )      { _stack.setThreshold(threshold); }
   inline  void  Query::setTransformation ( const Transformation& transformation ) { _stack.setTopTransformation(transformation); }
   inline  void  Query::setFilter         ( Mask                  filter )         { _filter = filter; }
   inline  void  Query::setExtensionMask  ( ExtensionSlice::Mask  mask )           { _extensionMask = mask; }
   inline  void  Query::setStartLevel     ( unsigned int          level )          { _stack.setStartLevel(level); }
   inline  void  Query::setStopLevel      ( unsigned int          level )          { _stack.setStopLevel(level); }
+  inline  void  Query::setStopCellFlags  ( Cell::Flags           flags )          { _stack.setStopCellFlags(flags); }
 
   inline  unsigned int          Query::getStartLevel      () const { return _stack.getStartLevel(); }
   inline  unsigned int          Query::getStopLevel       () const { return _stack.getStopLevel(); }
+  inline  Cell::Flags           Query::getStopCellFlags   () const { return _stack.getStopCellFlags(); }
   inline  size_t                Query::getDepth           () const { return _stack.size(); }
   inline  const Box&            Query::getArea            () const { return _stack.getArea(); }
   inline  const Transformation& Query::getTransformation  () const { return _stack.getTransformation(); }
@@ -379,5 +409,3 @@ namespace Hurricane {
   
 
 } // Hurricane namespace.
-
-#endif // HURRICANE_QUERY_H

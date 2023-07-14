@@ -243,8 +243,27 @@ extern "C" {
 
 
 
-  DirectDeleteMethod(PyOccurrence_DeAlloc,PyOccurrence)
-  PyTypeObjectLinkPyTypeNewInit(Occurrence)
+  DirectDeleteMethod    (PyOccurrence_DeAlloc,PyOccurrence)
+  DirectReprMethod      (PyOccurrence_Repr   ,PyOccurrence,   Occurrence)
+  DirectStrMethod       (PyOccurrence_Str    ,PyOccurrence,   Occurrence)
+  DirectCmpByValueMethod(PyOccurrence_Cmp    ,IsPyOccurrence, PyOccurrence)
+  DirectHashMethod      (PyOccurrence_Hash   ,Occurrence)
+
+  extern void  PyOccurrence_LinkPyType ()
+  {
+    cdebug_log(20,0) << "PyOccurrence_LinkType()" << endl;
+
+    PyTypeOccurrence.tp_dealloc     = (destructor) PyOccurrence_DeAlloc;
+    PyTypeOccurrence.tp_richcompare = (richcmpfunc)PyOccurrence_Cmp;
+    PyTypeOccurrence.tp_repr        = (reprfunc)   PyOccurrence_Repr;
+    PyTypeOccurrence.tp_str         = (reprfunc)   PyOccurrence_Str;
+    PyTypeOccurrence.tp_hash        = (hashfunc)   PyOccurrence_Hash;
+    PyTypeOccurrence.tp_new         = (newfunc)    PyOccurrence_NEW;
+    PyTypeOccurrence.tp_init        = (initproc)   PyOccurrence_Init;
+    PyTypeOccurrence.tp_methods     = PyOccurrence_Methods;
+  }
+
+//PyTypeObjectLinkPyTypeNewInit(Occurrence)
 //PyTypeObjectLinkPyType(Occurrence)
 
 

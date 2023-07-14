@@ -2,14 +2,14 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |          T o o l c h a i n   B u i l d e r                      |
 # |                                                                 |
 # |  Author      :                       Damien Dupuis              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :   "./builder/__init__.py"                        |
 # +-----------------------------------------------------------------+
@@ -21,8 +21,7 @@ class ErrorMessage ( Exception ):
 
     def __init__ ( self, code, *arguments ):
         self._code   = code
-        self._errors = [ 'Malformed call to ErrorMessage()'
-                       , '%s' % str(arguments) ]
+        self._errors = [ 'Malformed call to ErrorMessage()', '{}'.format(arguments) ]
 
         text = None
         if len(arguments) == 1:
@@ -31,7 +30,6 @@ class ErrorMessage ( Exception ):
                 self._errors = arguments[0]
         elif len(arguments) > 1:
             text = list(arguments)
-
         if text:
             self._errors = []
             while len(text[0]) == 0: del text[0]
@@ -50,11 +48,10 @@ class ErrorMessage ( Exception ):
     def __str__ ( self ):
         if not isinstance(self._errors,list):
             return "[ERROR] %s" % self._errors
-
         formatted = "\n"
         for i in range(len(self._errors)):
-            if i == 0: formatted += "[ERROR] %s" % self._errors[i]
-            else:      formatted += "        %s" % self._errors[i]
+            if i == 0: formatted += "[ERROR] {}".format(self._errors[i] )
+            else:      formatted += "        {}".format(self._errors[i] )
             if i+1 < len(self._errors): formatted += "\n"
         return formatted
 
@@ -69,7 +66,7 @@ class ErrorMessage ( Exception ):
         return
 
     def terminate ( self ):
-        print self
+        print( self )
         sys.exit(self._code)
 
     def _getCode ( self ): return self._code

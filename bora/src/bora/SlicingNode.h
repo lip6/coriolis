@@ -174,6 +174,7 @@ namespace Bora {
       virtual        void               setGlobalSize                ( DbU::Unit height, DbU::Unit width );
       virtual        void               setGlobalSize                ( size_t index );
       virtual        void               _setGlobalSize               ( BoxSet* );
+      virtual        void               _setGlobalSize               ( DbU::Unit height, DbU::Unit width );
       virtual inline bool               recursiveCheckPreset         () const;
       virtual inline bool               recursiveCheckSet            () const;
       virtual inline bool               recursiveCheckPlaced         () const;
@@ -251,11 +252,8 @@ namespace Bora {
       virtual        SlicingNode*       clone                        ( unsigned int tr=None );
       virtual        double             getDevicesArea               () const;
       virtual        double             getOccupationArea            () const;
-      virtual        void               setNFing                     ( int );
-      virtual        int                getNFing                     () const;
-      virtual        double             getStartParameter            () const;
-      virtual        double             getStepParameter             () const;
-      virtual        double             getCountParameter            () const;
+      virtual        void               setBoxSetIndex               ( size_t );
+      virtual        size_t             getBoxSetIndex               () const;
       virtual        Instance*          getInstance                  () const;
       virtual        void               setInstance                  ( Instance* );
       virtual        bool               checkCellInstances           ( Cell* );

@@ -1,7 +1,7 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.cpp<anabatic>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -17,7 +17,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
 #include "hurricane/Technology.h"
@@ -25,6 +25,8 @@
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Pin.h"
+#include "hurricane/Pad.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
@@ -55,6 +57,8 @@ namespace Anabatic {
   using  Hurricane::BasicLayer;
   using  Hurricane::RegularLayer;
   using  Hurricane::Segment;
+  using  Hurricane::Pad;
+  using  Hurricane::Pin;
   using  Hurricane::Plug;
   using  Hurricane::Path;
   using  Hurricane::Occurrence;
@@ -69,40 +73,50 @@ namespace Anabatic {
 
 
   Configuration::Configuration ( const CellGauge* cg, const RoutingGauge* rg )
-    : _gdepthv         (ndepth)
-    , _gdepthh         (ndepth)
-    , _ddepthv         (ndepth)
-    , _ddepthh         (ndepth)
-    , _ddepthc         (ndepth)
-    , _cg              (NULL)
-    , _rg              (NULL)
-    , _extensionCaps   ()
-    , _saturateRatio   (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
-    , _saturateRp      (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
-    , _globalThreshold (0)
-    , _allowedDepth    (0)
-    , _edgeLength      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
-    , _edgeWidth       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH       (Cfg::getParamDouble("anabatic.edgeCostH"       ,  9.0)->asDouble())
-    , _edgeCostK       (Cfg::getParamDouble("anabatic.edgeCostK"       ,-10.0)->asDouble())
-    , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,  1.5)->asDouble())
-    , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,  1.0)->asDouble())
-    , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations", 10  )->asInt())
+    : _gdepthv          (ndepth)
+    , _gdepthh          (ndepth)
+    , _ddepthv          (ndepth)
+    , _ddepthh          (ndepth)
+    , _ddepthc          (ndepth)
+    , _netBuilderStyle  (Cfg::getParamString("anabatic.netBuilderStyle","HV,3RL+")->asString() )
+    , _routingStyle     (Cfg::getParamInt   ("anabatic.routingStyle"   ,StyleFlags::NoStyle)->asInt() )
+    , _cg               (NULL)
+    , _rg               (NULL)
+    , _extensionCaps    ()
+    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio",80.0)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"   ,8   )->asInt())
+    , _globalThreshold  (0)
+    , _allowedDepth     (0)
+    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
+    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
+    , _edgeCostH        (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
+    , _edgeCostK        (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
+    , _edgeHInc         (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
+    , _edgeHScaling     (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
+    , _globalIterations (Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
+    , _diodeName        (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
+    , _antennaGateMaxWL (Cfg::getParamInt   ("etesian.antennaGateMaxWL" ,      0  )->asInt())
+    , _antennaDiodeMaxWL(Cfg::getParamInt   ("etesian.antennaDiodeMaxWL",      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
-    if (cg == NULL) {
+    if (not cg)
       cg = AllianceFramework::get()->getCellGauge( gaugeName );
-      if (cg == NULL) 
-        throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+    if (not cg) {
+      string cellGaugeName = Cfg::getParamString("anabatic.cellGauge","sxlib")->asString();
+      cg = AllianceFramework::get()->getCellGauge( cellGaugeName );
     }
+    if (not cg) 
+      throw Error( "AnabaticEngine::Configuration(): Unable to find cell gauge \"%s\""
+                 , gaugeName.c_str() );
 
-    if (rg == NULL) {
+    if (not rg)
       rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
-      if (rg == NULL) 
-        throw Error( "AnabaticEngine::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
-    }
+    if (not rg) 
+      throw Error( "AnabaticEngine::Configuration(): Unable to find routing gauge \"%s\""
+                 , gaugeName.c_str() );
+
     _cg = cg->getClone();
     _rg = rg->getClone();
 
@@ -155,29 +169,42 @@ namespace Anabatic {
         }
       }
     }
+
+    if (_antennaGateMaxWL and not _antennaDiodeMaxWL) {
+      _antennaDiodeMaxWL = _antennaGateMaxWL;
+      cerr << Warning( "Anabatic::Configuration(): \"etesian.antennaGateMaxWL\" is defined but not \"etesian.antennaDiodeMaxWL\".\n"
+                      "          Setting both to %s"
+                     , DbU::getValueString(_antennaGateMaxWL).c_str()
+                     ) << endl;
+    }
   }
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _gmetalh         (other._gmetalh)
-    , _gmetalv         (other._gmetalv)
-    , _gcontact        (other._gcontact)
-    , _gdepthv         (other._gdepthv)
-    , _gdepthh         (other._gdepthh)
-    , _ddepthv         (other._ddepthv)
-    , _ddepthh         (other._ddepthh)
-    , _ddepthc         (other._ddepthc)
-    , _cg              (NULL)
-    , _rg              (NULL)
-    , _extensionCaps   (other._extensionCaps)
-    , _saturateRatio   (other._saturateRatio)
-    , _globalThreshold (other._globalThreshold)
-    , _allowedDepth    (other._allowedDepth)
-    , _edgeCostH       (other._edgeCostH)
-    , _edgeCostK       (other._edgeCostK)
-    , _edgeHInc        (other._edgeHInc)
-    , _edgeHScaling    (other._edgeHScaling)
-    , _globalIterations(other._globalIterations)
+    : _gmetalh          (other._gmetalh)
+    , _gmetalv          (other._gmetalv)
+    , _gcontact         (other._gcontact)
+    , _gdepthv          (other._gdepthv)
+    , _gdepthh          (other._gdepthh)
+    , _ddepthv          (other._ddepthv)
+    , _ddepthh          (other._ddepthh)
+    , _ddepthc          (other._ddepthc)
+    , _netBuilderStyle  (other._netBuilderStyle)
+    , _routingStyle     (other._routingStyle)
+    , _cg               (NULL)
+    , _rg               (NULL)
+    , _extensionCaps    (other._extensionCaps)
+    , _saturateRatio    (other._saturateRatio)
+    , _globalThreshold  (other._globalThreshold)
+    , _allowedDepth     (other._allowedDepth)
+    , _edgeCostH        (other._edgeCostH)
+    , _edgeCostK        (other._edgeCostK)
+    , _edgeHInc         (other._edgeHInc)
+    , _edgeHScaling     (other._edgeHScaling)
+    , _globalIterations (other._globalIterations)
+    , _diodeName        (other._diodeName)
+    , _antennaGateMaxWL (other._antennaGateMaxWL)
+    , _antennaDiodeMaxWL(other._antennaDiodeMaxWL)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -200,6 +227,10 @@ namespace Anabatic {
 
   bool  Configuration::isTwoMetals () const
   { return _rg->isTwoMetals(); }
+
+
+  bool  Configuration::isHybrid () const
+  { return _routingStyle & StyleFlags::Hybrid; }
   
 
   bool  Configuration::isHV () const
@@ -286,6 +317,10 @@ namespace Anabatic {
   { return getWireWidth( getLayerDepth(layer) ); }
 
 
+  DbU::Unit  Configuration::getPWireWidth ( const Layer* layer ) const
+  { return getPWireWidth( getLayerDepth(layer) ); }
+
+
   Flags  Configuration::getDirection ( const Layer* layer ) const
   { return getDirection( getLayerDepth(layer) ); }
 
@@ -336,6 +371,9 @@ namespace Anabatic {
   DbU::Unit  Configuration::getWireWidth ( size_t depth ) const
   { return _rg->getLayerWireWidth(depth); }
 
+
+  DbU::Unit  Configuration::getPWireWidth ( size_t depth ) const
+  { return _rg->getLayerPWireWidth(depth); } 
 
   DbU::Unit  Configuration::getExtensionCap ( size_t depth ) const
   { return _extensionCaps[depth]; }
@@ -458,13 +496,26 @@ namespace Anabatic {
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {
       cdebug_log(112,0) << "@ " << component << endl;
-      if (not NetExternalComponents::isExternal(component)) continue;
+      if (not NetExternalComponents::isExternal(component)) {
+        cdebug_log(112,0) << "  Not an external component, skip." << endl;
+        continue;
+      }
 
-      Segment* segment = dynamic_cast<Segment*>(component);
-      if (not segment) continue;
-      if (segment->getLayer()->getMask() != metal1->getMask()) continue;
+      if (dynamic_cast<Pin*>(component)) {
+        cdebug_log(112,0) << "  Pins are always considered best candidates:" << component << endl;
+        bestComponent = component;
+        break;
+      }
 
-      Box        bb       = transformation.getBox( component->getBoundingBox() );
+      Component* candidate = dynamic_cast<Segment*>( component );
+      if (not candidate
+         or  (candidate->getLayer()->getMask() != metal1->getMask()) )
+        candidate = dynamic_cast<Pin*>(component);
+      if (not candidate)
+        candidate = dynamic_cast<Pad*>( component );
+      if (not candidate) continue;
+
+      Box        bb       = transformation.getBox( candidate->getBoundingBox() );
       DbU::Unit  trackPos = 0;
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
@@ -478,8 +529,8 @@ namespace Anabatic {
         maxPos = bb.getXMax();
 
         cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
-        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
+        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(bb.getXMin()) << endl;
+        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(bb.getXMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
       } else {
         trackPos = gauge->getTrackPosition( ab.getYMin()
@@ -490,18 +541,18 @@ namespace Anabatic {
         maxPos = bb.getYMax();
 
         cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
-        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
+        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(bb.getYMin()) << endl;
+        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(bb.getYMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
       }
 
       cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
       cdebug_log(112,0) << "| " << transformation << endl;
-      cdebug_log(112,0) << "| " << bb << " of:" << segment << endl;
+      cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
       cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        if (not bestComponent or (bestSpan > maxPos-minPos)) {
+        if (not bestComponent or (bestSpan < maxPos-minPos)) {
           bestComponent = component;
           bestSpan      = maxPos - minPos;
         }
@@ -533,6 +584,7 @@ namespace Anabatic {
     cout << "  o  Configuration of ToolEngine<Anabatic> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
     cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
+    cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
   }
 
 
@@ -555,17 +607,22 @@ namespace Anabatic {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot( "_gdepthh"     ,  _gdepthh     ) );
-    record->add ( getSlot( "_gdepthv"     ,  _gdepthv     ) );
-    record->add ( getSlot( "_rg"          ,  _rg          ) );
-    record->add ( getSlot( "_gmetalh"     , _gmetalh      ) );
-    record->add ( getSlot( "_gmetalv"     , _gmetalv      ) );
-    record->add ( getSlot( "_gcontact"    , _gcontact     ) );
-    record->add ( getSlot( "_allowedDepth", _allowedDepth ) );
-    record->add ( getSlot( "_edgeCostH"   , _edgeCostH    ) );
-    record->add ( getSlot( "_edgeCostK"   , _edgeCostK    ) );
+    record->add( getSlot( "_gdepthh"         , _gdepthh          ) );
+    record->add( getSlot( "_gdepthv"         , _gdepthv          ) );
+    record->add( getSlot( "_rg"              , _rg               ) );
+    record->add( getSlot( "_gmetalh"         , _gmetalh          ) );
+    record->add( getSlot( "_gmetalv"         , _gmetalv          ) );
+    record->add( getSlot( "_gcontact"        , _gcontact         ) );
+    record->add( getSlot( "_allowedDepth"    , _allowedDepth     ) );
+    record->add( getSlot( "_edgeCostH"       , _edgeCostH        ) );
+    record->add( getSlot( "_edgeCostK"       , _edgeCostK        ) );
+    record->add( getSlot( "_edgeHInc"        , _edgeHInc         ) );
+    record->add( getSlot( "_edgeHScaling"    , _edgeHScaling     ) );
+    record->add( getSlot( "_globalIterations", _globalIterations ) );
+    record->add( DbU::getValueSlot( "_antennaGateMaxWL" , &_antennaGateMaxWL  ) );
+    record->add( DbU::getValueSlot( "_antennaDiodeMaxWL", &_antennaDiodeMaxWL ) );
                                      
-    return ( record );
+    return record;
   }
 
 

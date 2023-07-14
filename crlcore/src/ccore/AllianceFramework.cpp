@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include <unistd.h>
-#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -149,7 +149,7 @@ namespace CRL {
 
 
   string  AllianceFrameworkProperty::JsonProperty::getTypeName () const
-  { return getString(AllianceFrameworkProperty::getPropertyName()); }
+  { return "CRL::AllianceFrameworkProperty"; }
 
 
   void  AllianceFrameworkProperty::JsonProperty::initialize ()
@@ -189,22 +189,21 @@ namespace CRL {
     , _parsers            ()
     , _drivers            ()
     , _catalog            ()
+    , _libraries          ()
     , _parentLibrary      (NULL)
     , _routingGauges      ()
     , _defaultRoutingGauge(NULL)
     , _cellGauges         ()
     , _defaultCellGauge   (NULL)
   {
-    DataBase* db = DataBase::getDB ();
-    if ( not db )
-      db = DataBase::create ();
+    DataBase* db = DataBase::getDB();
+    if (not db) db = DataBase::create();
 
-    db->put ( AllianceFrameworkProperty::create(this) );
-    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
+    Library* rootLibrary = db->getRootLibrary();
+    if (not rootLibrary ) rootLibrary = Library::create( db, "Root" );
 
-  //cmess1 << "  o  Reading Alliance Environment." << endl;
-
-  //_environment.loadFromShell ();
+    _parentLibrary = rootLibrary->getLibrary( _parentLibraryName );
+    if (not _parentLibrary ) _parentLibrary = Library::create( rootLibrary, _parentLibraryName );
   }
 
 
@@ -225,31 +224,20 @@ namespace CRL {
   }
 
 
-  void  AllianceFramework::_bindLibraries ()
+  void  AllianceFramework::bindLibraries ()
   {
-    DataBase*     db          = DataBase::getDB ();
-    unsigned int  flags       = AppendLibrary;
-    SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
-    Library*      rootLibrary = db->getRootLibrary ();
+    unsigned int  flags     = AppendLibrary;
+    SearchPath&   LIBRARIES = _environment.getLIBRARIES();
 
-  //cmess2 << "  o  Creating Alliance Framework root library." << endl;
-    if ( !rootLibrary )
-      rootLibrary = Library::create ( db, "Root" );
-
-    _parentLibrary = rootLibrary->getLibrary ( _parentLibraryName );
-    if ( !_parentLibrary )
-      _parentLibrary = Library::create ( rootLibrary, _parentLibraryName );
-
-  //cmess2 << "  o  Loading libraries (working first)." << endl;
+    cmess2 << "  o  Loading libraries (working first, " << LIBRARIES.getSize() << ") " << endl;
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
-      createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
+      createLibrary( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
 
-    //cmess2 << "     - " << LIBRARIES[i].getName()
-    //       << " \"" << LIBRARIES[i].getPath() << "\"" << endl;
-    //cmess2.flush();
+      cmess2 << "     - " << LIBRARIES[i].getName()
+             << " \"" << LIBRARIES[i].getPath() << "\"";
 
-    //if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
-    //else                    cmess2 << " [no CATAL]"    << endl;
+      if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
+      else                    cmess2 << " [no CATAL]"    << endl;
     }
   }
 
@@ -258,11 +246,12 @@ namespace CRL {
   {
     if (not _singleton) {
     // Triggers System singleton creation.
-      System::get ();
-      _singleton = new AllianceFramework ();
-      if (not (flags & NoPythonInit))
-        System::runPythonInit();
-      _singleton->_bindLibraries();
+      System::get();
+      AllianceFramework* af = new AllianceFramework ();
+      af->_postCreate();
+    //if (not (flags & NoPythonInit))
+    //  System::runPythonInit();
+    //_singleton->bindLibraries();
     }
 
     return _singleton;
@@ -270,14 +259,24 @@ namespace CRL {
 
 
   AllianceFramework* AllianceFramework::get ()
+  { return create(); }
+
+
+  void  AllianceFramework::_postCreate ()
   {
-    return create();
+    Super::_postCreate();
+    _singleton = this;
+
+    DataBase* db = DataBase::getDB();
+    db->put( AllianceFrameworkProperty::create(this) );
+    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
   }
 
 
-  void AllianceFramework::destroy ()
+  void  AllianceFramework::_preDestroy ()
   {
-    delete this;
+    Super::_preDestroy();
+    _singleton = NULL;
   }
 
 
@@ -348,61 +347,70 @@ namespace CRL {
   Cell* AllianceFramework::getCell ( const string& name, unsigned int mode, unsigned int depth )
   {
     bool              createCell = false;
-    Catalog::State*   state      = _catalog.getState ( name );
+    Catalog::State*   state      = _catalog.getState( name );
     ParserFormatSlot* parser;
 
-  // The cell is not even in the Catalog : add an entry.
-    if ( state == NULL ) state = _catalog.getState ( name, true );
+    if (not _libraries.empty()) {
+    // The cell is not even in the Catalog : add an entry.
+      if (state == NULL) state = _catalog.getState( name, true );
 
-    if ( state->isFlattenLeaf() ) depth = 0;
-    state->setDepth ( depth );
-
-  // Do not try to load.
-    if ( mode & Catalog::State::InMemory ) return state->getCell();
-
-    unsigned int loadMode;
-    for ( int i=0 ; i<2 ; i++ ) {
-    // Check is the view is requested for loading or already loaded.
-      switch ( i ) {
-        case 0: loadMode = mode & Catalog::State::Logical;  break;
-        case 1: loadMode = mode & Catalog::State::Physical; break;
+      if (state->isTerminalNetlist()) {
+        depth  = 0;
+        mode  |= Catalog::State::Physical;
       }
-      if ( loadMode == 0 ) continue;
-      if ( state->getFlags(loadMode) != 0 ) continue;
+      state->setDepth( depth );
 
-    // Transmit all flags except thoses related to views.
-      loadMode |= (mode & (!Catalog::State::Views));
-      parser    = & ( _parsers.getParserSlot ( name, loadMode, _environment ) );
+    // Do not try to load.
+      if (mode & Catalog::State::InMemory) return state->getCell();
 
-    // Try to open cell file (file extention is supplied by the parser).
-      if ( !_readLocate(name,loadMode) ) continue;
+      unsigned int loadMode;
+      for ( int i=0 ; i<2 ; i++ ) {
+      // Check is the view is requested for loading or already loaded.
+        switch ( i ) {
+          case 0: loadMode = mode & Catalog::State::Logical;  break;
+          case 1: loadMode = mode & Catalog::State::Physical; break;
+        }
+        if (loadMode == 0) continue;
+        if (state->getFlags(loadMode) != 0) continue;
 
-      if ( state->getCell() == NULL ) {
-        state->setCell ( Cell::create ( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
-        state->getCell ()->put ( CatalogProperty::create(state) );
-        state->getCell ()->setFlattenLeaf ( false );
-        createCell = true;
+      // Transmit all flags except thoses related to views.
+        loadMode |= (mode & (~Catalog::State::Views));
+        parser    = & (_parsers.getParserSlot( name, loadMode, _environment ));
+
+      // Try to open cell file (file extention is supplied by the parser).
+        if (not _readLocate(name,loadMode)) continue;
+
+        if (state->getCell() == NULL) {
+          state->setCell ( Cell::create( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
+          state->getCell ()->put( CatalogProperty::create(state) );
+          state->getCell ()->setTerminalNetlist( state->isTerminalNetlist() );
+          createCell = true;
+        }
+
+        try {
+        // Call the parser function.
+          (parser->getParsCell())( _environment.getLIBRARIES().getSelected() , state->getCell() );
+        } catch ( ... ) {
+          if (createCell) 
+          //state->getCell()->destroy();
+            throw;
+        }
       }
 
-      try {
-      // Call the parser function.
-        (parser->getParsCell())( _environment.getLIBRARIES().getSelected() , state->getCell() );
-      } catch ( ... ) {
-        if ( createCell ) 
-        //state->getCell()->destroy();
-        throw;
+    // At least one view must have been loaded.
+      if (state->getFlags(Catalog::State::Views) != 0) {
+        state->setFlags( Catalog::State::InMemory, true );
+        return state->getCell();
       }
+
+    // Delete the empty cell.
+      if (state->getCell()) state->getCell()->destroy();
+      _catalog.deleteState( name );
+    } else {
+      cerr << Warning( "AllianceFramework::getCell(): The library list is empty, while loading Cell \"%s\"."
+                     , name.c_str()
+                     ) << endl;
     }
-
-  // At least one view must have been loaded.
-    if ( state->getFlags(Catalog::State::Views) != 0 ) {
-      state->setFlags( Catalog::State::InMemory, true );
-      return state->getCell();
-    }
-
-  // Delete the empty cell.
-    if ( state->getCell() ) state->getCell()->destroy ();
-    _catalog.deleteState ( name );
 
   // Last resort, search through all Hurricane libraries.
     if (mode & Catalog::State::Foreign)
@@ -420,7 +428,7 @@ namespace CRL {
 
     string dupLibName = libName;
     for ( size_t duplicate=1 ; true ; ++duplicate ) {
-      AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags & ~CreateLibrary );
+      AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
       if (library == NULL) break;
 
       ostringstream oss;
@@ -428,22 +436,18 @@ namespace CRL {
       dupLibName = oss.str();
     }
 
-    // AllianceLibrary* library = getAllianceLibrary ( libName, flags );
-    // if ( library != NULL ) {
-    //   cerr << Warning("AllianceFramework::createLibrary(): Attempt to re-create <%s>, using already existing."
-    //                  ,libName.c_str()) << endl;
-    //   return library;
-    // }
-
-    SearchPath& LIBRARIES = _environment.getLIBRARIES ();
-    if ( not (flags & AppendLibrary) ) LIBRARIES.prepend ( path, dupLibName );
-    else                               LIBRARIES.select  ( path );
+    SearchPath& LIBRARIES = _environment.getLIBRARIES();
+    LIBRARIES.select( path );
+    if (not LIBRARIES.hasSelected()) {
+      if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
+      else                             LIBRARIES.append ( path, dupLibName );
+    }
 
     Library* hlibrary = getParentLibrary()->getLibrary( dupLibName );
     if (not hlibrary)
       hlibrary = Library::create( getParentLibrary(), dupLibName );
     
-    AllianceLibrary* alibrary = new AllianceLibrary ( path, hlibrary );
+    AllianceLibrary* alibrary = new AllianceLibrary( path, hlibrary );
 
     AllianceLibraries::iterator ilib = _libraries.begin();
     if (LIBRARIES.getIndex() != SearchPath::npos)
@@ -451,29 +455,85 @@ namespace CRL {
     else
       ilib = _libraries.end();
 
-    _libraries.insert ( ilib, alibrary );
+    _libraries.insert( ilib, alibrary );
 
     string catalog = path + "/" + _environment.getCATALOG();
 
-    if ( _catalog.loadFromFile(catalog,alibrary->getLibrary()) ) flags |= HasCatalog;
+    if (_catalog.loadFromFile(catalog,alibrary->getLibrary())) flags |= HasCatalog;
 
-    ParserFormatSlot& parser = _parsers.getParserSlot ( path, Catalog::State::Physical, _environment );
+    ParserFormatSlot& parser = _parsers.getParserSlot( path, Catalog::State::Physical, _environment );
 
-    if ( not parser.loadByLib() ) {
-      notify ( AddedLibrary );
+    if (not parser.loadByLib()) {
+      notify( AddedLibrary );
       return alibrary;
     }
 
   // Load the whole library.
-    if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return alibrary;
+    if (not _readLocate(dupLibName,Catalog::State::State::Logical,true)) return alibrary;
 
   // Call the parser function.
     (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , alibrary->getLibrary() , _catalog );
 
-    notify ( AddedLibrary );
+    notify( AddedLibrary );
     return alibrary;
   }
   
+
+  AllianceLibrary* AllianceFramework::wrapLibrary ( Library* hlibrary, unsigned int flags )
+  {
+    if (not hlibrary) {
+      cerr << Error( "AllianceFramework::wrapLibrary(): NULL library argument." ) << endl;
+      return NULL;
+    }
+
+    flags &= ~HasCatalog;
+
+    string dupLibName = getString( hlibrary->getName() );
+    string path       = "./wrapped/" + dupLibName;
+    for ( size_t duplicate=1 ; true ; ++duplicate ) {
+      AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
+      if (library == NULL) break;
+
+      ostringstream oss;
+      oss << hlibrary->getName() << "." << duplicate;
+      dupLibName = oss.str();
+    }
+
+    SearchPath& LIBRARIES = _environment.getLIBRARIES();
+    LIBRARIES.select( path );
+    if (not LIBRARIES.hasSelected()) {
+      if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
+      else                             LIBRARIES.append ( path, dupLibName );
+    }
+
+    AllianceLibrary* alibrary = new AllianceLibrary( path, hlibrary );
+
+    AllianceLibraries::iterator ilib = _libraries.begin();
+    if (   (LIBRARIES.getIndex() != SearchPath::npos)
+       and (LIBRARIES.getIndex() < _libraries.size()) )
+      for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+    else
+      ilib = _libraries.end();
+    _libraries.insert( ilib, alibrary );
+
+    for ( Cell* cell : hlibrary->getCells() ) {
+      Catalog::State* state = _catalog.getState ( getString(cell->getName()) );
+      if (state == NULL)
+        state = _catalog.getState( cell->getName(), true );
+      state->setDepth          ( 1 );
+      state->setInMemory       ( true );
+      state->setPhysical       ( true );
+      state->setLogical        ( true );
+      state->setTerminalNetlist( true );
+      state->setCell           ( cell );
+      state->getCell           ()->put( CatalogProperty::create(state) );
+      state->getCell           ()->setTerminalNetlist( true );
+    }
+
+    notify( AddedLibrary );
+    return alibrary;
+  }
+
 
   void  AllianceFramework::saveLibrary ( Library* library )
   {
@@ -506,22 +566,26 @@ namespace CRL {
 
   Cell* AllianceFramework::createCell ( const string& name, AllianceLibrary* library )
   {
-    Catalog::State* state = _catalog.getState ( name );
+    Catalog::State* state = _catalog.getState( name );
 
   // The cell is not in the CATAL : add an entry.
-    if ( state == NULL ) state = _catalog.getState ( name, true );
+    if (not state) state = _catalog.getState( name, true );
 
-    if ( library == NULL )
+    if (not library) {
+      if (_libraries.empty())
+        throw Error( "AllianceFramework::createCell(): Libraries are not set up, maybe an initialization problem." );
+
       library = _libraries[0];
+    }
 
-    if ( !state->getCell() ) {
-      state->setPhysical ( true );
-      state->setLogical  ( true );
-      state->setDepth    ( 1 );
+    if (not state->getCell()) {
+      state->setPhysical( true );
+      state->setLogical ( true );
+      state->setDepth   ( 1 );
 
-      state->setCell ( Cell::create ( library->getLibrary() , name ) );
-      state->getCell ()->put ( CatalogProperty::create(state) );
-      state->getCell ()->setFlattenLeaf ( false );
+      state->setCell( Cell::create ( library->getLibrary(), name ));
+      state->getCell()->put( CatalogProperty::create(state) );
+      state->getCell()->setTerminalNetlist( false );
     }
 
     return state->getCell ();
@@ -535,7 +599,7 @@ namespace CRL {
     string           name       = getString(cell->getName());
     DriverSlot*      driver;
     unsigned int     saveMode   = 0;
-    unsigned int     savedViews = 0;
+    unsigned int     savedViews = mode & (~Catalog::State::Views);
     AllianceLibrary* library    = getAllianceLibrary ( cell->getLibrary() );
 
     for ( int i=0 ; i<2 ; i++ ) {
@@ -548,7 +612,7 @@ namespace CRL {
       if ( ( savedViews & saveMode ) != 0 ) continue;
 
     // Transmit all flags except thoses related to views.
-      saveMode |= (mode & (!Catalog::State::Views));
+      saveMode |= (mode & (~Catalog::State::Views));
 
       driver = & ( _drivers.getDriverSlot ( name, saveMode, _environment ) );
 
@@ -761,7 +825,7 @@ namespace CRL {
 
   CellGauge* AllianceFramework::matchCellGauge ( DbU::Unit width, DbU::Unit height ) const
   {
-    for ( const auto item : _cellGauges ) {
+    for ( const auto& item : _cellGauges ) {
       CellGauge* cg       = item.second;
       DbU::Unit  hcount   = width  / cg->getSliceStep  ();
       DbU::Unit  hremains = width  % cg->getSliceStep  ();
@@ -778,7 +842,7 @@ namespace CRL {
 
   CellGauge* AllianceFramework::matchCellGaugeByHeight ( DbU::Unit height ) const
   {
-    for ( const auto item : _cellGauges ) {
+    for ( const auto& item : _cellGauges ) {
       CellGauge* cg       = item.second;
       DbU::Unit  vcount   = height / cg->getSliceHeight();
       DbU::Unit  vremains = height % cg->getSliceHeight();
@@ -794,39 +858,43 @@ namespace CRL {
   {
     size_t gates = 0;
 
-    forEach ( Instance*, iinstance,  cell->getInstances() ) {
+    for ( Instance* instance : cell->getInstances() ) {
+      Cell* masterCell = instance->getMasterCell();
       CatalogProperty *catalogProperty = static_cast<CatalogProperty*>
-        ((*iinstance)->getMasterCell()->getProperty ( CatalogProperty::getPropertyName()) );
+        (masterCell->getProperty ( CatalogProperty::getPropertyName()) );
 
-      if ( catalogProperty != NULL ) {
-        Catalog::State* state = catalogProperty->getState ();
-        if ( (flags and IgnoreFeeds) and state->isFeed() ) continue;
+      if (catalogProperty) {
+        Catalog::State* state = catalogProperty->getState();
+        if ((flags & IgnoreFeeds) and state->isFeed()) continue;
       }
+      if ((flags & IgnoreFeeds     ) and masterCell->isFeed     ()) continue;
+      if ((flags & IgnoreDiodes    ) and masterCell->isDiode    ()) continue;
+      if ((flags & IgnorePowerFeeds) and masterCell->isPowerFeed()) continue;
       ++gates;
-
-      if ( flags & Recursive ) {
-        gates += getInstancesCount ( iinstance->getMasterCell(), flags );
-      }
+      if ((flags & TerminalNetlist) and masterCell->isTerminalNetlist())
+        continue;
+      if (flags & Recursive)
+        gates += getInstancesCount( masterCell, flags );
     }
 
     return gates;
   }
 
 
-  string  AllianceFramework::_getString () const
-  { return "<AllianceFramework>"; }
+  string  AllianceFramework::_getTypeName () const
+  { return "AllianceFramework"; }
 
 
   Record *AllianceFramework::_getRecord () const
   {
-    Record* record = new Record ( "<AllianceFramework>" );
-    record->add ( getSlot ( "_environment"        , &_environment         ) );
-    record->add ( getSlot ( "_libraries"          , &_libraries           ) );
-    record->add ( getSlot ( "_catalog"            , &_catalog             ) );
-    record->add ( getSlot ( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
-    record->add ( getSlot ( "_routingGauges"      , &_routingGauges       ) );
-    record->add ( getSlot ( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
-    record->add ( getSlot ( "_cellGauges"         , &_cellGauges          ) );
+    Record* record = Super::_getRecord();
+    record->add( getSlot( "_environment"        , &_environment         ) );
+    record->add( getSlot( "_libraries"          , &_libraries           ) );
+    record->add( getSlot( "_catalog"            , &_catalog             ) );
+    record->add( getSlot( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
+    record->add( getSlot( "_routingGauges"      , &_routingGauges       ) );
+    record->add( getSlot( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
+    record->add( getSlot( "_cellGauges"         , &_cellGauges          ) );
     return record;
   }
 

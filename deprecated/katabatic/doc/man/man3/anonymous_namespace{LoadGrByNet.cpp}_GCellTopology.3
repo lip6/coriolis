@@ -1,0 +1,68 @@
+.TH "GCellTopology" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GCellTopology \- Build the wiring for a Net inside a GCell (\fBinternal\fP)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBdoRp_AutoContacts\fP (\fBGCell\fP *, \fBComponent\fP *, \fBAutoContact\fP *&source, \fBAutoContact\fP *&target, unsigned int flags)"
+.br
+.ti -1c
+.RI "static \fBAutoContact\fP * \fBdoRp_Access\fP (\fBGCell\fP *, \fBComponent\fP *, unsigned int flags)"
+.br
+.ti -1c
+.RI "static \fBAutoContact\fP * \fBdoRp_AccessPad\fP (\fBRoutingPad\fP *, unsigned int flags)"
+.br
+.ti -1c
+.RI "static void \fBdoRp_StairCaseH\fP (\fBGCell\fP *, \fBComponent\fP *rp1, \fBComponent\fP *rp2)"
+.br
+.ti -1c
+.RI "static void \fBdoRp_StairCaseV\fP (\fBGCell\fP *, \fBComponent\fP *rp1, \fBComponent\fP *rp2)"
+.br
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fB_do_xG\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_xG_1Pad\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_1G_1M1\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_1G_xM1\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_xG_xM1_xM3\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_xG_1M1_1M2\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_xG_xM2\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_1G_1M3\fP ()"
+.br
+.ti -1c
+.RI "void \fB_do_xG_xM3\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Build the wiring for a Net inside a GCell (\fBinternal\fP)\&. 
+
+As this class is called to initially construct the \fBKatabatic\fP wiring, it must build a \fBconnex\fP wiring\&. That is without gaps in layer depth, because the topology restauration mechanism (\fBAutoContact::updateTopology()\fP) of the AutoContact cannot work until all AutoSegments are revalidated at least once\&. The topology restauration work by creating doglegs which in turn, call the canonization, which needs all the caches to be up to date\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

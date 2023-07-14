@@ -51,7 +51,6 @@ namespace Analog {
     csp->addStepParameter("D2.w", 1, 1, 1);
     csp->addStepParameter("G.w" , 1, 1, 1);
     csp->addStepParameter("S.w" , 1, 1, 1);
-    csp->setTerminal( true );
     UpdateSession::close();
     return csp;
   }
@@ -242,6 +241,19 @@ namespace Analog {
     }
                    
     return true;
+  }
+
+
+  string  CommonSourcePair::_getTypeName () const
+  { return "CommonSourcePair"; }
+  
+
+  Record*  CommonSourcePair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cspBulkConnectedName"  ,  _cspBulkConnectedName   ) );
+    record->add( getSlot("_cspBulkUnconnectedName",  _cspBulkUnconnectedName ) );
+    return record;
   }
 
 

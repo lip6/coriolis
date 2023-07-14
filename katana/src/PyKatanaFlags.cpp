@@ -31,6 +31,7 @@ namespace  Katana {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
 
@@ -61,19 +62,19 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(KatanaFlags)
-  DirectReprMethod(PyKatanaFlags_Repr, PyKatanaFlags,   Katana::Flags)
-  DirectStrMethod (PyKatanaFlags_Str,  PyKatanaFlags,   Katana::Flags)
-  DirectCmpMethod (PyKatanaFlags_Cmp,  IsPyKatanaFlags, PyKatanaFlags)
-  DirectHashMethod(PyKatanaFlags_Hash, PyKatanaFlags)
+  DirectReprMethod      (PyKatanaFlags_Repr, PyKatanaFlags,   Katana::Flags)
+  DirectStrMethod       (PyKatanaFlags_Str,  PyKatanaFlags,   Katana::Flags)
+  DirectCmpByValueMethod(PyKatanaFlags_Cmp,  IsPyKatanaFlags, PyKatanaFlags)
+  DirectHashMethod      (PyKatanaFlags_Hash, KatanaFlags)
 
   extern void  PyKatanaFlags_LinkPyType() {
     cdebug_log(20,0) << "PyKatanaFlags_LinkType()" << endl;
-    PyTypeKatanaFlags.tp_dealloc = (destructor) PyKatanaFlags_DeAlloc;
-    PyTypeKatanaFlags.tp_compare = (cmpfunc)    PyKatanaFlags_Cmp;
-    PyTypeKatanaFlags.tp_repr    = (reprfunc)   PyKatanaFlags_Repr;
-    PyTypeKatanaFlags.tp_str     = (reprfunc)   PyKatanaFlags_Str;
-    PyTypeKatanaFlags.tp_hash    = (hashfunc)   PyKatanaFlags_Hash;
-    PyTypeKatanaFlags.tp_methods = PyKatanaFlags_Methods;
+    PyTypeKatanaFlags.tp_dealloc     = (destructor) PyKatanaFlags_DeAlloc;
+    PyTypeKatanaFlags.tp_richcompare = (richcmpfunc)PyKatanaFlags_Cmp;
+    PyTypeKatanaFlags.tp_repr        = (reprfunc)   PyKatanaFlags_Repr;
+    PyTypeKatanaFlags.tp_str         = (reprfunc)   PyKatanaFlags_Str;
+    PyTypeKatanaFlags.tp_hash        = (hashfunc)   PyKatanaFlags_Hash;
+    PyTypeKatanaFlags.tp_methods     = PyKatanaFlags_Methods;
   }
 
 
@@ -92,10 +93,15 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::NoFlags       ,"NoFlags"       );
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SlowMotion    ,"SlowMotion"    );
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PreRoutedStage,"PreRoutedStage");
-    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PairSymmetrics,"PairSymmetrics");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::NoFlags             ,"NoFlags"             );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SlowMotion          ,"SlowMotion"          );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PreRoutedStage      ,"PreRoutedStage"      );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PairSymmetrics      ,"PairSymmetrics"      );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowFailedNets      ,"ShowFailedNets"      );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowFailedGSegments ,"ShowFailedGSegments" );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowOverloadedGCells,"ShowOverloadedGCells");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowOverloadedEdges ,"ShowOverloadedEdges" );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowBloatedInstances,"ShowBloatedInstances");
   }
 
 

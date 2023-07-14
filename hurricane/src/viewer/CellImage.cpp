@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./CellImage.cpp"                               |
 // +-----------------------------------------------------------------+
@@ -21,8 +21,10 @@
 #include  <boost/bind.hpp>
 #include  <QApplication>
 #include  <QImage>
-#include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/DataBase.h"
+#include  "hurricane/Technology.h"
+#include  "hurricane/BasicLayer.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/CellImage.h"
@@ -81,11 +83,38 @@ namespace Hurricane {
     _screenCellWidget = cellWidget;
 
     shared_ptr<CellWidget::State> clone ( _screenCellWidget->getStateClone() );
-    _cellWidget->setState       ( clone );
-    _cellWidget->setLayerVisible("grid"          , _screenCellWidget->isLayerVisible("grid"          ));
-    _cellWidget->setLayerVisible("text.instance" , _screenCellWidget->isLayerVisible("text.instance" ));
-    _cellWidget->setLayerVisible("text.component", _screenCellWidget->isLayerVisible("text.component"));
-    _cellWidget->setLayerVisible("rubber"        , _screenCellWidget->isLayerVisible("rubber"        ));
+    _cellWidget->setState( clone );
+    _cellWidget->setPixelThreshold( 5 );
+
+    array<string,14> labels = {{ string("fallback"        )
+                               , string("rubber"          )
+                               , string("phantom"         )
+                               , string("boundaries"      )
+                               , string("marker"          )
+                               , string("grid"            )
+                               , string("spot"            )
+                               , string("ghost"           )
+                               , string("text.ruler"      )
+                               , string("text.cell"       )
+                               , string("text.instance"   )
+                               , string("text.components" )
+                               , string("text.references" )
+                               , string("undef"           )
+                              }};
+
+    for ( string label : labels )
+      _cellWidget->setLayerVisible( label
+                                  , _screenCellWidget->isLayerVisible(label) );
+
+    for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() )
+      _cellWidget->setLayerVisible( layer->getName()
+                                  , _screenCellWidget->isLayerVisible( layer->getName() ));
+
+    _cellWidget->copyDrawExtensionGos( _screenCellWidget );
+
+    for ( ExtensionSlice* extension : cellWidget->getCell()->getExtensionSlices() )
+      _cellWidget->setLayerVisible( extension->getName()
+                                  , _screenCellWidget->isLayerVisible( extension->getName() ));
   }
 
 
@@ -128,8 +157,9 @@ namespace Hurricane {
 
   //int  scale = 80 * Cfg::getParamEnumerate("viewer.printer.mode")->asInt();
     int  scale = (Graphics::isHighDpi()) ? 4 : 2;
-    _drawingWidth  = _cellWidget->width () * scale;
-    _drawingHeight = _cellWidget->height() * scale;
+    _drawingWidth  = _screenCellWidget->geometry().width () * scale;
+    _drawingHeight = _screenCellWidget->geometry().height() * scale;
+    _cellWidget->resize( _drawingWidth, _drawingHeight );
 
     _image = new QImage( _drawingWidth
                        , _drawingHeight + ((_flags&ShowScale) ? 60 : 0)

@@ -80,7 +80,7 @@ namespace Bora {
     : Super()
     , _parent  (NULL)
     , _flags   (0)
-    , _nodeSets(NodeSets::create( NULL, 0.0, 0.0, 0.0 ))
+    , _nodeSets(NodeSets::create( NULL, NULL))
     , _x       (0)
     , _y       (0)
     , _boxSet  (NULL)
@@ -488,6 +488,12 @@ namespace Bora {
     cdebug_log(535,-1);
   }
 
+  
+  void  SlicingNode::_setGlobalSize ( DbU::Unit, DbU::Unit )
+  {
+    cerr << Error( "SlicingNode::_setGlobalSize(): Must not be called on \"%s\"." , _getTypeName().c_str() ) << endl;
+  }
+
 
   void  SlicingNode::preDestroy ()
   {
@@ -692,6 +698,9 @@ namespace Bora {
       for ( RoutingPad* rp : net->getRoutingPads() ) rps.push_back( rp );
       for ( RoutingPad* rp : rps ) rp->destroy();
     }
+
+    _cell->getFlags().reset( Cell::Flags::FlattenedNets|Cell::Flags::Routed );
+    _cell->setTerminalNetlist( false );
   } 
 
 
@@ -812,35 +821,14 @@ namespace Bora {
   }
 
   
-  void  SlicingNode::setNFing ( int )
-  { cerr << Error( "SlicingNode::setNFing(): Base class method must never be called." ) << endl; }
+  void  SlicingNode::setBoxSetIndex ( size_t )
+  { cerr << Error( "SlicingNode::setBoxSetIndex(): Base class method must never be called." ) << endl; }
 
   
-  int  SlicingNode::getNFing () const
+  size_t  SlicingNode::getBoxSetIndex () const
   {
-    cerr << Error( "SlicingNode::getNFing(): Base class method must never be called." ) << endl;
+    cerr << Error( "SlicingNode::getBoxSetIndex(): Base class method must never be called." ) << endl;
     return 0;
-  }
-
-  
-  double  SlicingNode::getStartParameter () const
-  {
-    cerr << Error( "SlicingNode::getStartParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
-  }
-
-  
-  double  SlicingNode::getStepParameter () const
-  {
-    cerr << Error( "SlicingNode::getStepParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
-  }
-
-  
-  double  SlicingNode::getCountParameter () const
-  {
-    cerr << Error( "SlicingNode::getCountParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
   }
 
   

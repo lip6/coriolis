@@ -45,19 +45,6 @@ namespace Analog {
 
   class LayoutGenerator  {
     public:
-      class Logger {
-        public:
-                                   Logger         ( LayoutGenerator* );
-          virtual                 ~Logger         ();
-          inline  LayoutGenerator* getGenerator   ();
-          virtual void             popStatus      ( const std::string& );
-          virtual void             popError       ( const std::string& );
-          virtual void             popScriptError ();
-        private:
-          LayoutGenerator* _generator;
-      };
-  
-    public:
       typedef std::map<std::string, std::map<std::string, double> > ParamMap;
       enum Verbose { Quiet         = 0
                    , Verbose       = 1
@@ -77,7 +64,6 @@ namespace Analog {
     public:                                      
                              LayoutGenerator            ();
                             ~LayoutGenerator            ();
-      inline Logger*         getLogger                  ();
       inline Device*         getDevice                  ();
              unsigned        getNumberTransistor        ();
              unsigned        getNumberStack             ();
@@ -87,16 +73,11 @@ namespace Analog {
              PyObject*       getRow                     ( unsigned i );
              PyObject*       getDic                     ( PyObject* row, unsigned j );
              PyObject*       getParamValue              ( PyObject* dic, std::string paramName ); 
-  //         double          getParameterValue          ( std::string trName    , std::string paramName, bool& ok );
              double          getParameterValue          ( unsigned i, unsigned j, std::string paramName, bool& ok );
       inline double          unitToMicro                ( int );
       inline double          unitToMetter               ( int );
     public:                                             
-      inline void            setLogger                  ( Logger* );
       inline void            setDevice                  ( Device* );
-      inline void            popStatus                  ( const std::string& );
-      inline void            popError                   ( const std::string& );
-      inline void            popScriptError             ();
              bool            initialize                 ();
              void            finalize                   ( unsigned int flags );
              bool            checkScript                ();
@@ -108,7 +89,6 @@ namespace Analog {
     private:
       static int      _verboseLevel;
     private:          
-      Logger*         _logger;
       Device*         _device;
       Hurricane::Box* _box;
       Hurricane::Box* _activeBox;
@@ -117,17 +97,10 @@ namespace Analog {
   };
   
   
-  inline LayoutGenerator* LayoutGenerator::Logger::getGenerator () { return _generator; }
-  
-  
   inline int                      LayoutGenerator::getVerboseLevel ()                          { return _verboseLevel; }
-  inline LayoutGenerator::Logger* LayoutGenerator::getLogger       ()                          { return _logger; }
   inline Device*                  LayoutGenerator::getDevice       ()                          { return _device; }
   inline void                     LayoutGenerator::setDevice       ( Device* device )          { _device = device; }
   inline void                     LayoutGenerator::setVerboseLevel (int lvl )                  { _verboseLevel = lvl; }
-  inline void                     LayoutGenerator::popStatus       ( const std::string& text ) { if (_logger) _logger->popStatus(text); }
-  inline void                     LayoutGenerator::popError        ( const std::string& text ) { if (_logger) _logger->popError(text); }
-  inline void                     LayoutGenerator::popScriptError  ()                          { if (_logger) _logger->popScriptError(); }
   inline PyObject*                LayoutGenerator::getMatrix       ()                          { return _matrix; }
   
   inline double LayoutGenerator::unitToMicro ( int unit ) {
@@ -138,12 +111,6 @@ namespace Analog {
     return Hurricane::DbU::getPhysical(Hurricane::DbU::getOnPhysicalGrid(unit), Hurricane::DbU::Unity);
   }
   
-  inline void  LayoutGenerator::setLogger ( Logger* logger )
-  {
-    if ( _logger ) delete _logger;
-    _logger = logger;
-  }
-
 
 }  // Analog namespace.
 

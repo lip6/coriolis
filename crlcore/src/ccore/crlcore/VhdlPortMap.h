@@ -35,14 +35,16 @@ namespace Vhdl {
 
   class PortMap {
     public:
-      static  PortMap*      create        ( const Signal* );
+      static  PortMap*      create        ( const Signal*, unsigned int flags );
       virtual const Signal* getSignal     () const = 0;
       virtual void          doMapping     ( Instance* ) = 0;
       virtual void          toVhdlPortMap ( std::ostream&, size_t ) const = 0;
-                            PortMap       ();
+                            PortMap       ( unsigned int flags );
       virtual              ~PortMap       ();
     protected:
       static  const Bit*    _lookup       ( const Bit* masterBit, Instance* );
+    protected:
+      unsigned int  _flags;
   };
 
 
@@ -51,7 +53,7 @@ namespace Vhdl {
 
   class ScalarPortMap : public PortMap {
     public:
-                                  ScalarPortMap ( const ScalarSignal* );
+                                  ScalarPortMap ( const ScalarSignal*, unsigned int flags );
       virtual                    ~ScalarPortMap ();
       virtual const ScalarSignal* getSignal     () const;
       virtual void                doMapping     ( Instance* );
@@ -67,7 +69,7 @@ namespace Vhdl {
 
   class VectorPortMap : public PortMap {
     public:
-                                  VectorPortMap ( const VectorSignal* );
+                                  VectorPortMap ( const VectorSignal*, unsigned int flags );
       virtual                    ~VectorPortMap ();
       virtual const VectorSignal* getSignal     () const;
       virtual void                doMapping     ( Instance* );

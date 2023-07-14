@@ -49,6 +49,8 @@ namespace Analog {
                                      ~AnalogCellExtensionDatas ();
       template< typename Data > Data* get                      ();
       template< typename Data > void  set                      ( Data* );
+    private:
+                                      AnalogCellExtensionDatas ( const AnalogCellExtensionDatas& ) = delete;
     public:
       std::map<Name,boost::any>  _params;
       std::vector<AnalogData*>   _datas;
@@ -116,5 +118,14 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+namespace Hurricane {
+
+  template<>
+  Name  StandardPrivateProperty<Analog::AnalogCellExtensionDatas>::_name;
+
+}  // Hurricane namespace.
+
 
 #endif  // ANALOG_CELL_EXTENSION_H

@@ -1,0 +1,81 @@
+\hypertarget{classKatabatic_1_1AutoSegments__Aligneds}{}\section{Auto\+Segments\+\_\+\+Aligneds Class Reference}
+\label{classKatabatic_1_1AutoSegments__Aligneds}\index{Auto\+Segments\+\_\+\+Aligneds@{Auto\+Segments\+\_\+\+Aligneds}}
+
+
+All aligned \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} of a set.  
+
+
+
+
+Inheritance diagram for Auto\+Segments\+\_\+\+Aligneds\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classKatabatic_1_1AutoSegments__Aligneds__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds_a97d48d49a2372cf289d321e6abf81c2d}{Auto\+Segments\+\_\+\+Aligneds}} (\mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$, unsigned int flags=Kb\+No\+Flags)
+\item 
+\mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds_aade683d2c99dc069e2cd5c8b942f8912}{Auto\+Segments\+\_\+\+Aligneds}} (const \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds}{Auto\+Segments\+\_\+\+Aligneds}} \&)
+\item 
+virtual \mbox{\hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds_a5b26b0698bdcb40cbf51b250dfb21858}{get\+Clone}} () const
+\item 
+virtual \mbox{\hyperlink{namespaceKatabatic_a40ef13471fd0e797b75d3c436813fe65}{Auto\+Segment\+HL}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds_a07665c070fcc269aec02ce842f384483}{get\+Locator}} () const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+All aligned \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} of a set. 
+
+A Collection to iterate over all the \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} aligned with {\ttfamily master}. The {\ttfamily master} itself will not be included in the walkthrough. If the \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839}{Katabatic\+::\+Kb\+With\+Perpands}} flag is passed as argument, the collection will also includes the Auto\+Segments directly perpandicular to the aligned set.
+
+\begin{DoxyParagraph}{Remark\+: Auto\+Segments are forced to be aligneds only when connected through}
+\mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} or \mbox{\hyperlink{classKatabatic_1_1AutoContactVTee}{Auto\+Contact\+V\+Tee}}. 
+\end{DoxyParagraph}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__Aligneds_a97d48d49a2372cf289d321e6abf81c2d}\label{classKatabatic_1_1AutoSegments__Aligneds_a97d48d49a2372cf289d321e6abf81c2d}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}!Auto\+Segments\+\_\+\+Aligneds@{Auto\+Segments\+\_\+\+Aligneds}}
+\index{Auto\+Segments\+\_\+\+Aligneds@{Auto\+Segments\+\_\+\+Aligneds}!Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}}
+\subsubsection{\texorpdfstring{Auto\+Segments\+\_\+\+Aligneds()}{AutoSegments\_Aligneds()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds}{Auto\+Segments\+\_\+\+Aligneds}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{master,  }\item[{unsigned int}]{flags = {\ttfamily KbNoFlags} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Create a collection of all the \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} aligned on {\ttfamily master} (master itself is excluded from the Collection). If the flag \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839}{Katabatic\+::\+Kb\+With\+Perpands}} is given the directly perpandicular \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} will also be includeds. \mbox{\Hypertarget{classKatabatic_1_1AutoSegments__Aligneds_aade683d2c99dc069e2cd5c8b942f8912}\label{classKatabatic_1_1AutoSegments__Aligneds_aade683d2c99dc069e2cd5c8b942f8912}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}!Auto\+Segments\+\_\+\+Aligneds@{Auto\+Segments\+\_\+\+Aligneds}}
+\index{Auto\+Segments\+\_\+\+Aligneds@{Auto\+Segments\+\_\+\+Aligneds}!Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}}
+\subsubsection{\texorpdfstring{Auto\+Segments\+\_\+\+Aligneds()}{AutoSegments\_Aligneds()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds}{Auto\+Segments\+\_\+\+Aligneds}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classKatabatic_1_1AutoSegments__Aligneds}{Auto\+Segments\+\_\+\+Aligneds}} \&}]{autosegments }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Copy constructor. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__Aligneds_a5b26b0698bdcb40cbf51b250dfb21858}\label{classKatabatic_1_1AutoSegments__Aligneds_a5b26b0698bdcb40cbf51b250dfb21858}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC}} $\ast$ get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} A deep copy of the Collection. 
+
+Implements \textbf{ Collection$<$ Type $>$}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__Aligneds_a07665c070fcc269aec02ce842f384483}\label{classKatabatic_1_1AutoSegments__Aligneds_a07665c070fcc269aec02ce842f384483}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}!get\+Locator@{get\+Locator}}
+\index{get\+Locator@{get\+Locator}!Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds@{Katabatic\+::\+Auto\+Segments\+\_\+\+Aligneds}}
+\subsubsection{\texorpdfstring{get\+Locator()}{getLocator()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC}} $\ast$ get\+Locator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} A deep copy of the Collection Locator. 
+
+Implements \textbf{ Collection$<$ Type $>$}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Auto\+Segments.\+h\item 
+Auto\+Segments.\+dox\end{DoxyCompactItemize}

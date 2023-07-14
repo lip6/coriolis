@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_NET_ROUTING_PROPERTY_H
-#define  HURRICANE_NET_ROUTING_PROPERTY_H
-
+#pragma  once
 #include <string>
 #include <map>
 #include "hurricane/Name.h"
@@ -42,20 +40,23 @@ namespace Hurricane {
                  , Fixed                = (1<< 1)
                  , Unconnected          = (1<< 2)
                  , ManualGlobalRoute    = (1<< 3)
-                 , AutomaticGlobalRoute = (1<< 4)
-                 , MixedPreRoute        = Fixed|ManualGlobalRoute
-                 , Horizontal           = (1<< 5)
-                 , Vertical             = (1<< 6)
-                 , Symmetric            = (1<< 7)
-                 , SymmetricMaster      = (1<< 8)
-                 , Analog               = (1<< 9)
-                 , ShortNet             = (1<<10)
+                 , ManualDetailRoute    = (1<< 4)
+                 , AutomaticGlobalRoute = (1<< 5)
+                 , MixedPreRoute        = Fixed|ManualDetailRoute
+                 , Horizontal           = (1<< 6)
+                 , Vertical             = (1<< 7)
+                 , Symmetric            = (1<< 8)
+                 , SymmetricMaster      = (1<< 9)
+                 , Analog               = (1<<10)
+                 , ShortNet             = (1<<11)
+                 , HasAntenna           = (1<<11)
                  };
     public:
       inline  bool          isExcluded             () const;
       inline  bool          isFixed                () const;
       inline  bool          isUnconnected          () const;
       inline  bool          isManualGlobalRoute    () const;
+      inline  bool          isManualDetailRoute    () const;
       inline  bool          isAutomaticGlobalRoute () const;
       inline  bool          isMixedPreRoute        () const;
       inline  bool          isSymmetric            () const;
@@ -65,6 +66,7 @@ namespace Hurricane {
       inline  bool          isSymSlave             () const;
       inline  bool          isAnalog               () const;
       inline  bool          isShortNet             () const;
+      inline  bool          hasAntenna             () const;
       inline  Net*          getNet                 () const;
       inline  Net*          getSymNet              () const;
       inline  DbU::Unit     getSymAxis             () const;
@@ -98,6 +100,7 @@ namespace Hurricane {
   inline bool          NetRoutingState::isFixed                () const { return _flags & Fixed; };
   inline bool          NetRoutingState::isUnconnected          () const { return _flags & Unconnected; };
   inline bool          NetRoutingState::isManualGlobalRoute    () const { return _flags & ManualGlobalRoute; };
+  inline bool          NetRoutingState::isManualDetailRoute    () const { return _flags & ManualDetailRoute; };
   inline bool          NetRoutingState::isAutomaticGlobalRoute () const { return _flags & AutomaticGlobalRoute; };
   inline bool          NetRoutingState::isMixedPreRoute        () const { return _flags & MixedPreRoute; };
   inline bool          NetRoutingState::isSymmetric            () const { return _flags & Symmetric; }
@@ -106,6 +109,7 @@ namespace Hurricane {
   inline bool          NetRoutingState::isSymMaster            () const { return _flags & SymmetricMaster; }
   inline bool          NetRoutingState::isAnalog               () const { return _flags & Analog; }
   inline bool          NetRoutingState::isShortNet             () const { return _flags & ShortNet; }
+  inline bool          NetRoutingState::hasAntenna             () const { return _flags & HasAntenna; }
   inline Net*          NetRoutingState::getSymNet              () const { return _symNet; }
   inline DbU::Unit     NetRoutingState::getSymAxis             () const { return _axis; }
   inline uint32_t      NetRoutingState::getFlags               () const { return _flags; };
@@ -173,6 +177,7 @@ namespace Hurricane {
       static inline  bool             isUnconnected          ( const Net* );
       static inline  bool             isFixed                ( const Net* );
       static inline  bool             isManualGlobalRoute    ( const Net* );
+      static inline  bool             isManualDetailRoute    ( const Net* );
       static inline  bool             isAutomaticGlobalRoute ( const Net* );
       static inline  bool             isMixedPreRoute        ( const Net* );
       static inline  bool             isSymmetric            ( const Net* );
@@ -218,6 +223,13 @@ namespace Hurricane {
   {
     NetRoutingState* state = get( net );
     return (state == NULL) ? false : state->isManualGlobalRoute();
+  }
+
+
+  inline bool  NetRoutingExtension::isManualDetailRoute ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isManualDetailRoute();
   }
 
 
@@ -344,6 +356,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::NetRoutingState);
-
-
-#endif   // HURRICANE_NET_ROUTING_PROPERTY_H

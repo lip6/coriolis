@@ -43,11 +43,11 @@ namespace Hurricane {
 
 
   void  ExceptionWidget::run ( Error& e )
-  { run ( e.htmlWhat().c_str(), e.htmlWhere().c_str() ); }
+  { run ( e.textWhat().c_str(), e.textWhere().c_str() ); }
 
 
   void  ExceptionWidget::run ( Exception& e )
-  { run ( e.htmlWhat().c_str(), "" ); }
+  { run ( e.textWhat().c_str(), "" ); }
 
 
   void  ExceptionWidget::run ( exception& e )
@@ -74,6 +74,7 @@ namespace Hurricane {
 
   bool  ExceptionWidget::catchAllWrapper ( std::function< void() > method )
   {
+    cdebug_log(18,0) << "ExceptionWidget::catchAllWrapper()" << endl;
     bool failure = true;
     try {
       method();
@@ -107,7 +108,7 @@ namespace Hurricane {
   ExceptionWidget::ExceptionWidget ( QWidget* parent )
     : QDialog   (parent)
     , _header   (new QLabel())
-    , _message  (new QLabel())
+    , _message  (new QTextEdit())
     , _trace    (new QTextEdit())
   {
     setAttribute  ( Qt::WA_DeleteOnClose );
@@ -119,9 +120,17 @@ namespace Hurricane {
     _header->setTextFormat   ( Qt::RichText );
     _header->setText         ( "<b>[ERROR]</b>" );
 
-    _message->setTextFormat ( Qt::RichText );
-    _message->setFont       ( Graphics::getFixedFont(QFont::Normal,false,false) );
-    _message->setText       ( "<b>Oups! I did it again!</b>" );
+    QString labelBackground = _header->palette().color( _header->backgroundRole() ).name();
+  //_message->setFrameStyle          ( QFrame::NoFrame|QFrame::Plain );
+    _message->setStyleSheet          ( QString("* { background-color: %1 }").arg(labelBackground) );
+    _message->setTextInteractionFlags( Qt::TextSelectableByMouse );
+    _message->setAcceptRichText      ( false );
+    _message->setLineWrapMode        ( QTextEdit::NoWrap );
+    _message->setWordWrapMode        ( QTextOption::NoWrap );
+    _message->setMinimumSize         ( Graphics::isHighDpi() ? QSize(2500,200) : QSize(800,100) );
+  //_message->setTextFormat          ( Qt::RichText );
+    _message->setFont                ( Graphics::getFixedFont(QFont::Normal,false,false) );
+    _message->setPlainText           ( "Oups! I did it again!" );
 
     _trace->setTextInteractionFlags ( Qt::TextBrowserInteraction );
     _trace->setAcceptRichText       ( true );
@@ -137,7 +146,7 @@ namespace Hurricane {
 
     QLabel* leftMargin = new QLabel ();
     leftMargin->setSizePolicy ( QSizePolicy::Preferred, QSizePolicy::MinimumExpanding );
-    leftMargin->setPixmap     ( QPixmap(":/images/angry-birds-bomb.png").scaledToWidth(200) );
+    leftMargin->setPixmap     ( QPixmap(":/images/angry-birds-bomb.png").scaledToWidth( Graphics::isHighDpi() ? 200 : 80 ) );
     leftMargin->setStyleSheet ( "QLabel { background-color: #FF9999;"
                         "         padding:          5px }" );
 
@@ -172,14 +181,15 @@ namespace Hurricane {
     vLayout1->addLayout  ( hLayout2  , Qt::AlignCenter );
 
     QHBoxLayout* hLayout1 = new QHBoxLayout ();
-    hLayout1->setSizeConstraint  ( QLayout::SetFixedSize );
+  //hLayout1->setSizeConstraint  ( QLayout::SetFixedSize );
     hLayout1->setContentsMargins ( 0, 0, 0, 0 );
     hLayout1->addWidget          ( leftMargin );
     hLayout1->addLayout          ( vLayout1 );
 
-    setLayout      ( hLayout1 );
-  //setMinimumSize ( QSize(400,150) );
-    setSizePolicy  ( QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding) );
+    setLayout         ( hLayout1 );
+  //setMinimumSize    ( QSize(400,150) );
+    setSizePolicy     ( QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding) );
+    setSizeGripEnabled( true );
 
     connect ( contButton , SIGNAL(clicked())        , this, SLOT(accept()) );
     connect ( abortButton, SIGNAL(clicked())        , this, SLOT(reject()) );
@@ -204,7 +214,7 @@ namespace Hurricane {
     } else
       _header->setText ("<b>[UNKNOW]</b>");
 
-    _message->setText ( contents );
+    _message->setPlainText ( contents );
   }
 
 

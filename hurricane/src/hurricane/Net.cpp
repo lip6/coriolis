@@ -263,20 +263,17 @@ Net::Net(Cell* cell, const Name& name)
     _isAutomatic(false),
     _type(Type::LOGICAL), // default is Type::LOGICAL : no more Type::Undefined - Damien.Dupuis 01/10/2010
     _direction(),
-     _position(0,0),
+    _position(0,0),
     _componentSet(),
     _rubberSet(),
     _nextOfCellNetMap(NULL),
     _mainName(this)
 {
-  if (!_cell)
-    throw Error("Can't create " + _TName("Net") + " : null cell");
-
-  if (name.isEmpty())
-    throw Error("Can't create " + _TName("Net") + " : empty name");
-
+  if (not _cell)      throw Error( "Net::Net(): Can't create Hurricane::Net, NULL cell" );
+  if (name.isEmpty()) throw Error( "Net::Net(): Can't create Hurricane::Net, empty name" );
   if (_cell->getNet(_name))
-    throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
+    throw Error( "Net::Net(): Can't create Hurricane::Net named \""+getString(_name)+"\""
+               + " in Cell \""+getString(_cell->getName())+"\", already exists");
 }
 
 Net* Net::create(Cell* cell, const Name& name)
@@ -529,10 +526,24 @@ bool Net::hasAlias(const Name& name) const
   return false;
 }
 
-bool Net::addAlias(const Name& name)
-// *********************************
+NetAliasHook* Net::getAlias(const Name& name) const
+// ************************************************
 {
-  if (hasAlias(name)) return true;
+  if (name == _name) return dynamic_cast<NetAliasHook*>( const_cast<NetMainName*>( &_mainName ));
+  for ( NetAliasHook* alias : getAliases() ) {
+    if (alias->getName() == name) return alias;
+  }
+  return NULL;
+}
+
+bool Net::addAlias(const Name& name, bool isExternal )
+// ***************************************************
+{
+  NetAliasHook* alias = getAlias( name );
+  if (alias) {
+    if (isExternal) alias->setExternal( true );
+    return true;
+  }
 
   if (getCell()->getNet(name)) {
     cerr << Warning( "Net::addAlias(): Cannot add alias %s to net %s, already taken."
@@ -542,7 +553,7 @@ bool Net::addAlias(const Name& name)
     return false;
   }
 
-  NetAliasName* slave = new NetAliasName ( name );
+  NetAliasName* slave = new NetAliasName ( name, isExternal );
   _mainName.attach( slave );
   getCell()->_addNetAlias( slave );
 
@@ -680,19 +691,22 @@ void Net::merge(Net* net)
         }
     }
 
-    Name mergedName = net->getName();
+    bool mergedExternal = net->isExternal();
+    Name mergedName     = net->getName();
     NetAliasName* slaves = NULL;
     if (net->_mainName.isAttached()) {
       slaves = dynamic_cast<NetAliasName*>( net->_mainName.getNext() );
       net->_mainName.detach();
     }
 
-    if (net->isExternal() and not isExternal())
+    if (mergedExternal and not isExternal()) {
       setExternal( true );
+    }
     net->destroy();
 
     if (slaves) _mainName.attach( slaves );
-    addAlias( mergedName );
+    addAlias( mergedName, mergedExternal );
+    
 }
 
 void Net::_postCreate()
@@ -714,14 +728,15 @@ void Net::_preDestroy()
 // *******************
 {
   cdebug_log(18,1) << "entering Net::_preDestroy: " << this << endl;
-
   Inherit::_preDestroy();
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " slave Plugs..." << endl;
   Plugs plugs = getSlavePlugs();
   while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
   unmaterialize();
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " slave Rubbers..." << endl;
   Rubbers rubbers = getRubbers();
   while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
 
@@ -735,7 +750,13 @@ void Net::_preDestroy()
     // over a collection as it is modificated/destroyed!
     }
   }
+
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " RoutingPads..." << endl;
+  vector<RoutingPad*> rps;
+  for ( RoutingPad* rp : getRoutingPads() ) rps.push_back( rp );
+  for ( RoutingPad* rp : rps ) rp->destroy();
     
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " Components..." << endl;
   Components components = getComponents();
   while ( components.getFirst() ) {
     Component* component = components.getFirst();
@@ -743,6 +764,7 @@ void Net::_preDestroy()
     else (static_cast<Plug*>(component))->setNet(NULL);
   }
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " Names/Aliases..." << endl;
   _mainName.clear();
   _cell->_getNetMap()._remove(this);
 
@@ -750,14 +772,23 @@ void Net::_preDestroy()
   cdebug_tabw(18,-1);
 }
 
+string Net::_getFlagsAsString() const
+// **********************************
+{
+  string ds;
+  ds += ((isDeepNet() ) ? "d" : "-");
+  ds += ((_isExternal ) ? "e" : "-");
+  ds += ((_isGlobal   ) ? "g" : "-");
+  ds += ((_isAutomatic) ? "a" : "-");
+  return ds;
+}
+
 string Net::_getString() const
 // ***************************
 {
   string bs = Inherit::_getString();
   string ds = "\"" + getString(_name) + "\" ";
-  ds += ((_isExternal ) ? "e" : "-");
-  ds += ((_isGlobal   ) ? "g" : "-");
-  ds += ((_isAutomatic) ? "a" : "-");
+  ds += _getFlagsAsString();
   ds += " ";
   ds += getString(_type     ) + " ";
   ds += getString(_direction);

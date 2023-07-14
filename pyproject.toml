@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "Coriolis"
+version = "0.0.0"
+description = "Place and Route for semiconductors"
+authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
+readme = "README.rst"
+build = "builder.py"
+packages = [
+  { include = "Coriolis"}
+]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+dirty = true
+vcs = "git"
+style = "pep440"
+metadata = "true"
+pattern = '''
+  (?x)
+  ^coriolis-((?P<epoch>\d+)!)?(?P<base>\d+(\.\d+)*)
+  ([-._]?((?P<stage>[a-zA-Z]+)[-._]?(?P<revision>\d+)?))?
+  (\+(?P<tagged_metadata>.+))?$
+'''
+
+[tool.poetry.dependencies]
+python = "^3.8"
+find-libpython = "^0.3.0"
+
+[tool.poetry.dev-dependencies]
+cmake = ">=3"
+ninja = "^1.11.1"
+
+[tool.poetry.scripts]
+blif2vst =  'Coriolis:blif2vst'
+tutorial = 'Coriolis:tutorial'
+unittests = 'Coriolis:unittests'
+yosys_coriolis = 'Coriolis:yosys_coriolis'
+
+[build-system]
+requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.cibuildwheel.linux]
+skip = ["cp36-*", "cp37-*", "pp*"]
+build-frontend = "build"
+before-all = '''
+ yum -y install epel-release
+ yum repolist
+ yum install -y \
+ qt5-qtbase-devel qt5-qtsvg-devel \
+ rapidjson-devel bison flex doxygen bzip2-devel flex-devel \
+ boost-devel \
+ boost-python boost-filesystem \
+ boost-regex  boost-wave \
+ python36-devel libxml2-devel \
+ qwt-devel
+'''
+build-verbosity=2

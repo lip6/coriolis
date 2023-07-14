@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -13,9 +13,7 @@
 // |  C++ Header  :  "./anabatic/NetBuilderVH.h"                     |
 // +-----------------------------------------------------------------+
 
-#ifndef  ANABATIC_NET_BUILDER_VH_H
-#define  ANABATIC_NET_BUILDER_VH_H
-
+#pragma  once
 #include "anabatic/NetBuilder.h"
 
 
@@ -29,6 +27,7 @@ namespace Anabatic {
     public:
                             NetBuilderVH       ();
       virtual              ~NetBuilderVH       ();
+      static  std::string   getStyle           ();
       virtual void          doRp_AutoContacts  ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
       virtual AutoContact*  doRp_Access        ( GCell*, Component*, uint64_t  flags );
     private:                                     
@@ -41,6 +40,7 @@ namespace Anabatic {
       virtual bool          _do_2G_1M1         ();
       virtual bool          _do_xG_xM1_xM3     ();
       virtual bool          _do_xG             ();
+      virtual bool          _do_2G             ();
       virtual bool          _do_globalSegment  ();
       virtual void          singleGCell        ( AnabaticEngine*, Net* );
     public:
@@ -49,5 +49,3 @@ namespace Anabatic {
 
 
 }  // Anabatic namespace.
-
-#endif  // ANABATIC_NET_BUILDER_VH_H

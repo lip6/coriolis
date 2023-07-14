@@ -1,20 +1,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2018-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2018-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |            G D S I I / Hurricane  Interface                     |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :   "./gds/GdsParser.cpp"                          |
 // +-----------------------------------------------------------------+
 
 
 #include <ctime>
+#include <cstdio>
 #include <string>
 #include <bitset>
 #include <sstream>
@@ -25,7 +26,8 @@
 #include <vector>
 using namespace std;
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -64,7 +66,7 @@ namespace {
       static const uint16_t  BitArray        = 0x0001;
       static const uint16_t  TwoByteInteger  = 0x0002;  // Signed, 16 bits.
       static const uint16_t  FourByteInteger = 0x0003;  // Signed, 32 bits.
-      static const uint16_t  FourByteReal    = 0x0004;  // Unused.
+    //static const uint16_t  FourByteReal    = 0x0004;  // Unused.
       static const uint16_t  EightByteReal   = 0x0005;
       static const uint16_t  String          = 0x0006;
     // Record Types.
@@ -201,6 +203,11 @@ namespace {
                    void              readString     ();
                    void              readUnits      ();
                    void              readLayer      ();
+                   void              readDatatype   ();
+                   void              readWidth      ();
+                   void              readBgnextn    ();
+                   void              readEndextn    ();
+                   void              readPathtype   ();
                    void              readStrname    ();
                    void              readXy         ();
       static       string            toStrType      ( uint16_t );
@@ -211,6 +218,7 @@ namespace {
                                   double   _readDouble ();
     private:
       istream*          _stream;
+      uint32_t          _offset;
       uint16_t          _length;
       uint16_t          _count;
       uint16_t          _type;
@@ -220,6 +228,7 @@ namespace {
       vector<int16_t>   _int16s;
       vector<int32_t>   _int32s;
       vector<double>    _doubles;
+      char              _buffer[64];
   };
 
 
@@ -293,6 +302,7 @@ namespace {
 
   GdsRecord::GdsRecord ()
     : _stream     (NULL)
+    , _offset     (0)
     , _length     (0)
     , _count      (0)
     , _type       (0)
@@ -343,8 +353,8 @@ namespace {
       case AREF:         readDummy( false ); break;
       case TEXT:         readDummy( false ); break;
       case LAYER:        readLayer();        break;
-      case DATATYPE:     readDummy( false ); break;
-      case WIDTH:        readDummy( false ); break;
+      case DATATYPE:     readDatatype();     break;
+      case WIDTH:        readWidth();        break;
       case XY:           readXy();           break;
       case ENDEL:        readDummy( false ); break;
       case SNAME:        readStrname();      break;
@@ -360,7 +370,7 @@ namespace {
       case ANGLE:        _doubles.push_back( _readDouble() ); break;
       case REFLIBS:      readDummy( false ); break;
       case FONTS:        readDummy( false ); break;
-      case PATHTYPE:     readDummy( false ); break;
+      case PATHTYPE:     readPathtype();     break;
       case GENERATIONS:  readDummy( false ); break;
       case ATTRTABLE:    readDummy( false ); break;
       case STYPTABLE:    readDummy( false ); break;
@@ -375,8 +385,8 @@ namespace {
       case BOX:          readDummy( false ); break;
       case BOXTYPE:      readDummy( false ); break;
       case PLEX:         readDummy( false ); break;
-      case BGNEXTN:      readDummy( false ); break;
-      case ENDEXTN:      readDummy( false ); break;
+      case BGNEXTN:      readBgnextn(); break;
+      case ENDEXTN:      readEndextn(); break;
       case TAPENUM:      readDummy( false ); break;
       case TAPECODE:     readDummy( false ); break;
       case STRCLASS:     readDummy( false ); break;
@@ -389,7 +399,13 @@ namespace {
       case LIBSECUR:     readDummy( false ); break;
     }
 
-    cerr << "  GdsRecord::read() " << toStrType(_type) << endl;
+    ostringstream s;
+    s << " (0x" << std::setfill('0') << std::setw(4) << std::hex << _type << ")";
+    cdebug_log(101,0) << "GdsRecord::read() " << toStrType(_type)
+                      << s.str()
+                      << " _bytes:"  <<  _length
+                      << " (offset:" << (_offset-4) << ")"
+                      << endl;
   }
 
 
@@ -417,9 +433,15 @@ namespace {
         unsigned char bytes[ typeSize ];
     };
 
-    char bytes[typeSize];
-    _stream->read( bytes, typeSize );
-    _count += typeSize;
+    unsigned char bytes[typeSize];
+    _stream->read( (char*)(&bytes[0]), typeSize );
+    _count  += typeSize;
+
+    // cdebug_log(101,0) << "GdsRecord::_readInt() " << endl;
+    // for ( size_t i=0 ; i<typeSize ; ++i ) {
+    //   sprintf( _buffer, "0x%02x", bytes[i] );
+    //   cdebug(101,0) << setw(6) << hex << _offset++ << " | " << _buffer << endl; 
+    // }
 
     UType uvalue;
   // Little endian (x86).
@@ -440,6 +462,12 @@ namespace {
     _stream->read( bytes, 8 );
     _count += 8;
 
+    // cdebug_log(101,0) << "GdsRecord::_readDouble() " << endl;
+    // for ( size_t i=0 ; i<8 ; ++i ) {
+    //   sprintf( _buffer, "0x%02x", bytes[i] );
+    //   cdebug(101,0) << setw(6) << hex << _offset++ << " | " << _buffer << endl; 
+    // }
+
     gdsUInt64 mantisse;
     for ( size_t i=0 ; i<7 ; ++i ) mantisse.bytes[i] = bytes[7-i];
     mantisse.bytes[7] = 0;
@@ -456,31 +484,38 @@ namespace {
 
   string  GdsRecord::_readString ()
   {
+    cdebug_log(101,0) << "GdsRecord::_readDouble() " << endl;
     string s;
     char c;
     for ( ; _count<_length ; ++_count ) {
       _stream->get( c );
+      // sprintf( _buffer, "0x%02x", c );
+      // cdebug_log(101,0) << setw(6) << hex << _offset++ << " | " << _buffer << endl; 
+
       if (c != (char)0) s.push_back(c);
     }
-    cerr << "GdsRecord::_readString(): \"" << s << "\"" << endl;
+    cdebug_log(101,0) << "GdsRecord::_readString(): \"" << s << "\"" << endl;
     return s;
   }
 
 
   void  GdsRecord::readDummy ( bool showError )
   {
+    cdebug_log(101,0) << "GdsRecord::readDummy() " << endl;
     char c;
-    for ( ; _count<_length ; ++_count ) _stream->get( c );   
-
+    for ( ; _count<_length ; ++_count ) {
+      _stream->get( c );   
+      sprintf( _buffer, "0x%02x", c );
+      cdebug_log(101,0) << tsetw(6) << hex << _offset++ << " | " << _buffer << endl; 
+    }
     if (showError) {
-      cerr << Error( "GdsRecord type %s unsupported.", toStrType(_type).c_str() ) << endl;
+      cdebug_log(101,0) << Error( "GdsRecord type %s unsupported.", toStrType(_type).c_str() ) << endl;
     }
   }
 
 
   void  GdsRecord::readStrans ()
   {
-    
     const uint16_t XRMask = 0x8000;
           uint16_t flags  = _readInt<uint16_t>();
     _xReflection = (flags & XRMask);
@@ -505,6 +540,26 @@ namespace {
 
 
   void  GdsRecord::readLayer ()
+  { _int16s.push_back( _readInt<uint16_t>() ); }
+
+
+  void  GdsRecord::readDatatype ()
+  { _int16s.push_back( _readInt<uint16_t>() ); }
+
+
+  void  GdsRecord::readWidth ()
+  { _int32s.push_back( _readInt<uint32_t>() ); }
+
+
+  void  GdsRecord::readBgnextn ()
+  { _int32s.push_back( _readInt<uint32_t>() ); }
+
+
+  void  GdsRecord::readEndextn ()
+  { _int32s.push_back( _readInt<uint32_t>() ); }
+
+
+  void  GdsRecord::readPathtype ()
   { _int16s.push_back( _readInt<uint16_t>() ); }
 
 
@@ -590,29 +645,40 @@ namespace {
 
   class GdsStream {
     public:
-      static const Layer* gdsToLayer       ( uint16_t );
-    public:                                
-      static       void   _staticInit      ();
-                          GdsStream        ( string gdsPath );
-      inline       bool   isValidSyntax    () const;
-                   bool   misplacedRecord  ();
-      inline       void   resetStrans      ();
-                   bool   read             ( Library* );
-                   bool   readFormatType   ();
-                   bool   readStructure    ();
-                   bool   readBoundary     ();
-                   bool   readPath         ();
-                   bool   readSref         ();
-                   bool   readAref         ();
-                   bool   readNode         ();
-                   bool   readBox          ();
-                   bool   readText         ();
-                   bool   readTextbody     ();
-                   bool   readStrans       ();
-                   bool   readProperty     ();
-                   void   xyToComponent    ( const Layer* );
-                   void   makeInstances    ();
-                   Net*   fusedNet         ();
+      static const Layer* gdsToLayer           ( uint16_t gdsLayer, uint16_t datatype );
+    public:                                    
+      static       void   _staticInit          ();
+                          GdsStream            ( string gdsPath, uint32_t flags );
+      inline       bool   useGdsPrefix         () const;
+      inline       bool   useLayer0AsBoundary  () const;
+      inline       bool   isValidSyntax        () const;
+                   bool   misplacedRecord      ();
+      inline       void   resetStrans          ();
+                   bool   read                 ( Library* );
+                   bool   readFormatType       ();
+                   bool   readStructure        ();
+             const Layer* readLayerAndDatatype ();
+                   bool   readBoundary         ();
+                   bool   readPath             ();
+                   bool   readSref             ();
+                   bool   readAref             ();
+                   bool   readNode             ();
+                   bool   readBox              ();
+                   bool   readText             ();
+                   bool   readTextbody         ( const Layer* );
+                   bool   readStrans           ();
+                   bool   readProperty         ();
+                   void   xyToAbutmentBox      ();
+                   void   xyToComponent        ( const Layer* );
+                   void   xyToPath             ( uint16_t pathtype
+                                               , const Layer*
+                                               , DbU::Unit width
+                                               , DbU::Unit bgnextn
+                                               , DbU::Unit endextn );
+                   void   makeInstances        ();
+                   void   makeExternals        ();
+                   Net*   fusedNet             ();
+                   void   addNetReference      ( Net*, const Layer*, DbU::Unit x, DbU::Unit y );
     private:
       struct DelayedInstance {
           inline DelayedInstance ( Cell* owner, string masterName, const Transformation& );
@@ -622,22 +688,31 @@ namespace {
           Transformation  _transformation;
       };
     private:
-      static vector<const Layer*>     _gdsLayerTable;
-             vector<DelayedInstance>  _delayedInstances;
-             string                   _gdsPath;
-             ifstream                 _stream;
-             GdsRecord                _record;
-             double                   _angle;
-             bool                     _xReflection;
-             Library*                 _library;
-             Cell*                    _cell;
-             Component*               _component;
-             string                   _text;
-             DbU::Unit                _scale;
-             int64_t                  _netCount;
-             int64_t                  _SREFCount;
-             bool                     _validSyntax;
-             bool                     _skipENDEL;
+      struct PinPoint {
+          inline PinPoint ( const Layer*, DbU::Unit x, DbU::Unit y );
+          const Layer* _layer;
+          Point        _position;
+      };
+    private:
+      static map<uint32_t,const Layer*>  _gdsLayerTable;
+             vector<DelayedInstance>     _delayedInstances;
+             uint32_t                    _flags;
+             string                      _gdsPath;
+             ifstream                    _stream;
+             GdsRecord                   _record;
+             double                      _angle;
+             bool                        _xReflection;
+             Library*                    _library;
+             Cell*                       _cell;
+             Component*                  _component;
+             string                      _text;
+             DbU::Unit                   _scale;
+             int64_t                     _SREFCount;
+             bool                        _validSyntax;
+             bool                        _skipENDEL;
+             map< Net*
+                , vector<PinPoint>
+                , DBo::CompareById >  _netReferences;
   };
 
 
@@ -648,15 +723,21 @@ namespace {
   { }
 
 
-  vector<const Layer*>  GdsStream::_gdsLayerTable;
+  inline GdsStream::PinPoint::PinPoint ( const Layer* layer, DbU::Unit x, DbU::Unit y )
+    : _layer(layer), _position(x,y)
+  { }
+
+  
+  map<uint32_t,const Layer*>  GdsStream::_gdsLayerTable;
 
 
   void  GdsStream::_staticInit ()
   {
-    _gdsLayerTable = vector<const Layer*>( 64, NULL );
     for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-      unsigned int gdsNumber = layer->getGds2Layer();
-      if (gdsNumber < 64) _gdsLayerTable[gdsNumber] = layer;
+      if (layer->hasGds()) {
+        uint32_t gdsNumber = (layer->getGds2Layer() << 16) + layer->getGds2Datatype();
+        _gdsLayerTable[gdsNumber] = layer;
+      }
     }
   }
 
@@ -664,15 +745,24 @@ namespace {
   inline  void  GdsStream::resetStrans () { _angle = 0.0; _xReflection = false; }
 
 
-  const Layer* GdsStream::gdsToLayer ( uint16_t gdsLayer )
-  { return (gdsLayer < _gdsLayerTable.size()) ? _gdsLayerTable[gdsLayer] : NULL; }
+  const Layer* GdsStream::gdsToLayer ( uint16_t gdsLayer, uint16_t datatype )
+  {
+    uint32_t gdsIndex = (gdsLayer << 16) + datatype;
+    auto ilayer = _gdsLayerTable.find( gdsIndex );
+    if (ilayer == _gdsLayerTable.end())
+      return NULL;
+    return (*ilayer).second;
+  }
 
 
-  inline bool  GdsStream::isValidSyntax () const { return _validSyntax; }
+  inline bool  GdsStream::isValidSyntax       () const { return _validSyntax; }
+  inline bool  GdsStream::useGdsPrefix        () const { return not(_flags & Gds::NoGdsPrefix); }
+  inline bool  GdsStream::useLayer0AsBoundary () const { return    (_flags & Gds::Layer_0_IsBoundary); }
 
 
-  GdsStream::GdsStream ( string gdsPath )
+  GdsStream::GdsStream ( string gdsPath, uint32_t flags )
     : _delayedInstances()
+    , _flags           (flags)
     , _gdsPath         (gdsPath)
     , _stream          ()
     , _record          ()
@@ -683,14 +773,20 @@ namespace {
     , _component       (NULL)
     , _text            ()
     , _scale           (1)
-    , _netCount        (0)
     , _SREFCount       (0)
     , _validSyntax     (true)
     , _skipENDEL       (false)
   {
     if (_gdsLayerTable.empty()) _staticInit();
     
-    _stream.open( gdsPath, ios_base::in );
+    _stream.open( gdsPath, ios_base::in|ios_base::binary );
+    if (not _stream.is_open()) {
+      cerr << Error( "GdsStream::GdsStream(): Unable to open stream, check path.\n"
+                     "        \"%s\""
+                   , _gdsPath.c_str() ) << endl;
+      _validSyntax = false;
+      return;
+    }
 
     _stream >> _record;
     if (not _record.isHEADER()) {
@@ -717,7 +813,7 @@ namespace {
 
   bool  GdsStream::read ( Library* library )
   {
-  //cerr << "GdsStream::read(Library*)" << endl;
+    cdebug_log(101,1) << "GdsStream::read(Library*)" << endl;
     
     _library = library;
 
@@ -726,6 +822,7 @@ namespace {
                      "        in \"%s\""
                    , _gdsPath.c_str() ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return _validSyntax;
     }
     _stream >> _record;
@@ -739,13 +836,20 @@ namespace {
                      "        in \"%s\""
                    , _gdsPath.c_str() ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return _validSyntax;
     }
     if (_record.isREFLIBS    ()) { _stream >> _record; }
     if (_record.isFONTS      ()) { _stream >> _record; }
     if (_record.isATTRTABLE  ()) { _stream >> _record; }
     if (_record.isGENERATIONS()) { _stream >> _record; }
-    if (_record.isFORMAT     ()) { readFormatType(); if (not _validSyntax) return _validSyntax; }
+    if (_record.isFORMAT     ()) {
+      readFormatType();
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+    }
 
     if (_record.isUNITS()) {
       _scale = DbU::fromPhysical( _record.getDoubles()[1], DbU::Unity );
@@ -759,17 +863,20 @@ namespace {
 
     if (_validSyntax and not _record.isENDLIB()) { misplacedRecord(); }
 
-    if (_validSyntax) makeInstances();
+    if (_validSyntax) {
+      makeInstances();
+      makeExternals();
+    }
 
     _library = NULL;
-  //cerr << "GdsStream::read(Library*) - return:" << _validSyntax << endl;
+    cdebug_log(101,-1) << "    GdsStream::read(Library*) - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readFormatType ()
   {
-  //cerr << "GdsStream::readFormatType()" << endl;
+    cdebug_log(101,0) << "GdsStream::readFormatType()" << endl;
 
     if (_record.isMASK()) {
       _stream >> _record;
@@ -781,24 +888,26 @@ namespace {
       else { _validSyntax = false; return _validSyntax; }
     }
 
-  //cerr << "GdsStream::readFormatType() - return:" << _validSyntax << endl;
+  //cdebug(101,0) << "GdsStream::readFormatType() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readStructure ()
   {
-  //cerr << "GdsStream::readStructure()" << endl;
+    cdebug_log(101,1) << "GdsStream::readStructure()" << endl;
     
     if (_record.isSTRNAME()) {
       if (_library) {
-        _cell = _library->getCell( _record.getName() );
+        string cellName = _record.getName();
+        if (useGdsPrefix()) cellName.insert( 0, "gds_" );
+        _cell = _library->getCell( cellName );
         if (not _cell) {
-          cerr << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
-                         , _record.getName().c_str()
-                         , getString(_library).c_str()
-                         ) << endl;
-          _cell = Cell::create( _library, _record.getName() );
+          cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
+                              , cellName.c_str()
+                              , getString(_library).c_str()
+                              ) << endl;
+          _cell = Cell::create( _library, cellName );
         }
       }
       _stream >> _record;
@@ -821,7 +930,9 @@ namespace {
       if (not _skipENDEL) {
         if (_record.isENDEL()) { _stream >> _record; }
         else {
-          _validSyntax = false; break;
+          _validSyntax = false;
+          cdebug_log(101,0) << "Missing ENDEL inside STRUCTURE loop" << endl;
+          break;
         }
       } else
         _skipENDEL = false;
@@ -834,33 +945,90 @@ namespace {
     _cell->setAbutmentBox( _cell->getBoundingBox() );
     UpdateSession::open();
     _cell = NULL;
-    cerr << "GdsStream::readStructure() - return:" << _validSyntax << endl;
+    cdebug_log(101,-1) << "    GdsStream::readStructure() - return:" << _validSyntax << endl;
 
     return _validSyntax;
+  }
+
+
+  const Layer* GdsStream::readLayerAndDatatype ()
+  {
+    uint16_t  gdsLayer    = 0;
+    uint16_t  gdsDatatype = 0;
+
+    if (_record.isLAYER()) {
+      gdsLayer = (uint16_t)_record.getInt16s()[0];
+      _stream >> _record;
+    } else {
+      cerr << Error( "GdsStream::readLayerAndDatatype(): Expecting LAYER record, got %s."
+                   , GdsRecord::toStrType(_record.getType()).c_str()
+                   ) << endl;
+      _validSyntax = false;
+      return NULL;;
+    }
+
+    if (_record.isDATATYPE()) {
+      gdsDatatype = (uint16_t)_record.getInt16s()[0];
+      _stream >> _record;
+    } else {
+      cerr << Error( "GdsStream::readLayerAndDatatype(): Expecting DATATYPE record, got %s."
+                   , GdsRecord::toStrType(_record.getType()).c_str()
+                   ) << endl;
+      _validSyntax = false;
+      return NULL;;
+    }
+
+    const Layer* layer = gdsToLayer( gdsLayer, gdsDatatype );
+    if ((gdsLayer == 0) and not useLayer0AsBoundary()) {
+      cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
+      if (not layer) {
+        cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
+                     , gdsLayer, gdsDatatype
+                     ) << endl;
+      }
+    }
+
+    return layer;
   }
 
 
   bool  GdsStream::readText ()
   {
-  //cerr << "GdsStream::readText()" << endl;
+    const Layer* layer = NULL;
+    
+    cdebug_log(101,0) << "GdsStream::readText()" << endl;
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
-    if (_record.isLAYER  ()) { _stream >> _record; }
-    else { _validSyntax = false; return _validSyntax; }
+    if (_record.isLAYER  ()) {
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
+      if (not layer) {
+        cerr << Error( "GdsStream::readText(): No BasicLayer id:%d in GDS conversion table (skipped)."
+                     , _record.getInt16s()[0]
+                     ) << endl;
+      }
+      _stream >> _record;
+    } else { _validSyntax = false; return _validSyntax; }
 
-    readTextbody();
+    readTextbody( layer );
 
-  //cerr << "GdsStream::readText() - return:" << _validSyntax << endl;
+  //cdebug(101,0) << "GdsStream::readText() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
-  bool  GdsStream::readTextbody ()
+  bool  GdsStream::readTextbody ( const Layer* layer )
   {
-  //cerr << "GdsStream::readTextbody()" << endl;
+    cdebug_log(101,1) << "GdsStream::readTextbody()" << endl;
+
+    DbU::Unit xpos = 0;
+    DbU::Unit ypos = 0;
 
     if (_record.isTEXTTYPE()) { _stream >> _record; }
-    else { _validSyntax = false; return _validSyntax; }
+    else {
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
+    }
 
     if (_record.isPRESENTATION()) { _stream >> _record; }
     if (_record.isPATH        ()) { _stream >> _record; }
@@ -869,27 +1037,60 @@ namespace {
     if (_record.isSTRANS()) {
       _stream >> _record;
       readStrans();
-      if (not _validSyntax) return _validSyntax;
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
     }
 
-    if (_record.isXY()) { _stream >> _record; }
-    else { _validSyntax = false; return _validSyntax; }
+    if (_record.isXY()) {
+      vector<int32_t> coordinates = _record.getInt32s();
+      if (coordinates.size() != 2) {
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+      xpos = coordinates[ 0 ]*_scale;
+      ypos = coordinates[ 1 ]*_scale;
+      _stream >> _record;
+    } else {
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
+    }
 
     if (_record.isSTRING()) {
       _text = _record.getName();
       _stream >> _record;
-      cerr << "_text:\"" << _text << "\"" << endl;
+      if (not layer) {
+        cerr << Error( "GdsStream::readTextbody(): Discarted text is \"%s\"."
+                     , _text.c_str()
+                     ) << endl;
+      }
     }
-    else { _validSyntax = false; return _validSyntax; }
+    else {
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
+    }
 
-  //cerr << "GdsStream::readTextbody() - return:" << _validSyntax << endl;
+    if (not _text.empty()) {
+      Net* net = _cell->getNet( _text );
+      if (not net) {
+        net = Net::create( _cell, _text );
+        net->setExternal( true );
+      }
+      addNetReference( net, layer, xpos, ypos );
+    }
+
+    cdebug_log(101,-1) << "GdsStream::readTextbody() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readStrans ()
   {
-  //cerr << "GdsStream::readStrans()" << endl;
+    cdebug_log(101,0) << "GdsStream::readStrans()" << endl;
     
     _angle       = 0.0;
     _xReflection = _record.hasXReflection();
@@ -897,91 +1098,94 @@ namespace {
     if (_record.isMAG  ()) { _stream >> _record; }
     if (_record.isANGLE()) { _angle = _record.getDoubles()[0]; _stream >> _record; }
 
-  //cerr << "GdsStream::readStrans() - return:" << _validSyntax << endl;
+  //cdebug(101,0) << "GdsStream::readStrans() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readBoundary ()
   {
-  //cerr << "GdsStream::readBoundary()" << endl;
+    cdebug_log(101,1) << "GdsStream::readBoundary()" << endl;
     
-    const Layer* layer = NULL;
-
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER()) {
-      layer = gdsToLayer( _record.getInt16s()[0] );
-      if (not layer) {
-        cerr << Error( "GdsStream::readBoundary(): No BasicLayer id:%d in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
-      _stream >> _record;
-    } else {
-      _validSyntax = false; return _validSyntax;
+    const Layer* layer = readLayerAndDatatype();
+    if (not _validSyntax) {
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
-
-    if (_record.isDATATYPE()) { _stream >> _record; }
-    else { _validSyntax = false; return _validSyntax; }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
-      else                 _stream >> _record;
+      if (_cell and layer)
+        xyToComponent( layer );
+      else if (not layer and useLayer0AsBoundary()) {
+        xyToAbutmentBox();
+      }
+      else
+        _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
-  //cerr << "GdsStream::readBoundary() - return:" << _validSyntax << endl;
+    cdebug_log(101,-1) << "GdsStream::readBoundary() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readPath ()
   {
-  //cerr << "GdsStream::readPath()" << endl;
+    cdebug_log(101,1) << "GdsStream::readPath()" << endl;
     
-    const Layer* layer = NULL;
+    DbU::Unit  width    = 0;
+    uint16_t   pathtype = 0;
+    DbU::Unit  bgnextn  = 0;
+    DbU::Unit  endextn  = 0;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER()) {
-      layer = gdsToLayer( _record.getInt16s()[0] );
-      if (not layer) {
-        cerr << Error( "GdsStream::readPath(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
-      _stream >> _record;
-    } else {
-      _validSyntax = false; return _validSyntax;
+    const Layer* layer = readLayerAndDatatype();
+    if (not layer) {
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
-    if (_record.isDATATYPE()) { _stream >> _record; }
-    else { _validSyntax = false; return _validSyntax; }
-
-    if (_record.isPATHTYPE()) { _stream >> _record; }
-    if (_record.isWIDTH   ()) { _stream >> _record; }
-    if (_record.isBGNEXTN ()) { _stream >> _record; }
-    if (_record.isENDEXTN ()) { _stream >> _record; }
+    if (_record.isPATHTYPE()) {
+      pathtype = _record.getInt16s()[0];
+      _stream >> _record;
+    }
+    if (_record.isWIDTH   ()) {
+      width = _record.getInt32s()[0] * _scale;
+      _stream >> _record;
+    }
+    if (_record.isBGNEXTN ()) {
+      bgnextn = _record.getInt32s()[0] * _scale;
+      _stream >> _record;
+    }
+    if (_record.isENDEXTN ()) {
+      endextn = _record.getInt32s()[0] * _scale;
+      _stream >> _record;
+    }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
-      _stream >> _record;
+      if (_cell and layer) xyToPath( pathtype, layer, width, bgnextn, endextn );
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
-  //cerr << "GdsStream::readPath() - return:" << _validSyntax << endl;
+    cdebug_log(101,-1) << "GdsStream::readPath() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readSref ()
   {
-  //cerr << "GdsStream::readSref()" << endl;
+    cdebug_log(101,1) << "GdsStream::readSref()" << endl;
     resetStrans();
     
     string    masterName;
@@ -993,22 +1197,28 @@ namespace {
 
     if (_record.isSNAME()) {
       masterName = _record.getName();
-
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (_record.isSTRANS()) {
       readStrans();
     //_stream >> _record;
-      if (not _validSyntax) return _validSyntax;
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
     }
 
     if (_record.isXY()) {
       vector<int32_t> coordinates = _record.getInt32s();
       if (coordinates.size() != 2) {
-        _validSyntax = false; return _validSyntax;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
       }
       
       xpos = coordinates[ 0 ]*_scale;
@@ -1016,7 +1226,9 @@ namespace {
 
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (not masterName.empty()) {
@@ -1045,19 +1257,20 @@ namespace {
       //      << " XR:" << _xReflection << " angle:" << _angle
       //      << " " << Transformation(xpos,ypos,orient)
       //      << " in " << _cell << endl;
+      if (useGdsPrefix()) masterName.insert( 0, "gds_" );
       _delayedInstances.push_back( DelayedInstance( _cell
                                                   , masterName
                                                   , Transformation(xpos,ypos,orient)) );
     }
 
-  //cerr << "GdsStream::readSref() - return:" << _validSyntax << endl;
+    cdebug_log(101,-1) << "GdsStream::readSref() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readAref ()
   {
-  //cerr << "GdsStream::readAref()" << endl;
+    cdebug_log(101,0) << "GdsStream::readAref()" << endl;
     
     const Layer* layer = NULL;
 
@@ -1089,21 +1302,30 @@ namespace {
       _validSyntax = false; return _validSyntax;
     }
 
-  //cerr << "GdsStream::readAref() - return:" << _validSyntax << endl;
+    cdebug_log(101,0) << "GdsStream::readAref() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readNode ()
   {
-  //cerr << "GdsStream::readNode()" << endl;
+    cdebug_log(101,0) << "GdsStream::readNode()" << endl;
     
     const Layer* layer = NULL;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER  ()) { _stream >> _record; }
+    if (_record.isLAYER  ()) {
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
+      if (not layer) {
+        cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
+                     , _record.getInt16s()[0]
+                     ) << endl;
+      }
+      _stream >> _record;
+      cdebug_log(101,0) << layer << endl;
+    }
     else { _validSyntax = false; return _validSyntax; }
 
     if (_record.isNODETYPE()) {
@@ -1119,21 +1341,30 @@ namespace {
       _validSyntax = false; return _validSyntax;
     }
 
-  //cerr << "GdsStream::readNode() - return:" << _validSyntax << endl;
+    cdebug_log(101,0) << "GdsStream::readNode() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readBox ()
   {
-  //cerr << "GdsStream::readBox()" << endl;
+    cdebug_log(101,0) << "GdsStream::readBox()" << endl;
     
     const Layer* layer = NULL;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER  ()) { _stream >> _record; }
+    if (_record.isLAYER  ()) {
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
+      if (not layer) {
+        cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
+                     , _record.getInt16s()[0]
+                     ) << endl;
+      }
+      _stream >> _record;
+      cdebug_log(101,0) << layer << endl;
+    }
     else { _validSyntax = false; return _validSyntax; }
 
     if (_record.isBOXTYPE()) {
@@ -1149,35 +1380,124 @@ namespace {
       _validSyntax = false; return _validSyntax;
     }
 
-  //cerr << "GdsStream::readBox() - return:" << _validSyntax << endl;
+    cdebug_log(101,0) << "GdsStream::readBox() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
 
   bool  GdsStream::readProperty ()
   {
-  //cerr << "GdsStream::readProperty()" << endl;
+    cdebug_log(101,0) << "GdsStream::readProperty()" << endl;
     
     if (_record.isPROPVALUE  ()) { _stream >> _record; }
     else { _validSyntax = false; return _validSyntax; }
 
-  //cerr << "GdsStream::readProperty() - return:" << _validSyntax << endl;
+    cdebug_log(101,0) << "GdsStream::readProperty() - return:" << _validSyntax << endl;
     return _validSyntax;
+  }
+
+
+  void  GdsStream::xyToAbutmentBox ()
+  {
+    DbU::Unit oneGrid = DbU::fromGrid( 1 );
+    
+    vector<Point>   points;
+    vector<int32_t> coordinates = _record.getInt32s();
+    vector<size_t>  offgrids;
+    for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
+      points.push_back( Point( coordinates[i  ]*_scale
+                             , coordinates[i+1]*_scale ) );
+      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
+        offgrids.push_back( i );
+      }
+    }
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on abutment box (foundry grid: %s).\n"
+                     "%s"
+                   , DbU::getValueString(oneGrid).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
+
+    _stream >> _record;
+
+    if (  (_record.getType() == GdsRecord::ENDEL)
+       or (_record.getType() == GdsRecord::STRING)) {
+    //_stream >> _record;
+    } else {
+      _validSyntax = false;
+      return;
+    }
+    
+    if (_record.getType() == GdsRecord::TEXT) {
+      _stream >> _record;
+      readText();
+    } else
+      _skipENDEL = true;
+
+    bool isRectilinear = true;
+    for ( size_t i=1 ; i<points.size() ; ++i ) {
+      if (   (points[i-1].getX() != points[i].getX()) 
+         and (points[i-1].getY() != points[i].getY()) ) {
+        isRectilinear = false;
+        break;
+      }
+    }
+    if (isRectilinear and (points.size() == 5)) {
+      Box ab; 
+      for ( Point p : points ) ab.merge( p );
+      _cell->setAbutmentBox( ab );
+      cdebug_log(101,0) << "| Abutment box =" << ab << endl;
+    }
   }
 
 
   void  GdsStream::xyToComponent ( const Layer* layer )
   {
+    DbU::Unit oneGrid = DbU::fromGrid( 1 );
+    
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
-    for ( size_t i=0 ; i<coordinates.size() ; i += 2 )
+    vector<size_t>  offgrids;
+    for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
+      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
+        offgrids.push_back( i );
+      }
+    }
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on layer \"%s\" (foundry grid: %s).\n"
+                     "%s"
+                   , getString(layer->getName()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
 
     _stream >> _record;
 
-    if (_record.getType() == GdsRecord::ENDEL) {
-      _stream >> _record;
+    if (  (_record.getType() == GdsRecord::ENDEL)
+       or (_record.getType() == GdsRecord::STRING)) {
+    //_stream >> _record;
     } else {
       _validSyntax = false;
       return;
@@ -1186,9 +1506,7 @@ namespace {
     Net* net = NULL;
     if (_record.getType() == GdsRecord::TEXT) {
       _stream >> _record;
-      cerr << "        BOUNDARY --> TEXT record" << endl;
       readText();
-      cerr << "        AFTER readText()" << endl;
 
       if (not _text.empty()) {
         net = _cell->getNet( _text );
@@ -1216,33 +1534,262 @@ namespace {
         Box boundingBox; 
         for ( Point p : points ) boundingBox.merge( p );
         _component = Pad::create( net, layer, boundingBox );
-        cerr << _component << endl;
       } else {
         _component = Rectilinear::create( net, layer, points );
       }
+      // cdebug_log(101,0) << "| " << net->getCell() << endl;
+      cdebug_log(101,0) << "| " << _component << endl;
 
       if (not net->isAutomatic()) NetExternalComponents::setExternal( _component );
     }
   }
 
 
+  void  GdsStream::xyToPath ( uint16_t     pathtype
+                            , const Layer* layer
+                            , DbU::Unit    width
+                            , DbU::Unit    bgnextn
+                            , DbU::Unit    endextn )
+  {
+    cdebug_log(101,0) << "GdsStream::xyToPath(): pathtype=" << pathtype
+                      << " layer=" << layer->getName()
+                      << " width=" << DbU::getValueString(width)
+                      << " bgnextn=" << DbU::getValueString(bgnextn)
+                      << " endextn=" << DbU::getValueString(endextn) << endl;
+
+    vector<Point>   points;
+    vector<int32_t> coordinates = _record.getInt32s();
+    for ( size_t i=0 ; i<coordinates.size() ; i += 2 )
+      points.push_back( Point( coordinates[i  ]*_scale
+                             , coordinates[i+1]*_scale ) );
+    _stream >> _record;
+    if (_record.getType() != GdsRecord::ENDEL) {
+      _validSyntax = false;
+      return;
+    }
+
+    Net* net = fusedNet();
+
+    cdebug_log(101,0) << "Points" << endl;
+    cdebug_log(101,0) << " 0 | " << points[0] << endl;
+    for ( size_t i=1 ; i<points.size() ; ++i ) {
+      cdebug_log(101,0) << " " << i << " | " << points[i] << endl;
+      if (   (points[i-1].getX() != points[i].getX()) 
+         and (points[i-1].getY() != points[i].getY()) ) {
+        cerr << Error( "GdsStream::xyToPath(): Non-rectilinear paths are not supporteds (skipped)."
+                     ) << endl;
+        return;
+      }
+    }
+
+    DbU::Unit twoGrid   = DbU::fromGrid( 2 );
+    DbU::Unit xadjust   = 0;
+    DbU::Unit yadjust   = 0;
+    DbU::Unit hWidthCap = width;
+    DbU::Unit vWidthCap = width;
+    if (pathtype == 0) {
+      if (points[0].getX() == points[1].getX()) vWidthCap = 0;
+      else                                      hWidthCap = 0;
+    }
+    if (pathtype == 4) {
+      if (not (bgnextn % twoGrid)) twoGrid = 0;
+      else {
+        cdebug_log(101,0) << "bgnextn is an odd number of grid." << endl;
+        twoGrid >>= 1;
+      }
+      if (points[0].getX() == points[1].getX()) {
+        hWidthCap = width;
+        vWidthCap = bgnextn + twoGrid;
+        yadjust   = -vWidthCap/2 + twoGrid;
+        if (points[0].getY() > points[1].getY())
+          yadjust = -yadjust;
+      } else {
+        hWidthCap = bgnextn + twoGrid;
+        vWidthCap = width;
+        xadjust   = -hWidthCap/2 + twoGrid;
+        if (points[0].getX() > points[1].getX())
+          xadjust = -xadjust;
+      }
+    }
+    Contact* source = Contact::create( net
+                                     , layer
+                                     , points[0].getX() + xadjust
+                                     , points[0].getY() + yadjust
+                                     , hWidthCap
+                                     , vWidthCap );
+    cdebug_log(101,0) << "+ " << source << endl;
+    Contact* target  = NULL;
+    Segment* segment = NULL;
+    for ( size_t i=1 ; i<points.size() ; ++i ) {
+      hWidthCap = width;
+      vWidthCap = width;
+      xadjust   = 0;
+      yadjust   = 0;
+      if (i == points.size()-1) {
+        if (pathtype == 0) {
+          if (points[i].getX() == points[i-1].getX()) vWidthCap = 0;
+          else                                        hWidthCap = 0;
+        }
+        if (pathtype == 4) {
+          twoGrid = DbU::fromGrid( 2 );
+          if (not (endextn % twoGrid)) twoGrid = 0;
+          else {
+            cdebug_log(101,0) << "endextn is an odd number of grid." << endl;
+            twoGrid >>= 1;
+          }
+          if (points[i-1].getX() == points[i].getX()) {
+            hWidthCap = width;
+            vWidthCap = endextn + twoGrid;
+            yadjust   = vWidthCap/2 - twoGrid;
+            if (points[i-1].getY() > points[i].getY())
+              yadjust = -yadjust;
+          } else {
+            cdebug_log(101,0) << "endextn="  << DbU::getValueString(endextn)
+                              << " twoGrid=" << DbU::getValueString(twoGrid) << endl;
+            hWidthCap = endextn + twoGrid;
+            vWidthCap = width;
+            xadjust   = hWidthCap/2 - twoGrid;
+            if (points[i-1].getX() > points[i].getX())
+              xadjust = -xadjust;
+            cdebug_log(101,0) << "xadjust=" << DbU::getValueString(xadjust) << endl;
+          }
+        }
+      }
+      target = Contact::create( net
+                              , layer
+                              , points[i].getX() + xadjust
+                              , points[i].getY() + yadjust
+                              , hWidthCap
+                              , vWidthCap );
+      cdebug_log(101,0) << "+ " << target << endl;
+      if (points[i-1].getY() == points[i].getY()) {
+        segment = Horizontal::create( source
+                                    , target
+                                    , layer
+                                    , points[i].getY()
+                                    , width
+                                    , 0, 0 );
+      } else {
+        segment = Vertical::create( source
+                                  , target
+                                  , layer
+                                  , points[i].getX()
+                                  , width
+                                  , 0, 0 );
+      }
+      cdebug_log(101,0) << "| " << segment << endl;
+      if (not net->isAutomatic()) NetExternalComponents::setExternal( segment );
+      source = target;
+    }
+  }
+
+
   void  GdsStream::makeInstances ()
   {
-  //cerr << "GdsStream::makeInstances(): " << endl;
+    cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
       Cell* masterCell = _library->getCell( di._masterName );
 
       if (masterCell) {
         string    insName  = "sref_" + getString(_SREFCount++);
-      //Instance* instance =
+        Instance* instance =
           Instance::create( di._owner
                           , insName
                           , masterCell
                           , di._transformation
                           , Instance::PlacementStatus::FIXED
                           );
-      //cerr << "| " << instance << " @" << di._transformation << " in " << di._owner << endl;
+          cdebug_log(101,0) << "| " << instance << " @" << di._transformation << " in " << di._owner << endl;
+      }
+    }
+    cdebug_tabw(101,-1);
+  }
+
+
+  void  GdsStream::addNetReference  ( Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y )
+  {
+    cdebug_log(101,0) << "addNetReference(): " << net << " " << layer << " "
+                      << DbU::getValueString(x) << " " << DbU::getValueString(y) << endl;
+
+    if (not layer) return;
+
+    string layerName = getString( layer->getName() );
+
+    auto inet = _netReferences.find( net );
+    if (inet == _netReferences.end()) {
+      _netReferences[ net ] = vector<PinPoint>();
+    }
+    _netReferences[ net ].push_back( PinPoint(layer,x,y) );
+  }
+
+  
+  void  GdsStream::makeExternals ()
+  {
+    UpdateSession::close();
+    UpdateSession::open();
+    for ( auto netPins : _netReferences ) {
+      Net* net = netPins.first;
+      for ( const PinPoint& ref : netPins.second ) {
+        const Layer* layer = ref._layer;
+        string layerName = getString( layer->getName() );
+        if ((layerName.size() > 4) and layerName.substr(layerName.size()-4) == ".pin") {
+          layer = DataBase::getDB()->getTechnology()->getLayer( layerName.substr(0,layerName.size()-4) );
+        }
+        cdebug_log(101,0) << "Looking for components of \"" << net->getName()
+                          << "\" in " << layer
+                          << " @" << ref._position
+                          << endl;
+        cdebug_log(101,0) << "| In  " << net->getCell() << endl;
+        if (not layer) continue;
+
+        vector<Component*> toDestroy;
+        for ( Component* component : net->getCell()
+                ->getComponentsUnder( Box(ref._position).inflate(1),layer->getMask() ) ) {
+          cdebug_log(101,0) << "| " << component << endl;
+          Horizontal* href = dynamic_cast<Horizontal*>( component );
+          if (href) {
+            Horizontal* h = Horizontal::create( net
+                                              , href->getLayer()
+                                              , href->getY()
+                                              , href->getWidth()
+                                              , href->getSourceX()
+                                              , href->getTargetX()
+                                              );
+            NetExternalComponents::setExternal( h );
+            toDestroy.push_back( component );
+            cdebug_log(101,0) << "> external duplicate " << h << endl;
+          } else {
+            Vertical* vref = dynamic_cast<Vertical*>( component );
+            if (vref) {
+              Vertical* v = Vertical::create( net
+                                            , vref->getLayer()
+                                            , vref->getX()
+                                            , vref->getWidth()
+                                            , vref->getSourceY()
+                                            , vref->getTargetY()
+                                            );
+              NetExternalComponents::setExternal( v );
+              toDestroy.push_back( component );
+              cdebug_log(101,0) << "> external duplicate " << v << endl;
+            } else {
+              Pad* pref = dynamic_cast<Pad*>( component );
+              if (pref) {
+                Pad* p = Pad::create( net
+                                    , pref->getLayer()
+                                    , pref->getBoundingBox()
+                                    );
+                NetExternalComponents::setExternal( p );
+                toDestroy.push_back( component );
+                cdebug_log(101,0) << "> external duplicate " << p << endl;
+              }
+            }
+          }
+        }
+
+        for ( Component* component : toDestroy ) {
+          component->destroy();
+        }
       }
     }
   }
@@ -1272,11 +1819,13 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::Gds".
 
-  bool  Gds::load ( Library* library, string gdsPath )
+  bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
+  //DebugSession::open( 101, 110 );
     UpdateSession::open();
+    Contact::disableCheckMinSize();
 
-    GdsStream gstream ( gdsPath );
+    GdsStream gstream ( gdsPath, flags );
 
     if (not gstream.read( library ))
       cerr << Error( "Gds::load(): An error occurred while reading GDSII stream\n"
@@ -1284,7 +1833,9 @@ namespace CRL {
                    , gdsPath.c_str()
                    ) << endl;
 
+    Contact::enableCheckMinSize();
     UpdateSession::close();
+  //DebugSession::close();
 
     return true;
   }

@@ -1,0 +1,57 @@
+.TH "GCell::Key" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GCell::Key \- \fBGCell\fP \fBKey\fP - Density Cache\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBKey\fP (\fBGCell\fP *, unsigned int depth)"
+.br
+.ti -1c
+.RI "float \fBgetDensity\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetGCell\fP () const"
+.br
+.ti -1c
+.RI "void \fBupdate\fP (unsigned int depth)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBGCell\fP \fBKey\fP - Density Cache\&. 
+
+This class is used to create a \fBGCell\fP internal cache on density, mainly to be used by \fBGCellDensitySet\fP\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBKey\fP (\fBGCell\fP * owner, unsigned int depth)\fC [inline]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIowner\fP The \fBGCell\fP owning the key\&. 
+.br
+\fIdepth\fP The layer \fCdepth\fP of the density to use\&.
+.RE
+.PP
+\fBKey\fP constructor, with an initial value for the cached density\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "float getDensity () const\fC [inline]\fP"
+\fBReturns:\fP The value of the cached density\&. 
+.SS "\fBGCell\fP * getGCell () const\fC [inline]\fP"
+\fBReturns:\fP The owning \fBGCell\fP\&. 
+.SS "void update (unsigned int depth)\fC [inline]\fP"
+\fBReturns:\fP Update the density 
+.PP
+Referenced by GCell::updateKey()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

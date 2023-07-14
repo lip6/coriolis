@@ -1,68 +1,69 @@
-\hypertarget{classHurricane_1_1Quark}{}\section{Hurricane\+:\+:Quark Class Reference}
-\label{classHurricane_1_1Quark}\index{Hurricane\+::\+Quark@{Hurricane\+::\+Quark}}
+\hypertarget{classHurricane_1_1Quark}{}\doxysection{Hurricane\+::Quark Class Reference}
+\label{classHurricane_1_1Quark}\index{Hurricane::Quark@{Hurricane::Quark}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Quark}{Quark}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Quark}{Quark}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Quark\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Quark\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=170pt]{classHurricane_1_1Quark__inherit__graph}
+\includegraphics[width=172pt]{classHurricane_1_1Quark__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& \mbox{\hyperlink{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}{get\+Occurrence}} () const
 \end{DoxyCompactItemize}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Quark}{Quark}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Quark}{Quark}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Quark_secQuarkIntro}{}\subsection{Introduction}\label{classHurricane_1_1Quark_secQuarkIntro}
+\hypertarget{classHurricane_1_1Quark_secQuarkIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Quark_secQuarkIntro}
 As explained in the Occurence class, occurences are very simple objects used to designate any entity of the virtually unfolded hierarchy. However, those occurences, which are built and deleted very easily, are very volatile objects to which we can\textquotesingle{}t, of course, attach properties directly.
 
 But the usefullness of occurences lies in their ability to attach them properties.
 
-In order to do that, properties must be stored in a secure place, where they can be found when needed. That is the purpose of quarks \+: they are data base objects and then can own the properties of the occurences.\hypertarget{classHurricane_1_1Quark_secQuarkImportant}{}\subsection{Important}\label{classHurricane_1_1Quark_secQuarkImportant}
+In order to do that, properties must be stored in a secure place, where they can be found when needed. That is the purpose of quarks \+: they are data base objects and then can own the properties of the occurences.\hypertarget{classHurricane_1_1Quark_secQuarkImportant}{}\doxysubsection{Important}\label{classHurricane_1_1Quark_secQuarkImportant}
 A quark designates all occurences refering to the same entity of the virtually unfolded hierarchy.
 
-This means that a property put on an occurence can be recovered by an other occurence refering the same entity of the virtually unfolded hierarchy.\hypertarget{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}{}\subsection{Construction and destruction}\label{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}
+This means that a property put on an occurence can be recovered by an other occurence refering the same entity of the virtually unfolded hierarchy.\hypertarget{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}{}\doxysubsection{Construction and destruction}\label{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}
 Quarks being completely managed by the system, there is no constructor provided.
 
 They are themselves volatile because they need to exist only if there is at least a property attached to them (you must never store pointers to them !).
 
 An occurence may have, during its life, different quarks representing it.
 
-Nevertheless, it is possible to destroy a quark. This one will carry away with it the destruction of all its owned properties (like any other data base object). This is equivalent to destroying the properties associated to the occurences whom it is the unique representative. Conceptually, it is wiser to use the call \+: {\bfseries occurence.\+clear\+Properties()} which does the same.\hypertarget{classHurricane_1_1Quark_secQuarkExample}{}\subsection{Example}\label{classHurricane_1_1Quark_secQuarkExample}
+Nevertheless, it is possible to destroy a quark. This one will carry away with it the destruction of all its owned properties (like any other data base object). This is equivalent to destroying the properties associated to the occurences whom it is the unique representative. Conceptually, it is wiser to use the call \+: {\bfseries{occurence.\+clear\+Properties()}} which does the same.\hypertarget{classHurricane_1_1Quark_secQuarkExample}{}\doxysubsection{Example}\label{classHurricane_1_1Quark_secQuarkExample}
 The following sample code shows how to print the set of owners of a shared property \+: 
-\begin{DoxyCode}
-Property* \textcolor{keyword}{property} = ...; \textcolor{comment}{// we get a property}
- 
-\textcolor{keywordflow}{if} (is\_a<SharedPropery*>(property)) \{
-  forEach(DBo*, idbo, ((SharedProperty*)property)getOwners()) \{
-    \textcolor{keywordflow}{if} (not is\_a<Quark*>(*idbo))
-      cerr << *idbo << endl;
-    \textcolor{keywordflow}{else}
-      cerr << ((Quark*)*idbo)->getOccurence() << endl;
-  \}
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Property* \textcolor{keyword}{property} = ...; \textcolor{comment}{// we get a property}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{\textcolor{keywordflow}{if} (is\_a<SharedPropery*>(property)) \{}
+\DoxyCodeLine{  forEach(DBo*, idbo, ((SharedProperty*)property)getOwners()) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (not is\_a<Quark*>(*idbo))}
+\DoxyCodeLine{      cerr << *idbo << endl;}
+\DoxyCodeLine{    \textcolor{keywordflow}{else}}
+\DoxyCodeLine{      cerr << ((Quark*)*idbo)-\/>getOccurence() << endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}\label{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}} 
-\index{Hurricane\+::\+Quark@{Hurricane\+::\+Quark}!get\+Occurrence@{get\+Occurrence}}
-\index{get\+Occurrence@{get\+Occurrence}!Hurricane\+::\+Quark@{Hurricane\+::\+Quark}}
-\subsubsection{\texorpdfstring{get\+Occurrence()}{getOccurrence()}}
+\index{Hurricane::Quark@{Hurricane::Quark}!getOccurrence@{getOccurrence}}
+\index{getOccurrence@{getOccurrence}!Hurricane::Quark@{Hurricane::Quark}}
+\doxysubsubsection{\texorpdfstring{getOccurrence()}{getOccurrence()}}
 {\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& Hurricane\+::\+Quark\+::get\+Occurrence (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} an occurence of which this quark is a representative. 
+{\bfseries{Returns\+:}} an occurence of which this quark is a representative. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

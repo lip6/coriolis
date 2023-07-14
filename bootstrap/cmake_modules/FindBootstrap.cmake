@@ -7,12 +7,16 @@
    if(COMMAND CMAKE_POLICY)
      cmake_policy(SET CMP0003 NEW)
      cmake_policy(SET CMP0005 NEW)
-     if(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
-       cmake_policy(SET CMP0014 OLD)
-     endif()
-     if(NOT (CMAKE_VERSION VERSION_LESS 2.8.12))
-       cmake_policy(SET CMP0022 OLD)
-     endif()
+     cmake_policy(SET CMP0079 NEW)
+     cmake_policy(SET CMP0022 NEW)
+     cmake_policy(SET CMP0060 NEW)
+     cmake_policy(SET CMP0095 NEW)
+    #if(NOT (CMAKE_VERSION VERSION_LESS 2.8.0))
+    #  cmake_policy(SET CMP0014 OLD)
+    #endif()
+    #if(NOT (CMAKE_VERSION VERSION_LESS 2.8.12))
+    #  cmake_policy(SET CMP0022 OLD)
+    #endif()
    endif(COMMAND CMAKE_POLICY)
  endmacro(set_cmake_policies)
 
@@ -79,17 +83,26 @@
 #set(DEBUG_FLAGS "-g -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
  set(DEBUG_FLAGS "-g")
  if(CYGWIN)
-   set(ADDTIONAL_FLAGS "-D_GLIBCXX_USE_C99")
-   set(CXX_STANDARD "gnu++11")
+   set(ADDITIONAL_FLAGS "-D_GLIBCXX_USE_C99")
+   set(CXX_STANDARD "gnu++17")
  else()
-   set(ADDTIONAL_FLAGS "")
-   set(CXX_STANDARD "c++11")
+   set(ADDITIONAL_FLAGS "-Wl,--no-undefined")
+   set(CXX_STANDARD "c++17")
  endif()
- set(CMAKE_C_FLAGS_DEBUG     "                     -Wall ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."   FORCE)
- set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -O2  ${ADDTIONAL_FLAGS} -DNDEBUG"   CACHE STRING "C Compiler Release options." FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall  ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
- set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2  ${ADDTIONAL_FLAGS} -DNDEBUG"   CACHE STRING "C++ Compiler Release options." FORCE)
+#set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDITIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+ set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDITIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+ set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -O2                ${ADDITIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
+#set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -fsanitize=address ${ADDITIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
+#set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDITIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+ set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall                    ${ADDITIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+ set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2                ${ADDITIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
+#set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDITIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
 
+
+if ( NOT CMAKE_BUILD_TYPE )
+    message( "Build Type not set, defaulting to Debug..." )
+    set( CMAKE_BUILD_TYPE Debug )
+endif()
 
 #
 # Adds to the CMAKE_MODULE_PATH directories guesseds from project
@@ -127,7 +140,7 @@
 # Build <PROJECT>_INCLUDE_DIR & <PROJECT>_LIBRARIES and sets up <PROJECT>_FOUND
 # Usage:  set_library_path(<PROJECT> <library>)
 #
-# May be used any number of time on the same <PROJECT> to create a list of
+#PYTHON_NEW  May be used any number of time on the same <PROJECT> to create a list of
 # <library>.
 #
  macro(set_libraries_path configname library)
@@ -144,7 +157,14 @@
      set(${configname}_FOUND "NOTFOUND")
    endif()
  endmacro()
-
+#
+# sets that a library is expected to have unresolved symbols
+# Usage:  set_library_unresolved_symbols(<PROJECT>)
+# 
+# Should be used before set_libraries_path.
+ macro(set_has_unresolved_symbols configname)
+	 set(${configname}_LIBRARIES "-Wl,--unresolved-symbols=ignore-all" ${${configname}_LIBRARIES})
+ endmacro()
 
 #
 # Checks if a set of libraries has been found, could be blocking or not.
@@ -175,18 +195,23 @@
  endmacro(hurricane_check_libraries)
 
 
-#
-# Find Boost, checking different versions.
-#
  macro(setup_boost)
   #set(Boost_USE_STATIC_LIBS ON)
   #message(STATUS "Always uses Boost static libraries.")
    if(ARGC LESS 1)
-     find_package(Boost 1.33.1 REQUIRED)
+     find_package(Boost 1.35.0 REQUIRED)
    else(ARGC LESS 1)
-     find_package(Boost 1.35.0 COMPONENTS ${ARGV} system)
+     foreach(component ${ARGV})
+       if(${component} STREQUAL "python")
+         set(components ${components} ${component}39)
+       else()
+         set(components ${components} ${component})
+       endif()
+     endforeach()
+     
+     find_package(Boost 1.35.0 COMPONENTS ${components} system)
      if(NOT Boost_FOUND)
-       find_package(Boost 1.33.1 COMPONENTS ${ARGV} REQUIRED)
+       find_package(Boost 1.35.0 COMPONENTS ${components} REQUIRED)
      endif(NOT Boost_FOUND)
    endif(ARGC LESS 1)
    message(STATUS "Found Boost includes ${Boost_LIB_VERSION} in ${Boost_INCLUDE_DIR}")
@@ -199,10 +224,34 @@
 
 
 #
+# Setup Python, select detection depending on USE_MANYLINUX.
+#
+ macro(setup_python)
+   set(pydevelArg "Development")
+ 
+   if (USE_MANYLINUX)
+     message(STATUS "Build for manylinux")
+     set(pydevelArg "Development.Module")
+   endif()
+  find_package(Python 3 REQUIRED COMPONENTS Interpreter ${pydevelArg} )
+ endmacro()
+
+
+#
 # Find Qt, the union of all the modules we need for the whole project.
 #
  macro(setup_qt)
-   if(WITH_QT5)
+   if(WITH_QT4)
+     message(STATUS "Attempt to find Qt 4...")
+    # For Qt4.
+    #set(QT_USE_QTXML "true")
+     set(QT_USE_QTSVG "true")
+     find_package(Qt4 REQUIRED)
+     include(${QT_USE_FILE})
+    # ${QT_QTSVG_LIBRARY}
+     set(QtX_INCLUDE_DIRS ${QT_INCLUDE_DIR})
+     set(QtX_LIBRARIES    ${QT_LIBRARIES})
+   else()
      message(STATUS "Attempt to find Qt 5...")
     # For Qt5
      find_package(Qt5Core         REQUIRED)
@@ -211,42 +260,33 @@
      find_package(Qt5Svg          REQUIRED)
      find_package(Qt5PrintSupport REQUIRED)
      set(CMAKE_AUTOMOC ON)
-     set(QtX_INCLUDE_DIR ${Qt5PrintSupport_INCLUDE_DIRS}
-                         ${Qt5Widgets_INCLUDE_DIRS}
-                         ${Qt5Svg_INCLUDE_DIRS}
-                         ${Qt5Gui_INCLUDE_DIRS}
-                         ${Qt5Core_INCLUDE_DIRS} )
-     set(QtX_LIBRARIES   ${Qt5PrintSupport_LIBRARIES}
-                         ${Qt5Widgets_LIBRARIES}
-                         ${Qt5Gui_LIBRARIES}
-                         ${Qt5Core_LIBRARIES} )
-    #message(STATUS "QtX_INCLUDE_DIR: ${QtX_INCLUDE_DIR}")
+     set(QtX_INCLUDE_DIRS ${Qt5PrintSupport_INCLUDE_DIRS}
+                          ${Qt5Widgets_INCLUDE_DIRS}
+                          ${Qt5Svg_INCLUDE_DIRS}
+                          ${Qt5Gui_INCLUDE_DIRS}
+                          ${Qt5Core_INCLUDE_DIRS} )
+     set(QtX_LIBRARIES    ${Qt5PrintSupport_LIBRARIES}
+                          ${Qt5Widgets_LIBRARIES}
+                          ${Qt5Gui_LIBRARIES}
+                          ${Qt5Core_LIBRARIES} )
+    #message(STATUS "QtX_INCLUDE_DIRS: ${QtX_INCLUDE_DIRS}")
     #message(STATUS "QtX_LIBRARIES: ${QtX_LIBRARIES}")
-   else()
-     message(STATUS "Attempt to find Qt 4...")
-    # For Qt4.
-    #set(QT_USE_QTXML "true")
-     set(QT_USE_QTSVG "true")
-     find_package(Qt4 REQUIRED)
-     include(${QT_USE_FILE})
-    # ${QT_QTSVG_LIBRARY}
-     set(QtX_LIBRARIES ${QT_LIBRARIES})
    endif()
  endmacro()
 
  macro(qtX_wrap_cpp variable)
-   if (WITH_QT5)
-     qt5_wrap_cpp(${variable} ${ARGN})
-   else()
+   if (WITH_QT4)
      qt4_wrap_cpp(${variable} ${ARGN})
+   else()
+     qt5_wrap_cpp(${variable} ${ARGN})
    endif()
  endmacro()
 
  macro(qtX_add_resources variable)
-   if (WITH_QT5)
-     qt5_add_resources(${variable} ${ARGN})
-   else()
+   if (WITH_QT4)
      qt4_add_resources(${variable} ${ARGN})
+   else()
+     qt5_add_resources(${variable} ${ARGN})
    endif()
  endmacro()
 
@@ -255,21 +295,25 @@
 # Find Qwt, correlated to the Qt version.
 #
  macro(setup_qwt)
-   if(WITH_QT5)
+   if(WITH_QT4)
+     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
+                               PATHS         /usr/include/qwt-qt4
+                                             /opt/local/libexec/qt4/include
+                                             /usr/include/qt4
+                                             /usr/include
+                               PATH_SUFFIXES qwt )
+     find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
+                              PATHS /opt/local/libexec/qt4/lib
+                                    /usr/lib64
+				    /usr/lib )
+   else()
      find_path(QWT_INCLUDE_DIR NAMES         qwt.h
                                PATHS         /usr/include/qt5
                                              /usr/include
                                PATH_SUFFIXES qwt )
      find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
-                              PATHS /usr/lib${LIB_SUFFIX} )
-   else()
-     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
-                               PATHS         /usr/include/qwt-qt4
-                                             /usr/include/qt4
-                                             /usr/include
-                               PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
-                              PATHS /usr/lib${LIB_SUFFIX} )
+                              PATHS /usr/lib64
+			            /usr/lib )
    endif()
 
    if( QWT_INCLUDE_DIR AND QWT_LIBRARY)
@@ -382,9 +426,11 @@
      set( pyDeplibs ${clib} ${deplibs} )
 
              add_library( ${clib}      ${pyCpps} ) 
-   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion} )
+   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion})
+#target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${clib}      ${deplibs} )
                  install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
+     target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
    endif()
   
                      set( pytarget     "${pymodule}_target" )
@@ -395,8 +441,35 @@
                                        PREFIX        ""
                                        OUTPUT_NAME   ${pymodule}
                         )
+#target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
+   target_link_options( ${pytarget} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
 
-                 install( TARGETS      ${pytarget}    DESTINATION ${PYTHON_SITE_PACKAGES} )
+                 install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
+   if( NOT ("${pyIncludes}" STREQUAL "None") )
                  install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
+   endif()
  endmacro( add_python_module )
+
+
+#
+# Build a Python extention module (3rd version).
+# Usage:
+#   * pyCpps:          The list of C/C++ module files.
+#   * pyIncludes:      The list of C/C++ header files (will be installed in
+#                      "inc_install_dir").
+#   * pymodule:        The name of the Python module (for "import PYMODULE").
+#   * deplibs:         The list of dependencies.
+#   * inc_install_dir: The directory into which install the includes.
+#
+ macro( add_python_module3 pyCpps pyIncludes pymodule deplibs inc_install_dir )
+             add_library( ${pymodule}  MODULE ${pyCpps} ) 
+   set_target_properties( ${pymodule}  PROPERTIES PREFIX "" )
+   target_link_libraries( ${pymodule}  ${deplibs} )
+#target_compile_definitions( ${pymodule} PUBLIC Py_LIMITED_API=1)
+
+                 install( TARGETS      ${pymodule}    DESTINATION ${Python_CORIOLISARCH} )
+   if( NOT ("${pyIncludes}" STREQUAL "None") )
+                 install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
+   endif()
+ endmacro( add_python_module3 )

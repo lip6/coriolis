@@ -29,10 +29,15 @@ namespace Analog {
   
   class MCheckBoxParameter : public Parameter {
     public:
-      inline                  MCheckBoxParameter ( std::string id, const Choices& );
-      inline Choices::Values  getChoicesValues   () const;
-      inline unsigned int     getValue           () const;
-      inline void             setValue           ( unsigned int );
+      typedef Parameter  Super;
+    public:
+      inline                   MCheckBoxParameter ( std::string id, const Choices& );
+      inline  Choices::Values  getChoicesValues   () const;
+      inline  unsigned int     getValue           () const;
+      inline  void             setValue           ( unsigned int );
+      virtual std::string      _getTypeName       () const;
+      virtual std::string      _getString         () const;
+      virtual Record*          _getRecord         () const;
     private:
       Choices   _choices;
       unsigned  _value;
@@ -46,5 +51,8 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_PR_SUPPORT(Analog::MCheckBoxParameter);
 
 #endif  // ANALOG_MCHECKBOX_PARAMETER_H

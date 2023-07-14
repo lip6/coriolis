@@ -54,9 +54,7 @@
 #include "hurricane/isobar/PyBasicLayerCollection.h"
 #include "hurricane/isobar/PyRegularLayerCollection.h"
 #include "hurricane/isobar/PyViaLayerCollection.h"
-#include "hurricane/isobar/PyUnitRule.h"
 #include "hurricane/isobar/PyPhysicalRule.h"
-#include "hurricane/isobar/PyTwoLayersPhysicalRule.h"
 #include "hurricane/isobar/PyDeviceDescriptor.h"
 
 
@@ -192,6 +190,28 @@ extern "C" {
   }
 
 
+  static PyObject* PyTechnology_addLayerAlias ( PyTechnology *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "Technology.addLayerAlias()" << endl;
+
+    METHOD_HEAD("Technology.addLayerAlias()")
+    bool rvalue = false;
+    HTRY
+      char* reference = NULL;
+      char* alias     = NULL;
+      if (PyArg_ParseTuple(args,"ss:Technology.addLayerAlias", &reference, &alias)) {
+        rvalue = techno->addLayerAlias( reference, alias );
+      } else {
+        PyErr_SetString( ConstructorError, "Hurricane.addLayerAlias(str,str): Bad parameter(s) type." );
+        return NULL;
+      }
+    HCATCH
+    
+    if (rvalue) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyTechnology_setSymbolicLayer ( PyTechnology *self, PyObject* args ) {
     cdebug_log(20,0) << "Technology.setSymbolicLayer()" << endl;
 
@@ -226,7 +246,7 @@ extern "C" {
     cdebug.log(49) << "PyTechnology_getUnitRule()" << endl;
     METHOD_HEAD("Technology.getUnitRule()")
 
-    UnitRule* rule = NULL;
+    PhysicalRule* rule = NULL;
 
     HTRY
       char *arg0 = NULL;
@@ -236,7 +256,7 @@ extern "C" {
         return NULL;
       }
       if (arg0) {
-        rule = new UnitRule( techno->getUnitRule(arg0) );
+        rule = techno->getUnitRule( arg0 );
       } else {
         PyErr_SetString( ProxyError, "invalid number of parameters for getUnitRule on Technology." );
         return NULL;
@@ -262,11 +282,11 @@ extern "C" {
         return NULL;
       }
       if (arg2) {
-        rule = new PhysicalRule( techno->getPhysicalRule(arg0,arg1,arg2) );
+        rule = techno->getPhysicalRule( arg0, arg1, arg2 );
       } else if (arg1) {
-        rule = new PhysicalRule( techno->getPhysicalRule(arg0,arg1) );
+        rule = techno->getPhysicalRule( arg0, arg1 );
       } else if (arg0) {
-        rule = new PhysicalRule( techno->getPhysicalRule(arg0) );
+        rule = techno->getPhysicalRule( arg0 );
       } else {
         PyErr_SetString( ProxyError, "invalid number of parameters for getPhysicalRule on Technology." );
         return NULL;
@@ -282,31 +302,29 @@ extern "C" {
     cdebug.log(49) << "PyTechnology_addUnitRule()" << endl;
     METHOD_HEAD("Technology.addUnitRule()")
 
-    PyObject* arg0 = NULL;
-    PyObject* arg1 = NULL;
-    PyObject* arg2 = NULL;
+    PyObject*     arg0 = NULL;
+    PyObject*     arg1 = NULL;
+    PhysicalRule* rule = NULL;
 
     HTRY
       __cs.init ("Technology.addUnitRule");
-      if (not PyArg_ParseTuple(args,"O&O&O&:Technology.addUnitRule"
+      if (not PyArg_ParseTuple(args,"O&O&:Technology.addUnitRule"
                               ,Converter,&arg0
                               ,Converter,&arg1
-                              ,Converter,&arg2
                               )) {
-        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): invalid number of parameters." );
+        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): Invalid number of parameters." );
         return NULL;
       }
-      if (__cs.getObjectIds() == ":string:float:string")
-        techno->addUnitRule( PyString_AsString(arg0)
-                           , PyFloat_AsDouble(arg1)
-                           , PyString_AsString(arg2) );
+      if (__cs.getObjectIds() == ":string:string")
+        rule = techno->addUnitRule( PyString_AsString(arg0)
+                                  , PyString_AsString(arg1) );
       else {
-        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): Invalid number or bad type of parameters." );
+        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): Bad type of parameters." );
         return NULL;
       }
     HCATCH
 
-    Py_RETURN_NONE;
+    return PyRule_LinkDerived(rule);
   }
 
 
@@ -319,45 +337,38 @@ extern "C" {
     PyObject*     arg1 = NULL;
     PyObject*     arg2 = NULL;
     PyObject*     arg3 = NULL;
-    PyObject*     arg4 = NULL;
-    PyObject*     arg5 = NULL;
+    PhysicalRule* rule = NULL;
 
     HTRY
       __cs.init ("Technology.addPhysicalRule");
-      if (not PyArg_ParseTuple(args,"O&O&O&|O&O&O&:Technology.addPhysicalRule"
+      if (not PyArg_ParseTuple(args,"O&O&|O&O&:Technology.addPhysicalRule"
                               ,Converter,&arg0
                               ,Converter,&arg1
                               ,Converter,&arg2
                               ,Converter,&arg3
-                              ,Converter,&arg4
-                              ,Converter,&arg5
                               )) {
         PyErr_SetString( ConstructorError, "Technology.addPhysicalRule(): invalid number of parameters." );
         return NULL;
       }
-      if (__cs.getObjectIds() == ":string:int:string")
-        techno->addPhysicalRule( PyString_AsString(arg0)
-                               , PyAny_AsLong     (arg1)
-                               , PyString_AsString(arg2) );
-      else if (__cs.getObjectIds() == ":string:string:int:string")
-        techno->addPhysicalRule( PyString_AsString(arg0)
-                               , PyString_AsString(arg1)
-                               , PyAny_AsLong     (arg2)
-                               , PyString_AsString(arg3) );
-      else if (__cs.getObjectIds() == ":string:string:string:bool:int:string")
-        techno->addPhysicalRule( PyString_AsString(arg0)
-                               , PyString_AsString(arg1)
-                               , PyString_AsString(arg2)
-                               , PyObject_IsTrue  (arg3)
-                               , PyAny_AsLong     (arg4)
-                               , PyString_AsString(arg5) );
+      if (__cs.getObjectIds() == ":string:string")
+        rule = techno->addPhysicalRule( PyString_AsString(arg0)
+                                      , PyString_AsString(arg1) );
+      else if (__cs.getObjectIds() == ":string:string:string")
+        rule = techno->addPhysicalRule( PyString_AsString(arg0)
+                                      , PyString_AsString(arg1)
+                                      , PyString_AsString(arg2) );
+      else if (__cs.getObjectIds() == ":string:string:string:string")
+        rule = techno->addPhysicalRule( PyString_AsString(arg0)
+                                      , PyString_AsString(arg1)
+                                      , PyString_AsString(arg2)
+                                      , PyString_AsString(arg3) );
       else {
         PyErr_SetString( ConstructorError, "Technology.addPhysicalRule(): Invalid number or bad type of parameters." );
         return NULL;
       }
     HCATCH
 
-    Py_RETURN_NONE;
+    return PyRule_LinkDerived(rule);
   }
 
 
@@ -454,6 +465,8 @@ extern "C" {
                              , "Returns the collection of all RegularLayers." }
     , { "getViaLayers"       , (PyCFunction)PyTechnology_getViaLayers         , METH_NOARGS
                              , "Returns the collection of all BasicLayers." }
+    , { "addLayerAlias"      , (PyCFunction)PyTechnology_addLayerAlias        , METH_VARARGS
+                             , "Add an alias name to a layer." }
     , { "getMetalAbove"      , (PyCFunction)PyTechnology_getMetalAbove        , METH_VARARGS
                              , "Returns the metal layer immediatly above this one." }
     , { "getMetalBelow"      , (PyCFunction)PyTechnology_getMetalBelow        , METH_VARARGS

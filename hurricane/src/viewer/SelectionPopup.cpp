@@ -1,19 +1,21 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SelectionPopup.cpp"                     |
 // +-----------------------------------------------------------------+
 
 
 #include <QFontMetrics>
+#include <QCursor>
 #include <QLabel>
 #include <QHeaderView>
 #include <QKeyEvent>
@@ -21,6 +23,7 @@
 #include <QVBoxLayout>
 #include "hurricane/Commons.h"
 #include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/SelectionPopupModel.h"
 #include "hurricane/viewer/SelectionPopup.h"
 
@@ -34,22 +37,25 @@ namespace Hurricane {
 
   SelectionPopup::SelectionPopup ( QWidget* parent )
     : QWidget(parent)
+    , _cellWidget(NULL)
     , _model(NULL)
     , _view(NULL)
     , _rowHeight(20)
     , _charWidth(15)
   {
-    setAttribute    ( Qt::WA_DeleteOnClose );
-    setAttribute    ( Qt::WA_QuitOnClose, false );
-  //setWindowFlags  ( Qt::Popup );
-    setWindowFlags  ( Qt::FramelessWindowHint );
+    setAttribute    ( Qt::WA_DeleteOnClose, false );
+    setAttribute    ( Qt::WA_QuitOnClose  , false );
+    setWindowFlags  ( Qt::Popup|Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint|Qt::Dialog );
     setWindowOpacity( 0.9 );
+    setMouseTracking( true );
+    setFocusPolicy  ( Qt::StrongFocus );
 
-    _rowHeight = QFontMetrics(Graphics::getFixedFont()).height() + 4;
-    _charWidth = QFontMetrics(Graphics::getFixedFont()).averageCharWidth() + 1;
+    _rowHeight = QFontMetrics( Graphics::getFixedFont() ).height() + 2;
+    _charWidth = QFontMetrics( Graphics::getFixedFont() ).averageCharWidth() + 1;
     _model     = new SelectionPopupModel ( this );
+    setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
 
-    _view = new QTableView ( this );
+    _view = new QTableView ();
     _view->setShowGrid( false );
     _view->setAlternatingRowColors( true );
     _view->setSelectionBehavior( QAbstractItemView::SelectRows );
@@ -66,61 +72,75 @@ namespace Hurricane {
     horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 1500 : 200 );
     horizontalHeader->setVisible( false );
 
-    QHeaderView* verticalHeader = _view->verticalHeader ();
+    QHeaderView* verticalHeader = _view->verticalHeader();
     verticalHeader->setVisible( false );
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    verticalHeader->setResizeMode( QHeaderView::Fixed );
+#else
+    verticalHeader->setSectionResizeMode( QHeaderView::Fixed );
+#endif
+    verticalHeader->setDefaultSectionSize( _rowHeight );
 
-    connect( _model, SIGNAL(layoutChanged()), this, SLOT(forceRowHeight()) );
+    QVBoxLayout* layout = new QVBoxLayout ();
+    layout->addWidget( _view );
+    setLayout( layout );
 
-    resize( Graphics::isHighDpi() ? 1500 : 600, 10 );
+    // if (Graphics::isHighDpi()) resize( 1500, 40 );
+    // else                       resize(  600, 20 );
   }
 
 
-  void  SelectionPopup::popup ()
+  void  SelectionPopup::showPopup ()
   {
-    show ();
-    grabMouse ();
-  }
-
-
-  void  SelectionPopup::forceRowHeight ()
-  {
-    for (  int rows=_model->rowCount()-1; rows >= 0 ; rows-- )
-      _view->setRowHeight ( rows, _rowHeight );
+    show();
+    grabMouse( Qt::PointingHandCursor );
+    grabKeyboard();
+    setFocus();
   }
 
 
   void  SelectionPopup::keyPressEvent ( QKeyEvent* event )
   {
-  //cerr << "SelectionPopup::keyPressEvent()" << endl;
-  //QWidget::keyPressEvent ( event );
+    if (event->key() == Qt::Key_Escape) {
+      releaseMouse();
+      releaseKeyboard();
+      hide();
+    } else if (event->key() == Qt::Key_Space) {
+      if (_view->selectionModel()->hasSelection()) {
+        QModelIndex index      = _view->selectionModel()->selectedRows().first();
+        Occurrence  occurrence = _model->getOccurrence(index.row());
+        if (occurrence.getEntity()) {
+          if (_cellWidget) _cellWidget->setShowSelection( true );
+          emit selectionToggled( occurrence );
+        }
+      }
+      event->accept();
+    }
   }
-
 
 
   void  SelectionPopup::mouseMoveEvent ( QMouseEvent* event )
   {
     QModelIndex index = _view->indexAt ( event->pos() );
-    if ( index.isValid() )
+    if ( index.isValid() ) {
       _view->selectionModel()->select ( index, QItemSelectionModel::ClearAndSelect );
-    else
+    } else {
       _view->selectionModel()->clearSelection ();
+    }
   }
 
 
-
-  void  SelectionPopup::mouseReleaseEvent ( QMouseEvent* event )
+  void  SelectionPopup::mousePressEvent ( QMouseEvent* event )
   {
-    releaseMouse ();
-    hide ();
-
-    QModelIndex index = _view->indexAt ( event->pos() );
-    if ( index.isValid() ) {
-      Occurrence occurrence = _model->getOccurrence(index.row());
-      if ( occurrence.getEntity() )
-        emit selectionToggled ( occurrence );
+    if (_view->selectionModel()->hasSelection()) {
+      QModelIndex index      = _view->selectionModel()->selectedRows().first();
+      Occurrence  occurrence = _model->getOccurrence(index.row());
+      if (occurrence.getEntity()) {
+        if (_cellWidget) _cellWidget->setShowSelection( true );
+        emit selectionToggled( occurrence );
+      }
     }
-
-    clear ();
+    event->accept();
   }
 
 

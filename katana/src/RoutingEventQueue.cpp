@@ -66,7 +66,7 @@ namespace Katana {
         cinfo << "[INFO] Already in Track - " << segments[i] << endl;
         continue;
       }
-      RoutingEvent* event = RoutingEvent::create(segments[i]);
+      RoutingEvent* event = RoutingEvent::create( segments[i] );
       event->updateKey();
       _events.insert( event );
     }
@@ -155,7 +155,7 @@ namespace Katana {
     multiset<RoutingEvent*,RoutingEvent::Compare>::iterator ievent = _events.find(event);
     size_t count = _events.count(event);
     if (count > 1) {
-      cerr << Bug("RoutingEventQueue::repush(): %d events matches key %p.",count,event) << endl;
+      cerr << Bug( "RoutingEventQueue::repush(): %d events matches key %p.", count, event ) << endl;
 #if defined(CHECK_ROUTINGEVENT_QUEUE)
       _keyCheck ();
 #endif

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2006-2018, All Rights Reserved
+// Copyright (c) UPMC 2006-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_CELL_H
-#define PY_CELL_H
-
+#pragma  once
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/Cell.h"
 
@@ -40,8 +38,9 @@ namespace  Isobar {
     extern  PyTypeObject  PyTypeCell;
     extern  PyMethodDef   PyCell_Methods[];
 
-    extern  PyObject* PyCell_Link       ( Hurricane::Cell* object );
-    extern  void      PyCell_LinkPyType ();
+    extern  PyObject* PyCell_Link           ( Hurricane::Cell* object );
+    extern  void      PyCell_LinkPyType     ();
+    extern  void      PyCell_postModuleInit ();
   
 
 #define IsPyCell(v)    ((v)->ob_type == &PyTypeCell)
@@ -52,5 +51,3 @@ namespace  Isobar {
   }  // extern "C".
 
 }  // Isobar namespace.
- 
-#endif  // PY_CELL_H

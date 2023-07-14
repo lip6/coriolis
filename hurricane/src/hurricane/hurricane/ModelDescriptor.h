@@ -30,13 +30,13 @@ namespace Hurricane {
           { return lmd->getName() < rmd->getName(); }
       };
     public:
-      inline              ModelDescriptor ( const Name& name
-                                          , const Name& simul
-                                          , const Name& model
-                                          , std::string            netlist
-                                          , const Name& name_n
-                                          , const Name& name_p
-                                          , bool precise );
+      inline              ModelDescriptor ( const Name&        name
+                                          , const Name&        simul
+                                          , const Name&        model
+                                          ,       std::string  netlist
+                                          , const Name&        name_n
+                                          , const Name&        name_p
+                                          ,       bool         precise );
       inline Name         getName         () const;
       inline Name         getSimulator    () const;
       inline Name         getModel        () const;
@@ -45,23 +45,23 @@ namespace Hurricane {
       inline Name         getName_P       () const;
       inline bool         isPrecise       () const;
     private:
-      Name  _name;
-      Name  _simulator;
-      Name  _model;
-      std::string      _netlist;
-      Name  _name_N;
-      Name  _name_P;
-      bool             _precise;
+      Name         _name;
+      Name         _simulator;
+      Name         _model;
+      std::string  _netlist;
+      Name         _name_N;
+      Name         _name_P;
+      bool         _precise;
   };
 
   
-  inline  ModelDescriptor::ModelDescriptor( const Name& name
-                                          , const Name& simul
-                                          , const Name& model
-                                          , std::string            netlist
-                                          , const Name& name_n
-                                          , const Name& name_p
-                                          , bool precise )
+  inline  ModelDescriptor::ModelDescriptor( const Name&       name
+                                          , const Name&       simul
+                                          , const Name&       model
+                                          ,       std::string netlist
+                                          , const Name&       name_n
+                                          , const Name&       name_p
+                                          ,       bool        precise )
         : _name     (name)
         , _simulator(simul)
         , _model    (model)

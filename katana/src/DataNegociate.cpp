@@ -29,6 +29,7 @@ namespace Katana {
 
   using std::cerr;
   using std::endl;
+  using std::tuple;
   using std::map;
   using std::multimap;
   using std::make_pair;
@@ -51,6 +52,7 @@ namespace Katana {
     , _stateCount       (1)
     , _terminals        (0)
     , _ripupCount       (0)
+    , _sameRipup        (0)
     , _leftMinExtend    (DbU::Max)
     , _rightMinExtend   (DbU::Min)
     , _attractors       ()
@@ -91,8 +93,9 @@ namespace Katana {
     DbU::Unit            pitch            = _trackSegment->getPitch();
 #endif
     vector<AutoSegment*> collapseds;
-    vector<AutoSegment*> perpandiculars;
+    vector< tuple<AutoSegment*,Anabatic::Flags> > perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
+    size_t               reducedPerpands = 0;
 
     _reduceRanges[0].makeEmpty();
     _reduceRanges[1].makeEmpty();
@@ -113,43 +116,86 @@ namespace Katana {
     cdebug_log(159,0) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       Interval      interval;
+      AutoSegment*  basePerpand = std::get<0>( perpandiculars[i] );
       TrackElement* perpandicular;
 
-      if (perpandiculars[i]->isCanonical()) {
-        perpandicular = Session::lookup( perpandiculars[i]->base() );
+      if (basePerpand->isCanonical()) {
+        perpandicular = Session::lookup( basePerpand->base() );
         if (perpandicular) perpandicular->getCanonical( interval );
       } else {
-        perpandicular = Session::lookup( perpandiculars[i]->getCanonical(interval)->base() );
+        perpandicular = Session::lookup( basePerpand->getCanonical(interval)->base() );
       }
       if (not perpandicular) {
-        cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
-                 //, getString((void*)perpandiculars[i]->getCanonical(interval)->base()).c_str()
-                   , getString(perpandiculars[i]->getCanonical(interval)).c_str()
-                 //, getString((void*)perpandiculars[i]->base()).c_str()
-                   , getString(perpandiculars[i]).c_str()
-                   ) << endl;
+        if (not (Session::isChannelStyle()
+                and (basePerpand->isReduced() or basePerpand->isNonPref())))
+          cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
+                   //, getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
+                     , getString(basePerpand->getCanonical(interval)).c_str()
+                   //, getString((void*)basePerpand->base()).c_str()
+                     , getString(basePerpand).c_str()
+                     ) << endl;
+        else
+          ++reducedPerpands;
         continue;
       }
 
-      if (RoutingEvent::getStage() == RoutingEvent::Repair)
+      if (RoutingEvent::getStage() == StageRepair)
         perpandicular->base()->setFlagsOnAligneds( AutoSegment::SegUnbound );
 
     //cerr << "perpandicular:" << perpandicular << endl;
     //cerr << "  " << interval << endl;
     //interval.inflate( DbU::fromLambda(-0.5) );
 
-      cdebug_log(159,0) << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug_log(159,0) << "| perpandicular: " << basePerpand << endl;
       cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
       cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
-      if (perpandicular->getTrack()) {
+
+      if (perpandicular->isNonPref()) {
+        AutoContact* source    = perpandicular->base()->getAutoSource();
+        AutoContact* target    = perpandicular->base()->getAutoTarget();
+        DbU::Unit    pitch     = Session::getPitch    ( perpandicular->getLayer() );
+        Flags        direction = Session::getDirection( perpandicular->getLayer() );
+        Interval     trackFree ( false );
+
+        if (source->canDrag()) {
+          if (direction & Flags::Horizontal)
+            trackFree.intersection( source->getCBYMin(), source->getCBYMax() );
+          else
+            trackFree.intersection( source->getCBXMin(), source->getCBXMax() );
+          cdebug_log(159,0) << "trackFree (source drag): " << trackFree << endl;
+        }
+        if (target->canDrag()) {
+          if (direction & Flags::Horizontal)
+            trackFree.intersection( target->getCBYMin(), target->getCBYMax() );
+          else
+            trackFree.intersection( target->getCBXMin(), target->getCBXMax() );
+          cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
+        }
+
+        if (not source->canDrag() and not target->canDrag())
+          perpandicular->base()->getCanonical( trackFree );
+
+        if (Session::getStage() < StagePack)
+          trackFree.inflate( 1*pitch, 1*pitch );
+        cdebug_log(159,0) << "Non-Pref Track Perpandicular Free: " << trackFree << endl;
+
+        //_perpandicularFree.intersection
+        //  ( trackFree.inflate ( pitch - perpandicular->getExtensionCap(Flags::Source)
+        //                      , pitch - perpandicular->getExtensionCap(Flags::Target)) );
+        _perpandicularFree.intersection( trackFree );
+      } else if (perpandicular->getTrack()) {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        _perpandicularFree.intersection
-          ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
-                              , -perpandicular->getExtensionCap(Flags::Target)) );
+        DbU::Unit sourceCap = basePerpand->getExtensionCap( Flags::Source );
+        DbU::Unit targetCap = basePerpand->getExtensionCap( Flags::Target );
+        if (std::get<1>(perpandiculars[i]) & Flags::Source)
+          targetCap = std::max( targetCap, sourceCap );
+        else
+          sourceCap = std::max( targetCap, sourceCap );
+        _perpandicularFree.intersection( trackFree.inflate ( -sourceCap, -targetCap ) );
         cdebug_log(159,0) << "Source cap:"
                           << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
       } else if (perpandicular->isFixedAxis() /*or _trackSegment->isDogleg()*/) {
@@ -166,9 +212,10 @@ namespace Katana {
             cdebug_log(159,0) << "Track Perpandicular Free (fixed axis, target): " << trackFree << endl;
           }
 
+          Flags isSource = std::get<1>( perpandiculars[i] );
           _perpandicularFree.intersection
-            ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
-                                , -perpandicular->getExtensionCap(Flags::Target)) );
+            ( trackFree.inflate ( -perpandicular->getExtensionCap( isSource )
+                                , -perpandicular->getExtensionCap( isSource ) ));
         }
       } else {
         cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
@@ -183,7 +230,7 @@ namespace Katana {
       }
 
       if (  (interval.getVMin() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
+         or AutoSegment::isTopologicalBound(basePerpand
                                            ,perpandicular->isHorizontal() ? Flags::Horizontal : 0
                                            ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMin() );
@@ -196,7 +243,7 @@ namespace Katana {
       }
 
       if (  (interval.getVMax() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
+         or AutoSegment::isTopologicalBound(basePerpand
                                            ,Flags::Propagate | (perpandicular->isHorizontal() ? Flags::Horizontal : 0)
                                            ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMax() );
@@ -224,7 +271,7 @@ namespace Katana {
 
       cdebug_tabw(159,-1);
     }
-    if ( not _trackSegment->isTerminal() and (_perpandiculars.size() < 2) )
+    if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )
       cerr << Bug( "Less than two perpandiculars on %s.", getString(_trackSegment).c_str() ) << endl;
 
     map<DbU::Unit,int>::iterator iattractor = attractorSpins.begin();

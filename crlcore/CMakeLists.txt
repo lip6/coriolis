@@ -3,9 +3,12 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(CRLCORE)
 
- cmake_minimum_required(VERSION 2.8.9)
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}")
 
- OPTION(BUILD_DOC "Build the documentation (latex+doxygen)" OFF)
+ cmake_minimum_required(VERSION 3.16)
+
+ OPTION(BUILD_DOC  "Build the documentation (latex+doxygen)"       OFF)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
@@ -16,25 +19,27 @@
  set_cmake_policies()
  check_distribution()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
- setup_boost(program_options python regex wave)
+ setup_boost(program_options)
  setup_qt()
+ setup_python()
 
- find_package(LibXml2            REQUIRED)
- find_package(PythonLibs         2 REQUIRED)
+ cmake_policy(SET CMP0054 NEW)
+
+ if (USE_LIBBFD)
+   find_package(Libbfd)
+ endif()
+ find_package(BZip2              REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(BISON              REQUIRED)
  find_package(FLEX               REQUIRED)
  find_package(LEFDEF)
  find_package(OPENACCESS)
- find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(Libexecinfo        REQUIRED)
- find_package(Libbfd)
 #include(UseLATEX)
  find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(python)
- add_subdirectory(etc)
  add_subdirectory(cmake_modules)
  add_subdirectory(doc)

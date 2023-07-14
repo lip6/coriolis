@@ -1,0 +1,119 @@
+.TH "BaseGrid" 3 "Sun Nov 21 2021" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BaseGrid \- Abstract Base Class for Irregular \fBGrid\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBGrid< GCell >\fP, and \fBGrid< GCellT >\fP\&.
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAxis\fP"
+.br
+.RI "Graduations on a \fBBaseGrid\fP \fBAxis\fP (H or V)\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBdestroy\fP ()"
+.br
+.ti -1c
+.RI "const \fBBox\fP & \fBgetBoundingBox\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetColumns\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetRows\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetRawSize\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetIndex\fP (unsigned int c, unsigned int r) const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetRow\fP (unsigned int) const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetColumn\fP (unsigned int) const"
+.br
+.ti -1c
+.RI "const \fBAxis\fP & \fBgetXGrads\fP () const"
+.br
+.ti -1c
+.RI "const \fBAxis\fP & \fBgetYGrads\fP () const"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBaseGrid\fP (const \fBBox\fP &)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Abstract Base Class for Irregular \fBGrid\fP\&. 
+
+An abstract class for a 2-D matrix of objects\&. The grid is irregular in the sense that the horizontal and vertical cut lines may not be evenly spaced\&.
+.PP
+The coordinates of cut lines in horizontal and vertical direction are stored \fBBaseGrid::Axis\fP structure\&.
+.PP
+The \fBBaseGrid\fP contains all the non-template methods of the \fBGrid\fP, that is that do not depend of the matrix element type\&.
+.PP
+The internal storage implemented in derived classes is expected to store 'row by row' (rows are put one after another in the vector)\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBaseGrid\fP (const \fBBox\fP & bb)\fC [protected]\fP"
+Construct a new \fBBaseGrid\fP on area \fCbb\fP\&. Graduations, rows & columns are sets to zero\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void destroy ()\fC [inline]\fP"
+The user-level destructor\&. 
+.SS "const \fBBox\fP & getBoundingBox () const\fC [inline]\fP"
+\fBReturns:\fP The grid bounding box\&. 
+.SS "unsigned int getColumns () const\fC [inline]\fP"
+\fBReturns:\fP The numbers of columns in the grid\&. 
+.PP
+Referenced by GCellGrid::_postCreate(), KatabaticEngine::createDetailedGrid(), BaseGrid::getColumn(), BaseGrid::getIndex(), BaseGrid::getRawSize(), and BaseGrid::getRow()\&.
+.SS "unsigned int getRows () const\fC [inline]\fP"
+\fBReturns:\fP The numbers of rows in the grid\&. 
+.PP
+Referenced by GCellGrid::_postCreate(), KatabaticEngine::createDetailedGrid(), and BaseGrid::getRawSize()\&.
+.SS "unsigned int getRawSize () const\fC [inline]\fP"
+\fBReturns:\fP The total number of elements in the grid (i\&.e\&. $ rows \times columns $) 
+.PP
+References BaseGrid::getColumns(), and BaseGrid::getRows()\&.
+.SS "unsigned int getIndex (unsigned int c, unsigned int r) const\fC [inline]\fP"
+An helper function that compute the linear index in the element vector from a \fC\fP(c,r) coordinate pair: \[ index = c + r \times columns \] 
+.PP
+References BaseGrid::getColumns()\&.
+.PP
+Referenced by Grid< GCell >::getGCellDown(), Grid< GCell >::getGCellLeft(), Grid< GCell >::getGCellRight(), and Grid< GCell >::getGCellUp()\&.
+.SS "unsigned int getRow (unsigned int i) const\fC [inline]\fP"
+An helper function that compute the row number from the linear index in the vector: \[ row = index / columns \] 
+.PP
+References BaseGrid::getColumns()\&.
+.PP
+Referenced by GCell::getRow()\&.
+.SS "unsigned int getColumn (unsigned int i) const\fC [inline]\fP"
+An helper function that compute the column number from the linear index in the vector: \[ column = index \div columns \] 
+.PP
+References BaseGrid::getColumns()\&.
+.PP
+Referenced by GCell::getColumn()\&.
+.SS "const \fBAxis\fP & getXGrads () const\fC [inline]\fP"
+\fBReturns:\fP The graduations on the X axis\&. 
+.SS "const \fBAxis\fP & getYGrads () const\fC [inline]\fP"
+\fBReturns:\fP The graduations on the Y axis\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

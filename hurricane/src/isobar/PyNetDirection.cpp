@@ -62,19 +62,19 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(NetDirection)
-  DirectReprMethod(PyNetDirection_Repr, PyNetDirection,   Net::Direction)
-  DirectStrMethod (PyNetDirection_Str,  PyNetDirection,   Net::Direction)
-  DirectCmpMethod (PyNetDirection_Cmp,  IsPyNetDirection, PyNetDirection)
-  DirectHashMethod(PyNetDirection_Hash, PyNetDirection)
+  DirectReprMethod      (PyNetDirection_Repr, PyNetDirection,   Net::Direction)
+  DirectStrMethod       (PyNetDirection_Str,  PyNetDirection,   Net::Direction)
+  DirectCmpByValueMethod(PyNetDirection_Cmp,  IsPyNetDirection, PyNetDirection)
+  DirectHashMethod      (PyNetDirection_Hash, NetDirection)
 
   extern void  PyNetDirection_LinkPyType() {
     cdebug_log(20,0) << "PyNetDirection_LinkType()" << endl;
-    PyTypeNetDirection.tp_dealloc = (destructor) PyNetDirection_DeAlloc;
-    PyTypeNetDirection.tp_compare = (cmpfunc)    PyNetDirection_Cmp;
-    PyTypeNetDirection.tp_repr    = (reprfunc)   PyNetDirection_Repr;
-    PyTypeNetDirection.tp_str     = (reprfunc)   PyNetDirection_Str;
-    PyTypeNetDirection.tp_hash    = (hashfunc)   PyNetDirection_Hash;
-    PyTypeNetDirection.tp_methods = PyNetDirection_Methods;
+    PyTypeNetDirection.tp_dealloc     = (destructor) PyNetDirection_DeAlloc;
+    PyTypeNetDirection.tp_richcompare = (richcmpfunc)PyNetDirection_Cmp;
+    PyTypeNetDirection.tp_repr        = (reprfunc)   PyNetDirection_Repr;
+    PyTypeNetDirection.tp_str         = (reprfunc)   PyNetDirection_Str;
+    PyTypeNetDirection.tp_hash        = (hashfunc)   PyNetDirection_Hash;
+    PyTypeNetDirection.tp_methods     = PyNetDirection_Methods;
   }
 
 
@@ -93,11 +93,18 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::UNDEFINED,"UNDEFINED");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::IN       ,"IN");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::OUT      ,"OUT");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::INOUT    ,"INOUT");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRISTATE ,"TRISTATE");
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::DirIn       ,"DirIn"       );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::DirOut      ,"DirOut"      );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::ConnTristate,"ConnTristate");
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::ConnWiredOr ,"ConnWiredOr" );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::UNDEFINED   ,"UNDEFINED"   );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::IN          ,"IN"          );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::OUT         ,"OUT"         );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::INOUT       ,"INOUT"       );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRISTATE    ,"TRISTATE"    );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRANSCV     ,"TRANSCV"     );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::WOR_OUT     ,"WOR_OUT"     );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::WOR_INOUT   ,"WOR_INOUT"   );
   }
 
 

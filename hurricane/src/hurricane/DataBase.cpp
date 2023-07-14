@@ -21,11 +21,13 @@
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
+#include "hurricane/SharedName.h"
 #include "hurricane/SharedPath.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Library.h"
+#include "hurricane/CellsSort.h"
 
 
 namespace {
@@ -78,7 +80,7 @@ namespace {
 
     int depth = 0;
 
-    if (not cellDepth.first->isLeaf()) {
+    if (not cellDepth.first->isTerminalNetlist()) {
       for ( Instance* instance : cellDepth.first->getInstances() ) {
         Cell* masterCell = instance->getMasterCell();
         pair<Cell* const,int>& masterDepth = *(_cellMap.find( masterCell ));
@@ -149,6 +151,8 @@ void DataBase::_postCreate()
 void DataBase::_preDestroy()
 // ************************
 {
+    clear();
+  
     UpdateSession::open();
     Inherit::_preDestroy();
 
@@ -156,6 +160,7 @@ void DataBase::_preDestroy()
     if (_technology) _technology->destroy();
     UpdateSession::close();
 
+    DBo::resetId();
     _db = NULL;
 }
 
@@ -170,12 +175,13 @@ Record* DataBase::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("_technology"     , _technology        ));
-        record->add(getSlot("_rootLibrary"    , _rootLibrary       ));
-        record->add(getSlot("DbU::precision"  , DbU::getPrecision()));
-        record->add(getSlot("DbU::resolution" , DbU::db(1)         ));
-        record->add( DbU::getValueSlot("DbU::polygonStep", &DbU::_polygonStep ));
-      //record->add(getSlot("GridStep", getValueString(getGridStep())));
+      record->add(getSlot("_technology"                ,  _technology             ));
+      record->add(getSlot("_rootLibrary"               ,  _rootLibrary            ));
+      record->add(getSlot("DbU::precision"             ,  DbU::getPrecision()     ));
+      record->add(getSlot("DbU::resolution"            ,  DbU::db(1)              ));
+      record->add(getSlot("DbU::getGridsPerLambda"     ,  DbU::getGridsPerLambda()));
+      record->add( DbU::getValueSlot("DbU::polygonStep", &DbU::_polygonStep       ));
+    //record->add(getSlot("GridStep", getValueString(getGridStep())));
     }
     return record;
 }
@@ -275,6 +281,22 @@ Cell* DataBase::getCell(string name)
   }
 
   return NULL;
+}
+
+void DataBase::clear()
+// *******************
+{
+  UpdateSession::open();
+    
+  CellsSort cs = CellsSort();
+  cs.addLibrary( _rootLibrary );
+  cs.sort();
+  for ( Cell* cell : cs.getSortedCells() ) cell->destroy();
+  if (_rootLibrary) _rootLibrary->destroy();
+    
+  UpdateSession::close();
+
+//SharedName::dump();
 }
 
 void DataBase::_toJson(JsonWriter* w) const

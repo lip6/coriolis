@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2010-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -17,6 +17,7 @@
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyCell.h"
+#include "crlcore/PySystem.h"
 #include "crlcore/PyBanner.h"
 #include "crlcore/PyCatalog.h"
 #include "crlcore/PyCatalogState.h"
@@ -30,11 +31,14 @@
 #include "crlcore/PyToolEngine.h"
 #include "crlcore/PyToolEngineCollection.h"
 #include "crlcore/PyAcmSigda.h"
-#include "crlcore/PyIspd05.h"
+// #include "crlcore/PyIspd05.h"
+#include "crlcore/PySpice.h"
 #include "crlcore/PyBlif.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
+#include "crlcore/PyLefExport.h"
 #include "crlcore/PyDefImport.h"
+#include "crlcore/PyDefExport.h"
 #include "crlcore/VhdlEntity.h"
 
 
@@ -53,6 +57,7 @@ namespace CRL {
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
   using Isobar::__cs;
+  using Isobar::getPyHash;
   using Vhdl::EntityExtension;
 
 
@@ -77,11 +82,9 @@ extern "C" {
   static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
   {
     cdebug_log(30,0) << "PyVhdl_destroyAllVHDL()" << endl;
-
     HTRY
       EntityExtension::destroyAll();
     HCATCH
-
     Py_RETURN_NONE;
   }
 
@@ -92,11 +95,27 @@ extern "C" {
 
 
   static PyMethodDef PyCRL_Methods[] =
-    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing, METH_VARARGS
+    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing      , METH_VARARGS
                               , "Partial build of a ring" }
-    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL, METH_NOARGS
+    , { "restoreNetsDirection", (PyCFunction)PyToolBox_restoreNetsDirection, METH_VARARGS
+                              , "Compute and set nets direction of a complete cell hierarchy." }
+    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL         , METH_NOARGS
                               , "Clear all VHDL informations on all cells." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
+    };
+
+
+  static PyModuleDef  PyCRL_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "CRL"               /* m_name     */
+    , "Coriolis Core I/O framework"
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyCRL_Methods       /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
     };
 
 
@@ -105,9 +124,11 @@ extern "C" {
   // ---------------------------------------------------------------
   // Module Initialization  :  "initCRL ()"
 
-  DL_EXPORT(void) initCRL () {
-    cdebug_log(30,0) << "initCRL()" << endl;
+  PyMODINIT_FUNC PyInit_CRL ( void )
+  {
+    cdebug_log(30,0) << "PyInit_CRL()" << endl;
 
+    PySystem_LinkPyType ();
     PyBanner_LinkPyType ();
     PyCatalogState_LinkPyType ();
     PyCatalog_LinkPyType ();
@@ -121,12 +142,16 @@ extern "C" {
     PyToolEngine_LinkPyType ();
     PyToolEngineCollection_LinkPyType ();
     PyAcmSigda_LinkPyType ();
-    PyIspd05_LinkPyType ();
+    // PyIspd05_LinkPyType ();
+    PySpice_LinkPyType ();
     PyBlif_LinkPyType ();
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
+    PyLefExport_LinkPyType ();
+    PyDefExport_LinkPyType ();
 
+    PYTYPE_READY ( System );
     PYTYPE_READY ( Banner );
     PYTYPE_READY ( CatalogState );
     PYTYPE_READY ( Catalog );
@@ -142,12 +167,15 @@ extern "C" {
     PYTYPE_READY ( ToolEngineCollection );
     PYTYPE_READY ( ToolEngineCollectionLocator );
     PYTYPE_READY ( AcmSigda );
-    PYTYPE_READY ( Ispd05 );
+    // PYTYPE_READY ( Ispd05 );
+    PYTYPE_READY ( Spice );
     PYTYPE_READY ( Blif );
     PYTYPE_READY ( Gds );
     PYTYPE_READY ( LefImport );
     PYTYPE_READY ( DefImport );
-   
+    PYTYPE_READY ( LefExport );
+    PYTYPE_READY ( DefExport );
+
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcLib"     , &PyTypeAllianceLibrary  , "<AllianceLibrary>"  , false );
     __cs.addType ( "alcEnv"     , &PyTypeEnvironment      , "<Environment>"      , false );
@@ -158,13 +186,15 @@ extern "C" {
     __cs.addType ( "alcCatalog" , &PyTypeCatalog          , "<Catalog>"          , false );
     __cs.addType ( "alcCatStat" , &PyTypeCatalogState     , "<Catalog::State>"   , false );
 
-    PyObject* module = Py_InitModule ( "CRL", PyCRL_Methods );
-    if ( module == NULL ) {
+    PyObject* module = PyModule_Create( &PyCRL_ModuleDef );
+    if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize CRL module." << endl;
-      return;
+      return NULL;
     }
 
+    Py_INCREF ( &PyTypeSystem );
+    PyModule_AddObject ( module, "System", (PyObject*)&PyTypeSystem );
     Py_INCREF ( &PyTypeBanner );
     PyModule_AddObject ( module, "Banner", (PyObject*)&PyTypeBanner );
     Py_INCREF ( &PyTypeCatalog );
@@ -193,8 +223,10 @@ extern "C" {
     PyModule_AddObject ( module, "ToolEngineCollectionLocator", (PyObject*)&PyTypeToolEngineCollectionLocator );
     Py_INCREF ( &PyTypeAcmSigda );
     PyModule_AddObject ( module, "AcmSigda", (PyObject*)&PyTypeAcmSigda );
-    Py_INCREF ( &PyTypeIspd05 );
-    PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
+    // Py_INCREF ( &PyTypeIspd05 );
+    // PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
+    Py_INCREF ( &PyTypeSpice );
+    PyModule_AddObject ( module, "Spice", (PyObject*)&PyTypeSpice );
     Py_INCREF ( &PyTypeBlif );
     PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
     Py_INCREF ( &PyTypeGds );
@@ -203,16 +235,25 @@ extern "C" {
     PyModule_AddObject ( module, "LefImport", (PyObject*)&PyTypeLefImport );
     Py_INCREF ( &PyTypeDefImport );
     PyModule_AddObject ( module, "DefImport", (PyObject*)&PyTypeDefImport );
+    Py_INCREF ( &PyTypeLefExport );
+    PyModule_AddObject ( module, "LefExport", (PyObject*)&PyTypeLefExport );
+    Py_INCREF ( &PyTypeDefExport );
+    PyModule_AddObject ( module, "DefExport", (PyObject*)&PyTypeDefExport );
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();
+    PyRoutingGauge_postModuleInit ();
     PyRoutingLayerGauge_postModuleInit ();
     PyAllianceFramework_postModuleInit ();
+    PySpice_postModuleInit ();
+    PyGds_postModuleInit ();
+    PyDefExport_postModuleInit ();
     
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
 
     cdebug_log(30,0) << "CRL.so loaded " << (void*)&typeid(string) << endl;
+    return module;
   }
 
   

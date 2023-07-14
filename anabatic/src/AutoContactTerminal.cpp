@@ -29,6 +29,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Pin.h"
 #include "hurricane/DebugSession.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/AutoContactTerminal.h"
@@ -47,6 +48,7 @@ namespace Anabatic {
   using Hurricane::Transformation;
   using Hurricane::Entity;
   using Hurricane::Occurrence;
+  using Hurricane::Pin;
 
 
 // -------------------------------------------------------------------
@@ -129,6 +131,13 @@ namespace Anabatic {
   }
 
 
+  bool  AutoContactTerminal::isOnPin () const
+  {
+    RoutingPad* rp = dynamic_cast<RoutingPad*>( getAnchor() );
+    return (dynamic_cast<Pin*>(rp->getOccurrence().getEntity()) != NULL);
+  }
+
+
   AutoSegment* AutoContactTerminal::getOpposite ( const AutoSegment* ) const
   { return NULL; }
 
@@ -194,7 +203,7 @@ namespace Anabatic {
         // SxLib bug: METAL1 terminal segments are 0.5 lambdas too shorts on
         // their extremities. Should modificate all the standard cells layout...
         // HARDCODED.
-          if (Session::getRoutingGauge()->getName() == "msxlib")
+          if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
             yborder -= DbU::fromLambda( 1.0 );
           else
             yborder -= DbU::fromLambda( 0.5 );
@@ -337,7 +346,7 @@ namespace Anabatic {
   void  AutoContactTerminal::cacheDetach ( AutoSegment* segment )
   {
     if (_segment == segment) {
-      _segment->unsetFlags( AutoSegment::SegAxisSet );
+    //_segment->unsetFlags( AutoSegment::SegAxisSet );
       _segment = NULL;
       setFlags( CntInvalidatedCache );
       unsetFlags( CntDrag );
@@ -397,8 +406,8 @@ namespace Anabatic {
     if (horizontals[1] != NULL) ++count;
     if (verticals  [0] != NULL) ++count;
     if (verticals  [1] != NULL) ++count;
-    if (count > 1) {
-      showTopologyError( "Terminal has more than one segment." );
+    if (count != 1) {
+      showTopologyError( "Terminal has not *exactly* one segment." );
     }
     if (horizontals[0] != NULL ) {
       _segment = Session::lookup( horizontals[0] );
@@ -494,11 +503,17 @@ namespace Anabatic {
           AutoContact* opposite      = _segment->getOppositeAnchor(this);
           AutoSegment* perpandicular = opposite->getPerpandicular( _segment );
           if (perpandicular) {
+            cdebug_log(145,0) << "Draging V interval ["
+                              << DbU::getValueString(getCBYMin()) << " "
+                              << DbU::getValueString(getCBYMax()) << "]" << endl;
             DbU::Unit y = perpandicular->getAxis();
             y = std::min( y, getCBYMax() );
             y = std::max( y, getCBYMin() );
-            setY( y );
-            cdebug_log(145,0) << "Draging to Y @" << DbU::getValueString(y) << endl;
+            Point onGrid = Session::getNearestGridPoint( Point(getX(),y), getConstraintBox() );
+            setY( onGrid.getY() );
+            cdebug_log(145,0) << "Draging to Y @" << DbU::getValueString(y)
+                              << " pitched:" << DbU::getValueString(onGrid.getY())
+                              << " " << getConstraintBox() << endl;
           }
         }
 
@@ -547,11 +562,11 @@ namespace Anabatic {
       if (delta > 1) {
       //_segment = _segment->makeDogleg( this );
         _segment->makeDogleg( this );
-        cdebug_log(145,0) << "Update seg: " << _segment << endl;
         delta = abssub( anchorDepth, rg->getLayerDepth( _segment->getLayer() ) );
+        cdebug_log(145,0) << "Delta: " << delta << " Update seg: " << _segment << endl;
       }
-      else if (delta == 0) setLayerAndWidth( delta, anchorDepth );
-      else if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
+      if (delta == 0) setLayerAndWidth( delta, anchorDepth );
+      if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
     }
     _segment->invalidate( this );
 

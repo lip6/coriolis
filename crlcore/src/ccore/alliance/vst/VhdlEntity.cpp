@@ -105,12 +105,14 @@ namespace Vhdl {
     , _globals()
     , _flags  (flags)
   {
+    if (flags & VstNoLowerCase)       _ns.setNoLowerCase( true );
+    if (flags & VstUniquifyUpperCase) _ns.setUniquifyUpperCase( true );
     if (not _offset) {
     //_offset = offsetof(EntityProperty,_entity);
       _offset = (ptrdiff_t)this - (ptrdiff_t)property;
     }
 
-    if (_flags == NoFlags) _flags = EntityMode;
+    if ((_flags & ~ModeMask) == NoFlags) _flags |= EntityMode;
 
     for ( Net* net : cell->getNets() ) {
       if (net->isDeepNet()) continue;
@@ -133,7 +135,7 @@ namespace Vhdl {
         signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        ScalarSignal* signal = new ScalarSignal(net);
+        ScalarSignal* signal = new ScalarSignal(stem,net);
         _signals.insert( signal );
         if (net->isGlobal())
           _globals.insert( signal );
@@ -185,24 +187,28 @@ namespace Vhdl {
       else if (rightpar + 1 != name.size())
         error = "malformed net name, right parenthesis is *not* the last character";
       else {
-        size_t endindex = 0;
-        int    value    = stoi( name.substr(leftpar+1), &endindex );
-
-        if (endindex != rightpar-leftpar-1)
-          error = "unable to convert index (not a number)";
-        else if (value < 0)
-          error = "negative index";
-        else {
-          stem  = name.substr( 0, leftpar );
-          index = (size_t)value;
-          return true;
+        try {
+          size_t endindex = 0;
+          int    value    = stoi( name.substr(leftpar+1), &endindex );
+          
+          if (endindex != rightpar-leftpar-1)
+            error = "unable to convert index (not a number)";
+          else if (value < 0)
+            error = "negative index";
+          else {
+            stem  = name.substr( 0, leftpar );
+            index = (size_t)value;
+            return true;
+          }
+        } catch ( exception& e ) {
+          error = e.what();
         }
       }
     }
 
     if (not error.empty()) {
       cerr << Warning( "Entity::parseVector() Net has not a valid VHDL name, %s.\n"
-                       "          %s\n"
+                       "          \"%s\"\n"
                      , error.c_str()
                      , getString(net->getName()).c_str()
                      ) << endl;
@@ -229,7 +235,7 @@ namespace Vhdl {
         signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        _signals.insert( new ScalarSignal(net) );
+        _signals.insert( new ScalarSignal(stem,net) );
       }
     }
   }
@@ -280,7 +286,9 @@ namespace Vhdl {
     
     for ( auto isignal=internalSignals.begin(); isignal!=internalSignals.end() ; ++isignal ) {
       out << tab;
-      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal|(_flags & Entity::IeeeMode) );
+      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal
+                                         |(_flags & Entity::IeeeMode)
+                                         |(_flags & Entity::VstNoLinkage) );
       out << ";\n";
     }
     out << "\n";
@@ -304,7 +312,9 @@ namespace Vhdl {
     size_t ioCount = 0;
     for ( auto isignal=ioSignals.begin(); isignal!=ioSignals.end() ; ++isignal ) {
       if (ioCount) out << "\n" << tab << "     ; ";
-      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal|(_flags & Entity::IeeeMode ) );
+      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal
+                                         |(_flags & Entity::IeeeMode)
+                                         |(_flags & Entity::VstNoLinkage ) );
       ++ioCount;
     }
     out << "\n" << tab << "     );";
@@ -324,6 +334,16 @@ namespace Vhdl {
     out << "-- Coriolis Structural VHDL Driver\n";
     out << "-- Generated on " << stamp << "\n";
     out << "-- \n";
+    if (_flags & OptionMask) {
+      out << "-- Genarated with options:\n";
+      if (_flags & VstUseConcat)         out << "-- * VstUseConcat:   Use concat (&) in port map.\n";
+      if (_flags & VstNoLowerCase)       out << "-- * VstNoLowerCase: Identifiers are *not* put in lowercase.\n";
+      if (_flags & VstUniquifyUpperCase) {
+        out << "-- * VstUniquifyUpperCase: Upper case identifiers are uniquified.\n";
+        out << "--                         (one 'u' before each lowered letter)\n";
+      }
+      out << "-- \n";
+    }
     if (isIeeeMode()) {
       out << "-- VHDL IEEE compliant.\n";
     } else {
@@ -353,7 +373,8 @@ namespace Vhdl {
     }
 
     for ( auto icell : masterCells ) {
-      Vhdl::Entity* component = Vhdl::EntityExtension::create( icell, Vhdl::Entity::ComponentMode );
+      Vhdl::Entity* component = Vhdl::EntityExtension::create
+        ( icell, Vhdl::Entity::ComponentMode | (_flags & ModeMask));
       component->toComponent( out );
       out << "\n";
     }
@@ -393,7 +414,8 @@ namespace Vhdl {
 
     Entity* masterEntity = EntityExtension::get( instance->getMasterCell() );
     if (not masterEntity) {
-      masterEntity = EntityExtension::create( instance->getMasterCell(), ComponentMode );
+      masterEntity = EntityExtension::create
+        ( instance->getMasterCell(), ComponentMode | (_flags & ModeMask));
     }
 
     size_t            width = 0;
@@ -402,7 +424,7 @@ namespace Vhdl {
     for ( auto isignal=masterSignals->begin() ; isignal!=masterSignals->end() ; ++isignal ) {
       if ((*isignal)->isExternal()) {
         width = max( width, (*isignal)->getName().size() );
-        portMaps.push_back( PortMap::create(*isignal) );
+        portMaps.push_back( PortMap::create(*isignal,_flags) );
         portMaps.back()->doMapping( instance );
       }
     }

@@ -225,31 +225,26 @@ extern "C" {
        0                                // binaryfunc  nb_add;
      , 0                                // binaryfunc  nb_subtract;
      , 0                                // binaryfunc  nb_multiply;
-     , 0                                // binaryfunc  nb_divide;
      , 0                                // binaryfunc  nb_remainder;
      , 0                                // binaryfunc  nb_divmod;
      , 0                                // ternaryfunc nb_power;
      , 0                                // unaryfunc   nb_negative;
      , 0                                // unaryfunc   nb_positive;
      , 0                                // unaryfunc   nb_absolute;
-     , (inquiry)   PyLayerMask_nonzero  // inquiry     nb_nonzero;      -- Used by PyObject_IsTrue
+     , (inquiry)   PyLayerMask_nonzero  // inquiry     nb_bool;      -- Used by PyObject_IsTrue
      , (unaryfunc) PyLayerMask_invert   // unaryfunc   nb_invert;
      , (binaryfunc)PyLayerMask_lshift   // binaryfunc  nb_lshift;
      , (binaryfunc)PyLayerMask_rshift   // binaryfunc  nb_rshift;
      , (binaryfunc)PyLayerMask_and      // binaryfunc  nb_and;
      , (binaryfunc)PyLayerMask_xor      // binaryfunc  nb_xor;
      , (binaryfunc)PyLayerMask_or       // binaryfunc  nb_or;
-     , 0                                // coercion    nb_coerce;       -- Used by the coerce() function
      , 0                                // unaryfunc   nb_int;
-     , 0                                // unaryfunc   nb_long;
+     , NULL                             // void*       nb_reserved;
      , 0                                // unaryfunc   nb_float;
-     , 0                                // unaryfunc   nb_oct;
-     , 0                                // unaryfunc   nb_hex;
                                         // Added in release 2.0
      , 0                                // binaryfunc  nb_inplace_add;
      , 0                                // binaryfunc  nb_inplace_subtract;
      , 0                                // binaryfunc  nb_inplace_multiply;
-     , 0                                // binaryfunc  nb_inplace_divide;
      , 0                                // binaryfunc  nb_inplace_remainder;
      , 0                                // ternaryfunc nb_inplace_power;
      , 0                                // binaryfunc  nb_inplace_lshift;
@@ -264,6 +259,8 @@ extern "C" {
      , 0                                // binaryfunc  nb_inplace_true_divide;
                                         // Added in release 2.5
      , 0                                // unaryfunc   nb_index;
+     , 0                                // binaryfunc  nb_matrix_multiply;
+     , 0                                // binaryfunc  nb_inplce_matrix_multiply;
     };
 
 
@@ -292,15 +289,19 @@ extern "C" {
   }
 
 
-  static int  PyLayerMask_Cmp ( PyLayerMask *self, PyObject* other )
+  static PyObject* PyLayerMask_Cmp ( PyLayerMask *self, PyObject* other, int op )
   {
-    if ( not IsPyLayerMask(other) ) return -1;
+    if ( not IsPyLayerMask(other) ) Py_RETURN_FALSE;
 
     PyLayerMask* otherPyObject = (PyLayerMask*)other;
-    if ( self->_object == otherPyObject->_object ) return  0;
-    if ( self->_object <  otherPyObject->_object ) return -1;
+    if ((op == Py_LT) and (self->_object <  otherPyObject->_object)) Py_RETURN_TRUE;
+    if ((op == Py_LE) and (self->_object <= otherPyObject->_object)) Py_RETURN_TRUE;
+    if ((op == Py_EQ) and (self->_object == otherPyObject->_object)) Py_RETURN_TRUE;
+    if ((op == Py_NE) and (self->_object != otherPyObject->_object)) Py_RETURN_TRUE;
+    if ((op == Py_GT) and (self->_object >  otherPyObject->_object)) Py_RETURN_TRUE;
+    if ((op == Py_GE) and (self->_object >= otherPyObject->_object)) Py_RETURN_TRUE;
 
-    return 1;
+    Py_RETURN_FALSE;
   }
 
 
@@ -314,14 +315,14 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyLayerMask_LinkType()" << endl;
 
-    PyTypeLayerMask.tp_new       =              PyLayerMask_new;
-    PyTypeLayerMask.tp_dealloc   = (destructor) PyLayerMask_DeAlloc;
-    PyTypeLayerMask.tp_compare   = (cmpfunc)    PyLayerMask_Cmp;
-    PyTypeLayerMask.tp_repr      = (reprfunc)   PyLayerMask_Repr;
-    PyTypeLayerMask.tp_str       = (reprfunc)   PyLayerMask_Str;
-    PyTypeLayerMask.tp_hash      = (hashfunc)   PyLayerMask_Hash;
-    PyTypeLayerMask.tp_methods   =  PyLayerMask_Methods;
-    PyTypeLayerMask.tp_as_number = &PyLayerMask_NumberMethods;
+    PyTypeLayerMask.tp_new         =              PyLayerMask_new;
+    PyTypeLayerMask.tp_dealloc     = (destructor) PyLayerMask_DeAlloc;
+    PyTypeLayerMask.tp_richcompare = (richcmpfunc)PyLayerMask_Cmp;
+    PyTypeLayerMask.tp_repr        = (reprfunc)   PyLayerMask_Repr;
+    PyTypeLayerMask.tp_str         = (reprfunc)   PyLayerMask_Str;
+    PyTypeLayerMask.tp_hash        = (hashfunc)   PyLayerMask_Hash;
+    PyTypeLayerMask.tp_methods     =  PyLayerMask_Methods;
+    PyTypeLayerMask.tp_as_number   = &PyLayerMask_NumberMethods;
   }
 
 
@@ -350,9 +351,8 @@ extern "C" {
   // PyLayer Object Definitions.
 
   PyTypeObject  PyTypeLayerMask =
-    { PyObject_HEAD_INIT(NULL)
-      0                               /* ob_size.          */
-    , "Hurricane.Layer.Mask"          /* tp_name.          */
+    { PyVarObject_HEAD_INIT(NULL,0)
+      "Hurricane.Layer.Mask"          /* tp_name.          */
     , sizeof(PyLayerMask)             /* tp_basicsize.     */
     , 0                               /* tp_itemsize.      */
     /* methods. */

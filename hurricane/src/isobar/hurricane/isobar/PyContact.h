@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_CONTACT_H
-#define PY_CONTACT_H
-
+#pragma  once
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/Contact.h"
 
@@ -51,5 +49,3 @@ namespace  Isobar {
   }  // extern "C".
 
 }  // Isobar namespace.
-
-#endif  // PY_CONTACT_H

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -202,7 +201,7 @@ def suite_dadda ( iValue ) :
   Un_1 = 2
   
   while Un < iValue :
-    aux  = (3 * Un_1) / 2
+    aux  = (3 * Un_1) // 2
     Un_1 = Un
     Un   = aux
   
@@ -257,7 +256,7 @@ def wallace_1level ( lMat, lAdders ) :
     nbToDel = delta + len(carries)
     
     if(nbToDel > 0):
-      nb_FA = nbToDel/2
+      nb_FA = nbToDel//2
       nb_HA = nbToDel%2
     else:
       nb_FA = 0

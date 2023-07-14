@@ -29,8 +29,9 @@ namespace CRL {
 
   class LefImport {
     public:
-      static void                reset ();
-      static Hurricane::Library* load  ( std::string fileName );
+      static void                reset           ();
+      static Hurricane::Library* load            ( std::string fileName );
+      static void                setMergeLibrary ( Hurricane::Library* );
   };
 
 

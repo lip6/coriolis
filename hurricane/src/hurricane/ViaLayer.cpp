@@ -125,6 +125,10 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
+  const Layer* ViaLayer::getCut () const
+  { return getTechnology()->getLayer(_basicLayers[1]->getMask()); } 
+
+
   const Layer* ViaLayer::getTop () const
   { return getTechnology()->getLayer(_basicLayers[2]->getMask()); } 
 

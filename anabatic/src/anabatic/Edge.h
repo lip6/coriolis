@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_EDGE_H
-#define  ANABATIC_EDGE_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Name.h"
 #include "hurricane/Interval.h"
@@ -60,6 +58,7 @@ namespace Anabatic {
       inline        bool              isHorizontal         () const;
       inline        bool              hasNet               ( const Net* ) const;
       inline        unsigned int      getCapacity          () const;
+      inline        unsigned int      getRawCapacity       () const;
       inline        unsigned int      getReservedCapacity  () const;
       inline        unsigned int      getCapacity          ( size_t depth ) const;
       inline        unsigned int      getRealOccupancy     () const;
@@ -136,8 +135,8 @@ namespace Anabatic {
   inline       bool              Edge::isVertical           () const { return _flags.isset(Flags::Vertical); }
   inline       bool              Edge::isHorizontal         () const { return _flags.isset(Flags::Horizontal); }
   inline       bool              Edge::hasNet               ( const Net* owner ) const { return getSegment(owner); }
-  inline       unsigned int      Edge::getCapacity          () const { return (_capacities) ? _capacities->getCapacity()-_reservedCapacity : 0; }
   inline       unsigned int      Edge::getCapacity          ( size_t depth ) const { return (_capacities) ? _capacities->getCapacity(depth) : 0; }
+  inline       unsigned int      Edge::getRawCapacity       () const { return (_capacities) ? _capacities->getCapacity() : 0; }
   inline       unsigned int      Edge::getReservedCapacity  () const { return _reservedCapacity; }
   inline       unsigned int      Edge::getRealOccupancy     () const { return _realOccupancy; }
   inline       float             Edge::getEstimateOccupancy () const { return _estimateOccupancy; }
@@ -156,10 +155,14 @@ namespace Anabatic {
   inline       Flags&            Edge::flags                () { return _flags; }
   inline       Flags&            Edge::setFlags             ( Flags mask ) { _flags |= mask; return _flags; }
   inline       void              Edge::reserveCapacity      ( int delta ) { _reservedCapacity = ((int)_reservedCapacity+delta > 0) ? _reservedCapacity+delta : 0; }
+
+  inline unsigned int  Edge::getCapacity () const
+  {
+    if (not _capacities) return 0;
+    return (_capacities->getCapacity() > (int)_reservedCapacity) ? _capacities->getCapacity()-_reservedCapacity : 0;
+  }
  
 }  // Anabatic namespace.
 
 
 INSPECTOR_P_SUPPORT(Anabatic::Edge);
-
-#endif  // ANABATIC_EDGE_H

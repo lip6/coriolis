@@ -87,7 +87,7 @@ extern Tabulation tab;
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Tabulation);
+INSPECTOR_PR_SUPPORT(Hurricane::Tabulation);
 
 
 

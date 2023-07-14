@@ -55,7 +55,7 @@ namespace {
     private:
       class AxisCompare {
         public:
-          bool operator() ( const Axis* lhs, const Axis* rhs );
+          bool operator() ( const Axis* lhs, const Axis* rhs ) const;
       };
 
       class AxisMatch : public unary_function<Axis*,bool> {
@@ -155,7 +155,7 @@ namespace {
   }
 
 
-  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs )
+  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs ) const
   {
     if (lhs->getAxis () < rhs->getAxis ()) return true;
     return false;
@@ -259,7 +259,7 @@ namespace Anabatic {
   { }
 
 
-  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
+  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs ) const
   {
     float difference = lhs->getDensity(_depth) - rhs->getDensity(_depth);
     if (difference != 0.0) return (difference > 0.0);
@@ -285,7 +285,7 @@ namespace Anabatic {
     : Super(anabatic->getCell())
     , _observable    ()
     , _anabatic      (anabatic)
-    , _flags         (Flags::HChannelGCell|Flags::Invalidated)
+    , _flags         (Flags::Invalidated)
     , _westEdges     ()
     , _eastEdges     ()
     , _southEdges    ()
@@ -298,6 +298,8 @@ namespace Anabatic {
     , _contacts      ()
     , _depth         (Session::getRoutingGauge()->getDepth())
     , _pinDepth      (0)
+    , _satProcessed  (0)
+    , _rpCount       (0)
     , _blockages     (new DbU::Unit [_depth])
     , _cDensity      (0.0)
     , _densities     (new float [_depth])
@@ -305,6 +307,7 @@ namespace Anabatic {
     , _fragmentations(new float [_depth])
     , _globalsCount  (new float [_depth])
     , _key           (this,1)
+    , _lastClonedKey (NULL)
   {
     if (not _matrixHSide) {
       _matrixVSide = Session::getSliceHeight();
@@ -474,6 +477,26 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::hasNet ( const Net* net ) const
+  {
+    if (hasGContact(net)) return true;
+
+    for ( Edge* edge : _eastEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return true;
+      }
+    }
+
+    for ( Edge* edge : _northEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return true;
+      }
+    }
+
+    return false;
+  }
+
+
   Contact* GCell::hasGContact ( const Contact* owned ) const
   {
     for ( Contact* contact : _gcontacts ) {
@@ -503,6 +526,22 @@ namespace Anabatic {
     }
 
     return getGContact( net );
+  }
+
+
+  Segment* GCell::hasGoThrough ( Net* net ) const
+  {
+    for ( Edge* edge : _eastEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return segment;
+      }
+    }
+    for ( Edge* edge : _northEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return segment;
+      }
+    }
+    return NULL;
   }
 
 
@@ -1215,7 +1254,7 @@ namespace Anabatic {
   int  GCell::getCapacity ( size_t depth ) const
   {
     const vector<Edge*>* edges = NULL;
-    if (isHorizontalPlane(depth)) edges = (_eastEdges .empty()) ? &_westEdges  : &_westEdges;
+    if (isHorizontalPlane(depth)) edges = (_eastEdges .empty()) ? &_westEdges  : &_eastEdges;
     else                          edges = (_northEdges.empty()) ? &_southEdges : &_northEdges;
 
     int capacity = 0;
@@ -1304,6 +1343,26 @@ namespace Anabatic {
   }
 
 
+  void  GCell::postGlobalAnnotate ()
+  {
+    if (isInvalidated()) updateDensity();
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      RoutingLayerGauge* rlg = Session::getLayerGauge( depth );
+      if (rlg->getType() & Constant::PinOnly) continue;
+      if (_densities[depth] >= 0.9) {
+        if (depth+2 < _depth) {
+          Edge* edge = (rlg->getDirection() == Constant::Vertical) ? getNorthEdge()
+                                                                   : getEastEdge();
+          if (edge) {
+            edge->reserveCapacity( 2 );
+          }
+        }
+      }
+    }
+  }
+
+
   void  GCell::addBlockage ( size_t depth, DbU::Unit length )
   {
     if (depth >= _depth) return;
@@ -1311,7 +1370,7 @@ namespace Anabatic {
     _blockages[depth] += length;
     _flags |= Flags::Invalidated;
 
-    cdebug_log(149,0) << "GCell:addBlockage() " << this << " "
+    cdebug_log(149,0) << "GCell::addBlockage() " << this << " "
                 << depth << ":" << DbU::getValueString(_blockages[depth]) << endl;
   }
 
@@ -1332,6 +1391,7 @@ namespace Anabatic {
     if (found) {
       cdebug_log(149,0) << "remove " << ac << " from " << this << endl;
       _contacts.pop_back();
+      _flags |= Flags::Invalidated;
     } else {
       cerr << Bug("%p:%s do not belong to %s."
                  ,ac->base(),getString(ac).c_str(),_getString().c_str()) << endl;
@@ -1345,11 +1405,17 @@ namespace Anabatic {
     size_t begin = 0;
 
     for ( ; begin < end ; begin++ ) {
+      if (not _hsegments[begin])
+        cerr << Bug( "GCell::removeHSegment(): In %s, NULL segment at [%u/%u]."
+                   , _getString().c_str(), begin, _hsegments.size() ) << endl;
+      
       if (_hsegments[begin] == segment) std::swap( _hsegments[begin], _hsegments[--end] );
+      cdebug_log(9000,0) << "GCell::removeHSegment() " << this << endl;
+      cdebug_log(9000,0) << "  " << segment << endl;
     }
 
     if (_hsegments.size() == end) {
-      cerr << Bug( "%s do not go through %s."
+      cerr << Bug( "GCell::removeHSegment(): %s do not go through %s."
                  , getString(segment).c_str(), _getString().c_str() ) << endl;
       return;
     }
@@ -1359,6 +1425,7 @@ namespace Anabatic {
                  , _getString().c_str(), getString(segment).c_str() ) << endl;
 
     _hsegments.erase( _hsegments.begin() + end, _hsegments.end() );
+    _flags |= Flags::Invalidated;
   }
 
 
@@ -1384,6 +1451,7 @@ namespace Anabatic {
                  , getString(segment).c_str() ) << endl;
 
     _vsegments.erase( _vsegments.begin() + end, _vsegments.end() );
+    _flags |= Flags::Invalidated;
   }
 
 
@@ -1396,11 +1464,6 @@ namespace Anabatic {
     if (not isInvalidated()) return (isSaturated()) ? 1 : 0;
 
     _flags.reset( Flags::Saturated );
-
-    for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
-      if ( _vsegments[i] == NULL )
-        cerr << "NULL Autosegment at index " << i << endl;
-    }
 
     sort( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
@@ -1488,7 +1551,26 @@ namespace Anabatic {
     }
 
   // Add the blockages.
-    for ( size_t i=0 ; i<_depth ; i++ ) uLengths2[i] += _blockages[i];
+    if (isStdCellRow() or isChannelRow()) {
+      flags().reset( Flags::GoStraight );
+    } else {
+      int contiguousNonSaturated = 0;
+      for ( size_t i=0 ; i<_depth ; i++ ) {
+        uLengths2[i] += _blockages[i];
+        if (Session::getLayerGauge(i)->getType() & Constant::PinOnly)
+          continue;
+        if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)
+          continue;
+        if ((float)(_blockages[i] * Session::getPitch(i)) > 0.60*(float)(width*height))
+          contiguousNonSaturated = 0;
+        else
+          contiguousNonSaturated++;
+      }
+      if (contiguousNonSaturated < 2) {
+        flags() |= Flags::GoStraight;
+      //cerr << "| Set GoStraight on " << this << endl;
+      }
+    }
 
   // Compute the number of non pass-through tracks.
     if (not processeds.empty()) {
@@ -1498,7 +1580,8 @@ namespace Anabatic {
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
       for ( ; isegment != processeds.end(); ++isegment ) {
-        _feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+      //_feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+        _feedthroughs[depth] += 0.50;
         localCounts  [depth] += 1.0;
         if ( (*isegment)->isGlobal() ) _globalsCount[depth] += 1.0;
 
@@ -1736,7 +1819,7 @@ namespace Anabatic {
 
   bool  GCell::stepNetDesaturate ( size_t depth, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
-    cdebug_log(9000,0) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
+    cdebug_log(149,0) << "GCell::stepNetDesaturate() depth:" << depth << endl;
     cdebug_log(9000,0) << "Deter| " << this << endl;
 
     updateDensity();
@@ -1758,7 +1841,7 @@ namespace Anabatic {
       if (segmentDepth < depth) continue;
       if (segmentDepth > depth) break;
 
-      cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
+      cdebug_log(149,0) << "Move up " << (*isegment) << endl;
 
       if (getAnabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds))
         return true;
@@ -1790,6 +1873,7 @@ namespace Anabatic {
     string s = Super::_getString();
     s.insert( s.size()-1, " "+getString(getBoundingBox()) );
     s.insert( s.size()-1, " "+getString(_flags) );
+    s.insert( s.size()-1, " "+getString(_rpCount) );
   /* string s = "<GCell at(" + DbU::getValueString(getXMin())
        +  "-" + DbU::getValueString(getYMin()) 
        +  "-" + DbU::getValueString(getXMax()) 
@@ -1822,7 +1906,7 @@ namespace Anabatic {
       ostringstream s;
       const Layer* layer = rg->getRoutingLayer(depth)->getBlockageLayer();
       s << "_blockages[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
-      record->add( getSlot ( s.str(),  &_blockages[depth] ) );
+      record->add( DbU::getValueSlot( s.str(), &_blockages[depth] ) );
     }
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
@@ -1830,6 +1914,13 @@ namespace Anabatic {
       const Layer* layer = rg->getRoutingLayer(depth);
       s << "_densities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
       record->add( getSlot ( s.str(),  &_densities[depth] ) );
+    }
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_feedthroughs[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_feedthroughs[depth] ) );
     }
     return record;
   }

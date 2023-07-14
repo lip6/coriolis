@@ -38,6 +38,9 @@ Go::Go()
 {
 }
 
+Go::~Go()
+{ }
+
 bool Go::autoMaterializationIsDisabled()
 // *************************************
 {

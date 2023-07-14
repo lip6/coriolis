@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2018, All Rights Reserved
+// Copyright (c) SU 2010-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
 // |  Author      :                   Jean-Paul Chaput               |
-// |  E-mail      :      Jean-Paul.Chaput@asim.lip6.fr               |
+// |  E-mail      :           Jean-Paul.Chaput@lip6.fr               |
 // | =============================================================== |
 // |  C++ Module  :       "./PyEntity.cpp"                           |
 // +-----------------------------------------------------------------+
@@ -27,8 +27,11 @@
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPad.h"
+#include "hurricane/isobar/PyRectilinear.h"
+#include "hurricane/isobar/PyPolygon.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyRoutingPad.h"
+#include "hurricane/isobar/PythonAttributes.h"
 #include "hurricane/Cell.h"
 
 namespace Isobar {
@@ -47,52 +50,112 @@ extern "C" {
 
 #define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Entity,entity,function)
 
-
-  // +-------------------------------------------------------------+
-  // |                "PyEntity" Attribute Methods                 |
-  // +-------------------------------------------------------------+
-
-  // Standart destroy (Attribute).
+  GetBoundStateAttribute(PyEntity_isPyBound,      PyEntity,Entity)
+  DirectGetUIntAttribute(PyEntity_getId    ,getId,PyEntity,Entity)
   DBoDestroyAttribute(PyEntity_destroy ,PyEntity)
 
-  // ---------------------------------------------------------------
-  // Attribute Method  :  "PyEntity_getCell ()"
 
-  static PyObject* PyEntity_getCell ( PyEntity *self ) {
-    cdebug_log(20,0) << "PyEntity_getCell ()" << endl;
-
+  static PyObject* PyEntity_getCell ( PyEntity* self )
+  {
+    cdebug_log(20,0) << "PyEntity_getCell()" << endl;
     Cell* cell = NULL;
-    
     HTRY
-    METHOD_HEAD ( "Entity.getCell()" )
-    cell = entity->getCell ();
+      METHOD_HEAD( "Entity.getCell()" )
+      cell = entity->getCell();
     HCATCH
-
-    return PyCell_Link ( cell );
+    return PyCell_Link( cell );
   }
 
 
-  // ---------------------------------------------------------------
-  // PyEntity Attribute Method table.
+  static PyObject* PyEntity_getBoundingBox ( PyEntity* self )
+  {
+    cdebug_log(20,0) << "PyEntity_getBoundingBox()" << endl;
+    METHOD_HEAD( "Entity.getBoundingBox()" )
+    PyBox* boundingBox = PyObject_NEW( PyBox, &PyTypeBox );
+    if (not boundingBox) return NULL;
+    HTRY
+      boundingBox->_object = new Box ( entity->getBoundingBox() );
+    HCATCH
+    return ( (PyObject*)boundingBox );
+  }
+
+
+// https://stackoverflow.com/questions/64599762/how-does-one-use-both-tp-getattro-tp-setattro-and-tp-getset-in-a-custom-pyt
+
+  PyObject* PyEntity_getattro ( PyObject* self, PyObject* attrName )
+  {
+    cout.flush();
+    PyObject* type      = NULL;
+    PyObject* value     = NULL;
+    PyObject* traceback = NULL;
+    PyObject* attribute = PyObject_GenericGetAttr( self, attrName );
+    if (attribute) return attribute;
+
+    Entity* entity = ((PyEntity*)self)->_object;
+    PyAttributesHolder* holder = PythonAttributes::get( entity );
+    if (not holder) return NULL;
+
+    PyErr_Fetch( &type, &value, &traceback );
+    attribute = PyObject_GenericGetAttr( (PyObject*)holder, attrName );
+    if (not attribute) {
+      PyErr_Restore(type, value, traceback);
+      return NULL;
+    }
+
+    Py_XDECREF( type );
+    Py_XDECREF( value );
+    Py_XDECREF( traceback );
+    return attribute;
+  }
+
+
+  int32_t  PyEntity_setattro ( PyObject* self, PyObject * attrName, PyObject* attrValue )
+  {
+    int32_t   status    = -1;
+    PyObject* type      = NULL;
+    PyObject* value     = NULL;
+    PyObject* traceback = NULL;
+
+    status = PyObject_GenericSetAttr( self, attrName, attrValue );
+    if (status == 0) return status;
+
+    Entity* entity = ((PyEntity*)self)->_object;
+    PyAttributesHolder* holder = PythonAttributes::get( entity );
+    if (not holder) return status;
+
+    PyErr_Fetch( &type, &value, &traceback );
+    status = PyObject_GenericSetAttr( (PyObject*)holder, attrName, attrValue );
+    if (status != 0) {
+      PyErr_Restore( type, value, traceback );
+    } else {
+      Py_XDECREF( type );
+      Py_XDECREF( value );
+      Py_XDECREF( traceback );
+    }
+
+    return status;
+  }
+
 
   PyMethodDef PyEntity_Methods[] =
-    { { "getCell"              , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
-    , { "destroy"              , (PyCFunction)PyEntity_destroy       , METH_NOARGS
-                               , "Destroy associated hurricane object, the python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getCell"         , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
+    , { "getId"           , (PyCFunction)PyEntity_getId         , METH_NOARGS , "Returns unique object (DBo) identifier." }
+    , { "isBound"         , (PyCFunction)PyEntity_isPyBound     , METH_NOARGS , "Returns true if the Entity is bounded to it's Hurricane counterpart." }    
+    , { "getBoundingBox"  , (PyCFunction)PyEntity_getBoundingBox, METH_NOARGS , "Returns entity bounding box." }    
+    , { "destroy"         , (PyCFunction)PyEntity_destroy       , METH_NOARGS
+                          , "Destroy associated hurricane object, the python object remains." }
+    , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
-
-  // +-------------------------------------------------------------+
-  // |                 "PyEntity" Object Methods                   |
-  // +-------------------------------------------------------------+
 
   DBoDeleteMethod(Entity)
   PyTypeObjectLinkPyType(Entity) 
 
+  IteratorNextMethod(Entity)
+  VectorMethods     (Entity)
+
 
 #else  // End of Python Module Code Part.
-
 
 // +=================================================================+
 // |              "PyEntity" Shared Library Code Part                |
@@ -105,50 +168,66 @@ extern "C" {
   // No PyEntity should ever be created, it's not a terminal object
   // of the class hierarchy. Instead create the real underlying PyObject.
 
-  PyObject* PyEntity_NEW ( Entity* entity ) {
-    if ( !entity ) {
-      PyErr_SetString ( HurricaneError, "Invalid Entity (bad occurrence)" );  \
+  PyObject* PyEntity_NEW ( Entity* entity )
+  {
+    if (not entity) {
+      PyErr_SetString( HurricaneError, "Invalid Entity (bad occurrence)" );
       return NULL;
     }
 
-    Cell* cell = dynamic_cast<Cell*>(entity);
-    if ( cell ) return PyCell_Link ( cell );
+    Cell* cell = dynamic_cast<Cell*>( entity );
+    if (cell) return PyCell_Link( cell );
 
-    Instance* instance = dynamic_cast<Instance*>(entity);
-    if ( instance ) return PyInstance_Link ( instance );
+    Instance* instance = dynamic_cast<Instance*>( entity );
+    if (instance) return PyInstance_Link( instance );
 
-    Reference* reference = dynamic_cast<Reference*>(entity);
-    if ( reference ) return PyReference_Link ( reference );
+    Reference* reference = dynamic_cast<Reference*>( entity );
+    if (reference) return PyReference_Link( reference );
 
-    RoutingPad* rp = dynamic_cast<RoutingPad*>(entity);
-    if ( rp ) return PyRoutingPad_Link ( rp );
+    RoutingPad* rp = dynamic_cast<RoutingPad*>( entity );
+    if (rp) return PyRoutingPad_Link( rp );
 
-    Horizontal* horizontal = dynamic_cast<Horizontal*>(entity);
-    if ( horizontal ) return PyHorizontal_Link ( horizontal );
+    Horizontal* horizontal = dynamic_cast<Horizontal*>( entity );
+    if (horizontal) return PyHorizontal_Link( horizontal );
     
-    Vertical* vertical = dynamic_cast<Vertical*>(entity);
-    if ( vertical ) return PyVertical_Link ( vertical );
+    Vertical* vertical = dynamic_cast<Vertical*>( entity );
+    if (vertical) return PyVertical_Link( vertical );
 
-    Pad* pad = dynamic_cast<Pad*>(entity);
-    if ( pad ) return PyPad_Link ( pad );
+    Pad* pad = dynamic_cast<Pad*>( entity );
+    if (pad) return PyPad_Link( pad );
     
-    Contact* contact = dynamic_cast<Contact*>(entity);
-    if ( contact ) return PyContact_Link ( contact );
+    Contact* contact = dynamic_cast<Contact*>( entity );
+    if (contact) return PyContact_Link( contact );
     
-    Plug* plug = dynamic_cast<Plug*>(entity);
-    if ( plug ) return PyPlug_Link ( plug );
+    Plug* plug = dynamic_cast<Plug*>( entity );
+    if (plug) return PyPlug_Link( plug );
     
-    Pin* pin = dynamic_cast<Pin*>(entity);
-    if ( pin ) return PyPin_Link ( pin );
+    Pin* pin = dynamic_cast<Pin*>( entity );
+    if (pin) return PyPin_Link( pin );
     
-    Net* net = dynamic_cast<Net*>(entity);
-    if ( net ) return PyNet_Link ( net );
+    Polygon* polygon = dynamic_cast<Polygon*>( entity );
+    if (polygon) return PyPolygon_Link( polygon );
+    
+    Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( entity );
+    if (rectilinear) return PyRectilinear_Link( rectilinear );
+    
+    Net* net = dynamic_cast<Net*>( entity );
+    if (net) return PyNet_Link( net );
     
     Py_RETURN_NONE;
   }
 
 
+  PyObject* PyEntity_Link ( Entity* entity )
+  { return PyEntity_NEW( entity ); }
+
+
   PyTypeRootObjectDefinitions(Entity)
+
+
+  PyTypeVectorObjectDefinitions(EntityVector)
+  PyTypeVectorObjectDefinitions(EntityVectorIterator)
+
 
 
   // ---------------------------------------------------------------

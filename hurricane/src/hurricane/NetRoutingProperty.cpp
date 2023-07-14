@@ -30,9 +30,8 @@ namespace Hurricane {
 
   DbU::Unit NetRoutingState::getSymValue( DbU::Unit v ) const
   {
-    if (v < _axis) {
-      return _axis + (_axis-v);
-    } else return _axis;
+    if (v < _axis) return _axis + (_axis-v);
+    return 2*_axis - v ;
   }
 
 
@@ -44,6 +43,7 @@ namespace Hurricane {
     s += (isFixed               ()) ? 'f' : '-';
     s += (isUnconnected         ()) ? 'u' : '-';
     s += (isManualGlobalRoute   ()) ? 'm' : '-';
+    s += (isManualDetailRoute   ()) ? 'd' : '-';
     s += (isAutomaticGlobalRoute()) ? 'a' : '-';
     s += (isSymmetric           ()) ? 'S' : '-';
     s += (isSymHorizontal       ()) ? 'h' : '-';
@@ -176,6 +176,7 @@ namespace Hurricane {
     flags |= (sflags[1] == 'f') ? NetRoutingState::Fixed                : 0;
     flags |= (sflags[2] == 'u') ? NetRoutingState::Unconnected          : 0;
     flags |= (sflags[3] == 'm') ? NetRoutingState::ManualGlobalRoute    : 0;
+    flags |= (sflags[3] == 'd') ? NetRoutingState::ManualDetailRoute    : 0;
     flags |= (sflags[4] == 'a') ? NetRoutingState::AutomaticGlobalRoute : 0;
     flags |= (sflags[5] == 'S') ? NetRoutingState::Symmetric            : 0;
     flags |= (sflags[6] == 'h') ? NetRoutingState::Horizontal           : 0;
@@ -226,7 +227,8 @@ namespace Hurricane {
 
   NetRoutingState* NetRoutingExtension::get ( const Net* net )
   {
-    if (net == _owner) return _cache;
+    if (not net) return NULL;
+    if ((net == _owner) and _cache) return _cache;
     _owner = net;
 
     Property* property = _owner->getProperty( NetRoutingProperty::getPropertyName() );

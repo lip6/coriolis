@@ -15,7 +15,7 @@
 
 
 #include <string>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
 #include "katana/Configuration.h"
@@ -40,19 +40,33 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
-    , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
-    , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
+    , _searchHalo          (Cfg::getParamInt   ("katana.searchHalo"           ,      1)->asInt())
+    , _longWireUpThreshold1(Cfg::getParamInt   ("katana.longWireUpThreshold1" ,     60)->asInt())
+    , _longWireUpReserve1  (Cfg::getParamDouble("katana.longWireUpReserve1"   ,    1.0)->asDouble())
+    , _hTracksReservedLocal(Cfg::getParamInt   ("katana.hTracksReservedLocal" ,      3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt   ("katana.vTracksReservedLocal" ,      3)->asInt())
+    , _termSatReservedLocal(Cfg::getParamInt   ("katana.termSatReservedLocal" ,      9)->asInt())
+    , _hTracksReservedMin  (Cfg::getParamInt   ("katana.hTracksReservedMin"   ,      1)->asInt())
+    , _vTracksReservedMin  (Cfg::getParamInt   ("katana.vTracksReservedMin"   ,      1)->asInt())
+    , _termSatThreshold    (Cfg::getParamInt   ("katana.termSatThreshold"     ,      8)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
+    , _ripupCost           (Cfg::getParamInt   ("katana.ripupCost"            ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt   ("katana.eventsLimit"          ,4000000)->asInt())
+    , _bloatOverloadAdd    (Cfg::getParamInt   ("katana.bloatOverloadAdd"     ,      4)->asInt())
+    , _trackFill           (Cfg::getParamInt   ("katana.trackFill"            ,      0)->asInt())
     , _flags               (0)
-    , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
+    , _profileEventCosts   (Cfg::getParamBool  ("katana.profileEventCosts"    ,false  )->asBool())
+    , _runRealignStage     (Cfg::getParamBool  ("katana.runRealignStage"      ,true   )->asBool())
+    , _disableStackedVias  (Cfg::getParamBool  ("katana.disableStackedVias"   ,false  )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
     _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
+
+    if (Cfg::getParamBool("katana.useGlobalEstimate"    ,false)->asBool()) _flags |= UseGlobalEstimate;
+    if (Cfg::getParamBool("katana.useStaticBloatProfile",true )->asBool()) _flags |= UseStaticBloatProfile;
 
     // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
     //   ostringstream paramName;
@@ -78,12 +92,24 @@ namespace Katana {
   Configuration::Configuration ( const Configuration& other )
     : Anabatic::Configuration(*other.base())
     , _postEventCb         (other._postEventCb)
+    , _searchHalo          (other._searchHalo)
+    , _longWireUpThreshold1(other._longWireUpThreshold1)
+    , _longWireUpReserve1  (other._longWireUpReserve1)
     , _hTracksReservedLocal(other._hTracksReservedLocal)
     , _vTracksReservedLocal(other._vTracksReservedLocal)
+    , _termSatReservedLocal(other._termSatReservedLocal)
+    , _hTracksReservedMin  (other._hTracksReservedMin)
+    , _vTracksReservedMin  (other._vTracksReservedMin)
+    , _termSatThreshold    (other._termSatThreshold)
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
+    , _bloatOverloadAdd    (other._bloatOverloadAdd)
+    , _trackFill           (other._trackFill)
+    , _flags               (other._flags)
     , _profileEventCosts   (other._profileEventCosts)
+    , _runRealignStage     (other._runRealignStage)
+    , _disableStackedVias  (other._disableStackedVias)
   {
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
@@ -132,6 +158,14 @@ namespace Katana {
   }
 
 
+  void  Configuration::setHTracksReservedMin ( uint32_t reserved )
+  { _hTracksReservedMin = reserved; }
+
+
+  void  Configuration::setVTracksReservedMin ( uint32_t reserved )
+  { _vTracksReservedMin = reserved; }
+
+
   uint32_t  Configuration::getRipupLimit ( uint32_t type ) const
   {
     if ( type >= RipupLimitsTableSize ) {
@@ -148,15 +182,30 @@ namespace Katana {
     if (not cmess1.enabled()) return;
 
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
-    cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;
-    cout << Dots::asULong("     - Events limit (iterations)"          ,_eventsLimit) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+    cout << Dots::asString("     - Net builder style"                  ,getNetBuilderStyle()) << endl;
+    cout << Dots::asString("     - Routing style"                      ,getRoutingStyle().asString()) << endl;
+    cout << Dots::asUInt  ("     - Dijkstra GR search halo"            ,getSearchHalo()) << endl;
+    cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
+    cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;
+    cout << Dots::asInt   ("     - GCell terminal(RP) saturate number" ,getSaturateRp()) << endl;
+    cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
+    cout << Dots::asUInt  ("     - Long wire threshold1 for move up"   ,_longWireUpThreshold1) << endl;
+    cout << Dots::asDouble("     - Long wire reserved1 for move up"    ,_longWireUpReserve1) << endl;
+    cout << Dots::asUInt  ("     - Edge min H reserved local"          ,_hTracksReservedMin) << endl;
+    cout << Dots::asUInt  ("     - Edge min V reserved local"          ,_vTracksReservedMin) << endl;
+    cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Edge max V reserved local"          ,_vTracksReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Terminal saturated edge capacity"   ,_termSatReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Terminal saturated GCell threshold" ,_termSatThreshold) << endl;
+    cout << Dots::asULong ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Bloat overload additional penalty"  ,_bloatOverloadAdd) << endl;
+    cout << Dots::asUInt  ("     - Fill every nth track"               ,_trackFill) << endl;
 
-    Super::print ( cell );
+    Super::print( cell );
   }
 
 
@@ -178,15 +227,20 @@ namespace Katana {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
+      record->add ( getSlot("_searchHalo"           ,_searchHalo           ) );
+      record->add ( getSlot("_longWireUpThreshold1" ,_longWireUpThreshold1 ) );
+      record->add ( getSlot("_longWireUpReserved1"  ,_longWireUpReserve1   ) );
       record->add ( getSlot("_hTracksReservedLocal" ,_hTracksReservedLocal ) );
       record->add ( getSlot("_vTracksReservedLocal" ,_vTracksReservedLocal ) );
+      record->add ( getSlot("_hTracksReservedMin"   ,_hTracksReservedMin   ) );
+      record->add ( getSlot("_vTracksReservedMin"   ,_vTracksReservedMin   ) );
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
-      record->add ( getSlot("_ripupLimits[StrapRipupLimit]"     ,_ripupLimits[StrapRipupLimit]     ) );
-      record->add ( getSlot("_ripupLimits[LocalRipupLimit]"     ,_ripupLimits[LocalRipupLimit]     ) );
-      record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"    ,_ripupLimits[GlobalRipupLimit]    ) );
-      record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]",_ripupLimits[LongGlobalRipupLimit]) );
+      record->add ( getSlot("_ripupLimits[StrapRipupLimit]"      ,_ripupLimits[StrapRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[LocalRipupLimit]"      ,_ripupLimits[LocalRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"     ,_ripupLimits[GlobalRipupLimit]    ) );
+      record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]" ,_ripupLimits[LongGlobalRipupLimit]) );
 
       // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
       //   ostringstream paramName;

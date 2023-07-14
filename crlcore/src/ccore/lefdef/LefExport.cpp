@@ -119,7 +119,7 @@ namespace {
 
 
          int                LefDriver::getUnits       () { return _units; }
-         double             LefDriver::toLefUnits     ( DbU::Unit u ) { return DbU::getLambda(u)/**getUnits()*/; }
+         double             LefDriver::toLefUnits     ( DbU::Unit u ) { return DbU::toMicrons(u)/**getUnits()*/; }
          DbU::Unit          LefDriver::getSliceHeight () { return _sliceHeight; }
          DbU::Unit          LefDriver::getPitchWidth  () { return _pitchWidth; }; 
   inline AllianceFramework* LefDriver::getFramework   () { return _framework; }
@@ -144,8 +144,12 @@ namespace {
       _pitchWidth  = cg->getPitch       ();
     }
 
+    _units = DbU::toGrid(DbU::fromMicrons(1.0));
+
     _status = lefwInitCbk ( _lefStream );
     if ( _status != 0 ) return;
+
+
 
     lefwSetVersionCbk           ( _versionCbk           );
     lefwSetBusBitCharsCbk       ( _busBitCharsCbk       );
@@ -207,7 +211,7 @@ namespace {
     _status = lefwLayerRoutingPitch ( toLefUnits(lg->getPitch()) );
     if ( _status != 0 ) return _status;
 
-    _status = lefwLayerRoutingSpacing ( toLefUnits(lg->getPitch()-lg->getWireWidth()-DbU::lambda(1.0)) );
+    _status = lefwLayerRoutingSpacing ( toLefUnits(lg->getPitch()-lg->getWireWidth()/*-DbU::lambda(1.0)*/) );
     if ( _status != 0 ) return _status;
  
     return _status = lefwEndLayerRouting ( layerName.c_str() );
@@ -477,7 +481,13 @@ namespace {
                        );
     if ( status != 0 ) return driver->checkStatus(status);
 
-    return driver->checkStatus ( lefwEndUnits() );
+    status = lefwEndUnits();
+
+    status = lefwManufacturingGrid ( LefDriver::toLefUnits(DbU::fromGrid(1.0)) );
+
+    if ( status != 0 ) return driver->checkStatus(status);
+
+    return driver->checkStatus ( status );
   }
 
 
@@ -491,7 +501,7 @@ namespace {
     int status = 0;
     for ( size_t ilayer=0 ; ilayer<rg.size() ; ++ilayer ) {
       if ( ilayer > 0 ) {
-        status = driver->_driveCutLayer ( technology->getCutBelow(rg[ilayer]->getLayer()) );
+        status = driver->_driveCutLayer ( technology->getCutBelow(rg[ilayer]->getLayer(), false) );
         if ( status != 0 ) return driver->checkStatus(status);
       }
 
@@ -562,14 +572,7 @@ namespace {
 
   int  LefDriver::_manufacturingGridCbk ( lefwCallbackType_e, lefiUserData udata )
   {
-#if 1
-  // The driver puts it before UNITS, which seems to displease Cadence Encounter.
-  // So, as long as it doesn't prevent Encounter to works, disable it. 
-    LefDriver* driver = (LefDriver*)udata;
-    return driver->checkStatus ( lefwManufacturingGrid ( LefDriver::toLefUnits(DbU::fromLambda(0.5)) ) );
-#else
     return 0;
-#endif
   }
 
 
@@ -604,9 +607,11 @@ namespace {
     int status = 0;
     for ( size_t ilayer=1 ; ilayer<rg.size() ; ++ilayer ) {
       const Layer* topLayer    = rg[ilayer]->getLayer();
-      const Layer* bottomLayer = topLayer->getMetalBelow(); 
-      const Layer* cutLayer    = topLayer->getCutBelow(); 
+      const Layer* bottomLayer = topLayer->getMetalBelow(false); 
+      const Layer* cutLayer    = topLayer->getCutBelow(false); 
       const Layer* viaLayer    = technology->getViaBetween ( topLayer, bottomLayer );
+
+      if ( !viaLayer ) continue;
 
       status = lefwStartVia ( getString(viaLayer->getName()).c_str(), "DEFAULT" );
       if ( status != 0 ) return driver->checkStatus(status);
@@ -710,7 +715,7 @@ namespace CRL {
     if ( cell != NULL ) {
       libraryName = getString(cell->getName()) + "_export";
 
-      for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+      for ( Occurrence occurrence : cell->getTerminalNetlistInstanceOccurrences() ) {
         Instance*   instance = static_cast<Instance*>(occurrence.getEntity());
         cells.insert ( instance->getMasterCell() );
       }

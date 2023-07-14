@@ -14,7 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-# include <iomanip>
+#include <fstream>
+#include <iomanip>
 using namespace std;
 
 #include "hurricane/Initializer.h"
@@ -56,6 +57,7 @@ namespace CRL {
     if (_cell) {
       if (isPad ()) _cell->setPad ( true );
       if (isFeed()) _cell->setFeed( true );
+      _library = _cell->getLibrary();
     }
     return _cell;
   }
@@ -75,12 +77,12 @@ namespace CRL {
   {
     string  s;
 
-    s += (isFlattenLeaf()) ? 'C' : '-';
-    s += (isFeed()       ) ? 'F' : '-';
-    s += (isPad()        ) ? 'P' : '-';
-    s += (isGds()        ) ? 'G' : '-';
-    s += (isDelete()     ) ? 'D' : '-';
-    s += (isInMemory()   ) ? 'm' : '-';
+    s += (isTerminalNetlist()) ? 'C' : '-';
+    s += (isFeed()           ) ? 'F' : '-';
+    s += (isPad()            ) ? 'P' : '-';
+    s += (isGds()            ) ? 'G' : '-';
+    s += (isDelete()         ) ? 'D' : '-';
+    s += (isInMemory()       ) ? 'm' : '-';
 
     return s;
   }
@@ -162,12 +164,12 @@ namespace CRL {
     if (state->getLibrary() != library) state->setLibrary( library );
 
     state->setDepth( depth );
-    state->setFlattenLeaf( (sflags[0] == 'C') );
-    state->setFeed(        (sflags[1] == 'F') );
-    state->setPad(         (sflags[2] == 'P') );
-    state->setGds(         (sflags[3] == 'G') );
-    state->setDelete(      (sflags[4] == 'D') );
-    state->setInMemory(    (sflags[5] == 'm') );
+    state->setTerminalNetlist( (sflags[0] == 'C') );
+    state->setFeed(            (sflags[1] == 'F') );
+    state->setPad(             (sflags[2] == 'P') );
+    state->setGds(             (sflags[3] == 'G') );
+    state->setDelete(          (sflags[4] == 'D') );
+    state->setInMemory(        (sflags[5] == 'm') );
 
     update( stack, state );
   }
@@ -252,10 +254,10 @@ namespace CRL {
   
     for ( ; start<s.size() ; start++ ) {
       switch ( s[start] ) {
-        case 'C': state->setFlattenLeaf ( true ); break;
-        case 'F': state->setFeed        ( true ); break;
-        case 'G': state->setGds         ( true ); break;
-        case 'D': state->setDelete      ( true ); break;
+        case 'C': state->setTerminalNetlist ( true ); break;
+        case 'F': state->setFeed            ( true ); break;
+        case 'G': state->setGds             ( true ); break;
+        case 'D': state->setDelete          ( true ); break;
         default: return false;
       }
     }
@@ -295,11 +297,27 @@ namespace CRL {
   }
 
 
+  void  Catalog::saveToFile ( const string& path, Library* library )
+  {
+    ofstream of ( path, ios::out|ios::trunc );
+    for ( auto entry : _states ) {
+      State* state = entry.second;
+      if (state->getLibrary() != library) continue;
+
+      if (state->isTerminalNetlist()) of << setw(20) << left << entry.first << "C\n";
+      if (state->isFeed()           ) of << setw(20) << left << entry.first << "F\n";
+      if (state->isGds()            ) of << setw(20) << left << entry.first << "G\n";
+    }
+    of.close();
+  }
+
+
   string  Catalog::_getPrint () const
   {
     map<Name,State*>::const_iterator  it;
     ostringstream  s;
 
+    s << "Catalog contents:" << endl;
     for ( it=_states.begin() ; it!=_states.end() ; it++ ) {
       s << left << setw(30) << getString(it->first) << getString(it->second) << endl;
     }

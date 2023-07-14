@@ -1,33 +1,33 @@
-\hypertarget{classHurricane_1_1DiffusionLayer}{}\section{Hurricane\+:\+:Diffusion\+Layer Class Reference}
-\label{classHurricane_1_1DiffusionLayer}\index{Hurricane\+::\+Diffusion\+Layer@{Hurricane\+::\+Diffusion\+Layer}}
+\hypertarget{classHurricane_1_1DiffusionLayer}{}\doxysection{Hurricane\+::Diffusion\+Layer Class Reference}
+\label{classHurricane_1_1DiffusionLayer}\index{Hurricane::DiffusionLayer@{Hurricane::DiffusionLayer}}
 
 
-\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Diffusion\+Layer\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Diffusion\+Layer\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=208pt]{classHurricane_1_1DiffusionLayer__inherit__graph}
+\includegraphics[width=206pt]{classHurricane_1_1DiffusionLayer__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Static Public Member Functions}
+\doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 static \mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1DiffusionLayer_a91b5f8a20b005c20b4b9b9080250939e}{create}} (\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$technology, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$active\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$diffusion\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$well\+Layer)
 \end{DoxyCompactItemize}
-\subsection*{Additional Inherited Members}
+\doxysubsection*{Additional Inherited Members}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} description ({\bfseries{API}}) 
 
 For a more complete description of the Layers objects, please refer to \mbox{\hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}}.
 
-\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} is a symbolic layer that contains two or three layers, an active layer, a diffusion layer and an optional W\+E\+LL layer.
+\mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} is a symbolic layer that contains two or three layers, an active layer, a diffusion layer and an optional WELL layer.
 
 The accessors functions\+: 
 \begin{DoxyItemize}
@@ -38,14 +38,14 @@ The accessors functions\+:
 
 Only extention cap \& extention width are used here. Enclosure is not used. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1DiffusionLayer_a91b5f8a20b005c20b4b9b9080250939e}\label{classHurricane_1_1DiffusionLayer_a91b5f8a20b005c20b4b9b9080250939e}} 
-\index{Hurricane\+::\+Diffusion\+Layer@{Hurricane\+::\+Diffusion\+Layer}!create@{create}}
-\index{create@{create}!Hurricane\+::\+Diffusion\+Layer@{Hurricane\+::\+Diffusion\+Layer}}
-\subsubsection{\texorpdfstring{create()}{create()}}
+\index{Hurricane::DiffusionLayer@{Hurricane::DiffusionLayer}!create@{create}}
+\index{create@{create}!Hurricane::DiffusionLayer@{Hurricane::DiffusionLayer}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1DiffusionLayer}{Diffusion\+Layer}} $\ast$ Hurricane\+::\+Diffusion\+Layer\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$}]{technology,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{active\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{diffusion\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{well\+Layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-creates and returns a new diffusion layer named {\ttfamily $<$name$>$}, composed of active \& diffusion \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} and an optional W\+E\+LL \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}}. A N\+U\+LL value indicates that no N\+W\+E\+LL is used.
+creates and returns a new diffusion layer named {\ttfamily $<$name$>$}, composed of active \& diffusion \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} and an optional WELL \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}}. A NULL value indicates that no NWELL is used.
 
 \begin{DoxyParagraph}{Caution\+: Throws an exception if the technology is null, if the name is }
 empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 

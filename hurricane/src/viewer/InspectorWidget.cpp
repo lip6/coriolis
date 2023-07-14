@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./InspectorWidget.cpp"                    |
 // +-----------------------------------------------------------------+
@@ -24,7 +24,6 @@
 #include <QKeyEvent>
 #include <QGroupBox>
 #include <QVBoxLayout>
-
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/RecordModel.h"
 #include "hurricane/viewer/InspectorWidget.h"

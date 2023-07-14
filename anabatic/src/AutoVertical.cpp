@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
 #include "hurricane/ViaLayer.h"
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
@@ -29,8 +30,10 @@ namespace Anabatic {
 
   using std::min;
   using std::max;
-  using Hurricane::Error;
+  using std::abs;
   using Hurricane::Bug;
+  using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::ViaLayer;
 
 
@@ -41,13 +44,11 @@ namespace Anabatic {
   Segment*   AutoVertical::base         ()       { return _vertical; }
   Segment*   AutoVertical::base         () const { return _vertical; }
   Vertical*  AutoVertical::getVertical  ()       { return _vertical; }
-  DbU::Unit  AutoVertical::getSourceU   () const { return _vertical->getSourceY(); }
-  DbU::Unit  AutoVertical::getTargetU   () const { return _vertical->getTargetY(); }
+  DbU::Unit  AutoVertical::getSourceU   () const { return _vertical->getSource()->getY(); }
+  DbU::Unit  AutoVertical::getTargetU   () const { return _vertical->getTarget()->getY(); }
   DbU::Unit  AutoVertical::getDuSource  () const { return _vertical->getDySource(); }
   DbU::Unit  AutoVertical::getDuTarget  () const { return _vertical->getDyTarget(); }
   Interval   AutoVertical::getSpanU     () const { return Interval(_vertical->getSourceY(),_vertical->getTargetY()); }
-  void       AutoVertical::setDuSource  ( DbU::Unit du ) { _vertical->setDySource(du); }
-  void       AutoVertical::setDuTarget  ( DbU::Unit du ) { _vertical->setDyTarget(du); }
   string     AutoVertical::_getTypeName () const { return "AutoVertical"; }
 
 
@@ -114,6 +115,30 @@ namespace Anabatic {
       cdebug_log(149,0) << "~AutoVertical() - " << endl;
       _vertical->destroy ();
     }
+  }
+
+
+  void  AutoVertical::setDuSource ( DbU::Unit du )
+  {
+    _vertical->setDySource(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoVertical::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
+  }
+
+  
+  void  AutoVertical::setDuTarget ( DbU::Unit du )
+  {
+    _vertical->setDyTarget(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoVertical::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
   }
 
 
@@ -218,13 +243,15 @@ namespace Anabatic {
 
       if (not gcell) {
         success = false;
-        cerr << Error( "AutoVertical::getGCells() : NULL GCell under %s\n"
-                       "        begin:%s\n"
-                       "        end:  %s"
-                     , getString(this).c_str()
-                     , getString(getAutoSource()->getGCell()).c_str()
-                     , getString(getAutoTarget()->getGCell()).c_str()
-                     ) << endl;
+        if (not isCreated()) {
+          cerr << Error( "AutoVertical::getGCells() : NULL GCell under %s\n"
+                         "        begin:%s\n"
+                         "        end:  %s"
+                       , getString(this).c_str()
+                       , getString(getAutoSource()->getGCell()).c_str()
+                       , getString(getAutoTarget()->getGCell()).c_str()
+                       ) << endl;
+        }
         break;
       }
 
@@ -239,17 +266,21 @@ namespace Anabatic {
   {
     cdebug_tabw(149,-1);
 
+    if (getAutoSource()->isOnPin() or getAutoTarget()->isOnPin()) { cdebug_tabw(149,-1); return false; }
+
     Interval sourceSide        = getAutoSource()->getGCell()->getSide( Flags::Horizontal );
     Interval targetSide        = getAutoTarget()->getGCell()->getSide( Flags::Horizontal );
     Interval sourceConstraints = Interval(getAutoSource()->getCBXMin(),getAutoSource()->getCBXMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBXMin(),getAutoTarget()->getCBXMax());
+    bool     sourceGoStraight  = getAutoSource()->getGCell()->isGoStraight();
+    bool     targetGoStraight  = getAutoTarget()->getGCell()->isGoStraight();
 
   // Expand by a tiny amount for the "contains" to work for sure.
     sourceConstraints.inflate( 1 );
     targetConstraints.inflate( 1 );
 
-    if (not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
-    if (not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
+    if (not sourceGoStraight and not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
+    if (not targetGoStraight and not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
 
     cdebug_tabw(149,-1);
     return false;
@@ -262,13 +293,13 @@ namespace Anabatic {
 
     if (not isDrag()) {
       if (   not isStrongTerminal()
-         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
+         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
         { cdebug_tabw(149,-1); return false; }
     }
 
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
-    cdebug_log(149,0) << "test:" << (getLength() < getPitch()*5) << endl;
-    cdebug_log(149,0) << "length:" << DbU::getValueString(getLength()) << endl;
+    cdebug_log(149,0) << "test:" << (getAnchoredLength() < getPitch()*5) << endl;
+    cdebug_log(149,0) << "length:" << DbU::getValueString(getAnchoredLength()) << endl;
 
     bool         success         = false;
     bool         sourceSlackened = false;
@@ -399,8 +430,8 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
-    _targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
+    _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
+    _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
   }
 
 
@@ -420,8 +451,8 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
-    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
+    DbU::Unit sourcePosition = _vertical->getSource()->getY() - getExtensionCap(Flags::Source);
+    DbU::Unit targetPosition = _vertical->getTarget()->getY() + getExtensionCap(Flags::Target);
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -705,16 +736,15 @@ namespace Anabatic {
     bool    upLayer = true;
 
     if (Session::getRoutingGauge()->isTwoMetals()) {
-      upLayer = (depth == 0);
+      upLayer = (Session::getRoutingGauge()->isVH());
     } else if (Session::getRoutingGauge()->isVH()) {
       upLayer = (depth < 2);
     } else {
       upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     }
 
-    size_t       doglegDepth  = depth + ((upLayer)?1:-1);
-    Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer ( depth + ((upLayer)?0:-1) );
-    const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer ( doglegDepth );
+    size_t  doglegDepth  = depth + ((upLayer)?1:-1);
+    Layer*  contactLayer = Session::getRoutingGauge()->getContactLayer ( depth + ((upLayer)?0:-1) );
 
     Session::dogleg( this );
     targetDetach();
@@ -741,30 +771,55 @@ namespace Anabatic {
     segment2->setFlags( (isSlackened()?SegSlackened:0) );
     Session::dogleg( segment2 );
 
-    if (isSourceTerminal()) {
-      segment1->setFlags( SegWeakTerminal1 );
-      segment2->setFlags( SegWeakTerminal1 );
+    if (autoSource->isTerminal() and autoTarget->isTerminal()) {
+      dlContact1->setFlags  ( CntWeakTerminal );
+      dlContact2->setFlags  ( CntWeakTerminal );
+
+      if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
+      if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
+    } else if (autoSource->isTerminal()) {
       autoTarget->unsetFlags( CntWeakTerminal );
       dlContact1->setFlags  ( CntWeakTerminal );
-      if (autoTarget->getGCell() == doglegGCell)
-        dlContact1->migrateConstraintBox( autoTarget );
-    } else if (isTargetTerminal()) {
+      if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
+    } else if (autoTarget->isTerminal()) {
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
-      segment1->setFlags( SegWeakTerminal1 );
-      segment2->setFlags( SegTargetTerminal );
       autoSource->unsetFlags( CntWeakTerminal );
       dlContact2->setFlags  ( CntWeakTerminal );
-      if (autoSource->getGCell() == doglegGCell)
-        dlContact2->migrateConstraintBox( autoSource );
-    } else if (isWeakTerminal()) {
+      if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
+    } else  if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
     }
 
+    // if (isSourceTerminal()) {
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegWeakTerminal1 );
+    //   autoTarget->unsetFlags( CntWeakTerminal );
+    //   dlContact1->setFlags  ( CntWeakTerminal );
+    //   if (autoTarget->getGCell() == doglegGCell)
+    //     dlContact1->migrateConstraintBox( autoTarget );
+    // } else if (isTargetTerminal()) {
+    //   unsetFlags( SegTargetTerminal );
+    //   setFlags( SegWeakTerminal1 );
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegTargetTerminal );
+    //   autoSource->unsetFlags( CntWeakTerminal );
+    //   dlContact2->setFlags  ( CntWeakTerminal );
+    //   if (autoSource->getGCell() == doglegGCell)
+    //     dlContact2->migrateConstraintBox( autoSource );
+    // } else if (isWeakTerminal()) {
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegWeakTerminal1 );
+    // }
+
     if (isAnalog()) {
       segment1->setFlags( SegAnalog );
       segment2->setFlags( SegAnalog );
+    }
+    if (isNoMoveUp()) {
+      segment1->setFlags( SegNoMoveUp );
+      segment2->setFlags( SegNoMoveUp );
     }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
@@ -781,12 +836,15 @@ namespace Anabatic {
     updateNativeConstraints();
     segment2->updateNativeConstraints();
 
+    if (          isLocal()) autoSource->setFlags( AutoContactFlag::CntHDogleg );
+    if (segment2->isLocal()) autoTarget->setFlags( AutoContactFlag::CntHDogleg );
+
     if (autoTarget->canDrag() and not autoSource->canDrag()) {
-      if (not autoTarget->getGCell()->isDevice()) {
+      if (not autoTarget->getGCell()->isDevice() and (segment1->getGCell() == autoTarget->getGCell())) {
         Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Vertical);
         segment1->mergeUserConstraints( dragConstraints );
 
-        cdebug_log(149,0) << "Perpandical has drag constraints: " << dragConstraints << endl;
+        cdebug_log(149,0) << "Perpandicular has drag constraints: " << dragConstraints << endl;
       }
     }
 

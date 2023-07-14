@@ -1,0 +1,563 @@
+\hypertarget{classKatabatic_1_1KatabaticEngine}{}\section{Katabatic\+Engine Class Reference}
+\label{classKatabatic_1_1KatabaticEngine}\index{Katabatic\+Engine@{Katabatic\+Engine}}
+
+
+The \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} Tool.  
+
+
+
+
+Inheritance diagram for Katabatic\+Engine\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=176pt]{classKatabatic_1_1KatabaticEngine__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef set$<$ \textbf{ Net} $\ast$, Net\+Compare\+By\+Name $>$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}{Net\+Set}}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a83a7793270669d2669222eac2caa7f93}{is\+G\+Metal}} (const \textbf{ Layer} $\ast$) const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ab6b7bc2b47ead460ac00a531451dc9cf}{is\+Chip}} () const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a0141bff96a4778a806d4eba5d256c32a}{is\+In\+Demo\+Mode}} () const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a9dec164d53fdee77f0f008133ecbd97f}{do\+Warn\+On\+G\+Cell\+Overload}} () const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a6bb0ac3c0ec9720a3519d43491939f97}{do\+Destroy\+Base\+Contact}} () const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a54d58d645317d43371f6b0bec1815e6b}{do\+Destroy\+Base\+Segment}} () const
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a867e6dbfea5e5895a01ef71c66398b26}{do\+Destroy\+Tool}} () const
+\item 
+virtual const \textbf{ Name} \& \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a9e76ae5cee9320b65251387419c9432b}{get\+Name}} () const
+\item 
+\mbox{\hyperlink{namespaceKatabatic_ab9e409db5feff0bdbc85e90e2a029cda}{Engine\+State}} \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a878e8b694aa243a767c2f232799ec9b3}{get\+State}} () const
+\item 
+unsigned int \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a7132cd3f405dc24b3897b4396c8ecc92}{get\+Flags}} (unsigned int mask) const
+\item 
+Configuration $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_adccd6ceec2c68234d3a824ad7ae3954e}{get\+Katabatic\+Configuration}} ()
+\item 
+virtual Configuration $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a9a7fbadfe526875680f698c76adfb128}{get\+Configuration}} ()
+\item 
+\textbf{ Routing\+Gauge} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a171ed6fac01ac5067d4f1b770cc419cf}{get\+Routing\+Gauge}} () const
+\item 
+\textbf{ Routing\+Layer\+Gauge} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a0b7c308ac7fccc21dd0401c6ce70a586}{get\+Layer\+Gauge}} (size\+\_\+t depth) const
+\item 
+const \textbf{ Layer} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_afa7ea850397e87889733ac959833b49f}{get\+Routing\+Layer}} (size\+\_\+t depth) const
+\item 
+\textbf{ Layer} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a4c4549515aef37e81f2cc6537b931edc}{get\+Contact\+Layer}} (size\+\_\+t depth) const
+\item 
+\mbox{\hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a9a56286f633fddd702d66563de457a4a}{get\+G\+Cell\+Grid}} () const
+\item 
+const \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}{Net\+Set}} \& \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a8f661928f8f709552c8486d68ac33c55}{get\+Routing\+Nets}} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a094b479155d3f30ec54e252c35dcffa3}{get\+Global\+Threshold}} () const
+\item 
+float \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a44d2c1fbd97dd09b102b461e906367a0}{get\+Saturate\+Ratio}} () const
+\item 
+size\+\_\+t \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a61977cc1fd981e7f1c6125189ed20509}{get\+Saturate\+Rp}} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ad9072cfa6215c92c9a9842270cf677c5}{get\+Extension\+Cap}} () const
+\item 
+const \mbox{\hyperlink{classKatabatic_1_1ChipTools}{Chip\+Tools}} \& \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a423f5f2214c8b9fe73da9a86b6f6d9b9}{get\+Chip\+Tools}} () const
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_aecbe8bdcc61024a7539de3ea932c5e06}{xml\+Write\+G\+Cell\+Grid}} (ostream \&)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a78394ac380a0fa462f268dcc2becc50e}{xml\+Write\+G\+Cell\+Grid}} (const string \&)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a2391b9bfcb773398b9661b5ac0ef1a30}{set\+State}} (\mbox{\hyperlink{namespaceKatabatic_ab9e409db5feff0bdbc85e90e2a029cda}{Engine\+State}} state)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_aeb14f94914af58657a0dc2f50ec98df5}{set\+Flags}} (unsigned int)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a1a6fac115cb81db48e3ac9ffa0721bb5}{unset\+Flags}} (unsigned int)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a1bd1e0104b73d4c558b0e121002796a6}{set\+Global\+Threshold}} (\textbf{ Db\+U\+::\+Unit})
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ac2b780e06975ce8a0d6ca96f20cb971f}{set\+Saturate\+Ratio}} (float)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ade227e828b8c8fbfce478e353ca3ca59}{set\+Saturate\+Rp}} (size\+\_\+t)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a2ea4b4fc379fb85a13890db451cbf93a}{print\+Measures}} (const string \&) const
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a1e9bb62be35c6a415a1950c72c1964ef}{refresh}} (unsigned int flags=\mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5}{Kb\+Open\+Session}})
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a1b7d8ed09a198f7afd6e3ac911f6eb37}{create\+Detailed\+Grid}} ()
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_aaba3b9450c85634131146fb507089f2d}{make\+Power\+Rails}} ()
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a583925cfe4bbadcc1c24fe619debce09}{load\+Global\+Routing}} (unsigned int method)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a145b36b18fc9149980c5d6bd4bd10e0d}{slacken\+Border}} (\textbf{ Box} bb, \textbf{ Layer\+::\+Mask}, unsigned int flags)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ac40754d4a9bd0cf327b5fa088e993897}{slacken\+Block\+Ios}} (\textbf{ Instance} $\ast$core)
+\item 
+bool \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ac934a049003c9d5d2380f44ff393e458}{move\+Up\+Net\+Trunk}} (\mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$, set$<$ \textbf{ Net} $\ast$$>$ \&global\+Nets, \mbox{\hyperlink{classKatabatic_1_1GCell_aacb1c215b203bfba5729f135b3221d40}{G\+Cell\+::\+Set\+Index}} \&invalidateds)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a77833ce938a430785ba869eedbc2300c}{layer\+Assign}} (unsigned int method)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a6957a5830a4d6f1b2daf83a7d98df601}{compute\+Net\+Constraints}} (\textbf{ Net} $\ast$)
+\item 
+void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ad6b9f7d94ee4a88f12c485e48d1e644a}{to\+Optimals}} (\textbf{ Net} $\ast$)
+\item 
+virtual void \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a468eddb683c04cfeea1c5124a39e1f86}{finalize\+Layout}} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_ab877a64c314024602cfb04631ebfbfc4}{create}} (\textbf{ Cell} $\ast$)
+\item 
+static const \textbf{ Name} \& \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a802eee6265da8d536db52d412f8a4afd}{static\+Get\+Name}} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} Tool. 
+
+\hypertarget{classKatabatic_1_1KatabaticEngine_secEngineStates}{}\subsection{States of Katabatic\+Engine}\label{classKatabatic_1_1KatabaticEngine_secEngineStates}
+During it\textquotesingle{}s lifecycle, the engine go through a serie of states. It only can go forward between states.
+\begin{DoxyItemize}
+\item {\bfseries Engine\+Creation} \+: just after C++ object creation until the global routing is loaded.
+\item {\bfseries Engine\+Global\+Loaded} \+: {\itshape after} the global routing has been done. This state must be set by an external tool, \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} cannot know by itself when the global routing has been done (see Kite).
+\item {\bfseries Engine\+Active} \+: {\itshape after} the global routing has been converted into the \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} data structure. At this point the tool is ready to run.
+\item {\bfseries Engine\+Driving} \+: {\itshape during} the stage of stripping all the decorations the tool has added over the Hurricane data structure (mostly\+: \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} \& \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}}).
+\item {\bfseries Engine\+Gutted} \+: {\itshape after} the tool decorations have been removed. The tool is now useless and can only be destroyed.
+\item {\bfseries Engine\+Pre\+Destroying} \+: this special state is reached when going straight from Engine\+Active to the destructor, that is, skipping the Engine\+Driving state. That means we {\itshape do not} want to save whatever routing has been done. In that case, not only the tool decorations are destroyeds, but also the Hurricane data-\/structures they relies on (Contact, Segments).
+\end{DoxyItemize}\hypertarget{classKatabatic_1_1KatabaticEngine_secEngineImpl}{}\subsection{Katabatic\+Engine Implementation Details}\label{classKatabatic_1_1KatabaticEngine_secEngineImpl}
+Due to the size of the code and the fact that the main body of some methods do not need to be present in the class, the implementation of \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} is split in several files. The list below summarize them\+:
+\begin{DoxyItemize}
+\item {\ttfamily Katabatic\+Engine.\+cpp} \+: the core of the class, methods that really need their bodies here.
+\item {\ttfamily Power\+Rails.\+cpp} \+: utilities to construct an abstract from all the power rails through the hierarchy.
+\item {\ttfamily Layer\+Assign.\+cpp} \+: layer assignement related methods and helpers.
+\item {\ttfamily Load\+Gr\+By\+Net.\+cpp} \+: global routing loader, transform global routing into \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} data-\/structure.
+\item {\ttfamily Net\+Constraints.\+cpp} \+: compute the topological constraints of all Auto\+Segment/\+Auto\+Contact of a Net.
+\item {\ttfamily Net\+Optimals.\+cpp} \+: compute the optimal positions of all \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} of a Net. 
+\end{DoxyItemize}
+
+\subsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}\label{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!Net\+Set@{Net\+Set}}
+\index{Net\+Set@{Net\+Set}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{Net\+Set}{NetSet}}
+{\footnotesize\ttfamily set$<$ \textbf{ Net} $\ast$, Net\+Compare\+By\+Name $>$ \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}{Net\+Set}}}
+
+Set of Net to be routed, alphabetically sorteds. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ab877a64c314024602cfb04631ebfbfc4}\label{classKatabatic_1_1KatabaticEngine_ab877a64c314024602cfb04631ebfbfc4}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!create@{create}}
+\index{create@{create}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} $\ast$ create (\begin{DoxyParamCaption}\item[{\textbf{ Cell} $\ast$}]{cell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Create a \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} on {\ttfamily cell}. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a802eee6265da8d536db52d412f8a4afd}\label{classKatabatic_1_1KatabaticEngine_a802eee6265da8d536db52d412f8a4afd}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!static\+Get\+Name@{static\+Get\+Name}}
+\index{static\+Get\+Name@{static\+Get\+Name}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{static\+Get\+Name()}{staticGetName()}}
+{\footnotesize\ttfamily const \textbf{ Name} \& static\+Get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} The unique string identifier for the \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} class of Tool\+Engine. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a83a7793270669d2669222eac2caa7f93}\label{classKatabatic_1_1KatabaticEngine_a83a7793270669d2669222eac2caa7f93}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!is\+G\+Metal@{is\+G\+Metal}}
+\index{is\+G\+Metal@{is\+G\+Metal}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{is\+G\+Metal()}{isGMetal()}}
+{\footnotesize\ttfamily bool is\+G\+Metal (\begin{DoxyParamCaption}\item[{const \textbf{ Layer} $\ast$}]{layer }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if {\ttfamily layer} is one of the special (fake) metals used to build the global routing. 
+
+Referenced by Auto\+Segment\+::create().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ab6b7bc2b47ead460ac00a531451dc9cf}\label{classKatabatic_1_1KatabaticEngine_ab6b7bc2b47ead460ac00a531451dc9cf}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!is\+Chip@{is\+Chip}}
+\index{is\+Chip@{is\+Chip}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{is\+Chip()}{isChip()}}
+{\footnotesize\ttfamily bool is\+Chip (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the hierarchy top-\/level of the Cell matches the one of a complete design (i.\+e. pads and one core instance). 
+
+References Chip\+Tools\+::is\+Chip().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a0141bff96a4778a806d4eba5d256c32a}\label{classKatabatic_1_1KatabaticEngine_a0141bff96a4778a806d4eba5d256c32a}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!is\+In\+Demo\+Mode@{is\+In\+Demo\+Mode}}
+\index{is\+In\+Demo\+Mode@{is\+In\+Demo\+Mode}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{is\+In\+Demo\+Mode()}{isInDemoMode()}}
+{\footnotesize\ttfamily bool is\+In\+Demo\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the tool is in demo mode, that is suppress almost all warning and debug messages. 
+
+Referenced by Session\+::is\+In\+Demo\+Mode().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a9dec164d53fdee77f0f008133ecbd97f}\label{classKatabatic_1_1KatabaticEngine_a9dec164d53fdee77f0f008133ecbd97f}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!do\+Warn\+On\+G\+Cell\+Overload@{do\+Warn\+On\+G\+Cell\+Overload}}
+\index{do\+Warn\+On\+G\+Cell\+Overload@{do\+Warn\+On\+G\+Cell\+Overload}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{do\+Warn\+On\+G\+Cell\+Overload()}{doWarnOnGCellOverload()}}
+{\footnotesize\ttfamily bool do\+Warn\+On\+G\+Cell\+Overload (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the tool should issue a warning when a \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} is overloaded (overload could be transient). 
+
+Referenced by Session\+::do\+Warn\+G\+Cell\+Overload().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a6bb0ac3c0ec9720a3519d43491939f97}\label{classKatabatic_1_1KatabaticEngine_a6bb0ac3c0ec9720a3519d43491939f97}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!do\+Destroy\+Base\+Contact@{do\+Destroy\+Base\+Contact}}
+\index{do\+Destroy\+Base\+Contact@{do\+Destroy\+Base\+Contact}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{do\+Destroy\+Base\+Contact()}{doDestroyBaseContact()}}
+{\footnotesize\ttfamily bool do\+Destroy\+Base\+Contact (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the Engine\+Destroy\+Base\+Contact is set, meaning that when an \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} is destroyed, the Contact it decorates is destroyed altogether. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a54d58d645317d43371f6b0bec1815e6b}\label{classKatabatic_1_1KatabaticEngine_a54d58d645317d43371f6b0bec1815e6b}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!do\+Destroy\+Base\+Segment@{do\+Destroy\+Base\+Segment}}
+\index{do\+Destroy\+Base\+Segment@{do\+Destroy\+Base\+Segment}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{do\+Destroy\+Base\+Segment()}{doDestroyBaseSegment()}}
+{\footnotesize\ttfamily bool do\+Destroy\+Base\+Segment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the Engine\+Destroy\+Base\+Segment is set, meaning that when an \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} is destroyed, the Segment it decorates is destroyed altogether. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a867e6dbfea5e5895a01ef71c66398b26}\label{classKatabatic_1_1KatabaticEngine_a867e6dbfea5e5895a01ef71c66398b26}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!do\+Destroy\+Tool@{do\+Destroy\+Tool}}
+\index{do\+Destroy\+Tool@{do\+Destroy\+Tool}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{do\+Destroy\+Tool()}{doDestroyTool()}}
+{\footnotesize\ttfamily bool do\+Destroy\+Tool (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the tool state is beyond Engine\+State\+Gutted, that is, only waits for {\ttfamily \textbf{ destroy()}} to be called. 
+
+References Katabatic\+::\+Engine\+Gutted.
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a9e76ae5cee9320b65251387419c9432b}\label{classKatabatic_1_1KatabaticEngine_a9e76ae5cee9320b65251387419c9432b}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \textbf{ Name} \& get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The unique string identifier for the \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} class of Tool\+Engine. 
+
+Implements \textbf{ Tool\+Engine}.
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a878e8b694aa243a767c2f232799ec9b3}\label{classKatabatic_1_1KatabaticEngine_a878e8b694aa243a767c2f232799ec9b3}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+State@{get\+State}}
+\index{get\+State@{get\+State}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+State()}{getState()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceKatabatic_ab9e409db5feff0bdbc85e90e2a029cda}{Engine\+State}} get\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The state the tool is currently in. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a7132cd3f405dc24b3897b4396c8ecc92}\label{classKatabatic_1_1KatabaticEngine_a7132cd3f405dc24b3897b4396c8ecc92}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Flags@{get\+Flags}}
+\index{get\+Flags@{get\+Flags}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Flags()}{getFlags()}}
+{\footnotesize\ttfamily unsigned int get\+Flags (\begin{DoxyParamCaption}\item[{unsigned int}]{mask }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The {\itshape anded} combination of the tool flags and {\ttfamily mask}. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_adccd6ceec2c68234d3a824ad7ae3954e}\label{classKatabatic_1_1KatabaticEngine_adccd6ceec2c68234d3a824ad7ae3954e}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Katabatic\+Configuration@{get\+Katabatic\+Configuration}}
+\index{get\+Katabatic\+Configuration@{get\+Katabatic\+Configuration}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Katabatic\+Configuration()}{getKatabaticConfiguration()}}
+{\footnotesize\ttfamily Configuration $\ast$ get\+Katabatic\+Configuration (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The Configuration of \mbox{\hyperlink{namespaceKatabatic}{Katabatic}}. In this class it is redundant with \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a9a7fbadfe526875680f698c76adfb128}{get\+Configuration()}}, but may be useful in derived classes. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a9a7fbadfe526875680f698c76adfb128}\label{classKatabatic_1_1KatabaticEngine_a9a7fbadfe526875680f698c76adfb128}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Configuration@{get\+Configuration}}
+\index{get\+Configuration@{get\+Configuration}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Configuration()}{getConfiguration()}}
+{\footnotesize\ttfamily Configuration $\ast$ get\+Configuration (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} The Configuration of the current Tool\+Engine. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a171ed6fac01ac5067d4f1b770cc419cf}\label{classKatabatic_1_1KatabaticEngine_a171ed6fac01ac5067d4f1b770cc419cf}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Routing\+Gauge@{get\+Routing\+Gauge}}
+\index{get\+Routing\+Gauge@{get\+Routing\+Gauge}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Routing\+Gauge()}{getRoutingGauge()}}
+{\footnotesize\ttfamily \textbf{ Routing\+Gauge} $\ast$ get\+Routing\+Gauge (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The Routing\+Gauge (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a0b7c308ac7fccc21dd0401c6ce70a586}\label{classKatabatic_1_1KatabaticEngine_a0b7c308ac7fccc21dd0401c6ce70a586}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Layer\+Gauge@{get\+Layer\+Gauge}}
+\index{get\+Layer\+Gauge@{get\+Layer\+Gauge}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Layer\+Gauge()}{getLayerGauge()}}
+{\footnotesize\ttfamily \textbf{ Routing\+Layer\+Gauge} $\ast$ get\+Layer\+Gauge (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The Routing\+Layer\+Gauge associated to {\ttfamily depth} (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_afa7ea850397e87889733ac959833b49f}\label{classKatabatic_1_1KatabaticEngine_afa7ea850397e87889733ac959833b49f}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Routing\+Layer@{get\+Routing\+Layer}}
+\index{get\+Routing\+Layer@{get\+Routing\+Layer}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Routing\+Layer()}{getRoutingLayer()}}
+{\footnotesize\ttfamily const \textbf{ Layer} $\ast$ get\+Routing\+Layer (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The routing Layer associated to {\ttfamily depth} (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a4c4549515aef37e81f2cc6537b931edc}\label{classKatabatic_1_1KatabaticEngine_a4c4549515aef37e81f2cc6537b931edc}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Contact\+Layer@{get\+Contact\+Layer}}
+\index{get\+Contact\+Layer@{get\+Contact\+Layer}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Contact\+Layer()}{getContactLayer()}}
+{\footnotesize\ttfamily \textbf{ Layer} $\ast$ get\+Contact\+Layer (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The contact Layer associated to {\ttfamily depth} (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a9a56286f633fddd702d66563de457a4a}\label{classKatabatic_1_1KatabaticEngine_a9a56286f633fddd702d66563de457a4a}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+G\+Cell\+Grid@{get\+G\+Cell\+Grid}}
+\index{get\+G\+Cell\+Grid@{get\+G\+Cell\+Grid}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+G\+Cell\+Grid()}{getGCellGrid()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid}} $\ast$ get\+G\+Cell\+Grid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid}}. 
+
+Referenced by G\+Cell\+Topology\+::do\+Rp\+\_\+\+Access\+Pad(), G\+Cell\+Topology\+::do\+Rp\+\_\+\+Auto\+Contacts(), and anonymous\+\_\+namespace\{\+Load\+Gr\+By\+Net.\+cpp\}\+::single\+G\+Cell().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a8f661928f8f709552c8486d68ac33c55}\label{classKatabatic_1_1KatabaticEngine_a8f661928f8f709552c8486d68ac33c55}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Routing\+Nets@{get\+Routing\+Nets}}
+\index{get\+Routing\+Nets@{get\+Routing\+Nets}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Routing\+Nets()}{getRoutingNets()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine_a92ed88f9aecd2f195089c4029fa8bcc7}{Net\+Set}} \& get\+Routing\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The set of nets to be routeds. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a094b479155d3f30ec54e252c35dcffa3}\label{classKatabatic_1_1KatabaticEngine_a094b479155d3f30ec54e252c35dcffa3}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Global\+Threshold@{get\+Global\+Threshold}}
+\index{get\+Global\+Threshold@{get\+Global\+Threshold}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Global\+Threshold()}{getGlobalThreshold()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Global\+Threshold (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The length above which a global wire is moved up in the layer assignment stage (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a44d2c1fbd97dd09b102b461e906367a0}\label{classKatabatic_1_1KatabaticEngine_a44d2c1fbd97dd09b102b461e906367a0}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Saturate\+Ratio@{get\+Saturate\+Ratio}}
+\index{get\+Saturate\+Ratio@{get\+Saturate\+Ratio}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Saturate\+Ratio()}{getSaturateRatio()}}
+{\footnotesize\ttfamily float get\+Saturate\+Ratio (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The ratio above which a \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} is considered to be saturated (Configuration shortcut). 
+
+Referenced by Session\+::get\+Saturate\+Ratio().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a61977cc1fd981e7f1c6125189ed20509}\label{classKatabatic_1_1KatabaticEngine_a61977cc1fd981e7f1c6125189ed20509}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Saturate\+Rp@{get\+Saturate\+Rp}}
+\index{get\+Saturate\+Rp@{get\+Saturate\+Rp}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Saturate\+Rp()}{getSaturateRp()}}
+{\footnotesize\ttfamily size\+\_\+t get\+Saturate\+Rp (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The number of Routing\+Pad above which a \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} is saturated, causing extras global segments to be moved up. (Configuration shortcut). 
+
+Referenced by Session\+::get\+Saturate\+Rp().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ad9072cfa6215c92c9a9842270cf677c5}\label{classKatabatic_1_1KatabaticEngine_ad9072cfa6215c92c9a9842270cf677c5}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Extension\+Cap@{get\+Extension\+Cap}}
+\index{get\+Extension\+Cap@{get\+Extension\+Cap}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Extension\+Cap()}{getExtensionCap()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Extension\+Cap (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The wires extension cap, same for all layers for the time beeing (Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a423f5f2214c8b9fe73da9a86b6f6d9b9}\label{classKatabatic_1_1KatabaticEngine_a423f5f2214c8b9fe73da9a86b6f6d9b9}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!get\+Chip\+Tools@{get\+Chip\+Tools}}
+\index{get\+Chip\+Tools@{get\+Chip\+Tools}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{get\+Chip\+Tools()}{getChipTools()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classKatabatic_1_1ChipTools}{Chip\+Tools}} \& get\+Chip\+Tools (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The chip tools (for whole designs). 
+
+Referenced by Katabatic\+Engine\+::create\+Detailed\+Grid().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_aecbe8bdcc61024a7539de3ea932c5e06}\label{classKatabatic_1_1KatabaticEngine_aecbe8bdcc61024a7539de3ea932c5e06}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!xml\+Write\+G\+Cell\+Grid@{xml\+Write\+G\+Cell\+Grid}}
+\index{xml\+Write\+G\+Cell\+Grid@{xml\+Write\+G\+Cell\+Grid}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{xml\+Write\+G\+Cell\+Grid()}{xmlWriteGCellGrid()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void xml\+Write\+G\+Cell\+Grid (\begin{DoxyParamCaption}\item[{ostream \&}]{o }\end{DoxyParamCaption})}
+
+Write in a stream all informations on the G\+Cells in X\+ML format. 
+
+Referenced by Katabatic\+Engine\+::xml\+Write\+G\+Cell\+Grid().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a78394ac380a0fa462f268dcc2becc50e}\label{classKatabatic_1_1KatabaticEngine_a78394ac380a0fa462f268dcc2becc50e}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!xml\+Write\+G\+Cell\+Grid@{xml\+Write\+G\+Cell\+Grid}}
+\index{xml\+Write\+G\+Cell\+Grid@{xml\+Write\+G\+Cell\+Grid}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{xml\+Write\+G\+Cell\+Grid()}{xmlWriteGCellGrid()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void xml\+Write\+G\+Cell\+Grid (\begin{DoxyParamCaption}\item[{const string \&}]{file\+Name }\end{DoxyParamCaption})}
+
+Write in a file all informations on the G\+Cells in X\+ML format. 
+
+References Katabatic\+Engine\+::xml\+Write\+G\+Cell\+Grid().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a2391b9bfcb773398b9661b5ac0ef1a30}\label{classKatabatic_1_1KatabaticEngine_a2391b9bfcb773398b9661b5ac0ef1a30}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!set\+State@{set\+State}}
+\index{set\+State@{set\+State}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{set\+State()}{setState()}}
+{\footnotesize\ttfamily void set\+State (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespaceKatabatic_ab9e409db5feff0bdbc85e90e2a029cda}{Engine\+State}}}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Force the state of the tool. Must be used with caution, as no sanity checks are performeds. This method is normally invoked from inside the \mbox{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}} various methods. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_aeb14f94914af58657a0dc2f50ec98df5}\label{classKatabatic_1_1KatabaticEngine_aeb14f94914af58657a0dc2f50ec98df5}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!set\+Flags@{set\+Flags}}
+\index{set\+Flags@{set\+Flags}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{set\+Flags()}{setFlags()}}
+{\footnotesize\ttfamily void set\+Flags (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Set the flags given in {\ttfamily flags}. 
+
+Referenced by Session\+::set\+Katabatic\+Flags().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a1a6fac115cb81db48e3ac9ffa0721bb5}\label{classKatabatic_1_1KatabaticEngine_a1a6fac115cb81db48e3ac9ffa0721bb5}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!unset\+Flags@{unset\+Flags}}
+\index{unset\+Flags@{unset\+Flags}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{unset\+Flags()}{unsetFlags()}}
+{\footnotesize\ttfamily void unset\+Flags (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Reset the flags given in {\ttfamily flags}. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a1bd1e0104b73d4c558b0e121002796a6}\label{classKatabatic_1_1KatabaticEngine_a1bd1e0104b73d4c558b0e121002796a6}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!set\+Global\+Threshold@{set\+Global\+Threshold}}
+\index{set\+Global\+Threshold@{set\+Global\+Threshold}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{set\+Global\+Threshold()}{setGlobalThreshold()}}
+{\footnotesize\ttfamily void set\+Global\+Threshold (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{threshold }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+(Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ac2b780e06975ce8a0d6ca96f20cb971f}\label{classKatabatic_1_1KatabaticEngine_ac2b780e06975ce8a0d6ca96f20cb971f}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!set\+Saturate\+Ratio@{set\+Saturate\+Ratio}}
+\index{set\+Saturate\+Ratio@{set\+Saturate\+Ratio}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{set\+Saturate\+Ratio()}{setSaturateRatio()}}
+{\footnotesize\ttfamily void set\+Saturate\+Ratio (\begin{DoxyParamCaption}\item[{float}]{ratio }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+(Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ade227e828b8c8fbfce478e353ca3ca59}\label{classKatabatic_1_1KatabaticEngine_ade227e828b8c8fbfce478e353ca3ca59}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!set\+Saturate\+Rp@{set\+Saturate\+Rp}}
+\index{set\+Saturate\+Rp@{set\+Saturate\+Rp}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{set\+Saturate\+Rp()}{setSaturateRp()}}
+{\footnotesize\ttfamily void set\+Saturate\+Rp (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{threshold }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+(Configuration shortcut). \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a2ea4b4fc379fb85a13890db451cbf93a}\label{classKatabatic_1_1KatabaticEngine_a2ea4b4fc379fb85a13890db451cbf93a}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!print\+Measures@{print\+Measures}}
+\index{print\+Measures@{print\+Measures}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{print\+Measures()}{printMeasures()}}
+{\footnotesize\ttfamily void print\+Measures (\begin{DoxyParamCaption}\item[{const string \&}]{tag }\end{DoxyParamCaption}) const}
+
+Print memory \& time measurement on \`{}\`{}cmess1\`{}\`{}. If {\ttfamily tag} is not empty, also adds the measurement to the internal table (with {\ttfamily tag} as label). 
+
+Referenced by Katabatic\+Engine\+::finalize\+Layout().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a1e9bb62be35c6a415a1950c72c1964ef}\label{classKatabatic_1_1KatabaticEngine_a1e9bb62be35c6a415a1950c72c1964ef}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!refresh@{refresh}}
+\index{refresh@{refresh}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{refresh()}{refresh()}}
+{\footnotesize\ttfamily void refresh (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5}{Kb\+Open\+Session}}} }\end{DoxyParamCaption})}
+
+In case the tool is associated with a graphic display, trigger a full redraw of the Cell. Slow the router but allow to see work in progress... If {\ttfamily flags} {\itshape do not} contains {\ttfamily Kb\+Open\+Session} the refresh operation will not be enclosed inside it\textquotesingle{}s own session. This assumes that a session is already opened. 
+
+References G\+Cell\+Grid\+::update\+Contacts().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a1b7d8ed09a198f7afd6e3ac911f6eb37}\label{classKatabatic_1_1KatabaticEngine_a1b7d8ed09a198f7afd6e3ac911f6eb37}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!create\+Detailed\+Grid@{create\+Detailed\+Grid}}
+\index{create\+Detailed\+Grid@{create\+Detailed\+Grid}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{create\+Detailed\+Grid()}{createDetailedGrid()}}
+{\footnotesize\ttfamily void create\+Detailed\+Grid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Allocate the \mbox{\hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid}}. 
+
+References G\+Cell\+Grid\+::create(), Katabatic\+Engine\+::get\+Chip\+Tools(), Base\+Grid\+::get\+Columns(), Grid$<$ G\+Cell\+T $>$\+::get\+G\+Cells\+Column(), Grid$<$ G\+Cell\+T $>$\+::get\+G\+Cells\+Row(), Base\+Grid\+::get\+Rows(), Chip\+Tools\+::is\+Chip(), and Session\+::revalidate().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_aaba3b9450c85634131146fb507089f2d}\label{classKatabatic_1_1KatabaticEngine_aaba3b9450c85634131146fb507089f2d}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!make\+Power\+Rails@{make\+Power\+Rails}}
+\index{make\+Power\+Rails@{make\+Power\+Rails}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{make\+Power\+Rails()}{makePowerRails()}}
+{\footnotesize\ttfamily void make\+Power\+Rails (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Detect all the aligned segments of same width that compose power rails, unificate them and copy them at the design top level. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a583925cfe4bbadcc1c24fe619debce09}\label{classKatabatic_1_1KatabaticEngine_a583925cfe4bbadcc1c24fe619debce09}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!load\+Global\+Routing@{load\+Global\+Routing}}
+\index{load\+Global\+Routing@{load\+Global\+Routing}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{load\+Global\+Routing()}{loadGlobalRouting()}}
+{\footnotesize\ttfamily void load\+Global\+Routing (\begin{DoxyParamCaption}\item[{unsigned int}]{method }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em method} & the loading algorithm \\
+\hline
+{\em nets} & the set of nets to route.\\
+\hline
+\end{DoxyParams}
+Convert the global routing into the initial detailed routing. For the time beeing, only one loading algorithm is available\+: {\itshape net by net} (Engine\+Load\+Gr\+By\+Net). Only Net given in {\ttfamily nets} are routeds. If {\ttfamily nets} is empty then all ordinary nets are routeds. In either cases the set of nets to route is pruned from any power, ground or clock signals.
+
+\begin{DoxyParagraph}{Remark\+: The tool state must be {\bfseries Engine\+Global\+Loaded} {\itshape before} calling this method}
+and will be set to {\bfseries Engine\+Active} on exit. 
+\end{DoxyParagraph}
+
+
+References Katabatic\+::\+Engine\+Active, and Katabatic\+::\+Engine\+Global\+Loaded.
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a145b36b18fc9149980c5d6bd4bd10e0d}\label{classKatabatic_1_1KatabaticEngine_a145b36b18fc9149980c5d6bd4bd10e0d}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!slacken\+Border@{slacken\+Border}}
+\index{slacken\+Border@{slacken\+Border}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{slacken\+Border()}{slackenBorder()}}
+{\footnotesize\ttfamily void slacken\+Border (\begin{DoxyParamCaption}\item[{\textbf{ Box}}]{bb,  }\item[{\textbf{ Layer\+::\+Mask}}]{mask,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em bb} & The bounding box, defines the edges. \\
+\hline
+{\em mask} & Consider only layers that are fully included in that mask. \\
+\hline
+{\em flags} & Consider only segment in that direction.\\
+\hline
+\end{DoxyParams}
+Perform a preventive break on all global segments going through the {\itshape vertical} left and right edges of the {\ttfamily bb} box. The set of global segments to be broken could be further restricted using {\ttfamily mask} and {\ttfamily flags}.
+
+The Semantic of {\ttfamily flags} is not clear, must review the code more closely. 
+
+References Box\+::get\+X\+Max(), Box\+::get\+X\+Min(), Box\+::get\+Y\+Max(), and Box\+::get\+Y\+Min().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ac40754d4a9bd0cf327b5fa088e993897}\label{classKatabatic_1_1KatabaticEngine_ac40754d4a9bd0cf327b5fa088e993897}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!slacken\+Block\+Ios@{slacken\+Block\+Ios}}
+\index{slacken\+Block\+Ios@{slacken\+Block\+Ios}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{slacken\+Block\+Ios()}{slackenBlockIos()}}
+{\footnotesize\ttfamily void slacken\+Block\+Ios (\begin{DoxyParamCaption}\item[{\textbf{ Instance} $\ast$}]{core }\end{DoxyParamCaption})}
+
+Perform a preventive break on horizontal segments in the \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} immediatly {\itshape outside} the instance {\ttfamily core} area in the routing layer of index {\ttfamily 1}.
+
+This method is too much hardwired to the {\ttfamily Sx\+Lib} gauge. It\textquotesingle{}s effect is to break all {\bfseries M\+E\+T\+A\+L2} outside the core (in a chip). 
+
+References Entity\+::get\+Bounding\+Box(), Instance\+::get\+Name(), Constant\+::\+Horizontal, and Box\+::inflate().
+
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ac934a049003c9d5d2380f44ff393e458}\label{classKatabatic_1_1KatabaticEngine_ac934a049003c9d5d2380f44ff393e458}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!move\+Up\+Net\+Trunk@{move\+Up\+Net\+Trunk}}
+\index{move\+Up\+Net\+Trunk@{move\+Up\+Net\+Trunk}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{move\+Up\+Net\+Trunk()}{moveUpNetTrunk()}}
+{\footnotesize\ttfamily bool move\+Up\+Net\+Trunk (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$}]{seed,  }\item[{set$<$ \textbf{ Net} $\ast$$>$ \&}]{global\+Nets,  }\item[{\mbox{\hyperlink{classKatabatic_1_1GCell_aacb1c215b203bfba5729f135b3221d40}{G\+Cell\+::\+Set\+Index}} \&}]{invalidateds }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em seed} & The \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} to take the net from. \\
+\hline
+{\em global\+Nets} & The set of nets that has been moved up. \\
+\hline
+{\em invalidateds} & The set of G\+Cells that have been invalidated. {\bfseries Returns\+:} {\bfseries true} if the net trunk have been moved up.\\
+\hline
+\end{DoxyParams}
+Try to move up a whole net trunk. The net is supplied through the {\ttfamily seed} argument (the segment that triggers the move). If the net is actually moved up, it is added to {\ttfamily global\+Nets} and all G\+Cells that have been invalidateds are added to {\ttfamily invalidateds}.
+
+An individual \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} of the net is moved up if it\textquotesingle{}s length is greater that {\ttfamily 150} lambdas, that is, three times the side of a \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}}. This is hard-\/wired and should be parametrized in the future. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a77833ce938a430785ba869eedbc2300c}\label{classKatabatic_1_1KatabaticEngine_a77833ce938a430785ba869eedbc2300c}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!layer\+Assign@{layer\+Assign}}
+\index{layer\+Assign@{layer\+Assign}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{layer\+Assign()}{layerAssign()}}
+{\footnotesize\ttfamily void layer\+Assign (\begin{DoxyParamCaption}\item[{unsigned int}]{method }\end{DoxyParamCaption})}
+
+Perform the layer assignment. The global routing loading stage uses only the two bottom most layers, this method spread them on all the availables routing layers, according to \mbox{\hyperlink{classKatabatic_1_1GCell}{G\+Cell}} and Routing\+Pad density criterions.
+
+Two algorithms are availables\+:
+\begin{DoxyItemize}
+\item {\bfseries Engine\+Layer\+Assign\+By\+Length} \+: the global wires are moved up one by one.
+\item {\bfseries Engine\+Layer\+Assign\+By\+Trunk} \+: if one global wire of a net is to be moved up, then all the global trunk of the net is moved along. This methods gives the best results for now. 
+\end{DoxyItemize}\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a6957a5830a4d6f1b2daf83a7d98df601}\label{classKatabatic_1_1KatabaticEngine_a6957a5830a4d6f1b2daf83a7d98df601}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!compute\+Net\+Constraints@{compute\+Net\+Constraints}}
+\index{compute\+Net\+Constraints@{compute\+Net\+Constraints}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{compute\+Net\+Constraints()}{computeNetConstraints()}}
+{\footnotesize\ttfamily void compute\+Net\+Constraints (\begin{DoxyParamCaption}\item[{\textbf{ Net} $\ast$}]{net }\end{DoxyParamCaption})}
+
+Compute the box constraints on Auto\+Contacts (and therefore those applied to Auto\+Segments). Constraints comes from Auto\+Contacts anchoreds on Routing\+Pads and transmitted through \mbox{\hyperlink{classKatabatic_1_1AutoContactHTee}{Auto\+Contact\+H\+Tee}} or \mbox{\hyperlink{classKatabatic_1_1AutoContactVTee}{Auto\+Contact\+V\+Tee}}. Constraints are applied to all Auto\+Contacts of an aligned set.
+
+\begin{DoxyParagraph}{Remark\+: The {\ttfamily net} must have been canonized before this function to be called. }
+
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_ad6b9f7d94ee4a88f12c485e48d1e644a}\label{classKatabatic_1_1KatabaticEngine_ad6b9f7d94ee4a88f12c485e48d1e644a}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!to\+Optimals@{to\+Optimals}}
+\index{to\+Optimals@{to\+Optimals}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{to\+Optimals()}{toOptimals()}}
+{\footnotesize\ttfamily void to\+Optimals (\begin{DoxyParamCaption}\item[{\textbf{ Net} $\ast$}]{net }\end{DoxyParamCaption})}
+
+Move all \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} of {\ttfamily net} so that their axis are inside their optimals interval. If a \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} is already inside the interval is not moved, otherwise it is put on the nearest bound of the optimal interval. \mbox{\Hypertarget{classKatabatic_1_1KatabaticEngine_a468eddb683c04cfeea1c5124a39e1f86}\label{classKatabatic_1_1KatabaticEngine_a468eddb683c04cfeea1c5124a39e1f86}} 
+\index{Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}!finalize\+Layout@{finalize\+Layout}}
+\index{finalize\+Layout@{finalize\+Layout}!Katabatic\+::\+Katabatic\+Engine@{Katabatic\+::\+Katabatic\+Engine}}
+\subsubsection{\texorpdfstring{finalize\+Layout()}{finalizeLayout()}}
+{\footnotesize\ttfamily void finalize\+Layout (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Transform the \mbox{\hyperlink{namespaceKatabatic}{Katabatic}} wires into the Hurricane data-\/structure. Mostly by removing the Auto\+Segment/\+Auto\+Contact {\itshape without} removing their Hurricane conterparts. May also fill gaps that may have appeared.
+
+\begin{DoxyParagraph}{Remark\+: The tool state must be {\bfseries Engine\+Active} {\itshape before} calling this method}
+and will be set to {\bfseries Engine\+Gutted} on exit. 
+\end{DoxyParagraph}
+
+
+References Katabatic\+::\+Engine\+Driving, Katabatic\+::\+Engine\+Gutted, and Katabatic\+Engine\+::print\+Measures().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Katabatic\+Engine.\+h\item 
+Chip\+Tools.\+cpp\item 
+Load\+Gr\+By\+Net.\+cpp\item 
+Katabatic\+Engine.\+cpp\item 
+Katabatic\+Engine.\+dox\end{DoxyCompactItemize}

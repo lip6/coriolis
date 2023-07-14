@@ -37,27 +37,48 @@ namespace Katana {
                        , TrackElement* symSegment
                        , Track*        refTrack
                        , Track*        symTrack
+                       , DbU::Unit     refCandidateAxis
+                       , DbU::Unit     symCandidateAxis
                        )
-    : _flags          ((symSegment) ? Symmetric : NoFlags)
-    , _span           (refSegment->getTrackSpan())
-    , _tracks         ( _span * ((symSegment) ? 2 : 1)
-                      , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
-    , _segment1       (refSegment)
-    , _segment2       (symSegment)
-    , _interval1      (refSegment->getCanonicalInterval())
-    , _interval2      ((symSegment) ? symSegment->getCanonicalInterval() : Interval())
-    , _terminals      (0)
-    , _delta          (-_interval1.getSize() -_interval2.getSize())
-    , _deltaShared    (0)
-    , _deltaPerpand   (0)
-    , _axisWeight     (0)
-    , _distanceToFixed(2*Session::getSliceHeight())
-    , _longuestOverlap(0)
-    , _dataState      (0)
-    , _ripupCount     (0)
-    , _selectFlags    (NoFlags)
-    , _selectIndex    (0)
+    : _flags           ((symSegment) ? Symmetric : NoFlags)
+    , _span            (refSegment->getTrackSpan())
+    , _refCandidateAxis(refCandidateAxis)
+    , _symCandidateAxis(symCandidateAxis)
+    , _tracks          ( _span * ((symSegment) ? 2 : 1)
+                       , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
+    , _segment1        (refSegment)
+    , _segment2        (symSegment)
+    , _interval1       (refSegment->getCanonicalInterval())
+    , _interval2       ((symSegment) ? symSegment->getCanonicalInterval() : Interval())
+    , _terminals       (0)
+    , _delta           (-_interval1.getSize() -_interval2.getSize())
+    , _deltaShared     (0)
+    , _deltaPerpand    (0)
+    , _axisWeight      (0)
+    , _distanceToFixed (2*Session::getSliceHeight())
+    , _longuestOverlap (0)
+    , _freeLength      (DbU::Max)
+    , _dataState       (0)
+    , _ripupCount      (0)
+    , _selectFlags     (NoFlags)
+    , _selectIndex     (0)
   {
+    if (Session::getStage() == StageRealign) _flags |= IgnoreShort;
+    
+    if (refSegment->isNonPref()) {
+      DbU::Unit axisShift = getRefCandidateAxis() - refSegment->getAxis();
+      _interval1.translate( axisShift );
+
+      if (symSegment) {
+        throw Error( "TrackCost::TrackCost(): Symmetric management is not implemented for Non-preferred routing segments.\n"
+                     "        %s", getString(refSegment).c_str() );
+      }
+    }
+    if (not _span) {
+        throw Error( "TrackCost::TrackCost(): Zero track span is not allowed.\n"
+                     "        %s", getString(refSegment).c_str() );
+    }
+    
     cdebug_log(159,1) << "TrackCost::TrackCost() - " << refSegment << endl;
     cdebug_log(159,0) << "  interval1: " << _interval1 << endl;
     
@@ -65,6 +86,8 @@ namespace Katana {
     _segment1->addOverlapCost( *this );
 
     if (symTrack) {
+      cdebug_log(159,0) << "  _tracks.size(): " << _tracks.size() << " _span:" << _span << endl;
+
       std::get<0>( _tracks[_span] ) = symTrack;
       select( 0, Symmetric );
       _segment2->addOverlapCost( *this );
@@ -87,16 +110,18 @@ namespace Katana {
 
   bool  TrackCost::Compare::operator() ( const TrackCost* lhs, const TrackCost* rhs )
   {
-    if ( lhs->isInfinite() xor rhs->isInfinite() ) return rhs->isInfinite();
+    if (lhs->isInfinite    () xor rhs->isInfinite    ()) return rhs->isInfinite();
+    if (lhs->isAtRipupLimit() xor rhs->isAtRipupLimit()) return rhs->isAtRipupLimit();
+    if (lhs->isBlacklisted()  xor rhs->isBlacklisted ()) return rhs->isBlacklisted();
 
     if (   (_flags & TrackCost::DiscardGlobals)
        and (lhs->isOverlapGlobal() xor rhs->isOverlapGlobal()) )
       return rhs->isOverlapGlobal();
 
-    if ( lhs->isHardOverlap() xor rhs->isHardOverlap() ) return rhs->isHardOverlap();
+    if (lhs->isHardOverlap() xor rhs->isHardOverlap()) return rhs->isHardOverlap();
 
-    if ( lhs->_ripupCount + (int)Session::getRipupCost() < rhs->_ripupCount ) return true;
-    if ( lhs->_ripupCount > (int)Session::getRipupCost() + rhs->_ripupCount ) return false;
+    if (lhs->_ripupCount + (int)Session::getRipupCost() < rhs->_ripupCount) return true;
+    if (lhs->_ripupCount > (int)Session::getRipupCost() + rhs->_ripupCount) return false;
 
   //int lhsRipupCost = (lhs->_dataState<<2) + lhs->_ripupCount;
   //int rhsRipupCost = (rhs->_dataState<<2) + rhs->_ripupCount;
@@ -108,10 +133,12 @@ namespace Katana {
   //  if ( lhs->_longuestOverlap > rhs->_longuestOverlap ) return false;
   //}
 
-    if ( lhs->isOverlap() xor rhs->isOverlap() ) return rhs->isOverlap();
+    if (lhs->isOverlap() xor rhs->isOverlap()) return rhs->isOverlap();
 
-    if ( lhs->_terminals < rhs->_terminals ) return true;
-    if ( lhs->_terminals > rhs->_terminals ) return false;
+    if (not (_flags & TrackCost::IgnoreTerminals)) {
+      if ( lhs->_terminals < rhs->_terminals ) return true;
+      if ( lhs->_terminals > rhs->_terminals ) return false;
+    }
 
     if (lhs->_delta != rhs->_delta) {
     //cdebug_log(155,0) << "TrackCost::Compare() lhs->_delta:" << lhs->_delta << " rhs->_delta:" << rhs->_delta << endl;
@@ -140,15 +167,15 @@ namespace Katana {
 #endif
 
     if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
-      if ( lhs->_axisWeight < rhs->_axisWeight ) return true;
-      if ( lhs->_axisWeight > rhs->_axisWeight ) return false;
+      if (lhs->_axisWeight < rhs->_axisWeight) return true;
+      if (lhs->_axisWeight > rhs->_axisWeight) return false;
     }
 
-    if ( lhs->_deltaPerpand < rhs->_deltaPerpand ) return true;
-    if ( lhs->_deltaPerpand > rhs->_deltaPerpand ) return false;
+    if (lhs->_deltaPerpand < rhs->_deltaPerpand) return true;
+    if (lhs->_deltaPerpand > rhs->_deltaPerpand) return false;
 
-    if ( lhs->_distanceToFixed > rhs->_distanceToFixed ) return true;
-    if ( lhs->_distanceToFixed < rhs->_distanceToFixed ) return false;
+    if (lhs->_distanceToFixed > rhs->_distanceToFixed) return true;
+    if (lhs->_distanceToFixed < rhs->_distanceToFixed) return false;
 
     return lhs->getTrack(0)->getAxis() < rhs->getTrack(0)->getAxis();
   }
@@ -160,8 +187,8 @@ namespace Katana {
   }
 
 
-  Net* TrackCost::getNet1 () const { return (_segment1) ? _segment1->getNet() : NULL; }
-  Net* TrackCost::getNet2 () const { return (_segment2) ? _segment2->getNet() : NULL; }
+  Net*       TrackCost::getNet1          () const { return (_segment1) ? _segment1->getNet() : NULL; }
+  Net*       TrackCost::getNet2          () const { return (_segment2) ? _segment2->getNet() : NULL; }
 
 
   size_t  TrackCost::getBegin ( size_t i, uint32_t flags ) const
@@ -181,7 +208,8 @@ namespace Katana {
   void  TrackCost::consolidate ()
   {
     if ( not isInfinite() and not isHardOverlap() ) {
-      cdebug_log(159,0) << "TrackCost::consolidate() " << _delta << " - " << _deltaShared << endl;
+      cdebug_log(159,0) << "TrackCost::consolidate() " << DbU::getValueString(_delta)
+                        << " - " << DbU::getValueString(_deltaShared) << endl;
     //_deltaPerpand += - (_deltaShared << 1);
       _delta -= _deltaShared;
     //if (_delta > 0) _delta -= _deltaShared;
@@ -232,7 +260,8 @@ namespace Katana {
   {
     string s = "<" + _getTypeName();
 
-    s += " "    + getString(getTrack(0));
+    s += " @"   + DbU::getValueString(getRefCandidateAxis());
+    s += " "    + getString(getTrack(0)->getLayer()->getName());
     s += " "    + getString(_dataState);
     s += "+"    + getString(_ripupCount);
     s += ":"    + getString((_dataState<<2)+_ripupCount);
@@ -243,11 +272,12 @@ namespace Katana {
     s +=          string ( (isOverlap()       )?"o":"-" );
     s +=          string ( (isOverlapGlobal() )?"g":"-" );
     s +=          string ( (isGlobalEnclosed())?"e":"-" );
+    s +=          string ( (isAtRipupLimit  ())?"R":"-" );
     s +=          string ( (isAnalog        ())?"a":"-" );
     s +=          string ( (isShortNet      ())?"N":"-" );
-    s += " "    + getString(_terminals);
-    s += "/"    + /*DbU::getValueString(_delta)*/       getString(_delta);
-    s += "-"    + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
+    s += " t:"  + getString(_terminals);
+    s += "/d:"  + /*DbU::getValueString(_delta)*/       DbU::getValueString(_delta);
+    s += "-"    + /*DbU::getValueString(_deltaShared)*/ DbU::getValueString(_deltaShared);
     s += "/aw:" + DbU::getValueString(_axisWeight);
     s += "/dp:" + DbU::getValueString(_deltaPerpand);
     s += "/df:" + DbU::getValueString(_distanceToFixed);

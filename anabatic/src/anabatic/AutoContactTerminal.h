@@ -60,6 +60,7 @@ namespace Anabatic {
       virtual void                 _invalidate            ( Flags flags );
     public:
               bool                 isEndPoint             () const;
+      virtual bool                 isOnPin                () const;
       virtual Box                  getNativeConstraintBox () const;
               RoutingPad*          getRoutingPad          () const;
       inline  AutoSegment*         getSegment             () const;

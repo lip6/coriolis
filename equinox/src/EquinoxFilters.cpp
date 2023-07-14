@@ -69,7 +69,7 @@ namespace Equinox {
   bool                 IsRoutingFilter::accept            (Equi* item) const           
   {
     if(item->isLeafEqui()) {
-      if( item->getCell()->isLeaf() ) {   
+      if( item->getCell()->isTerminalNetlist() ) {   
 	OccurrenceLocator locator = item->getNetOccurrences().getLocator();
 	Net * net = dynamic_cast<Net*>(locator.getElement().getEntity());
 	if(!(net->isExternal()))  

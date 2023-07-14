@@ -1,9 +1,11 @@
 <map id="Hurricane::Property" name="Hurricane::Property">
-<area shape="rect" id="node2" href="$classHurricane_1_1PrivateProperty.html" title="PrivateProperty description (API) " alt="" coords="189,29,365,56"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1SharedProperty.html" title="SharedProperty description (API) " alt="" coords="189,113,365,140"/>
-<area shape="rect" id="node3" href="$classHurricane_1_1StandardPrivateProperty.html" title="StandardPrivateProperty description (API) " alt="" coords="413,5,608,46"/>
-<area shape="rect" id="node5" href="$classHurricane_1_1Relation.html" title="Relation description (API) " alt="" coords="443,71,578,97"/>
-<area shape="rect" id="node7" href="$classHurricane_1_1StandardSharedProperty.html" title="StandardSharedProperty description (API) " alt="" coords="421,122,600,163"/>
-<area shape="rect" id="node8" href="$classHurricane_1_1UpdateSession.html" title="UpdateSession description (API) " alt="" coords="423,188,598,215"/>
-<area shape="rect" id="node6" href="$classHurricane_1_1StandardRelation.html" title="StandardRelation description (API) " alt="" coords="656,71,843,97"/>
+<area shape="rect" id="node1" title="Property description (API)" alt="" coords="5,126,141,153"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1PrivateProperty.html" title="PrivateProperty description (API)" alt="" coords="190,71,366,98"/>
+<area shape="rect" id="node5" href="$classHurricane_1_1SharedProperty.html" title="SharedProperty description (API)" alt="" coords="189,151,367,178"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1StandardPrivateProperty.html" title="StandardPrivateProperty description (API)" alt="" coords="415,5,609,47"/>
+<area shape="rect" id="node4" href="$classIsobar_1_1PyHolderProperty.html" title="A Property to contain PyAttributesHolder." alt="" coords="427,71,597,98"/>
+<area shape="rect" id="node6" href="$classHurricane_1_1Relation.html" title="Relation description (API)" alt="" coords="445,122,579,149"/>
+<area shape="rect" id="node8" href="$classHurricane_1_1StandardSharedProperty.html" title="StandardSharedProperty description (API)" alt="" coords="423,173,601,215"/>
+<area shape="rect" id="node9" href="$classHurricane_1_1UpdateSession.html" title="UpdateSession description (API)" alt="" coords="425,239,599,266"/>
+<area shape="rect" id="node7" href="$classHurricane_1_1StandardRelation.html" title="StandardRelation description (API)" alt="" coords="657,122,843,149"/>
 </map>

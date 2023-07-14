@@ -53,7 +53,6 @@ namespace Analog {
     dp->addStepParameter( "G1.w", 1, 1, 1 );
     dp->addStepParameter( "G2.w", 1, 1, 1 );
     dp->addStepParameter( "S.w" , 1, 1, 1 );
-    dp->setTerminal( true );
     UpdateSession::close();
     return dp;
   }
@@ -262,6 +261,19 @@ namespace Analog {
     }
                    
     return true;
+  }
+
+
+  string  DifferentialPair::_getTypeName () const
+  { return "DifferentialPair"; }
+  
+
+  Record*  DifferentialPair::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_dpBulkConnectedName"  ,  _dpBulkConnectedName   ) );
+    record->add( getSlot("_dpBulkUnconnectedName",  _dpBulkUnconnectedName ) );
+    return record;
   }
 
 

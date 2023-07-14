@@ -1,0 +1,486 @@
+.TH "TrackSegment" 3 "Sun Nov 21 2021" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TrackSegment \- Derived \fBKatabatic::AutoSegment\fP for the router\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBTrackElement\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual bool \fBisFixed\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisHorizontal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisVertical\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisLocal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisGlobal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisBipoint\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisTerminal\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisStrap\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisSlackened\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBisDogleg\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP (\fBInterval\fP)"
+.br
+.ti -1c
+.RI "virtual bool \fBcanDogleg\fP (\fBKatabatic::GCell\fP *, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "virtual float \fBgetMaxUnderDensity\fP (unsigned int flags) const"
+.br
+.ti -1c
+.RI "virtual unsigned long \fBgetId\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDirection\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBNet\fP * \fBgetNet\fP () const"
+.br
+.ti -1c
+.RI "virtual const \fBLayer\fP * \fBgetLayer\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned long \fBgetFreedomDegree\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDoglegLevel\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetNext\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetPrevious\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetParent\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetAxis\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetFreeInterval\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetSourceConstraints\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetTargetConstraints\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDataNegociate\fP * \fBgetDataNegociate\fP (unsigned int flags=\fBKtDataSelf\fP) const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetCanonical\fP (\fBInterval\fP &)"
+.br
+.ti -1c
+.RI "virtual size_t \fBgetGCells\fP (Katabatic::GCellVector &) const"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetSourceDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBgetTargetDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual TrackElements \fBgetPerpandiculars\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBsetTrack\fP (\fBTrack\fP *)"
+.br
+.ti -1c
+.RI "virtual void \fBupdateFreedomDegree\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBsetDoglegLevel\fP (unsigned int)"
+.br
+.ti -1c
+.RI "virtual void \fBswapTrack\fP (\fBTrackElement\fP *)"
+.br
+.ti -1c
+.RI "virtual void \fBreschedule\fP (unsigned int level)"
+.br
+.ti -1c
+.RI "virtual void \fBdetach\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBinvalidate\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBrevalidate\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBsetAxis\fP (\fBDbU::Unit\fP, unsigned int flags)"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBmakeDogleg\fP ()"
+.br
+.ti -1c
+.RI "virtual \fBTrackElement\fP * \fBmakeDogleg\fP (\fBInterval\fP, unsigned int &flags)"
+.br
+.ti -1c
+.RI "virtual void \fB_postDoglegs\fP (\fBTrackElement\fP *&perpandicular, \fBTrackElement\fP *&parallel)"
+.br
+.ti -1c
+.RI "virtual bool \fB_check\fP () const"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBTrackElement\fP * \fBcreate\fP (\fBAutoSegment\fP *, \fBTrack\fP *, bool &created)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Derived \fBKatabatic::AutoSegment\fP for the router\&. 
+
+Fig 1: TrackSegment Context We create one \fBTrackSegment\fP per aligned \fBKatabatic::AutoSegment\fP set, the \fBTrackSegment\fP is associated to the canonical one of the set\&.
+.PP
+To provide some speedup, the full extention of the aligned segment set is computed once and stored in the \fBTrackSegment\fP itself\&. The drawback beeing that whenever one segment from the aligned set has it's extention modified, the full extention must be recomputed\&.
+.SH "Lazy Revalidate"
+.PP
+When the \fBTrackSegment::revalidate()\fP method is called, it only update the cached size of the segment (from the AutoSegment set of aligneds) and the track into which it may be inserted\&.
+.PP
+The associated \fBDataNegociate\fP and \fBRoutingEvent\fP are \fBnot\fP updated\&.
+.IP "\(bu" 2
+The \fBRoutingEvent\fP will be updated when it's key is updated, typically during a requeueing operation \fBand\fP in the \fBSegmentFsm\fP constructor\&. This should be optimized in the future\&.
+.IP "\(bu" 2
+The \fBDataNegociate\fP is updated \fIonly\fP in the \fBSegmentFsm\fP constructor\&. This is the most costly of the two updates as it perform a perpandicular & parallel connexity exploration\&.
+.PP
+.SH "Dogleg Management"
+.PP
+The basic \fBAutoSegment::canDogleg()\fP method is declined in three more dedicated methods in this class:
+.IP "\(bu" 2
+\fBTrackSegment::canDogleg()\fP, for locals only, check if a break is possible, never break a segment more than once (to avoid fragmentation)\&.
+.IP "\(bu" 2
+\fBTrackSegment::canDogleg(Katabatic::GCell*,unsigned int flags)\fP for globals, check that the segment is breakable in the desired GCell\&. Never break twice in the first/last GCell (fragmentation limitation), but may \fIreuse\fP an already existing dogleg\&.
+.IP "\(bu" 2
+\fBTrackSegment::canDogleg(Interval)\fP, for locals only, direct proxy for the AutoSegment method\&. Never allow more than one break\&.
+.PP
+.PP
+\fBRelationship between AutoSegment and \fBTrackSegment\fP\fP
+.PP
+Figure 2 below, shows an example of dogleg creation:
+.IP "\(bu" 2
+At the Katabatic level, AutoSegment \fCid:12\fP is broken\&. Thus the creation of AutoSegments \fCid:20\fP and \fCid:21\fP\&. The orignal \fBTrackSegment\fP (canonical AutoSegment \fCid:10\fP) remains on the right side (target) of the break\&.
+.IP "\(bu" 2
+But, because the canonical of the former aligned AutoSegment set \fC\fP(10,11,12,13,14) was on the \fIright\fP side of the break, the new parallel \fBTrackSegment\fP will be created on the \fCleft\fP side, associated to the newly promoted canonical AutoSegment \fCid:12\fP\&.
+.PP
+.PP
+Fig 2: Dogleg Management The \fBTrackSegment::_postDoglegs()\fP method called by all flavors of \fBTrackSegment::makeDogleg()\fP methods is responsible for creating new TrackSegments for the new doglegs (there may be more than one), it also update the dogleg level and source/target dogleg flags\&.
+.PP
+\fBThis section is not finished\&.\fP I need to review the parent and doglevel numbering management\&. There seems to be a risk of infinite fragmentation as the numbering of the original segment is not increased, we should create a \fIbreak\fP counter separate from deepness\&.
+.SH "Global, Weak Global and Local Segments"
+.PP
+There's a slight semantic change between Katabatic and \fBKite\fP about what is local and what is local\&. This is due to how we consider the intermediate status of \fIWeakGlobal\fP\&.
+.PP
+A \fCWeakGlobal\fP segment is a local segment which is aligned with a global (though a VTee or an HTee contact)\&.
+.PP
+In Katabatic a local segment is one that is not \fCGlobal\fP, a local segment can be both \fCLocal\fP and \fCWeakGlobal\fP\&.
+.PP
+In \fBKite\fP a local segment is one that is neither \fCGlobal\fP or \fCWeakGlobal\fP\&. The \fCWeakGlobal\fP sides with \fCGlobal\fP unlike in Katabatic\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "static \fBTrackSegment\fP * create (\fBAutoSegment\fP * segment, \fBTrack\fP * track, bool & created)\fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP The Katabatic AutoSegment to decorate\&. 
+.br
+\fItrack\fP A \fBTrack\fP into which insert the \fBTrackSegment\fP (may be \fCNULL\fP)\&. 
+.br
+\fIcreated\fP This flag is sets is a new \fBTrackSegment\fP has be created\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A \fBTrackSegment\fP wrapped around an AutoSegment\&.
+.RE
+.PP
+Constructor mainly used at loading time to decorate the Katabatic data-base with the router attributes\&. 
+.PP
+Referenced by NegociateWindow::createTrackSegment()\&.
+.SS "bool isFixed () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isFixed()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "bool isHorizontal () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isHorizontal()\fP\&. 
+.PP
+Implements \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::getGCells()\&.
+.SS "bool isVertical () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isVertical()\fP\&. 
+.PP
+Implements \fBTrackElement\fP\&.
+.SS "bool isLocal () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::isLocal()\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::_postDoglegs(), and TrackSegment::canDogleg()\&.
+.SS "bool isGlobal () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isGlobal()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool isBipoint () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isBipoint()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool isTerminal () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::AutoSegment::isTerminal()\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool isStrap () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isStrap()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool isSlackened () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::isSlackened()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "bool isDogleg () const\fC [virtual]\fP"
+\fBSee also:\fP  Katabatic::isDogleg()\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool canDogleg ()\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At \fBKite\fP level, this variant of the method will apply only on local segments and the segment must not already have a source or target dogleg\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool canDogleg (\fBInterval\fP)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At \fBKite\fP level, this variant of the method will apply only on local segments and the segment must not already have a source or target dogleg\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "bool canDogleg (\fBKatabatic::GCell\fP * doglegGCell, unsigned int flags = \fC0\fP)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::canDogleg()\fP\&. At kite level, this variant of the method is mainly targeted to global segment\&. For local segment it behave like \fBTrackElement::canDogleg(Interval)\fP\&. For global segment, make the break in the requested GCell \fCdoglegGCell\fP\&. If it's in the first or last GCell and there is already a dogleg, allow to reuse it if \fCflags\fP contains \fBKite::KtAllowDoglegReuse\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "float getMaxUnderDensity (unsigned int flags) const\fC [virtual]\fP"
+\fBReturns:\fP The maximum density of all the GCells under this element\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "unsigned long getId () const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The \fCId\fP of the supporting AutoSegment, if there is any\&. \fIZero\fP otherwise\&. 
+.RE
+.PP
+
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::detach()\&.
+.SS "unsigned int getDirection () const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The direction of the supporting element (should match the preferred direction of the \fBTrack\fP)\&. 
+.RE
+.PP
+
+.PP
+Implements \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::getSourceDogleg(), and TrackSegment::getTargetDogleg()\&.
+.SS "\fBNet\fP * getNet () const\fC [virtual]\fP"
+\fBReturns:\fP The Net associated to the element (may be \fCNULL\fP)\&. 
+.PP
+Implements \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::getFreeInterval(), TrackSegment::getNext(), and TrackSegment::getPrevious()\&.
+.SS "const \fBLayer\fP * getLayer () const\fC [virtual]\fP"
+\fBReturns:\fP The Layer of the element (should match the one of the \fBTrack\fP)\&. 
+.PP
+Implements \fBTrackElement\fP\&.
+.SS "unsigned long getFreedomDegree () const\fC [virtual]\fP"
+\fBReturns:\fP The degree of freedom of the element\&. It is used as a priority value when sorting \fBTrackElement\fP (in \fBRoutingEvent\fP)\&.
+.PP
+\fBReturns:\fP The degree of freedom of the element\&. It is used as a priority value when sorting \fBTrackElement\fP (in \fBRoutingEvent\fP)\&.
+.PP
+Currently, it is the \fIslack\fP of the \fBKatabatic::AutoSegment\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "unsigned int getDoglegLevel () const\fC [virtual]\fP"
+\fBReturns:\fP The deepness of the dogleg\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "\fBTrackElement\fP * getNext () const\fC [virtual]\fP"
+\fBReturns:\fP The next \fBTrackElement\fP, on the same track and of a \fIdifferent\fP net\&. \fBSee also:\fP  \fBTrack::getNext()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackElement\fP * getPrevious () const\fC [virtual]\fP"
+\fBReturns:\fP The previous \fBTrackElement\fP, on the same track and of a \fIdifferent\fP net\&. \fBSee also:\fP  \fBTrack::getPrevious()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackElement\fP * getParent () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBTrackElement\fP from which the dogleg has been created, if any\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::getDataNegociate()\&.
+.SS "\fBDbU::Unit\fP getAxis () const\fC [virtual]\fP"
+\fBReturns:\fP The axis position of the element (must be the same as the \fBTrack\fP)\&. 
+.PP
+Implements \fBTrackElement\fP\&.
+.SS "\fBInterval\fP getFreeInterval () const\fC [virtual]\fP"
+\fBReturns:\fP The greatest free interval enclosing this element\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBInterval\fP getSourceConstraints () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::getSourceConstraints()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBInterval\fP getTargetConstraints () const\fC [virtual]\fP"
+\fBSee also:\fP  \fBKatabatic::AutoSegment::getTargetConstraints()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBDataNegociate\fP * getDataNegociate (unsigned int flags = \fC\fBKtDataSelf\fP\fP) const\fC [virtual]\fP"
+\fBReturns:\fP The additional data-structure supplied by the routing algorithm\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::_postDoglegs(), and TrackSegment::swapTrack()\&.
+.SS "\fBTrackElement\fP * getCanonical (\fBInterval\fP & i)\fC [virtual]\fP"
+Inner working still unclear to myself\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "size_t getGCells (Katabatic::GCellVector & gcells) const\fC [virtual]\fP"
+\fBReturns:\fP The table of \fBKatabatic::GCell\fP underneath the element whole span\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::canDogleg()\&.
+.SS "\fBTrackElement\fP * getSourceDogleg ()\fC [virtual]\fP"
+\fBReturns:\fP The source part of the segment from which the dogleg has been created\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackElement\fP * getTargetDogleg ()\fC [virtual]\fP"
+\fBReturns:\fP The target part of the segment from which the dogleg has been created\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "TrackElements getPerpandiculars ()\fC [virtual]\fP"
+\fBReturns:\fP The collection of all element perpandiculars to this one\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void setTrack (\fBTrack\fP * track)\fC [virtual]\fP"
+Insert the element into \fCtrack\fP, also used as an insertion marker\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::detach(), and TrackSegment::swapTrack()\&.
+.SS "void updateFreedomDegree ()\fC [virtual]\fP"
+Update, from the element characteristics, it's degree of freedom\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void setDoglegLevel (unsigned int level)\fC [virtual]\fP"
+Sets the level of dogleg of the element\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void swapTrack (\fBTrackElement\fP * other)\fC [virtual]\fP"
+Swap the tracks of \fCthis\fP and \fCother\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void reschedule (unsigned int level)\fC [virtual]\fP"
+If the \fBTrackElement\fP has already an event scheduled, change the level of this event, otherwise create a new event\&.
+.PP
+\fBSee also:\fP  NegotiateWindow::rescheduleEvent()\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::_postDoglegs()\&.
+.SS "void detach ()\fC [virtual]\fP"
+Remove the link from the \fBTrackElement\fP to it's owning \fBTrack\fP, marking it for removal\&. The removal from the \fBTrack\fP's vector is managed by the \fBTrack\fP itself during the \fBSession\fP revalidation stage\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void invalidate ()\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::invalidate()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::create(), and TrackSegment::setAxis()\&.
+.SS "void revalidate ()\fC [virtual]\fP"
+Actualize the \fBTrackSegment\fP characteristics from the supporting elements (set of AutoSegment)\&.
+.PP
+This method do not update the \fBDataNegociate\fP or the \fBRoutingEvent\fP\&. This is a lazy update delayed until the constructor of \fBSegmentFsm\fP is called\&. (see \fBLazy Revalidate\fP)\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "void setAxis (\fBDbU::Unit\fP, unsigned int flags)\fC [virtual]\fP"
+Sets the axis of the \fBTrackElement\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackElement\fP * makeDogleg ()\fC [virtual]\fP"
+Create a dogleg on the source end of the \fBTrackSegment\fP\&. Put the dogleg axis on the source \fBTo be further reviewed\fP\&.
+.PP
+\fBSee also:\fP  \fBDogleg management\fP\&.
+.PP
+Post-processing done by \fBTrackSegment::_postDoglegs()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackElement\fP * makeDogleg (\fBInterval\fP interval, unsigned int & flags)\fC [virtual]\fP"
+\fBSee also:\fP  \fBAutoSegment::makeDogleg()\fP, \fBDogleg management\fP, the return flags from this method are returned through the \fCflags\fP variable\&.
+.PP
+Post-processing done by \fBTrackSegment::_postDoglegs()\fP\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.SS "\fBTrackSegment\fP * _postDoglegs (\fBTrackElement\fP *& perpandicular, \fBTrackElement\fP *& parallel)\fC [virtual]\fP"
+Post-process to be called inside the various dogleg creation or slacken methods\&. Iterate through the newly created AutoSegments to create, for the \fIperpandicular\fP and the \fInew parallel\fP associateds TrackSegments\&. Also sets the dogleg levels and flags of the newly created elements\&.
+.PP
+The session dogleg reset is called at the end of this method\&. The \fCperpandicular\fP and \fCparallel\fP references to pointers contains the newly created segments for the \fBlast\fP dogleg\&. If more than one was created, you cannot access them (the need has not arised yet)\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+.PP
+Referenced by TrackSegment::makeDogleg()\&.
+.SS "bool _check () const\fC [virtual]\fP"
+Check the coherency of the element\&. For a \fBTrackSegment\fP:
+.IP "\(bu" 2
+The supporting AutoSegment the canonical one of the set\&.
+.IP "\(bu" 2
+The cached \fCmin\fP & \fCmax\fP values are identical to the computed ones\&.
+.PP
+.PP
+\fBReturns:\fP \fBtrue\fP on success\&. 
+.PP
+Reimplemented from \fBTrackElement\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

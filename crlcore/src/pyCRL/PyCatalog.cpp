@@ -2,25 +2,17 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) SU/LIP6 2010-2020, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCatalog.cpp"                          |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyCell.h"
@@ -37,6 +29,8 @@ namespace  CRL {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -44,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyLibrary;
@@ -63,17 +58,36 @@ extern "C" {
 // x=================================================================x
 
 #if defined(__PYTHON_MODULE__)
-
   
-  // Standart Accessors (Attributes).
 
-
-  // Standart Destroy (Attribute).
   // DBoDestroyAttribute(PyCatalog_destroy,PyCatalog)
 
 
+  static PyObject* PyCatalog_getState ( PyCatalog* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyCatalog_getState ()" << endl;
+
+    char*           name  = NULL;
+    Catalog::State* state = NULL;
+    PyObject*       pyAdd = NULL;
+    HTRY
+      METHOD_HEAD("Catalog.getState()")
+      if ( not PyArg_ParseTuple(args,"s|O:Catalog.getState",&name,&pyAdd) ) {
+        PyErr_SetString( ConstructorError, "Catalog.getState(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      bool add = (pyAdd) and PyObject_IsTrue(pyAdd);
+      state = catalog->getState( Name(name), add );
+    HCATCH
+    if (not state) Py_RETURN_FALSE;
+    return PyCatalogState_Link(state);
+  }
+
+
   PyMethodDef PyCatalog_Methods[] =
-    { {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getState"          , (PyCFunction)PyCatalog_getState, METH_VARARGS
+                            , "Gets the catalog state of a cell." }
+    , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
 
@@ -90,6 +104,7 @@ extern "C" {
 
   // Link/Creation Method.
   PyTypeObjectDefinitions(Catalog)
+  LinkCreateMethod(Catalog)
 
 
   extern  void  PyCatalog_postModuleInit ()

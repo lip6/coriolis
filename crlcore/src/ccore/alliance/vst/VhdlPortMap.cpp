@@ -34,7 +34,8 @@ namespace Vhdl {
 // Class  :  "Vhdl::PortMap".
 
 
-  PortMap::PortMap ()
+  PortMap::PortMap ( unsigned int flags )
+    : _flags(flags)
   { }
 
 
@@ -51,8 +52,10 @@ namespace Vhdl {
       const Signal* signal = entity->getGlobal( getString(masterNet->getName()) );
       if (signal) return signal->getBit();
 
-      cerr << Error( "PortMap::_lookup() VHDL extension missing on parent of global <%s>."
+      cerr << Error( "PortMap::_lookup() VHDL extension missing on parent of global \"%s\"\n"
+                     "        In parent cell \"%s\"."
                    , getString(masterNet).c_str()
+                   , getString(instance->getCell()->getName()).c_str()
                    ) << endl;
     } else {
       Net* net = plug->getNet();
@@ -60,12 +63,16 @@ namespace Vhdl {
         Bit* bit = BitExtension::get( net );
         if (bit) return bit;
 
-        cerr << Error( "PortMap::_lookup() VHDL extension missing on <%s>."
+        cerr << Error( "PortMap::_lookup() VHDL extension missing on \"%s\".\n"
+                       "        In cell \"%s\"."
                      , getString(net).c_str()
+                     , getString(net->getCell()->getName()).c_str()
                      ) << endl;
       } else {
-        cerr << Error( "PortMap::_lookup() Unconnected <%s>."
+        cerr << Error( "PortMap::_lookup() Unconnected \"%s\",\n"
+                       "        In %s."
                      , getString(plug).c_str()
+                     , getString(instance).c_str()
                      ) << endl;
       }
     }
@@ -73,25 +80,24 @@ namespace Vhdl {
   }
 
 
-  PortMap* PortMap::create ( const Signal* signal )
+  PortMap* PortMap::create ( const Signal* signal, unsigned int flags )
   {
     const ScalarSignal* scalarSignal = dynamic_cast<const ScalarSignal*>( signal );
-    if (not scalarSignal) {
-      const VectorSignal* vectorSignal = dynamic_cast<const VectorSignal*>( signal );
-      if (vectorSignal)
-        return new VectorPortMap ( vectorSignal );
-      else
-        throw Error( "PortMap::create() Unable to cast toward <ScalarSignal> or <VectorSignal>." );
-    }
-    return new ScalarPortMap ( scalarSignal );
+    if (scalarSignal) return new ScalarPortMap ( scalarSignal, flags );
+
+    const VectorSignal* vectorSignal = dynamic_cast<const VectorSignal*>( signal );
+    if (not vectorSignal)
+      throw Error( "PortMap::create() Unable to cast toward <ScalarSignal> or <VectorSignal>." );
+
+    return new VectorPortMap ( vectorSignal, flags );
   }
 
 
 // -------------------------------------------------------------------
 // Class  :  "Vhdl::ScalarPortMap".
   
-  ScalarPortMap::ScalarPortMap ( const ScalarSignal* signal )
-    : PortMap ()
+  ScalarPortMap::ScalarPortMap ( const ScalarSignal* signal, unsigned int flags )
+    : PortMap (flags)
     , _signal (signal)
     , _mapping(NULL)
   { }
@@ -120,8 +126,8 @@ namespace Vhdl {
 // -------------------------------------------------------------------
 // Class  :  "Vhdl::VectorPortMap".
   
-  VectorPortMap::VectorPortMap ( const VectorSignal* signal )
-    : PortMap ()
+  VectorPortMap::VectorPortMap ( const VectorSignal* signal, unsigned int flags )
+    : PortMap (flags)
     , _signal (signal)
     , _mapping()
   {
@@ -153,16 +159,16 @@ namespace Vhdl {
 
   void  VectorPortMap::toVhdlPortMap ( ostream& out, size_t width ) const
   {
+    vector<string>  mappedNames;
     if (getSignal()->isContiguous()) {
-      vector<string>  mappedNames;
-      int             begin  = -1;
-      int             end    = -1;
-      int             delta  =  0;
-      int             deltap =  0;
-      const Bit*      bit    = NULL;
-      const Bit*      bitp   = NULL;
-      string          name   = "UNCONNECTED";
-      string          namep  = "UNCONNECTED";
+      int        begin  = -1;
+      int        end    = -1;
+      int        delta  =  0;
+      int        deltap =  0;
+      const Bit* bit    = NULL;
+      const Bit* bitp   = NULL;
+      string     name   = "UNCONNECTED";
+      string     namep  = "UNCONNECTED";
   
       auto imapping  = _mapping.rbegin();
       auto imappingp = _mapping.rbegin();
@@ -184,7 +190,8 @@ namespace Vhdl {
           if (end    <  0) end   = bitp->getIndex();
           if (deltap == 0) deltap = delta;
   
-          if ( (delta == deltap) and ((delta == -1) or (delta == +1)) ) {
+        //if ( (delta == deltap) and ((delta == -1) or (delta == +1)) ) {
+          if ( (delta == deltap) and (delta == -1) ) {
             end = bit->getIndex();
             deltap = delta;
             continue;
@@ -220,7 +227,15 @@ namespace Vhdl {
           mappedNames.push_back( bitp->getName() );
         }
       }
+    }
+
+    if (mappedNames.size() == 1) {
+      out << setw(width) << left << _signal->getName()
+          << " => " << mappedNames[0];
+      return;
+    }
   
+    if ( (mappedNames.size() > 1) and (_flags & Entity::VstUseConcat) ) {
       out << setw(width) << left << _signal->getName() << " => ";
   
       size_t lhsWidth  = 90 - tab.getWidth() - width - 4;
@@ -239,16 +254,26 @@ namespace Vhdl {
         out << name;
         first = false;
       }
-    } else {
-      auto imapping  = _mapping.rbegin();
-      bool first = true;
-      for ( ; imapping!=_mapping.rend() ; ++imapping ) {
-        if (not first) out << "\n" << tab << "         , ";
-        
-        out << setw(width) << left << _signal->getBit(imapping->first)->getName()
-            << " => " << imapping->second->getName();
-        first = false;
-      }
+      return;
+    }
+
+    const Bit* bit  = NULL;
+    string     name = "UNCONNECTED";
+
+    // cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
+    //      << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
+
+    auto imapping  = _mapping.rbegin();
+    bool first = true;
+    for ( ; imapping!=_mapping.rend() ; ++imapping ) {
+      bit  = imapping ->second;
+      name = (bit) ? bit->getName() : "UNCONNECTED";
+
+      if (not first) out << "\n" << tab << "         , ";
+      
+      out << setw(width) << left << _signal->getBit(imapping->first)->getName()
+          << " => " << name;
+      first = false;
     }
   }
 

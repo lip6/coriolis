@@ -57,7 +57,7 @@ namespace  Isobar {
   // +-------------------------------------------------------------+
 
 
-  DirectDeleteMethod(PyTwoLayersPhysicalRule_DeAlloc,PyTwoLayersPhysicalRule)
+  PythonOnlyDeleteMethod(TwoLayersPhysicalRule)
   PyTypeObjectLinkPyType(TwoLayersPhysicalRule)
 
 

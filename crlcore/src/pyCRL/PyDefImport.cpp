@@ -38,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -62,9 +63,10 @@ extern "C" {
     
     HTRY
       char* defFile = NULL;
+      long  flags   = 0;
       
-      if (PyArg_ParseTuple( args, "s:DefImport.load", &defFile )) {
-        cell = DefImport::load( defFile, 0 );
+      if (PyArg_ParseTuple( args, "s|l:DefImport.load", &defFile, &flags )) {
+        cell = DefImport::load( defFile, flags );
       } else {
         PyErr_SetString ( ConstructorError, "DefImport.load(): Bad type or bad number of parameters." );
         return NULL;

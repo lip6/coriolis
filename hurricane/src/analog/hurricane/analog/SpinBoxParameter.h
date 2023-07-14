@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2009-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2009-2023, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_SPINBOX_PARAMETER_H
-#define ANALOG_SPINBOX_PARAMETER_H
-
+#pragma  once
 #include "hurricane/analog/Parameter.h"
 
 namespace Analog {
@@ -24,12 +22,17 @@ namespace Analog {
 
   class SpinBoxParameter : public Parameter {
     public:
-      inline          SpinBoxParameter ( std::string id, long min, long max );
-      inline long     getMin           () const;
-      inline long     getMax           () const;
-      inline long     getValue         () const;
-      inline operator long             () const;
-      inline void     setValue         ( long value );
+      typedef Parameter Super;
+    public:
+      inline               SpinBoxParameter ( std::string id, long min, long max );
+      inline  long         getMin           () const;
+      inline  long         getMax           () const;
+      inline  long         getValue         () const;
+      inline  operator     long             () const;
+      inline  void         setValue         ( long value );
+      virtual std::string  _getTypeName     () const;
+      virtual std::string  _getString       () const;
+      virtual Record*      _getRecord       () const;
     private:
       long _min;
       long _max;
@@ -47,4 +50,5 @@ namespace Analog {
 
 }  // Analog namespace.
 
-#endif // ANALOG_SPINBOX_PARAMETER_H
+
+INSPECTOR_PR_SUPPORT(Analog::SpinBoxParameter);

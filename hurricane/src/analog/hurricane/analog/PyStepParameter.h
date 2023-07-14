@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANALOG_PY_STEP_PARAMETER_H
-#define  ANALOG_PY_STEP_PARAMETER_H
-
+#pragma once
 #include "hurricane/analog/PyParameter.h"
 #include "hurricane/analog/StepParameter.h"
 
@@ -51,5 +49,3 @@ extern "C" {
 }  // extern "C".
 
 }  // Isobar namespace.
-
-#endif  // ANALOG_PY_STEP_PARAMETER_H

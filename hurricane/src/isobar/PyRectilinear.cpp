@@ -45,6 +45,24 @@ namespace  Isobar {
   }
 
 
+  PyObject* VectorToList ( const std::vector<Box>& v )
+  {
+    PyObject* pyList = PyList_New( v.size() );
+
+    for ( size_t i=0 ; i<v.size() ; ++i ) {
+      PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
+      if (not pyBox) { return NULL; }
+    
+      HTRY
+        pyBox->_object = new Box ( v[i] );
+      HCATCH    
+      PyList_SetItem( pyList, i, (PyObject*)pyBox );
+    }
+
+    return pyList;
+  }
+
+
 extern "C" {
 
 
@@ -62,8 +80,9 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
   // Standard Accessors (Attributes).
-  DirectGetLongAttribute(PyRectilinear_getX, getX, PyRectilinear, Rectilinear)
-  DirectGetLongAttribute(PyRectilinear_getY, getY, PyRectilinear, Rectilinear)
+  DirectGetLongAttribute(PyRectilinear_getX          , getX          , PyRectilinear, Rectilinear)
+  DirectGetLongAttribute(PyRectilinear_getY          , getY          , PyRectilinear, Rectilinear)
+  DirectGetBoolAttribute(PyRectilinear_isNonRectangle, isNonRectangle, PyRectilinear, Rectilinear)
 
   // Standard Destroy (Attribute).
   DBoDestroyAttribute(PyRectilinear_destroy, PyRectilinear)
@@ -127,8 +146,6 @@ extern "C" {
       METHOD_HEAD( "Rectilinear.setPoints()" )
       
       PyObject* arg0 = NULL;
-      PyObject* arg1 = NULL;
-      PyObject* arg2 = NULL;
       if (not PyArg_ParseTuple( args, "O:Rectilinear.setPoints", &arg0 )) {
         PyErr_SetString( ConstructorError, "Invalid number of parameters for Rectilinear.setPoints()." );
         return NULL;
@@ -169,19 +186,54 @@ extern "C" {
   }
 
 
+  static PyObject* PyRectilinear_getAsRectangles ( PyRectilinear *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "Rectilinear.getAsRectangles()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Rectilinear.getAsRectangles()" )
+      
+      PyObject* pyList = NULL;
+      if (not PyArg_ParseTuple( args, "O:Rectilinear.getAsRectangles", &pyList )) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsRectangles(): Must have exactly one parameter." );
+        return NULL;
+      }
+      if (not PyList_Check(pyList)) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsRectangles(): Argument must be a list." );
+        return NULL;
+      }
+
+      PyList_SetSlice( pyList, 0, PyList_Size(pyList), NULL );
+      vector<Box> boxes;
+      rectilinear->getAsRectangles( boxes );
+      for ( size_t i=0 ; i<boxes.size() ; ++i ) {
+        PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
+        if (not pyBox) { return NULL; }
+    
+        pyBox->_object = new Box ( boxes[i] );
+        PyList_Append( pyList, (PyObject*)pyBox );
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyRectilinear Attribute Method table.
 
   PyMethodDef PyRectilinear_Methods[] =
-    { { "create"        , (PyCFunction)PyRectilinear_create        , METH_VARARGS|METH_STATIC
-                        , "Create a new Rectilinear polygon." }
-    , { "getX"          , (PyCFunction)PyRectilinear_getX          , METH_NOARGS , "Return the Rectilinear X value." }
-    , { "getY"          , (PyCFunction)PyRectilinear_getY          , METH_NOARGS , "Return the Rectilinear Y value." }
-    , { "getBoundingBox", (PyCFunction)PyRectilinear_getBoundingBox, METH_NOARGS , "Return the Rectilinear Bounding Box." }
-    , { "setPoints"     , (PyCFunction)PyRectilinear_setPoints     , METH_VARARGS, "Sets the Rectilinear Bounding Box." }
-    , { "translate"     , (PyCFunction)PyRectilinear_translate     , METH_VARARGS, "Translates the Rectilinear of dx and dy." }
-    , { "destroy"       , (PyCFunction)PyRectilinear_destroy       , METH_NOARGS
-                        , "Destroy associated hurricane object, the python object remains." }
+    { { "create"         , (PyCFunction)PyRectilinear_create         , METH_VARARGS|METH_STATIC
+                         , "Create a new Rectilinear polygon." }     
+    , { "isNonRectangle" , (PyCFunction)PyRectilinear_isNonRectangle , METH_NOARGS , "Tells if the shape is not a rectangle." }
+    , { "getX"           , (PyCFunction)PyRectilinear_getX           , METH_NOARGS , "Return the Rectilinear X value." }
+    , { "getY"           , (PyCFunction)PyRectilinear_getY           , METH_NOARGS , "Return the Rectilinear Y value." }
+    , { "getBoundingBox" , (PyCFunction)PyRectilinear_getBoundingBox , METH_NOARGS , "Return the Rectilinear Bounding Box." }
+    , { "setPoints"      , (PyCFunction)PyRectilinear_setPoints      , METH_VARARGS, "Sets the Rectilinear Bounding Box." }
+    , { "translate"      , (PyCFunction)PyRectilinear_translate      , METH_VARARGS, "Translates the Rectilinear of dx and dy." }
+    , { "getAsRectangles", (PyCFunction)PyRectilinear_getAsRectangles, METH_VARARGS, "Return the rectangle coverage." }
+    , { "destroy"        , (PyCFunction)PyRectilinear_destroy        , METH_NOARGS
+                         , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}  /* sentinel */
     };
 

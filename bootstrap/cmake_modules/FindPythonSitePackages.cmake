@@ -1,13 +1,25 @@
-
-if(UNIX)
+if(UNIX AND NOT POETRY)
+  if(NOT Python_FOUND)
+    message(FATAL_ERROR "Python has not been found, maybe forgot to call find_package(Python). ")
+  endif()
  # This way avoids newline in the script string.
   set(SCRIPT            "import os.path,distutils.sysconfig")
-  set(SCRIPT "${SCRIPT}; pathes = distutils.sysconfig.get_python_lib().split('/')")
-  set(SCRIPT "${SCRIPT}; print os.path.join(pathes[-2],pathes[-1])")
+  set(SCRIPT "${SCRIPT}; pathes = distutils.sysconfig.get_python_lib('platstdlib').split('/')")
+  set(SCRIPT "${SCRIPT}; print( os.path.join(pathes[-2],pathes[-1]) )")
  
-  execute_process(COMMAND "python" "-c" "${SCRIPT}"
+  execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${SCRIPT}"
                   RESULT_VARIABLE RETURN_CODE
-                  OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+                  OUTPUT_VARIABLE Python_SITEARCH
+                  OUTPUT_STRIP_TRAILING_WHITESPACE
+                 )
+
+  set(SCRIPT            "import os.path,distutils.sysconfig")
+  set(SCRIPT "${SCRIPT}; pathes = distutils.sysconfig.get_python_lib('stdlib').split('/')")
+  set(SCRIPT "${SCRIPT}; print( os.path.join(pathes[-2],pathes[-1]) )")
+ 
+  execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${SCRIPT}"
+                  RESULT_VARIABLE RETURN_CODE
+                  OUTPUT_VARIABLE Python_SITELIB
                   OUTPUT_STRIP_TRAILING_WHITESPACE
                  )
  
@@ -17,17 +29,23 @@ if(UNIX)
     set(FindPythonSitePackages_FOUND FALSE)
   endif(RETURN_CODE EQUAL 0)
 
-  set(PYTHON_SITE_PACKAGES "lib${LIB_SUFFIX}/${PYTHON_SITE_PACKAGES}"
-      CACHE STRING         "Python site packages directory." FORCE)
-  mark_as_advanced(PYTHON_SITE_PACKAGES)
+  set(Python_CORIOLISARCH "lib${LIB_SUFFIX}/${Python_SITEARCH}/coriolis"
+      CACHE STRING        "Python platform dependent install directory (Coriolis modules)." FORCE)
+  set(Python_SITELIB      "lib${LIB_SUFFIX}/${Python_SITELIB}"
+      CACHE STRING        "Python platform independent install directory." FORCE)
+  set(Python_CORIOLISLIB  "${Python_SITELIB}/coriolis"
+      CACHE STRING        "Python platform independent install directory (Coriolis modules)." FORCE)
+  mark_as_advanced(Python_CORIOLISARCH)
+  mark_as_advanced(Python_CORIOLISLIB)
+  mark_as_advanced(Python_SITELIB)
 
   if(FindPythonSitePackages_FOUND)
     if(NOT FindPythonSitePackages_FIND_QUIETLY)
       if(FindPythonSitePackages_FOUND)
-        message(STATUS "Found FindPythonSitePackages : ${PYTHON_SITE_PACKAGES}")
+        message(STATUS "Found FindPythonSitePackages : ${Python_CORIOLISARCH}")
       endif(FindPythonSitePackages_FOUND)
     endif(NOT FindPythonSitePackages_FIND_QUIETLY)
   else(FindPythonSitePackages_FOUND)
     message ( FATAL_ERROR "Python site packages directory was not found (pythonV.R/site-packages/)." )
   endif(FindPythonSitePackages_FOUND)
-endif(UNIX)
+endif(UNIX AND NOT POETRY)

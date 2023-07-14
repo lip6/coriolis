@@ -1,0 +1,1704 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classHurricane_1_1Net" kind="class" language="C++" prot="public">
+    <compoundname>Hurricane::Net</compoundname>
+    <basecompoundref refid="classHurricane_1_1Entity" prot="public" virt="non-virtual">Hurricane::Entity</basecompoundref>
+    <innerclass refid="structHurricane_1_1Net_1_1CompareByName" prot="public">Hurricane::Net::CompareByName</innerclass>
+    <innerclass refid="classHurricane_1_1Net_1_1ComponentSet" prot="public">Hurricane::Net::ComponentSet</innerclass>
+    <innerclass refid="classHurricane_1_1Net_1_1Direction" prot="public">Hurricane::Net::Direction</innerclass>
+    <innerclass refid="classHurricane_1_1Net_1_1RubberSet" prot="public">Hurricane::Net::RubberSet</innerclass>
+    <innerclass refid="classHurricane_1_1Net_1_1Type" prot="public">Hurricane::Net::Type</innerclass>
+      <sectiondef kind="user-defined">
+      <header>Net Collection</header>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1730ed1247cd9bce7fcf519ea60dc738" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>NetFilter Hurricane::Net::getIsGlobalFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsGlobalFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting global nets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="202" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a3af91a80e219e37e70229e61dfd385da" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>NetFilter Hurricane::Net::getIsExternalFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsExternalFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting external nets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="203" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a7a2d1c4ab84bf81a16e24557d2342ea5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>NetFilter Hurricane::Net::getIsInternalFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsInternalFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting internal nets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="204" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1afdb2269f3a88923c25264f6f785372a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>NetFilter Hurricane::Net::getIsClockFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsClockFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting clock nets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="205" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ac241f44abf1f332004dd6103ee1dfa48" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>NetFilter Hurricane::Net::getIsSupplyFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsSupplyFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the filter selecting supply nets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="206" column="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classHurricane_1_1Net_1a3f1ac0fcb03638b2ffa9af6a9a58de15" prot="public" static="no">
+        <type><ref refid="classHurricane_1_1Entity" kindref="compound">Entity</ref></type>
+        <definition>Hurricane::Net::Inherit</definition>
+        <argsstring></argsstring>
+        <name>Inherit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for calling upon methods of the base class without knowing it. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="54" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classHurricane_1_1Net_1a3a242d929e0c733f90f3f69be8cc427b" prot="public" static="no">
+        <type>unsigned</type>
+        <definition>Hurricane::Net::Arity</definition>
+        <argsstring></argsstring>
+        <name>Arity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This type allows to represent the number of bits associated to a net (a null value meaning undefined). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="56" column="30" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a32d17fc4c283031835738b82a80fa1d4" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>Cell* Hurricane::Net::_cell</definition>
+        <argsstring></argsstring>
+        <name>_cell</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="148" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1acb0322011b463b89c6a9fbf4a2ebc413" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+        <definition>Name Hurricane::Net::_name</definition>
+        <argsstring></argsstring>
+        <name>_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="149" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1aaa916fd82ae09f64148e7b6a06f26cd8" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net_1a3a242d929e0c733f90f3f69be8cc427b" kindref="member">Arity</ref></type>
+        <definition>Arity Hurricane::Net::_arity</definition>
+        <argsstring></argsstring>
+        <name>_arity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="150" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a2cd3632ebf7cce3d2a127b04f3682038" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::_isGlobal</definition>
+        <argsstring></argsstring>
+        <name>_isGlobal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="151" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a216187bf76c43c3707df0146953c9e04" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::_isExternal</definition>
+        <argsstring></argsstring>
+        <name>_isExternal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="152" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1ac6a0c7d090b57e41ca1b4183b78f0aa1" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::_isAutomatic</definition>
+        <argsstring></argsstring>
+        <name>_isAutomatic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="153" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1aad7e4fa6db266b4aea7a7c2c05681bca" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref></type>
+        <definition>Type Hurricane::Net::_type</definition>
+        <argsstring></argsstring>
+        <name>_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="154" column="19" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a4402eb5609e7f6775668118d45bbcbb6" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net_1_1Direction" kindref="compound">Direction</ref></type>
+        <definition>Direction Hurricane::Net::_direction</definition>
+        <argsstring></argsstring>
+        <name>_direction</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="155" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a2a594a460d053a916117e27d9eda1d3c" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Point" kindref="compound">Point</ref></type>
+        <definition>Point Hurricane::Net::_position</definition>
+        <argsstring></argsstring>
+        <name>_position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="156" column="20" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1a6713f8beebf565d1103914764372ed44" prot="private" static="no" mutable="no">
+        <type>ComponentSet</type>
+        <definition>ComponentSet Hurricane::Net::_componentSet</definition>
+        <argsstring></argsstring>
+        <name>_componentSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="157" column="27" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1ade8e0c0728affc47ecbca1e2f944bbd3" prot="private" static="no" mutable="no">
+        <type>RubberSet</type>
+        <definition>RubberSet Hurricane::Net::_rubberSet</definition>
+        <argsstring></argsstring>
+        <name>_rubberSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="158" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1aa4857b11f68e3c0ca8a812cf4da30312" prot="private" static="no" mutable="no">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net* Hurricane::Net::_nextOfCellNetMap</definition>
+        <argsstring></argsstring>
+        <name>_nextOfCellNetMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="159" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classHurricane_1_1Net_1ac679317d26a788f4f9c8021eed971867" prot="private" static="no" mutable="no">
+        <type>NetMainName</type>
+        <definition>NetMainName Hurricane::Net::_mainName</definition>
+        <argsstring></argsstring>
+        <name>_mainName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="160" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classHurricane_1_1Net_1a66f8870c8d1d8ba119995c14e1caab55" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Hurricane::Net::Net</definition>
+        <argsstring>(Cell *cell, const Name &amp;name)</argsstring>
+        <name>Net</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="165" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ab5e33b38b969a3c4a8c4f3e5789a9ea5" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::_postCreate</definition>
+        <argsstring>()</argsstring>
+        <name>_postCreate</name>
+        <reimplements refid="classHurricane_1_1Entity_1a1526d8717674ffba331f9900807b022e">_postCreate</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="249" column="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a212f0c483ec916a67ee565f876d15d31" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::_preDestroy</definition>
+        <argsstring>()</argsstring>
+        <name>_preDestroy</name>
+        <reimplements refid="classHurricane_1_1Entity_1a4ecb295831b7dcc9f3f52ff51907885b">_preDestroy</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="250" column="29"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classHurricane_1_1Net_1ac1524cea15e8eacbf992c0cfb9e481db" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net * Hurricane::Net::create</definition>
+        <argsstring>(Cell *cell, const Name &amp;name)</argsstring>
+        <name>create</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cell</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates and returns a new net named <computeroutput>&lt;name&gt;</computeroutput> for the cell <computeroutput>&lt;cell&gt;</computeroutput>.</para>
+<para><simplesect kind="par"><title>Caution: Throws an exception if the cell is null, if the name empty or </title><para>if a net with same name already exists. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="167" column="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a790ca5311e555a34d2cdfe25b7e40596" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>static NetFilter Hurricane::Net::getIsCellNetFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsCellNetFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="200" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aa9e8f03ab0efa6fdd6b361ef87a4400a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>static NetFilter Hurricane::Net::getIsDeepNetFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsDeepNetFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="201" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a521fc0e3d7e896bcdd93707c90bc96c0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>static NetFilter Hurricane::Net::getIsPowerFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsPowerFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="207" column="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a82ee79a609c9c83d7cebe64c64c1a6cd" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a0dfd2c5b40325a919d139091312732e9" kindref="member">NetFilter</ref></type>
+        <definition>static NetFilter Hurricane::Net::getIsGroundFilter</definition>
+        <argsstring>()</argsstring>
+        <name>getIsGroundFilter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="208" column="30"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classHurricane_1_1Net_1a46bcdae317a2ebb36d5f1dcb685b6fd2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+        <definition>virtual Cell* Hurricane::Net::getCell</definition>
+        <argsstring>() const</argsstring>
+        <name>getCell</name>
+        <reimplements refid="classHurricane_1_1Entity_1a42bdf015f583be477cc54b48652b1007">getCell</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="172" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="172" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a5326386dbc4036f9546578bfb4bb7953" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classHurricane_1_1Box" kindref="compound">Box</ref></type>
+        <definition>virtual Box Hurricane::Net::getBoundingBox</definition>
+        <argsstring>() const</argsstring>
+        <name>getBoundingBox</name>
+        <reimplements refid="classHurricane_1_1Entity_1ad834f8ce33a08a13e2a88446696e63e7">getBoundingBox</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="173" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aeba73ca641db371dde29baf348b58bba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        <definition>const Name &amp; Hurricane::Net::getName</definition>
+        <argsstring>() const</argsstring>
+        <name>getName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the net name. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="174" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a76d404e877ab4a058bb1fb6ff3a24935" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const NetMainName *</type>
+        <definition>const NetMainName* Hurricane::Net::getMainName</definition>
+        <argsstring>() const</argsstring>
+        <name>getMainName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="175" column="31" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="175" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a78de2202fcf4f16024b4460ebb7dc907" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Net_1a3a242d929e0c733f90f3f69be8cc427b" kindref="member">Arity</ref> &amp;</type>
+        <definition>const Net::Arity &amp; Hurricane::Net::getArity</definition>
+        <argsstring>() const</argsstring>
+        <name>getArity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the signal arity (by default set to 1). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="176" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a0fa61dc0ccb67f384f03b35f83d391e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> &amp;</type>
+        <definition>const Net::Type &amp; Hurricane::Net::getType</definition>
+        <argsstring>() const</argsstring>
+        <name>getType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the signal type (by default set to UNDEFINED). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="177" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aa84245d734dfaa572660a1a2c1bfc56e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Net_1_1Direction" kindref="compound">Direction</ref> &amp;</type>
+        <definition>const Net::Direction &amp; Hurricane::Net::getDirection</definition>
+        <argsstring>() const</argsstring>
+        <name>getDirection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the signal direction (by default set to UNDEFINED).</para>
+<para><simplesect kind="remark"><para>This direction is meaningfull only for external nets. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="178" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="178" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1abcfdec9c953d228845fdb9d75e8173cc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+        <definition>const Point &amp; Hurricane::Net::getPosition</definition>
+        <argsstring>() const</argsstring>
+        <name>getPosition</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the X,Y position of the net. This position is used for computing the location of the plugs (on slave instances calling the cell owning this net) having that net as master. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="179" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="179" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1f8f4c4632614b84a1227a1da8310428" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const Unit &amp; Hurricane::Net::getX</definition>
+        <argsstring>() const</argsstring>
+        <name>getX</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> net abscissa. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="180" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="180" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aa97899b408aa47ec22792b5c6d6e9216" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classHurricane_1_1DbU_1a4fbfa3e8c89347af76c9628ea06c4146" kindref="member">DbU::Unit</ref> &amp;</type>
+        <definition>const Unit &amp; Hurricane::Net::getY</definition>
+        <argsstring>() const</argsstring>
+        <name>getY</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> net ordinate. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="181" column="29" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="181" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1e2d7ef9bab15694870a605e514f26e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a7d26d99aeb5dd6d70d51bd35d2473e72" kindref="member">Components</ref></type>
+        <definition>Components Hurricane::Net::getComponents</definition>
+        <argsstring>() const</argsstring>
+        <name>getComponents</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s components. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="182" column="24" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="182" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a6ddbe2697a7fd7a7cd359f97b2ad0223" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1af8923abd57508cc44931a00d61b564ad" kindref="member">Rubbers</ref></type>
+        <definition>Rubbers Hurricane::Net::getRubbers</definition>
+        <argsstring>() const</argsstring>
+        <name>getRubbers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s rubbers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="183" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="183" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1078d55acf3efa0b3c23cd345cae87fa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>RoutingPads</type>
+        <definition>RoutingPads Hurricane::Net::getRoutingPads</definition>
+        <argsstring>() const</argsstring>
+        <name>getRoutingPads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s RoutingPads. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="184" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a88322672c105405a61a78022359178aa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Net::getPlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getPlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s plugs. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="185" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a797a7bbcac968793bc84c352eb4ce87a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1GenericCollection" kindref="compound">Pins</ref></type>
+        <definition>Pins Hurricane::Net::getPins</definition>
+        <argsstring>() const</argsstring>
+        <name>getPins</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="186" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9c397596fe9ecbf674712c72e0b9010c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a1e6a8ab09f688509bd727b3fee02d0d2" kindref="member">Contacts</ref></type>
+        <definition>Contacts Hurricane::Net::getContacts</definition>
+        <argsstring>() const</argsstring>
+        <name>getContacts</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s contacts. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="187" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aadc5a9ef26d7a72f49fdf22452f3cc58" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a30748fa53a81cb597d4a13d651238716" kindref="member">Segments</ref></type>
+        <definition>Segments Hurricane::Net::getSegments</definition>
+        <argsstring>() const</argsstring>
+        <name>getSegments</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s segments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="188" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a97f32cf738af9cf107833ca81fe95db8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a146e2d3d34b4035aff422f12e85345b9" kindref="member">Verticals</ref></type>
+        <definition>Verticals Hurricane::Net::getVerticals</definition>
+        <argsstring>() const</argsstring>
+        <name>getVerticals</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s vertical segments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="189" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ad8553af888909e1c127e12e68bd000fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1a721e644c7d97f2f66049ab062140b855" kindref="member">Horizontals</ref></type>
+        <definition>Horizontals Hurricane::Net::getHorizontals</definition>
+        <argsstring>() const</argsstring>
+        <name>getHorizontals</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s horizontal segments. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="190" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a564df07be5589bc72dd6eb944855aa2b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1abd1f433c44d8b515e1b8a8810aea1610" kindref="member">Pads</ref></type>
+        <definition>Pads Hurricane::Net::getPads</definition>
+        <argsstring>() const</argsstring>
+        <name>getPads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of net&apos;s pads. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="191" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9c835d2f071155521700921d816ac1fa" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Net::getSlavePlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getSlavePlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of plugs which have this net as master.</para>
+<para><simplesect kind="remark"><para>Meaningfull only for external nets. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="192" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a08560ffa6b0f5ecc442bf232486dd8ff" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Net::getConnectedSlavePlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getConnectedSlavePlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of connected plugs which have this net as master.</para>
+<para><simplesect kind="remark"><para>Meaningfull only for external nets. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="193" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aad3f3ea88bdea914cab3f38bdcdb843d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespaceHurricane_1ac8335d2057483ee7a935c15a9460c64f" kindref="member">Plugs</ref></type>
+        <definition>Plugs Hurricane::Net::getUnconnectedSlavePlugs</definition>
+        <argsstring>() const</argsstring>
+        <name>getUnconnectedSlavePlugs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> the collection of unconnected plugs which have this net as master.</para>
+<para><simplesect kind="remark"><para>Meaningfull only for external nets. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="194" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ae1026cba48a735df7888064139c23cb1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>Aliases</type>
+        <definition>Aliases Hurricane::Net::getAliases</definition>
+        <argsstring>() const</argsstring>
+        <name>getAliases</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="195" column="21" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="195" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a93d4b0aff66a1b6809fa722ff6aea3e2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool Hurricane::Net::isDeepNet</definition>
+        <argsstring>() const</argsstring>
+        <name>isDeepNet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="213" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="213" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a332e9b311809f75fc0fa3a5f36acebcc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isGlobal</definition>
+        <argsstring>() const</argsstring>
+        <name>isGlobal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the net is global else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="214" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="214" bodyend="214"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1aeeb3735dd7451bc0054dd68ac21aae47" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isExternal</definition>
+        <argsstring>() const</argsstring>
+        <name>isExternal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the net is external else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="215" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="215" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ae4247dc7c432760043c6afa0a9a95aa8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isAutomatic</definition>
+        <argsstring>() const</argsstring>
+        <name>isAutomatic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="216" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="216" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a88c94d0367b149b2d17f076a7ce92516" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isBlockage</definition>
+        <argsstring>() const</argsstring>
+        <name>isBlockage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="217" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="217" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a97fc3cd13e32f0b4c275bc4a0d259895" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isFused</definition>
+        <argsstring>() const</argsstring>
+        <name>isFused</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="218" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="218" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9caf25bfa84478157d206979dd521ed4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isLogical</definition>
+        <argsstring>() const</argsstring>
+        <name>isLogical</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the net is logical else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="219" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="219" bodyend="219"/>
+        <references refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a8f454d4a48d8dbdd7d6341e7285b4a35" compoundref="Net_8h" startline="61">Hurricane::Net::Type::LOGICAL</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a8807cc000bbbe1c340c71fcbfbb8fe33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isClock</definition>
+        <argsstring>() const</argsstring>
+        <name>isClock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the net is a clock else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="220" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="220" bodyend="220"/>
+        <references refid="classHurricane_1_1Net_1_1Type_1a2652e3299403e0f5979a848b267163a5a94d77dd6484c8f8524a3960d42d3974b" compoundref="Net_8h" startline="61">Hurricane::Net::Type::CLOCK</references>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a552222ebf08922e58cd5103e743e0c98" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isPower</definition>
+        <argsstring>() const</argsstring>
+        <name>isPower</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="221" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="221" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a4922fb9e820100631299e07c113ab52f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isGround</definition>
+        <argsstring>() const</argsstring>
+        <name>isGround</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="222" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="222" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ab8947fc6c5093341958b94148407c2a2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::isSupply</definition>
+        <argsstring>() const</argsstring>
+        <name>isSupply</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><bold>Returns:</bold> <bold>true</bold> if the net is a supply else <bold>false</bold>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="223" column="35" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="223" bodyend="223"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a095634766c43d3718ff0c561b6a651dc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::hasAlias</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>hasAlias</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="224" column="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a2d68c1419752ba767bf6b381568478e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>NetAliasHook *</type>
+        <definition>NetAliasHook* Hurricane::Net::getAlias</definition>
+        <argsstring>(const Name &amp;) const</argsstring>
+        <name>getAlias</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="225" column="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1a39702b9f4d26ba29ad0dafcdddf840" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setName</definition>
+        <argsstring>(Name name)</argsstring>
+        <name>setName</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Name" kindref="compound">Name</ref></type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows to change net name.</para>
+<para><simplesect kind="remark"><para>Throws an exception if the new name is empty, or if a net with same net already exists in the cell. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="230" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1af5dfdca4401902ee7e1e46a1a486da38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setArity</definition>
+        <argsstring>(const Arity &amp;arity)</argsstring>
+        <name>setArity</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1a3a242d929e0c733f90f3f69be8cc427b" kindref="member">Arity</ref> &amp;</type>
+          <declname>arity</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the signal arity to <computeroutput>&lt;arity&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="231" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a35c84afd9dade0cb715602bcf8ec8865" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setGlobal</definition>
+        <argsstring>(bool isGlobal)</argsstring>
+        <name>setGlobal</name>
+        <param>
+          <type>bool</type>
+          <declname>isGlobal</declname>
+          <defname>state</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets global signal status to <computeroutput>&lt;state&gt;</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="232" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a6a30bc8282ce7e4b936e73a11549fedf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setExternal</definition>
+        <argsstring>(bool isExternal)</argsstring>
+        <name>setExternal</name>
+        <param>
+          <type>bool</type>
+          <declname>isExternal</declname>
+          <defname>state</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the external net status to <computeroutput>&lt;state&gt;</computeroutput>.</para>
+<para><simplesect kind="remark"><para>This function will throw an exception if the net switches to internal and there is a plug refering to it. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="233" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a120e80aa0998c7c388e26796a5620f8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setAutomatic</definition>
+        <argsstring>(bool isAutomatic)</argsstring>
+        <name>setAutomatic</name>
+        <param>
+          <type>bool</type>
+          <declname>isAutomatic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="234" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a83f5ce12291b0ec5ab584d515dd8963c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setType</definition>
+        <argsstring>(const Type &amp;type)</argsstring>
+        <name>setType</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1_1Type" kindref="compound">Type</ref> &amp;</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the signal type of the net. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="235" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ac33d13bb0ddc60f369d5bfcffc4bb0f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setDirection</definition>
+        <argsstring>(const Direction &amp;direction)</argsstring>
+        <name>setDirection</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Net_1_1Direction" kindref="compound">Direction</ref> &amp;</type>
+          <declname>direction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the signal direction of the net. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="236" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a0a3a3232a74ebced14b14029c5199561" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setPosition</definition>
+        <argsstring>(const Point &amp;position)</argsstring>
+        <name>setPosition</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Point" kindref="compound">Point</ref> &amp;</type>
+          <declname>position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the X,Y location of the net. By default it is located at the coordinates origin of the cell (point 0,0). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="237" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a6afcc056ee6453485801ba5fded01a96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::setRoutingState</definition>
+        <argsstring>(uint32_t state)</argsstring>
+        <name>setRoutingState</name>
+        <param>
+          <type>uint32_t</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="238" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ae46f7e4a9b00b265c06cb6e0ee00b806" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::materialize</definition>
+        <argsstring>()</argsstring>
+        <name>materialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Materializes all the rubbers and components of a net. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="239" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9e53a3d54b61f7081263e6d7b4fa81b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::unmaterialize</definition>
+        <argsstring>()</argsstring>
+        <name>unmaterialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>De-materializes all rubbers and the components of a net. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="240" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a1fd16a31d32ec4f2d16857647efc473a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::addAlias</definition>
+        <argsstring>(const Name &amp;name, bool isExternal=false)</argsstring>
+        <name>addAlias</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isExternal</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="241" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ab4a0364205bb2e489111d0207a8c921a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Hurricane::Net::removeAlias</definition>
+        <argsstring>(const Name &amp;name)</argsstring>
+        <name>removeAlias</name>
+        <param>
+          <type>const <ref refid="classHurricane_1_1Name" kindref="compound">Name</ref> &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="242" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a442f62d23364805f39816cd543284886" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::merge</definition>
+        <argsstring>(Net *net)</argsstring>
+        <name>merge</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <declname>net</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Merges the net <computeroutput>&lt;net&gt;</computeroutput> to the net <computeroutput>&lt;this&gt;</computeroutput> which keeps its characteristics (arity, global, external and direction).</para>
+<para><simplesect kind="par"><title>Caution: An exception is thrown if the <computeroutput>&lt;net&gt;</computeroutput> is null or equal to </title><para><computeroutput>&lt;this&gt;</computeroutput>, if the two nets don&apos;t belong to the same cell or if <computeroutput>&lt;net&gt;</computeroutput> is external and master net of a connected plug while net <computeroutput>&lt;this&gt;</computeroutput> is not external.</para>
+</simplesect>
+<simplesect kind="remark"><para>All the rubbers and the components of the <computeroutput>&lt;net&gt;</computeroutput> (and also the plugs) become rubbers or components of the net <computeroutput>&lt;this&gt;</computeroutput>. Nevertheless if for a particular slave instance there was both a plug referencing the <computeroutput>&lt;net&gt;</computeroutput> and an other plug referencing <computeroutput>&lt;this&gt;</computeroutput>, the first is deleted to the advantage of the second, because a net can&apos;t have more than one plug for a given instance (the rings of the body hooks are then merged).</para>
+</simplesect>
+<simplesect kind="remark"><para>Once the merger done the net <computeroutput>&lt;net&gt;</computeroutput> is definitively deleted. Its properties and those of its deleted plugs, if any, are lost (as well as the ones which could be attached to their occurences). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="243" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a4bd27e6ae22606463491c28437c4068f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net * Hurricane::Net::getClone</definition>
+        <argsstring>(Cell *cloneCell)</argsstring>
+        <name>getClone</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> *</type>
+          <declname>cloneCell</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Build a duplicate of net (<computeroutput></computeroutput> &lt;this&gt;) inside a cloned <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref> <computeroutput></computeroutput> &lt;cloneCell&gt;. The connectivity (<ref refid="classHurricane_1_1Plug" kindref="compound">Plug</ref>) or components of the original net are <bold>not</bold> copied.</para>
+<para><simplesect kind="remark"><para>It is likely that <computeroutput></computeroutput> &lt;cloneCell&gt; is a copy of this net&apos;s onwer <ref refid="classHurricane_1_1Cell" kindref="compound">Cell</ref>, but it is not mandatory. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="244" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9a832cec9e3a047c0a3ef8184515fc64" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::_toJson</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJson</name>
+        <reimplements refid="classHurricane_1_1Entity_1a0301fa9a630aae3f17131d909d6ca5e3">_toJson</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="252" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a632d8a4a63e3b6bc034d2fb15e97bc78" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::_toJsonSignature</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJsonSignature</name>
+        <reimplements refid="classHurricane_1_1DBo_1a5a30676a8ddfd2f6848974f9d0b228f2">_toJsonSignature</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="253" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9b4785e70c1dcd5c92ef82586ec59481" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Hurricane::Net::_toJsonCollections</definition>
+        <argsstring>(JsonWriter *) const</argsstring>
+        <name>_toJsonCollections</name>
+        <reimplements refid="classHurricane_1_1DBo_1a199aab196fb4d08a797f46e9fbf011c6">_toJsonCollections</reimplements>
+        <param>
+          <type>JsonWriter *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="254" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a3fbed850ea79212e5f3a8d4ea919f656" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Net::_getTypeName</definition>
+        <argsstring>() const</argsstring>
+        <name>_getTypeName</name>
+        <reimplements refid="classHurricane_1_1DBo_1af7f24f206bc6822b9bb6ab589948e7e2">_getTypeName</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="255" column="28" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="255" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a9bcf30905a148d6fde2b19418f6811bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>string</type>
+        <definition>virtual string Hurricane::Net::_getString</definition>
+        <argsstring>() const</argsstring>
+        <name>_getString</name>
+        <reimplements refid="classHurricane_1_1Entity_1a4bf6ab9c016168b149998c0f2ed1eb30">_getString</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="256" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ad624123d1c5fffc6221902119a0449af" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>Record *</type>
+        <definition>virtual Record* Hurricane::Net::_getRecord</definition>
+        <argsstring>() const</argsstring>
+        <name>_getRecord</name>
+        <reimplements refid="classHurricane_1_1Entity_1a1db28a634afa140925d540169ea8b39f">_getRecord</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="257" column="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1af6ee3137da9eda1cf70257142b445fc4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>NetMainName &amp;</type>
+        <definition>NetMainName&amp; Hurricane::Net::_getMainName</definition>
+        <argsstring>()</argsstring>
+        <name>_getMainName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="258" column="25" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="258" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1ad4471a62c3eed118b61a6fd443fc8eed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ComponentSet &amp;</type>
+        <definition>ComponentSet&amp; Hurricane::Net::_getComponentSet</definition>
+        <argsstring>()</argsstring>
+        <name>_getComponentSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="259" column="26" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="259" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a8d07a1de6b09ba116176a0da24c01302" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>RubberSet &amp;</type>
+        <definition>RubberSet&amp; Hurricane::Net::_getRubberSet</definition>
+        <argsstring>()</argsstring>
+        <name>_getRubberSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="260" column="23" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="260" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a8271980433d33f028a053e0161694fcf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+        <definition>Net* Hurricane::Net::_getNextOfCellNetMap</definition>
+        <argsstring>() const</argsstring>
+        <name>_getNextOfCellNetMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="261" column="17" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="261" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="classHurricane_1_1Net_1a00db9fd41bb76288326e2797b0421691" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Hurricane::Net::_setNextOfCellNetMap</definition>
+        <argsstring>(Net *net)</argsstring>
+        <name>_setNextOfCellNetMap</name>
+        <param>
+          <type><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> *</type>
+          <declname>net</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="263" column="18" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="263" bodyend="263"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classHurricane_1_1Net" kindref="compound">Net</ref> description (<bold>API</bold>) </para>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="classHurricane_1_1Net_1secNetPredefinedFilters">
+<title>Predefined filters</title>
+<para><itemizedlist>
+<listitem><para><bold><ref refid="classHurricane_1_1Net_1a1730ed1247cd9bce7fcf519ea60dc738" kindref="member">Hurricane::Net::getIsGlobalFilter</ref></bold></para>
+</listitem><listitem><para><bold><ref refid="classHurricane_1_1Net_1a3af91a80e219e37e70229e61dfd385da" kindref="member">Hurricane::Net::getIsExternalFilter</ref></bold></para>
+</listitem><listitem><para><bold><ref refid="classHurricane_1_1Net_1a7a2d1c4ab84bf81a16e24557d2342ea5" kindref="member">Hurricane::Net::getIsInternalFilter</ref></bold></para>
+</listitem><listitem><para><bold><ref refid="classHurricane_1_1Net_1afdb2269f3a88923c25264f6f785372a1" kindref="member">Hurricane::Net::getIsClockFilter</ref></bold></para>
+</listitem><listitem><para><bold><ref refid="classHurricane_1_1Net_1ac241f44abf1f332004dd6103ee1dfa48" kindref="member">Hurricane::Net::getIsSupplyFilter</ref></bold> </para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>Hurricane::Net</label>
+        <link refid="classHurricane_1_1Net"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1" relation="usage">
+          <edgelabel>_nextOfCellNetMap</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>_direction</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>_position</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>_type</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_cell</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Hurricane::Net::Direction</label>
+        <link refid="classHurricane_1_1Net_1_1Direction"/>
+      </node>
+      <node id="5">
+        <label>Hurricane::Point</label>
+        <link refid="classHurricane_1_1Point"/>
+      </node>
+      <node id="12">
+        <label>Hurricane::DataBase</label>
+        <link refid="classHurricane_1_1DataBase"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>_technology</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_db</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_rootLibrary</edgelabel>
+        </childnode>
+      </node>
+      <node id="7">
+        <label>Hurricane::Name</label>
+        <link refid="classHurricane_1_1Name"/>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_emptyName</edgelabel>
+        </childnode>
+      </node>
+      <node id="14">
+        <label>Hurricane::QuadTree</label>
+        <link refid="classHurricane_1_1QuadTree"/>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_llChild</edgelabel>
+          <edgelabel>_lrChild</edgelabel>
+          <edgelabel>_parent</edgelabel>
+          <edgelabel>_ulChild</edgelabel>
+          <edgelabel>_urChild</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>Hurricane::Entity</label>
+        <link refid="classHurricane_1_1Entity"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>Hurricane::Box</label>
+        <link refid="classHurricane_1_1Box"/>
+      </node>
+      <node id="13">
+        <label>Hurricane::Technology</label>
+        <link refid="classHurricane_1_1Technology"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="9">
+        <label>Hurricane::Path</label>
+        <link refid="classHurricane_1_1Path"/>
+      </node>
+      <node id="6">
+        <label>Hurricane::Net::Type</label>
+        <link refid="classHurricane_1_1Net_1_1Type"/>
+      </node>
+      <node id="8">
+        <label>Hurricane::Cell</label>
+        <link refid="classHurricane_1_1Cell"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>_shuntedPath</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>_abutmentBox</edgelabel>
+          <edgelabel>_boundingBox</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_library</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>_quadTree</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>_nextOfLibraryCellMap</edgelabel>
+          <edgelabel>_nextOfSymbolCellSet</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="11">
+        <label>Hurricane::Library</label>
+        <link refid="classHurricane_1_1Library"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>_dataBase</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>_library</edgelabel>
+          <edgelabel>_nextOfLibraryLibraryMap</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Hurricane::DBo</label>
+        <link refid="classHurricane_1_1DBo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" line="48" column="1" bodyfile="/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Net.h" bodystart="48" bodyend="269"/>
+    <listofallmembers>
+      <member refid="classHurricane_1_1Net_1aaa916fd82ae09f64148e7b6a06f26cd8" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_arity</name></member>
+      <member refid="classHurricane_1_1Net_1a32d17fc4c283031835738b82a80fa1d4" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_cell</name></member>
+      <member refid="classHurricane_1_1Net_1a6713f8beebf565d1103914764372ed44" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_componentSet</name></member>
+      <member refid="classHurricane_1_1Net_1a4402eb5609e7f6775668118d45bbcbb6" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_direction</name></member>
+      <member refid="classHurricane_1_1DBo_1a6773bf239b646982ee463a57021e0d13" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_flags</name></member>
+      <member refid="classHurricane_1_1Net_1ad4471a62c3eed118b61a6fd443fc8eed" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getComponentSet</name></member>
+      <member refid="classHurricane_1_1Net_1af6ee3137da9eda1cf70257142b445fc4" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getMainName</name></member>
+      <member refid="classHurricane_1_1Net_1a8271980433d33f028a053e0161694fcf" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getNextOfCellNetMap</name></member>
+      <member refid="classHurricane_1_1DBo_1ab50af0d192f88fcd9917e7f1c3bdac19" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getPropertySet</name></member>
+      <member refid="classHurricane_1_1Entity_1a01be68d1d059eb4cdb160d12c0db7a5e" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getQuark</name></member>
+      <member refid="classHurricane_1_1Net_1ad624123d1c5fffc6221902119a0449af" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_getRecord</name></member>
+      <member refid="classHurricane_1_1Net_1a8d07a1de6b09ba116176a0da24c01302" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_getRubberSet</name></member>
+      <member refid="classHurricane_1_1Net_1a9bcf30905a148d6fde2b19418f6811bf" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_getString</name></member>
+      <member refid="classHurricane_1_1Net_1a3fbed850ea79212e5f3a8d4ea919f656" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_getTypeName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d59fe852677ac51d622b83fcc5d6d2f" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_id</name></member>
+      <member refid="classHurricane_1_1DBo_1abb3b5e900339fbc152bef116f93b60a3" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_idCount</name></member>
+      <member refid="classHurricane_1_1DBo_1a5b13b87d2b79bfab236672d5e2c35065" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_idCounter</name></member>
+      <member refid="classHurricane_1_1DBo_1a53710abe54e5f872501c76ccb9d9d250" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_idCounterLimit</name></member>
+      <member refid="classHurricane_1_1Net_1ac6a0c7d090b57e41ca1b4183b78f0aa1" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_isAutomatic</name></member>
+      <member refid="classHurricane_1_1Net_1a216187bf76c43c3707df0146953c9e04" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_isExternal</name></member>
+      <member refid="classHurricane_1_1Net_1a2cd3632ebf7cce3d2a127b04f3682038" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_isGlobal</name></member>
+      <member refid="classHurricane_1_1Net_1ac679317d26a788f4f9c8021eed971867" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_mainName</name></member>
+      <member refid="classHurricane_1_1DBo_1a4075e1c82992b65e4ef9910962435499" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_memoryLimit</name></member>
+      <member refid="classHurricane_1_1Net_1acb0322011b463b89c6a9fbf4a2ebc413" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_name</name></member>
+      <member refid="classHurricane_1_1DBo_1aaa25cf153535cbde027cf410dab9d185" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_nextId</name></member>
+      <member refid="classHurricane_1_1Net_1aa4857b11f68e3c0ca8a812cf4da30312" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_nextOfCellNetMap</name></member>
+      <member refid="classHurricane_1_1DBo_1a04ee2304b85563a6b5864fdb8284ab6c" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_onDestroyed</name></member>
+      <member refid="classHurricane_1_1Net_1a2a594a460d053a916117e27d9eda1d3c" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_position</name></member>
+      <member refid="classHurricane_1_1Net_1ab5e33b38b969a3c4a8c4f3e5789a9ea5" prot="protected" virt="virtual"><scope>Hurricane::Net</scope><name>_postCreate</name></member>
+      <member refid="classHurricane_1_1Net_1a212f0c483ec916a67ee565f876d15d31" prot="protected" virt="virtual"><scope>Hurricane::Net</scope><name>_preDestroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a932cca69b2744cad5ea1342c31386e77" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_propertySet</name></member>
+      <member refid="classHurricane_1_1Net_1ade8e0c0728affc47ecbca1e2f944bbd3" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_rubberSet</name></member>
+      <member refid="classHurricane_1_1Net_1a00db9fd41bb76288326e2797b0421691" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>_setNextOfCellNetMap</name></member>
+      <member refid="classHurricane_1_1Net_1a9a832cec9e3a047c0a3ef8184515fc64" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_toJson</name></member>
+      <member refid="classHurricane_1_1Net_1a9b4785e70c1dcd5c92ef82586ec59481" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_toJsonCollections</name></member>
+      <member refid="classHurricane_1_1Net_1a632d8a4a63e3b6bc034d2fb15e97bc78" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>_toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Net_1aad7e4fa6db266b4aea7a7c2c05681bca" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>_type</name></member>
+      <member refid="classHurricane_1_1Net_1a1fd16a31d32ec4f2d16857647efc473a" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>addAlias</name></member>
+      <member refid="classHurricane_1_1Net_1a3a242d929e0c733f90f3f69be8cc427b" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>Arity</name></member>
+      <member refid="classHurricane_1_1DBo_1a3e02f3d665cb0b2120df2fdfe9c3df4f" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>clearProperties</name></member>
+      <member refid="classHurricane_1_1Net_1ac1524cea15e8eacbf992c0cfb9e481db" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>create</name></member>
+      <member refid="classHurricane_1_1DBo_1ace975ea52394a9905814d31e80297a77" prot="protected" virt="non-virtual"><scope>Hurricane::Net</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1acdd9ad2dbeaf5f8c39a5ceacc36c7f5f" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>DBo</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>DBoFlags</name></member>
+      <member refid="classHurricane_1_1DBo_1a67febf5bf9c8b322674648688639728b" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>destroy</name></member>
+      <member refid="classHurricane_1_1DBo_1a966833baed35b35013f074e6888492b6" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>disableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1DBo_1a7878335cfa4f8531db5c922fb47d2f20" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>enableForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Entity_1a97cf0d2e193d947f4e312d471657c06d" prot="protected" virt="non-virtual"><scope>Hurricane::Net</scope><name>Entity</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a9a189cbf2b334e5142c34cb731cb7a83" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>ForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Net_1a2d68c1419752ba767bf6b381568478e3" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getAlias</name></member>
+      <member refid="classHurricane_1_1Net_1ae1026cba48a735df7888064139c23cb1" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getAliases</name></member>
+      <member refid="classHurricane_1_1Net_1a78de2202fcf4f16024b4460ebb7dc907" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getArity</name></member>
+      <member refid="classHurricane_1_1Net_1a5326386dbc4036f9546578bfb4bb7953" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>getBoundingBox</name></member>
+      <member refid="classHurricane_1_1Net_1a46bcdae317a2ebb36d5f1dcb685b6fd2" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>getCell</name></member>
+      <member refid="classHurricane_1_1Net_1a4bd27e6ae22606463491c28437c4068f" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getClone</name></member>
+      <member refid="classHurricane_1_1Net_1a1e2d7ef9bab15694870a605e514f26e8" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getComponents</name></member>
+      <member refid="classHurricane_1_1Net_1a08560ffa6b0f5ecc442bf232486dd8ff" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getConnectedSlavePlugs</name></member>
+      <member refid="classHurricane_1_1Net_1a9c397596fe9ecbf674712c72e0b9010c" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getContacts</name></member>
+      <member refid="classHurricane_1_1Net_1aa84245d734dfaa572660a1a2c1bfc56e" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getDirection</name></member>
+      <member refid="classHurricane_1_1Net_1ad8553af888909e1c127e12e68bd000fb" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getHorizontals</name></member>
+      <member refid="classHurricane_1_1DBo_1a518b1604b342e7daed165aecde194864" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getId</name></member>
+      <member refid="classHurricane_1_1DBo_1a83ac55491d02b4fd14d5583eae153032" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIdCounter</name></member>
+      <member refid="classHurricane_1_1Net_1a790ca5311e555a34d2cdfe25b7e40596" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsCellNetFilter</name></member>
+      <member refid="classHurricane_1_1Net_1afdb2269f3a88923c25264f6f785372a1" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsClockFilter</name></member>
+      <member refid="classHurricane_1_1Net_1aa9e8f03ab0efa6fdd6b361ef87a4400a" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsDeepNetFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a3af91a80e219e37e70229e61dfd385da" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsExternalFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a1730ed1247cd9bce7fcf519ea60dc738" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsGlobalFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a82ee79a609c9c83d7cebe64c64c1a6cd" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsGroundFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a7a2d1c4ab84bf81a16e24557d2342ea5" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsInternalFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a521fc0e3d7e896bcdd93707c90bc96c0" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsPowerFilter</name></member>
+      <member refid="classHurricane_1_1Net_1ac241f44abf1f332004dd6103ee1dfa48" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getIsSupplyFilter</name></member>
+      <member refid="classHurricane_1_1Net_1a76d404e877ab4a058bb1fb6ff3a24935" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getMainName</name></member>
+      <member refid="classHurricane_1_1Net_1aeba73ca641db371dde29baf348b58bba" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getName</name></member>
+      <member refid="classHurricane_1_1DBo_1ab5dcb87dc003ed982ec45abe237e34c5" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getNextId</name></member>
+      <member refid="classHurricane_1_1Net_1a564df07be5589bc72dd6eb944855aa2b" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getPads</name></member>
+      <member refid="classHurricane_1_1Net_1a797a7bbcac968793bc84c352eb4ce87a" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getPins</name></member>
+      <member refid="classHurricane_1_1Net_1a88322672c105405a61a78022359178aa" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getPlugs</name></member>
+      <member refid="classHurricane_1_1Net_1abcfdec9c953d228845fdb9d75e8173cc" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getPosition</name></member>
+      <member refid="classHurricane_1_1DBo_1aec46894a10e83abb54c495dc4d90f2d3" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getProperties</name></member>
+      <member refid="classHurricane_1_1DBo_1a599f61978df51d1d4c351f6cbd02488d" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getProperty</name></member>
+      <member refid="classHurricane_1_1Net_1a1078d55acf3efa0b3c23cd345cae87fa" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getRoutingPads</name></member>
+      <member refid="classHurricane_1_1Net_1a6ddbe2697a7fd7a7cd359f97b2ad0223" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getRubbers</name></member>
+      <member refid="classHurricane_1_1Net_1aadc5a9ef26d7a72f49fdf22452f3cc58" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getSegments</name></member>
+      <member refid="classHurricane_1_1Net_1a9c835d2f071155521700921d816ac1fa" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getSlavePlugs</name></member>
+      <member refid="classHurricane_1_1Net_1a0fa61dc0ccb67f384f03b35f83d391e7" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getType</name></member>
+      <member refid="classHurricane_1_1Net_1aad3f3ea88bdea914cab3f38bdcdb843d" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getUnconnectedSlavePlugs</name></member>
+      <member refid="classHurricane_1_1Net_1a97f32cf738af9cf107833ca81fe95db8" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getVerticals</name></member>
+      <member refid="classHurricane_1_1Net_1a1f8f4c4632614b84a1227a1da8310428" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getX</name></member>
+      <member refid="classHurricane_1_1Net_1aa97899b408aa47ec22792b5c6d6e9216" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>getY</name></member>
+      <member refid="classHurricane_1_1Net_1a095634766c43d3718ff0c561b6a651dc" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>hasAlias</name></member>
+      <member refid="classHurricane_1_1DBo_1a1563f094565030c77592ed82f9a9989b" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>hasProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1a05e3adb61e02e99a34e71b8d8d5d76ad" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>inForcedIdMode</name></member>
+      <member refid="classHurricane_1_1Net_1a3f1ac0fcb03638b2ffa9af6a9a58de15" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>Inherit</name></member>
+      <member refid="classHurricane_1_1Net_1ae4247dc7c432760043c6afa0a9a95aa8" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isAutomatic</name></member>
+      <member refid="classHurricane_1_1Net_1a88c94d0367b149b2d17f076a7ce92516" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isBlockage</name></member>
+      <member refid="classHurricane_1_1Net_1a8807cc000bbbe1c340c71fcbfbb8fe33" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isClock</name></member>
+      <member refid="classHurricane_1_1Net_1a93d4b0aff66a1b6809fa722ff6aea3e2" prot="public" virt="virtual"><scope>Hurricane::Net</scope><name>isDeepNet</name></member>
+      <member refid="classHurricane_1_1Net_1aeeb3735dd7451bc0054dd68ac21aae47" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isExternal</name></member>
+      <member refid="classHurricane_1_1Net_1a97fc3cd13e32f0b4c275bc4a0d259895" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isFused</name></member>
+      <member refid="classHurricane_1_1Net_1a332e9b311809f75fc0fa3a5f36acebcc" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isGlobal</name></member>
+      <member refid="classHurricane_1_1Net_1a4922fb9e820100631299e07c113ab52f" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isGround</name></member>
+      <member refid="classHurricane_1_1Net_1a9caf25bfa84478157d206979dd521ed4" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isLogical</name></member>
+      <member refid="classHurricane_1_1Net_1a552222ebf08922e58cd5103e743e0c98" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isPower</name></member>
+      <member refid="classHurricane_1_1Net_1ab8947fc6c5093341958b94148407c2a2" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>isSupply</name></member>
+      <member refid="classHurricane_1_1Net_1ae46f7e4a9b00b265c06cb6e0ee00b806" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>materialize</name></member>
+      <member refid="classHurricane_1_1Net_1a442f62d23364805f39816cd543284886" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>merge</name></member>
+      <member refid="classHurricane_1_1Net_1a66f8870c8d1d8ba119995c14e1caab55" prot="protected" virt="non-virtual"><scope>Hurricane::Net</scope><name>Net</name></member>
+      <member refid="classHurricane_1_1DBo_1a4d4b88db5041d12c23f2ab5ea8646b67a79979f9fda436b69b9b2b75e95b7d952" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>NextIdSet</name></member>
+      <member refid="classHurricane_1_1DBo_1a3da78a35f2788eb92e41537be505bf43" prot="private" virt="non-virtual"><scope>Hurricane::Net</scope><name>operator=</name></member>
+      <member refid="classHurricane_1_1DBo_1a8979674f11507cb4c7c5251b41ed72d5" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>put</name></member>
+      <member refid="classHurricane_1_1DBo_1a7833a1f0b8c704930bdc00861e63cf5e" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>remove</name></member>
+      <member refid="classHurricane_1_1Net_1ab4a0364205bb2e489111d0207a8c921a" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>removeAlias</name></member>
+      <member refid="classHurricane_1_1DBo_1ac35fbb8303b1a78db5ca0fc831fb6a0c" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>removeProperty</name></member>
+      <member refid="classHurricane_1_1DBo_1ad2aab57665670320ca7b435e57ac2aae" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>resetId</name></member>
+      <member refid="classHurricane_1_1Net_1af5dfdca4401902ee7e1e46a1a486da38" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setArity</name></member>
+      <member refid="classHurricane_1_1Net_1a120e80aa0998c7c388e26796a5620f8c" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setAutomatic</name></member>
+      <member refid="classHurricane_1_1Net_1ac33d13bb0ddc60f369d5bfcffc4bb0f8" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setDirection</name></member>
+      <member refid="classHurricane_1_1Net_1a6a30bc8282ce7e4b936e73a11549fedf" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setExternal</name></member>
+      <member refid="classHurricane_1_1Net_1a35c84afd9dade0cb715602bcf8ec8865" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setGlobal</name></member>
+      <member refid="classHurricane_1_1DBo_1aad89937459f6b789e9756c96064aa291" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setId</name></member>
+      <member refid="classHurricane_1_1DBo_1ab429e40225a556a242f728d56de0c5d4" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setIdCounterLimit</name></member>
+      <member refid="classHurricane_1_1DBo_1a2c50a00301fd849d05f44f33b60681df" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setMemoryLimit</name></member>
+      <member refid="classHurricane_1_1Net_1a1a39702b9f4d26ba29ad0dafcdddf840" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setName</name></member>
+      <member refid="classHurricane_1_1DBo_1a2974f36de2478d194d56db4fe783c99e" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setNextId</name></member>
+      <member refid="classHurricane_1_1Net_1a0a3a3232a74ebced14b14029c5199561" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setPosition</name></member>
+      <member refid="classHurricane_1_1Net_1a6afcc056ee6453485801ba5fded01a96" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setRoutingState</name></member>
+      <member refid="classHurricane_1_1Net_1a83f5ce12291b0ec5ab584d515dd8963c" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>setType</name></member>
+      <member refid="classHurricane_1_1DBo_1a87d9a6e41a01e0ce9f17630317b58184" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>toJson</name></member>
+      <member refid="classHurricane_1_1DBo_1a5fdec3fb3b2c0b2832d137e00d73365b" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>toJsonSignature</name></member>
+      <member refid="classHurricane_1_1Net_1a9e53a3d54b61f7081263e6d7b4fa81b9" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>unmaterialize</name></member>
+      <member refid="classHurricane_1_1DBo_1a1b3a6c9d1979ed9ed1157badc1abefaf" prot="public" virt="non-virtual"><scope>Hurricane::Net</scope><name>useIdCounter2</name></member>
+      <member refid="classHurricane_1_1DBo_1a59767f0958f57a01b2a708ee814ecdfe" prot="protected" virt="virtual"><scope>Hurricane::Net</scope><name>~DBo</name></member>
+      <member refid="classHurricane_1_1Entity_1a4bbd1e777d515f98fde3d4601f3adb89" prot="protected" virt="virtual"><scope>Hurricane::Net</scope><name>~Entity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

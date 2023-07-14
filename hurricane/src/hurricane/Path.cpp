@@ -233,6 +233,17 @@ bool Path::isEmpty() const
     return (_sharedPath == NULL);
 }
 
+int32_t Path::contains(Instance* element) const
+// ********************************************
+{
+  int32_t depth = 0;
+  for ( Instance* instance : getInstances() ) {
+    if (instance == element) return depth;
+    ++depth;
+  }
+  return -1;
+}
+
 void Path::makeEmpty()
 // *******************
 {
@@ -245,16 +256,21 @@ void Path::setNameSeparator(char nameSeparator)
     SharedPath::setNameSeparator(nameSeparator);
 }
 
-string Path::getCompactString() const
-// **********************************
+string Path::getCompactString( bool showBrackets ) const
+// *****************************************************
 {
-  if (isEmpty()) return "<empty>";
+  if (isEmpty()) {
+    if (not showBrackets) return "__empty__";
+    return "<empty>";
+  }
 
-  string s = "<";
+  string s;
+  if (showBrackets) s += "<";
   s += getString(getOwnerCell()->getName());
   s += ":";
-  s += getString(_sharedPath->getName()) + ":";
-  s += getString(getMasterCell()->getName()) + ">";
+  s += getString(_sharedPath->getName());
+  if (showBrackets)
+    s += ":" + getString(getMasterCell()->getName()) + ">";
   return s;
 }
 

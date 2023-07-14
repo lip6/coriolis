@@ -14,9 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_AUTOSEGMENT_H
-#define  ANABATIC_AUTOSEGMENT_H
-
+#pragma  once
+#include <tuple>
 #include <set>
 #include <iostream>
 #include <functional>
@@ -39,6 +38,7 @@ namespace Hurricane {
 
 namespace Anabatic {
 
+  using std::tuple;
   using std::array;
   using std::set;
   using std::cerr;
@@ -58,10 +58,9 @@ namespace Anabatic {
   class AutoHorizontal;
   class AutoVertical;
 
+
 // -------------------------------------------------------------------
 // Class  :  "AutoSegment".
-
- 
 
   class AutoSegment {
       friend class AutoHorizontal;
@@ -106,6 +105,11 @@ namespace Anabatic {
       static const uint64_t  SegAnalog            = (1L<<33);
       static const uint64_t  SegWide              = (1L<<34);
       static const uint64_t  SegShortNet          = (1L<<35);
+      static const uint64_t  SegUnbreakable       = (1L<<36);
+      static const uint64_t  SegNonPref           = (1L<<37);
+      static const uint64_t  SegAtMinArea         = (1L<<38);
+      static const uint64_t  SegNoMoveUp          = (1L<<39);
+      static const uint64_t  SegOnVSmall          = (1L<<40);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -140,6 +144,7 @@ namespace Anabatic {
       inline static  DbU::Unit           getViaToTopCap             ( size_t depth );
       inline static  DbU::Unit           getViaToBottomCap          ( size_t depth );
       inline static  DbU::Unit           getViaToSameCap            ( size_t depth );
+      inline static  DbU::Unit           getMinimalLength           ( size_t depth );
              static  AutoSegment*        create                     ( AutoContact*  source
                                                                     , AutoContact*  target
                                                                     , Segment*      hurricaneSegment
@@ -170,6 +175,8 @@ namespace Anabatic {
       inline         DbU::Unit           getWidth                   () const;
       inline         DbU::Unit           getContactWidth            () const;
       inline         DbU::Unit           getLength                  () const;
+      inline         DbU::Unit           getSpanLength              () const;
+      inline         DbU::Unit           getAnchoredLength          () const;
       inline         DbU::Unit           getSourcePosition          () const;
       inline         DbU::Unit           getTargetPosition          () const;
       inline         DbU::Unit           getSourceX                 () const;
@@ -194,7 +201,11 @@ namespace Anabatic {
       inline         bool                isWeakTerminal1            () const;
       inline         bool                isWeakTerminal2            () const;
       inline         bool                isTerminal                 () const;
+      inline         bool                isUnbreakable              () const;
+      inline         bool                isNonPref                  () const;
+      inline         bool                isNonPrefOnVSmall          () const;
       inline         bool                isDrag                     () const;
+      inline         bool                isAtMinArea                () const;
       inline         bool                isNotSourceAligned         () const;
       inline         bool                isNotTargetAligned         () const;
       inline         bool                isNotAligned               () const;
@@ -202,6 +213,7 @@ namespace Anabatic {
       inline         bool                isSourceTerminal           () const;
       inline         bool                isTargetTerminal           () const;
       inline         bool                isLayerChange              () const;
+      inline         bool                isStackedStrap             () const;
       inline         bool                isSpinTop                  () const;
       inline         bool                isSpinBottom               () const;
       inline         bool                isSpinTopOrBottom          () const;
@@ -216,13 +228,15 @@ namespace Anabatic {
       inline         bool                isUnsetAxis                () const;
       inline         bool                isSlackened                () const;
       inline         bool                isUserDefined              () const;
+                     bool                isNearMinArea              () const;
                      bool                isReduceCandidate          () const;
                      bool                isUTurn                    () const;
       inline         bool                isAnalog                   () const;
       inline         bool                isWide                     () const;
       inline         bool                isShortNet                 () const;
+      inline         bool                isNoMoveUp                 () const;
              virtual bool                _canSlacken                () const = 0;
-                     bool                canReduce                  () const;
+                     bool                canReduce                  ( Flags flags=Flags::WithPerpands ) const;
                      bool                mustRaise                  () const;
                      Flags               canDogleg                  ( Interval );
              virtual bool                canMoveULeft               ( float reserve=0.0 ) const = 0;
@@ -245,6 +259,7 @@ namespace Anabatic {
                      AutoContact*        getOppositeAnchor          ( AutoContact* ) const;
                      size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
       inline         AutoSegment*        getParent                  () const;
+      inline         unsigned int        getRpDistance              () const;
       inline         unsigned int        getDepth                   () const;
       inline         DbU::Unit           getPitch                   () const;
                      DbU::Unit           getPPitch                  () const;
@@ -278,10 +293,13 @@ namespace Anabatic {
              virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max );
       inline         AutoSegment*        getCanonical               ( Interval& i );
                      float               getMaxUnderDensity         ( Flags flags );
+      inline         uint32_t            getReduceds                () const;
+                     uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;
     // Modifiers.                                            
       inline         void                unsetFlags                 ( uint64_t );
       inline         void                setFlags                   ( uint64_t );
                      void                setFlagsOnAligneds         ( uint64_t );
+      inline         void                setRpDistance              ( unsigned int );
       inline         void                incReduceds                ();
       inline         void                decReduceds                ();
              virtual void                setDuSource                ( DbU::Unit du ) = 0;
@@ -320,8 +338,11 @@ namespace Anabatic {
                      bool                moveUp                     ( Flags flags=Flags::NoFlags );
                      bool                moveDown                   ( Flags flags=Flags::NoFlags );
                      bool                reduceDoglegLayer          ();
-                     bool                reduce                     ();
+                     bool                bloatStackedStrap          ();
+                     bool                reduce                     ( Flags flags=Flags::WithPerpands );
                      bool                raise                      ();
+                     void                expandToMinLength          ( Interval );
+                     void                unexpandToMinLength        ();
     // Canonical Modifiers.                                            
                      AutoSegment*        canonize                   ( Flags flags=Flags::NoFlags );
              virtual void                invalidate                 ( Flags flags=Flags::Propagate );
@@ -365,15 +386,16 @@ namespace Anabatic {
       static bool                          _analogMode;
       static bool                          _shortNetMode;
       static bool                          _initialized;
-      static vector< array<DbU::Unit*,3> > _extensionCaps;
+      static vector< array<DbU::Unit*,4> > _extensionCaps;
     // Internal: Attributes.      
       const  unsigned long                 _id;
              GCell*                        _gcell;
              uint64_t                      _flags;
-             unsigned int                  _depth      : 8;
-             unsigned int                  _optimalMin :16;
-             unsigned int                  _optimalMax :16;
-             unsigned int                  _reduceds   : 2;
+             unsigned int                  _depth        : 8;
+             unsigned int                  _optimalMin   :16;
+             unsigned int                  _optimalMax   :16;
+             unsigned int                  _reduceds     : 2;
+             unsigned int                  _rpDistance   : 4;
              DbU::Unit                     _sourcePosition;
              DbU::Unit                     _targetPosition;
              Interval                      _userConstraints;
@@ -415,6 +437,13 @@ namespace Anabatic {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
+      struct CompareByRevalidate : public binary_function<AutoSegment*,AutoSegment*,bool> {
+          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
+      };
+      struct CompareByReduceds : public binary_function<AutoSegment*,AutoSegment*,bool> {
+          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
+      };
+    public:
       typedef std::set<AutoSegment*,CompareByDepthLength>  DepthLengthSet;
       typedef std::set<AutoSegment*,CompareId>             IdSet;
 
@@ -440,7 +469,8 @@ namespace Anabatic {
                                                              );
       static void                 getTopologicalInfos        ( AutoSegment*          seed
                                                              , vector<AutoSegment*>& collapseds
-                                                             , vector<AutoSegment*>& perpandiculars
+                                                             , vector< tuple<AutoSegment*,Flags> >&
+                                                                                     perpandiculars
                                                              , DbU::Unit&            leftBound
                                                              , DbU::Unit&            rightBound
                                                              );
@@ -458,6 +488,7 @@ namespace Anabatic {
   inline  DbU::Unit       AutoSegment::getViaToTopCap         ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][0]) : 0; }
   inline  DbU::Unit       AutoSegment::getViaToBottomCap      ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][1]) : 0; }
   inline  DbU::Unit       AutoSegment::getViaToSameCap        ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][2]) : 0; }
+  inline  DbU::Unit       AutoSegment::getMinimalLength       ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][3]) : 0; }
   inline  unsigned long   AutoSegment::getId                  () const { return _id; }
   inline  Cell*           AutoSegment::getCell                () const { return base()->getCell(); }
   inline  Net*            AutoSegment::getNet                 () const { return base()->getNet(); }
@@ -484,6 +515,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::getConstraints         ( Interval& i ) const { return getConstraints(i.getVMin(),i.getVMax()); }
   inline  AutoSegment*    AutoSegment::getCanonical           ( Interval& i ) { return getCanonical(i.getVMin(),i.getVMax()); }
   inline  unsigned int    AutoSegment::getDepth               () const { return _depth; }
+  inline  unsigned int    AutoSegment::getRpDistance          () const { return _rpDistance; }
   inline  DbU::Unit       AutoSegment::getPitch               () const { return Session::getPitch(getDepth(),Flags::NoFlags); }
   inline  DbU::Unit       AutoSegment::getAxis                () const { return isHorizontal()?base()->getY():base()->getX(); }
   inline  DbU::Unit       AutoSegment::getOrigin              () const { return isHorizontal()?_gcell->getYMin():_gcell->getXMin(); }
@@ -494,6 +526,7 @@ namespace Anabatic {
   inline  DbU::Unit       AutoSegment::getNativeMax           () const { return _nativeConstraints.getVMax(); }
   inline  const Interval& AutoSegment::getUserConstraints     () const { return _userConstraints; }
   inline  const Interval& AutoSegment::getNativeConstraints   () const { return _nativeConstraints; }
+  inline  uint32_t        AutoSegment::getReduceds            () const { return _reduceds; }
                                                               
   inline  bool            AutoSegment::isHorizontal           () const { return _flags & SegHorizontal; }
   inline  bool            AutoSegment::isVertical             () const { return not (_flags & SegHorizontal); }
@@ -503,14 +536,18 @@ namespace Anabatic {
   inline  bool            AutoSegment::isWeakGlobal           () const { return _flags & SegWeakGlobal; }
   inline  bool            AutoSegment::isLongLocal            () const { return _flags & SegLongLocal; }
   inline  bool            AutoSegment::isLocal                () const { return not (_flags & SegGlobal); }
+  inline  bool            AutoSegment::isUnbreakable          () const { return _flags & SegUnbreakable; }
+  inline  bool            AutoSegment::isNonPref              () const { return _flags & SegNonPref; }
+  inline  bool            AutoSegment::isNonPrefOnVSmall      () const { return (_flags & SegNonPref) and (_flags & SegOnVSmall); }
   inline  bool            AutoSegment::isBipoint              () const { return _flags & SegBipoint; }
-  inline  bool            AutoSegment::isWeakTerminal         () const { return _flags & SegWeakTerminal; }
-  inline  bool            AutoSegment::isWeakTerminal1        () const { return _flags & SegWeakTerminal1; }
-  inline  bool            AutoSegment::isWeakTerminal2        () const { return _flags & SegWeakTerminal2; }
+  inline  bool            AutoSegment::isWeakTerminal         () const { return (_rpDistance < 2); }
+  inline  bool            AutoSegment::isWeakTerminal1        () const { return (_rpDistance == 1); }
+  inline  bool            AutoSegment::isWeakTerminal2        () const { return (_rpDistance == 2); }
   inline  bool            AutoSegment::isSourceTerminal       () const { return _flags & SegSourceTerminal; }
   inline  bool            AutoSegment::isTargetTerminal       () const { return _flags & SegTargetTerminal; }
-  inline  bool            AutoSegment::isTerminal             () const { return _flags & SegStrongTerminal; }
+  inline  bool            AutoSegment::isTerminal             () const { return (_rpDistance == 0); }
   inline  bool            AutoSegment::isDrag                 () const { return _flags & SegDrag; }
+  inline  bool            AutoSegment::isAtMinArea            () const { return _flags & SegAtMinArea; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned     () const { return _flags & SegNotTargetAligned; }
   inline  bool            AutoSegment::isNotAligned           () const { return (_flags & SegNotAligned) == SegNotAligned; }
@@ -532,11 +569,13 @@ namespace Anabatic {
   inline  bool            AutoSegment::isAnalog               () const { return _flags & SegAnalog; }
   inline  bool            AutoSegment::isWide                 () const { return _flags & SegWide; }
   inline  bool            AutoSegment::isShortNet             () const { return _flags & SegShortNet; }
+  inline  bool            AutoSegment::isNoMoveUp             () const { return _flags & SegNoMoveUp; }
   inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }
                                                               
   inline  uint64_t        AutoSegment::getFlags               () const { return _flags; }
   inline  uint64_t        AutoSegment::_getFlags              () const { return _flags; }
+  inline  void            AutoSegment::setRpDistance          ( unsigned int distance ) { _rpDistance=distance; }
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
@@ -548,7 +587,7 @@ namespace Anabatic {
   inline  void            AutoSegment::resetNativeConstraints ( DbU::Unit min, DbU::Unit max ) { _nativeConstraints = Interval( min, max ); }
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
-
+  inline  DbU::Unit       AutoSegment::getAnchoredLength      () const { return std::abs(getTargetU() - getSourceU()); }
 
   inline  void  AutoSegment::setLayer ( size_t depth )
   {
@@ -560,10 +599,13 @@ namespace Anabatic {
     _flags|=SegInvalidatedLayer;
   }
 
-
   inline  DbU::Unit  AutoSegment::getContactWidth () const
   { return getWidth() + Session::getViaWidth(getLayer()) - Session::getWireWidth(getLayer()); }
 
+  inline  DbU::Unit  AutoSegment::getSpanLength () const
+  { return getAnchoredLength() + getExtensionCap( Flags::Source|Flags::LayerCapOnly|Flags::NoMinLength )
+                               + getExtensionCap( Flags::Target|Flags::LayerCapOnly|Flags::NoMinLength );
+  }
 
   inline  void  AutoSegment::setParent ( AutoSegment* parent )
   {
@@ -628,7 +670,8 @@ namespace Anabatic {
     cdebug_log(145,0) << "getTerminalCount() - " << seed << endl;
 
     vector<AutoSegment*>  collapseds;
-    vector<AutoSegment*>  perpandiculars;
+    vector< tuple<AutoSegment*,Flags> >
+                          perpandiculars;
     DbU::Unit             leftBound;
     DbU::Unit             rightBound;
 
@@ -664,6 +707,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AutoSegment);
-
-
-# endif  // ANABATIC_AUTOSEGMENT_H

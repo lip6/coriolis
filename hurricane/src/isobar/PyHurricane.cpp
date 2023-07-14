@@ -47,6 +47,7 @@
 #include "hurricane/isobar/PyPinPlacementStatus.h"
 #include "hurricane/isobar/PyPinDirection.h"
 #include "hurricane/isobar/PyPinCollection.h"
+#include "hurricane/isobar/PyRoutingPadCollection.h"
 #include "hurricane/isobar/PyPlacementStatus.h"
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyInstanceCollection.h"
@@ -59,6 +60,8 @@
 #include "hurricane/isobar/PyNetExternalComponents.h"
 #include "hurricane/isobar/PyNetRoutingState.h"
 #include "hurricane/isobar/PyNetRoutingProperty.h"
+#include "hurricane/isobar/PyPythonAttributes.h"
+#include "hurricane/isobar/PythonAttributes.h"
 #include "hurricane/isobar/PyHyperNet.h"
 #include "hurricane/isobar/PyHook.h"
 #include "hurricane/isobar/PyHookCollection.h"
@@ -257,10 +260,7 @@ using namespace Hurricane;
         return _types[i]->_id;
         
       if (object->ob_type == _types[i]->_pyType) return _types[i]->_id;
-      if (&PyLong_Type    == _types[i]->_pyType) {
-        cerr << "PyLong_Type, now check for PyInt_Type" << endl;
-        if (object->ob_type == &PyInt_Type) return _types[i]->_id;
-      }
+      if (&PyLong_Type    == _types[i]->_pyType) return _types[i]->_id;
     }
 
     return ( "unknown" ); // return 'X'
@@ -310,9 +310,7 @@ using namespace Hurricane;
     ConverterState::ObjectType* baseType;
 
     for ( unsigned i=0 ; i < __cs.getTypes().size() ; i++ ) {
-      PyTypeObject* obType = object->ob_type;
-      if (obType == &PyInt_Type) obType = &PyLong_Type;
-
+      PyTypeObject* obType = Py_TYPE( object );
       baseType = __cs.getTypes()[i]->PyBase( obType );
       if (PyCallable_Check(object) or baseType) {
         *pArg = object;
@@ -480,6 +478,14 @@ extern "C" {
   // |               "PyHurricane" Module Methods                  |
   // +-------------------------------------------------------------+
 
+
+  void showAtExit ()
+  {
+    cout.flush();
+    cerr << "Py_AtExit() called."  << endl;
+  }
+
+
   static PyObject* PyCommons_trace ( PyObject* self, PyObject* args )
   {
     HTRY
@@ -510,10 +516,25 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyHurricane_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Hurricane"         /* m_name     */
+    , "Hurricane Database."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyHurricane_Methods /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initHurricane ()"
 
-  DL_EXPORT(void) initHurricane () {
+  PyMODINIT_FUNC PyInit_Hurricane ( void )
+  {
   //trace_on();
     cdebug_log(20,0) << "initHurricane()" << endl;
 
@@ -530,6 +551,9 @@ extern "C" {
     PyTechnology_LinkPyType ();
     PyLibrary_LinkPyType ();
     PyEntity_LinkPyType ();
+    PyTypeEntity.tp_getattro = PyEntity_getattro;
+    PyTypeEntity.tp_setattro = PyEntity_setattro;
+    PyEntityVector_LinkPyType ();
     PyLayer_LinkPyType ();
     PyLayerMask_LinkPyType ();
     PyBasicLayer_LinkPyType ();
@@ -551,10 +575,12 @@ extern "C" {
     PyNetExternalComponents_LinkPyType ();
     PyNetRoutingState_LinkPyType ();
     PyNetRoutingExtension_LinkPyType ();
+    PyPythonAttributes_LinkPyType ();
     PyCellCollection_LinkPyType ();
     PyPinPlacementStatus_LinkPyType ();
     PyPinDirection_LinkPyType ();
     PyPinCollection_LinkPyType ();
+    PyRoutingPadCollection_LinkPyType ();
     PySegmentCollection_LinkPyType ();
     PyOccurrenceCollection_LinkPyType ();
     PyComponentCollection_LinkPyType ();
@@ -590,6 +616,8 @@ extern "C" {
     PyPhysicalRule_LinkPyType();
     PyTwoLayersPhysicalRule_LinkPyType();
 
+    PYTYPE_READY( AttributesHolder              )
+    PYTYPE_READY( DebugSession                  )
     PYTYPE_READY( DebugSession                  )
     PYTYPE_READY( UpdateSession                 )
     PYTYPE_READY( DbU                           )
@@ -603,6 +631,8 @@ extern "C" {
     PYTYPE_READY( Technology                    )
     PYTYPE_READY( Library                       )
     PYTYPE_READY( Entity                        )
+    PYTYPE_READY( EntityVector                  )
+    PYTYPE_READY( EntityVectorIterator          )
     PYTYPE_READY( Hook                          )
     PYTYPE_READY( HookCollection                )
     PYTYPE_READY( Material                      )
@@ -635,6 +665,8 @@ extern "C" {
     PYTYPE_READY( PinDirection                  )
     PYTYPE_READY( PinCollection                 )
     PYTYPE_READY( PinCollectionLocator          )
+    PYTYPE_READY( RoutingPadCollection          )
+    PYTYPE_READY( RoutingPadCollectionLocator   )
     PYTYPE_READY( SegmentCollection             )
     PYTYPE_READY( SegmentCollectionLocator      )
     PYTYPE_READY( ComponentCollection           ) 
@@ -645,6 +677,7 @@ extern "C" {
     PYTYPE_READY( ReferenceCollectionLocator    )
     PYTYPE_READY( HyperNet                      )
     PYTYPE_READY( NetExternalComponents         )
+    PYTYPE_READY( PythonAttributes              )
     PYTYPE_READY( Breakpoint                    )
     PYTYPE_READY( Query                         )
     PYTYPE_READY( QueryMask                     )
@@ -695,7 +728,7 @@ extern "C" {
     __cs.addType( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
     __cs.addType( "int"        , &PyLong_Type                 , "<Int>"                   , true  );
     __cs.addType( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
-    __cs.addType( "string"     , &PyString_Type               , "<String>"                , true  );
+    __cs.addType( "string"     , &PyUnicode_Type              , "<String>"                , true  );
     __cs.addType( "list"       , &PyList_Type                 , "<List>"                  , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
     __cs.addType( "function"   , NULL                         , "<Function>"              , true  );
@@ -703,6 +736,7 @@ extern "C" {
     __cs.addType( "inst"       , &PyTypeInstance              , "<Instance>"              , false, "ent" );
     __cs.addType( "instCol"    , &PyTypeInstanceCollection    , "<InstanceCollection>"    , false );
     __cs.addType( "mat"        , &PyTypeMaterial              , "<Material>"              , false );
+    __cs.addType( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
     __cs.addType( "basicLayer" , &PyTypeBasicLayer            , "<BasicLayer>"            , false, "layer" );
     __cs.addType( "regLayer"   , &PyTypeRegularLayer          , "<RegularLayer>"          , false, "layer" );
     __cs.addType( "contLayer"  , &PyTypeContactLayer          , "<ContactLayer>"          , false, "layer" );
@@ -713,7 +747,6 @@ extern "C" {
     __cs.addType( "blayerColl" , &PyTypeBasicLayerCollection  , "<BasicLayerCollection>"  , false );
     __cs.addType( "rlayerColl" , &PyTypeRegularLayerCollection, "<RegularLayerCollection>", false );
     __cs.addType( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
-    __cs.addType( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
     __cs.addType( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
     __cs.addType( "library"    , &PyTypeLibrary               , "<Library>"               , false );
     __cs.addType( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
@@ -723,6 +756,7 @@ extern "C" {
     __cs.addType( "hyperNet"   , &PyTypeHyperNet              , "<HyperNet>"              , false );
     __cs.addType( "pin"        , &PyTypePin                   , "<Pin>"                   , false, "contact" );
     __cs.addType( "pinCol"     , &PyTypePinCollection         , "<PinCollection>"         , false );
+    __cs.addType( "rpCol"      , &PyTypeRoutingPadCollection  , "<RoutingPadCollection>"  , false );
     __cs.addType( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
     __cs.addType( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
     __cs.addType( "point"      , &PyTypePoint                 , "<Point>"                 , false );
@@ -751,11 +785,11 @@ extern "C" {
     __cs.addType( "2prule"     , &PyTypeTwoLayersPhysicalRule , "<TwoLayersPhysicalRule>" , false, "prule" );
 
 
-    PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );
+    PyObject* module = PyModule_Create( &PyHurricane_ModuleDef );
     if ( module == NULL ) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Hurricane module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF ( &PyTypeDbU );
@@ -772,7 +806,6 @@ extern "C" {
     PyModule_AddObject ( module, "Path"                 , (PyObject*)&PyTypePath );
     Py_INCREF ( &PyTypeOccurrence );
     PyModule_AddObject ( module, "Occurrence"           , (PyObject*)&PyTypeOccurrence );
-
     Py_INCREF ( &PyTypeDataBase );
     PyModule_AddObject ( module, "DataBase"             , (PyObject*)&PyTypeDataBase );
     Py_INCREF ( &PyTypeLibrary );
@@ -807,6 +840,8 @@ extern "C" {
     PyModule_AddObject ( module, "NetRoutingState"      , (PyObject*)&PyTypeNetRoutingState );
     Py_INCREF ( &PyTypeNetRoutingExtension );
     PyModule_AddObject ( module, "NetRoutingExtension"  , (PyObject*)&PyTypeNetRoutingExtension );
+    Py_INCREF ( &PyTypePythonAttributes );
+    PyModule_AddObject ( module, "PythonAttributes"     , (PyObject*)&PyTypePythonAttributes );
     Py_INCREF ( &PyTypeDebugSession );
     PyModule_AddObject ( module, "DebugSession"         , (PyObject*)&PyTypeDebugSession );
     Py_INCREF ( &PyTypeUpdateSession );
@@ -817,7 +852,6 @@ extern "C" {
     PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
     Py_INCREF ( &PyTypeReference );
     PyModule_AddObject ( module, "Reference"            , (PyObject*)&PyTypeReference );
-
     Py_INCREF ( &PyTypeHook );
     PyModule_AddObject ( module, "Hook"                 , (PyObject*)&PyTypeHook );
     Py_INCREF ( &PyTypeHookCollection );
@@ -844,7 +878,6 @@ extern "C" {
     PyModule_AddObject ( module, "Rectilinear"          , (PyObject*)&PyTypeRectilinear );
     Py_INCREF ( &PyTypePolygon );
     PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
-
     Py_INCREF( &PyTypeDeviceDescriptor );
     PyModule_AddObject( module, "DeviceDescriptor"      , (PyObject*)&PyTypeDeviceDescriptor );
     
@@ -870,10 +903,15 @@ extern "C" {
     PyRoutingPad_postModuleInit();
     PyNet_postModuleInit();
     PyNetRoutingState_postModuleInit();
+    PyCell_postModuleInit();
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 
+  //Py_AtExit( showAtExit );
+
     cdebug_log(20,0) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
+
+    return module;
   }
 
   

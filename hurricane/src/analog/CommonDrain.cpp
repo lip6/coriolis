@@ -44,7 +44,6 @@ namespace Analog {
     CommonDrain* dp = new CommonDrain(library,name,type);
     dp->_postCreate      (deviceName);
     dp->createConnections(bulkConnected);
-    dp->setTerminal( true );
     UpdateSession::close();
     return dp;
   }
@@ -107,6 +106,19 @@ namespace Analog {
   Name  CommonDrain::getDeviceName () const
   {
     return (isBulkConnected()) ? _cdBulkConnectedName : _cdBulkUnconnectedName;
+  }
+
+
+  string  CommonDrain::_getTypeName () const
+  { return "CommonDrain"; }
+  
+
+  Record*  CommonDrain::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_cdBulkConnectedName"  ,  _cdBulkConnectedName   ) );
+    record->add( getSlot("_cdBulkUnconnectedName",  _cdBulkUnconnectedName ) );
+    return record;
   }
 
 

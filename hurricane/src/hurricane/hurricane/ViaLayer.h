@@ -57,6 +57,7 @@ namespace Hurricane {
                                                       );
     // Accessors.                                     
       virtual BasicLayers          getBasicLayers     () const;
+      virtual const Layer*         getCut             () const;
       virtual const Layer*         getTop             () const;
       virtual const Layer*         getBottom          () const;
       virtual const Layer*         getOpposite        ( const Layer* ) const;

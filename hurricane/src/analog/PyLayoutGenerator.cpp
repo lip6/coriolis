@@ -26,13 +26,6 @@ namespace  Isobar {
   using std::endl;
   using std::hex;
   using std::ostringstream;
-  using Isobar::ProxyProperty;
-  using Isobar::ProxyError;
-  using Isobar::ConstructorError;
-  using Isobar::HurricaneError;
-  using Isobar::HurricaneWarning;
-  using Isobar::ParseOneArg;
-  using Isobar::ParseTwoArg;
   using namespace Analog;
 
 
@@ -49,11 +42,11 @@ extern "C" {
 // +=================================================================+
 
 
-  static PyObject* PyLayoutGenerator_getVerboseLevel ( PyObject*  )
+  static PyObject* PyLayoutGenerator_getVerboseLevel ( PyLayoutGenerator*  )
   { return Py_BuildValue( "i", LayoutGenerator::getVerboseLevel() ); }
 
 
-  static PyObject* PyLayoutGenerator_setVerboseLevel ( PyObject*, PyObject* args  )
+  static PyObject* PyLayoutGenerator_setVerboseLevel ( PyLayoutGenerator*, PyObject* args  )
   {
     int  verboseLevel = 0;
     if (PyArg_ParseTuple( args, "i:LayoutGenerator.setVerboseLevel", &verboseLevel )) {
@@ -294,8 +287,8 @@ extern "C" {
 
 
   PyMethodDef PyLayoutGenerator_Methods[] =
-    { { "getVerboseLevel"    , (PyCFunction)PyLayoutGenerator_getVerboseLevel    , METH_NOARGS|METH_STATIC, "Return the verbosity level." }
-    , { "setVerboseLevel"    , (PyCFunction)PyLayoutGenerator_setVerboseLevel    ,             METH_STATIC, "Sets the verbosity level." }
+    { { "getVerboseLevel"    , (PyCFunction)PyLayoutGenerator_getVerboseLevel    , METH_NOARGS |METH_STATIC, "Return the verbosity level." }
+    , { "setVerboseLevel"    , (PyCFunction)PyLayoutGenerator_setVerboseLevel    , METH_VARARGS|METH_STATIC, "Sets the verbosity level." }
     , { "getDevice"          , (PyCFunction)PyLayoutGenerator_getDevice          , METH_NOARGS , "Return the Device currently loaded." }
     , { "getNumberTransistor", (PyCFunction)PyLayoutGenerator_getNumberTransistor, METH_NOARGS , "Return how many real transistors (fingers) are useds." }
     , { "getNumberStack"     , (PyCFunction)PyLayoutGenerator_getNumberStack     , METH_NOARGS , "Return how many transistor stacks are useds." }
@@ -315,7 +308,7 @@ extern "C" {
 
 
   DirectDeleteMethod(PyLayoutGenerator_DeAlloc,PyLayoutGenerator)
-  DirectHashMethod(PyLayoutGenerator_Hash, PyLayoutGenerator)
+  DirectHashMethod(PyLayoutGenerator_Hash,LayoutGenerator)
 
   extern void  PyLayoutGenerator_LinkPyType() {
     cdebug.log(49) << "PyLayoutGenerator_LinkType()" << endl;

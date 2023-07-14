@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2013, All Rights Reserved
+// Copyright (c) Sorbonne Université 2010-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |        C a d e n c e   D E F   E x p o r t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./crlcore/DefExport.cpp"                  |
 // +-----------------------------------------------------------------+
@@ -32,6 +32,9 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/Library.h"
 #include  "hurricane/UpdateSession.h"
+#include  "hurricane/ViaLayer.h"
+#include  "hurricane/Rectilinear.h"
+
 #include  "crlcore/Utilities.h"
 #include  "crlcore/ToolBox.h"
 #include  "crlcore/RoutingGauge.h"
@@ -84,15 +87,15 @@ namespace {
   }
 
 
-#define  CHECK_STATUS_CBK(status)         if ((status) != 0) return driver->checkStatus(status);
-#define  CHECK_STATUS_DRV(status)         if ((status) != 0) return checkStatus(status);
-#define  RETURN_CHECK_STATUS_CBK(status)  return driver->checkStatus(status);
-#define  RETURN_CHECK_STATUS_DRV(status)  return checkStatus(status);
+#define  CHECK_STATUS_CBK(status,info)         if ((status) != 0) return driver->checkStatus(status,info);
+#define  CHECK_STATUS_DRV(status,info)         if ((status) != 0) return checkStatus(status,info);
+#define  RETURN_CHECK_STATUS_CBK(status,info)  return driver->checkStatus(status,info);
+#define  RETURN_CHECK_STATUS_DRV(status,info)  return checkStatus(status,info);
 
 
   class DefDriver {
     public:
-      static void          drive            ( Cell* cell, unsigned int flags );
+      static void          drive            ( Cell* cell, uint32_t flags );
       static int           getUnits         ();
       static int           toDefUnits       ( DbU::Unit );
       static int           toDefOrient      ( Transformation::Orientation );
@@ -102,12 +105,13 @@ namespace {
                           ~DefDriver        ();
              int           write            ();
     private:                                
-                           DefDriver        ( Cell*, const string& designName, FILE*, unsigned int flags );
+                           DefDriver        ( Cell*, const string& designName, FILE*, uint32_t flags );
       inline Cell*         getCell          ();
       inline const string& getDesignName    () const;
-      inline unsigned int  getFlags         () const;
+      inline uint32_t      getFlags         () const;
       inline int           getStatus        () const;
-             int           checkStatus      ( int status );
+             int           checkStatus      ( int status, string info );
+      static int           writeRouting     ( Net*, bool special );
     private:               
       static int           _designCbk       ( defwCallbackType_e, defiUserData );
       static int           _designEndCbk    ( defwCallbackType_e, defiUserData );
@@ -139,22 +143,22 @@ namespace {
              Cell*         _cell;
              string        _designName;
              FILE*         _defStream;
-             unsigned int  _flags;
+             uint32_t      _flags;
              int           _status;
   };
 
 
-  int        DefDriver::_units       = 100;
+  int        DefDriver::_units       = 1000;
   DbU::Unit  DefDriver::_sliceHeight = 0;
   DbU::Unit  DefDriver::_pitchWidth  = 0;
 
 
          int           DefDriver::getUnits       () { return _units; }
-         int           DefDriver::toDefUnits     ( DbU::Unit u ) { return (int)round(DbU::getLambda(u)*getUnits()); }
+         int           DefDriver::toDefUnits     ( DbU::Unit u ) { return (int)(round(DbU::toMicrons(u)*_units)); }
          DbU::Unit     DefDriver::getSliceHeight () { return _sliceHeight; }
          DbU::Unit     DefDriver::getPitchWidth  () { return _pitchWidth; }; 
   inline Cell*         DefDriver::getCell        () { return _cell; }
-  inline unsigned int  DefDriver::getFlags       () const { return _flags; }
+  inline uint32_t      DefDriver::getFlags       () const { return _flags; }
   inline int           DefDriver::getStatus      () const { return _status; }
   inline const string& DefDriver::getDesignName  () const { return _designName; }
 
@@ -178,12 +182,13 @@ namespace {
 
   void  DefDriver::toDefCoordinates ( Instance* instance, Transformation transf, int& statusX, int& statusY, int& statusOrient )
   {
-    instance->getTransformation().applyOn( transf );
-    statusX      = toDefUnits ( transf.getTx() );
-    statusY      = toDefUnits ( transf.getTy() );
-    statusOrient = toDefOrient( transf.getOrientation() );
+    Transformation inst_transf = instance->getTransformation();
+    transf.applyOn( inst_transf );
+    statusX      = toDefUnits ( inst_transf.getTx() );
+    statusY      = toDefUnits ( inst_transf.getTy() );
+    statusOrient = toDefOrient( inst_transf.getOrientation() );
 
-    switch ( transf.getOrientation() ) {
+    switch ( inst_transf.getOrientation() ) {
       case Transformation::Orientation::ID: break;
       case Transformation::Orientation::R1: break;
       case Transformation::Orientation::R2:
@@ -206,7 +211,7 @@ namespace {
   }
 
 
-  DefDriver::DefDriver ( Cell* cell, const string& designName, FILE* defStream, unsigned int flags )
+  DefDriver::DefDriver ( Cell* cell, const string& designName, FILE* defStream, uint32_t flags )
     : _cell      (cell)
     , _designName(designName)
     , _defStream (defStream)
@@ -218,6 +223,8 @@ namespace {
 
     _sliceHeight = cg->getSliceHeight ();
     _pitchWidth  = cg->getPitch       ();
+  //_units       = DbU::toGrid( DbU::fromMicrons(1.0) );
+    _units       = 1000;
 
     _status = defwInitCbk ( _defStream );
     if ( _status != 0 ) return;
@@ -255,16 +262,18 @@ namespace {
   int  DefDriver::write ()
   {
     _cell->flattenNets( Cell::Flags::NoFlags );
-    return checkStatus ( defwWrite(_defStream,_designName.c_str(),(void*)this) );
+    return checkStatus( defwWrite(_defStream,_designName.c_str(), (void*)this )
+                      , "write(): Problem while writing DEF." );
   }
 
 
-  int  DefDriver::checkStatus ( int status )
+  int  DefDriver::checkStatus ( int status, string info )
   {
-    if ( (_status=status) != 0 ) {
-      defwPrintError ( _status );
+    if ((_status=status) != 0) {
+      defwPrintError( _status );
       ostringstream message;
-      message << "DefDriver::drive(): Error occured while driving <" << _designName << ">.";
+      message << "DefDriver::checkStatus(): Error occured while driving \"" << _designName << "\".\n";
+      message << "        " << info;
       cerr << Error(message.str()) << endl;
     }
     return _status;
@@ -279,7 +288,7 @@ namespace {
     defwAddComment ( "DEF generated by Coriolis2 DEF exporter." );
     defwNewLine ();
 
-    return driver->checkStatus ( defwVersion(5,7) );
+    return driver->checkStatus( defwVersion(5,7), "_versionCnk(): Failed to write VERSION" );
   }
 
 
@@ -287,14 +296,15 @@ namespace {
   {
     DefDriver* driver = (DefDriver*)udata;
     defwNewLine ();
-    return driver->checkStatus ( defwDesignName(driver->getDesignName().c_str()) );
+    return driver->checkStatus( defwDesignName(driver->getDesignName().c_str())
+                              , "_designCbk(): Failed to write DESIGN" );
   }
 
 
   int  DefDriver::_designEndCbk ( defwCallbackType_e, defiUserData udata )
   {
     DefDriver* driver = (DefDriver*)udata;
-    return driver->checkStatus ( defwEnd() );
+    return driver->checkStatus( defwEnd(), "_designEndCbk(): Failed to END design" );
   }
 
 
@@ -309,14 +319,15 @@ namespace {
   {
     DefDriver* driver = (DefDriver*)udata;
     defwNewLine ();
-    return driver->checkStatus ( defwDividerChar(".") );
+    return driver->checkStatus( defwDividerChar("."), "_dividerCbk(): Failed to drive DIVIDER" );
   }
 
 
   int  DefDriver::_busBitCbk ( defwCallbackType_e, defiUserData udata )
   {
     DefDriver* driver = (DefDriver*)udata;
-    return driver->checkStatus ( defwBusBitChars("()") );
+    return driver->checkStatus( defwBusBitChars("()")
+                              , "_busBitCbk(): Failed to drive BUSBITCHAR" );
   }
 
 
@@ -324,14 +335,17 @@ namespace {
   {
     DefDriver* driver = (DefDriver*)udata;
     defwNewLine ();
-    return driver->checkStatus ( defwUnits (DefDriver::getUnits()) );
+    ostringstream info;
+    info << "_unitsCnk(): Failed to drive UNITS (" << DefDriver::getUnits() << ")";
+    return driver->checkStatus( defwUnits(DefDriver::getUnits()), info.str() );
   }
 
 
   int  DefDriver::_technologyCbk ( defwCallbackType_e, defiUserData udata )
   {
     DefDriver* driver = (DefDriver*)udata;
-    return driver->checkStatus ( defwTechnology("symbolic") );
+    return driver->checkStatus( defwTechnology( getString(driver->getCell()->getLibrary()->getName()).c_str() )
+                              , "_technologycbk(): Failed to drive TECHNOLOGY" );
   }
 
 
@@ -352,6 +366,7 @@ namespace {
                       , (int)( toDefUnits(abutmentBox.getXMax()) )
                       , (int)( toDefUnits(abutmentBox.getYMax()) )
                       )
+        , "_dieAreaCbk(): Failed to write DIEAERA"
         );
     }
     return driver->getStatus();
@@ -402,6 +417,7 @@ namespace {
                      , stepX
                      , stepY
                      )
+        , "_rowCbk(): Failed to write ROW"
         );
 
       if ( status != 0 ) break;
@@ -447,10 +463,10 @@ namespace {
       }
       
       status = defwTracks ( master, doStart, doCount, doStep, 1, layerName );
-      CHECK_STATUS_CBK(status);
+      CHECK_STATUS_CBK(status,"_trackCbk(): Direction neither vertical nor horizontal.");
     }
 
-    RETURN_CHECK_STATUS_CBK(status);
+    RETURN_CHECK_STATUS_CBK(status,"_trackCbk(): Did not complete properly");
   }
 
 
@@ -473,7 +489,8 @@ namespace {
     }
 
     status = defwStartPins ( pinsNb );
-    if ( status != 0 ) return driver->checkStatus(status);
+    if ( status != 0 )
+      return driver->checkStatus( status, "_pinCbk(): Failed to start PINS" );
 
     forEach ( Net*, inet, cell->getNets() ) {
       if ( not (*inet)->isExternal() ) continue;
@@ -495,10 +512,10 @@ namespace {
                        , NULL                                  // layer.
                        , 0, 0, 0, 0                            // geometry.
                        );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_pinCbk(): Failed to write PIN");
     }
 
-    return driver->checkStatus ( defwEndPins() );
+    return driver->checkStatus ( defwEndPins(), "_pinCbk(): Failed to close PINS" );
   }
 
 
@@ -516,12 +533,12 @@ namespace {
     Cell*      cell        = driver->getCell();
 
     status = defwNewLine ();
-    CHECK_STATUS_CBK(status);
+    CHECK_STATUS_CBK(status,"_componentCbk(): Did not start properly");
 
-    status = defwStartComponents ( cell->getLeafInstanceOccurrences().getSize() );
-    CHECK_STATUS_CBK(status);
+    status = defwStartComponents ( cell->getTerminalNetlistInstanceOccurrences().getSize() );
+    CHECK_STATUS_CBK(status,"_componentCbk(): Cannot create instance count");
 
-    for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+    for ( Occurrence occurrence : cell->getTerminalNetlistInstanceOccurrences() ) {
       Instance*   instance     = static_cast<Instance*>(occurrence.getEntity());
       string      insname      = toDefName(occurrence.getCompactString());
       const char* source       = NULL;
@@ -564,10 +581,76 @@ namespace {
                              , NULL          // region (disabled).
                              , 0, 0, 0, 0    // region coordinates.
                              );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_componentCbk(): Failed to write COMPONENT");
     }
 
-    return driver->checkStatus ( defwEndComponents() );
+    return driver->checkStatus ( defwEndComponents(),"_componentCbk(): Failed to close COMPONENTS" );
+  }
+
+
+  int  DefDriver::writeRouting ( Net* net, bool special )
+  {
+    int status = 0;
+    int i = 0;
+    for ( Component *component : net->getComponents() ) {
+      std::string layer = component->getLayer() ? getString(component->getLayer()->getName()) : "";
+      if (layer.size() >= 4 && layer.substr(layer.size() - 4) == ".pin")
+        continue;
+      if (layer.size() >= 6 && layer.substr(layer.size() - 6) == ".block")
+        continue;
+
+      Segment *seg = dynamic_cast<Segment*>(component);
+      if (seg) {
+        status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+        if (special) {
+          status = defwSpecialNetPathLayer(layer.c_str());
+          status = defwSpecialNetPathWidth(int(toDefUnits(seg->getWidth())));
+        } else {
+          status = defwNetPathLayer(layer.c_str(), 0, nullptr);
+        }
+        double x[2], y[2];
+        x[0] = toDefUnits(seg->getSourceX());
+        y[0] = toDefUnits(seg->getSourceY());
+        x[1] = toDefUnits(seg->getTargetX());
+        y[1] = toDefUnits(seg->getTargetY());
+        status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(2, x, y);
+      } else {
+        Contact *contact = dynamic_cast<Contact*>(component);
+        if (contact) {
+          const ViaLayer *viaLayer = dynamic_cast<const ViaLayer*>(contact->getLayer());
+          if (viaLayer) {
+            status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+            if (special)
+              status = defwSpecialNetPathLayer(getString(viaLayer->getBottom()->getName()).c_str());
+            else
+              status = defwNetPathLayer(getString(viaLayer->getBottom()->getName()).c_str(), 0, nullptr);
+            double x[1], y[1];
+            x[0] = toDefUnits(contact->getX());
+            y[0] = toDefUnits(contact->getY());
+            status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(1, x, y);
+            status = (special ? defwSpecialNetPathVia : defwNetPathVia)(getString(viaLayer->getName()).c_str());
+          }
+        } else {
+          Rectilinear *rl = dynamic_cast<Rectilinear*>(component);
+          if (rl) {
+            Box box = rl->getBoundingBox();
+            status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+            if (special)
+              status = defwSpecialNetPathLayer(layer.c_str());
+            else
+              status = defwNetPathLayer(layer.c_str(), 0, nullptr);
+            double x[1], y[1];
+            x[0] = toDefUnits(box.getXMin());
+            y[0] = toDefUnits(box.getYMin());
+            status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(1, x, y);
+            defwNetPathRect(0, 0, toDefUnits(box.getWidth()), toDefUnits(box.getHeight()));
+          }
+        }
+      }
+    }
+    if (i > 0)
+      status = (special ? defwSpecialNetPathEnd : defwNetPathEnd)();
+    return status;
   }
 
 
@@ -584,34 +667,46 @@ namespace {
     }
 
     status = defwStartNets ( netsNb );
-    if ( status != 0 ) return driver->checkStatus(status);
+    if ( status != 0 )
+      return driver->checkStatus(status,"_netCbk(): Failed to begin NETS");
 
     for ( Net* net : cell->getNets() ) {
       if ( net->isSupply() or net->isClock() ) continue;
 
-      size_t pos     = string::npos;
       string netName = getString( net->getName() );
-      if (netName[netName.size()-1] == ')') pos = netName.rfind('(');
-      if (pos == string::npos)              pos = netName.size();
-      netName.insert( pos, "_net" );
+      if ( driver->getFlags() & DefExport::ProtectNetNames) {
+        size_t pos = string::npos;
+        if (netName[netName.size()-1] == ')') pos = netName.rfind('(');
+        if (pos == string::npos)              pos = netName.size();
+        netName.insert( pos, "_net" );
+      }
       netName = toDefName( netName );
 
       status = defwNet ( netName.c_str() );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_netCbk(): Failed to begin NET");
 
       for ( RoutingPad* rp : net->getRoutingPads() ) {
-        status = defwNetConnection ( extractInstanceName(rp).c_str()
-                                   , getString(static_cast<Plug*>(rp->getPlugOccurrence().getEntity())->getMasterNet()->getName()).c_str()
-                                   , 0
-                                   );
-        if ( status != 0 ) return driver->checkStatus(status);
+        Plug *plug = dynamic_cast<Plug*>(rp->getPlugOccurrence().getEntity());
+        if (plug) {
+          status = defwNetConnection ( extractInstanceName(rp).c_str()
+                                     , getString(plug->getMasterNet()->getName()).c_str()
+                                     , 0
+                                     );
+        } else {
+          Pin *pin = dynamic_cast<Pin*>(rp->getPlugOccurrence().getEntity());
+          if (!pin)
+            throw Error("RP PlugOccurrence neither a plug nor a pin!");
+          // TODO: do we need to write something ?
+        }
+        if ( status != 0 ) return driver->checkStatus(status,"_netCbk(): Failed to write RoutingPad");
       }
 
+      status = writeRouting(net, false);
       status = defwNetEndOneNet ();
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus( status, "_neCbk(): Failed to end NET" );
     }
 
-    return driver->checkStatus ( defwEndNets() );
+    return driver->checkStatus ( defwEndNets(), "_neCbk(): Failed to end NETS" );
   }
 
 
@@ -627,7 +722,7 @@ namespace {
     }
 
     status = defwStartSpecialNets ( netsNb );
-    if ( status != 0 ) return driver->checkStatus(status);
+    if ( status != 0 ) return driver->checkStatus(status,"_snetCbk(): Failed to begin SNETS");
 
     forEach ( Net*, inet, cell->getNets() ) {
       const char* netUse = NULL;
@@ -637,22 +732,25 @@ namespace {
       if ( netUse == NULL ) continue;
 
       status = defwSpecialNet ( getString((*inet)->getName()).c_str() );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_snetCbk(): Failed to write SNET");
 
       status = defwSpecialNetConnection ( "*"
                                         , getString((*inet)->getName()).c_str()
                                         , 0
                                         );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_snetCbk(): Failed to write CONNEXION");
 
       status = defwSpecialNetUse ( netUse );
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_snetCnk(): Failed to write NET USE");
+
+      status = writeRouting(*inet, true);
+      if ( status != 0 ) return driver->checkStatus(status,"_snetCnk(): Failed to write special wiring");
 
       status = defwSpecialNetEndOneNet ();
-      if ( status != 0 ) return driver->checkStatus(status);
+      if ( status != 0 ) return driver->checkStatus(status,"_snetCnk(): Failed to end SNET");
     }
 
-    return driver->checkStatus ( defwEndSpecialNets() );
+    return driver->checkStatus( defwEndSpecialNets(), "_snetCnk(): Failed to end SPECIALNETS" );
   }
 
 
@@ -691,7 +789,7 @@ namespace {
   }
 
 
-  void  DefDriver::drive ( Cell* cell, unsigned int flags )
+  void  DefDriver::drive ( Cell* cell, uint32_t flags )
   {
     FILE* defStream = NULL;
     try {
@@ -731,7 +829,7 @@ namespace CRL {
   using Hurricane::UpdateSession;
 
 
-  void  DefExport::drive ( Cell* cell, unsigned int flags )
+  void  DefExport::drive ( Cell* cell, uint32_t flags )
   {
 #if defined(HAVE_LEFDEF)
     DefDriver::drive ( cell, flags );

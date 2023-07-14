@@ -6,7 +6,7 @@
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
-                         ${QtX_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
                        )
 
@@ -57,7 +57,7 @@
                                        ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
-                                       ${PYTHON_LIBRARIES} -lutil
+                                        -lutil
                        )
 
                install ( TARGETS        equinox intervalTree DESTINATION lib${LIB_SUFFIX} )

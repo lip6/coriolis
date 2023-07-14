@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2022, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_SEGMENT_H
-#define  KATANA_TRACK_SEGMENT_H
-
+#pragma  once
 #include <set>
 #include <functional>
 #include "katana/TrackElement.h"
@@ -52,7 +50,7 @@ namespace Katana {
     public:
       class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
         public:
-          inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs );
+          inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const;
       };
 
     public:
@@ -68,11 +66,13 @@ namespace Katana {
       virtual bool                  isVertical             () const;
       virtual bool                  isLocal                () const;
       virtual bool                  isGlobal               () const;
+      virtual bool                  isWeakGlobal           () const;
       virtual bool                  isBipoint              () const;
       virtual bool                  isTerminal             () const;
       virtual bool                  isDrag                 () const;
       virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
+      virtual bool                  isUnbreakable          () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isShortDogleg          () const;
@@ -82,6 +82,7 @@ namespace Katana {
       virtual bool                  isAnalog               () const;
       virtual bool                  isWide                 () const;
       virtual bool                  isShortNet             () const;
+      virtual bool                  isNonPrefOnVSmall      () const;
       virtual bool                  isPriorityLocked       () const;
     // Predicates.
       virtual bool                  hasSymmetric           () const;
@@ -92,6 +93,7 @@ namespace Katana {
       virtual bool                  canPivotDown           ( float reserve, Flags ) const;
       virtual bool                  canMoveUp              ( float reserve, Flags ) const;
       virtual bool                  canSlacken             () const;
+      virtual bool                  canRealign             () const;
       virtual float                 getMaxUnderDensity     ( Flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
@@ -115,7 +117,6 @@ namespace Katana {
       virtual Interval              getSourceConstraints   () const;
       virtual Interval              getTargetConstraints   () const;
       virtual DataNegociate*        getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
-      virtual TrackElement*         getCanonical           ( Interval& );
       virtual size_t                getGCells              ( vector<GCell*>& ) const;
       virtual TrackElement*         getSourceDogleg        ();
       virtual TrackElement*         getTargetDogleg        ();
@@ -133,8 +134,8 @@ namespace Katana {
       virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
-      virtual void                  detach                 ();
-      virtual void                  detach                 ( std::set<Track*>& );
+    //virtual void                  detach                 ();
+      virtual void                  detach                 ( TrackSet& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();
@@ -180,7 +181,7 @@ namespace Katana {
   };
 
 
-  inline bool  TrackSegment::CompareById::operator() ( const TrackSegment* lhs, const TrackSegment* rhs )
+  inline bool  TrackSegment::CompareById::operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const
   { return lhs->getId() < rhs->getId(); }
 
 
@@ -191,5 +192,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackSegment);
-
-#endif  // KATANA_TRACK_SEGMENT_H

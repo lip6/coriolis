@@ -22,7 +22,7 @@
 #if defined(HAVE_LEFDEF)
 #  include  "lefrReader.hpp"
 #endif
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -33,6 +33,7 @@
 #include "hurricane/Contact.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Library.h"
 #include "hurricane/UpdateSession.h"
@@ -71,6 +72,7 @@ namespace {
 
   class LefParser {
     public:
+      static       void               setMergeLibrary          ( Library* );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -79,6 +81,7 @@ namespace {
                                       LefParser                ( string file, string libraryName );
                                      ~LefParser                ();
       inline       bool               isVH                     () const;
+                   bool               isUnmatchedLayer         ( string );
                    Library*           createLibrary            ();
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
@@ -104,9 +107,11 @@ namespace {
       inline       void               incNthMetal              ();
       inline       int                getNthCut                () const;
       inline       void               incNthCut                ();
+      inline       int                getNthRouting            () const;
+      inline       void               incNthRouting            ();
       inline       RoutingGauge*      getRoutingGauge          () const;
-      inline       void               addPinSegment            ( string name, Segment* );
-      inline       void               clearPinSegments         ();
+      inline       void               addPinComponent          ( string name, Component* );
+      inline       void               clearPinComponents       ();
     private:                                               
       static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*      , lefiUserData );
       static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*      , lefiUserData );
@@ -118,6 +123,7 @@ namespace {
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
     private:                                               
+      static       Library*            _mergeLibrary;
                    string              _file;
                    string              _libraryName;
                    Library*            _library;
@@ -125,11 +131,13 @@ namespace {
                    Net*                _net;
                    string              _busBits;
                    double              _unitsMicrons;
-                   map< string, vector<Segment*> >  _pinSegments;
+                   map< string, vector<Component*> >  _pinComponents;
       static       map<string,Layer*>  _layerLut;
+                   vector<string>      _unmatchedLayers;
                    vector<string>      _errors;
                    int                 _nthMetal;
                    int                 _nthCut;
+                   int                 _nthRouting;
                    RoutingGauge*       _routingGauge;
                    CellGauge*          _cellGauge;
                    DbU::Unit           _minTerminalWidth;
@@ -154,6 +162,8 @@ namespace {
   inline       void              LefParser::incNthMetal              () { ++_nthMetal; }
   inline       int               LefParser::getNthCut                () const { return _nthCut; }
   inline       void              LefParser::incNthCut                () { ++_nthCut; }
+  inline       int               LefParser::getNthRouting            () const { return _nthRouting; }
+  inline       void              LefParser::incNthRouting            () { ++_nthRouting; }
   inline       RoutingGauge*     LefParser::getRoutingGauge          () const { return _routingGauge; }
   inline       CellGauge*        LefParser::getCellGauge             () const { return _cellGauge; }
   inline       void              LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
@@ -163,14 +173,19 @@ namespace {
   inline const vector<string>&   LefParser::getErrors                () const { return _errors; }
   inline       void              LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
   inline       void              LefParser::clearErrors              () { return _errors.clear(); }
-  inline       void              LefParser::addPinSegment            ( string name, Segment* s ) { _pinSegments[name].push_back(s); }
-  inline       void              LefParser::clearPinSegments         () { _pinSegments.clear(); }
+  inline       void              LefParser::addPinComponent          ( string name, Component* comp ) { _pinComponents[name].push_back(comp); }
+  inline       void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
 
 
+  Library*            LefParser::_mergeLibrary = nullptr;
   map<string,Layer*>  LefParser::_layerLut;
   DbU::Unit           LefParser::_coreSiteX = 0;
   DbU::Unit           LefParser::_coreSiteY = 0;
 
+
+  void  LefParser::setMergeLibrary ( Library* library )
+  { _mergeLibrary = library; }
+  
 
   void  LefParser::reset ()
   {
@@ -199,6 +214,15 @@ namespace {
   }
 
 
+  bool  LefParser::isUnmatchedLayer ( string layerName )
+  {
+    for ( string layer : _unmatchedLayers ) {
+      if (layer == layerName) return true;
+    }
+    return false;
+  }
+
+
   LefParser::LefParser ( string file, string libraryName )
     : _file            (file)
     , _libraryName     (libraryName)
@@ -207,15 +231,35 @@ namespace {
     , _net             (NULL)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
+    , _unmatchedLayers ()
     , _errors          ()
     , _nthMetal        (0)
     , _nthCut          (0)
+    , _nthRouting      (0)
     , _routingGauge    (NULL)
     , _cellGauge       (NULL)
     , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
+
+    if (not _routingGauge)
+      throw Error( "LefParser::LefParser(): No default routing gauge defined in Alliance framework." );
+
+    if (not _cellGauge)
+      throw Error( "LefParser::LefParser(): No default cell gauge defined in Alliance framework." );
+
+    string unmatcheds = Cfg::getParamString("lefImport.unmatchedLayers","")->asString();
+    if (not unmatcheds.empty()) {
+      size_t ibegin = 0;
+      size_t iend   = unmatcheds.find( ',', ibegin );
+      while (iend != string::npos) {
+        _unmatchedLayers.push_back( unmatcheds.substr(ibegin,iend-ibegin) );
+        ibegin = iend+1;
+        iend   = unmatcheds.find( ',', ibegin );
+      }
+      _unmatchedLayers.push_back( unmatcheds.substr(ibegin) );
+    }
     
     lefrInit();
     lefrSetUnitsCbk      ( _unitsCbk       );
@@ -236,6 +280,11 @@ namespace {
 
   Library* LefParser::createLibrary ()
   {
+    if (_mergeLibrary) {
+      _library = _mergeLibrary;
+      return _library;
+    }
+
     DataBase* db          = DataBase::getDB();
     Library*  rootLibrary = db->getRootLibrary();
     if (not rootLibrary) rootLibrary = Library::create( db, "RootLibrary" );
@@ -283,6 +332,11 @@ namespace {
 
     if (lefType == "CUT") {
       Layer* layer = techno->getNthCut( parser->getNthCut() );
+      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+        parser->incNthCut();
+        cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
+        layer = techno->getNthCut( parser->getNthCut() );
+      }
       if (layer) {
         parser->addLayer( lefLayer->name(), layer );
         parser->incNthCut();
@@ -293,15 +347,21 @@ namespace {
 
     if (lefType == "ROUTING") {
       Layer* layer = techno->getNthMetal( parser->getNthMetal() );
+      while (parser->isUnmatchedLayer(getString(layer->getName()))) {
+        parser->incNthMetal();
+        cerr << "     - Unmapped techno layer \"" << layer->getName() << "\"" << endl;
+        layer = techno->getNthMetal( parser->getNthMetal() );
+      }
+      
       if (layer) {
         BasicLayer* basicLayer = layer->getBasicLayers().getFirst();
         parser->addLayer( lefLayer->name(), basicLayer );
 
         cerr << "     - \"" << lefLayer->name() << "\" map to \"" << basicLayer->getName() << "\"" << endl;
 
-        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthMetal() );
+        RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( parser->getNthRouting() );
 
-        if (gauge) {
+        if (gauge and (layer == gauge->getLayer())) {
           if (lefLayer->hasPitch()) {
             double lefPitch = lefLayer->pitch();
             double crlPitch = DbU::toPhysical(gauge->getPitch(),DbU::Micro);
@@ -330,6 +390,7 @@ namespace {
               cerr << Warning( "LefParser::_layerCbk(): CRL Routing direction discrepency for \"%s\", LEF is VERTICAL."
                              , getString( basicLayer->getName() ).c_str() ) << endl;
           }
+          parser->incNthRouting();
         } else {
           cerr << Warning( "LefParser::_layerCbk(): No CRL routing gauge defined for \"%s\"."
                          , getString( basicLayer->getName() ).c_str()
@@ -357,7 +418,10 @@ namespace {
       DbU::Unit lefSiteHeight = DbU::fromPhysical( site->sizeY(), DbU::Micro );
 
       if (siteClass == "CORE") {
-        CellGauge* gauge          = parser->getCellGauge();
+        CellGauge* gauge = parser->getCellGauge();
+        if (not gauge)
+          throw Error( "LefParser::_siteCbk(): Default gauge is not defined. Aborting." );
+        
         DbU::Unit  crlSliceStep   = gauge->getSliceStep  ();
         DbU::Unit  crlSliceHeight = gauge->getSliceHeight();
 
@@ -399,9 +463,10 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    const Layer* layer       = NULL;
-          Cell*  cell        = parser->getCell();
-          Net*   blockageNet = cell->getNet( "blockage" );
+    const Layer* layer         = NULL;
+    const Layer* blockageLayer = NULL;
+          Cell*  cell          = parser->getCell();
+          Net*   blockageNet   = cell->getNet( "blockage" );
 
     if (not blockageNet) {
       blockageNet = Net::create( cell, "blockage" );
@@ -413,9 +478,17 @@ namespace {
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
       if (geoms->itemType(igeom) == lefiGeomLayerE) {
-        layer = parser->getLayer( geoms->getLayer(igeom) )->getBlockageLayer();
+        layer         = parser->getLayer( geoms->getLayer(igeom) );
+        blockageLayer = layer->getBlockageLayer();
       }
-      if (not layer) continue;
+      if (not blockageLayer) {
+        cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
+                       "        (while parsing \"%s\")"
+                     , getString( layer->getName() ).c_str()
+                     , getString( cell ).c_str()
+                     ) << endl;
+        continue;
+      }
       
       if (geoms->itemType(igeom) == lefiGeomRectE) {
         lefiGeomRect* r         = geoms->getRect(igeom);
@@ -423,21 +496,34 @@ namespace {
         double        h         = r->yh - r->yl;
         Segment*      segment   = NULL;
         if (w >= h) {
-          segment = Horizontal::create( blockageNet, layer
+          segment = Horizontal::create( blockageNet, blockageLayer
                                       , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
                                       , parser->fromUnitsMicrons( h  )
                                       , parser->fromUnitsMicrons( r->xl )
                                       , parser->fromUnitsMicrons( r->xh )
                                       );
         } else {
-          segment = Vertical::create( blockageNet, layer
+          segment = Vertical::create( blockageNet, blockageLayer
                                     , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
                                     , parser->fromUnitsMicrons( w  )
                                     , parser->fromUnitsMicrons( r->yl )
                                     , parser->fromUnitsMicrons( r->yh )
                                     );
         }
-      //cerr << "       | " << segment << endl;
+        cdebug_log(100,0) << "| " << segment << endl;
+      }
+
+      if (geoms->itemType(igeom) == lefiGeomPolygonE) {
+        lefiGeomPolygon* polygon = geoms->getPolygon(igeom);
+        vector<Point>    points;
+        for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
+          points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
+                                 , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
+        }
+        points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
+                               , parser->fromUnitsMicrons(polygon->y[0]) ));
+        Rectilinear::create( blockageNet, blockageLayer, points );
+        continue;
       }
     }
 
@@ -493,7 +579,7 @@ namespace {
 
     if (not isPad) parser->_pinStdPostProcess();
     else           parser->_pinPadPostProcess();
-    parser->clearPinSegments();
+    parser->clearPinComponents();
 
     cerr << "     - " << cellName
          << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
@@ -501,6 +587,13 @@ namespace {
     if (isPad) cerr << " (PAD)";
     cerr << endl; 
 
+    Catalog::State* state = af->getCatalog()->getState( cellName );
+    if (not state) state = af->getCatalog()->getState ( cellName, true );
+    state->setFlags( Catalog::State::Logical
+                   | Catalog::State::Physical
+                   | Catalog::State::InMemory
+                   | Catalog::State::TerminalNetlist, true );
+    cell->setTerminalNetlist( true );
     parser->setCell( NULL );
 
     return 0;
@@ -576,8 +669,21 @@ namespace {
                                       , parser->fromUnitsMicrons( r->yh )
                                       );
           }
-          if (segment) parser->addPinSegment( pin->name(), segment );
+          if (segment) parser->addPinComponent( pin->name(), segment );
         //cerr << "       | " << segment << endl;
+          continue;
+        }
+        if (geoms->itemType(igeom) == lefiGeomPolygonE) {
+          lefiGeomPolygon* polygon = geoms->getPolygon(igeom);
+          vector<Point>    points;
+          for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
+            points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
+                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
+          }
+          points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
+                                 , parser->fromUnitsMicrons(polygon->y[0]) ));
+          Rectilinear* rectilinear = Rectilinear::create( net, layer, points );
+          if (rectilinear) parser->addPinComponent( pin->name(), rectilinear );
           continue;
         }
         if (geoms->itemType(igeom) == lefiGeomClassE) {
@@ -621,20 +727,27 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-  //cerr << "       @ _pinStdPostProcess" << endl;
+    cerr << "       @ _pinStdPostProcess" << endl;
 
-    for ( auto element : _pinSegments ) {
-      string            pinName  = element.first;
-      vector<Segment*>& segments = element.second;
-      vector<Segment*>  ongrids;
+    for ( auto element : _pinComponents ) {
+      string              pinName    = element.first;
+      vector<Component*>& components = element.second;
+      vector<Segment*>    ongrids;
 
-      for ( Segment* segment : segments ) {
-        bool isWide = (segment->getWidth() >= getMinTerminalWidth());
+      for ( Component* component : components ) {
+        Segment* segment = dynamic_cast<Segment*>( component );
+        if (segment) {
+          if (component->getNet()->isSupply()) continue;
+          bool isWide = (segment->getWidth() >= getMinTerminalWidth());
 
-      //cerr << "       > " << segment << endl;
+          cerr << "       > " << segment << endl;
+          if (not isVH())
+            cerr << "NOT isVH()" << endl;
+          else
+            cerr << "isVH()" << endl;
         
-        if (not segment->getNet()->isSupply()) {
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
+            cerr << "isVH()" << endl;
             Vertical* v = dynamic_cast<Vertical*>( segment );
             if (v) {
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
@@ -645,7 +758,7 @@ namespace {
               if (nearestX == v->getX()) {
               } else {
                 DbU::Unit neighbor = nearestX
-                                   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+                  + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
 
               //cerr << "       | X:" << DbU::getValueString(v->getX())
               //     <<  " nearestX:" << DbU::getValueString(nearestX)
@@ -671,16 +784,67 @@ namespace {
               }
             }
           }
-        }
       
-        if (isWide) ongrids.push_back( segment );
+          if (isWide) ongrids.push_back( segment );
+        }
+        Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+        if (not (rectilinear->getLayer()->getMask() == metal1->getMask()))
+          continue;
+
+        if (rectilinear) {
+          cerr << "       > " << rectilinear << endl;
+          vector<Box> boxes;
+          rectilinear->getAsRectangles( boxes );
+
+          if (component->getNet()->isSupply()) {
+            ongrids.push_back( Horizontal::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , boxes.front().getYCenter()
+                                                 , boxes.front().getHeight()
+                                                 , _cell->getAbutmentBox().getXMin()
+                                                 , _cell->getAbutmentBox().getXMax()
+                                                 )
+                                 );
+          } else {
+            for ( const Box& box : boxes ) {
+              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
+                                                                , ab.getXMax()
+                                                                , box.getXCenter()
+                                                                , Constant::Nearest );
+              DbU::Unit xmin = std::min( box.getXMin(), nearestX - gaugeMetal2->getViaWidth()/2 );
+              DbU::Unit xmax = std::max( box.getXMax(), nearestX + gaugeMetal2->getViaWidth()/2 );
+              ongrids.push_back( Vertical::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , (xmax+xmin)/2
+                                                 ,  xmax-xmin
+                                                 , box.getYMin()
+                                                 , box.getYMax()
+                                                 )
+                                 );
+              // DbU::Unit neighbor = nearestY
+              //   + ((nearestY > box.getYCenter()) ? 1 : -1) * gaugeMetal2->getPitch();
+              
+              // if (  (box.getYMin() > neighbor)
+              //    or (box.getYMax() < neighbor) ) {
+              //   ongrids.push_back( Vertical::create( rectilinear->getNet()
+              //                                      , rectilinear->getLayer()
+              //                                      , box.getXCenter()
+              //                                      , box.getWidth()
+              //                                      , box.getYMin()
+              //                                      , box.getYMax()
+              //                                      )
+              //                    );
+              // }
+            }
+          }
+        }
       }
 
       if (ongrids.empty()) {
         cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
                        , pinName.c_str() ) << endl;
-        for ( Segment* segment : segments ) {
-          NetExternalComponents::setExternal( segment );
+        for ( Component* component : components ) {
+          NetExternalComponents::setExternal( component );
         }
       } else {
         for ( Segment* segment : ongrids ) {
@@ -696,10 +860,10 @@ namespace {
     Box  ab          = getCell()->getAbutmentBox();
     bool isCornerPad = (_cellGauge) and (_cellGauge->getSliceHeight() == _cellGauge->getSliceStep());
 
-    for ( auto element : _pinSegments ) {
-      string            pinName  = element.first;
-      vector<Segment*>& segments = element.second;
-      vector<Segment*>  ongrids;
+    for ( auto element : _pinComponents ) {
+      string              pinName  = element.first;
+      vector<Component*>& segments = element.second;
+      vector<Segment*>    ongrids;
 
       if (segments.empty()) continue;
       
@@ -836,7 +1000,9 @@ namespace {
 
     fclose( lefStream );
 
-    if (not parser->getCoreSiteX()) {
+    if (not parser->getCellGauge()) {
+      cerr << Warning( "LefParser::parse(): No default Alliance cell gauge, unable to check the Cell gauge." ) << endl;
+    } else if (not parser->getCoreSiteX()) {
       cerr << Warning( "LefParser::parse(): No CORE site found in library, unable to check the Cell gauge." ) << endl;
     } else {
       if (parser->getCoreSiteY() != parser->getCellGauge()->getSliceHeight())
@@ -887,7 +1053,19 @@ namespace CRL {
 
 
   void  LefImport::reset ()
-  { LefParser::reset(); }
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::reset();
+#endif
+  }
+
+
+  void  LefImport::setMergeLibrary ( Library* library )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setMergeLibrary( library );
+#endif
+  }
 
 
 }  // End of CRL namespace.

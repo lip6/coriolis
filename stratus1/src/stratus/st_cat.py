@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -66,12 +65,12 @@ def Cat ( *nets ) :
 
   netToCat = cell._TAB_NETS_CAT[nb]
 
-  #if type ( nets[0] ) == types.ListType : nets = nets[0]
+  #if isinstance( nets[0], list ): nets = nets[0]
     
   # Creation of the inversed tab
   netstries = []
   for net in nets :
-     if type(net) == types.ListType :
+     if isinstance(net,list):
         for netin in net : netstries.insert(0, netin)
      else:
         netstries.insert ( 0, net )

@@ -14,25 +14,23 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cstdio>
-#include  <cstdlib>
-#include  <cstring>
-#include  <cstdarg>
-
-#include  "hurricane/DataBase.h"
-#include  "hurricane/RegularLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Pin.h"
-#include  "hurricane/Contact.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
-#include  "hurricane/NetExternalComponents.h"
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/ToolBox.h"
-#include  "Ap.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cstdarg>
+#include "hurricane/DataBase.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Pin.h"
+#include "hurricane/Contact.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/NetExternalComponents.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/ToolBox.h"
+#include "Ap.h"
 
 
 namespace {
@@ -153,7 +151,7 @@ namespace {
                             , DirectionLeft      =DirectionHorizontal|DirectionDecrease
                             , DirectionRight     =DirectionHorizontal|DirectionIncrease
                             };
-      static LayerInformations  _layerInformations;
+             LayerInformations  _layerInformations;
              AllianceFramework* _framework;
              string             _cellPath;
              Cell*              _cell;
@@ -165,7 +163,7 @@ namespace {
 
     protected:
     // Internal: Methods.
-      static LayerInformation*  _getLayerInformation ( const Name& layerName );
+             LayerInformation*  _getLayerInformation ( const Name& layerName );
       inline DbU::Unit          _getUnit             ( long value );
       inline DbU::Unit          _getUnit             ( const char* value );
              vector<char*>      _splitString         ( char* s, char separator );
@@ -187,9 +185,6 @@ namespace {
   };
 
 
-  LayerInformations  ApParser::_layerInformations;
-
-
   ApParser::ApParser ( AllianceFramework* framework )
     : _framework  (framework)
     , _cellPath   ()
@@ -199,70 +194,68 @@ namespace {
     , _parserState(StateVersion)
     , _lineNumber (0)
   {
-    if ( _layerInformations.empty() ) {
-      _layerInformations.setTechnology ( DataBase::getDB()->getTechnology() );
+    _layerInformations.setTechnology ( DataBase::getDB()->getTechnology() );
 
-      _layerInformations.add ( "NWELL"      , "NWELL"      , false, false );
-      _layerInformations.add ( "PWELL"      , "PWELL"      , false, false );
-      _layerInformations.add ( "NTIE"       , "NTIE"       , false, false );
-      _layerInformations.add ( "PTIE"       , "PTIE"       , false, false );
-      _layerInformations.add ( "NDIF"       , "NDIF"       , false, false );
-      _layerInformations.add ( "PDIF"       , "PDIF"       , false, false );
-      _layerInformations.add ( "NTRANS"     , "NTRANS"     , false, false );
-      _layerInformations.add ( "PTRANS"     , "PTRANS"     , false, false );
-      _layerInformations.add ( "POLY"       , "POLY"       , false, false );
-      _layerInformations.add ( "POLY2"      , "POLY2"      , false, false );
-      
-      _layerInformations.add ( "ALU1"       , "METAL1"     , false, false );
-      _layerInformations.add ( "ALU2"       , "METAL2"     , false, false );
-      _layerInformations.add ( "ALU3"       , "METAL3"     , false, false );
-      _layerInformations.add ( "ALU4"       , "METAL4"     , false, false );
-      _layerInformations.add ( "ALU5"       , "METAL5"     , false, false );
-      _layerInformations.add ( "ALU6"       , "METAL6"     , false, false );
-      _layerInformations.add ( "ALU7"       , "METAL7"     , false, false );
-      _layerInformations.add ( "ALU8"       , "METAL8"     , false, false );
+    _layerInformations.add ( "NWELL"      , "NWELL"      , false, false );
+    _layerInformations.add ( "PWELL"      , "PWELL"      , false, false );
+    _layerInformations.add ( "NTIE"       , "NTIE"       , false, false );
+    _layerInformations.add ( "PTIE"       , "PTIE"       , false, false );
+    _layerInformations.add ( "NDIF"       , "NDIF"       , false, false );
+    _layerInformations.add ( "PDIF"       , "PDIF"       , false, false );
+    _layerInformations.add ( "NTRANS"     , "NTRANS"     , false, false );
+    _layerInformations.add ( "PTRANS"     , "PTRANS"     , false, false );
+    _layerInformations.add ( "POLY"       , "POLY"       , false, false );
+    _layerInformations.add ( "POLY2"      , "POLY2"      , false, false );
+    
+    _layerInformations.add ( "ALU1"       , "METAL1"     , false, false );
+    _layerInformations.add ( "ALU2"       , "METAL2"     , false, false );
+    _layerInformations.add ( "ALU3"       , "METAL3"     , false, false );
+    _layerInformations.add ( "ALU4"       , "METAL4"     , false, false );
+    _layerInformations.add ( "ALU5"       , "METAL5"     , false, false );
+    _layerInformations.add ( "ALU6"       , "METAL6"     , false, false );
+    _layerInformations.add ( "ALU7"       , "METAL7"     , false, false );
+    _layerInformations.add ( "ALU8"       , "METAL8"     , false, false );
 
-      _layerInformations.add ( "CALU1"      , "METAL1"     ,  true, false );
-      _layerInformations.add ( "CALU2"      , "METAL2"     ,  true, false );
-      _layerInformations.add ( "CALU3"      , "METAL3"     ,  true, false );
-      _layerInformations.add ( "CALU4"      , "METAL4"     ,  true, false );
-      _layerInformations.add ( "CALU5"      , "METAL5"     ,  true, false );
-      _layerInformations.add ( "CALU6"      , "METAL6"     ,  true, false );
-      _layerInformations.add ( "CALU7"      , "METAL7"     ,  true, false );
-      _layerInformations.add ( "CALU8"      , "METAL8"     ,  true, false );
+    _layerInformations.add ( "CALU1"      , "METAL1"     ,  true, false );
+    _layerInformations.add ( "CALU2"      , "METAL2"     ,  true, false );
+    _layerInformations.add ( "CALU3"      , "METAL3"     ,  true, false );
+    _layerInformations.add ( "CALU4"      , "METAL4"     ,  true, false );
+    _layerInformations.add ( "CALU5"      , "METAL5"     ,  true, false );
+    _layerInformations.add ( "CALU6"      , "METAL6"     ,  true, false );
+    _layerInformations.add ( "CALU7"      , "METAL7"     ,  true, false );
+    _layerInformations.add ( "CALU8"      , "METAL8"     ,  true, false );
 
-      _layerInformations.add ( "TALU1"      , "BLOCKAGE1"  , false,  true );
-      _layerInformations.add ( "TALU2"      , "BLOCKAGE2"  , false,  true );
-      _layerInformations.add ( "TALU3"      , "BLOCKAGE3"  , false,  true );
-      _layerInformations.add ( "TALU4"      , "BLOCKAGE4"  , false,  true );
-      _layerInformations.add ( "TALU5"      , "BLOCKAGE5"  , false,  true );
-      _layerInformations.add ( "TALU6"      , "BLOCKAGE6"  , false,  true );
-      _layerInformations.add ( "TALU7"      , "BLOCKAGE7"  , false,  true );
-      _layerInformations.add ( "TALU8"      , "BLOCKAGE8"  , false,  true );
+    _layerInformations.add ( "TALU1"      , "BLOCKAGE1"  , false,  true );
+    _layerInformations.add ( "TALU2"      , "BLOCKAGE2"  , false,  true );
+    _layerInformations.add ( "TALU3"      , "BLOCKAGE3"  , false,  true );
+    _layerInformations.add ( "TALU4"      , "BLOCKAGE4"  , false,  true );
+    _layerInformations.add ( "TALU5"      , "BLOCKAGE5"  , false,  true );
+    _layerInformations.add ( "TALU6"      , "BLOCKAGE6"  , false,  true );
+    _layerInformations.add ( "TALU7"      , "BLOCKAGE7"  , false,  true );
+    _layerInformations.add ( "TALU8"      , "BLOCKAGE8"  , false,  true );
 
-      _layerInformations.add ( "CONT_BODY_N", "CONT_BODY_N", false, false );
-      _layerInformations.add ( "CONT_BODY_P", "CONT_BODY_P", false, false );
-      _layerInformations.add ( "CONT_DIF_N" , "CONT_DIF_N" , false, false );
-      _layerInformations.add ( "CONT_DIF_P" , "CONT_DIF_P" , false, false );
-      _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
-      _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
-      _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
-      _layerInformations.add ( "CONT_VIA1"  , "VIA12"      , false, false );
-      _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
-      _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
-      _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );
-      _layerInformations.add ( "CONT_VIA5"  , "VIA56"      , false, false );
-      _layerInformations.add ( "CONT_VIA6"  , "VIA67"      , false, false );
-      _layerInformations.add ( "CONT_VIA7"  , "VIA78"      , false, false );
-      _layerInformations.add ( "CONT_TURN1" , "METAL1"     , false, false );
-      _layerInformations.add ( "CONT_TURN2" , "METAL2"     , false, false );
-      _layerInformations.add ( "CONT_TURN3" , "METAL3"     , false, false );
-      _layerInformations.add ( "CONT_TURN4" , "METAL4"     , false, false );
-      _layerInformations.add ( "CONT_TURN5" , "METAL5"     , false, false );
-      _layerInformations.add ( "CONT_TURN6" , "METAL6"     , false, false );
-      _layerInformations.add ( "CONT_TURN7" , "METAL7"     , false, false );
-      _layerInformations.add ( "CONT_TURN8" , "METAL8"     , false, false );
-    }
+    _layerInformations.add ( "CONT_BODY_N", "CONT_BODY_N", false, false );
+    _layerInformations.add ( "CONT_BODY_P", "CONT_BODY_P", false, false );
+    _layerInformations.add ( "CONT_DIF_N" , "CONT_DIF_N" , false, false );
+    _layerInformations.add ( "CONT_DIF_P" , "CONT_DIF_P" , false, false );
+    _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
+    _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
+    _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
+    _layerInformations.add ( "CONT_VIA1"  , "VIA12"      , false, false );
+    _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
+    _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
+    _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );
+    _layerInformations.add ( "CONT_VIA5"  , "VIA56"      , false, false );
+    _layerInformations.add ( "CONT_VIA6"  , "VIA67"      , false, false );
+    _layerInformations.add ( "CONT_VIA7"  , "VIA78"      , false, false );
+    _layerInformations.add ( "CONT_TURN1" , "METAL1"     , false, false );
+    _layerInformations.add ( "CONT_TURN2" , "METAL2"     , false, false );
+    _layerInformations.add ( "CONT_TURN3" , "METAL3"     , false, false );
+    _layerInformations.add ( "CONT_TURN4" , "METAL4"     , false, false );
+    _layerInformations.add ( "CONT_TURN5" , "METAL5"     , false, false );
+    _layerInformations.add ( "CONT_TURN6" , "METAL6"     , false, false );
+    _layerInformations.add ( "CONT_TURN7" , "METAL7"     , false, false );
+    _layerInformations.add ( "CONT_TURN8" , "METAL8"     , false, false );
   }
 
 
@@ -377,7 +370,7 @@ namespace {
 
   Net* ApParser::_safeGetNet ( const char* apName )
   {
-    if ( ( apName[0] == '\0' ) || !strcmp(apName,"*") )
+    if ( ( apName[0] == '\0' ) or not strcmp(apName,"*") or not strcmp(apName,"fused_net") )
       return _getFusedNet ();
 
     return _getNet ( apName );
@@ -442,7 +435,7 @@ namespace {
 
   void  ApParser::_parseReference ()
   {
-    static DbU::Unit  XREF, YREF;
+    DbU::Unit  XREF, YREF;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 4 )
@@ -459,14 +452,14 @@ namespace {
 
   void  ApParser::_parseConnector ()
   {
-    static DbU::Unit             XCON, YCON, WIDTH, HEIGHT;
-    static int                   index;
+           DbU::Unit             XCON, YCON, WIDTH, HEIGHT;
+           int                   index;
            string                pinName;
-    static Net*                  net;
-  //static Pin*                  pin;
-    static LayerInformation*     layerInfo;
-    static Pin::AccessDirection  accessDirection;
-    static Name                  orientation;
+           Net*                  net;
+  //       Pin*                  pin;
+           LayerInformation*     layerInfo;
+           Pin::AccessDirection  accessDirection;
+           Name                  orientation;
     static Name                  NORTH = "NORTH";
     static Name                  SOUTH = "SOUTH";
     static Name                  EAST  = "EAST";
@@ -522,16 +515,17 @@ namespace {
 
       if (layerInfo and net) {
         net->setExternal( true );
-        /*pin =*/ Pin::create( net
-                             , pinName
-                             , accessDirection
-                             , Pin::PlacementStatus::PLACED
-                             , layerInfo->getLayer()
-                             , XCON
-                             , YCON
-                             , WIDTH
-                             , HEIGHT
-                             );
+        Pin* pin = Pin::create( net
+                              , pinName
+                              , accessDirection
+                              , Pin::PlacementStatus::PLACED
+                              , layerInfo->getLayer()
+                              , XCON
+                              , YCON
+                              , WIDTH
+                              , HEIGHT
+                              );
+        NetExternalComponents::setExternal( pin );
       }
       if (not net )       _printError( false, "Unknown net name <%s>."  , fields[5] );
       if (not layerInfo ) _printError( false, "Unknown layer name <%s>.", fields[6] );
@@ -541,9 +535,9 @@ namespace {
 
   void  ApParser::_parseVia ()
   {
-    static DbU::Unit         XVIA, YVIA;
-    static Net*              net;
-    static LayerInformation* layerInfo;
+    DbU::Unit         XVIA, YVIA;
+    Net*              net;
+    LayerInformation* layerInfo;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 4 )
@@ -564,9 +558,9 @@ namespace {
 
   void  ApParser::_parseBigVia ()
   {
-    static DbU::Unit              XVIA, YVIA, WIDTH, HEIGHT;
-    static Net*              net;
-    static LayerInformation* layerInfo;
+    DbU::Unit         XVIA, YVIA, WIDTH, HEIGHT;
+    Net*              net;
+    LayerInformation* layerInfo;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 6 )
@@ -594,10 +588,10 @@ namespace {
 
   void  ApParser::_parseSegment ()
   {
-    static DbU::Unit         X1, Y1, X2, Y2, WIDTH;
-    static Net*              net;
-    static LayerInformation* layerInfo;
-    static SegmentDirection  segDir;
+    DbU::Unit         X1, Y1, X2, Y2, WIDTH;
+    Net*              net;
+    LayerInformation* layerInfo;
+    SegmentDirection  segDir;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 8 )
@@ -649,21 +643,21 @@ namespace {
 
   void  ApParser::_parseInstance ()
   {
-    static DbU::Unit  XINS, YINS;
-    static Name    masterCellName;
-    static Name    instanceName;
-    static Name    orientName;
-    static Transformation::Orientation
-                   orient         = Transformation::Orientation::ID;
-    static Name    NOSYM          = "NOSYM";
-    static Name    SYM_X          = "SYM_X";
-    static Name    SYM_Y          = "SYM_Y";
-    static Name    SYMXY          = "SYMXY";
-    static Name    ROT_P          = "ROT_P";
-    static Name    ROT_M          = "ROT_M";
-    static Name    SY_RM          = "SY_RM";
-    static Name    SY_RP          = "SY_RP";
-    static string  padreal        = "padreal";
+           DbU::Unit  XINS, YINS;
+           Name       masterCellName;
+           Name       instanceName;
+           Name       orientName;
+           Transformation::Orientation
+                      orient  = Transformation::Orientation::ID;
+    static Name       NOSYM   = "NOSYM";
+    static Name       SYM_X   = "SYM_X";
+    static Name       SYM_Y   = "SYM_Y";
+    static Name       SYMXY   = "SYMXY";
+    static Name       ROT_P   = "ROT_P";
+    static Name       ROT_M   = "ROT_M";
+    static Name       SY_RM   = "SY_RM";
+    static Name       SY_RP   = "SY_RP";
+    static string     padreal = "padreal";
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 5 )
@@ -684,21 +678,32 @@ namespace {
       else if (orientName == "SYM_Y") orient = Transformation::Orientation::MY;
       else if (orientName == "SY_RP") orient = Transformation::Orientation::YR;
       else
-        _printError ( false, "Unknown orientation (%s).", getString(orientName).c_str() );
+        _printError( false, "Unknown orientation (%s).", getString(orientName).c_str() );
 
-      Instance* instance = _cell->getInstance ( instanceName );
-      if ( instance ) {
-        instance->setTransformation
-          ( getTransformation ( instance->getMasterCell()->getAbutmentBox()
-                              , XINS
-                              , YINS
-                              , orient
-                              )
-          );
-        instance->setPlacementStatus ( Instance::PlacementStatus::FIXED );
+      Instance* instance = _cell->getInstance( instanceName );
+      if (instance) {
+        Cell* masterCell = instance->getMasterCell();
+        bool  hasLayout  = not masterCell->getAbutmentBox().isEmpty(); 
+        if (not hasLayout) {
+          tab++;
+          AllianceFramework::get()->getCell( getString(masterCell->getName()), Catalog::State::Physical );
+          hasLayout = not masterCell->getAbutmentBox().isEmpty(); 
+          tab--;
+        }
+
+        if (hasLayout) {
+          instance->setTransformation
+            ( getTransformation( masterCell->getAbutmentBox()
+                               , XINS
+                               , YINS
+                               , orient
+                               )
+            );
+          instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
+        }
       } else {
-        bool            ignoreInstance = (getString(masterCellName).substr(0,7) == padreal);
-        Catalog::State* instanceState  = _framework->getCatalog()->getState ( masterCellName );
+        bool            ignoreInstance = _framework->isPad( _cell );
+        Catalog::State* instanceState  = _framework->getCatalog()->getState( masterCellName );
         if ( not ignoreInstance and ( not instanceState or (not instanceState->isFeed()) ) ) {
           _printError ( false
                       , "No logical instance associated to physical instance %s."
@@ -710,30 +715,30 @@ namespace {
       // Load a cell that is not in the logical view. Only feedthrough Cell
       // could be in that case.
         tab++;
-        Cell* masterCell = _framework->getCell ( getString(masterCellName)
-                                               , Catalog::State::Views
-                                               );
+        Cell* masterCell = _framework->getCell( getString(masterCellName)
+                                              , Catalog::State::Views
+                                              );
         tab--;
 
-        if ( !masterCell ) {
-          _printError ( "Unable to load model %s.", getString(masterCellName).c_str() );
+        if (not masterCell) {
+          _printError( "Unable to load model %s.", getString(masterCellName).c_str() );
           return;
         }
 
-        ignoreInstance = ignoreInstance and _cell->isTerminal();
+        ignoreInstance = ignoreInstance and _cell->isTerminalNetlist();
 
-        instance = Instance::create ( _cell
-                                    , instanceName
-                                    , masterCell
-                                    , getTransformation ( masterCell->getAbutmentBox()
-                                                        , XINS
-                                                        , YINS
-                                                        , orient
-                                                        )
-                                    , Instance::PlacementStatus::FIXED
-                                    , true  // Checking of recursive calls
-                                    );
-        _cell->setTerminal ( ignoreInstance );
+        instance = Instance::create( _cell
+                                   , instanceName
+                                   , masterCell
+                                   , getTransformation ( masterCell->getAbutmentBox()
+                                                       , XINS
+                                                       , YINS
+                                                       , orient
+                                                       )
+                                   , Instance::PlacementStatus::FIXED
+                                   , true  // Checking of recursive calls
+                                   );
+        _cell->setTerminalNetlist( ignoreInstance );
       }
     }
   }
@@ -785,7 +790,6 @@ namespace {
 
     _state = catalogProperty->getState ();
     _state->setPhysical ( true );
-    if ( _state->isFlattenLeaf() ) _cell->setFlattenLeaf ( true );
     if ( _framework->isPad(_cell) ) _state->setPad ( true );
 
     IoFile fileStream ( cellPath );
@@ -842,8 +846,10 @@ namespace {
 
       placeNets(_cell);
     } catch ( Error& e ) {
-      if ( e.what() != "[ERROR] ApParser processed" )
+      if ( e.what() != "[ERROR] ApParser processed" ) {
         cerr << e.what() << endl;
+        cerr << "[ERROR] ApParser(): file " << _cellPath << ", line: " << _lineNumber << "." << endl;
+      }
     }
 
     Go::enableAutoMaterialization();

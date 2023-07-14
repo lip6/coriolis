@@ -43,7 +43,7 @@ namespace Hurricane {
       virtual Type          getType           () const;
       inline  bool          isActive          () const;
               void          setActive         ( bool state );
-      inline  void          setCellWidget     ( CellWidget* );
+      virtual void          setCellWidget     ( CellWidget* );
       virtual void          wheelEvent        ( QWheelEvent* );
       virtual void          keyPressEvent     ( QKeyEvent* );
       virtual void          keyReleaseEvent   ( QKeyEvent* );
@@ -63,7 +63,6 @@ namespace Hurricane {
 
 // Inline Functions.
   bool  Command::isActive      () const { return _active; }
-  void  Command::setCellWidget ( CellWidget* widget ) { _cellWidget=widget; }
 
 
 }

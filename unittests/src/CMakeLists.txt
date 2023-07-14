@@ -3,7 +3,7 @@
    include_directories ( ${CORIOLIS_INCLUDE_DIR}
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
-                         ${QtX_INCLUDE_DIR}
+                         ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIR}
                        )
 
@@ -21,8 +21,8 @@ endif()
         add_executable ( unittests     ${cpps} )
  target_link_libraries ( unittests     ${CORIOLIS_PYTHON_LIBRARIES}
                                        ${CORIOLIS_LIBRARIES}
-                                       ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                       ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${BOOKSHELF_LIBRARY}
                                        ${AGDS_LIBRARY}
@@ -33,8 +33,9 @@ endif()
                                        ${OA_LIBRARIES}
                                        ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
-                                       ${PYTHON_LIBRARIES}
+                                       
                                        -lutil
+                                       ${BZIP2_LIBRARIES}
                                        ${LIBXML2_LIBRARIES}
                                        ${LIBEXECINFO_LIBRARIES}
                                        ${LIBBFD_LIBRARIES}

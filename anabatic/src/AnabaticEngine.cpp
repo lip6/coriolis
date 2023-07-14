@@ -20,17 +20,21 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/Measures.h"
+#include "crlcore/Histogram.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AutoContactTerminal.h"
+#include "anabatic/NetBuilderHybridVH.h"
 #include "anabatic/NetBuilderM2.h"
 #include "anabatic/NetBuilderHV.h"
 #include "anabatic/NetBuilderVH.h"
@@ -45,11 +49,11 @@ namespace {
 
   class SortAcByXY {
     public:
-      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 );
+      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const;
   };
 
 
-  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 )
+  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const
   {
     DbU::Unit x1 = contact1->getX();
     DbU::Unit x2 = contact2->getX();
@@ -119,6 +123,33 @@ namespace {
   }
 
 
+  class NonReducedItem {
+    public:
+      inline              NonReducedItem ( AutoSegment* segment=NULL, uint32_t nonReduceds=0 );
+      inline AutoSegment* segment        () const;
+      inline uint32_t     nonReduceds    () const;
+    private:
+      AutoSegment* _segment;
+      uint32_t     _nonReduceds;
+  };
+
+
+  inline NonReducedItem::NonReducedItem ( AutoSegment* segment, uint32_t nonReduceds )
+    : _segment    (segment)
+    , _nonReduceds(nonReduceds)
+  { }
+
+  inline AutoSegment* NonReducedItem::segment     () const { return _segment; }
+  inline uint32_t     NonReducedItem::nonReduceds () const { return _nonReduceds; }
+
+  bool  operator< ( const NonReducedItem& lhs, const NonReducedItem& rhs )
+  {
+    int32_t deltaReduceds = (int32_t)lhs.nonReduceds() - (int32_t)rhs.nonReduceds();
+    if (deltaReduceds > 0) return true;  // Most connected first.
+    if (deltaReduceds < 0) return false;
+    return lhs.segment()->getId() < rhs.segment()->getId(); // Smallest Id first.
+  }
+
 }  // Anonymous namespace.
 
 
@@ -133,11 +164,13 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
+  using Hurricane::DataBase;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::NetRoutingExtension;
+  using Hurricane::NetExternalComponents;
   using Hurricane::Cell;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
@@ -145,6 +178,7 @@ namespace Anabatic {
   using CRL::RoutingLayerGauge;
   using CRL::addMeasure;
   using CRL::getMeasure;
+  using CRL::Histogram;
 
 
 // -------------------------------------------------------------------
@@ -168,28 +202,72 @@ namespace Anabatic {
 
   RawGCellsUnder::RawGCellsUnder ( const AnabaticEngine* engine, Segment* segment )
   {
-    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(): " << segment << endl;
+    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(Segment*): " << segment << endl;
 
-    Box   gcellsArea     = engine->getCell()->getAbutmentBox();
-    Point sourcePosition = segment->getSourcePosition();
-    Point targetPosition = segment->getTargetPosition();
+    commonCtor( engine, segment->getSourcePosition(), segment->getTargetPosition() );
 
-    if (  (sourcePosition.getX() >  gcellsArea.getXMax())
-       or (sourcePosition.getY() >  gcellsArea.getYMax())
-       or (targetPosition.getX() <= gcellsArea.getXMin())
-       or (targetPosition.getY() <= gcellsArea.getYMin()) ) {
-      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s is completly outside the GCells area (ignored)."
-                   , getString(segment).c_str()
+    cdebug_tabw(112,-1);
+  }
+
+
+  RawGCellsUnder::RawGCellsUnder ( const AnabaticEngine* engine, Point source, Point target )
+  {
+    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(Point,Point): s:"
+                      << source << " t:" << target << endl;
+
+    commonCtor( engine, source, target );
+
+    cdebug_tabw(112,-1);
+  }
+
+
+  void  RawGCellsUnder::commonCtor ( const AnabaticEngine* engine, Point source, Point target )
+  {
+    cdebug_log(112,1) << "RawGCellsUnder::commontCtor(): s:" << source << " t:" << target << endl;
+
+    Box        gcellsArea = engine->getCell()->getAbutmentBox();
+    DbU::Unit  axis       = 0;
+    Flags      side       = Flags::NoFlags;
+
+    if (source.getY() == target.getY()) {
+      side = Flags::EastSide;
+      axis = source.getY();
+      if (source.getX() > target.getX()) std::swap( source, target );
+    }
+    if (source.getX() == target.getX()) {
+      side = Flags::NorthSide;
+      axis = source.getX();
+      if (source.getY() > target.getY()) std::swap( source, target );
+    }
+
+    if (side == Flags::NoFlags) {
+      cerr << Error( "RawGCellsUnder::commonCtor(): Points are neither horizontally nor vertically aligneds (ignored)."
                    ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
-    DbU::Unit xsource = std::max( sourcePosition.getX(), gcellsArea.getXMin() );
-    DbU::Unit ysource = std::max( sourcePosition.getY(), gcellsArea.getYMin() );
-    DbU::Unit xtarget = std::min( targetPosition.getX(), gcellsArea.getXMax() );
-    DbU::Unit ytarget = std::min( targetPosition.getY(), gcellsArea.getYMax() );
+    if (  (source.getX() >  gcellsArea.getXMax())
+       or (source.getY() >  gcellsArea.getYMax())
+       or (target.getX() <= gcellsArea.getXMin())
+       or (target.getY() <= gcellsArea.getYMin()) ) {
+      cerr << Warning( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored).\n"
+                       "          * GCells area: %s\n" 
+                       "          * Obstacle area: [%s %s %s %s]" 
+                     , getString(gcellsArea).c_str()
+                     , DbU::getValueString(source.getX()).c_str()
+                     , DbU::getValueString(source.getY()).c_str()
+                     , DbU::getValueString(target.getX()).c_str()
+                     , DbU::getValueString(target.getY()).c_str()
+                     ) << endl;
+      cdebug_tabw(112,-1);
+      return;
+    }
+
+    DbU::Unit xsource = std::max( source.getX(), gcellsArea.getXMin() );
+    DbU::Unit ysource = std::max( source.getY(), gcellsArea.getYMin() );
+    DbU::Unit xtarget = std::min( target.getX(), gcellsArea.getXMax() );
+    DbU::Unit ytarget = std::min( target.getY(), gcellsArea.getYMax() );
 
     if (xtarget == gcellsArea.getXMax()) --xtarget;
     if (ytarget == gcellsArea.getYMax()) --ytarget;
@@ -198,45 +276,22 @@ namespace Anabatic {
     GCell* gtarget = engine->getGCellUnder( xtarget, ytarget );
 
     if (not gsource) {
-      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s source not under a GCell (ignored)."
-                 , getString(segment).c_str()
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Source not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
     if (not gtarget) {
-      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s target not under a GCell (ignored)."
-                 , getString(segment).c_str()
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Target not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
     }
 
     if (gsource == gtarget) {
       _elements.push_back( Element(gsource,NULL) );
       cdebug_tabw(112,-1);
-      DebugSession::close();
       return;
-    }
-
-    Flags       side       = Flags::NoFlags;
-    DbU::Unit   axis       = 0;
-    Horizontal* horizontal = dynamic_cast<Horizontal*>( segment );
-    if (horizontal) {
-      side = Flags::EastSide;
-      axis = horizontal->getY();
-
-      if (horizontal->getSourceX() > horizontal->getTargetX())
-        std::swap( gsource, gtarget );
-    } else {
-      Vertical* vertical = dynamic_cast<Vertical*>( segment );
-      side = Flags::NorthSide;
-      axis = vertical->getX();
-
-      if (vertical->getSourceY() > vertical->getTargetY())
-        std::swap( gsource, gtarget );
     }
 
     cdebug_log(112,0) << "flags:" << side << " axis:" << DbU::getValueString(axis) << endl;
@@ -259,19 +314,28 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::NetData".
 
-  NetData::NetData ( Net* net )
+  NetData::NetData ( Net* net, AnabaticEngine* anabatic )
     : _net       (net)
     , _state     (NetRoutingExtension::get(net))
     , _searchArea()
     , _rpCount   (0)
+    , _diodeCount(0)
     , _sparsity  (0)
     , _flags     ()
+    , _noMoveUp  ()
   {
     if (_state and _state->isMixedPreRoute()) return;
 
+    Cell* diodeCell = anabatic->getDiodeCell();
     for ( RoutingPad* rp : _net->getRoutingPads() ) {
       _searchArea.merge( rp->getBoundingBox() );
       ++_rpCount;
+
+      if (diodeCell) {
+        Plug* plug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+        if (plug and (plug->getInstance()->getMasterCell() == diodeCell))
+          ++_diodeCount;
+      }
     }
     _update();
   }
@@ -308,27 +372,46 @@ namespace Anabatic {
     , _viewer           (NULL)
     , _flags            (Flags::DestroyBaseContact)
     , _stamp            (-1)
+    , _routingMode      (DigitalMode)
     , _densityMode      (MaxDensity)
     , _autoSegmentLut   ()
     , _autoContactLut   ()
     , _edgeCapacitiesLut()
     , _blockageNet      (cell->getNet("blockagenet"))
-  {
-    _matrix.setCell( cell, _configuration->getSliceHeight() );
-    Edge::unity = _configuration->getSliceHeight();
-
-    if (not _blockageNet) _blockageNet = Net::create( cell, "blockagenet" );
-  }
+    , _diodeCell        (NULL)
+  { }
 
 
   void  AnabaticEngine::_postCreate ()
   {
     Super::_postCreate();
 
+    _configuration = _createConfiguration();
+    setupNetBuilder();
+    _matrix.setCell( getCell(), _configuration->getSliceHeight() );
+    Edge::unity = _configuration->getSliceHeight();
+
+    if (not _blockageNet) {
+      _blockageNet = Net::create( getCell(), "blockagenet" );
+      _blockageNet->setType( Net::Type::BLOCKAGE );
+    }
+
+    _diodeCell = DataBase::getDB()->getCell( _configuration->getDiodeName() );;
+    if (not _diodeCell) {
+      cerr << Warning( "AnabaticEngine::_postCreate() Unable to find \"%s\" diode cell."
+                     , _configuration->getDiodeName().c_str()
+                     ) << endl;
+    }
+
     UpdateSession::open();
     GCell::create( this );
     UpdateSession::close();
+    checkPlacement();
   }
+
+
+  Configuration* AnabaticEngine::_createConfiguration ()
+  { return new Configuration(); }
 
 
   AnabaticEngine* AnabaticEngine::create ( Cell* cell )
@@ -374,6 +457,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_gutAnabatic ()
   {
+  //DebugSession::open( 159, 160 );
     openSession();
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
@@ -381,19 +465,40 @@ namespace Anabatic {
     if (_state == EngineDriving) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
+      vector<NonReducedItem> reduceds;
       size_t fixedSegments    = 0;
       size_t sameLayerDoglegs = 0;
+      size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
         if (isegment.second->isFixed()) ++fixedSegments;
-        if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
+        if (isegment.second->canReduce( Flags::NullLength )) {
+        //cerr << "push_back() " << (void*)isegment.second << ":" << isegment.second << endl;
+          reduceds.push_back( NonReducedItem( isegment.second
+                                            , isegment.second->getNonReduceds( Flags::NoFlags ) ));
+        } else {
+          if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
+        }
+      //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
+      }
+      sort( reduceds.begin(), reduceds.end() );
+      // cerr << "Reduced segment queue:" << endl;
+      // for ( size_t i=0 ; i<reduceds.size() ; ++i ) {
+      //   cerr << "| " << setw(3) << i
+      //        << " " << reduceds[i].nonReduceds()
+      //        << " " << reduceds[i].segment() << endl;
+      // }
+      for ( auto& item : reduceds ) {
+        item.segment()->reduce( Flags::NoFlags );
+        if (item.segment()->reduceDoglegLayer()) ++sameLayerDoglegs;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
-      cmess1 << Dots::asSizet("     - Active AutoSegments",AutoSegment::getAllocateds()-fixedSegments) << endl;
-      cmess1 << Dots::asSizet("     - Active AutoContacts",AutoContact::getAllocateds()-fixedSegments*2) << endl;
-      cmess1 << Dots::asSizet("     - AutoSegments"       ,AutoSegment::getAllocateds()) << endl;
-      cmess1 << Dots::asSizet("     - AutoContacts"       ,AutoContact::getAllocateds()) << endl;
-      cmess1 << Dots::asSizet("     - Same Layer doglegs" ,sameLayerDoglegs) << endl;
+      cmess1 << Dots::asSizet("     - Active AutoSegments"       ,AutoSegment::getAllocateds()-fixedSegments) << endl;
+      cmess1 << Dots::asSizet("     - Active AutoContacts"       ,AutoContact::getAllocateds()-fixedSegments*2) << endl;
+      cmess1 << Dots::asSizet("     - AutoSegments"              ,AutoSegment::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - AutoContacts"              ,AutoContact::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - Same Layer doglegs"        ,sameLayerDoglegs) << endl;
+      cmess1 << Dots::asSizet("     - Bloated straps (< minArea)",bloatedStraps   ) << endl;
 
     //for ( Net* net : _cell->getNets() ) _saveNet( net );
 
@@ -416,11 +521,30 @@ namespace Anabatic {
       _ovEdges.clear();
     }
 
+    exportExternalNets();
     Session::close();
+  //DebugSession::close();
   }
 
 
+  void  AnabaticEngine::exportExternalNets ()
+  {
+    for ( Net* net : getCell()->getNets() ) {
+      if (not net->isExternal()) continue;
+      if (net->isSupply()) continue;
+
+      for ( Segment* segment : net->getSegments() ) {
+        NetExternalComponents::setExternal( segment );
+      }
+    }
+  }
+  
+
   Configuration* AnabaticEngine::getConfiguration ()
+  { return _configuration; }
+
+
+  const Configuration* AnabaticEngine::getConfiguration () const
   { return _configuration; }
 
 
@@ -471,6 +595,113 @@ namespace Anabatic {
   }
 
 
+  bool  AnabaticEngine::checkPlacement () const
+  {
+    bool valid  = true;
+    Box  cellAb = getCell()->getAbutmentBox();
+    
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+      string    instanceName = occurrence.getCompactString();
+
+      instanceName.erase( 0, 1 );
+      instanceName.erase( instanceName.size()-1 );
+
+      Box instanceAb = masterCell->getAbutmentBox();
+
+      Transformation instanceTransf = instance->getTransformation();
+      occurrence.getPath().getTransformation().applyOn( instanceTransf );
+      instanceTransf.applyOn( instanceAb );
+
+      if (not cellAb.contains(instanceAb)) {
+        valid = false;
+        cerr << Error( "AnabaticEngine::checkPlacement(): Instance %s is outside top cell abutment box, routing will be incomplete.\n"
+                       "        (cell:%s vs instance:%s)"
+                     , instanceName.c_str()
+                     , getString(cellAb    ).c_str()
+                     , getString(instanceAb).c_str()
+                     ) << endl;
+      }
+    }
+
+    RoutingGauge* rg         = _configuration->getRoutingGauge();
+    size_t        errorCount = 0;
+    ostringstream errors;
+    errors << "AnabaticEngine::checkPlacement():\n";
+
+    for ( Net* net: getCell()->getNets() ) {
+      for ( RoutingPad* rp : net->getRoutingPads() ) {
+        Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+        if (not pin) continue;
+
+        ostringstream pinError;
+
+        RoutingLayerGauge* lg = rg->getLayerGauge( pin->getLayer() );
+        if (not lg) {
+          pinError << "    Layer not in the routing gauge, "
+                   << "pin:"      << pin->getLayer()->getName()
+                   << "\n";
+          valid = false;
+          ++errorCount;
+        } else {
+          Point pinCenter = rp->getCenter();
+          if (  (pin->getAccessDirection() == Pin::AccessDirection::NORTH)
+             or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH) ) {
+            if (not lg->isVertical()) {
+              pinError << "    Should be in vertical routing layer, "
+                       << "pin:"      << pin->getLayer()->getName()
+                       << " vs gauge:" << lg->getLayer()->getName()
+                       << "\n";
+              valid = false;
+              ++errorCount;
+            }
+            if ((pinCenter.getX() - getCell()->getAbutmentBox().getXMin() - lg->getOffset())
+               % lg->getPitch()) {
+              pinError << "    Misaligned, "
+                       << "pin:" << DbU::getValueString(pinCenter.getX())
+                       << " vs gauge, pitch:" << DbU::getValueString(lg->getPitch ())
+                       << ", offset:"         << DbU::getValueString(lg->getOffset())
+                       << "\n";
+              valid = false;
+              ++errorCount;
+            }
+          } 
+
+          if (  (pin->getAccessDirection() == Pin::AccessDirection::EAST)
+             or (pin->getAccessDirection() == Pin::AccessDirection::WEST) ) {
+            if (not lg->isHorizontal()) {
+              pinError << "    Should be in horizontal routing layer, "
+                       << "pin:"      << pin->getLayer()->getName()
+                       << " vs gauge:" << lg->getLayer()->getName()
+                       << "\n";
+              valid = false;
+              ++errorCount;
+            }
+            if ((pinCenter.getY() - getCell()->getAbutmentBox().getYMin() - lg->getOffset())
+              % lg->getPitch()) {
+              pinError << "    Misaligned, "
+                       << "pin:" << DbU::getValueString(pinCenter.getY())
+                       << " vs gauge, pitch:" << DbU::getValueString(lg->getPitch ())
+                       << ", offset:"         << DbU::getValueString(lg->getOffset())
+                       << "\n";
+              valid = false;
+              ++errorCount;
+            }
+          } 
+
+          if (not pinError.str().empty()) {
+            errors << "On " << pin << "\n" << pinError.str();
+          }
+        }
+      }
+    }
+    if (errorCount) throw Error( errors.str() );
+    
+    return valid;
+  }
+
+
   void  AnabaticEngine::openSession ()
   { Session::_open(this); }
 
@@ -489,10 +720,18 @@ namespace Anabatic {
 
   void  AnabaticEngine::setupNetDatas ()
   {
+    Histogram  netHistogram ( 0.0, 1.0, 1 );
+    netHistogram.setTitle ( "RoutingPads", 0 );
+    netHistogram.setColor ( "green"      , 0 );
+    netHistogram.setIndent( "       "    , 0 );
+    
     size_t  oindex = _netOrdering.size();
     for ( Net* net : _cell->getNets() ) {
       if (_netDatas.find(net->getId()) != _netDatas.end()) continue;
-      _netOrdering.push_back( new NetData(net) );
+      NetData* data = new NetData( net, this );
+      _netOrdering.push_back( data );
+
+      netHistogram.addSample( (float)(data->getRpCount() - data->getDiodeRpCount()), 0 );
     }
 
     for ( ; oindex < _netOrdering.size() ; ++oindex ) {
@@ -501,6 +740,9 @@ namespace Anabatic {
     }
 
     sort( _netOrdering.begin(), _netOrdering.end(), SparsityOrder() );
+
+    cmess2 << "  o  Nets Histogram." << endl;
+    cmess2 << netHistogram.toString(0) << endl;
   }
 
 
@@ -567,7 +809,7 @@ namespace Anabatic {
     NetData*            data = NULL;
     NetDatas::iterator idata = _netDatas.find( net->getId() );
     if (idata == _netDatas.end()) {
-      data = new NetData( net );
+      data = new NetData( net, this );
       _netDatas.insert( make_pair(net->getId(),data) );
       _netOrdering.push_back( data );
       // cerr << Bug( "AnabaticEngine::getNetData() - %s is missing in NetDatas table."
@@ -587,8 +829,8 @@ namespace Anabatic {
 
   Contact* AnabaticEngine::breakAt ( Segment* segment, GCell* breakGCell )
   {
-    size_t       i      = 0;
-    GCellsUnder  gcells ( new RawGCellsUnder(this,segment) );
+    size_t       i       = 0;
+    GCellsUnder  gcells  ( new RawGCellsUnder(this,segment) );
     for ( ; i<gcells->size() ; ++i ) {
       if (gcells->gcellAt(i) == breakGCell) break;
     }
@@ -612,7 +854,7 @@ namespace Anabatic {
     if (horizontal) {
       splitted = Horizontal::create( breakContact
                                    , targetContact
-                                   , getConfiguration()->getGHorizontalLayer()
+                                   , _configuration->getGHorizontalLayer()
                                    , horizontal->getY()
                                    , DbU::fromLambda(2.0)
                                    );
@@ -621,7 +863,7 @@ namespace Anabatic {
       if (vertical) {
         splitted = Vertical::create( breakContact
                                    , targetContact
-                                   , getConfiguration()->getGVerticalLayer()
+                                   , _configuration->getGVerticalLayer()
                                    , vertical->getX()
                                    , DbU::fromLambda(2.0)
                                    );
@@ -629,6 +871,9 @@ namespace Anabatic {
         return breakContact;
     }
 
+    NetData* netData = getNetData( segment->getNet() );
+    if (netData and netData->isNoMoveUp(segment))
+      netData->setNoMoveUp( splitted );
     for ( ; i<gcells->size()-1 ; ++i ) gcells->edgeAt(i)->replace( segment, splitted );
 
     return breakContact;
@@ -851,6 +1096,17 @@ namespace Anabatic {
     UpdateSession::open();
     for ( GCell* gcell : _gcells ) gcell->cleanupGlobal();
     UpdateSession::close();
+
+    for ( Net* net : getCell()->getNets() ) {
+      for ( Component* component : net->getComponents() ) {
+        if (_configuration->isGLayer(component->getLayer())) {
+          cerr << Error( "AnabaticEngine::cleanupGlobal(): Remaining global routing,\n"
+                         "        %s"
+                       , getString(component).c_str()
+                       ) << endl;
+        }
+      }
+    }
   }
 
 
@@ -862,13 +1118,15 @@ namespace Anabatic {
     if (_state > EngineGlobalLoaded)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing already loaded.");
 
+    antennaProtect();
+
     if (method == EngineLoadGrByNet ) { _loadGrByNet(); }
     else {
       throw Error( badMethod, "Anabatic::loadGlobalRouting()", method, getString(_cell).c_str() );
     }
     cleanupGlobal();
 
-    if (not getConfiguration()->isTwoMetals()) relaxOverConstraineds();
+    if (not _configuration->isTwoMetals()) relaxOverConstraineds();
 
     _state = EngineActive;
   }
@@ -878,7 +1136,7 @@ namespace Anabatic {
   {
     openSession();
 
-    DbU::Unit           pitch3 = Session::getPitch( 2 );
+  //DbU::Unit           pitch3 = Session::getPitch( 2 );
     AutoSegment::IdSet  constraineds;
     AutoSegment::IdSet  processeds;
     
@@ -985,6 +1243,64 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::setupNetBuilder ()
+  {
+    uint32_t gaugeKind = 4;
+    if      (NetBuilderHybridVH::getStyle() == getNetBuilderStyle()) gaugeKind = 0;
+    else if (NetBuilderM2      ::getStyle() == getNetBuilderStyle()) gaugeKind = 1;
+    else if (NetBuilderVH      ::getStyle() == getNetBuilderStyle()) gaugeKind = 2;
+    else if (NetBuilderHV      ::getStyle() == getNetBuilderStyle()) gaugeKind = 3;
+    
+    if (gaugeKind == 0) {
+      if (not _configuration->isVH())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::VH
+                                       | StyleFlags::Channel
+                                       | StyleFlags::Hybrid );
+      }
+    }
+    else if (gaugeKind == 1) {
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::Channel );
+      }
+    }
+    else if (gaugeKind == 2) {
+      if (not _configuration->isVH())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (_configuration->getRoutingGauge()->getUsableLayers() < 3)
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::VH
+                                       | StyleFlags::OTH );
+      }
+    }
+    else if (gaugeKind == 3) {
+      if (not _configuration->isHV())
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (_configuration->getRoutingGauge()->getUsableLayers() < 3)
+        throw Error( "AnabaticEngine::_loadGrByNet(): Incoherency between routing gauge \"%s\" and NetBuilder style \"%s\"."
+                   , getString(_configuration->getRoutingGauge()->getName()).c_str()
+                   , getNetBuilderStyle().c_str() );
+      if (getRoutingStyle() == StyleFlags::NoStyle) {
+        _configuration->setRoutingStyle( StyleFlags::HV
+                                       | StyleFlags::OTH );
+      }
+    }
+    if (gaugeKind == 4) {
+      throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing auge style \"%s\"."
+                 , getNetBuilderStyle().c_str() );
+    }
+  }
+
   void  AnabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Building detailed routing from global. " << endl;
@@ -994,25 +1310,30 @@ namespace Anabatic {
     startMeasures();
     openSession();
 
-    int gaugeKind = 3;
-    if (getConfiguration()->isTwoMetals()) gaugeKind = 0;
-    if (getConfiguration()->isHV       ()) gaugeKind = 1;
-    if (getConfiguration()->isVH       ()) gaugeKind = 2;
+    uint32_t gaugeKind = 4;
+    if      (NetBuilderHybridVH::getStyle() == getNetBuilderStyle()) gaugeKind = 0;
+    else if (NetBuilderM2      ::getStyle() == getNetBuilderStyle()) gaugeKind = 1;
+    else if (NetBuilderVH      ::getStyle() == getNetBuilderStyle()) gaugeKind = 2;
+    else if (NetBuilderHV      ::getStyle() == getNetBuilderStyle()) gaugeKind = 3;
 
-    if (gaugeKind < 3) {
+    if (gaugeKind < 4) {
       for ( Net* net : getCell()->getNets() ) {
         if (NetRoutingExtension::isShortNet(net)) {
         //AutoSegment::setShortNetMode( true );
           ++shortNets;
         }
-        if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
+        if (NetRoutingExtension::isManualDetailRoute(net))
+          continue;
+        if (  NetRoutingExtension::isManualGlobalRoute(net)
+           or NetRoutingExtension::isAutomaticGlobalRoute(net)) {
           DebugSession::open( net, 145, 150 );
           AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
 
           switch ( gaugeKind ) {
-            case 0: NetBuilder::load<NetBuilderM2>( this, net ); break;
-            case 1: NetBuilder::load<NetBuilderHV>( this, net ); break;
-            case 2: NetBuilder::load<NetBuilderVH>( this, net ); break;
+            case 0: NetBuilder::load<NetBuilderHybridVH>( this, net ); break;
+            case 1: NetBuilder::load<NetBuilderM2>      ( this, net ); break;
+            case 2: NetBuilder::load<NetBuilderVH>      ( this, net ); break;
+            case 3: NetBuilder::load<NetBuilderHV>      ( this, net ); break;
           }
 
           Session::revalidate();
@@ -1031,16 +1352,11 @@ namespace Anabatic {
     stopMeasures();
 
     cmess2 << Dots::asSizet("     - Short nets",shortNets) << endl;
-
-    if (gaugeKind > 2) {
-      throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing gauge \"%s\"."
-                 , getString(getConfiguration()->getRoutingGauge()->getName()).c_str() );
-    }
     
     printMeasures( "load" );
 
-    addMeasure<size_t>( getCell(), "Globals", AutoSegment::getGlobalsCount() );
-    addMeasure<size_t>( getCell(), "Edges"  , AutoSegment::getAllocateds() );
+    addMeasure<size_t>( "Globals", AutoSegment::getGlobalsCount() );
+    addMeasure<size_t>( "Edges"  , AutoSegment::getAllocateds() );
   }
 
 
@@ -1176,7 +1492,7 @@ namespace Anabatic {
     set<const Layer*>  connectedLayers;
 
     forEach ( Segment*, segment, net->getSegments() ) {
-      if (segment->getLength()) {
+      if (segment->getAnchoredLength()) {
         if (net->isExternal()) {
           NetExternalComponents::setExternal( *segment );
         }
@@ -1367,7 +1683,7 @@ namespace Anabatic {
 
   EdgeCapacity* AnabaticEngine::_createCapacity ( Flags flags, Interval span )
   {
-    size_t        depth        = getConfiguration()->getAllowedDepth();
+    size_t        depth        = _configuration->getAllowedDepth();
     EdgeCapacity* edgeCapacity = NULL;
 
     flags &= Flags::EdgeCapacityMask;
@@ -1390,6 +1706,83 @@ namespace Anabatic {
   {
     if (capacity->getref() < 2) _edgeCapacitiesLut.erase( capacity );
     return capacity->decref();
+  }
+  
+
+  void  AnabaticEngine::computeEdgeCapacities ( int maxHCap, int maxVCap, int termSatThreshold, int maxTermSat )
+  {
+          vector<RoutingPad*> rps;
+          vector<GCell*>      saturateds;
+    const vector<NetData*>&   netDatas = getNetOrdering();
+
+    for ( NetData* netData : netDatas ) {
+      for ( Component* component : netData->getNet()->getComponents() ) {
+        RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
+        if (rp) rps.push_back( rp ); 
+      }
+    }
+
+    UpdateSession::open();
+    
+    for ( auto rp : rps ) {
+      if (not _configuration->selectRpComponent(rp))
+        cerr << Warning( "AnabaticEngine::computeEdgeCapacities(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+
+      Point  center = rp->getBoundingBox().getCenter();
+      GCell* gcell  = getGCellUnder( center );
+      
+      if (not gcell) {
+        cerr << Error( "AnabaticEngine::computeEdgeCapacities(): %s\n"
+                       "        @%s of %s is not under any GCell.\n"
+                       "        It will be ignored so the edge capacity estimate may be wrong."
+                     , getString(rp).c_str()
+                     , getString(center).c_str()
+                     , getString(rp->getNet()).c_str()
+                     ) << endl;
+        continue;
+      }
+
+      gcell->incRpCount( 1 );
+      if (gcell->getRpCount() == termSatThreshold) saturateds.push_back( gcell );
+    }
+
+    for ( GCell* gcell : getGCells() ) {
+      if (not gcell->isMatrix()) continue;
+
+      for ( Edge* edge : gcell->getEdges(Flags::EastSide|Flags::NorthSide) ) {
+        GCell* opposite    = edge->getOpposite( gcell );
+        int    maxReserved = maxHCap;
+        int    reserved    = std::max( gcell->getRpCount(), opposite->getRpCount() );
+
+        if (edge->isVertical()) maxReserved = maxVCap;
+        edge->reserveCapacity( std::min( maxReserved, reserved ) );
+      }
+    }
+
+    for ( GCell* gcell : saturateds ) {
+      GCell* neighbor = gcell;
+      for ( size_t i=0 ; i<2; ++i ) {
+        Edge* edge = neighbor->getWestEdge();
+        if (not edge) break;
+
+        if (edge->getReservedCapacity() < (uint32_t)maxTermSat)
+          edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
+        neighbor = neighbor->getWest();
+      }
+      neighbor = gcell;
+      for ( size_t i=0 ; i<2; ++i ) {
+        Edge* edge = neighbor->getEastEdge();
+        if (not edge) break;
+
+        if (edge->getReservedCapacity() < (uint32_t)maxTermSat)
+          edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
+        neighbor = neighbor->getEast();
+      }
+    }
+
+    UpdateSession::close();
+
+  //Breakpoint::stop( 1, "Edge capacities computeds." );
   }
   
 
@@ -1437,10 +1830,10 @@ namespace Anabatic {
   {
     Super::printMeasures();
 
-    // if (not tag.empty()) {
-    //   addMeasure<double>( getCell(), tag+"T",  getTimer().getCombTime  () );
-    //   addMeasure<size_t>( getCell(), tag+"S", (getTimer().getMemorySize() >> 20) );
-    // }
+    if (not tag.empty()) {
+      addMeasure<double>( tag+"T",  getTimer().getCombTime  () );
+      addMeasure<size_t>( tag+"S", (getTimer().getMemorySize() >> 20) );
+    }
   }
 
 

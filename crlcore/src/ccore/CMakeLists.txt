@@ -20,26 +20,23 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/ispd04
                              ${CRLCORE_SOURCE_DIR}/src/ccore/ispd05
                              ${CRLCORE_SOURCE_DIR}/src/ccore/iccad04
-                             ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
+                             ${CRLCORE_SOURCE_DIR}/src/ccore/spice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
                              ${CRLCORE_SOURCE_DIR}/src/ccore/blif
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cif
-                             ${CRLCORE_SOURCE_DIR}/src/ccore/spice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/liberty
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                              ${HURRICANE_INCLUDE_DIR}
-                             ${CIF_INCLUDE_DIR}
-                             ${CONFIGURATION_INCLUDE_DIR}
-                             ${PYTHON_INCLUDE_PATH}
+                             ${Python_INCLUDE_DIRS}
                              ${Boost_INCLUDE_DIR}
-                             ${QtX_INCLUDE_DIR}
+                             ${QtX_INCLUDE_DIRS}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                              -DSYS_CONF_DIR="${SYS_CONF_DIR}"
-                             -DPYTHON_SITE_PACKAGES="${PYTHON_SITE_PACKAGES}"
+                             -DPYTHON_SITE_PACKAGES="${Python_SITELIB}"
                            )
 
                        set ( includes          crlcore/Utilities.h
@@ -50,7 +47,6 @@
                                                crlcore/GdsDriver.h
                                                crlcore/OAParser.h
                                                crlcore/OADriver.h
-                                               crlcore/CifDriver.h
                                                crlcore/SearchPath.h
                                                crlcore/Environment.h
                                                crlcore/Catalog.h
@@ -65,8 +61,8 @@
                                                crlcore/Blif.h
                                                crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
-                                               crlcore/Ispd04Bookshelf.h
-                                               crlcore/Ispd05Bookshelf.h
+#                                              crlcore/Ispd04Bookshelf.h
+#                                              crlcore/Ispd05Bookshelf.h
                                                crlcore/Ioc.h
                                                crlcore/VhdlBit.h
                                                crlcore/VhdlSignal.h
@@ -93,7 +89,6 @@
                                                COptions.cpp
                                                Histogram.cpp
                                                OAParserDriver.cpp
-                                               CifDriver.cpp
                                                SearchPath.cpp
                                                Environment.cpp
                                                Catalog.cpp
@@ -106,9 +101,10 @@
                                                ToolEngine.cpp
                                                GraphicToolEngine.cpp
                            )
-                       set ( spice_cpps        spice/SpiceParser.cpp
+                       set ( spice_cpps        spice/SpiceBit.cpp
+                                               spice/SpiceEntity.cpp
+                                               spice/SpiceParser.cpp
                                                spice/SpiceDriver.cpp
-                                               spice/Spice.cpp
                            )
                        set ( bookshelf_cpps    bookshelf/BookshelfParser.cpp
                                                bookshelf/BookshelfDriver.cpp
@@ -118,8 +114,6 @@
                            )
                        set ( gds_cpps          gds/GdsDriver.cpp
                                                gds/GdsParser.cpp
-                           )
-                       set ( cif_cpps          cif/CifDriver.cpp
                            )
                        set ( toolbox_cpps      toolbox/HyperNetPortOccurrences.cpp
                                                toolbox/ToolBox.cpp
@@ -155,8 +149,8 @@
                                                lefdef/LefDefExtension.cpp
                            )
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
-                       set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
-                       set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
+#                      set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
+#                      set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
                        set ( blif_cpps         blif/BlifParser.cpp )
  if ( LEFDEF_FOUND )
        include_directories ( ${LEFDEF_INCLUDE_DIR} )
@@ -259,7 +253,7 @@
                                OUTPUT           ${AcmSigdaParserScannerCpp}
                                COMMAND          ${FLEX_EXECUTABLE}
                                ARGS             -PAcmSigda_ -o${AcmSigdaParserScannerCpp}
-			                                      ${AcmSigdaParserScanner}
+			                                                  ${AcmSigdaParserScanner}
                              )
           add_custom_command ( MAIN_DEPENDENCY   ${AcmSigdaParserGrammar}
                                DEPENDS           ${AcmSigdaParserScannerCpp}
@@ -267,7 +261,7 @@
                                OUTPUT            ${AcmSigdaParserGrammarCpp}
                                COMMAND           ${BISON_EXECUTABLE} 
                                ARGS              -d -v -p AcmSigda_ -y ${AcmSigdaParserGrammar}
-			                         -o ${AcmSigdaParserGrammarCpp}
+			                                                        -o ${AcmSigdaParserGrammarCpp}
                              )
          include_directories ( ${AcmSigdaParserBinaryDir} )
                          set ( acmsigda_parser_cpps ${AcmSigdaParserScannerCpp}
@@ -278,6 +272,13 @@
 
 
                 qtX_wrap_cpp ( moc_cpps ${mocincludes} )
+                set_property ( SOURCE ${VstParserGrammarCpp}
+                                      ${VstParserScannerCpp}
+                                      ${AcmSigdaParserGrammarCpp}
+                                      ${AcmSigdaParserScannerCpp}
+                                      ${IocParserGrammarCpp}
+                                      ${IocParserScannerCpp}
+                               PROPERTY SKIP_AUTOMOC ON)
 
                  add_library ( crlcore  ${ccore_cpps}
                                         ${moc_cpps}
@@ -302,21 +303,18 @@
                                         ${openaccess_cpps}
                              )
        set_target_properties ( crlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
-       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_LIBRARIES}
+       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
+                                        ${HURRICANE_PYTHON_LIBRARIES}
                                         ${HURRICANE_GRAPHICAL_LIBRARIES}
                                         ${HURRICANE_LIBRARIES}
                                         ${BOOKSHELF_LIBRARY}
-                                        ${CONFIGURATION_LIBRARY}
-                                        ${CIF_LIBRARY}
-                                        ${AGDS_LIBRARY}
-                                        ${UTILITIES_LIBRARY}
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
                                         ${QtX_LIBRARIES}
                                         ${Boost_LIBRARIES}
                                         ${LIBXML2_LIBRARIES}
-                                        ${PYTHON_LIBRARIES} -lutil
-                             )
+                                         -lutil
+                            )
 
                      install ( TARGETS  crlcore DESTINATION lib${LIB_SUFFIX} )
                      install ( FILES    ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 

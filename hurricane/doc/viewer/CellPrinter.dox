@@ -29,6 +29,7 @@
   *                </ol>
   *
   *                Code example (took from CellViewer):
+  *
 \code
   void  CellViewer::printDisplay ()
   {

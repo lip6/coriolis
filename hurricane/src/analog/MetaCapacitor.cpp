@@ -21,19 +21,19 @@ namespace Analog {
 
 
   MetaCapacitor::MetaCapacitor ( Library* library, const Name& name )
-      : Super(library,name)
-      , _plate1(NULL)
-      , _plate2(NULL)
-      , _ce    (0.0)
+    : Super(library,name)
+    , _topPlate(NULL)
+    , _botPlate(NULL)
+    , _ce      (0.0)
   { }
   
   
   MetaCapacitor* MetaCapacitor::create ( Library* library, const Name& name )
   {
-      MetaCapacitor* mCapacitor = new MetaCapacitor( library, name );
-      mCapacitor->_postCreate();
+    MetaCapacitor* mCapacitor = new MetaCapacitor( library, name );
+    mCapacitor->_postCreate();
   
-      return mCapacitor;
+    return mCapacitor;
   }
   
   
@@ -41,12 +41,10 @@ namespace Analog {
   {
     Super::_postCreate();
   
-    _plate1 = Net::create(this, "P1");
-    _plate1->setExternal(true);
-    _plate2 = Net::create(this, "P2");
-    _plate2->setExternal(true);
-  
-    setTerminal( false );
+    _topPlate = Net::create( this, "T" );
+    _topPlate->setExternal( true );
+    _botPlate = Net::create( this, "B" );
+    _botPlate->setExternal( true );
   }
 
 

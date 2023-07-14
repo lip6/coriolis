@@ -15,12 +15,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_PARSERS_DRIVERS_H_
+#ifndef CRL_PARSERS_DRIVERS_H
 #define CRL_PARSERS_DRIVERS_H
 
 #include  <string>
 #include  <map>
-#include  "hurricane/Name.h"
 namespace Hurricane {
   class Library;
   class Cell;
@@ -29,7 +28,6 @@ namespace Hurricane {
 
 namespace CRL {
 
-  using Hurricane::Name;
   using Hurricane::Cell;
   using Hurricane::Library;
 
@@ -51,9 +49,9 @@ namespace CRL {
 // Struct  :  "CRL::ParserSlot".
 
   struct ParserSlot {
-      Name  _tag;
-      Name  _ext;
-      void* _parser;
+      std::string  _tag;
+      std::string  _ext;
+      void*        _parser;
 
             ParserSlot ( const string& t, const string& e, void* p ): _tag(t),_ext(e),_parser(p) {};
   };
@@ -73,15 +71,15 @@ namespace CRL {
       inline                  ParserFormatSlot ();
     // Accessors.
       inline bool             loadByLib        ();
-      inline const Name&      getTag           ();
-      inline const Name&      getExt           ();
+      inline std::string      getTag           ();
+      inline std::string      getExt           ();
       inline LibraryParser_t* getParsLib       ();
       inline CellParser_t*    getParsCell      ();
     // Modifiers.
-             void             registerCell     ( const std::string& tag, CellParser_t*    p, const std::string& ext );
-             void             registerLib      ( const std::string& tag, LibraryParser_t* p, const std::string& ext );
-             bool             unRegisterCell   ( const Name& ext );
-             bool             unRegisterLib    ( const Name& ext );
+             void             registerCell     ( std::string tag, CellParser_t*    p, std::string ext );
+             void             registerLib      ( std::string tag, LibraryParser_t* p, std::string ext );
+             bool             unRegisterCell   ( std::string ext );
+             bool             unRegisterLib    ( std::string ext );
     // Iterators handling.
       inline void             cbegin           ();
       inline void             lbegin           ();
@@ -101,8 +99,8 @@ namespace CRL {
 
   inline                  ParserFormatSlot::ParserFormatSlot () : _loadByLib(false), _itset(false) { };
   inline bool             ParserFormatSlot::loadByLib        () { return ( _loadByLib ); }
-  inline const Name&      ParserFormatSlot::getTag           () { return ( _it->_tag    ); }
-  inline const Name&      ParserFormatSlot::getExt           () { return ( _it->_ext    ); }
+  inline std::string      ParserFormatSlot::getTag           () { return ( _it->_tag    ); }
+  inline std::string      ParserFormatSlot::getExt           () { return ( _it->_ext    ); }
   inline LibraryParser_t* ParserFormatSlot::getParsLib       () { return ( (LibraryParser_t*)_it->_parser ); }
   inline CellParser_t*    ParserFormatSlot::getParsCell      () { return ( (CellParser_t*   )_it->_parser ); }
   inline void             ParserFormatSlot::cbegin           () { _it = _cells.begin(); _itset = true; }
@@ -112,17 +110,17 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::ParsersMap".
 
-  class ParsersMap : public map<Name,ParserFormatSlot> {
+  class ParsersMap : public map<std::string,ParserFormatSlot> {
 
     public:
     // Constructor.
                                ParsersMap     ();
     // Methods.
-             ParserFormatSlot& getParserSlot  ( const std::string& tag );
-             ParserFormatSlot& getParserSlot  ( const std::string& tag, unsigned int mode, const Environment& env );
-             void              registerSlot   ( const std::string& tag, LibraryParser_t* p, const std::string& ext );
-             void              registerSlot   ( const std::string& tag, CellParser_t*    p, const std::string& ext );
-             void              unRegisterSlot ( const Name& tag, const Name& ext, bool lib );
+             ParserFormatSlot& getParserSlot  ( std::string tag );
+             ParserFormatSlot& getParserSlot  ( std::string tag, unsigned int mode, const Environment& env );
+             void              registerSlot   ( std::string tag, LibraryParser_t* p, std::string ext );
+             void              registerSlot   ( std::string tag, CellParser_t*    p, std::string ext );
+             void              unRegisterSlot ( std::string tag, std::string ext, bool lib );
   };
 
 
@@ -135,23 +133,23 @@ namespace CRL {
     // Constructor.
       inline                  DriverSlot  ( string tag="unknown" );
     // Accessors.
-      inline const Name&      getTag      ();
-      inline const Name&      getExtLib   ();
-      inline const Name&      getExtCell  ();
+      inline std::string      getTag      ();
+      inline std::string      getExtLib   ();
+      inline std::string      getExtCell  ();
       inline LibraryDriver_t* getDrivLib  ();
       inline CellDriver_t*    getDrivCell ();
 
     // Modifiers.
-      inline void             setExtLib   ( const std::string &ext );
-      inline void             setExtCell  ( const std::string &ext );
+      inline void             setExtLib   ( std::string ext );
+      inline void             setExtCell  ( std::string ext );
       inline void             setDrivLib  ( LibraryDriver_t *driv );
       inline void             setDrivCell ( CellDriver_t *driv );
 
     private:
     // Internal - Attributes.
-             Name             _tag;
-             Name             _extLib;
-             Name             _extCell;
+             std::string      _tag;
+             std::string      _extLib;
+             std::string      _extCell;
              LibraryDriver_t* _drivLib;
              CellDriver_t*    _drivCell;
   };
@@ -164,13 +162,13 @@ namespace CRL {
                                                   , _drivLib(NULL)
                                                   , _drivCell(NULL)
                                                   { }
-  inline const Name&      DriverSlot::getTag      () { return ( _tag      ); }
-  inline const Name&      DriverSlot::getExtLib   () { return ( _extLib   ); }
-  inline const Name&      DriverSlot::getExtCell  () { return ( _extCell  ); }
+  inline std::string      DriverSlot::getTag      () { return ( _tag      ); }
+  inline std::string      DriverSlot::getExtLib   () { return ( _extLib   ); }
+  inline std::string      DriverSlot::getExtCell  () { return ( _extCell  ); }
   inline LibraryDriver_t* DriverSlot::getDrivLib  () { return ( _drivLib  ); }
   inline CellDriver_t*    DriverSlot::getDrivCell () { return ( _drivCell ); }
-  inline void             DriverSlot::setExtLib   ( const std::string& ext ) { _extLib  = ext; }
-  inline void             DriverSlot::setExtCell  ( const std::string& ext ) { _extCell = ext; }
+  inline void             DriverSlot::setExtLib   ( std::string ext ) { _extLib  = ext; }
+  inline void             DriverSlot::setExtCell  ( std::string ext ) { _extCell = ext; }
   inline void             DriverSlot::setDrivLib  ( LibraryDriver_t* driv ) { _drivLib  = driv; }
   inline void             DriverSlot::setDrivCell ( CellDriver_t*    driv ) { _drivCell = driv; }
 
@@ -180,17 +178,17 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::DriversMap".
 
-  class DriversMap : public map<Name,DriverSlot> {
+  class DriversMap : public map<string,DriverSlot> {
 
     public:
     // Constructor.
                          DriversMap      ();
     // Methods.
-             DriverSlot& getDriverSlot  ( const std::string& tag );
-             DriverSlot& getDriverSlot  ( const std::string& tag, unsigned int mode, const Environment& env );
-             void        registerSlot   ( const std::string& tag, CellDriver_t    *d, const std::string& ext );
-             void        registerSlot   ( const std::string& tag, LibraryDriver_t *d, const std::string& ext );
-             void        unRegisterSlot ( const Name& tag );
+             DriverSlot& getDriverSlot  ( std::string tag );
+             DriverSlot& getDriverSlot  ( std::string tag, unsigned int mode, const Environment& env );
+             void        registerSlot   ( std::string tag, CellDriver_t    *d, std::string ext );
+             void        registerSlot   ( std::string tag, LibraryDriver_t *d, std::string ext );
+             void        unRegisterSlot ( std::string tag );
   };
 
 

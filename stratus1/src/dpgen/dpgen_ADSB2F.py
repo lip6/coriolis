@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -231,7 +230,7 @@ class DpgenAdsb2f ( Model ) :
       PlaceTop ( self.Xorb[i], sym )
        
     # Ligne des PIGI
-    if self._nbit > 1 : Place ( self.Pigi[1], SYM_Y, XY ( 45, 50 ) )
+    if self._nbit > 1 : Place ( self.Pigi[1], SYM_Y, XY ( DbU.fromLambda(45), DbU.fromLambda(50) ) )
     
     for i in range ( 2, self._nbit ) :
       if i % 2 == 0 : sym = NOSYM
@@ -249,8 +248,8 @@ class DpgenAdsb2f ( Model ) :
           if pi % 2 == 0 : sym = NOSYM
           else           : sym = SYM_Y
           
-          Place ( self.PgI1[n][i], sym, XY ( 125 + 55 * twostage, pi * 50 ) )
-          Place ( self.PgI2[n][i], sym, XY ( 150 + 55 * twostage, pi * 50 ) )
+          Place ( self.PgI1[n][i], sym, XY ( DbU.fromLambda(125 + 55 * twostage), DbU.fromLambda(pi * 50) ) )
+          Place ( self.PgI2[n][i], sym, XY ( DbU.fromLambda(150 + 55 * twostage), DbU.fromLambda(pi * 50) ) )
             
           pi -= 1
         
@@ -258,8 +257,8 @@ class DpgenAdsb2f ( Model ) :
         
           if pi % 2 == 0 : sym = NOSYM
           else           : sym = SYM_Y
-          Place ( self.PgI1[n+1][i], sym, XY ( 125 + 55 * twostage, pi * 50 ) )
-          Place ( self.PgI2[n+1][i], sym, XY ( 150 + 55 * twostage, pi * 50 ) )
+          Place ( self.PgI1[n+1][i], sym, XY ( DbU.fromLambda(125 + 55 * twostage), DbU.fromLambda(pi * 50) ) )
+          Place ( self.PgI2[n+1][i], sym, XY ( DbU.fromLambda(150 + 55 * twostage), DbU.fromLambda(pi * 50) ) )
             
           pi -= 1
     
@@ -270,11 +269,11 @@ class DpgenAdsb2f ( Model ) :
     for n in range ( 2, self._nbit + 1 ) :
       if ( n - 1 ) % 2 == 0 : sym = NOSYM
       else                  : sym = SYM_Y
-      Place ( self.R[n], sym, XY ( 125 + 55 * twostage, ( n - 1 ) * 50 ) )
+      Place ( self.R[n], sym, XY ( DbU.fromLambda(125 + 55 * twostage), DbU.fromLambda( (n-1) * 50 ) ) )
     
         
     # Calcul des sommes
-    if self._nbit > 1 : Place ( self.S[1], NOSYM, XY ( 155 + 55 * twostage, 0 ) )
+    if self._nbit > 1 : Place ( self.S[1], NOSYM, XY ( DbU.fromLambda(155 + 55 * twostage), 0 ) )
     
     for i in range ( 2, self._nbit ) :
       if ( i - 1 ) % 2 == 0 : sym = NOSYM
@@ -283,7 +282,7 @@ class DpgenAdsb2f ( Model ) :
     
   
     # Calcul somme et retenue du LSB
-    Place ( self.S[0], NOSYM, XY ( 45, 0 ) )
+    Place ( self.S[0], NOSYM, XY ( DbU.fromLambda(45), 0 ) )
   
   
   ########## VHDL ##########

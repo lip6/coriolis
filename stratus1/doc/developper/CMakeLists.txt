@@ -15,7 +15,7 @@
                        )
  endif()
 
-                   set ( htmlInstallDir  share/doc/coriolis2/en/html/ )
+                   set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/stratus_developper )
 
         make_directory ( "${LATEX_OUTPUT_PATH}/stratus_developper" )

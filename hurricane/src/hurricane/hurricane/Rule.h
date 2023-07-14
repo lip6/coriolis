@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_RULE_H
-#define  HURRICANE_RULE_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Name.h"
 
@@ -52,5 +50,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Rule);
-
-#endif  // HURRICANE_RULE_H

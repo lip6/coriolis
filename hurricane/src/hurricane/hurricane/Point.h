@@ -71,8 +71,8 @@ class Point {
 // Updators
 // ********
 
-    public: void setX(const DbU::Unit& x) {_x = x;};
-    public: void setY(const DbU::Unit& y) {_y = y;};
+    public: void setX(DbU::Unit x) {_x = x;};
+    public: void setY(DbU::Unit y) {_y = y;};
     public: Point& translate(const DbU::Unit& dx, const DbU::Unit& dy);
     public: Point getTranslated(const DbU::Unit& dx, const DbU::Unit& dy) const;
 
@@ -100,7 +100,7 @@ class JsonPoint : public JsonObject {
 
 } // End of Hurricane namespace.
 
-INSPECTOR_PV_SUPPORT(Hurricane::Point);
+INSPECTOR_PR_SUPPORT(Hurricane::Point);
 
 
 #endif // HURRICANE_POINT

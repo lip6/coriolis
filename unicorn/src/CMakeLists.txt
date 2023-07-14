@@ -3,13 +3,21 @@
 #              include( ${QT_USE_FILE} )
    include_directories( ${UNICORN_SOURCE_DIR}/src
                         ${HURRICANE_INCLUDE_DIR}
+                        ${KNIK_INCLUDE_DIR}
+                        ${KATABATIC_INCLUDE_DIR}
+                        ${SOLSTICE_INCLUDE_DIR}
+                        ${EQUINOX_INCLUDE_DIR}
+                        ${KITE_INCLUDE_DIR}
+                        ${ETESIAN_INCLUDE_DIR}
+                        ${ANABATIC_INCLUDE_DIR}
+                        ${KATANA_INCLUDE_DIR}
                         ${CORIOLIS_INCLUDE_DIR}
                         ${BOOKSHELF_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR}
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
                         ${LEFDEF_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
        add_definitions( -DSYS_CONF_DIR="${SYS_CONF_DIR}" )
 
@@ -22,7 +30,7 @@
                       )
                    set( pyIncludes    unicorn/PyUnicornGui.h
                       )
-		   set( cpps          ImportCell.cpp
+                   set( cpps          ImportCell.cpp
                                       OpenCellDialog.cpp
                                       SaveCellDialog.cpp
                                       ImportCellDialog.cpp
@@ -69,9 +77,10 @@
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
-                                      ${PYTHON_LIBRARIES}
+                                      
                                       -lutil
                                       ${LIBXML2_LIBRARIES}
+                                      ${BZIP2_LIBRARIES}
                                       ${LIBBFD_LIBRARIES}
                       )
 

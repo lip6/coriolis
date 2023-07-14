@@ -1,8 +1,10 @@
 
- include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane 
-                       ${CONFIGURATION_INCLUDE_DIR}
+ include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                       ${HURRICANE_SOURCE_DIR}/src/configuration3 
+                       ${RapidJSON_INCLUDE_DIRS}
                        ${Boost_INCLUDE_DIRS}
                        ${BZIP2_INCLUDE_DIR}
+                       ${CMAKE_INSTALL_PREFIX}/include
                      )
                  set ( includes hurricane/Mask.h
                                 hurricane/Flags.h
@@ -25,6 +27,7 @@
                                 hurricane/Box.h                   hurricane/Boxes.h
                                 hurricane/Torus.h
                                 hurricane/Cell.h                  hurricane/Cells.h
+                                hurricane/CellsSort.h
                                 hurricane/Collection.h
                                 hurricane/Commons.h
                                 hurricane/Component.h             hurricane/Components.h
@@ -154,6 +157,7 @@
                                 Entity.cpp
                                 Cell.cpp
                                 CellCollections.cpp
+                                CellsSort.cpp
                                 NetAlias.cpp
                                 Net.cpp
                                 DeepNet.cpp

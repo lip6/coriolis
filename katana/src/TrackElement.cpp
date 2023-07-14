@@ -136,11 +136,13 @@ namespace Katana {
   bool           TrackElement::isFixedAxis          () const { return false; }
   bool           TrackElement::isLocal              () const { return true; }
   bool           TrackElement::isGlobal             () const { return not isLocal(); }
+  bool           TrackElement::isWeakGlobal         () const { return false; }
   bool           TrackElement::isBipoint            () const { return false; }
   bool           TrackElement::isTerminal           () const { return false; }
   bool           TrackElement::isDrag               () const { return false; }
   bool           TrackElement::isStrongTerminal     ( Flags ) const { return false; }
   bool           TrackElement::isStrap              () const { return false; }
+  bool           TrackElement::isUnbreakable        () const { return false; }
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
   bool           TrackElement::isShortDogleg        () const { return false; }
@@ -149,6 +151,8 @@ namespace Katana {
   bool           TrackElement::isUserDefined        () const { return false; }
   bool           TrackElement::isAnalog             () const { return false; }
   bool           TrackElement::isWide               () const { return false; }
+  bool           TrackElement::isNonPref            () const { return false; }
+  bool           TrackElement::isNonPrefOnVSmall    () const { return false; }
   bool           TrackElement::isShortNet           () const { return false; }
 // Predicates.
   bool           TrackElement::hasSymmetric         () const { return false; }
@@ -159,6 +163,7 @@ namespace Katana {
   bool           TrackElement::canDogleg            () { return false; };
   bool           TrackElement::canDogleg            ( Interval ) { return false; };
   bool           TrackElement::canDogleg            ( Anabatic::GCell*, Flags ) { return false; };
+  bool           TrackElement::canRealign           () const { return false; };
 // Accessors.
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }
@@ -175,7 +180,6 @@ namespace Katana {
   DataNegociate* TrackElement::getDataNegociate     ( Flags ) const { return NULL; }
   TrackElements  TrackElement::getPerpandiculars    () { return new TrackElements_Perpandiculars(NULL); }
   void           TrackElement::invalidate           () { }
-  TrackElement*  TrackElement::getCanonical         ( Interval& i ) { i=Interval(getSourceU(),getTargetU()); return this; }
   TrackElement*  TrackElement::getSourceDogleg      () { return NULL; }
   TrackElement*  TrackElement::getTargetDogleg      () { return NULL; }
   TrackElement*  TrackElement::getSymmetric         () { return NULL; }
@@ -187,10 +191,11 @@ namespace Katana {
   void           TrackElement::setDoglegLevel       ( uint32_t ) { }
   void           TrackElement::swapTrack            ( TrackElement* ) { }
   void           TrackElement::reschedule           ( uint32_t ) { }
-  void           TrackElement::detach               () { }
-  void           TrackElement::detach               ( set<Track*>& ) { }
+//void           TrackElement::detach               () { }
+//void           TrackElement::detach               ( TrackSet& ) { }
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
+  void           TrackElement::updateTrackSpan      () { }
   void           TrackElement::setAxis              ( DbU::Unit, uint32_t flags ) { }
   TrackElement*  TrackElement::makeDogleg           () { return NULL; }
   Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags  ) { return Flags::NoFlags; }

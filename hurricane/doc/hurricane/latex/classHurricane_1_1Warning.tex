@@ -1,20 +1,20 @@
-\hypertarget{classHurricane_1_1Warning}{}\section{Hurricane\+:\+:Warning Class Reference}
-\label{classHurricane_1_1Warning}\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
+\hypertarget{classHurricane_1_1Warning}{}\doxysection{Hurricane\+::Warning Class Reference}
+\label{classHurricane_1_1Warning}\index{Hurricane::Warning@{Hurricane::Warning}}
 
 
-\mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} description ({\bfseries A\+PI})  
+\mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} description ({\bfseries{API}})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Warning\+:\nopagebreak
+Inheritance diagram for Hurricane\+::Warning\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=188pt]{classHurricane_1_1Warning__inherit__graph}
+\includegraphics[width=187pt]{classHurricane_1_1Warning__inherit__graph}
 \end{center}
 \end{figure}
-\subsection*{Public Member Functions}
+\doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{classHurricane_1_1Warning_aea7aa9bccac13e6c15b1eb3b4741ef0d}{Warning}} (const string \&reason)
@@ -33,80 +33,81 @@ string \mbox{\hyperlink{classHurricane_1_1Warning_afe26e9c4e0801d112d743d8afe8c3
 \item 
 int \mbox{\hyperlink{classHurricane_1_1Warning_a28350d25d1691b754fd8d79d1539234c}{get\+Code}} () const
 \end{DoxyCompactItemize}
-\subsection*{Additional Inherited Members}
+\doxysubsection*{Additional Inherited Members}
 
 
-\subsection{Detailed Description}
-\mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} description ({\bfseries A\+PI}) 
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} description ({\bfseries{API}}) 
 
-\hypertarget{classHurricane_1_1Warning_secWarningIntro}{}\subsection{Introduction}\label{classHurricane_1_1Warning_secWarningIntro}
-There is no difference with the \mbox{\hyperlink{classHurricane_1_1Error}{Error}} type but the printed message is prefixed by {\bfseries W\+A\+R\+N\+I\+NG} instead of {\bfseries E\+R\+R\+OR}.\hypertarget{classHurricane_1_1Warning_secWarningNouveauxTypes}{}\subsection{Nouveaux types}\label{classHurricane_1_1Warning_secWarningNouveauxTypes}
-type\+: {\bfseries Warning\+::\+Inherit} -\/$>$ \mbox{\hyperlink{classHurricane_1_1Exception}{Exception}} Useful for calling the base class methods without knowing this class.\hypertarget{classHurricane_1_1Warning_secWarningRemark}{}\subsection{Remark}\label{classHurricane_1_1Warning_secWarningRemark}
+\hypertarget{classHurricane_1_1Warning_secWarningIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Warning_secWarningIntro}
+There is no difference with the \mbox{\hyperlink{classHurricane_1_1Error}{Error}} type but the printed message is prefixed by {\bfseries{WARNING}} instead of {\bfseries{ERROR}}.\hypertarget{classHurricane_1_1Warning_secWarningNouveauxTypes}{}\doxysubsection{Nouveaux types}\label{classHurricane_1_1Warning_secWarningNouveauxTypes}
+type\+: {\bfseries{Warning\+::\+Inherit}} -\/$>$ \mbox{\hyperlink{classHurricane_1_1Exception}{Exception}} Useful for calling the base class methods without knowing this class.\hypertarget{classHurricane_1_1Warning_secWarningRemark}{}\doxysubsection{Remark}\label{classHurricane_1_1Warning_secWarningRemark}
 You can also use this object to print messages without throwing an exception as shown below \+: 
-\begin{DoxyCode}
-Cell* cell = library->getCell(\textcolor{stringliteral}{"adder"}); \textcolor{comment}{// we get the cell}
- 
-\textcolor{keywordflow}{if} (!cell)
-   cerr << \mbox{\hyperlink{classHurricane_1_1Warning_aea7aa9bccac13e6c15b1eb3b4741ef0d}{Warning}}(\textcolor{stringliteral}{"Unknown cell adder"}).what() << endl;
-\textcolor{keywordflow}{else} \{
-   \textcolor{comment}{// we know what to do here}
-\}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Cell* cell = library-\/>getCell(\textcolor{stringliteral}{"{}adder"{}}); \textcolor{comment}{// we get the cell}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!cell)}
+\DoxyCodeLine{   cerr << \mbox{\hyperlink{classHurricane_1_1Warning_aea7aa9bccac13e6c15b1eb3b4741ef0d}{Warning}}(\textcolor{stringliteral}{"{}Unknown cell adder"{}}).what() << endl;}
+\DoxyCodeLine{\textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{   \textcolor{comment}{// we know what to do here}}
+\DoxyCodeLine{\}}
+
 \end{DoxyCode}
  The same remark applies to all exception types. 
 
-\subsection{Constructor \& Destructor Documentation}
+\doxysubsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Warning_aea7aa9bccac13e6c15b1eb3b4741ef0d}\label{classHurricane_1_1Warning_aea7aa9bccac13e6c15b1eb3b4741ef0d}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!Warning@{Warning}}
-\index{Warning@{Warning}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+\index{Hurricane::Warning@{Hurricane::Warning}!Warning@{Warning}}
+\index{Warning@{Warning}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Warning\+::\+Warning (\begin{DoxyParamCaption}\item[{const string \&}]{reason }\end{DoxyParamCaption})}
 
 Builds a warning characterized by a reason (code defaults to zero). \mbox{\Hypertarget{classHurricane_1_1Warning_a93bdec83d118f235def1d354938c0529}\label{classHurricane_1_1Warning_a93bdec83d118f235def1d354938c0529}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!Warning@{Warning}}
-\index{Warning@{Warning}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+\index{Hurricane::Warning@{Hurricane::Warning}!Warning@{Warning}}
+\index{Warning@{Warning}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Warning\+::\+Warning (\begin{DoxyParamCaption}\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 Builds a warning characterized by a reason, using the {\ttfamily vararg} protocol and {\ttfamily printf} format (code defaults to zero). \mbox{\Hypertarget{classHurricane_1_1Warning_a95e98968e28550678f1ed91193f8ee5f}\label{classHurricane_1_1Warning_a95e98968e28550678f1ed91193f8ee5f}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!Warning@{Warning}}
-\index{Warning@{Warning}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+\index{Hurricane::Warning@{Hurricane::Warning}!Warning@{Warning}}
+\index{Warning@{Warning}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Warning\+::\+Warning (\begin{DoxyParamCaption}\item[{int}]{code,  }\item[{const string \&}]{reason }\end{DoxyParamCaption})}
 
 Builds a warning characterized by a reason and a code useful within a switch. \mbox{\Hypertarget{classHurricane_1_1Warning_aad9cf84a9c08fb2012462e6f38450bf0}\label{classHurricane_1_1Warning_aad9cf84a9c08fb2012462e6f38450bf0}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!Warning@{Warning}}
-\index{Warning@{Warning}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+\index{Hurricane::Warning@{Hurricane::Warning}!Warning@{Warning}}
+\index{Warning@{Warning}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Warning\+::\+Warning (\begin{DoxyParamCaption}\item[{int}]{code,  }\item[{const char $\ast$}]{format,  }\item[{}]{... }\end{DoxyParamCaption})}
 
 Builds a warning characterized by a reason and a code useful within a switch. The reason is supplied in a {\ttfamily printf} like fashion. \mbox{\Hypertarget{classHurricane_1_1Warning_a5855a8066401c0b1d1b830a3f7c6216e}\label{classHurricane_1_1Warning_a5855a8066401c0b1d1b830a3f7c6216e}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!Warning@{Warning}}
-\index{Warning@{Warning}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+\index{Hurricane::Warning@{Hurricane::Warning}!Warning@{Warning}}
+\index{Warning@{Warning}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{Warning()}{Warning()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
 {\footnotesize\ttfamily Hurricane\+::\+Warning\+::\+Warning (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} \&}]{warning }\end{DoxyParamCaption})}
 
 Copy constructor. 
 
-\subsection{Member Function Documentation}
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classHurricane_1_1Warning_a21827cacf1cb4f53d8a1963bdeb3cd50}\label{classHurricane_1_1Warning_a21827cacf1cb4f53d8a1963bdeb3cd50}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!operator=@{operator=}}
-\index{operator=@{operator=}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{operator=()}{operator=()}}
+\index{Hurricane::Warning@{Hurricane::Warning}!operator=@{operator=}}
+\index{operator=@{operator=}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} \& Hurricane\+::\+Warning\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Warning}{Warning}} \&}]{warning }\end{DoxyParamCaption})}
 
 Assignment operator. \mbox{\Hypertarget{classHurricane_1_1Warning_afe26e9c4e0801d112d743d8afe8c3ac3}\label{classHurricane_1_1Warning_afe26e9c4e0801d112d743d8afe8c3ac3}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!get\+Reason@{get\+Reason}}
-\index{get\+Reason@{get\+Reason}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{get\+Reason()}{getReason()}}
+\index{Hurricane::Warning@{Hurricane::Warning}!getReason@{getReason}}
+\index{getReason@{getReason}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{getReason()}{getReason()}}
 {\footnotesize\ttfamily string Hurricane\+::\+Warning\+::get\+Reason (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the reason for which the warning was thrown. \mbox{\Hypertarget{classHurricane_1_1Warning_a28350d25d1691b754fd8d79d1539234c}\label{classHurricane_1_1Warning_a28350d25d1691b754fd8d79d1539234c}} 
-\index{Hurricane\+::\+Warning@{Hurricane\+::\+Warning}!get\+Code@{get\+Code}}
-\index{get\+Code@{get\+Code}!Hurricane\+::\+Warning@{Hurricane\+::\+Warning}}
-\subsubsection{\texorpdfstring{get\+Code()}{getCode()}}
+{\bfseries{Returns\+:}} the reason for which the warning was thrown. \mbox{\Hypertarget{classHurricane_1_1Warning_a28350d25d1691b754fd8d79d1539234c}\label{classHurricane_1_1Warning_a28350d25d1691b754fd8d79d1539234c}} 
+\index{Hurricane::Warning@{Hurricane::Warning}!getCode@{getCode}}
+\index{getCode@{getCode}!Hurricane::Warning@{Hurricane::Warning}}
+\doxysubsubsection{\texorpdfstring{getCode()}{getCode()}}
 {\footnotesize\ttfamily int Hurricane\+::\+Warning\+::get\+Code (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-{\bfseries Returns\+:} the warning code number. 
+{\bfseries{Returns\+:}} the warning code number. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

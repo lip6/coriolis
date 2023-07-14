@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -146,7 +145,7 @@ class PatRead:
                     connector['arity'] = int(pieces[2])-int(pieces[4])+1
                 else:
                     connector['arity'] = 1
-                #DEBUG: print '%s=>%s\n' % (line, connector)
+                #DEBUG: print( '%s=>%s\n' % (line, connector) )
                 self.connectors.append(connector)
 
     # ------------------------------------------------------
