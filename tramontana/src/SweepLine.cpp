@@ -172,7 +172,18 @@ namespace Tramontana {
     loadTiles();
   //bool debugOn = false;
   //bool written = false;
+    size_t processedTiles = 0;
     for ( Element& element : _tiles ) {
+      processedTiles++;
+      if (tty::enabled()) {
+        cmess2 << "        <tile:" << tty::bold << right << setw(10) << setfill('0')
+               << processedTiles << tty::reset
+               << " remains:" << right << setw(10) << setfill('0')
+               << (_tiles.size() - processedTiles)
+               << setfill(' ') << tty::reset << ">" << tty::cr;
+        cmess2.flush ();
+      }
+
       Tile*     tile     = element.getTile();
       TileIntv  tileIntv ( tile, tile->getYMin(), tile->getYMax() );
       // if (tile->getOccurrence().getEntity()->getId() == 3348) {
@@ -301,7 +312,8 @@ namespace Tramontana {
       query.setBasicLayer( layer );
       query.doQuery();
     }
-    cmess2 << "     - Loaded " << query.getGoMatchCount() << " tiles." << endl;
+    cmess2 << "     - Loaded " << _tiles.size() << " tiles (from "
+           << query.getGoMatchCount() << " gos)." << endl;
 
     // for ( Occurrence occurrence : getCell()->getOccurrencesUnder( getCell()->getBoundingBox() ) ) {
     //   vector<Tile*> tiles;

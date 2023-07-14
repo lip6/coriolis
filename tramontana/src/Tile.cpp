@@ -122,7 +122,7 @@ namespace Tramontana {
       return nullptr;
     }
     if (not (flags & ForceLayer) and not component->getLayer()->contains(layer)) {
-      cerr << "Intersect:" << component->getLayer()->getMask().intersect(layer->getMask()) << endl;
+    //cerr << "Intersect:" << component->getLayer()->getMask().intersect(layer->getMask()) << endl;
       cerr << Error( "Tile::create(): Component layer \"%s\" does not contains \"%s\".\n"
                      "        (%s)\n"
                      "        component :%s\n"
@@ -163,10 +163,10 @@ namespace Tramontana {
                      ) << endl;
         return nullptr;
       }
-      if (rectilinear->getId() == 3367) {
-        DebugSession::open( 160, 169 );
-        cdebug_log(160,0) << "Tiling: " << rectilinear << endl;
-      }
+      // if (rectilinear->getId() == 3367) {
+      //   DebugSession::open( 160, 169 );
+      //   cdebug_log(160,0) << "Tiling: " << rectilinear << endl;
+      // }
       vector<Box> boxes;
       rectilinear->getAsRectangles( boxes );
       for ( Box bb : boxes ) {
@@ -176,9 +176,9 @@ namespace Tramontana {
         cdebug_log(160,0) << "| " << tile << endl;
         if (not rootTile) rootTile = tile;
       }
-      if (rectilinear->getId() == 3367) {
-        DebugSession::close();
-      }
+      // if (rectilinear->getId() == 3367) {
+      //   DebugSession::close();
+      // }
       return rootTile;
     }
 
