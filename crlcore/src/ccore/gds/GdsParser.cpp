@@ -1782,6 +1782,18 @@ namespace {
                 NetExternalComponents::setExternal( p );
                 toDestroy.push_back( component );
                 cdebug_log(101,0) << "> external duplicate " << p << endl;
+              } else {
+                Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+                if (rectilinear) {
+                  rectilinear = Rectilinear::create( net
+                                                   , rectilinear->getLayer()
+                                                   , rectilinear->getPoints() );
+                  NetExternalComponents::setExternal( rectilinear );
+                } else {
+                  cerr << Error( "GdsStream::makeExternals(): Unmanaged component %s for net \"%s\"."
+                               , getString(component).c_str()
+                               , getString(net->getName()).c_str() ) << endl;
+                }
               }
             }
           }
