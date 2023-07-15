@@ -744,7 +744,10 @@ class IoPadConf ( object ):
         else:
             if   self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
             elif self._datas[6] is not None: self.flags |= IoPadConf.TRISTATE
-        trace( 550, '\tIoPadConf._datas: {}\n'.format(self._datas) )
+        sPos = ''
+        if self._datas[1]:
+            sPos = DbU.getValueString(self._datas[1])
+        trace( 550, '\tIoPadConf._datas: @{} {}\n'.format(sPos,self._datas) )
   
     @property
     def side ( self ): return self._datas[0]

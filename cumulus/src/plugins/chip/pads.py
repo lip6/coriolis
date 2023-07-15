@@ -169,7 +169,7 @@ class Side ( object ):
         self.type          = sideType
         self.corona        = corona
         self.pins          = []
-        self.u             = self.conf.ioPadHeight
+        self.u             = 0
         self.spacerCount   = 0
         self.gap           = 0
         self.coreWires     = []
@@ -370,6 +370,10 @@ class Side ( object ):
         return
 
     def _placePads ( self ):
+        if self.type in (North,South):
+            self.u = self.corona.padCornerWidth
+        else:
+            self.u = self.corona.padCornerHeight
         padLength = 0
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
         padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
@@ -551,6 +555,8 @@ class Corona ( object ):
         self.padCorner        = []
         self.padRails         = []  # [ , [net, layer, axis, width] ]
         self.powerCount       = 0
+        self.padCornerWidth   = self.conf.ioPadHeight
+        self.padCornerHeight  = self.conf.ioPadHeight
         self.conf.cfg.chip.padCoreSide = None
         if self.conf.cfg.chip.padCoreSide.lower() == 'south':
             self.padOrient = Transformation.Orientation.MY
@@ -567,7 +573,9 @@ class Corona ( object ):
                     raise ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "{}"'.format(spacerName) )
                 self.padSpacers = sorted( self.padSpacers, key=_cmpPad, reverse=True )
         if self.conf.cfg.chip.padCorner is not None:
-            self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
+            self.padCorner       = self.padLib.getCell( self.conf.cfg.chip.padCorner )
+            self.padCornerWidth  = self.padCorner.getAbutmentBox().getWidth()
+            self.padCornerHeight = self.padCorner.getAbutmentBox().getHeight()
         if self.conf.cfg.chip.minPadSpacing is None:
             self.conf.cfg.chip.minPadSpacing = 0
 
