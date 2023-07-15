@@ -4,9 +4,42 @@ version = "0.0.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
 readme = "README.rst"
-build = "builder.py"
+homepage = "https://github.com/lip6/coriolis"
+repository = "https://github.com/lip6/coriolis"
 packages = [
-  { include = "Coriolis"}
+  { include = "Coriolis"},
+]
+include = [
+  "COPYRIGHT.rst",
+  "LICENSE.rst",
+  "README.rst",
+  "SUPPORT.rst",
+  "Seabreeze",
+  "anabatic",
+  "bootstrap",
+  "bora",
+  "builder.py",
+  "coloquinte",
+  "crlcore",
+  "cumulus",
+  "equinox",
+  "etesian",
+  "flute",
+  "foehn",
+  "hurricane",
+  "ispd",
+  "karakaze",
+  "katana",
+  "lefdef",
+  "oroshi",
+  "poetry.lock",
+  "pyproject.toml",
+  "solstice",
+  "stratus1",
+  "tramontana",
+  "tutorial",
+  "unicorn",
+  "unittests",
 ]
 
 [tool.poetry-dynamic-versioning]
@@ -29,6 +62,10 @@ find-libpython = "^0.3.0"
 [tool.poetry.dev-dependencies]
 cmake = ">=3"
 ninja = "^1.11.1"
+
+[tool.poetry.build] 
+script = "builder.py" 
+generate-setup-file = true
 
 [tool.poetry.scripts]
 blif2vst =  'Coriolis:blif2vst'
