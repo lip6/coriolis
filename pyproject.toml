@@ -53,6 +53,7 @@ before-all = '''
  boost-python boost-filesystem \
  boost-regex  boost-wave \
  python36-devel libxml2-devel \
- qwt-devel
+ qwt-devel \
+ ccache
 '''
 build-verbosity=2

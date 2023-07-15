@@ -58,6 +58,8 @@ jobs:
         env:
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
+          CIBW_ENVIRONMENT: USE_CCACHE=1 CCACHE_DIR=/.ccache
+          CIBW_CONTAINER_ENGINE: "docker; create_args: '--volume=${{ github.workspace  }}/.ccache:/.ccache'"
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
