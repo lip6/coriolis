@@ -61,7 +61,7 @@ class ExtensionBuilder(build_ext):
 
         cfg = "Debug" if self.debug else "Release"
         # cfg = 'Debug'
-        build_args = ["--config", cfg]
+        build_args = ["--config", cfg, "-j", "4"]
         install_args = ["--config", cfg]
 
         cmake_args += ["-DCMAKE_BUILD_TYPE=" + cfg]
