@@ -60,6 +60,7 @@ namespace Hurricane {
       inline        Points         getContour        () const;
                     bool           getAsRectangles   ( std::vector<Box>& ) const;
       inline  const vector<Point>& getPoints         () const;
+                    Box            getNearestHSide   ( DbU::Unit y ) const;
     // Mutators.
                     void           setLayer          ( const Layer* );
       virtual       void           translate         ( const DbU::Unit& dx, const DbU::Unit& dy );
