@@ -87,6 +87,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DSYS_CONF_DIR={install_dir}"]
         cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
+        cmake_args += [f"-DUSE_MANYLINUX=TRUE"]
 
         cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
 
