@@ -34,7 +34,9 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
+if (BUILD_DOC)
  add_subdirectory(doc)
+endif
 #add_subdirectory(tests)
  
 #enable_testing()

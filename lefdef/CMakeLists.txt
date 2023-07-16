@@ -4,7 +4,9 @@
  project(LEFDEF)
 
  cmake_minimum_required(VERSION 3.16)
- set(ignoreVariables "${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+
+ option(BUILD_DOC  "Build the documentation (doxygen)" OFF)
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
@@ -20,4 +22,6 @@
  find_package(FLEX               REQUIRED)
  
  add_subdirectory(src)
- add_subdirectory(doc)
+ if (BUILD_DOC)
+   add_subdirectory(doc)
+ endif
