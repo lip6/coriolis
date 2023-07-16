@@ -45,7 +45,6 @@ jobs:
             Dockerfile-manylinux
 
       - name: Log in to the Container registry
-        if: steps.changed-files-specific.outputs.any_changed == 'true'
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
           registry: ${{ env.REGISTRY }}
@@ -61,7 +60,7 @@ jobs:
 
       - name: Build and push Docker image
         if: steps.changed-files-specific.outputs.any_changed == 'true'
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile-manylinux
@@ -121,6 +120,9 @@ jobs:
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           CIBW_ENVIRONMENT: USE_CCACHE=1 CCACHE_DIR=/.ccache
           CIBW_CONTAINER_ENGINE: "docker; create_args: '--volume=${{ github.workspace  }}/.ccache:/.ccache'"
+          # overriede before-all in pyproject.toml
+          CIBW_BEFORE_ALL: ""
+          CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/chipflow/coriolis-manylinux2014:${{ github.ref_name }}
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
