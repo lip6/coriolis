@@ -615,8 +615,6 @@ namespace {
     Net* net = Net::create( parser->getCell(), pin->name() );
     net->setExternal( true );
 
-    if (pin->name()[ strlen(pin->name())-1 ] == '!') net->setGlobal( true );
-
     if (pin->hasDirection()) {
       string lefDir = pin->direction();
       boost::to_upper( lefDir );
@@ -637,6 +635,8 @@ namespace {
       if (lefUse == "POWER" ) net->setType( Net::Type::POWER   );
       if (lefUse == "GROUND") net->setType( Net::Type::GROUND  );
     }
+    if (net->isSupply())                             net->setGlobal( true );
+    if (pin->name()[ strlen(pin->name())-1 ] == '!') net->setGlobal( true );
 
     for ( int iport=0 ; iport < pin->numPorts() ; ++iport ) {
       Layer* layer = NULL;
@@ -727,27 +727,30 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-    cerr << "       @ _pinStdPostProcess" << endl;
+    //cerr << "       @ _pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
       string              pinName    = element.first;
       vector<Component*>& components = element.second;
       vector<Segment*>    ongrids;
+      bool                isSupply = false;
 
       for ( Component* component : components ) {
+        if (component->getNet()->isSupply()) {
+          isSupply = true;
+          break;
+        }
+
         Segment* segment = dynamic_cast<Segment*>( component );
         if (segment) {
-          if (component->getNet()->isSupply()) continue;
           bool isWide = (segment->getWidth() >= getMinTerminalWidth());
 
-          cerr << "       > " << segment << endl;
-          if (not isVH())
-            cerr << "NOT isVH()" << endl;
-          else
-            cerr << "isVH()" << endl;
+          // cerr << "       > " << segment << endl;
+          // if (not isVH()) cerr << "X NOT isVH()" << endl;
+          // else            cerr << "X isVH()" << endl;
         
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
-            cerr << "isVH()" << endl;
+          // cerr << "isVH()" << endl;
             Vertical* v = dynamic_cast<Vertical*>( segment );
             if (v) {
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
@@ -775,7 +778,7 @@ namespace {
                                                      , v->getDyTarget()
                                                      )
                                    );
-                //cerr << "       | " << ongrids[ongrids.size()-1] << endl;
+                  cerr << "       | " << ongrids[ongrids.size()-1] << endl;
                 } else {
                 // Unpitched and not wide enough to be under a metal2 track, ignore.
                 }
@@ -788,11 +791,11 @@ namespace {
           if (isWide) ongrids.push_back( segment );
         }
         Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
-        if (not (rectilinear->getLayer()->getMask() == metal1->getMask()))
-          continue;
-
         if (rectilinear) {
           cerr << "       > " << rectilinear << endl;
+          if (rectilinear->getLayer()->getMask() != metal1->getMask())
+            continue;
+
           vector<Box> boxes;
           rectilinear->getAsRectangles( boxes );
 
@@ -841,8 +844,9 @@ namespace {
       }
 
       if (ongrids.empty()) {
-        cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
-                       , pinName.c_str() ) << endl;
+        if (not isSupply)
+          cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
+                         , pinName.c_str() ) << endl;
         for ( Component* component : components ) {
           NetExternalComponents::setExternal( component );
         }
@@ -1008,7 +1012,7 @@ namespace {
       if (parser->getCoreSiteY() != parser->getCellGauge()->getSliceHeight())
         cerr << Warning( "LefParser::parse(): CRL slice height discrepency %s while LEF is %s."
                        , DbU::getValueString(parser->getCellGauge()->getSliceHeight()).c_str()
-                       , DbU::getValueString(parser->getCoreSiteX()).c_str() ) << endl;
+                       , DbU::getValueString(parser->getCoreSiteY()).c_str() ) << endl;
         
       if (parser->getCoreSiteX() != parser->getCellGauge()->getSliceStep())
         cerr << Warning( "LefParser::parse(): CRL slice step discrepency %s while LEF is %s."
