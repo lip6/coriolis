@@ -479,6 +479,19 @@ namespace Hurricane {
   }
 
 
+  Box  Rectilinear::getNearestHSide ( DbU::Unit y ) const
+  {
+    Box side;
+    for ( size_t i=1 ; i<_points.size() ; ++i ) {
+      if (_points[i-1].getY() != _points[i].getY()) continue;
+      if (   not side.isEmpty()
+         and (std::abs(side.getYCenter() - y) >= std::abs(_points[i].getY() - y))) continue;
+      side = Box( _points[i-1], _points[i] );
+    }
+    return side;
+  }
+
+
   void Rectilinear::_toJson ( JsonWriter* writer ) const
   {
     Inherit::_toJson( writer );

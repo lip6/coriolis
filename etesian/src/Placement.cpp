@@ -24,6 +24,7 @@
 #include "hurricane/Plug.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Horizontal.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Path.h"
 #include "hurricane/Library.h"
@@ -50,6 +51,7 @@ namespace Etesian {
   using Hurricane::Plug;
   using Hurricane::RoutingPad;
   using Hurricane::Vertical;
+  using Hurricane::Horizontal;
   using Hurricane::NetExternalComponents;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
@@ -57,6 +59,8 @@ namespace Etesian {
   using CRL::CatalogExtension;
   using CRL::getTransformation;
   using CRL::RoutingLayerGauge;
+  using Constant::LayerGaugeType;
+  using Constant::Direction;
   using Etesian::EtesianEngine;
 
 
@@ -146,7 +150,7 @@ namespace Etesian {
       return;
     }
 
-    list<Tile>::iterator imerge = _tiles.end();
+  //list<Tile>::iterator imerge = _tiles.end();
     for ( auto itile = _tiles.begin() ; itile != _tiles.end() ; ++itile ) {
       if ((*itile).getXMin() > flatAb.getXMin()) {
         _tiles.insert( itile, Tile(flatAb.getXMin(), flatAb.getWidth(), occurrence) );
@@ -630,12 +634,15 @@ namespace Etesian {
           if (not component->getLayer()->isBlockage()) continue;
           cdebug_log(121,0) << "Looking at " << component << endl;
           Vertical* v = dynamic_cast<Vertical*>( component );
-          if (not v) continue;
+          if (   not dynamic_cast<Vertical*  >(component)
+             and not dynamic_cast<Horizontal*>(component)) continue;
 
-          RoutingLayerGauge* rlg = rg->getLayerGauge( v->getLayer()->getRoutingLayer() );
+          RoutingLayerGauge* rlg = rg->getLayerGauge( component->getLayer()->getRoutingLayer() );
           if (not rlg) continue;
+          if (rlg->getType()      != LayerGaugeType::Default) continue;
+          if (rlg->getDirection() != Direction::Vertical) continue;
 
-          Box bb = v->getBoundingBox();
+          Box bb = component->getBoundingBox();
           bb.inflate( -rlg->getWireWidth()/2, 0 );
           Transformation transf = tile.getInstance()->getTransformation();
           tile.getOccurrence().getPath().getTransformation().applyOn( transf );

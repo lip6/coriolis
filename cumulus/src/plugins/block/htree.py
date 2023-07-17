@@ -106,7 +106,11 @@ class HTree ( object ):
             hLeafDepth = gaugeConf.horizontalDepth - 2
         gaugeConf.setStackPosition( contact, x, y )
         gaugeConf.createVertical  ( contact, forkContact, x, 0 )
-        gaugeConf.addTrackAvoid( Box( x, forkContact.getY(), x, y ) )
+        trackAvoidBox = Box( x, forkContact.getY(), x, y )
+        if forkContact.getY() > contact.getY():
+            trackAvoidBox.inflate( 0, 0, 0, self.spares.conf.sliceHeight )
+        gaugeConf.addTrackAvoid( trackAvoidBox )
+        self.spares.trackAvoid( trackAvoidBox )
         if len(leaf.buffers) > 1:
             tl1Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[1], bufferConf.input, ckNet, GaugeConf.DeepDepth|GaugeConf.HAccess )
             tl2Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[2], bufferConf.input, ckNet )
