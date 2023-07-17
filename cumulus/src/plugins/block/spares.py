@@ -1103,8 +1103,8 @@ class Spares ( object ):
         trace( 540, ',+', '\tSpares.addStrayBuffer()\n' )
 
         sliceHeight = self.conf.sliceHeight 
-        x           = self.quadTree.toXPitch( position.getX() )
-        y           = self.quadTree.toYSlice( position.getY() )
+        x           = self.toXPitch( position.getX() )
+        y           = self.toYSlice( position.getY() )
         slice       = y // sliceHeight
         orientation = Transformation.Orientation.ID
         y = slice * sliceHeight
@@ -1133,6 +1133,37 @@ class Spares ( object ):
         if leaf is None:
             raise ErrorMessage( 2, 'Spares.getFreeBufferUnder(): No more free buffers under {}.'.format(area) )
         return leaf.selectFree()
+
+    def trackAvoid ( self, box ):
+        """
+        Protect a vertical track by putting a vertical column of narrow filler
+        under it (usually tie). Used by the H-Tree (clock tree) in low-metal
+        nodes.
+        """
+        trace( 540, ',+', '\tSpares.trackAvoid() {}\n'.format( box ))
+        yoffset = 0
+        if self.conf.isCoreBlock:
+            yoffset = self.conf.icore.getTransformation().getTy()
+        sliceHeight = self.conf.sliceHeight 
+        x           = self.toXPitch( box.getXMin() ) - self.conf.sliceStep
+        ymin        = self.toYSlice( box.getYMin() )
+        ymax        = self.toYSlice( box.getYMax() )
+        sliceMin    = (ymin - yoffset) // sliceHeight
+        sliceMax    = (ymax - yoffset) // sliceHeight
+        orientation = Transformation.Orientation.ID
+        ymin        = sliceMin * sliceHeight
+        for row in range( sliceMin+1, sliceMax ):
+            orientation = Transformation.Orientation.ID
+            y = row * sliceHeight + yoffset
+            if row%2:
+                orientation = Transformation.Orientation.MY
+                y          += sliceHeight
+            transf   = Transformation( x, y, orientation )
+            instance = self.conf.feedsConf.createFeed( self.conf.corona )
+            instance.setTransformation( transf )
+            instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            trace( 540, '\ttrackAvoid, feed: {} @{}\n'.format(instance,transf) )
+        trace( 540, '-' )
 
     def raddTransNet ( self, topNet, path ):
         """
