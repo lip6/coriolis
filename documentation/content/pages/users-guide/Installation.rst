@@ -107,7 +107,7 @@ The actively developed branch
 The **devel_anabatic** branch is now closed and we go back to a more classical
 scheme where **master** is the stable version and **devel** the development one.
 
-The |Coriolis| |git| repository is https://gitlab.lip6.fr/vlsi-cad/coriolis.git
+The |Coriolis| |git| repository is https://github.com/lip6/coriolis.git
 
 .. note::
    Again, the **devel_anabatic** branch is now closed. Please revert to **devel**
@@ -171,7 +171,7 @@ Installing on |RedHat| or compatible distributions
 
       dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
       dummy@lepka:src> cd ~/coriolis-2.x/src
-      dummy@lepka:src> git clone https://gitlab.lip6.fr/vlsi-cad/coriolis.git
+      dummy@lepka:src> git clone https://github.com/lip6/coriolis.git
 
 4. Build & install:
 
@@ -315,7 +315,7 @@ Second step is to create the source directory and pull the |git| repository:
 
    dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
    dummy@lepka:src> cd ~/coriolis-2.x/src
-   dummy@lepka:src> git clone https://gitlab.lip6.fr/vlsi-cad/coriolis.git
+   dummy@lepka:src> git clone https://github.com/lip6/coriolis.git
 
 Third and final step, build & install:
 

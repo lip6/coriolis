@@ -5,7 +5,7 @@
 
   # Nixpkgs / NixOS version to use.
   inputs.nixpkgs.url = "github:NixOS/nixpkgs"; # for alliance
-  inputs.alliance-check-toolkit.url = "git+https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git";
+  inputs.alliance-check-toolkit.url = "git+https://github.com/lip6/alliance-check-toolkit.git";
   inputs.alliance-check-toolkit.flake = false;
   inputs.soclayout.url = "git+https://git.libre-soc.org/git/soclayout.git";
   inputs.soclayout.flake = false;

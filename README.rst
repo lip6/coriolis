@@ -7,6 +7,8 @@ Coriolis README
 
 Coriolis is a free database, placement tool and routing tool for VLSI design.
 
+This project is hosted at: https://github.com/lip6/coriolis
+
 
 Purpose
 =======
@@ -55,7 +57,7 @@ the repository in the right place. Proceed as follow: ::
 
    ego@home:~$ mkdir -p ~/coriolis-2.x/src/
    ego@home:~$ cd ~/coriolis-2.x/src
-   ego@home:src$ git clone https://gitlab.lip6.fr/vlsi-eda/coriolis.git
+   ego@home:src$ git clone https://github.com/lip6/coriolis
    ego@home:src$ cd coriolis
 
 Then, build the tool: ::

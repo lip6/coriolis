@@ -9,11 +9,11 @@
         "rev": "0e5744fd98acadee44bc5cfc4949146f1d30506f",
         "revCount": 291,
         "type": "git",
-        "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
+        "url": "https://github.com/lip6/alliance-check-toolkit.git"
       },
       "original": {
         "type": "git",
-        "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
+        "url": "https://github.com/lip6/alliance-check-toolkit.git"
       }
     },
     "nixpkgs": {
