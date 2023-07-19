@@ -1141,6 +1141,10 @@ class Spares ( object ):
         nodes.
         """
         trace( 540, ',+', '\tSpares.trackAvoid() {}\n'.format( box ))
+        if self.conf.isCoreBlock:
+            coreCell = self.conf.corona
+        else:
+            coreCell = self.conf.core
         yoffset = 0
         if self.conf.isCoreBlock:
             yoffset = self.conf.icore.getTransformation().getTy()
@@ -1159,7 +1163,7 @@ class Spares ( object ):
                 orientation = Transformation.Orientation.MY
                 y          += sliceHeight
             transf   = Transformation( x, y, orientation )
-            instance = self.conf.feedsConf.createFeed( self.conf.corona )
+            instance = self.conf.feedsConf.createFeed( coreCell )
             instance.setTransformation( transf )
             instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
             trace( 540, '\ttrackAvoid, feed: {} @{}\n'.format(instance,transf) )
