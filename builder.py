@@ -61,7 +61,7 @@ class ExtensionBuilder(build_ext):
 
         cfg = "Debug" if self.debug else "Release"
         # cfg = 'Debug'
-        build_args = ["--config", cfg]
+        build_args = ["--config", cfg, "-j", "4"]
         install_args = ["--config", cfg]
 
         cmake_args += ["-DCMAKE_BUILD_TYPE=" + cfg]
@@ -71,10 +71,13 @@ class ExtensionBuilder(build_ext):
 
         env = os.environ.copy()
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())
-
+        
         build_dir = os.path.join(self.build_temp, ext.sourcedir_rel)
         install_dir = os.path.join(extdir, 'Coriolis')
         os.makedirs(build_dir,exist_ok=True)
+
+        if "USE_CCACHE" in env:
+            cmake_args += ["-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"]
 
         cmake_args += [f"-DCMAKE_MODULE_PATH={os.path.abspath('bootstrap/cmake_modules')};"
                        f"{os.path.join(install_dir, 'share/cmake/Modules')}"]
@@ -84,6 +87,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DSYS_CONF_DIR={install_dir}"]
         cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
+        cmake_args += [f"-DUSE_MANYLINUX=TRUE"]
 
         cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
 

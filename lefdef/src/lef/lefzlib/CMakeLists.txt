@@ -11,7 +11,7 @@
                              )
 
                  add_library ( lefzlib  ${cpps} )
-       target_link_libraries ( lefzlib  lef z )
+#      target_link_libraries ( lefzlib  lef z )
        set_target_properties ( lefzlib  PROPERTIES VERSION 5.8 SOVERSION 5 )
       
                      install ( TARGETS  lefzlib DESTINATION lib${LIB_SUFFIX} )

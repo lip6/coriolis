@@ -83,11 +83,9 @@
      qtX_add_resources( RCC_SRCS       Configuration.qrc )
                         
            add_library( configuration  ${cpps} ${mocCpps} ${RCC_SRCS} )
- target_link_libraries( configuration  ${QtX_LIBRARIES} )
  set_target_properties( configuration  PROPERTIES VERSION 1.0 SOVERSION 1 )
                         
            add_library( pytypemanager  ${pyTypeCpps} )
- target_link_libraries( pytypemanager  hurricane ${Python_LIBRARIES})
  set_target_properties( pytypemanager  PROPERTIES VERSION 1.0 SOVERSION 1 )
 
     add_python_module3( "${pyCfgCpps}"
