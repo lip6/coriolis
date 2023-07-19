@@ -45,7 +45,7 @@ def unbitify ( rawName ):
 
 class HTree ( object ):
     """
-    Build a H-Tree on a net occurrene.
+    Build a H-Tree on a net occurrence.
     """
 
     def __init__ ( self, spares, treeNetOcc, index, flags ):
@@ -159,12 +159,12 @@ class HTree ( object ):
                or (qt.br and len(qt.br.buffers) > 1) \
                or (qt.tr and len(qt.tr.buffers) > 1):
                leafFlags |= GaugeConf.HAccess
-        yoffset = 3
+        yoffset = gaugeConf.cfg.spares.htreeRootOffset
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
             driverY       = driverContact.getY()
-            yoffset       = 5
+            yoffset       = gaugeConf.cfg.spares.htreeOffset
             trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )

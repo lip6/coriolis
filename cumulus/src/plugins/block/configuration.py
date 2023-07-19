@@ -25,7 +25,7 @@ from   ...CRL             import AllianceFramework, RoutingLayerGauge, Catalog, 
                                  Gds, Spice
 from   ...helpers         import trace, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
-from   ...helpers.overlay import CfgCache, UpdateSession
+from   ...helpers.overlay import CfgCache, CfgDefault, UpdateSession
 from   ..                 import getParameter
 from   ..rsave            import rsave
 from   ..utils            import getPlugByName
@@ -80,7 +80,7 @@ class GaugeConf ( object ):
         self._plugToRp       = { }
         self._rpToAccess     = { }
         self._loadRoutingGauge()
-        self._routingBb      = Box()
+        self._routingBb       = Box()
         return
 
     @property
@@ -1403,6 +1403,8 @@ class BlockConf ( GaugeConf ):
         self.cfg.block.spareSide         = None
         self.cfg.block.vRailsPeriod      = None
         self.cfg.katana.dumpMeasures     = None
+        self.cfg.spares.htreeRootOffset  = CfgDefault(3)
+        self.cfg.spares.htreeOffset      = CfgDefault(5)
         self.chipConf = ChipConf( self )
         self.etesian  = None
         self.katana   = None
