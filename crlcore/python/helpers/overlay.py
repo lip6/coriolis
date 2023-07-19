@@ -92,15 +92,32 @@ class Configuration:
             Cfg.Configuration.popDefaultPriority()
 
 
+class CfgDefault ( object ):
+    """
+    Define a builtin default value. This value will be used as default
+    if the associated parameter do not have a value either set on disk
+    nor through progamming.
+
+    It is used as a very last ditch to get a value for a parameter.
+    """
+
+    def __init__ ( self, v ):
+        self.vDefault = v
+
+    def __str__ ( self ):
+        return 'CfgDefault({})'.format( self.vDefault )
+
+
 class CachedParameter ( object ):
 
     def __init__ ( self, path, v ):
-        self.path   = path
-        self._v     = None
-        self.v      = v
-        self.vRange = [ None, None ]
-        self.vEnum  = []
-        self.create = True
+        self.path      = path
+        self._v        = None
+        self.vRange    = [ None, None ]
+        self.vEnum     = []
+        self.create    = True
+        if not isinstance(v,CfgDefault):
+            self.v = v
         self.cacheRead()
 
     @property
@@ -108,7 +125,12 @@ class CachedParameter ( object ):
 
     @v.setter
     def v ( self, value ):
-        if value is not None: self._v = value
+        if value is None: return
+        if isinstance(value,CfgDefault):
+            if self._v is None:
+                self._v = value.vDefault
+            return
+        self._v = value
 
     def __str__ ( self ):
         if isinstance(self.v,str): s = '"{}"'.format(self.v)
@@ -325,7 +347,7 @@ class CfgCache ( object ):
     def display ( self ):
         """Print all the parameters stored in that CfgCache."""
         if not len(self._path):
-            print( '  o  Applying configuration (CfgCache):' )
+            print( '  o  Configuration contents (CfgCache):' )
         for attrName in self._rattr.keys():
             if isinstance(self._rattr[attrName],CfgCache):
                 self._rattr[attrName].display()
