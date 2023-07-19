@@ -33,6 +33,7 @@ namespace CRL {
     public:
       static const uint32_t  NoGdsPrefix        = (1<<0);
       static const uint32_t  Layer_0_IsBoundary = (1<<1);
+      static const uint32_t  NoBlockages        = (1<<2);
     public:
       static bool  save ( Cell* );
       static bool  load ( Library*, std::string gdsPath, uint32_t flags=0 );

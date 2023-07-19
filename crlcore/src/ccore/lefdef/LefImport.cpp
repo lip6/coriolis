@@ -43,6 +43,7 @@
 #include "crlcore/CellGauge.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/LefImport.h"
+#include "crlcore/Gds.h"
 
 
 #if defined(HAVE_LEFDEF)
@@ -73,6 +74,7 @@ namespace {
   class LefParser {
     public:
       static       void               setMergeLibrary          ( Library* );
+      static       void               setGdsForeignDirectory   ( string );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -85,6 +87,14 @@ namespace {
                    Library*           createLibrary            ();
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
+      inline       string             getForeignPath           () const;
+      inline       void               setForeignPath           ( string );
+      inline const Point&             getForeignPosition       () const;
+      inline       void               setForeignPosition       ( const Point&  );
+      inline       Net*               getGdsPower              () const;
+      inline       void               setGdsPower              ( Net* );
+      inline       Net*               getGdsGround             () const;
+      inline       void               setGdsGround             ( Net* );
       inline       Cell*              getCell                  () const;
       inline       void               setCell                  ( Cell* );
       inline       CellGauge*         getCellGauge             () const;
@@ -113,20 +123,26 @@ namespace {
       inline       void               addPinComponent          ( string name, Component* );
       inline       void               clearPinComponents       ();
     private:                                               
-      static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*      , lefiUserData );
-      static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*      , lefiUserData );
-      static       int                _siteCbk                 ( lefrCallbackType_e,       lefiSite*       , lefiUserData );
-      static       int                _obstructionCbk          ( lefrCallbackType_e,       lefiObstruction*, lefiUserData );
-      static       int                _macroCbk                ( lefrCallbackType_e,       lefiMacro*      , lefiUserData );
-      static       int                _macroSiteCbk            ( lefrCallbackType_e, const lefiMacroSite*  , lefiUserData );
-      static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*        , lefiUserData );
+      static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*       , lefiUserData );
+      static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*       , lefiUserData );
+      static       int                _siteCbk                 ( lefrCallbackType_e,       lefiSite*        , lefiUserData );
+      static       int                _obstructionCbk          ( lefrCallbackType_e,       lefiObstruction* , lefiUserData );
+      static       int                _macroCbk                ( lefrCallbackType_e,       lefiMacro*       , lefiUserData );
+      static       int                _macroSiteCbk            ( lefrCallbackType_e, const lefiMacroSite*   , lefiUserData );
+      static       int                _macroForeignCbk         ( lefrCallbackType_e, const lefiMacroForeign*, lefiUserData );
+      static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
     private:                                               
+      static       string              _gdsForeignDirectory;
       static       Library*            _mergeLibrary;
                    string              _file;
                    string              _libraryName;
                    Library*            _library;
+                   string              _foreignPath;
+                   Point               _foreignPosition;
+                   Net*                _gdsPower;
+                   Net*                _gdsGround;
                    Cell*               _cell;
                    Net*                _net;
                    string              _busBits;
@@ -152,6 +168,14 @@ namespace {
   inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*             LefParser::getCell                  () const { return _cell; }
   inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline       string            LefParser::getForeignPath           () const { return _foreignPath; }
+  inline       void              LefParser::setForeignPath           ( string path ) { _foreignPath=path; }
+  inline const Point&            LefParser::getForeignPosition       () const { return _foreignPosition; }
+  inline       void              LefParser::setForeignPosition       ( const Point& position ) { _foreignPosition=position; }
+  inline       Net*              LefParser::getGdsPower              () const { return _gdsPower; }
+  inline       void              LefParser::setGdsPower              ( Net* net ) { _gdsPower=net; }
+  inline       Net*              LefParser::getGdsGround             () const { return _gdsGround; }
+  inline       void              LefParser::setGdsGround             ( Net* net ) { _gdsGround=net; }
   inline       void              LefParser::setCellGauge             ( CellGauge* gauge ) { _cellGauge=gauge; }
   inline       Net*              LefParser::getNet                   () const { return _net; }
   inline       void              LefParser::setNet                   ( Net* net ) { _net=net; }
@@ -177,6 +201,7 @@ namespace {
   inline       void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
 
 
+  string              LefParser::_gdsForeignDirectory = "";
   Library*            LefParser::_mergeLibrary = nullptr;
   map<string,Layer*>  LefParser::_layerLut;
   DbU::Unit           LefParser::_coreSiteX = 0;
@@ -186,6 +211,10 @@ namespace {
   void  LefParser::setMergeLibrary ( Library* library )
   { _mergeLibrary = library; }
   
+
+  void  LefParser::setGdsForeignDirectory ( string path )
+  { _gdsForeignDirectory = path; }
+
 
   void  LefParser::reset ()
   {
@@ -226,9 +255,13 @@ namespace {
   LefParser::LefParser ( string file, string libraryName )
     : _file            (file)
     , _libraryName     (libraryName)
-    , _library         (NULL)
-    , _cell            (NULL)
-    , _net             (NULL)
+    , _library         (nullptr)
+    , _foreignPath     ()
+    , _foreignPosition (Point(0,0))
+    , _gdsPower        (nullptr)
+    , _gdsGround       (nullptr)
+    , _cell            (nullptr)
+    , _net             (nullptr)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
     , _unmatchedLayers ()
@@ -236,8 +269,8 @@ namespace {
     , _nthMetal        (0)
     , _nthCut          (0)
     , _nthRouting      (0)
-    , _routingGauge    (NULL)
-    , _cellGauge       (NULL)
+    , _routingGauge    (nullptr)
+    , _cellGauge       (nullptr)
     , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
@@ -262,13 +295,14 @@ namespace {
     }
     
     lefrInit();
-    lefrSetUnitsCbk      ( _unitsCbk       );
-    lefrSetLayerCbk      ( _layerCbk       );
-    lefrSetSiteCbk       ( _siteCbk        );
-    lefrSetObstructionCbk( _obstructionCbk );
-    lefrSetMacroCbk      ( _macroCbk       );
-    lefrSetMacroSiteCbk  ( _macroSiteCbk   );
-    lefrSetPinCbk        ( _pinCbk         );
+    lefrSetUnitsCbk       ( _unitsCbk        );
+    lefrSetLayerCbk       ( _layerCbk        );
+    lefrSetSiteCbk        ( _siteCbk         );
+    lefrSetObstructionCbk ( _obstructionCbk  );
+    lefrSetMacroCbk       ( _macroCbk        );
+    lefrSetMacroSiteCbk   ( _macroSiteCbk    );
+    lefrSetMacroForeignCbk( _macroForeignCbk );
+    lefrSetPinCbk         ( _pinCbk          );
   }
 
 
@@ -458,6 +492,20 @@ namespace {
     return 0;
   }
 
+  int  LefParser::_macroForeignCbk ( lefrCallbackType_e c, const lefiMacroForeign* foreign, lefiUserData ud )
+  {
+    LefParser*         parser = (LefParser*)ud;
+    AllianceFramework* af     = AllianceFramework::get();
+
+    if (_gdsForeignDirectory.empty()) return 0;
+
+    string gdsPath = _gdsForeignDirectory + "/" + foreign->cellName() + ".gds";
+    parser->setForeignPath( gdsPath );
+    parser->setForeignPosition( Point( parser->fromUnitsMicrons( foreign->px() )
+                                     , parser->fromUnitsMicrons( foreign->px() )));
+
+    return 0;
+  }
   
   int  LefParser::_obstructionCbk ( lefrCallbackType_e c, lefiObstruction* obstruction, lefiUserData ud )
   {
@@ -550,6 +598,21 @@ namespace {
       parser->setCell( cell );
     }
 
+    if (not parser->getForeignPath().empty()) {
+      Gds::load( parser->getLibrary(), parser->getForeignPath()
+               , Gds::NoGdsPrefix|Gds::NoBlockages|Gds::Layer_0_IsBoundary);
+      for ( Net* net : cell->getNets() ) {
+        if (net->isPower ()) parser->setGdsPower ( net );
+        if (net->isGround()) parser->setGdsGround( net );
+        if (parser->getForeignPosition() != Point(0,0)) {
+          for ( Component* component : net->getComponents() ) {
+            component->translate( parser->getForeignPosition().getX()
+                                , parser->getForeignPosition().getY() );
+          }
+        }
+      }
+    }
+
     if (macro->hasSize()) {
       width  = parser->fromUnitsMicrons( macro->sizeX() );
       height = parser->fromUnitsMicrons( macro->sizeY() );
@@ -581,7 +644,7 @@ namespace {
     else           parser->_pinPadPostProcess();
     parser->clearPinComponents();
 
-    cerr << "     - " << cellName
+    cerr << "     o " << cellName
          << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
          << " " << gaugeName; 
     if (isPad) cerr << " (PAD)";
@@ -612,8 +675,38 @@ namespace {
 
     if (not parser->getCell()) parser->setCell( Cell::create( parser->getLibrary(true), "LefImportTmpCell" ) );
 
-    Net* net = Net::create( parser->getCell(), pin->name() );
+    Net*      net     = nullptr;
+    Net::Type netType = Net::Type::UNDEFINED;
+    if (pin->hasUse()) {
+      string lefUse = pin->use();
+      boost::to_upper( lefUse );
+      
+      if (lefUse == "SIGNAL") netType = Net::Type::LOGICAL;
+    //if (lefUse == "ANALOG") netType = Net::Type::ANALOG;
+      if (lefUse == "CLOCK" ) netType = Net::Type::CLOCK;
+      if (lefUse == "POWER" ) netType = Net::Type::POWER;
+      if (lefUse == "GROUND") netType = Net::Type::GROUND;
+    }
+
+    if ((netType == Net::Type::POWER) and parser->getGdsPower()) {
+      net = parser->getGdsPower();
+      cerr << "       - Renaming GDS power net \"" << net->getName() << "\""
+           << " to LEF name \"" << pin->name() << "\"." << endl;
+      net->setName( pin->name() );
+      parser->setGdsPower( nullptr );
+    } else {
+      if ((netType == Net::Type::GROUND) and parser->getGdsGround()) {
+        net = parser->getGdsGround();
+        cerr << "       - Renaming GDS ground net \"" << net->getName() << "\""
+             << " to LEF name \"" << pin->name() << "\"." << endl;
+        net->setName( pin->name() );
+        parser->setGdsGround( nullptr );
+      } else {
+        net = Net::create( parser->getCell(), pin->name() );
+      }
+    }
     net->setExternal( true );
+    net->setType    ( netType );
 
     if (pin->hasDirection()) {
       string lefDir = pin->direction();
@@ -623,17 +716,6 @@ namespace {
       if (lefDir == "OUTPUT"         ) net->setDirection( Net::Direction::OUT      );
       if (lefDir == "OUTPUT TRISTATE") net->setDirection( Net::Direction::TRISTATE );
       if (lefDir == "INOUT"          ) net->setDirection( Net::Direction::INOUT    );
-    }
-
-    if (pin->hasUse()) {
-      string lefUse = pin->use();
-      boost::to_upper( lefUse );
-      
-      if (lefUse == "SIGNAL") net->setType( Net::Type::LOGICAL );
-    //if (lefUse == "ANALOG") net->setType( Net::Type::ANALOG  );
-      if (lefUse == "CLOCK" ) net->setType( Net::Type::CLOCK   );
-      if (lefUse == "POWER" ) net->setType( Net::Type::POWER   );
-      if (lefUse == "GROUND") net->setType( Net::Type::GROUND  );
     }
     if (net->isSupply())                             net->setGlobal( true );
     if (pin->name()[ strlen(pin->name())-1 ] == '!') net->setGlobal( true );
@@ -1068,6 +1150,14 @@ namespace CRL {
   {
 #if defined(HAVE_LEFDEF)
     LefParser::setMergeLibrary( library );
+#endif
+  }
+
+
+  void  LefImport::setGdsForeignDirectory ( string path )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setGdsForeignDirectory( path );
 #endif
   }
 

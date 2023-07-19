@@ -109,19 +109,37 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setGdsForeignDirectory ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setGdsForeignDirectory()" << endl;
+    HTRY
+      char* path = NULL;
+      if (PyArg_ParseTuple( args, "s:LefImport.setGdsForeignDirectory", &path )) {
+        LefImport::setGdsForeignDirectory( path );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.setGdsForeignDirectory(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Destroy (Attribute).
 
 
   PyMethodDef PyLefImport_Methods[] =
-    { { "load"                , (PyCFunction)PyLefImport_load          , METH_VARARGS|METH_STATIC
-                              , "Load a complete Cadence LEF library." }
-    , { "reset"               , (PyCFunction)PyLefImport_reset         , METH_NOARGS|METH_STATIC
-                              , "Reset the Cadence LEF parser (clear technology)." }
-    , { "setMergeLibrary"     , (PyCFunction)PyLefImport_setMergeLibrary, METH_VARARGS|METH_STATIC
-                              , "Merge into this library instead of creating a new one." }
-  //, { "destroy"             , (PyCFunction)PyLefImport_destroy  , METH_VARARGS
-  //                          , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL}   /* sentinel */
+    { { "load"                  , (PyCFunction)PyLefImport_load                  , METH_VARARGS|METH_STATIC
+                                , "Load a complete Cadence LEF library." }
+    , { "reset"                 , (PyCFunction)PyLefImport_reset                 , METH_NOARGS|METH_STATIC
+                                , "Reset the Cadence LEF parser (clear technology)." }
+    , { "setMergeLibrary"       , (PyCFunction)PyLefImport_setMergeLibrary       , METH_VARARGS|METH_STATIC
+                                , "Merge into this library instead of creating a new one." }
+    , { "setGdsForeignDirectory", (PyCFunction)PyLefImport_setGdsForeignDirectory, METH_VARARGS|METH_STATIC
+                                , "Set the directory where to find FOREIGN GDS files." }
+  //, { "destroy"               , (PyCFunction)PyLefImport_destroy  , METH_VARARGS
+  //                            , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
 

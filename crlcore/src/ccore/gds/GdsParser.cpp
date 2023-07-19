@@ -1079,6 +1079,9 @@ namespace {
       if (not net) {
         net = Net::create( _cell, _text );
         net->setExternal( true );
+        if (_text.substr(0,3) == "vdd")     net->setType  ( Net::Type::POWER );
+        if (_text.substr(0,3) == "gnd")     net->setType  ( Net::Type::GROUND );
+        if (_text[ _text.size()-1 ] == '!') net->setGlobal( true );
       }
       addNetReference( net, layer, xpos, ypos );
     }
@@ -1513,13 +1516,19 @@ namespace {
         if (not net) {
           net = Net::create( _cell, _text );
           net->setExternal( true );
+          if (_text.substr(0,3) == "vdd")     net->setType  ( Net::Type::POWER );
+          if (_text.substr(0,3) == "gnd")     net->setType  ( Net::Type::GROUND );
+          if (_text[ _text.size()-1 ] == '!') net->setGlobal( true );
         }
       }
     } else
       _skipENDEL = true;
 
-    if (not net) net = fusedNet();
+    if (layer->isBlockage() and (_flags & Gds::NoBlockages))
+      return;
 
+    if (not net) net = fusedNet();
+    
     if (points.size() > 2) {
       bool isRectilinear = true;
       for ( size_t i=1 ; i<points.size() ; ++i ) {
