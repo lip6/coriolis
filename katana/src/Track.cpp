@@ -1036,6 +1036,8 @@ namespace Katana {
   {
   //if ((getIndex() == 3473) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
+
+    if (getLayerGauge()->getType() != Constant::LayerGaugeType::Default) return 0;
     
     if (_segments.empty()) {
       fillHole( getMin(), getMax() );
