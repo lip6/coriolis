@@ -474,6 +474,7 @@ namespace {
     public:
                                GdsStream    ( string filename );
                               ~GdsStream    ();
+             inline Point      putOnGrid    ( const Point& ) const;
              inline int32_t    toGdsDbu     ( DbU::Unit ) const;
       static inline GdsRecord  PROPATTR     ( int16_t );
       static inline GdsRecord  DATATYPE     ( int16_t );
@@ -496,9 +497,10 @@ namespace {
                     GdsStream& operator<<   ( const Cell* );
                     GdsStream& operator<<   ( const Transformation& );
     private:
-      ofstream  _ostream;
-      double    _dbuPerUu;
-      double    _metricDbU;
+      ofstream   _ostream;
+      double     _dbuPerUu;
+      double     _metricDbU;
+      DbU::Unit  _oneGrid;
   };
 
   
@@ -522,14 +524,31 @@ namespace {
   inline GdsRecord  GdsStream::SNAME        ( const Name& n )  { return GdsRecord(GdsRecord::SNAME,getString(n)); }
   inline GdsRecord  GdsStream::STRING       ( const Name& n )  { return GdsRecord(GdsRecord::STRING,getString(n)); }
   inline GdsRecord  GdsStream::STRING       ( const string s ) { return GdsRecord(GdsRecord::STRING,s); }
+
   inline int32_t    GdsStream::toGdsDbu     ( DbU::Unit v )   const
-  { return uint32_t( std::lrint( DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU )); }
+  {
+    if (v % _oneGrid) {
+      cerr << getString( Error( "Offgrid value %s (DbU=%d), grid %s (DbU=%d)."
+                              , DbU::getValueString(v).c_str(), v
+                              , DbU::getValueString(_oneGrid).c_str(), _oneGrid ))
+           << endl;
+    }
+    return uint32_t( std::lrint( DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU ));
+  }
+
+
+  inline Point  GdsStream::putOnGrid ( const Point& p ) const
+  {
+    return Point( p.getX() - (p.getX() % _oneGrid)
+                , p.getY() - (p.getY() % _oneGrid));
+  }
 
 
   GdsStream::GdsStream ( string filename )
     : _ostream  ()
     , _dbuPerUu (Cfg::getParamDouble("gdsDriver.dbuPerUu" ,0.001)->asDouble())  // 1000
     , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
+    , _oneGrid  (DbU::grid(1.0))
   {
     std::fesetround( FE_TONEAREST );
     _ostream.open( filename, ios_base::out|ios_base::binary );
@@ -723,7 +742,7 @@ namespace {
     if (cell->getName() == "control_r") return *this;
     if (not hasLayout(cell)) return *this;
 
-  //cerr << "GdsStream::operator<<(Cell*): " << getString(cell) << endl;
+    cdebug_log(101,1) << "GdsStream::operator<<(Cell*): " << getString(cell) << endl;
 
     Technology* tech = DataBase::getDB()->getTechnology();
     
@@ -762,7 +781,9 @@ namespace {
     }
 
     for ( Net* net : cell->getNets() ) {
+      cdebug_log(101,1) << "Writing net " << net << endl;
       for ( Component* component : net->getComponents() ) {
+        cdebug_log(101,0) << "Writing " << component << endl;
         Polygon* polygon  = dynamic_cast<Polygon*>(component);
         if (polygon) {
           vector< vector<Point> > subpolygons;
@@ -849,7 +870,7 @@ namespace {
                   (*this) << TEXTTYPE( 0 );
                   cdebug_log(101,0) << "TEXTYPE end record" << endl;
                   (*this) << PRESENTATION( 5 );
-                  (*this) << bb.getCenter();
+                  (*this) << putOnGrid( bb.getCenter() );
                   (*this) << STRING( name );
                   (*this) << ENDEL;
                   cdebug_log(101,0) << "TEXT ENDEL" << endl;
@@ -859,9 +880,11 @@ namespace {
           }
         }
       }
+      cdebug_tabw(101,-1);
     }
 
     (*this) << ENDSTR;
+    cdebug_tabw(101,-1);
 
     return *this;
   }

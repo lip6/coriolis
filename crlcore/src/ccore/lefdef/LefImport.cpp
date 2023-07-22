@@ -147,6 +147,7 @@ namespace {
                    Net*                _net;
                    string              _busBits;
                    double              _unitsMicrons;
+                   DbU::Unit           _oneGrid;
                    map< string, vector<Component*> >  _pinComponents;
       static       map<string,Layer*>  _layerLut;
                    vector<string>      _unmatchedLayers;
@@ -179,7 +180,6 @@ namespace {
   inline       void              LefParser::setCellGauge             ( CellGauge* gauge ) { _cellGauge=gauge; }
   inline       Net*              LefParser::getNet                   () const { return _net; }
   inline       void              LefParser::setNet                   ( Net* net ) { _net=net; }
-  inline       DbU::Unit         LefParser::fromUnitsMicrons         ( double d ) const { return DbU::fromPhysical(d,DbU::Micro); }
   inline       double            LefParser::getUnitsMicrons          () const { return _unitsMicrons; }
   inline       void              LefParser::setUnitsMicrons          ( double precision ) { _unitsMicrons=precision; }
   inline       int               LefParser::getNthMetal              () const { return _nthMetal; }
@@ -199,6 +199,18 @@ namespace {
   inline       void              LefParser::clearErrors              () { return _errors.clear(); }
   inline       void              LefParser::addPinComponent          ( string name, Component* comp ) { _pinComponents[name].push_back(comp); }
   inline       void              LefParser::clearPinComponents       () { _pinComponents.clear(); }
+
+  inline DbU::Unit  LefParser::fromUnitsMicrons ( double d ) const
+  {
+    DbU::Unit u = DbU::fromPhysical(d,DbU::Micro);
+    if (u % _oneGrid) {
+      cerr << Error( "LefParser::fromUnitsMicrons(): Offgrid value %s (DbU=%d), grid %s (DbU=%d)."
+                   , DbU::getValueString(u).c_str(), u
+                   , DbU::getValueString(_oneGrid).c_str(), _oneGrid )
+           << endl;
+    }
+    return u;
+  }
 
 
   string              LefParser::_gdsForeignDirectory = "";
@@ -264,6 +276,7 @@ namespace {
     , _net             (nullptr)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
+    , _oneGrid         (DbU::fromGrid(1.0))
     , _unmatchedLayers ()
     , _errors          ()
     , _nthMetal        (0)
@@ -497,7 +510,10 @@ namespace {
     LefParser*         parser = (LefParser*)ud;
     AllianceFramework* af     = AllianceFramework::get();
 
-    if (_gdsForeignDirectory.empty()) return 0;
+    if (_gdsForeignDirectory.empty()) {
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
+      return 0;
+    }
 
     string gdsPath = _gdsForeignDirectory + "/" + foreign->cellName() + ".gds";
     parser->setForeignPath( gdsPath );
