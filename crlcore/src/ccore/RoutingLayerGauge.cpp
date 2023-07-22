@@ -224,7 +224,8 @@ namespace CRL {
 
   long  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
   {
-    cdebug_log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
+    cdebug_log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << DbU::getValueString(position)
+                      << " DbU=" << position << " )" << endl;
 
     long  modulo;
     long  index;
