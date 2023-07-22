@@ -41,7 +41,6 @@
  #find_package(EQUINOX            REQUIRED)
  #find_package(SOLSTICE           REQUIRED)
  #find_package(TUTORIAL           REQUIRED) # FIXME: make FindTUTORIAL.cmake
- find_package(Doxygen)
 
  if(WITH_OPENMP)
     find_package(OpenMP REQUIRED)
@@ -51,7 +50,11 @@
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_CXX_FLAGS}")
  endif(WITH_OPENMP)
 
+ if(BUILD_DOC)
+   find_package(Doxygen  REQUIRED)
+   add_subdirectory(doc)    
+ endif(BUILD_DOC)
+
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(cmake_modules)
- add_subdirectory(doc)

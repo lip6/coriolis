@@ -3,8 +3,6 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(TUTORIAL)
 
- option(BUILD_DOC "Build the documentation (doxygen)" OFF)
- 
  cmake_minimum_required(VERSION 3.16)
 
  set(ignoreVariables "${LIB_SUFFIX} ${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
@@ -24,9 +22,7 @@
  find_package(LEFDEF             REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
- find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(python)
 #add_subdirectory(cmake_modules)
-#add_subdirectory(doc)

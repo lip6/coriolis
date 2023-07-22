@@ -5,7 +5,6 @@
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}" "${BUILD_DOC}")
 
-#option(BUILD_DOC  "Build the documentation (doxygen)" OFF)
  option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 3.16)
@@ -26,8 +25,6 @@
 #find_package(KITE               REQUIRED)
  find_package(COLOQUINTE         REQUIRED)
  find_package(Libexecinfo        REQUIRED)
- find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
-#add_subdirectory(doc)

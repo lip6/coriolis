@@ -26,8 +26,12 @@
  find_package(CORIOLIS REQUIRED)
  find_package(ETESIAN REQUIRED)
  find_package(COLOQUINTE REQUIRED)
- find_package(Doxygen)
- 
+
+ if(BUILD_DOC)
+   find_package(Doxygen  REQUIRED)
+   add_subdirectory(doc)    
+ endif(BUILD_DOC)
+
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
 #add_subdirectory(doc)

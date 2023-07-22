@@ -3,7 +3,6 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(KATANA)
 
- option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
@@ -29,7 +28,6 @@
  find_package(ANABATIC           REQUIRED)
  find_package(ETESIAN            REQUIRED)
  find_package(COLOQUINTE         REQUIRED)
- find_package(Doxygen)
  
  if(CHECK_DATABASE)
    add_definitions(-DCHECK_DATABASE)
@@ -41,4 +39,3 @@
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(cmake_modules)
-#add_subdirectory(doc)

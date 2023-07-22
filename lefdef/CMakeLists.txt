@@ -21,7 +21,9 @@
  find_package(BISON              REQUIRED)
  find_package(FLEX               REQUIRED)
  
+ if(BUILD_DOC)
+   find_package(Doxygen  REQUIRED)
+   add_subdirectory(doc)    
+ endif(BUILD_DOC)
+
  add_subdirectory(src)
- if (BUILD_DOC)
-   add_subdirectory(doc)
- endif
