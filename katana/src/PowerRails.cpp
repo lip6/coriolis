@@ -498,8 +498,10 @@ namespace {
           delta = plane->getLayerGauge()->getPitch();
         }
       }
-      if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
+      else {
+      //if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
         delta = plane->getLayerGauge()->getPitch();
+      //}
       }
     }
 
@@ -551,22 +553,11 @@ namespace {
           axisMax += delta;
         }
 
-        // if (segment->getId() == 51904) {
-        //   DebugSession::open( 0, 1000 );
-        // }
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
-
-          // if (segment->getId() == 51904) {
-          //   cerr << "  Insert in " << track << endl;
-          //   cerr << "    +" << element << endl;
-          // }
         }
-        // if (segment->getId() == 51904) {
-        //   DebugSession::close();
-        // }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
@@ -592,15 +583,15 @@ namespace {
       //}
 
         cdebug_log(159,0) << "  axisMin:" << DbU::getValueString(axisMin)
-                    <<  " axisMax:" << DbU::getValueString(axisMax) << endl;
+                          <<  " axisMax:" << DbU::getValueString(axisMax) << endl;
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track
-                      << "+" << element
-                      << " " << (net->isExternal() ? "external" : "internal")
-                      << endl;
+                            << "+" << element
+                            << " " << (net->isExternal() ? "external" : "internal")
+                            << endl;
         }
       }
     }
