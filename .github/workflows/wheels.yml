@@ -39,13 +39,13 @@ jobs:
 
       - name: Get changed Dockerfile
         id: changed-files-specific
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@de0eba32790fb9bf87471b32855a30fc8f9d5fc6 #v37.4.0
         with:
           files: |
             Dockerfile-manylinux
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc #v2.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -54,13 +54,13 @@ jobs:
       - name: Extract metadata (tags, labels) for Docker
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175 #v4.6.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         if: steps.changed-files-specific.outputs.any_changed == 'true'
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 #v4.1.1
         with:
           context: .
           file: ./Dockerfile-manylinux
@@ -109,12 +109,12 @@ jobs:
           python-version: "3.x"
 
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@ca3acd2731eef11f1572ccb126356c2f9298d35e #v1.2.9
         with:
           key: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
 
       - name: Log in to the Container registry
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc #v2.2.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
