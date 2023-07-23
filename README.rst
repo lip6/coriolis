@@ -1,5 +1,5 @@
 .. -*- Mode: rst -*-
-
+[![Wheel builder](https://github.com/lip6/coriolis/actions/workflows/wheels.yml/badge.svg)](https://github.com/lip6/coriolis/actions/workflows/wheels.yml)
 
 ===============
 Coriolis README
