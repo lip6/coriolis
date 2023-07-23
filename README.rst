@@ -14,7 +14,7 @@ Coriolis is a free database, placement tool and routing tool for VLSI design.
 
 This project is hosted at: https://github.com/lip6/coriolis
 
-Development discussion can be found at <https://matrix.to/#/#coriolis:matrix.org>
+Development discussion can be found `on our Matrix Channel <https://matrix.to/#/#coriolis:matrix.org>`_ and in our `GitHub Discussions <https://github.com/lip6/coriolis/discussions>`_.
 
 
 Purpose
