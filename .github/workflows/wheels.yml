@@ -1,7 +1,16 @@
 # Workflow to build and test wheels.
 name: Wheel builder
 
-on: [push, pull_request]
+on: 
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -67,6 +76,28 @@ jobs:
         with:
           name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./wheelhouse/*.whl
+
+  upload_pypi:
+    # TODO: create an sdist that can build without a custom environment
+    needs: [build_wheels] 
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    #if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          # unpacks default artifact into dist/
+          # if `name: artifact` is omitted, the action will create extra parent dir
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Testing for now
+          repository_url: https://test.pypi.org/legacy/
 #
 #  build_sdist:
 #    name: Build sdist
