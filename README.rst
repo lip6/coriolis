@@ -1,5 +1,10 @@
 .. -*- Mode: rst -*-
-[![Wheel builder](https://github.com/lip6/coriolis/actions/workflows/wheels.yml/badge.svg)](https://github.com/lip6/coriolis/actions/workflows/wheels.yml)
+
+|Python wheel builds|
+
+.. |Python wheel builds| image:: https://github.com/lip6/coriolis/actions/workflows/wheels.yml/badge.svg
+   :target: https://github.com/lip6/coriolis/actions/workflows/wheels.yml
+
 
 ===============
 Coriolis README

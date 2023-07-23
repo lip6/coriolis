@@ -44,16 +44,8 @@ include = [
 
 [tool.poetry-dynamic-versioning]
 enable = true
-dirty = true
 vcs = "git"
-style = "pep440"
-metadata = "true"
-pattern = '''
-  (?x)
-  ^coriolis-((?P<epoch>\d+)!)?(?P<base>\d+(\.\d+)*)
-  ([-._]?((?P<stage>[a-zA-Z]+)[-._]?(?P<revision>\d+)?))?
-  (\+(?P<tagged_metadata>.+))?$
-'''
+style = "semver"
 
 [tool.poetry.dependencies]
 python = "^3.8"
