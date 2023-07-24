@@ -377,19 +377,23 @@ namespace Hurricane {
             double bestArea = getArea(bestComponent);
 
             if (compArea == bestArea) {
-              Box compBox  = component->getBoundingBox();
-              Box bestBox  = bestComponent->getBoundingBox();
-
-              if (compBox.getXMin() == bestBox.getXMin()) {
-                if (compBox.getYMin() == bestBox.getYMin()) {
-                  if (component->getId() < bestComponent->getId())
-                    bestComponent = component;
-                } else
-                  if (compBox.getYMin() < bestBox.getYMin())
-                    bestComponent = component;
+              if (dynamic_cast<Segment*>(component) and dynamic_cast<Pad*>(bestComponent)) {
+                bestComponent = component;
               } else {
-                if (compBox.getXMin() < bestBox.getXMin())
-                  bestComponent = component;
+                Box compBox  = component->getBoundingBox();
+                Box bestBox  = bestComponent->getBoundingBox();
+                
+                if (compBox.getXMin() == bestBox.getXMin()) {
+                  if (compBox.getYMin() == bestBox.getYMin()) {
+                    if (component->getId() < bestComponent->getId())
+                      bestComponent = component;
+                  } else
+                    if (compBox.getYMin() < bestBox.getYMin())
+                      bestComponent = component;
+                } else {
+                  if (compBox.getXMin() < bestBox.getXMin())
+                    bestComponent = component;
+                }
               }
             } else {
               if (compArea > bestArea)
