@@ -120,6 +120,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175 #v4.6.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build wheels
         uses: pypa/cibuildwheel@66b46d086804a9e9782354100d96a3a445431bca # v2.14.0
         env:
@@ -129,7 +135,7 @@ jobs:
           CIBW_CONTAINER_ENGINE: "docker; create_args: '--volume=${{ github.workspace  }}/.ccache:/.ccache'"
           # overriede before-all in pyproject.toml
           CIBW_BEFORE_ALL: ""
-          CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/chipflow/coriolis-manylinux2014:${{ github.ref_name }}
+          CIBW_MANYLINUX_X86_64_IMAGE: ${{ steps.meta.outputs.tags }}
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
