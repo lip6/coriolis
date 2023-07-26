@@ -259,6 +259,8 @@ class IoPad ( object ):
     TRI_OUT     = 0x0008
     ANALOG      = 0x0010
     UNSUPPORTED = 0x0020
+    FILLER      = 0x0040
+    CORNER      = 0x0080
   
     @staticmethod
     def directionToStr ( direction ):
@@ -517,7 +519,7 @@ class CoreToChip ( object ):
                                          .format( core.getName() )
                                        ] )
             conf = block.state
-        conf._postInit()
+       #conf._postInit()
         self.conf            = conf
         self.conf.useHarness = False
         self.ringNetNames    = []

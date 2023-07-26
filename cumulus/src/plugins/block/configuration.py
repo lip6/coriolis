@@ -1411,6 +1411,7 @@ class BlockConf ( GaugeConf ):
         self.katana   = None
 
     def _postInit ( self ):
+        trace( 550, ',+', '\tblock.configuration._postInit()\n' )
         self.cfg.apply()
         self.bufferConf    = BufferConf( self.framework )
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
@@ -1420,6 +1421,7 @@ class BlockConf ( GaugeConf ):
             self.ioPins.append( IoPin( *ioPinSpec ) )
         for line in range(len(self.ioPadsArg)):
             self.chipConf.addIoPad( self.ioPadsArg[line], line )
+        trace( 550, ',-' )
 
     @property
     def isCoreBlock ( self ): return self.chip is not None

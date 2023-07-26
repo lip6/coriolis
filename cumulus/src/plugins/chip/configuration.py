@@ -112,6 +112,7 @@ class ChipConf ( BlockConf ):
         self.chipLogos        = []
         self.minHCorona       = 0
         self.minVCorona       = 0
+        self.coreToChip       = None
         trace( 550, '-' )
 
     @property
