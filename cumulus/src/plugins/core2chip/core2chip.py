@@ -261,6 +261,7 @@ class IoPad ( object ):
     UNSUPPORTED = 0x0020
     FILLER      = 0x0040
     CORNER      = 0x0080
+    NON_CONNECT = 0x0100
   
     @staticmethod
     def directionToStr ( direction ):
@@ -270,12 +271,13 @@ class IoPad ( object ):
         if direction == IoPad.TRI_OUT:     return "TRI_OUT"
         if direction == IoPad.ANALOG:      return "ANALOG"
         if direction == IoPad.UNSUPPORTED: return "UNSUPPORTED"
+        if direction == IoPad.NON_CONNECT: return "NON_CONNECT"
         return "Invalid value"
   
     def __init__ ( self, coreToChip, ioPadConf ):
         self.coreToChip = coreToChip
         self.ioPadConf  = ioPadConf
-        self.direction  = 0
+        self.direction  = IoPad.NON_CONNECT
         self.nets       = []
         return
 
@@ -363,6 +365,8 @@ class IoPad ( object ):
             self.nets[0].buildNets()
             connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet ) )
             connexions.append( ( self.nets[0].chipIntNet, padInfo.coreNets[1] ) )
+        elif (self.direction == IoPad.NON_CONNECT):
+            pass
         elif (self.direction == IoPad.BIDIR) and (len(self.nets) < 3):
             # Case of BIDIR as fallback for simple IN/OUT.
             self.nets[0].setFlags( IoNet.DoExtNet )
@@ -669,6 +673,26 @@ class CoreToChip ( object ):
     def _loadHarness ( self ):
         """Load the DEF file containing the reference harness layout."""
         raise NotImplementedError( 'coreToChip._loadHarness(): This method must be overloaded.' )
+
+    def hasCornerCell ( self ):
+        """Is there a special cell for corners. This method may be overloaded."""
+        return False
+
+    def hasFillerCells ( self ):
+        """Is there a special cell(s) for filling gaps. This method may be overloaded."""
+        return False
+
+    def getCornerCell ( self, instanceName=None ):
+        """Return the model of corner cell."""
+        raise NotImplementedError( 'coreToChip.getCornerCell(): This method must be overloaded.' )
+
+    def createSpacer ( self, gapWidth ):
+        """Return a new instance of spacer cell."""
+        raise NotImplementedError( 'coreToChip.createSpacer(): This method must be overloaded.' )
+
+    def createCorner ( self ):
+        """Return a new instance of corner cell."""
+        raise NotImplementedError( 'coreToChip.createCorner(): This method must be overloaded' )
 
     def buildChip ( self ):
         """

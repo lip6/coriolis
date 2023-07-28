@@ -661,7 +661,8 @@ class GaugeConf ( object ):
 class IoPadConf ( object ):
     """
     Store all informations related to an I/O pad. It's side, position
-    and connected nets.
+    and connected nets. The kind of pad is guessed from the number of
+    nets.
 
     .. code-block:: python
 
@@ -669,6 +670,7 @@ class IoPadConf ( object ):
          ( IoPin.SOUTH, None, 'a_0'    , 'a(0)'  , 'a(0)'        )
          ( IoPin.NORTH, None, 'p_r0'   , 'r0'    , 'r0_from_pads', 'shift_r'      , 'r0_to_pads'  )
          ( IoPin.NORTH, None, 'p_y0'   , 'y(0)'  , 'y_oe'        , 'y_to_pads(0)' )
+         ( IoPin.NORTH, None, 'nc_0'   )
 
     self._datas is a table of 8 elements, the seven first coming from
     the configuration itself. Direction are taken from the core point
@@ -710,17 +712,20 @@ class IoPadConf ( object ):
     CLOCK       = 0x0040
     TRISTATE    = 0x0080
     BIDIR       = 0x0100
+    NON_CONNECT = 0x0200
 
     def __init__ ( self, datas ):
-        if not isinstance(datas,tuple):
-            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is not a tuple.'
+        if   isinstance(datas,list ): self._datas = datas
+        elif isinstance(datas,tuple): self._datas = list( datas )
+        else:
+            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is neither a list nor a tuple.'
                                    , str(datas) ] )
-        if len(datas) < 5 and len(datas) > 8:
+        if len(datas) != 3 and len(datas) < 5 and len(datas) > 8:
             raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" list must have between 5 to 7 elements.'
                                    , str(datas) ] )
         self.flags  = 0
         self.index  = None
-        self._datas = list( datas )
+        if   len(self._datas) == 3: self._datas += [ None, None, None, None ]
         if   len(self._datas) == 4: self._datas += [ None, None, None ]
         if   len(self._datas) == 5: self._datas += [ None, None ]
         elif len(self._datas) == 6: self._datas.insert( 5, None )
@@ -742,7 +747,8 @@ class IoPadConf ( object ):
             if m.group('type') == 'ground':    self.flags |= IoPadConf.CORE_GROUND
             if m.group('type') == 'clock' :    self.flags |= IoPadConf.CLOCK
         else:
-            if   self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
+            if   self._datas[3] is     None: self.flags |= IoPadConf.NON_CONNECT
+            elif self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
             elif self._datas[6] is not None: self.flags |= IoPadConf.TRISTATE
         sPos = ''
         if self._datas[1]:
@@ -799,6 +805,7 @@ class IoPadConf ( object ):
     def isClock      ( self ): return self.flags & IoPadConf.CLOCK
     def isTristate   ( self ): return self.flags & IoPadConf.TRISTATE
     def isBidir      ( self ): return self.flags & IoPadConf.BIDIR
+    def isNonConnect ( self ): return self.flags & IoPadConf.NON_CONNECT
 
     def isAnalog ( self ):
         if self._datas[0] is None: return False

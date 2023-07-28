@@ -149,15 +149,13 @@ class Corner ( object ):
 
     def _instanciateCorner ( self ):
         name, transformation = self._getTransformation()
-        corner = Instance.create( self.conf.chip
-                                , name, self.corona.padCorner
-                                , transformation
-                                , Instance.PlacementStatus.FIXED
-                                )
+        corner = self.conf.coreToChip.createCorner( name )
+        corner.setTransformation ( transformation )
+        corner.setPlacementStatus( Instance.PlacementStatus.FIXED )
 
     def doLayout ( self ):
-        if self.corona.padCorner: self._instanciateCorner()
-        else:                     self._createCorner()
+        if self.conf.coreToChip.hasCornerCell(): self._instanciateCorner()
+        else:                                    self._createCorner()
 
 
 # --------------------------------------------------------------------
@@ -261,33 +259,54 @@ class Side ( object ):
         return self.conf.validated
 
     def _fillPadSpacing ( self, gapWidth ):
-
-        def _getWidth   ( spacer ): return spacer.getAbutmentBox().getWidth()
-
-        def _nextSpacer ( iPadSpacer ):
-            while     iPadSpacer < len(self.corona.padSpacers) \
-                  and gapWidth < _getWidth(self.corona.padSpacers[iPadSpacer]):
-                iPadSpacer += 1
-            return iPadSpacer
-        
-        if not self.corona.padSpacers:
+        """
+        Fill ``gapWidth`` with I/O pad spacer (Use widest cells first).
+        """
+        if not self.conf.coreToChip.hasFillerCells():
             self.u += gapWidth
             return
-        iPadSpacer = 0
-        iPadSpacer = _nextSpacer( iPadSpacer )
-        while iPadSpacer < len(self.corona.padSpacers) and gapWidth > 0:
-            gapWidth -= _getWidth( self.corona.padSpacers[iPadSpacer] )
-            spacer    = Instance.create( self.conf.chip
-                                       , self.spacerNames % self.spacerCount
-                                       , self.corona.padSpacers[iPadSpacer])
-            self.spacerCount += 1
+            
+        while gapWidth > 0:
+            spacer = self.conf.coreToChip.createSpacer( gapWidth )
+            if not spacer:
+                print( ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads @{} on {} side, {} remains.' \
+                                        .format( DbU.getValueString(self.u)
+                                               , self.sideName
+                                               , DbU.getValueString(gapWidth) )))
+                break
             self._placePad( spacer )
-            if gapWidth < _getWidth(self.corona.padSpacers[iPadSpacer]):
-                iPadSpacer = _nextSpacer( iPadSpacer )
-        if gapWidth != 0:
-            print( ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on {} side, {} remains.' \
-                                    .format(self.sideName,DbU.getValueString(gapWidth)) ))
+            gapWidth -= spacer.getMasterCell().getAbutmentBox().getWidth()
+            trace( 550, '\tself.u:{} gapWidth:{} after spacer {}\n'.format( DbU.getValueString(self.u)
+                                                                          , DbU.getValueString(gapWidth)
+                                                                          , spacer ))
         self.u += gapWidth
+
+       #def _getWidth   ( spacer ): return spacer.getAbutmentBox().getWidth()
+       #
+       #def _nextSpacer ( iPadSpacer ):
+       #    while     iPadSpacer < len(self.corona.padSpacers) \
+       #          and gapWidth < _getWidth(self.corona.padSpacers[iPadSpacer]):
+       #        iPadSpacer += 1
+       #    return iPadSpacer
+       #
+       #if not self.corona.padSpacers:
+       #    self.u += gapWidth
+       #    return
+       #iPadSpacer = 0
+       #iPadSpacer = _nextSpacer( iPadSpacer )
+       #while iPadSpacer < len(self.corona.padSpacers) and gapWidth > 0:
+       #    gapWidth -= _getWidth( self.corona.padSpacers[iPadSpacer] )
+       #    spacer    = Instance.create( self.conf.chip
+       #                               , self.spacerNames % self.spacerCount
+       #                               , self.corona.padSpacers[iPadSpacer])
+       #    self.spacerCount += 1
+       #    self._placePad( spacer )
+       #    if gapWidth < _getWidth(self.corona.padSpacers[iPadSpacer]):
+       #        iPadSpacer = _nextSpacer( iPadSpacer )
+       #if gapWidth != 0:
+       #    print( ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on {} side, {} remains.' \
+       #                            .format(self.sideName,DbU.getValueString(gapWidth)) ))
+       #self.u += gapWidth
 
     def _placePad ( self, padInstance ):
         padAb = padInstance.getMasterCell().getAbutmentBox()
@@ -401,7 +420,10 @@ class Side ( object ):
         for pad in self.pads:
             self._fillPadSpacing( pad[0] - self.u )
             self._placePad( pad[1] )
-        self._fillPadSpacing( self.sideLength - self.conf.ioPadHeight - self.u )
+        cornerWidth = self.conf.ioPadHeight
+        if self.conf.coreToChip.hasCornerCell():
+            cornerWidth = self.conf.coreToChip.getCornerCell().getAbutmentBox().getWidth()
+        self._fillPadSpacing( self.sideLength - cornerWidth - self.u )
 
     def _getUMin ( self, box ):
         if self.type == North or self.type == South:
