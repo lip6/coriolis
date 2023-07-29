@@ -61,6 +61,17 @@ class Chip ( Block ):
                 self.conf.validated = False
         return self.conf.validated
   
+    def doChipNetlist ( self ):
+        """
+        Build the netlist at chip-level around the ``core`` block. Needs the ``conf.coreToChipClass``
+        configuration parameter to be set up. Otherwise assume the netlist is already a chip.
+        """
+        if not hasattr(self.conf,'coreToChipClass'):
+            print( WarningMessage( 'Chip.doChipNetlist(): No "conf.coreToChipClass" defined, assume we already have a chip-level netlist.' ) )
+            return
+        self.conf.coreToChip = self.conf.coreToChipClass( self.conf )
+        self.conf.coreToChip.buildChip()
+  
     def doChipFloorplan ( self ):
         self.padsCorona = None
         minHCorona = self.conf.minHCorona

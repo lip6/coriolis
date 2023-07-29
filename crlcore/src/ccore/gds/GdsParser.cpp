@@ -1672,19 +1672,19 @@ namespace {
                               , vWidthCap );
       cdebug_log(101,0) << "+ " << target << endl;
       if (points[i-1].getY() == points[i].getY()) {
-        segment = Horizontal::create( source
-                                    , target
+        segment = Horizontal::create( source->getNet()
                                     , layer
                                     , points[i].getY()
                                     , width
-                                    , 0, 0 );
+                                    , source->getX()
+                                    , target->getX() );
       } else {
-        segment = Vertical::create( source
-                                  , target
+        segment = Vertical::create( source->getNet()
                                   , layer
                                   , points[i].getX()
                                   , width
-                                  , 0, 0 );
+                                  , source->getY()
+                                  , target->getY() );
       }
       cdebug_log(101,0) << "| " << segment << endl;
       if (not net->isAutomatic()) NetExternalComponents::setExternal( segment );

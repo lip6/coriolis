@@ -59,13 +59,13 @@ Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox)
 DbU::Unit Pad::getX() const
 // *******************
 {
-  return 0;
+  return _boundingBox.getXCenter();
 }
 
 DbU::Unit Pad::getY() const
 // *******************
 {
-    return 0;
+  return _boundingBox.getYCenter();
 }
 
 Box Pad::getBoundingBox() const

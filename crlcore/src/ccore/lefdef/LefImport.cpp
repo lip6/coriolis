@@ -85,6 +85,8 @@ namespace {
       inline       bool               isVH                     () const;
                    bool               isUnmatchedLayer         ( string );
                    Library*           createLibrary            ();
+                   Cell*              earlyGetCell             ( string name="" );
+                   Net*               earlyGetNet              ( string name );
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
       inline       string             getForeignPath           () const;
@@ -349,6 +351,27 @@ namespace {
     return _library;
   }
 
+
+  Cell* LefParser::earlyGetCell ( string name )
+  {
+    if (not _cell) {
+      if (name.empty())
+        name = "EarlyLEFCell";
+      _cell = Cell::create( getLibrary(true), name );
+    }
+    return _cell;
+  }
+
+
+  Net* LefParser::earlyGetNet ( string name )
+  {
+    if (not _cell) earlyGetCell();
+    Net* net = _cell->getNet( name );
+    if (not net)
+      net = Net::create( _cell, name );
+    return net;
+  }
+
   
   int  LefParser::_unitsCbk ( lefrCallbackType_e c, lefiUnits* units, lefiUserData ud )
   {
@@ -505,10 +528,10 @@ namespace {
     return 0;
   }
 
+
   int  LefParser::_macroForeignCbk ( lefrCallbackType_e c, const lefiMacroForeign* foreign, lefiUserData ud )
   {
-    LefParser*         parser = (LefParser*)ud;
-    AllianceFramework* af     = AllianceFramework::get();
+    LefParser* parser = (LefParser*)ud;
 
     if (_gdsForeignDirectory.empty()) {
       cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
@@ -520,9 +543,25 @@ namespace {
     parser->setForeignPosition( Point( parser->fromUnitsMicrons( foreign->px() )
                                      , parser->fromUnitsMicrons( foreign->px() )));
 
+    Cell* cell = parser->earlyGetCell( foreign->cellName() );
+
+    Gds::load( parser->getLibrary(), parser->getForeignPath()
+             , Gds::NoGdsPrefix|Gds::NoBlockages|Gds::Layer_0_IsBoundary);
+    for ( Net* net : cell->getNets() ) {
+      if (net->isPower ()) parser->setGdsPower ( net );
+      if (net->isGround()) parser->setGdsGround( net );
+      if (parser->getForeignPosition() != Point(0,0)) {
+        for ( Component* component : net->getComponents() ) {
+          component->translate( parser->getForeignPosition().getX()
+                              , parser->getForeignPosition().getY() );
+        }
+      }
+    }
+
     return 0;
   }
   
+
   int  LefParser::_obstructionCbk ( lefrCallbackType_e c, lefiObstruction* obstruction, lefiUserData ud )
   {
     LefParser* parser = (LefParser*)ud;
@@ -600,33 +639,16 @@ namespace {
     AllianceFramework* af     = AllianceFramework::get();
     LefParser*         parser = (LefParser*)ud;
 
-    parser->setCellGauge( NULL );
+    parser->setCellGauge( nullptr );
 
     string     cellName = macro->name();
     DbU::Unit  width    = 0;
     DbU::Unit  height   = 0;
-    Cell*      cell     = parser->getCell();
+    Cell*      cell     = parser->earlyGetCell();
 
-    if (cell) {
+    if (cell->getName() != Name(cellName)) {
+      cerr << cell << " -> " << cellName << endl;
       cell->setName( cellName );
-    } else {
-      cell = Cell::create( parser->getLibrary(true), cellName );
-      parser->setCell( cell );
-    }
-
-    if (not parser->getForeignPath().empty()) {
-      Gds::load( parser->getLibrary(), parser->getForeignPath()
-               , Gds::NoGdsPrefix|Gds::NoBlockages|Gds::Layer_0_IsBoundary);
-      for ( Net* net : cell->getNets() ) {
-        if (net->isPower ()) parser->setGdsPower ( net );
-        if (net->isGround()) parser->setGdsGround( net );
-        if (parser->getForeignPosition() != Point(0,0)) {
-          for ( Component* component : net->getComponents() ) {
-            component->translate( parser->getForeignPosition().getX()
-                                , parser->getForeignPosition().getY() );
-          }
-        }
-      }
     }
 
     if (macro->hasSize()) {
@@ -673,7 +695,9 @@ namespace {
                    | Catalog::State::InMemory
                    | Catalog::State::TerminalNetlist, true );
     cell->setTerminalNetlist( true );
-    parser->setCell( NULL );
+    parser->setCell     ( nullptr );
+    parser->setGdsPower ( nullptr );
+    parser->setGdsGround( nullptr );
 
     return 0;
   }
@@ -689,7 +713,7 @@ namespace {
 
   //cerr << "       @ _pinCbk: " << pin->name() << endl;
 
-    if (not parser->getCell()) parser->setCell( Cell::create( parser->getLibrary(true), "LefImportTmpCell" ) );
+    parser->earlyGetCell();
 
     Net*      net     = nullptr;
     Net::Type netType = Net::Type::UNDEFINED;
@@ -718,7 +742,7 @@ namespace {
         net->setName( pin->name() );
         parser->setGdsGround( nullptr );
       } else {
-        net = Net::create( parser->getCell(), pin->name() );
+        net = parser->earlyGetNet( pin->name() );
       }
     }
     net->setExternal( true );
