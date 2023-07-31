@@ -78,16 +78,16 @@ the repository in the right place. Proceed as follow: ::
 
 .. code-block:: bash
 
-   ego@home:~$ mkdir -p ~/coriolis-2.x/src/
-   ego@home:~$ cd ~/coriolis-2.x/src
-   ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
-   ego@home:src$ cd coriolis
+                ego@home:~$ mkdir -p ~/coriolis-2.x/src/
+                ego@home:~$ cd ~/coriolis-2.x/src
+                ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
+                ego@home:src$ cd coriolis
 
 Then, build the tool: ::
 
 .. code-block:: bash
 
-    ego@home:coriolis$ make install
+                ego@home:coriolis$ make install
 
 Coriolis gets installed at the root of the following tree: ::
 
