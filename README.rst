@@ -7,8 +7,8 @@
 
 .. image:: documentation/content/images/common/Coriolis-logo-blue-4.png
    :alt:   Coriolis Logo
-   :align: right
-   :width: 5%
+   :align: center
+   :width: 10%
 
 
 ======================
