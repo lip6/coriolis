@@ -5,7 +5,7 @@
 .. |Python wheel builds| image:: https://github.com/lip6/coriolis/actions/workflows/wheels.yml/badge.svg
    :target: https://github.com/lip6/coriolis/actions/workflows/wheels.yml
 
-.. image:: documentation/contents/images/common/Coriolis-logo-blue-4.png
+.. image:: documentation/content/images/common/Coriolis-logo-blue-4.png
    :alt:   Coriolis Logo
    :align: center
    :width: 20%
@@ -28,7 +28,7 @@ Coriolis is part of a set of three repositories that are closely relateds.
 * Alliance
 
   A venerable EDA toolchain, working only on symbolic layout. Some of it's
-  checking tools (LVS, DRC) are used for the regressiontests in Alliance Check Toolkit.
+  checking tools (LVS, DRC) are used for the regression tests in Alliance Check Toolkit.
 
   https://github.com/lip6/alliance
 
@@ -76,6 +76,8 @@ The build system relies on a fixed directory tree from the root
 of the user currently building it. Thus first step is to get a clone of
 the repository in the right place. Proceed as follow: ::
 
+.. code-block:: bash
+
    ego@home:~$ mkdir -p ~/coriolis-2.x/src/
    ego@home:~$ cd ~/coriolis-2.x/src
    ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
@@ -83,13 +85,15 @@ the repository in the right place. Proceed as follow: ::
 
 Then, build the tool: ::
 
+.. code-block:: bash
+
     ego@home:coriolis$ make install
 
 Coriolis gets installed at the root of the following tree: ::
 
-    ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/
+    ~/coriolis-2.x/OS.DISTRIB/Release.Shared/install/
 
-Where ``<OS>`` is the name of your operating system and ``<DISTRIB>`` your
+Where ``OS`` is the name of your operating system and ``DISTRIB`` your
 distribution (mileage may vary).
 
 
@@ -101,7 +105,7 @@ the following command :
 
 .. code-block:: bash
 
-    ego@home:~$ eval `~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
+    ego@home:~$ eval `~/coriolis-2.x/OS.DISTRIB/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
 
 Then you can launch the GUI :
 
