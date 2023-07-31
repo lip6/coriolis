@@ -93,6 +93,7 @@ class ExtensionBuilder(build_ext):
 
         cmake_args += ["-DPOETRY=1"]
         cmake_args += ["-DWITH_QT5=1"]
+        cmake_args += ["-DBUILD_DOC=TRUE"]
         cmake_args += ["-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
         cmake_args += ["-DCMAKE_SKIP_BUILD_RPATH=FALSE"]
         cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"]

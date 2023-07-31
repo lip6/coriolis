@@ -86,13 +86,12 @@
                                          ${rdsRst}
                                          ${stratusRst}
                        )
+     install( DIRECTORY output/  DESTINATION ${htmlInstallDir} )
 
    else(PELICAN_EXECUTABLE)
      message(STATUS "Pelican has *not* been found, use the git supplied documentation.")
    endif(PELICAN_EXECUTABLE)
  endif(BUILD_DOC)
-  
- install( DIRECTORY output/  DESTINATION ${htmlInstallDir} )
 
 
 # Old part for Sphinx, keep it for now.
