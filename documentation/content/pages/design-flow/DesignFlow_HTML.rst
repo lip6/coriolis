@@ -19,8 +19,8 @@ Design Flow
 
 .. URLs that changes between the various backends.
 .. _Coriolis Tools Documentation:   ../documentation.rst
-.. _Here:                           {filename}/pdfs/DesignFlow.pdf
-.. _DesignFlow:                     {filename}/pdfs/DesignFlow.pdf
+.. _Here:                           {static}/pdfs/DesignFlow.pdf
+.. _DesignFlow:                     {static}/pdfs/DesignFlow.pdf
 
 
 Printable Version of this Document

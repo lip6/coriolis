@@ -44,7 +44,7 @@ RDS / Symbolic to Real Conversion
 Printable version of this Document
 ==================================
 
-`RDS.pdf <{filename}/pdfs/RDS.pdf>`_
+`RDS.pdf <{static}/pdfs/RDS.pdf>`_
 
 
 .. contents::

@@ -20,7 +20,7 @@
 .. |MBK_TO_RDS_BIGVIA_METAL|        replace:: ``MBK_TO_RDS_BIGVIA_METAL``
 .. |MBK_WIRESETTING|                replace:: ``MBK_WIRESETTING``
 .. |ALL|                            replace:: ``ALL``
-.. |DRC|                            replace:: ``DRC``
+.. .. |DRC|                            replace:: ``DRC``
 .. |EXT|                            replace:: ``EXT``
 .. |VW|                             replace:: ``VW``
 .. |LCW|                            replace:: ``LCW``

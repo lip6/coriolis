@@ -1,12 +1,12 @@
 .. -*- Mode: rst -*-
 
 .. Acronyms & Names
-.. |Verilog|           replace:: :sc:`Verilog`
+.. .. |Verilog|           replace:: :sc:`Verilog`
 .. |RTLIL|             replace:: :sc:`rtlil`
 .. |RAM|               replace:: :sc:`ram`
 .. |ROM|               replace:: :sc:`rom`
 .. |LVS|               replace:: :sc:`lvs`
-.. |DRC|               replace:: :sc:`drc`
+.. .. |DRC|               replace:: :sc:`drc`
 .. |adder|             replace:: ``adder``
 .. |AM2901|            replace:: :sc:`am2901`
 .. |alliance-run|      replace:: ``alliance-run``
@@ -75,7 +75,7 @@
 
 .. |vbe|               replace:: ``vbe``
 .. |vhdl|              replace:: ``vhdl``
-.. |blif|              replace:: ``blif``
+.. .. |blif|              replace:: ``blif``
 
 				 
 .. _`Arlet's MOS 6502 core`: https://github.com/Arlet/verilog-6502

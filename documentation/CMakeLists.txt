@@ -1,9 +1,9 @@
 # -*- mode: CMAKE; explicit-buffer-name: "CMakeLists.txt<documentation>" -*-
 
+ cmake_minimum_required(VERSION 3.16)
+
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(DOCUMENTATION)
-
- cmake_minimum_required(VERSION 3.16)
 
  set(ignoreVariables "${LIB_SUFFIX} ${CMAKE_INSTALL_DIR}")
 

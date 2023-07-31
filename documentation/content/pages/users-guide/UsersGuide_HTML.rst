@@ -20,8 +20,8 @@ Coriolis User's Guide
 .. URLs that changes between the various backends.
 .. _Coriolis Tools Documentation:   ../documentation.rst
 .. _Stratus Documentation:          ../stratus/Stratus_HTML.rst
-.. _Here:                           {filename}/pdfs/UsersGuide.pdf
-.. _Coriolis User's Guide:          {filename}/pdfs/UsersGuide.pdf
+.. _Here:                           {static}/pdfs/UsersGuide.pdf
+.. _Coriolis User's Guide:          {static}/pdfs/UsersGuide.pdf
 
 .. For HTML backend
 .. |BigMouse|                       image:: {attach}images/ComputerMouse.png

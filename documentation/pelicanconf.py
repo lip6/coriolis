@@ -33,7 +33,7 @@ STATIC_PATHS = [ 'pages/users-guide'
                , 'pages/check-toolkit'
                , 'pages/design-flow'
                , 'pages/rds'
-               , 'scripts'
+              #, 'scripts'
                , 'images'
                , 'pdfs'
                ]
@@ -43,7 +43,7 @@ AUTHOR   = u'Jean-Paul Chaput'
 SITENAME = u'Coriolis VLSI CAD Tools [offline]'
 SITEURL  = siteUrl
 
-THEME = 'nest-coriolis'
+THEME = './themes/nest-coriolis'
 #THEME = 'nest'
 #THEME = 'dev-random'
 #THEME = 'brutalist'
@@ -89,6 +89,8 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'Releases.rst'
                , 'ScriptsPlugins.rst'
                , 'ViewerTools.rst'
+
+               , 'QuickStart.rst'     # For Design Flow.
 
                , 'PythonTutorial.rst' # For Python Tutorial & New.
                , 'Introduction.rst'

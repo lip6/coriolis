@@ -18,8 +18,13 @@ rtf/
 html/
 latex/
 
+build/
+coriolis-venv/
+coriolis.egg-info/
+
 bootstrap/coriolis2.spec
 
+documentation/output
 documentation/UsersGuide/UsersGuide-raw.tex
 documentation/UsersGuide/UsersGuide.tex
 documentation/UsersGuide/UsersGuide.aux

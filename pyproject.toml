@@ -55,6 +55,9 @@ find-libpython = "^0.3.0"
 cmake = ">=3"
 ninja = "^1.11.1"
 
+[tool.poetry.group.doc.dependencies]
+pelican = ">= 4.5.0"
+
 [tool.poetry.build] 
 script = "builder.py" 
 generate-setup-file = true
