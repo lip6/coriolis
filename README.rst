@@ -5,16 +5,38 @@
 .. |Python wheel builds| image:: https://github.com/lip6/coriolis/actions/workflows/wheels.yml/badge.svg
    :target: https://github.com/lip6/coriolis/actions/workflows/wheels.yml
 
+.. image:: documentation/contents/images/common/Coriolis-logo-blue-4.png
+   :alt:   Coriolis Logo
+   :align: center
+   :width: 20%
 
-===============
-Coriolis README
-===============
 
-Coriolis is a free database, placement tool and routing tool for VLSI design.
+======================
+Coriolis Open EDA Tool
+======================
+
+Coriolis is a free database, placement and routing tool for VLSI design.
 
 This project is hosted at: https://github.com/lip6/coriolis
 
+Main documentation is available at: https://coriolis.lip6.fr/
+
 Development discussion can be found `on our Matrix Channel <https://matrix.to/#/#coriolis:matrix.org>`_ and in our `GitHub Discussions <https://github.com/lip6/coriolis/discussions>`_.
+
+Coriolis is part of a set of three repositories that are closely relateds.
+
+* Alliance
+
+  A venerable EDA toolchain, working only on symbolic layout. Some of it's
+  checking tools (LVS, DRC) are used for the regressiontests in Alliance Check Toolkit.
+
+  https://github.com/lip6/alliance
+
+* Alliance Check Toolkit
+
+  A wide set of examples of designs and scripts to use by Coriolis.
+
+  https://github.com/lip6/alliance-check-toolkit
 
 
 Purpose
@@ -25,23 +47,8 @@ main components are the Hurricane database, the Etesian placer and the Katana
 router, but other tools can use the Hurricane database and the parsers
 provided.
 
-The user interface <cgt> is the prefered way to use Coriolis, but all
+The user interface ``cgt`` is the prefered way to run Coriolis, but all
 Coriolis tools are Python modules and thus scriptable.
-
-
-Documentation
-=============
-
-The complete documentation is available here, both in pdf & html:
-
-   ./documentation/output/html
-   ./documentation/UsersGuide/UsersGuide.pdf
-
-The documentation of the latest *stable* version is also
-available online. It may be quite outdated from the *devel*
-version.
-
-    https://www-soc.lip6.fr/sesi-docs/coriolis2-docs/coriolis2/en/latex/users-guide/UsersGuide.pdf
 
 
 Building Coriolis
@@ -49,14 +56,21 @@ Building Coriolis
 
 To build Coriolis, ensure the following prerequisites are met:
 
-* Python 3,
-* cmake,
-* boost,
-* bison & flex,
-* Qt 4 or 5,
-* libxml2,
-* RapidJSON,
 * A C++11 compliant compiler.
+* Python 3.
+* make or ninja.
+* cmake.
+* bzip2
+* boost.
+* bison & flex.
+* Qt 5 & Qt 5 Svg.
+* Qwt
+* libxml2.
+* RapidJSON, http://rapidjson.org/ .
+* Eigen 3,  http://eigen.tuxfamily.org .
+* Lemon, http://lemon.cs.elte.hu/trac/lemon .
+* doxygen
+* pelican
 
 The build system relies on a fixed directory tree from the root
 of the user currently building it. Thus first step is to get a clone of
@@ -64,14 +78,13 @@ the repository in the right place. Proceed as follow: ::
 
    ego@home:~$ mkdir -p ~/coriolis-2.x/src/
    ego@home:~$ cd ~/coriolis-2.x/src
-   ego@home:src$ git clone https://github.com/lip6/coriolis
+   ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
    ego@home:src$ cd coriolis
 
 Then, build the tool: ::
 
     ego@home:coriolis$ make install
 
-If you encounter issues, please consult SUPPORT.rst for tips.
 Coriolis gets installed at the root of the following tree: ::
 
     ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/
@@ -83,17 +96,11 @@ distribution.
 Using Coriolis
 ==============
 
-The Coriolis main interface can be launched with the command: ::
+Prior to using Coriolis, you need to setup your UNIX environment by running
+the following command :
 
-    ego@home:~: ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/bin/coriolis
+    ego@home:~$ eval `~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
 
-The ``coriolis`` script detects its location and setups the UNIX
-environment appropriately, then lauches ``cgt`` (or *any* command, with the
-``--run=<COMMAND>`` option).
+Then you can launch the GUI :
 
-Conversely, you can setup the current shell environment for Coriolis by
-using the helper ``coriolisEnv.py``, then run any Coriolis tool: ::
-
-    ego@home:~$ eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
     ego@home:~$ cgt -V
-
