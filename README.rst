@@ -90,7 +90,7 @@ Coriolis gets installed at the root of the following tree: ::
     ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/
 
 Where ``<OS>`` is the name of your operating system and ``<DISTRIB>`` your
-distribution.
+distribution (mileage may vary).
 
 
 Using Coriolis
@@ -99,8 +99,12 @@ Using Coriolis
 Prior to using Coriolis, you need to setup your UNIX environment by running
 the following command :
 
+.. code-block:: bash
+
     ego@home:~$ eval `~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
 
 Then you can launch the GUI :
+
+.. code-block:: bash
 
     ego@home:~$ cgt -V
