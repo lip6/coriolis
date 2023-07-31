@@ -74,20 +74,20 @@ To build Coriolis, ensure the following prerequisites are met:
 
 The build system relies on a fixed directory tree from the root
 of the user currently building it. Thus first step is to get a clone of
-the repository in the right place. Proceed as follow: ::
+the repository in the right place. Proceed as follow:
 
 .. code-block:: bash
 
-                ego@home:~$ mkdir -p ~/coriolis-2.x/src/
-                ego@home:~$ cd ~/coriolis-2.x/src
-                ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
-                ego@home:src$ cd coriolis
+   ego@home:~$ mkdir -p ~/coriolis-2.x/src/
+   ego@home:~$ cd ~/coriolis-2.x/src
+   ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
+   ego@home:src$ cd coriolis
 
-Then, build the tool: ::
+Then, build the tool:
 
 .. code-block:: bash
 
-                ego@home:coriolis$ make install
+   ego@home:coriolis$ make install
 
 Coriolis gets installed at the root of the following tree: ::
 
@@ -101,13 +101,13 @@ Using Coriolis
 ==============
 
 Prior to using Coriolis, you need to setup your UNIX environment by running
-the following command :
+the following command:
 
 .. code-block:: bash
 
     ego@home:~$ eval `~/coriolis-2.x/OS.DISTRIB/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
 
-Then you can launch the GUI :
+Then you can launch the GUI:
 
 .. code-block:: bash
 
