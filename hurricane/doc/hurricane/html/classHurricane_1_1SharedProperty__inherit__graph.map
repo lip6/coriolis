@@ -1,8 +1,0 @@
-<map id="Hurricane::SharedProperty" name="Hurricane::SharedProperty">
-<area shape="rect" id="node1" title="SharedProperty description (API)" alt="" coords="189,64,367,91"/>
-<area shape="rect" id="node3" href="$classHurricane_1_1Relation.html" title="Relation description (API)" alt="" coords="437,5,571,32"/>
-<area shape="rect" id="node5" href="$classHurricane_1_1StandardSharedProperty.html" title="StandardSharedProperty description (API)" alt="" coords="415,57,593,98"/>
-<area shape="rect" id="node6" href="$classHurricane_1_1UpdateSession.html" title="UpdateSession description (API)" alt="" coords="417,123,591,149"/>
-<area shape="rect" id="node2" href="$classHurricane_1_1Property.html" title="Property description (API)" alt="" coords="5,64,141,91"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1StandardRelation.html" title="StandardRelation description (API)" alt="" coords="641,5,827,32"/>
-</map>

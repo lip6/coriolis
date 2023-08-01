@@ -16,17 +16,17 @@ Symbolic Layout
 
 .. include:: ../../etc/definitions.rst
 
-.. |symbolic_1|               image:: {filename}/images/symbolic-layout/symbolic-1.png
+.. |symbolic_1|               image:: {static}/images/symbolic-layout/symbolic-1.png
                               :alt:   Symbolic, Mead & Conway
                               :align: middle
                               :width: 80%
 
-.. |symbolic_2|               image:: {filename}/images/symbolic-layout/symbolic-2.png
+.. |symbolic_2|               image:: {static}/images/symbolic-layout/symbolic-2.png
                               :alt:   Symbolic, Alliance
                               :align: middle
                               :width: 80%
 
-.. |rds_1|                    image:: {filename}/images/symbolic-layout/rds-1.png
+.. |rds_1|                    image:: {static}/images/symbolic-layout/rds-1.png
                               :alt:   Symbolic to Real translation
                               :align: middle
                               :width: 80%

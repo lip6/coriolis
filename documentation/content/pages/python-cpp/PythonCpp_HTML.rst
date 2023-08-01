@@ -20,7 +20,7 @@ Hurricane Python/C++ API Tutorial
 Printable version of this Document
 ==================================
 
-`PythonCpp.pdf <{filename}/pdfs/PythonCpp.pdf>`_
+`PythonCpp.pdf <{static}/pdfs/PythonCpp.pdf>`_
 
 
 .. contents::

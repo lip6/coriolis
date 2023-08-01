@@ -14,6 +14,8 @@
    endif
  endif
 
+ venv = source ./venv/bin/activate
+
  SMP_FLAGS = 
  ifneq ($(shell which nproc 2> /dev/null),)
    SMP_FLAGS = -j$(shell nproc)
@@ -55,8 +57,17 @@ check_dir:
 	 fi
 
 
-install: check_dir
-	@./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=support --project=coriolis --make="$(SMP_FLAGS) install"
+check_venv:
+	@if [ ! -d "./venv" ]; then python3 -m venv venv; fi
+
+
+poetry_deps: check_venv
+	@$(venv); poetry install --no-root 
+
+
+install: check_dir poetry_deps
+	@$(venv); ./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis \
+	                                                  --make="$(SMP_FLAGS) --doc install"
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \

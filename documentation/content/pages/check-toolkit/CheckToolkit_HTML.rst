@@ -19,7 +19,7 @@ Alliance Check Toolkit
 
 .. URLs that changes between the various backends.
 .. _Coriolis Tools Documentation:   ../documentation.rst
-.. _Alliance Check Toolkit:          {filename}/pdfs/CheckToolkit.pdf
+.. _Alliance Check Toolkit:          {static}/pdfs/CheckToolkit.pdf
 
 
 Printable Version of this Document

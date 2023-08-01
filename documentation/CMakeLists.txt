@@ -1,9 +1,9 @@
 # -*- mode: CMAKE; explicit-buffer-name: "CMakeLists.txt<documentation>" -*-
 
+ cmake_minimum_required(VERSION 3.16)
+
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(DOCUMENTATION)
-
- cmake_minimum_required(VERSION 3.16)
 
  set(ignoreVariables "${LIB_SUFFIX} ${CMAKE_INSTALL_DIR}")
 
@@ -86,13 +86,12 @@
                                          ${rdsRst}
                                          ${stratusRst}
                        )
+     install( DIRECTORY output/  DESTINATION ${htmlInstallDir} )
 
    else(PELICAN_EXECUTABLE)
      message(STATUS "Pelican has *not* been found, use the git supplied documentation.")
    endif(PELICAN_EXECUTABLE)
  endif(BUILD_DOC)
-  
- install( DIRECTORY output/  DESTINATION ${htmlInstallDir} )
 
 
 # Old part for Sphinx, keep it for now.

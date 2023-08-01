@@ -25,7 +25,7 @@ Hurricane+Python Tutorial
 Printable version of this Document
 ==================================
 
-`PythonTutorial.pdf <{filename}/pdfs/PythonTutorial.pdf>`_
+`PythonTutorial.pdf <{static}/pdfs/PythonTutorial.pdf>`_
 
 
 .. contents::

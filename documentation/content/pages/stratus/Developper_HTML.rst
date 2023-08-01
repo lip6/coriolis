@@ -20,7 +20,7 @@ Stratus : Developper's Documentation
 Printable version of this Document
 ==================================
 
-`Stratus.pdf <{filename}/pdfs/Stratus.pdf>`_
+`Stratus.pdf <{static}/pdfs/Stratus.pdf>`_
 
 
 .. contents::
