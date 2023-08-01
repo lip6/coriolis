@@ -1,6 +1,0 @@
-<map id="CapacitorStack" name="CapacitorStack">
-<area shape="rect" id="node1" title="Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors." alt="" coords="27,80,138,107"/>
-<area shape="rect" id="node3" href="$classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks.html" title="Route two matched capacitors, C1 and C2, drawn in a capacitor matrix." alt="" coords="7,155,158,181"/>
-<area shape="rect" id="node2" href="$classpython_1_1capacitorunit_1_1CapacitorUnit.html" title="Draws a capacitor of type Poly&#45;Poly or Metal&#45;Metal in 350 nm AMS CMOS technology." alt="" coords="32,5,133,32"/>
-<area shape="rect" id="node4" href="$classpython_1_1capacitorrouted_1_1RoutMatchedCapacitor.html" title="Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix." alt="" coords="5,229,160,256"/>
-</map>

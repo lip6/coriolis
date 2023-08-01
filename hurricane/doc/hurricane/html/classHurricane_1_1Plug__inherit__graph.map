@@ -1,7 +1,0 @@
-<map id="Hurricane::Plug" name="Hurricane::Plug">
-<area shape="rect" id="node1" title="Plug description (API)" alt="" coords="26,304,138,331"/>
-<area shape="rect" id="node2" href="$classHurricane_1_1Component.html" title="Component description (API)" alt="" coords="5,229,159,256"/>
-<area shape="rect" id="node3" href="$classHurricane_1_1Go.html" title="Go description (API)" alt="" coords="31,155,133,181"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API)." alt="" coords="22,80,142,107"/>
-<area shape="rect" id="node5" href="$classHurricane_1_1DBo.html" title="DataBase object root class (API)." alt="" coords="26,5,138,32"/>
-</map>
