@@ -67,10 +67,12 @@ class GaugeConf ( object ):
     OffsetTop1      = 0x0008
     OffsetTop2      = 0x0010
     OffsetBottom1   = 0x0020
-    DeepDepth       = 0x0040
-    UseContactWidth = 0x0080
-    ExpandWidth     = 0x0100
-    SourceExtend    = 0x0200
+    OffsetBottom2   = 0x0040
+    OffsetFromSlice = 0x0080
+    DeepDepth       = 0x0100
+    UseContactWidth = 0x0200
+    ExpandWidth     = 0x0400
+    SourceExtend    = 0x0800
 
     def __init__ ( self ):
         self._cellGauge      = None
@@ -245,6 +247,11 @@ class GaugeConf ( object ):
         trace( 550, ' -> utrack={}\n'.format( DbU.getValueString(utrack) ))
         return utrack + offset*rg.getPitch()
 
+    def getHorizontalPitch ( self, flags ):
+        if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
+        else:                           depth = self.horizontalDepth
+        return self._routingGauge.getLayerGauge( depth ).getPitch()
+
     def getNearestHorizontalTrack ( self, y, flags, offset=0 ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
         else:                           depth = self.horizontalDepth
@@ -289,8 +296,9 @@ class GaugeConf ( object ):
         trace( 550, segment )
         return segment
   
-    def rpAccess ( self, rp, flags ):
-        trace( 550, ',+', '\tGaugeConf.rpAccess() {}\n'.format(rp) )
+    def rpAccess ( self, rp, flags, yoffset ):
+        trace( 550, ',+', '\tGaugeConf.rpAccess() {}\n'.format( rp ))
+        trace( 550, '\tHAccess set : {}\n'.format( flags&GaugeConf.HAccess ))
         startDepth = self.routingGauge.getLayerDepth( rp.getOccurrence().getEntity().getLayer() )
         trace( 550, '\tlayer:{} startDepth:{}\n'.format(rp.getOccurrence().getEntity().getLayer(),startDepth) )
         if rp in self._rpToAccess:
@@ -315,15 +323,28 @@ class GaugeConf ( object ):
         #if flags & GaugeConf.OffsetTop1:    dy -= hpitch
         #contact1.setDy( dy )
 
-        yoffset = 0
-        if flags & GaugeConf.OffsetBottom1: yoffset =  1
-        if flags & GaugeConf.OffsetTop1:    yoffset = -1
-        if flags & GaugeConf.OffsetTop2:    yoffset = -2
-        trace( 550, '\tyoffset:{}\n'.format(yoffset) )
+        rg        = self.routingGauge.getLayerGauge( startDepth )
+        rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
+
         if startDepth == 0:
-            rg        = self.routingGauge.getLayerGauge( 0 )
-            rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
-            ytrack    = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
+            if flags & GaugeConf.OffsetFromSlice:
+                sliceY = rpContact.getY() - (rpContact.getY() % self._cellGauge.getSliceHeight())
+                if yoffset < 0:
+                    sliceY += self._cellGauge.getSliceHeight()
+                ytrack = self.getTrack( sliceY, self.horizontalDeepDepth, yoffset )
+                trace( 550, '\tyoffset (from slice):{}\n'.format(yoffset) )
+                trace( 550, '\tPut on Y-track:{}\n'.format(DbU.getValueString(ytrack)) )
+            else:
+                if yoffset is None:
+                    yoffset = 0
+                    if flags & GaugeConf.OffsetBottom1: yoffset = -1
+                    if flags & GaugeConf.OffsetBottom2: yoffset = -2
+                    if flags & GaugeConf.OffsetTop1:    yoffset =  1
+                    if flags & GaugeConf.OffsetTop2:    yoffset =  2
+                    trace( 550, '\tyoffset (from flags):{}\n'.format( yoffset ))
+                ytrack = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
+                trace( 550, '\tyoffset (from contact):{}\n'.format(yoffset) )
+                trace( 550, '\tPut on Y-track:{}\n'.format(DbU.getValueString(ytrack)) )
             contact1  = Contact.create( rp.getNet()
                                       , self._routingGauge.getContactLayer( 0 )
                                       , rpContact.getX()
@@ -341,8 +362,6 @@ class GaugeConf ( object ):
             #trace( 550, '\tPut on Y-tracks:{}\n'.format(DbU.getValueString(ytrack)) )
             #contact1.setDy( dy )
         else:
-            rg        = self.routingGauge.getLayerGauge( startDepth )
-            rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
             ytrack    = self.getTrack( rpContact.getY(), startDepth, 0 )
             #dy        = ytrack - contact1.getY()
             contact1  = Contact.create( rp.getNet()
@@ -433,14 +452,14 @@ class GaugeConf ( object ):
             self._plugToRp[plug] = rp
         return rp
   
-    def rpAccessByOccurrence ( self, occurrence, net, flags ):
+    def rpAccessByOccurrence ( self, occurrence, net, flags, yoffset=None ):
         plug = occurrence.getEntity()
         if plug in self._plugToRp:
             rp = self._plugToRp[plug]
         else:
             rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
             self._plugToRp[plug] = rp
-        return self.rpAccess( self.rpByOccurrence(occurrence,net), flags )
+        return self.rpAccess( self.rpByOccurrence(occurrence,net), flags, yoffset )
   
     def rpByPlug ( self, plug, net ):
         """
@@ -464,15 +483,15 @@ class GaugeConf ( object ):
         """
         return self.rpByPlug( getPlugByName(instance,plugName), net )
   
-    def rpAccessByPlug ( self, plug, net, flags ):
-        return self.rpAccess( self.rpByPlug(plug,net), flags )
+    def rpAccessByPlug ( self, plug, net, flags, yoffset=None ):
+        return self.rpAccess( self.rpByPlug(plug,net), flags, yoffset )
   
-    def rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
+    def rpAccessByPlugName ( self, instance, plugName, net, flags=0, yoffset=None ):
         """
         Creates a RoutingPad from a Plug (using ``rpByPlug()``) and build a contact
         stack using a relative positionning specified by ``flags``.
         """
-        return self.rpAccess( self.rpByPlugName(instance,plugName,net), flags )
+        return self.rpAccess( self.rpByPlugName(instance,plugName,net), flags, yoffset )
 
     def setStackPosition ( self, topContact, x, y ):
         trace( 550, '\tGaugeConf.setStackPosition() @({},{}) for {}\n' \
@@ -1376,6 +1395,9 @@ class BlockConf ( GaugeConf ):
         self.editor        = None
         self.framework     = AllianceFramework.get()
         self.cfg           = CfgCache('',Cfg.Parameter.Priority.Interactive)
+        # H-Tree/Spares parameters (triggers loading from disk).
+        self.cfg.spares.htreeOffsetDriver = None
+        self.cfg.spares.htreeOffsetSink   = None
         self.bufferConf    = None
         self.constantsConf = None
         self.feedsConf     = None

@@ -30,6 +30,8 @@ p = Cfg.getParamInt       ( "katabatic.globalLengthThreshold" ).setInt       ( 1
 p = Cfg.getParamPercentage( "katabatic.saturateRatio"         ).setPercentage( 80       ) 
 p = Cfg.getParamInt       ( "katabatic.saturateRp"            ).setInt       ( 8        )
 p = Cfg.getParamString    ( 'katabatic.topRoutingLayer'       ).setString    ( 'METAL5' )
+#p = Cfg.getParamInt       ( "spares.htreeOffsetDriver"        ).setInt       ( 4        )
+#p = Cfg.getParamInt       ( "spares.htreeOffsetSink"          ).setInt       ( 6        )
 
  # Kite parameters.
 p = Cfg.getParamInt( "kite.hTracksReservedLocal" ); p.setInt( 3       ); p.setMin( 0 ); p.setMax( 20 )
