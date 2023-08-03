@@ -19,7 +19,7 @@ html/
 latex/
 
 build/
-coriolis-venv/
+venv/
 coriolis.egg-info/
 
 bootstrap/coriolis2.spec
