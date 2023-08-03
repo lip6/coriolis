@@ -146,7 +146,7 @@ class HTree ( object ):
         hLeafDepth = gaugeConf.horizontalDepth
         if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
             hLeafDepth = gaugeConf.horizontalDepth - 2
-        leafFlags    = GaugeConf.OffsetLeft1
+        leafFlags    = 0
         blContact    = None
         brContact    = None
         tlContact    = None
@@ -160,55 +160,146 @@ class HTree ( object ):
                or (qt.br and len(qt.br.buffers) > 1) \
                or (qt.tr and len(qt.tr.buffers) > 1):
                leafFlags |= GaugeConf.HAccess
-        yoffset = gaugeConf.cfg.spares.htreeRootOffset
+        bufferTransf   = qt.buffers[0].getTransformation()
+        botSinkTransf  = None
+        topSinkTransf  = None
+        driverY        = None
+        sinkBotY       = None
+        sinkTopY       = None
+        yoffsetDriver  = gaugeConf.cfg.spares.htreeOffsetDriver
+        yoffsetTopSink = gaugeConf.cfg.spares.htreeOffsetSink
+        yoffsetBotSink = gaugeConf.cfg.spares.htreeOffsetSink
+        trace( 550, '\tyoffsetDriver={}\n'.format( yoffsetDriver ))
+        trace( 550, '\tyoffsetSink={}\n'.format( yoffsetTopSink ))
+
+        if bufferTransf.getOrientation() in ( Transformation.Orientation.ID
+                                            , Transformation.Orientation.MX ):
+            driverFlags = leafFlags | GaugeConf.HAccess | GaugeConf.OffsetTop1
+        else:
+            driverFlags = leafFlags | GaugeConf.HAccess | GaugeConf.OffsetBottom1
+            if yoffsetDriver is not None:
+                yoffsetDriver = -yoffsetDriver
+        if yoffsetDriver is not None:
+            driverFlags = leafFlags | GaugeConf.HAccess | GaugeConf.OffsetFromSlice
+            driverY = gaugeConf.getNearestHorizontalTrack( bufferTransf.getTy(), 0, yoffsetDriver )
+            trace( 550, '\tdriverY:{}\n'.format( DbU.getValueString(driverY) ))
+
+        if qt.bl:
+            botSinkTransf = qt.bl.buffers[0].getTransformation()
+        elif qt.br:
+            botSinkTransf = qt.br.buffers[0].getTransformation()
+        if botSinkTransf:
+            if botSinkTransf.getOrientation() in ( Transformation.Orientation.ID
+                                                 , Transformation.Orientation.MX ):
+                sinkBotFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetBottom1
+            else:
+                sinkBotFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetTop1
+                if yoffsetBotSink is not None:
+                    yoffsetBotSink = -yoffsetBotSink
+            if yoffsetBotSink is not None:
+                sinkBotFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetFromSlice
+                ty = botSinkTransf.getTy()
+                if yoffsetBotSink < 0:
+                    ty += gaugeConf._cellGauge.getSliceHeight()
+                sinkBotY = gaugeConf.getTrack( ty, hLeafDepth, yoffsetBotSink )
+                trace( 550, '\tsinkBotY:{}\n'.format( DbU.getValueString(sinkBotY) ))
+
+        if qt.tl:
+            topSinkTransf = qt.tl.buffers[0].getTransformation()
+        elif qt.tr:
+            topSinkTransf = qt.tr.buffers[0].getTransformation()
+        if topSinkTransf:
+            if topSinkTransf.getOrientation() in ( Transformation.Orientation.ID
+                                                 , Transformation.Orientation.MX ):
+                sinkTopFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetBottom1
+            else:
+                sinkTopFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetTop1
+                if yoffsetTopSink is not None:
+                    yoffsetTopSink = -yoffsetTopSink
+            if yoffsetTopSink is not None:
+                sinkTopFlags = leafFlags | GaugeConf.OffsetLeft1 | GaugeConf.OffsetFromSlice
+                ty = topSinkTransf.getTy()
+                if yoffsetTopSink < 0:
+                    ty += gaugeConf._cellGauge.getSliceHeight()
+                sinkTopY = gaugeConf.getTrack( ty, hLeafDepth, yoffsetTopSink )
+                trace( 550, '\tsinkTopY:{}\n'.format( DbU.getValueString(sinkTopY) ))
+
         if not qt.isRoot():
             ckParentNet   = qt.bInputPlug(0).getNet()
             driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
-            driverY       = driverContact.getY()
-            yoffset       = gaugeConf.cfg.spares.htreeOffset
             trace( 550, '\tdriverContact={}\n'.format( driverContact ))
         if qt.bl:
             trace( 550, '+,', '\tblContact\n' )
-            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, leafFlags )
+            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0]
+                                                    , bufferConf.input
+                                                    , ckNet
+                                                    , sinkBotFlags
+                                                    , yoffsetBotSink )
+            if sinkBotY is None:
+                sinkBotY = gaugeConf.getTrack( blContact.getY(), hLeafDepth, 0 )
             trace( 550, ',-', '\tblContact={}\n'.format(blContact) )
         if qt.br:
             trace( 550, '+,', '\tbrContact\n' )
-            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, leafFlags )
+            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0]
+                                                    , bufferConf.input
+                                                    , ckNet
+                                                    , sinkBotFlags
+                                                    , yoffsetBotSink  )
+            if sinkBotY is None:
+                sinkBotY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, 0 )
             trace( 550, ',-', '\tbrContact={}\n'.format(brContact) )
         if qt.tl:
             trace( 550, '+,', '\ttlContact\n' )
-            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input, ckNet, leafFlags )
+            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0]
+                                                    , bufferConf.input
+                                                    , ckNet
+                                                    , sinkTopFlags
+                                                    , yoffsetTopSink )
+            if sinkTopY is None:
+                sinkTopY = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, 0 )
             trace( 550, ',-', '\ttlContact={}\n'.format(tlContact) )
         if qt.tr:
             trace( 550, '+,', '\ttrContact\n' )
-            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, leafFlags )
+            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0]
+                                                    , bufferConf.input
+                                                    , ckNet
+                                                    , sinkTopFlags
+                                                    , yoffsetTopSink  )
+            if sinkTopY is None:
+                sinkTopY = gaugeConf.getTrack( trContact.getY(), hLeafDepth, 0 )
             trace( 550, ',-', '\ttrContact={}\n'.format(trContact) )
-        flags = GaugeConf.OffsetTop2
-        bufferTransf = qt.buffers[0].getTransformation()
-        if bufferTransf == Transformation.Orientation.ID:
-            yoffset = -yoffset
+
         if qt.bl or qt.tl:
             trace( 550, '\tLeft branch\n' )
             leafContact       = blContact if brContact else tlContact
-            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
-            leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0 )
+            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0]
+                                                            , bufferConf.output
+                                                            , ckNet
+                                                            , driverFlags
+                                                            , yoffsetDriver )
+            leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0, 0 )
             if driverY is None:
-                driverY = leftSourceContact.getY()
-            leftSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
+                leftSourceY = gaugeConf.getNearestHorizontalTrack( leftSourceContact.getY(), 0, 0 )
+            else:
+                leftSourceY = driverY
             leftContact       = gaugeConf.createContact( ckNet, leafContact.getX(),  leftSourceContact.getY(), 0 )
             leftX             = gaugeConf.getNearestVerticalTrack( leftContact.getX(), 0 )
             gaugeConf.setStackPosition( leftSourceContact, leftSourceX, leftSourceY )
             leftContact .setX(       leftX )
             leftContact .setY( leftSourceY )
-            flags   = 0
         if qt.br or qt.tr:
             trace( 550, '\tRight branch\n' )
             leafContact        = brContact if brContact else trContact
-            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
+            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0]
+                                                             , bufferConf.output
+                                                             , ckNet
+                                                             , driverFlags
+                                                             , yoffsetDriver )
+            rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0, 0 )
             if driverY is None:
-                driverY = rightSourceContact.getY()
-            rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0 )
-            rightSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
+                rightSourceY = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0, 0 )
+            else:
+                rightSourceY = driverY
             rightContact       = gaugeConf.createContact( ckNet, leafContact.getX(), rightSourceContact.getY(), 0 )
             rightX             = gaugeConf.getNearestVerticalTrack( rightContact.getX(), 0 )
             gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
@@ -218,27 +309,31 @@ class HTree ( object ):
             gaugeConf.createHorizontal( leftContact, leftSourceContact, leftSourceY , 0 )
         if qt.br or qt.tr:
             gaugeConf.createHorizontal( rightSourceContact, rightContact, rightSourceY, 0 )
-        if tlContact:
-            tlY = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, -1 )
-        elif trContact:
-            tlY = gaugeConf.getTrack( trContact.getY(), hLeafDepth, -1 )
-        if blContact:
-            blY = gaugeConf.getTrack( blContact.getY(), hLeafDepth, 2 )
-            trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
-        elif brContact:
-            blY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, 2 )
-            trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
+
+        #if tlContact:
+        #    tlY = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, yoffsetTopSink )
+        #elif trContact:
+        #    tlY = gaugeConf.getTrack( trContact.getY(), hLeafDepth, yoffsetTopSink )
+        #if blContact:
+        #    blY = gaugeConf.getTrack( blContact.getY(), hLeafDepth, yoffsetBotSink )
+        #    trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
+        #elif brContact:
+        #    blY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, yoffsetBotSink )
+        #    trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
+
         if qt.tl:
-            self._connectLeaf( qt.tl, ckNet, leftContact, tlContact, leftX, tlY )
+            self._connectLeaf( qt.tl, ckNet, leftContact, tlContact, leftX, sinkTopY )
         if qt.bl:
-            trace( 550, '\tConnect BL leaf, leftX={} blY={}\n'.format( DbU.getValueString(leftX), DbU.getValueString(blY) ))
-            self._connectLeaf( qt.bl, ckNet, leftContact, blContact, leftX, blY )
-           #gaugeConf.addTrackAvoid( Box( leftX, leftSourceY, leftX, blY ) )
+            trace( 550, '\tConnect BL leaf, leftX={} blY={}\n' \
+                        .format( DbU.getValueString(leftX), DbU.getValueString(sinkBotY) ))
+            self._connectLeaf( qt.bl, ckNet, leftContact, blContact, leftX, sinkBotY )
+           #gaugeConf.addTrackAvoid( Box( leftX, leftSourceY, leftX, sinkBotY ) )
         if qt.tr:
-            self._connectLeaf( qt.tr, ckNet, rightContact, trContact, rightX, tlY )
-           #gaugeConf.addTrackAvoid( Box( rightX, rightSourceY, rightX, tlY ) )
+            self._connectLeaf( qt.tr, ckNet, rightContact, trContact, rightX, sinkTopY )
+           #gaugeConf.addTrackAvoid( Box( rightX, rightSourceY, rightX, si,kTopY ) )
         if qt.br:
-            self._connectLeaf( qt.br, ckNet, rightContact, brContact, rightX, blY )
+            self._connectLeaf( qt.br, ckNet, rightContact, brContact, rightX, sinkBotY )
+
         if qt.isRoot():
             ckNet = self.treeNet
             if not self.spares.conf.isCoreBlock \
