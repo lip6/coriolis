@@ -23,4 +23,4 @@ jobs:
          sudo apt-get update
          sudo apt-get install libeigen3-dev liblemon-dev
      - name: Build Coriolis
-       run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }} --project=coriolis --make="-j4 install"
+       run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
