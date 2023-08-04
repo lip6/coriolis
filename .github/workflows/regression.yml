@@ -1,0 +1,26 @@
+
+name: Regression tests
+on:   [workflow_dispatch]
+
+jobs:
+  Regression-Tests:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v3
+       with:
+         submodules: true
+         path:       coriolis-2.x/src/coriolis
+     - uses: actions/checkout@v3
+       with:
+         repository: lip6/alliance
+         path:       coriolis-2.x/src/alliance
+     - uses: actions/checkout@v3
+       with:
+         repository: lip6/alliance-check-toolkit
+         path:       coriolis-2.x/src/alliance-check-toolkit
+     - name: Install software dependencies
+       run: |
+         sudo apt-get update
+         sudo apt-get install libeigen3-dev liblemon-dev
+     - name: Build Coriolis
+       run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }} --project=coriolis --make="-j4 install"
