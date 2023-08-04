@@ -57,4 +57,9 @@ jobs:
          cd ${{ github.workspace }}/coriolis-2.x/src/alliance-check-toolkit/benchs
          eval `${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
          ../bin/gopy.sh
-         
+     - name: Archive code coverage results
+       uses: actions/upload-artifact@v3
+       with:
+         name: design-set-full-logs
+         path: ${{ github.workspace }}/coriolis-2.x/src/alliance-check-toolkit/benchs/doit-gopy.log
+         retention-days: 5
