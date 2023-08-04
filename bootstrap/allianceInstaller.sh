@@ -31,6 +31,7 @@
                          onGithub="true"
                          root=`getString $1`;;
     esac
+    shift
   done
 
   if [ "${onGithub}" = "true" ]; then
