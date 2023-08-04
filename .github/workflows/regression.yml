@@ -22,6 +22,7 @@ jobs:
        run: sudo apt-get update
      - name: Install software dependencies
        run: >
-         sudo apt-get install libboost-all-dev libeigen3-dev liblemon-dev
+         sudo apt-get install libboost-all-dev rapidjson-dev
+	                      libeigen3-dev liblemon-dev
      - name: Build Coriolis
        run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
