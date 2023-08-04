@@ -18,9 +18,10 @@ jobs:
        with:
          repository: lip6/alliance-check-toolkit
          path:       coriolis-2.x/src/alliance-check-toolkit
+     - name: Update APT cache
+       run: sudo apt-get update
      - name: Install software dependencies
-       run: |
-         sudo apt-get update
-         sudo apt-get install libeigen3-dev liblemon-dev
+       run: >
+         sudo apt-get install libboost-all-dev libeigen3-dev liblemon-dev
      - name: Build Coriolis
        run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
