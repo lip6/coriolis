@@ -66,5 +66,5 @@ jobs:
      - name: Make the runner fail *after* the log has been saved.
        run: |
           if [ -f ${{ github.workspace }}/coriolis-2.x/src/alliance-check-toolkit/benchs/doit-gopy.failed ]; then
-	    exit 1
-	  fi
+            exit 1
+          fi
