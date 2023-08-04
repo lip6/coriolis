@@ -22,7 +22,8 @@ jobs:
        run: sudo apt-get update
      - name: Install software dependencies
        run: >
-         sudo apt-get install libboost-all-dev rapidjson-dev qt5-default \
+         sudo apt-get install libboost-all-dev rapidjson-dev \
+                              qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqwt-qt5-dev \
                               libeigen3-dev liblemon-dev
      - name: Build Coriolis
        run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
