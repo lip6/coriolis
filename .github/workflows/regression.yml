@@ -56,7 +56,7 @@ jobs:
        run: |
          export CORIOLIS_TOP=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
          cd ${{ github.workspace }}/coriolis-2.x/src/alliance-check-toolkit/benchs
-         ../bin/crlenv.py
+         ../bin/crlenv.py --verbose
          ../bin/gopy.sh --github-runner
      - name: Archive code coverage results
        uses: actions/upload-artifact@v3
