@@ -18,16 +18,34 @@ jobs:
        with:
          repository: lip6/alliance-check-toolkit
          path:       coriolis-2.x/src/alliance-check-toolkit
+     - uses: actions/checkout@v3
+       with:
+         repository: YosysHQ/yosys
+         path:       coriolis-2.x/src/yosys
+         ref:        69cbef966
      - name: Update APT cache
        run: sudo apt-get update
      - name: Install software dependencies
        run: >
          sudo apt-get install libboost-all-dev rapidjson-dev \
+                              python-dev-is-python3 \
                               qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqwt-qt5-dev \
                               libeigen3-dev liblemon-dev \
                               autotools-dev automake \
-                              libxt-dev libxpm-dev libmotif-dev
+                              libxt-dev libxpm-dev libmotif-dev \
+                              tcl-dev libffi-dev
+     - name: Build Yosys
+       run: |
+         cd ${{ github.workspace }}/coriolis-2.x/src/yosys
+         make ENABLE_PYOSYS=1 config-gcc
+         make ENABLE_PYOSYS=1 GIT_REV=69cbef966 PREFIX=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install install
+     - name: Check for binaries
+       run: ls ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/bin
      - name: Build Alliance
-       run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/allianceInstaller.sh --github-runner=${{ github.workspace }}
+       run: >
+         ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/allianceInstaller.sh \
+           --github-runner=${{ github.workspace }}
      - name: Build Coriolis
-       run: ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
+       run: >
+         ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py \
+	   --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
