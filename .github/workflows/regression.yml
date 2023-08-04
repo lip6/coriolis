@@ -48,4 +48,4 @@ jobs:
      - name: Build Coriolis
        run: >
          ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py \
-	   --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
+           --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
