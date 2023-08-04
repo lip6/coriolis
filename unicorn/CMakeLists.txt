@@ -54,4 +54,6 @@
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(cmake_modules)
- add_subdirectory(doc)
+ if (BUILD_DOC)
+   add_subdirectory(doc)
+ endif()
