@@ -17,10 +17,30 @@
   if [[ "`pwd`" =~ /nightly/ ]]; then
     nightly="/nightly"
   fi
+  root="${HOME}${nightly}"
 
-      srcDir=${HOME}${nightly}/coriolis-2.x/src/alliance/alliance/src
-  commonRoot=${HOME}${nightly}/coriolis-2.x/${arch}/Release.Shared
- #commonRoot=${HOME}${nightly}/coriolis-2.x/${arch}/Debug.Shared
+  getString ()
+  {
+    string=`echo $1 | cut -d '=' -f 2-` 
+    echo $string
+  }
+
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --github-runner=*) echo "Using Github/runner profile.";
+                         onGithub="true"
+                         root=`getString $1`;;
+    esac
+  done
+
+  if [ "${onGithub}" = "true" ]; then
+    arch="Linux.x86_64"
+  fi
+
+
+      srcDir=${root}/coriolis-2.x/src/alliance/alliance/src
+  commonRoot=${root}/coriolis-2.x/${arch}/Release.Shared
+ #commonRoot=${root}/coriolis-2.x/${arch}/Debug.Shared
     buildDir=${commonRoot}/build
   installDir=${commonRoot}/install
 
