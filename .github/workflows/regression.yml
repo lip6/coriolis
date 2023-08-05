@@ -41,7 +41,8 @@ jobs:
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
          cd ${{ github.workspace }}/coriolis-2.x/src/yosys
          make ENABLE_PYOSYS=1 config-gcc
-         make ENABLE_PYOSYS=1 PREFIX=/install PYTHON_DESTDIR=/install/lib64/python3/dist-packages DESTDIR=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared install
+         sudo make ENABLE_PYOSYS=1 install
+#        make ENABLE_PYOSYS=1 PREFIX=/install PYTHON_DESTDIR=/install/lib64/python3/dist-packages DESTDIR=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared install
      - name: Build Alliance
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
