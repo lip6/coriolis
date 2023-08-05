@@ -41,7 +41,7 @@ jobs:
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
          cd ${{ github.workspace }}/coriolis-2.x/src/yosys
          make ENABLE_PYOSYS=1 config-gcc
-         sudo make ENABLE_PYOSYS=1 PREFIX=/usr install
+#        sudo make ENABLE_PYOSYS=1 PREFIX=/usr install
          make ENABLE_PYOSYS=1 PREFIX=/install \
               PYTHON_DESTDIR=/install/lib64/python3/dist-packages \
               DESTDIR=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared \
