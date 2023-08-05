@@ -47,8 +47,11 @@ jobs:
          make ENABLE_PYOSYS=1 \
               PREFIX=${{ env.installDir }} \
               PYTHON_DESTDIR=${{ env.installDir }}/lib64/python3/dist-packages \
-              LIBDIR=${{ env.installDir}}/lib64/yosys \
+              LIBDIR=${{ env.installDir }}/lib64/yosys \
+              DATDIR=${{ env.installDir }}/share/yosys \
               install
+     - name: Check Yosys share directory
+       run: ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/share/yosys
      - name: Build Alliance
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
