@@ -42,11 +42,7 @@ jobs:
          cd ${{ github.workspace }}/coriolis-2.x/src/yosys
          make ENABLE_PYOSYS=1 config-gcc
 #        sudo make ENABLE_PYOSYS=1 PREFIX=/usr install
-         make ENABLE_PYOSYS=1 PREFIX=/install \
-              PYTHON_DESTDIR=/install/lib64/python3/dist-packages \
-              DESTDIR=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared \
-              LIBDIR=/install/lib64/yosys \
-              install
+         make ENABLE_PYOSYS=1 PREFIX=/install PYTHON_DESTDIR=/install/lib64/python3/dist-packages DESTDIR=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared LIBDIR=/install/lib64/yosys install
      - name: Build Alliance
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
