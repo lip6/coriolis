@@ -605,17 +605,18 @@ try:
         if conf.doAlliance:
             if conf.rmSource: gitAlliance.removeLocalRepo()
             gitAlliance.clone   ()
-           #gitAlliance.checkout( 'devel' )
+            gitAlliance.checkout( 'main' )
         
         if conf.doCoriolis:
             if conf.rmSource: gitCoriolis.removeLocalRepo()
             gitCoriolis.clone   ()
-            gitCoriolis.checkout( 'devel' )
+            gitCoriolis.checkout( 'main' )
             gitCoriolis.submoduleInit()
             gitCoriolis.submoduleUpdate()
       
         if conf.rmSource: gitBenchs.removeLocalRepo()
         gitBenchs.clone()
+        gitBenchs.checkout( 'main' )
 
     if conf.rmBuild:
         for entry in os.listdir(conf.rootDir):
