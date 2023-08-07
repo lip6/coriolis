@@ -199,7 +199,8 @@ namespace Katana {
   {
     Net* realNet = _segment->getNet();
   //if (realNet->isSupply() or realNet->isClock())
-    if (realNet->isSupply())
+  //if (realNet->isSupply())
+    if (_flags & TElemUseBlockageNet)
       return Session::getBlockageNet();
     return realNet;
   }
@@ -265,7 +266,8 @@ namespace Katana {
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
               + " F"
-              + ((isBlockage()) ? "B" : "-");
+              + ((isBlockage()) ? "B" : "-")
+              + ((_flags & TElemUseBlockageNet) ? "N" : "-");
     s1.insert ( s1.size()-1, s2 );
 
     return s1;
