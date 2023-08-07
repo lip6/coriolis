@@ -50,7 +50,7 @@ namespace Hurricane {
     setMouseTracking( true );
     setFocusPolicy  ( Qt::StrongFocus );
 
-    _rowHeight = QFontMetrics( Graphics::getFixedFont() ).height() + 2;
+    _rowHeight = QFontMetrics( Graphics::getFixedFont() ).height() + 4;
     _charWidth = QFontMetrics( Graphics::getFixedFont() ).averageCharWidth() + 1;
     _model     = new SelectionPopupModel ( this );
     setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
