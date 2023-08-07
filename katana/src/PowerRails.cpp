@@ -495,12 +495,12 @@ namespace {
         if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
           delta = 2 * plane->getLayerGauge()->getPitch();
         } else {
-          delta = plane->getLayerGauge()->getPitch();
+          delta = plane->getLayerGauge()->getPitch() - plane->getLayerGauge()->getHalfWireWidth() - 1;
         }
       }
       else {
       //if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
-        delta = plane->getLayerGauge()->getPitch();
+        delta = plane->getLayerGauge()->getPitch() - plane->getLayerGauge()->getHalfWireWidth() - 1;
       //}
       }
     }
@@ -557,6 +557,7 @@ namespace {
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
+          element->setFlags( TElemUseBlockageNet );
         }
       }
     } else {
@@ -592,6 +593,7 @@ namespace {
                             << "+" << element
                             << " " << (net->isExternal() ? "external" : "internal")
                             << endl;
+          element->setFlags( TElemUseBlockageNet );
         }
       }
     }

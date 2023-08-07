@@ -230,6 +230,7 @@ class Builder ( object ):
             return
         with UpdateSession():
             bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
+            trace( 550, '\tClock buffer access RP @{}\n'.format(bufferRp) )
             self.conf.expandMinArea( bufferRp )
             layerGauge = self.conf.routingGauge.getLayerGauge(self.conf.verticalDepth)
             contact    = Contact.create( ck

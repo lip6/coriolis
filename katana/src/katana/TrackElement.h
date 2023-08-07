@@ -64,20 +64,20 @@ namespace Katana {
 // -------------------------------------------------------------------
 // Class  :  "TrackElement".
 
-  enum TrackElementFlags { TElemCreated      = (1 <<  0)
-                         , TElemBlockage     = (1 <<  2)
-                         , TElemFixed        = (1 <<  3)
-                         , TElemLocked       = (1 <<  4)
-                         , TElemRouted       = (1 <<  5)
-                         , TElemShortDogleg  = (1 <<  6)
-                         , TElemSourceDogleg = (1 <<  7)
-                         , TElemTargetDogleg = (1 <<  8)
-                         , TElemAlignBottom  = (1 <<  9)
-                         , TElemAlignCenter  = (1 << 10)
-                         , TElemAlignTop     = (1 << 11)
-                         , TElemRipple       = (1 << 12)
-                         , TElemInvalidated  = (1 << 13)
-                         };
+  const uint32_t  TElemCreated        = (1 <<  0);
+  const uint32_t  TElemBlockage       = (1 <<  2);
+  const uint32_t  TElemFixed          = (1 <<  3);
+  const uint32_t  TElemLocked         = (1 <<  4);
+  const uint32_t  TElemRouted         = (1 <<  5);
+  const uint32_t  TElemUseBlockageNet = (1 <<  6);
+  const uint32_t  TElemShortDogleg    = (1 <<  7);
+  const uint32_t  TElemSourceDogleg   = (1 <<  8);
+  const uint32_t  TElemTargetDogleg   = (1 <<  9);
+  const uint32_t  TElemAlignBottom    = (1 << 10);
+  const uint32_t  TElemAlignCenter    = (1 << 11);
+  const uint32_t  TElemAlignTop       = (1 << 12);
+  const uint32_t  TElemRipple         = (1 << 13);
+  const uint32_t  TElemInvalidated    = (1 << 14);
 
 
   struct Compare {

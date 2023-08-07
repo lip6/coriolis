@@ -134,6 +134,7 @@ class HorizontalRail ( Rail ):
         return True
 
     def connect ( self, contact ):
+        trace( 550, '\tHorizontalRail.connect() {}\n'.format(contact) )
         viaWidth  = contact.getWidth()
         viaHeight = self.side.hRailWidth
         viaFlags  = BigVia.AllowAllExpand

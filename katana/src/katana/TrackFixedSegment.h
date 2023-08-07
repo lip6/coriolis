@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_FIXED_SEGMENT_H
-#define  KATANA_TRACK_FIXED_SEGMENT_H
-
+#pragma  once
 #include "katana/TrackElement.h"
 
 
@@ -88,5 +86,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackFixedSegment);
-
-#endif  // KATANA_TRACK_FIXED_SEGMENT_H
