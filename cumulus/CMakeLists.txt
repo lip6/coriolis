@@ -11,11 +11,11 @@
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(CORIOLIS)
+ setup_python()
  
  set_cmake_policies()
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  
- find_package(Python 3           REQUIRED COMPONENTS Interpreter Development.Module)
  find_package(PythonSitePackages REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
