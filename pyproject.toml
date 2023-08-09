@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "Coriolis"
+name = "coriolis-eda"
 version = "0.0.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
