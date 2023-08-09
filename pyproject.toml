@@ -45,7 +45,14 @@ include = [
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
-style = "semver"
+style = "pep440"
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage="a", revision=distance) }}
+    {%- endif -%}
+"""
 
 [tool.poetry.dependencies]
 python = "^3.8"
