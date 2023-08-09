@@ -134,7 +134,7 @@ def build(setup_kwargs: Dict[str, Any]) -> None:
                      CMakeExtension("bora", sourcedir="bora"),
                      CMakeExtension("karakaze", sourcedir="karakaze"),
                      #CMakeExtension("knik", sourcedir="knik"),
-                     #CMakeExtension("unicorn", sourcedir="unicorn"),
+                     CMakeExtension("unicorn", sourcedir="unicorn"),
                      CMakeExtension("tutorial", sourcedir="tutorial"),
                      CMakeExtension("cumulus", sourcedir="cumulus"),
                      CMakeExtension("stratus1", sourcedir="stratus1"),
