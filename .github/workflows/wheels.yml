@@ -107,6 +107,7 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@f8c70e705ffc13c3b4d1221169b84f12a75d6ca8 #v1.8.8
         with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
 
   upload_pypi:
@@ -139,7 +140,7 @@ jobs:
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-#
+
 #  build_sdist:
 #    name: Build sdist
 #    runs-on: ubuntu-latest
