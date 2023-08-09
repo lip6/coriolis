@@ -73,7 +73,7 @@ class ExtensionBuilder(build_ext):
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())
         
         build_dir = os.path.join(self.build_temp, ext.sourcedir_rel)
-        install_dir = os.path.join(extdir, 'Coriolis')
+        install_dir = os.path.join(extdir, 'coriolis')
         os.makedirs(build_dir,exist_ok=True)
 
         if "USE_CCACHE" in env:

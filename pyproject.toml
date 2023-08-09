@@ -7,7 +7,7 @@ readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
 packages = [
-  { include = "Coriolis"},
+  { include = "coriolis"},
 ]
 include = [
   "COPYRIGHT.rst",
@@ -70,10 +70,10 @@ script = "builder.py"
 generate-setup-file = true
 
 [tool.poetry.scripts]
-blif2vst =  'Coriolis:blif2vst'
-tutorial = 'Coriolis:tutorial'
-unittests = 'Coriolis:unittests'
-yosys_coriolis = 'Coriolis:yosys_coriolis'
+blif2vst =  'coriolis:blif2vst'
+tutorial = 'coriolis:tutorial'
+unittests = 'coriolis:unittests'
+yosys_coriolis = 'coriolis:yosys_coriolis'
 
 [build-system]
 requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
