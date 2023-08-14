@@ -146,6 +146,7 @@ jobs:
     # TODO: create an sdist that can build without a custom environment
     needs: [build_wheels] 
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         buildplat:
