@@ -33,3 +33,5 @@ def unittests():
 def yosys_coriolis():
     raise SystemExit(_program("yosys.py", sys.argv[1:]))
 
+def cgt():
+    raise SystemExit(_program("cgt", sys.argv[1:]))
