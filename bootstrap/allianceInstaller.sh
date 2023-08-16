@@ -7,10 +7,16 @@
  #  arch="Linux.el7_64"
  #fi
 
-  arch="Linux.el9"
-  if [ "`hostname -s`" == "bop" ]; then
+  arch_str=$((uname -srm))
+  if [[ ${arch_str} =~ Linux.*(el9|al9).*x86_64 ]]; then
+    echo "Building for RHEL 9"
+    arch="Linux.el9"
+  elif [[ ${arch_str} =~ Linux.*(el7|al7).*x86_64 ]]; then
     echo "Building for RHEL 7"
-    arch="Linux.el7_64"
+    arch="Linux.el7"
+  else
+    echo "Building for Generic Linux"
+    arch="Linux.x86_64"
   fi
 
   nightly=""
