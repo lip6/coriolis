@@ -240,11 +240,12 @@ int defiRow::numProps() const {
 
 
 const char* defiRow::propName(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   }
   return propNames_[index];
@@ -252,55 +253,60 @@ const char* defiRow::propName(int index) const {
 
 
 const char* defiRow::propValue(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   }
   return propValues_[index];
 }
 
 double defiRow::propNumber(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   }
   return propDValues_[index];
 }
 
 const char defiRow::propType(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   }
   return propTypes_[index];
 }
 
 int defiRow::propIsNumber(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   } 
   return propDValues_[index] ? 1 : 0;
 }
 
 int defiRow::propIsString(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6140): The index number %d specified for the VIA LAYER RECTANGLE is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6140, msg, defData);
+     free(msg);
      return 0;
   } 
   return propDValues_[index] ? 0 : 1;

@@ -226,11 +226,12 @@ int defiPinProp::numProps() const {
 
 
 const char* defiPinProp::propName(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propNames_[index];
@@ -238,11 +239,12 @@ const char* defiPinProp::propName(int index) const {
 
 
 const char* defiPinProp::propValue(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propValues_[index];
@@ -250,11 +252,12 @@ const char* defiPinProp::propValue(int index) const {
 
 
 double defiPinProp::propNumber(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propDValues_[index];
@@ -262,11 +265,12 @@ double defiPinProp::propNumber(int index) const {
 
 
 const char defiPinProp::propType(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propTypes_[index];
@@ -274,11 +278,12 @@ const char defiPinProp::propType(int index) const {
 
 
 int defiPinProp::propIsNumber(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propDValues_[index] ? 1 : 0;
@@ -286,11 +291,12 @@ int defiPinProp::propIsNumber(int index) const {
 
 
 int defiPinProp::propIsString(int index) const {
-  char msg[160];
+  char *msg;
   if (index < 0 || index >= numProps_) {
-     sprintf (msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
+     asprintf (&msg, "ERROR (DEFPARS-6120): The index number %d specified for the PIN PROPERTY is invalide.\nValid index number is from 0 to %d. Specify a valid index number and then try again.",
               index, numProps_);
      defiError(0, 6120, msg, defData);
+     free(msg);
      return 0;
   }
   return propDValues_[index] ? 0 : 1;
