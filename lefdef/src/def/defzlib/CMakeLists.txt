@@ -11,7 +11,7 @@
                              )
 
                  add_library ( defzlib  ${cpps} )
-#      target_link_libraries ( defzlib  def z )
+       target_link_libraries ( defzlib  def z )
        set_target_properties ( defzlib  PROPERTIES VERSION 5.8 SOVERSION 5 )
       
                      install ( TARGETS  defzlib DESTINATION lib${LIB_SUFFIX} )
