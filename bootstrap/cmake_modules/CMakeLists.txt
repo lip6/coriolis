@@ -6,7 +6,6 @@
                    FindBootstrap.cmake
                    FindLibexecinfo.cmake
                    FindLibbfd.cmake
-                   FindQwt.cmake
                    FindSphinx.cmake
                    FindPelican.cmake
                    FindCOLOQUINTE.cmake

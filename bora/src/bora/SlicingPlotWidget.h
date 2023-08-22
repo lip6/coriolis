@@ -50,13 +50,13 @@ namespace Bora {
                      SlicingPlotWidget   ( QWidget* parent=NULL );
       virtual       ~SlicingPlotWidget   ();
                Cell* getCell             ();
-               void  setViewer           ( CellViewer* );
+               void  setViewer           ( CellViewer* viewer);
                void  setDatas            ();
     public slots:
 #if QWT_VERSION < 0x060000
-               void  onPointSelect       ( const QwtDoublePoint& );
+               void  onPointSelect       ( const QwtDoublePoint& point);
 #else
-               void  onPointSelect       ( const QPointF& );
+               void  onPointSelect       ( const QPointF& point);
 #endif
                void  updateSelectedPoint ( double x, double y );
     signals:

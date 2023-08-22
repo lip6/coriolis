@@ -172,8 +172,8 @@ namespace Cfg {
 
   void  ConfigurationWidget::syncSlaves ()
   {
-    const map<string,Parameter*>& parameters = Configuration::get()->getParameters ();
-    map<string,Parameter*>::const_iterator iparam = parameters.begin();
+    const map<const string,Parameter*>& parameters = Configuration::get()->getParameters ();
+    map<const string,Parameter*>::const_iterator iparam = parameters.begin();
 
     for ( ; iparam != parameters.end() ; ++iparam ) {
       if ( (*iparam).second->getSlaves().empty() ) continue;

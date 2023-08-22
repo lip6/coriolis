@@ -90,7 +90,7 @@
 #include  <sstream>
 #include  <iomanip>
 #include  <map>
-//#include  <regex>
+#include  <regex>
 #include  <regex.h>
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;

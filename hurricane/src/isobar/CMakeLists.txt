@@ -167,15 +167,13 @@
                       )
 
                    set( depLibs    hurricane
-                                   ${Python3_LIBRARIES}
                                    ${Boost_LIBRARIES}
-                                   
                       )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"
                         "isobar;1.0;1"
-                        Hurricane
+                        Isobar
                         "${depLibs}"
                         include/coriolis2/hurricane/isobar
                       )

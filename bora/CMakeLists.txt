@@ -17,9 +17,8 @@
  set_cmake_policies()
  setup_boost(program_options)
  setup_qt()
- setup_qwt()
  setup_python()
- 
+ find_package(Qwt                REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
@@ -29,7 +28,6 @@
  find_package(ANABATIC           REQUIRED)
  find_package(KATANA             REQUIRED)
  find_package(Doxygen)
- 
  add_subdirectory(src)
  add_subdirectory(python)
 #add_subdirectory(cmake_modules)
