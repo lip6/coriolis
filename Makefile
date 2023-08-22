@@ -66,7 +66,7 @@ poetry_deps: check_venv
 
 
 install: check_dir poetry_deps
-	@$(venv); ./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis --doc \
+	@$(venv); ./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis \
 	                                                  --make="$(SMP_FLAGS) install"
 	@echo "";                                                                             \
 	 echo "============================================================================"; \

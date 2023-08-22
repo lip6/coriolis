@@ -5,6 +5,7 @@
                         ${COLOQUINTE_INCLUDE_DIR} 
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
+			${KATANA_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
@@ -47,6 +48,7 @@
                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
                                       ${HURRICANE_LIBRARIES}
                                       ${KITE_LIBRARIES}
+				      ${KATANA_LIBRARIES}
                                       ${CONFIGURATION_LIBRARY}
                                       ${BOOKSHELF_LIBRARY}
                                       ${CIF_LIBRARY}

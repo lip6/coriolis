@@ -41,6 +41,7 @@
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/CellViewer.h"
+#include "katana/KatanaEngine.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
 #include "crlcore/Histogram.h"
@@ -1087,7 +1088,12 @@ namespace Etesian {
     else {
       *_placementUB = placement;
     }
-
+    _updatePlacement(&placement);
+    auto engine = Katana::KatanaEngine::create(getCell());
+    engine->digitalInit();
+    engine->runGlobalRouter(Katana::Flags::NoFlags);
+    //engine->saveGlobalSolution();
+    engine->destroy();
     // Graphical update
     GraphicUpdate conf = getUpdateConf();
     if (conf == GraphicUpdate::UpdateAll) {

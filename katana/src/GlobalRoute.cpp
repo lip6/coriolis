@@ -705,6 +705,10 @@ namespace Katana {
 
     delete dijkstra;
 
+      for ( NetData* netData : getNetOrdering() ) {
+        netData->setGlobalRouted(false);
+      }
+
     Session::close();
     if (isChannelStyle()) {
       setupRoutingPlanes();
