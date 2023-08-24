@@ -1,6 +1,6 @@
-[tool.poetry]
+[project]
 name = "coriolis-eda"
-version = "0.0.0"
+version = "2.5.5"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
 readme = "README.rst"
@@ -32,7 +32,7 @@ include = [
   "katana",
   "lefdef",
   "oroshi",
-  "poetry.lock",
+  "pdm.lock",
   "pyproject.toml",
   "solstice",
   "stratus1",
@@ -41,44 +41,12 @@ include = [
   "unicorn",
   "unittests",
 ]
-
-[tool.poetry-dynamic-versioning]
-enable = true
-vcs = "git"
-style = "pep440"
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- else -%}
-        {{ serialize_pep440(bump_version(base), stage="a", revision=distance) }}
-    {%- endif -%}
-"""
-
-[tool.poetry.dependencies]
-python = "^3.8"
-find-libpython = "^0.3.0"
-patchelf = "^0"
-
-[tool.poetry.dev-dependencies]
-cmake = ">=3"
-ninja = "^1.11.1"
-
-[tool.poetry.group.doc.dependencies]
-pelican = ">= 4.5.0"
-
-[tool.poetry.build] 
-script = "builder.py" 
-generate-setup-file = true
-
-[tool.poetry.scripts]
-blif2vst =  'coriolis:blif2vst'
-tutorial = 'coriolis:tutorial'
-unittests = 'coriolis:unittests'
-yosys_coriolis = 'coriolis:yosys_coriolis'
+[tool.pdm.dev-dependencies]
+doc = ["pelican", "doxygen"]
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "ninja", "poetry-dynamic-versioning"]
-build-backend = "poetry_dynamic_versioning.backend"
+requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@mac-homebrew",  "ninja", "meson-python == 0.13.2"]
+build-backend = "mesonpy"
 
 [tool.cibuildwheel.linux]
 skip = ["cp36-*", "cp37-*", "pp*"]
