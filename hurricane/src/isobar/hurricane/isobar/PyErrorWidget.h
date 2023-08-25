@@ -51,4 +51,4 @@ extern "C" {
 }  // extern "C".
 
 
-}  // Isobar namespace.
+}  // Hurricane namespace.

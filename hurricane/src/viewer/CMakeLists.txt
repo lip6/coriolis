@@ -71,10 +71,10 @@
                                     hurricane/viewer/PyDisplayStyle.h
                                     hurricane/viewer/PyHApplication.h
                                     hurricane/viewer/PyGraphics.h
-                                    hurricane/viewer/PyCellViewer.h
-                                    hurricane/viewer/PyErrorWidget.h
+                                    hurricane/isobar/PyCellViewer.h
+                                    hurricane/isobar/PyErrorWidget.h
                                     hurricane/viewer/PyAboutWindow.h
-                                    hurricane/viewer/Script.h
+                                    hurricane/isobar/Script.h
                       )
                    set( cpps        HApplication.cpp
                                     ScreenUtilities.cpp 

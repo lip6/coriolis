@@ -36,7 +36,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
 #include "anabatic/AutoContact.h"

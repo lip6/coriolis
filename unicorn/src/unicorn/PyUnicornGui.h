@@ -19,7 +19,7 @@
 #define __UNICORN_PY_UNICORN_GUI_H__
 
 #include "hurricane/isobar/PyHurricane.h"
-#include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "unicorn/UnicornGui.h"
 
 

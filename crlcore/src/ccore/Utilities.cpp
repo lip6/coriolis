@@ -28,7 +28,7 @@ namespace boptions = boost::program_options;
 #include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/Backtrace.h"
 #include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Script.h"
+#include  "hurricane/isobar/Script.h"
 #include  "crlcore/Utilities.h"
 #include  "crlcore/AllianceFramework.h"
 
