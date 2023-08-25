@@ -31,7 +31,7 @@
 #include "hurricane/Library.h"
 #include "hurricane/viewer/HApplication.h"
 #include "hurricane/viewer/ExceptionWidget.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 #include "hurricane/UpdateSession.h" 
 #include "hurricane/analog/AnalogCellExtension.h"
 #include "hurricane/analog/LayoutGenerator.h"

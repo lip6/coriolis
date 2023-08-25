@@ -31,7 +31,7 @@ namespace bopts = boost::program_options;
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/UpdateSession.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 
 #include <QtGui>
 #if (QT_VERSION >= QT_VERSION_CHECK(4,5,0)) and \

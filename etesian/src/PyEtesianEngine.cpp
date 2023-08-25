@@ -17,7 +17,7 @@
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyInstance.h"
-#include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/Cell.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "etesian/PyEtesianEngine.h"

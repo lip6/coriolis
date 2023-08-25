@@ -21,8 +21,8 @@
 #include  "hurricane/Error.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/isobar/PyCell.h"
-#include  "hurricane/viewer/PyCellViewer.h"
-#include  "hurricane/viewer/Script.h"
+#include  "hurricane/isobar/PyCellViewer.h"
+#include  "hurricane/isobar/Script.h"
 
 
 namespace Isobar {

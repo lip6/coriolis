@@ -71,10 +71,10 @@
                                     hurricane/viewer/PyDisplayStyle.h
                                     hurricane/viewer/PyHApplication.h
                                     hurricane/viewer/PyGraphics.h
-                                    hurricane/viewer/PyCellViewer.h
-                                    hurricane/viewer/PyErrorWidget.h
                                     hurricane/viewer/PyAboutWindow.h
-                                    hurricane/viewer/Script.h
+                                    hurricane/isobar/PyCellViewer.h
+                                    hurricane/isobar/PyErrorWidget.h
+                                    hurricane/isobar/Script.h
                       )
                    set( cpps        HApplication.cpp
                                     ScreenUtilities.cpp 
@@ -134,10 +134,7 @@
                                     PyHApplication.cpp
                                     PyGraphics.cpp
                                     PyViewer.cpp
-                                    PyCellViewer.cpp
-                                    PyErrorWidget.cpp
                                     PyAboutWindow.cpp
-                                    Script.cpp
                       )
 
           qtX_wrap_cpp( MOC_SRCS    ${mocIncludes} )

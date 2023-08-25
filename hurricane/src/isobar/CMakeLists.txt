@@ -85,6 +85,9 @@
                                    PyUnitRule.cpp
                                    PyPhysicalRule.cpp
                                    PyTwoLayersPhysicalRule.cpp
+                                   PyCellViewer.cpp
+                                   PyErrorWidget.cpp
+                                   Script.cpp
                       )	    
                    set( pyIncludes hurricane/isobar/ProxyProperty.h
                                    hurricane/isobar/PythonAttributes.h
@@ -164,6 +167,9 @@
                                    hurricane/isobar/PyUnitRule.h
                                    hurricane/isobar/PyPhysicalRule.h
                                    hurricane/isobar/PyTwoLayersPhysicalRule.h
+                                   hurricane/viewer/PyCellViewer.h
+                                   hurricane/viewer/PyErrorWidget.h
+                                   hurricane/viewer/Script.h
                       )
 
                    set( depLibs    hurricane

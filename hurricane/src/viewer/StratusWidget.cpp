@@ -30,7 +30,7 @@ using namespace std;
 #include  <QVBoxLayout>
 #include  "hurricane/utilities/Path.h"
 #include  "hurricane/Warning.h"
-#include  "hurricane/viewer/Script.h"
+#include  "hurricane/isobar/Script.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/StratusScript.h"
 #include  "hurricane/viewer/StratusWidget.h"
