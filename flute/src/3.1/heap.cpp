@@ -48,7 +48,7 @@ void  deallocate_heap()
 
 void  heap_init( long  n )
 {
-  register long  p;
+  long  p;
 
   allocate_heap( n );
   _heap_size = 0;
@@ -66,9 +66,9 @@ void  heap_insert(
   long   key 
 )
 {
-  register long  k;       /* hole in the heap     */   
-  register long  j;       /* parent of the hole   */
-  register long  q;       /* heap_elt(j)          */
+  long  k;       /* hole in the heap     */   
+  long  j;       /* parent of the hole   */
+  long  q;       /* heap_elt(j)          */
 
   heap_key( p ) = key;
 
@@ -107,9 +107,9 @@ void  heap_decrease_key
   long   new_key 
 )
 {
-  register long    k;       /* hole in the heap     */   
-  register long    j;       /* parent of the hole   */
-  register long    q;       /* heap_elt(j)          */
+  long    k;       /* hole in the heap     */   
+  long    j;       /* parent of the hole   */
+  long    q;       /* heap_elt(j)          */
 
   heap_key( p ) = new_key;
   k = heap_idx( p ); 
@@ -138,9 +138,9 @@ void  heap_decrease_key
 long  heap_delete_min()
 {
   long    min, last;  
-  register long  k;         /* hole in the heap     */   
-  register long  j;         /* child of the hole    */
-  register long  l_key;     /* key of last point    */
+  long  k;         /* hole in the heap     */   
+  long  j;         /* child of the hole    */
+  long  l_key;     /* key of last point    */
 
   if( _heap_size == 0 )            /* heap is empty */
     return( -1 );
