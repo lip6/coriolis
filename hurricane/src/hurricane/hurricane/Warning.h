@@ -50,8 +50,8 @@ namespace Hurricane {
                        Warning      ( const Warning& warning );
               Warning& operator=    ( const Warning& warning );
     // Methods.
-      inline  string   getReason    () const;
-      inline  int      getCode      () const;
+      inline  string   getReason () const { return _reason; }
+      inline  int      getCode   () const { return _code; }
     // Hurricane Managment.
       virtual string   _getTypeName () const;
       virtual string   _getString   () const;
@@ -61,11 +61,6 @@ namespace Hurricane {
               string   _reason;
               int      _code;
   };
-
-
-// Inline Functions.
-  inline  string  Warning::getReason () const { return _reason; }
-  inline  int     Warning::getCode   () const { return _code; }
 
 
 } // Hurricane namespace.
