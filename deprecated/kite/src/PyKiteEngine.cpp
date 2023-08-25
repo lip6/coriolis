@@ -15,7 +15,7 @@
 
 
 #include "hurricane/isobar/PyCell.h"
-#include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/Cell.h"
 #include "kite/PyKiteEngine.h"

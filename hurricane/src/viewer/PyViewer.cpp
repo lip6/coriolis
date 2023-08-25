@@ -21,8 +21,8 @@
 #include "hurricane/viewer/PyDrawingGroup.h"
 #include "hurricane/viewer/PyDisplayStyle.h"
 #include "hurricane/viewer/PyHSVr.h"
-#include "hurricane/viewer/PyErrorWidget.h"
-#include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/isobar/PyErrorWidget.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/viewer/PyAboutWindow.h"
 
 

@@ -38,7 +38,7 @@
 #include "hurricane/Cell.h"
 //#include  "MapView.h"
 #include "hurricane/isobar/PyCell.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/CellViewer.h"
 #include "hurricane/viewer/CellPrinter.h"
@@ -51,7 +51,7 @@
 #include "hurricane/viewer/DesignBlob.h"
 #include "hurricane/viewer/OpenBlobDialog.h"
 #include "hurricane/viewer/SelectCommand.h"
-#include "hurricane/viewer/PyCellViewer.h"
+#include "hurricane/isobar/PyCellViewer.h"
 
 
 namespace Hurricane {

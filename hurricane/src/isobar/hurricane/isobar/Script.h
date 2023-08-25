@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/viewer/Script.h"                   |
+// |  C++ Header  :  "./hurricane/isobar/Script.h"                   |
 // +-----------------------------------------------------------------+
 
 

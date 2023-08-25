@@ -33,7 +33,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 #include "crlcore/Measures.h"
 #include "knik/Vertex.h"
 #include "knik/Edge.h"
