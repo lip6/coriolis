@@ -36,7 +36,7 @@ namespace Cfg {
     public:
       class LogEntry {
         public:
-          inline               LogEntry ( std::string id );
+          inline               LogEntry ( const std::string id );
           inline  std::string  getId    () const;
           inline  std::string  getValid () const;
           inline  void         restore  () const;
@@ -50,37 +50,37 @@ namespace Cfg {
       static Parameter::Priority       pushDefaultPriority ( Parameter::Priority );
       static Parameter::Priority       popDefaultPriority  ();
       static Parameter::Priority       getDefaultPriority  ();
-      static void                      _tokenize           ( std::set<std::string>& tokens, std::string line );
+      static void                      _tokenize           ( std::set<const std::string>& tokens, const std::string line );
     public:
     // Methods.
              ConfigurationWidget*      buildWidget         ( unsigned int flags );
              ConfigurationDialog*      buildDialog         ();
-      inline const std::map<std::string,Parameter*>&
+      inline const std::map<const std::string,Parameter*>&
                                        getParameters       () const;
              const std::set<LogEntry>& getLogs             ( unsigned int ilog ) const;
       inline unsigned int              getFlags            () const;
       inline const LayoutDescription&  getLayout           () const;
       inline LayoutDescription&        getLayout           ();
-             Parameter*                getParameter        ( std::string     id
+             Parameter*                getParameter        ( const std::string     id
                                                            , Parameter::Type type=Parameter::Unknown ) const;
-             Parameter*                addParameter        ( std::string     id
+             Parameter*                addParameter        ( const std::string     id
                                                            , Parameter::Type type
-                                                           , std::string     value
+                                                           , const std::string     value
                                                            , Parameter::Priority priority=Parameter::UseDefault );
       inline void                      setFlags            ( unsigned int mask );
       inline bool                      hasLogs             ( unsigned int mask ) const;
-             void                      addLog              ( unsigned int mask, std::string id );
-             void                      removeLog           ( unsigned int mask, std::string id );
+             void                      addLog              ( unsigned int mask, const std::string id );
+             void                      removeLog           ( unsigned int mask, const std::string id );
       inline void                      restoreFromLogs     ( unsigned int mask );
       inline void                      clearLogs           ( unsigned int mask );
              void                      print               ( std::ostream& ) const;
-             bool                      readFromFile        ( std::string );
-             bool                      writeToFile         ( std::string, unsigned int flags, std::string tabs="" ) const;
-             void                      writeToStream       ( std::ostream&, unsigned int flags, std::string tabs="" ) const;
+             bool                      readFromFile        ( const std::string );
+             bool                      writeToFile         ( const std::string, unsigned int flags, const std::string tabs="" ) const;
+             void                      writeToStream       ( std::ostream&, unsigned int flags, const std::string tabs="" ) const;
     private:
     // Attributes.
       static Configuration*                         _singleton;
-      std::map<std::string,Parameter*>              _parameters;
+      std::map<const std::string,Parameter*>              _parameters;
       LayoutDescription                             _layout;
       unsigned int                                  _flags;
       std::map< unsigned int, std::set<LogEntry> >  _logSets;
@@ -90,7 +90,7 @@ namespace Cfg {
 
 
 // Inline Methods.
-  inline const std::map<std::string,Parameter*>& Configuration::getParameters () const
+  inline const std::map<const std::string,Parameter*>& Configuration::getParameters () const
   { return _parameters; }
 
   inline const LayoutDescription& Configuration::getLayout () const { return _layout; }
@@ -132,13 +132,13 @@ namespace Cfg {
   }
 
 
-  inline bool  hasParameter ( std::string id )
+  inline bool  hasParameter ( const std::string id )
   {
     return (Configuration::get()->getParameter(id,Parameter::Unknown) != NULL);
   }
 
 
-  inline Parameter* getParamString ( std::string id, std::string value="<undefined>" )
+  inline Parameter* getParamString ( const std::string id, std::string value="<undefined>" )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::String);
     if ( parameter == NULL ) {
@@ -148,7 +148,7 @@ namespace Cfg {
   }
 
 
-  inline Parameter* getParamBool ( std::string id, bool value=false )
+  inline Parameter* getParamBool ( const std::string id, bool value=false )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Bool);
     if ( parameter == NULL ) {
@@ -159,7 +159,7 @@ namespace Cfg {
   }
 
 
-  inline Parameter* getParamInt ( std::string id, int value=0 )
+  inline Parameter* getParamInt ( const std::string id, int value=0 )
   {
   //std::cerr << "getParamInt() " << id << " value:" << value << std::endl;
 
@@ -172,7 +172,7 @@ namespace Cfg {
   }
 
 
-  inline Parameter* getParamEnumerate ( std::string id, int value=0 )
+  inline Parameter* getParamEnumerate ( const std::string id, int value=0 )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Enumerate);
     if ( parameter == NULL ) {
@@ -183,7 +183,7 @@ namespace Cfg {
   }
 
 
-  inline Parameter* getParamDouble ( std::string id, double value=0.0 )
+  inline Parameter* getParamDouble ( const std::string id, double value=0.0 )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Double);
     if ( parameter == NULL ) {
@@ -194,7 +194,7 @@ namespace Cfg {
   }
 
 
-  inline Parameter* getParamPercentage ( std::string id, double value=91.0 )
+  inline Parameter* getParamPercentage ( const std::string id, double value=91.0 )
   {
     Parameter* parameter = Configuration::get()->getParameter(id,Parameter::Percentage);
     if ( parameter == NULL ) {
@@ -205,7 +205,7 @@ namespace Cfg {
   }
 
 
-  inline Configuration::LogEntry::LogEntry ( std::string id )
+  inline Configuration::LogEntry::LogEntry ( const std::string id )
     : _id   (id)
     , _valid("")
   {
