@@ -22,7 +22,7 @@
 #include <fstream>
 #include "hurricane/Warning.h"
 #include "hurricane/isobar/PyBox.h"
-#include "hurricane/viewer/Script.h"
+#include "hurricane/isobar/Script.h"
 #include "hurricane/analog/Device.h"
 #include "hurricane/analog/PyDevice.h"
 #include "hurricane/analog/LayoutGenerator.h"

@@ -18,7 +18,7 @@
 #ifndef  __VIEWER_STRATUS_SCRIPT__
 #define  __VIEWER_STRATUS_SCRIPT__
 
-#include  "hurricane/viewer/Script.h"
+#include  "hurricane/isobar/Script.h"
 
 
 namespace Hurricane {
