@@ -1,140 +1,329 @@
 DoxygenLayout.xml:21: warning: the type 'dirs' is not supported for the entry tag within a navindex! Check your layout file!
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:184: warning: documentation for unknown define trace found.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:184: warning: documentation for unknown define trace found.
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:143: warning: documentation for unknown define for_each_basic_layer found.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:143: warning: documentation for unknown define for_each_basic_layer found.
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:86: warning: documentation for unknown define for_each_basic_layer found.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:86: warning: documentation for unknown define for_each_basic_layer found.
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:31: warning: Documentation for undefined enum 'Flags' found.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:160: warning: documented symbol 'bool Hurricane::in_trace' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:166: warning: documented symbol 'void Hurricane::trace_on' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:170: warning: documented symbol 'void Hurricane::trace_off' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:174: warning: documented symbol 'void Hurricane::trace_in' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Generalities.dox:179: warning: documented symbol 'void Hurricane::trace_out' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Error.dox:60: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RoutingPad.dox:31: warning: Documentation for undefined enum 'Flags' found.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:160: warning: documented symbol 'bool Hurricane::in_trace' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:166: warning: documented symbol 'void Hurricane::trace_on' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:170: warning: documented symbol 'void Hurricane::trace_off' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:174: warning: documented symbol 'void Hurricane::trace_in' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Generalities.dox:179: warning: documented symbol 'void Hurricane::trace_out' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Error.dox:60: warning: no uniquely matching class member found for 
   Hurricane::Error::Inherit
+Possible candidates:
+  'Exception Hurricane::Interruption::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Interruption.h
+  'Collection< Type > Hurricane::GenericCollection< Type >::Inherit' at line 241 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Collection< Type > Hurricane::ElementCollection< Type >::Inherit' at line 404 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Collection< SubType > Hurricane::SubTypeCollection< Type, SubType >::Inherit' at line 482 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Hurricane::Locator< SubType > Hurricane::SubTypeCollection< Type, SubType >::Locator::Inherit' at line 490 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Collection< SubType > Hurricane::NotSubTypeCollection< Type, SubType >::Inherit' at line 648 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Hurricane::Locator< SubType > Hurricane::NotSubTypeCollection< Type, SubType >::Locator::Inherit' at line 656 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Collection< Type > Hurricane::SubSetCollection< Type >::Inherit' at line 814 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Hurricane::Locator< Type > Hurricane::SubSetCollection< Type >::Locator::Inherit' at line 822 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'Collection< Element > Hurricane::ListCollection< Element >::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ListCollection.h
+  'Hurricane::Locator< Element > Hurricane::ListCollection< Element >::Locator::Inherit' at line 46 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ListCollection.h
+  'Collection< Element > Hurricane::MapCollection< Key, Element, Compare >::Inherit' at line 40 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/MapCollection.h
+  'Hurricane::Locator< Element > Hurricane::MapCollection< Key, Element, Compare >::Locator::Inherit' at line 47 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/MapCollection.h
+  'Collection< Element > Hurricane::SetCollection< Element, Compare >::Inherit' at line 43 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/SetCollection.h
+  'Hurricane::Locator< Element > Hurricane::SetCollection< Element, Compare >::Locator::Inherit' at line 50 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/SetCollection.h
+  'Collection< Element > Hurricane::VectorCollection< Element >::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/VectorCollection.h
+  'Hurricane::Locator< Element > Hurricane::VectorCollection< Element >::Locator::Inherit' at line 46 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/VectorCollection.h
+  'Locator< Type > Hurricane::GenericLocator< Type >::Inherit' at line 119 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Locator.h
+  'Filter< Type > Hurricane::GenericFilter< Type >::Inherit' at line 92 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'Filter< Type > Hurricane::NotFilter< Type >::Inherit' at line 220 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'SharedProperty Hurricane::Relation::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Relation.h
+  'Relation Hurricane::StandardRelation::Inherit' at line 86 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Relation.h
+  'DBo Hurricane::DataBase::Inherit' at line 46 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DataBase.h
+  'DBo Hurricane::Library::Inherit' at line 44 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Library.h
+  'IntrusiveMap< Name, Library > Hurricane::Library::LibraryMap::Inherit' at line 49 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Library.h
+  'IntrusiveMap< Name, Cell > Hurricane::Library::CellMap::Inherit' at line 63 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Library.h
+  'DBo Hurricane::Entity::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Entity.h
+  'Entity Hurricane::Cell::Inherit' at line 70 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveMap< Name, Instance > Hurricane::Cell::InstanceMap::Inherit' at line 243 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveSet< Instance > Hurricane::Cell::SlaveInstanceSet::Inherit' at line 257 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveMapConst< Name, Net > Hurricane::Cell::NetMap::Inherit' at line 270 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveMap< Name, Pin > Hurricane::Cell::PinMap::Inherit' at line 284 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveMap< const Layer *, Slice > Hurricane::Cell::SliceMap::Inherit' at line 298 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'IntrusiveSet< Marker > Hurricane::Cell::MarkerSet::Inherit' at line 312 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'Entity Hurricane::Net::Inherit' at line 52 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'IntrusiveSet< Component > Hurricane::Net::ComponentSet::Inherit' at line 120 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'IntrusiveSet< Rubber > Hurricane::Net::RubberSet::Inherit' at line 133 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'Entity Hurricane::Go::Inherit' at line 45 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Go.h
+  'Go Hurricane::Instance::Inherit' at line 41 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'IntrusiveMap< const Net *, Plug > Hurricane::Instance::PlugMap::Inherit' at line 69 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'IntrusiveMap< const SharedPath *, SharedPath > Hurricane::Instance::SharedPathMap::Inherit' at line 83 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'Go Hurricane::Component::Inherit' at line 45 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Component.h
+  'Hook Hurricane::Component::BodyHook::Inherit' at line 77 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Component.h
+  'Component Hurricane::Plug::Inherit' at line 43 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Plug.h
+  'Component Hurricane::Contact::Inherit' at line 45 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'Hook Hurricane::Contact::AnchorHook::Inherit' at line 50 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'Contact Hurricane::Pin::Inherit' at line 43 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pin.h
+  'Component Hurricane::Segment::Inherit' at line 39 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Segment.h
+  'Hook Hurricane::Segment::SourceHook::Inherit' at line 46 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Segment.h
+  'Hook Hurricane::Segment::TargetHook::Inherit' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Segment.h
+  'Segment Hurricane::Vertical::Inherit' at line 42 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Vertical.h
+  'Segment Hurricane::Horizontal::Inherit' at line 42 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Horizontal.h
+  'Component Hurricane::Pad::Inherit' at line 42 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pad.h
+  'Go Hurricane::Rubber::Inherit' at line 42 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Rubber.h
+  'Component Hurricane::RoutingPad::Inherit' at line 48 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'DBo Hurricane::Quark::Inherit' at line 41 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Quark.h
+  'IntrusiveSet< Go > Hurricane::QuadTree::GoSet::Inherit' at line 40 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h
+  'SharedProperty Hurricane::UpdateSession::Inherit' at line 41 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/UpdateSession.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Error.dox:91: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Error.dox:91: warning: no uniquely matching class member found for 
   Error & Hurricane::Error::operator=(const Error &error)
+Possible candidates:
+  'DebugSession & Hurricane::DebugSession::operator=(const DebugSession &)' at line 91 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DebugSession.h
+  'JsonReader & Hurricane::JsonReader::operator=(const JsonReader &) const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/JsonReader.h
+  'Exception & Hurricane::Exception::operator=(const Exception &exception)' at line 58 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Exception.h
+  'Warning & Hurricane::Warning::operator=(const Warning &warning)' at line 51 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Warning.h
+  'Interruption & Hurricane::Interruption::operator=(const Interruption &interruption)' at line 57 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Interruption.h
+  'Collection & Hurricane::Collection< Type >::operator=(const Collection &collection)' at line 66 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'GenericCollection & Hurricane::GenericCollection< Type >::operator=(const Collection< Type > &collection)' at line 293 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'GenericCollection & Hurricane::GenericCollection< Type >::operator=(const GenericCollection &genericCollection)' at line 301 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'GenericCollection & Hurricane::GenericCollection< Type >::operator=(Collection< Type > *collection)' at line 309 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'SubTypeCollection & Hurricane::SubTypeCollection< Type, SubType >::operator=(const SubTypeCollection &subTypeCollection)' at line 604 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'NotSubTypeCollection & Hurricane::NotSubTypeCollection< Type, SubType >::operator=(const NotSubTypeCollection &subTypeCollection)' at line 770 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'SubSetCollection & Hurricane::SubSetCollection< Type >::operator=(const SubSetCollection &subSetCollection)' at line 954 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Collection.h
+  'ListCollection & Hurricane::ListCollection< Element >::operator=(const ListCollection &listCollection)' at line 118 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ListCollection.h
+  'MapCollection & Hurricane::MapCollection< Key, Element, Compare >::operator=(const MapCollection &mapCollection)' at line 119 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/MapCollection.h
+  'SetCollection & Hurricane::SetCollection< Element, Compare >::operator=(const SetCollection &setCollection)' at line 122 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/SetCollection.h
+  'VectorCollection & Hurricane::VectorCollection< Element >::operator=(const VectorCollection &vectorCollection)' at line 118 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/VectorCollection.h
+  'Locator & Hurricane::Locator< Type >::operator=(const Locator &locator)' at line 60 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Locator.h
+  'GenericLocator & Hurricane::GenericLocator< Type >::operator=(const Locator< Type > &locator)' at line 171 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Locator.h
+  'GenericLocator & Hurricane::GenericLocator< Type >::operator=(const GenericLocator &genericLocator)' at line 179 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Locator.h
+  'GenericLocator & Hurricane::GenericLocator< Type >::operator=(Locator< Type > *locator)' at line 187 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Locator.h
+  'Filter & Hurricane::Filter< Type >::operator=(const Filter &filter)' at line 54 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'GenericFilter & Hurricane::GenericFilter< Type >::operator=(const Filter< Type > &filter)' at line 144 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'GenericFilter & Hurricane::GenericFilter< Type >::operator=(const GenericFilter &genericFilter)' at line 152 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'GenericFilter & Hurricane::GenericFilter< Type >::operator=(Filter< Type > *filter)' at line 160 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'NotFilter & Hurricane::NotFilter< Type >::operator=(const NotFilter< Type > &notFilter)' at line 254 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Filter.h
+  'Tabulation & Hurricane::Tabulation::operator=(const Tabulation &tabulation)' at line 59 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Tabulation.h
+  'Point & Hurricane::Point::operator=(const Point &point)' at line 53 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Point.h
+  'Box & Hurricane::Box::operator=(const Box &box)' at line 57 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Box.h
+  'Interval & Hurricane::Interval::operator=(const Interval &)' at line 60 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Interval.h
+  'Orientation & Hurricane::Transformation::Orientation::operator=(const Orientation &orientation)' at line 49 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Transformation.h
+  'Transformation & Hurricane::Transformation::operator=(const Transformation &transformation)' at line 80 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Transformation.h
+  'Name & Hurricane::Name::operator=(const Name &name)' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Name.h
+  'DBo & Hurricane::DBo::operator=(const DBo &)=delete' at line 89 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DBo.h
+  'Material & Hurricane::BasicLayer::Material::operator=(const Material &material)' at line 67 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/BasicLayer.h
+  'Type & Hurricane::Net::Type::operator=(const Type &type)' at line 67 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'Direction & Hurricane::Net::Direction::operator=(const Direction &direction)' at line 104 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'HyperNet & Hurricane::HyperNet::operator=(const HyperNet &hyperNet)' at line 50 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/HyperNet.h
+  'PlacementStatus & Hurricane::Instance::PlacementStatus::operator=(const PlacementStatus &placementstatus)' at line 54 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'AccessDirection & Hurricane::Pin::AccessDirection::operator=(const AccessDirection &accessDirection)' at line 52 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pin.h
+  'PlacementStatus & Hurricane::Pin::PlacementStatus::operator=(const PlacementStatus &placementstatus)' at line 69 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pin.h
+  'Property & Hurricane::Property::operator=(const Property &)' at line 91 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'Hook & Hurricane::Hook::operator=(const Hook &hook)' at line 60 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Hook.h
+  'Path & Hurricane::Path::operator=(const Path &path)' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Path.h
+  'Occurrence & Hurricane::Occurrence::operator=(const Occurrence &occurrence)' at line 58 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Occurrence.h
+  'QuadTree & Hurricane::QuadTree::operator=(const QuadTree &quadTree)' at line 81 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h
+  'Slice & Hurricane::Slice::operator=(const Slice &slice)' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Slice.h
+  'QueryState & Hurricane::QueryState::operator=(const QueryState &)' at line 61 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Query.h
+  'QueryStack & Hurricane::QueryStack::operator=(const QueryStack &)' at line 157 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Query.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Interruption.dox:41: warning: documented symbol 'const string & Hurricane::Interruption::GetReason' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Interruption.dox:45: warning: documented symbol 'int Hurricane::Interruption::GetCode' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Collection.dox:439: warning: documented symbol 'typedef list< Element > Hurricane::ElementList' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Technology.dox:183: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Technology.dox:188: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:128: warning: documented symbol 'const DbU::Unit & Hurricane::Layer::getPitch' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:181: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Interruption.dox:41: warning: documented symbol 'const string & Hurricane::Interruption::GetReason' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Interruption.dox:45: warning: documented symbol 'int Hurricane::Interruption::GetCode' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Collection.dox:439: warning: documented symbol 'typedef list< Element > Hurricane::ElementList' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Technology.dox:183: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Technology.dox:188: warning: documented symbol 'bool Hurricane::Technology::setWorkingLayer' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:128: warning: documented symbol 'const DbU::Unit & Hurricane::Layer::getPitch' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:181: warning: no uniquely matching class member found for 
   DbU::Unit Hurricane::Layer::getEnclosure() const
 Possible candidates:
-  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
-  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::RegularLayer::getEnclosure(uint32_t flags=0) const' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RegularLayer.h
+  'virtual DbU::Unit Hurricane::RegularLayer::getEnclosure(const BasicLayer *layer, uint32_t flags=0) const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RegularLayer.h
+  'virtual DbU::Unit Hurricane::ViaLayer::getEnclosure(uint32_t flags) const' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ViaLayer.h
+  'virtual DbU::Unit Hurricane::ViaLayer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ViaLayer.h
+  'virtual DbU::Unit Hurricane::ContactLayer::getEnclosure(uint32_t flags) const' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ContactLayer.h
+  'virtual DbU::Unit Hurricane::ContactLayer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 63 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ContactLayer.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:185: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:189: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:193: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:185: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:189: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:193: warning: no uniquely matching class member found for 
   DbU::Unit Hurricane::Layer::getEnclosure(const Hurricane::BasicLayer *layer) const
 Possible candidates:
-  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
-  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(uint32_t flags) const' at line 82 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::Layer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 85 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Layer.h
+  'virtual DbU::Unit Hurricane::RegularLayer::getEnclosure(uint32_t flags=0) const' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RegularLayer.h
+  'virtual DbU::Unit Hurricane::RegularLayer::getEnclosure(const BasicLayer *layer, uint32_t flags=0) const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RegularLayer.h
+  'virtual DbU::Unit Hurricane::ViaLayer::getEnclosure(uint32_t flags) const' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ViaLayer.h
+  'virtual DbU::Unit Hurricane::ViaLayer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ViaLayer.h
+  'virtual DbU::Unit Hurricane::ContactLayer::getEnclosure(uint32_t flags) const' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ContactLayer.h
+  'virtual DbU::Unit Hurricane::ContactLayer::getEnclosure(const BasicLayer *layer, uint32_t flags) const' at line 63 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ContactLayer.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:197: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:201: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Layer.dox:227: warning: documented symbol 'bool Hurricane::Layer::isWorking' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:41: warning: documented symbol 'unsigned Hurricane::BasicLayer::getExtractNumber' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:117: warning: documented symbol 'void Hurricane::BasicLayer::setExtractNumber' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:130: warning: documented symbol 'Hurricane::BasicLayers' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:134: warning: documented symbol 'Hurricane::BasicLayerLocator' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/BasicLayer.dox:138: warning: documented symbol 'Hurricane::BasicLayerFilter' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:56: warning: no matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:197: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionCap' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:201: warning: documented symbol 'DbU::Unit Hurricane::Layer::getExtensionWidth' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Layer.dox:227: warning: documented symbol 'bool Hurricane::Layer::isWorking' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:41: warning: documented symbol 'unsigned Hurricane::BasicLayer::getExtractNumber' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:117: warning: documented symbol 'void Hurricane::BasicLayer::setExtractNumber' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:130: warning: documented symbol 'Hurricane::BasicLayers' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:134: warning: documented symbol 'Hurricane::BasicLayerLocator' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/BasicLayer.dox:138: warning: documented symbol 'Hurricane::BasicLayerFilter' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:56: warning: no matching class member found for 
   void Hurricane::RegularLayer::setBlockageLayer(RegularLayer *layer)
+Possible candidates:
+  'void Hurricane::BasicLayer::setBlockageLayer(BasicLayer *layer)' at line 102 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/BasicLayer.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:61: warning: documented symbol 'void Hurricane::RegularLayer::setExtractNumber' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:65: warning: no matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:61: warning: documented symbol 'void Hurricane::RegularLayer::setExtractNumber' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:65: warning: no matching class member found for 
   void Hurricane::RegularLayer::setRealName(const char *)
+Possible candidates:
+  'void Hurricane::BasicLayer::setRealName(const char *realName)' at line 106 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/BasicLayer.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:73: warning: documented symbol 'Hurricane::RegularLayers' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:77: warning: documented symbol 'Hurricane::RegularLayerLocator' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RegularLayer.dox:81: warning: documented symbol 'Hurricane::RegularLayerFilter' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Entity.dox:30: warning: no matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:73: warning: documented symbol 'Hurricane::RegularLayers' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:77: warning: documented symbol 'Hurricane::RegularLayerLocator' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RegularLayer.dox:81: warning: documented symbol 'Hurricane::RegularLayerFilter' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Entity.dox:30: warning: no matching class member found for 
   unsigned int Hurricane::Entity::getId() const
+Possible candidates:
+  'unsigned int Hurricane::DBo::getId() const' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DBo.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:47: warning: documented symbol 'Occurrences Hurricane::HyperNet::getLeafPlugOccurrences' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:39: warning: documented symbol 'Hurricane::Polygons' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:43: warning: documented symbol 'Hurricane::PolygonLocator' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Polygon.dox:47: warning: documented symbol 'Hurricane::PolygonFilter' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:56: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/HyperNet.dox:47: warning: documented symbol 'Occurrences Hurricane::HyperNet::getLeafPlugOccurrences' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Polygon.dox:39: warning: documented symbol 'Hurricane::Polygons' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Polygon.dox:43: warning: documented symbol 'Hurricane::PolygonLocator' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Polygon.dox:47: warning: documented symbol 'Hurricane::PolygonFilter' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RoutingPad.dox:56: warning: no uniquely matching class member found for 
   RoutingPad * Hurricane::RoutingPad::create(Hurricane::Net *net, Hurricane::Occurrence occurrence, unsigned int flags=0)
 Possible candidates:
-  'static RoutingPad * Hurricane::RoutingPad::create(Net *, Occurrence, uint32_t flags=0)' at line 57 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
-  'static RoutingPad * Hurricane::RoutingPad::create(Pin *)' at line 58 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'static DebugSession * Hurricane::DebugSession::create()' at line 59 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DebugSession.h
+  'static StandardRelation * Hurricane::StandardRelation::create(DBo *masterOwner, const Name &name)' at line 98 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Relation.h
+  'static DataBase * Hurricane::DataBase::create()' at line 80 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DataBase.h
+  'static Technology * Hurricane::Technology::create(DataBase *, const Name &)' at line 99 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Technology.h
+  'static BasicLayer * Hurricane::BasicLayer::create(Technology *technology, const Name &name, const Material &material, uint32_t gds2Layer=0, uint32_t gds2Datatype=0, const DbU::Unit &minimalSize=0, const DbU::Unit &minimalSpacing=0)' at line 82 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/BasicLayer.h
+  'static RegularLayer * Hurricane::RegularLayer::create(Technology *technology, const Name &name, BasicLayer *layer)' at line 51 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RegularLayer.h
+  'static ViaLayer * Hurricane::ViaLayer::create(Technology *technology, const Name &name, BasicLayer *bottomLayer, BasicLayer *cutLayer, BasicLayer *topLayer)' at line 52 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ViaLayer.h
+  'static ContactLayer * Hurricane::ContactLayer::create(Technology *technology, const Name &name, BasicLayer *metalLayer, BasicLayer *cutLayer, BasicLayer *activeLayer, BasicLayer *diffusionLayer, BasicLayer *wellLayer)' at line 52 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/ContactLayer.h
+  'static DiffusionLayer * Hurricane::DiffusionLayer::create(Technology *technology, const Name &name, BasicLayer *activeLayer, BasicLayer *diffusionLayer, BasicLayer *wellLayer)' at line 51 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/DiffusionLayer.h
+  'static TransistorLayer * Hurricane::TransistorLayer::create(Technology *technology, const Name &name, BasicLayer *gateLayer, BasicLayer *activeLayer, BasicLayer *diffusionLayer, BasicLayer *wellLayer)' at line 52 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/TransistorLayer.h
+  'static Library * Hurricane::Library::create(DataBase *dataBase, const Name &name)' at line 89 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Library.h
+  'static Library * Hurricane::Library::create(Library *library, const Name &name)' at line 90 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Library.h
+  'static UniquifyRelation * Hurricane::Cell::UniquifyRelation::create(Cell *)' at line 110 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'static SlavedsRelation * Hurricane::Cell::SlavedsRelation::create(Cell *)' at line 178 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'static Cell * Hurricane::Cell::create(Library *library, const Name &name)' at line 401 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'static Net * Hurricane::Net::create(Cell *cell, const Name &name)' at line 165 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'static Instance * Hurricane::Instance::create(Cell *cell, const Name &name, Cell *masterCell, bool secureFlag=true)' at line 112 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'static Instance * Hurricane::Instance::create(Cell *cell, const Name &name, Cell *masterCell, const Transformation &transformation, const PlacementStatus &placementstatus, bool secureFlag=true)' at line 113 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'static Contact * Hurricane::Contact::create(Net *net, const Layer *layer, DbU::Unit x, DbU::Unit y, DbU::Unit width=0, DbU::Unit height=0)' at line 80 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'static Contact * Hurricane::Contact::create(Component *anchor, const Layer *layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width=0, DbU::Unit height=0)' at line 87 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'static Pin * Hurricane::Pin::create(Net *, const Name &, const AccessDirection &, const PlacementStatus &, const Layer *, DbU::Unit x, DbU::Unit y, DbU::Unit width=0, DbU::Unit height=0)' at line 91 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pin.h
+  'static Vertical * Hurricane::Vertical::create(Net *net, const Layer *layer, const DbU::Unit &x, const DbU::Unit &width=0, const DbU::Unit &dySource=0, const DbU::Unit &dyTarget=0)' at line 64 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Vertical.h
+  'static Vertical * Hurricane::Vertical::create(Component *source, Component *target, const Layer *layer, const DbU::Unit &x, const DbU::Unit &width=0, const DbU::Unit &dySource=0, const DbU::Unit &dyTarget=0)' at line 71 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Vertical.h
+  'static Horizontal * Hurricane::Horizontal::create(Net *net, const Layer *layer, const DbU::Unit &y, const DbU::Unit &width=0, const DbU::Unit &dxSource=0, const DbU::Unit &dxTarget=0)' at line 63 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Horizontal.h
+  'static Horizontal * Hurricane::Horizontal::create(Component *source, Component *target, const Layer *layer, const DbU::Unit &y, const DbU::Unit &width=0, const DbU::Unit &dxSource=0, const DbU::Unit &dxTarget=0)' at line 70 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Horizontal.h
+  'static Pad * Hurricane::Pad::create(Net *net, const Layer *layer, const Box &boundingBox)' at line 55 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pad.h
+  'static Polygon * Hurricane::Polygon::create(Net *, const Layer *, const std::vector< Point > &)' at line 106 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Polygon.h
+  'static Diagonal * Hurricane::Diagonal::create(Net *, const Layer *, const Point &source, const Point &target, DbU::Unit width)' at line 49 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Diagonal.h
+  'static RoutingPad * Hurricane::RoutingPad::create(Net *, Occurrence, uint32_t flags=0)' at line 57 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'static RoutingPad * Hurricane::RoutingPad::create(Pin *)' at line 58 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'template < DerivedProperty >
+  static DerivedProperty * Hurricane::Property::create()' at line 65 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'template < DerivedProperty, Value >
+  static DerivedProperty * Hurricane::Property::create(const Value &)' at line 67 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'static StandardPrivateProperty * Hurricane::StandardPrivateProperty< Value, JsonState >::create()' at line 168 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'static StandardPrivateProperty * Hurricane::StandardPrivateProperty< Value, JsonState >::create(const Value &)' at line 169 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'static StandardSharedProperty * Hurricane::StandardSharedProperty< Value >::create()' at line 446 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'static StandardSharedProperty * Hurricane::StandardSharedProperty< Value >::create(const Value &)' at line 447 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Property.h
+  'static PyHolderProperty * Isobar::PyHolderProperty::create(DBo *)' at line 60 of file /Users/roberttaylor/coriolis/hurricane/src/isobar/hurricane/isobar/PythonAttributes.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/RoutingPad.dox:102: warning: no uniquely matching class member found for 
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/RoutingPad.dox:102: warning: no uniquely matching class member found for 
   Box Hurricane::RoutingPad::getBoundingBox(Hurricane::BasicLayer *layer) const
 Possible candidates:
-  'virtual Box Hurricane::RoutingPad::getBoundingBox() const' at line 68 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
-  'virtual Box Hurricane::RoutingPad::getBoundingBox(const BasicLayer *) const' at line 69 of file /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'virtual Box Hurricane::Entity::getBoundingBox() const =0' at line 42 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Entity.h
+  'virtual Box Hurricane::Cell::getBoundingBox() const' at line 408 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Cell.h
+  'virtual Box Hurricane::Net::getBoundingBox() const' at line 171 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Net.h
+  'virtual Box Hurricane::Instance::getBoundingBox() const' at line 119 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Instance.h
+  'virtual Box Hurricane::Component::getBoundingBox() const =0' at line 106 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Component.h
+  'virtual Box Hurricane::Component::getBoundingBox(const BasicLayer *) const =0' at line 107 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Component.h
+  'virtual Box Hurricane::Plug::getBoundingBox() const' at line 69 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Plug.h
+  'virtual Box Hurricane::Plug::getBoundingBox(const BasicLayer *basicLayer) const' at line 71 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Plug.h
+  'virtual Box Hurricane::Contact::getBoundingBox() const' at line 99 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'virtual Box Hurricane::Contact::getBoundingBox(const BasicLayer *) const' at line 101 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Contact.h
+  'virtual Box Hurricane::Vertical::getBoundingBox() const' at line 85 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Vertical.h
+  'virtual Box Hurricane::Vertical::getBoundingBox(const BasicLayer *basicLayer) const' at line 86 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Vertical.h
+  'virtual Box Hurricane::Horizontal::getBoundingBox() const' at line 84 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Horizontal.h
+  'virtual Box Hurricane::Horizontal::getBoundingBox(const BasicLayer *basicLayer) const' at line 85 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Horizontal.h
+  'virtual Box Hurricane::Pad::getBoundingBox() const' at line 62 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pad.h
+  'virtual Box Hurricane::Pad::getBoundingBox(const BasicLayer *basicLayer) const' at line 63 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Pad.h
+  'virtual Box Hurricane::Polygon::getBoundingBox() const' at line 117 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Polygon.h
+  'virtual Box Hurricane::Polygon::getBoundingBox(const BasicLayer *) const' at line 118 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Polygon.h
+  'virtual Box Hurricane::Diagonal::getBoundingBox() const' at line 60 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Diagonal.h
+  'virtual Box Hurricane::Diagonal::getBoundingBox(const BasicLayer *) const' at line 61 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Diagonal.h
+  'virtual Box Hurricane::Rubber::getBoundingBox() const' at line 73 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Rubber.h
+  'virtual Box Hurricane::RoutingPad::getBoundingBox() const' at line 68 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'virtual Box Hurricane::RoutingPad::getBoundingBox(const BasicLayer *) const' at line 69 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/RoutingPad.h
+  'Box Hurricane::Occurrence::getBoundingBox() const' at line 75 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Occurrence.h
+  'Box Hurricane::Occurrence::getBoundingBox(const BasicLayer *) const' at line 76 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Occurrence.h
+  'const Box & Hurricane::QuadTree::getBoundingBox() const' at line 87 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/QuadTree.h
+  'const Box & Hurricane::Slice::getBoundingBox() const' at line 71 of file /Users/roberttaylor/coriolis/hurricane/src/hurricane/hurricane/Slice.h
 
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PrivateProperty.dox:49: warning: documented symbol 'typedef PrivateProperty::Inherit Hurricane::Property' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/SharedProperty.dox:50: warning: documented symbol 'typedef SharedProperty::Inherit Hurricane::Property' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/SharedProperty.dox:71: warning: documented symbol 'DBos Hurricane::SharedProperty::GetOwners' was not declared or defined.
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/DebugSession.dox:103: warning: Found unknown command '\Returns'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:40: warning: Illegal command @typename as part of a \c command
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:72: warning: argument 'stack' of command @param is not found in the argument list of Hurricane::JsonObject::check(JsonStack &, std::string fname) const
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:148: warning: argument 'name' of command @param is not found in the argument list of Hurricane::JsonObject::setName(const std::string &)
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:161: warning: argument 'T' of command @param is not found in the argument list of Hurricane::JsonObject::setObject(T t)
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h:102: warning: The following parameter of Hurricane::JsonObject::setObject(T t) is not documented:
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/PrivateProperty.dox:49: warning: documented symbol 'typedef PrivateProperty::Inherit Hurricane::Property' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/SharedProperty.dox:50: warning: documented symbol 'typedef SharedProperty::Inherit Hurricane::Property' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/SharedProperty.dox:71: warning: documented symbol 'DBos Hurricane::SharedProperty::GetOwners' was not declared or defined.
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Collection.dox:244: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/DebugSession.dox:103: warning: Found unknown command '\Returns'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Go.dox:201: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/HyperNet.dox:31: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/HyperNet.dox:34: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:103: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:163: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:177: warning: Unsupported xml/html tag <masterCell> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <this> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <cloneCell> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:184: warning: Unsupported xml/html tag <cloneCell> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:186: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Instance.dox:186: warning: Illegal command \cloneCell found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:40: warning: Illegal command @typename found as part of a \c command
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:72: warning: argument 'stack' of command @param is not found in the argument list of Hurricane::JsonObject::check(JsonStack &, std::string fname) const
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:148: warning: argument 'name' of command @param is not found in the argument list of Hurricane::JsonObject::setName(const std::string &)
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:161: warning: argument 'T' of command @param is not found in the argument list of Hurricane::JsonObject::setObject(T t)
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:161: warning: The following parameter of Hurricane::JsonObject::setObject(T t) is not documented:
   parameter 't'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:178: warning: Found unknown command '\Important'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:181: warning: argument 'The' of command @param is not found in the argument list of Hurricane::JsonObject::toData(JsonStack &stack)
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:183: warning: Found unknown command '\Important'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/JsonObject.h:105: warning: The following parameter of Hurricane::JsonObject::toData(JsonStack &stack) is not documented:
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:178: warning: Found unknown command '\Important'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:181: warning: argument 'The' of command @param is not found in the argument list of Hurricane::JsonObject::toData(JsonStack &stack)
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:183: warning: Found unknown command '\Important'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:181: warning: The following parameter of Hurricane::JsonObject::toData(JsonStack &stack) is not documented:
   parameter 'stack'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:193: warning: Found unknown command '\Remark'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/JsonObject.dox:204: warning: Found unknown command '\Remark'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Collection.dox:244: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'hvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'vvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/PhysicalRule.h:83: warning: The following parameters of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength) are not documented:
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:193: warning: Found unknown command '\Remark'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/JsonObject.dox:204: warning: Found unknown command '\Remark'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <this> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <cloneCell> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Net.dox:299: warning: Unsupported xml/html tag <cloneCell> found
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'hvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: argument 'vvalue' of command @param is not found in the argument list of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/PhysicalRule.dox:70: warning: The following parameters of Hurricane::PhysicalRule::addValue(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength) are not documented:
   parameter 'hValue'
   parameter 'vValue'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <this> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:295: warning: Unsupported xml/html tag <cloneCell> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Net.dox:299: warning: Unsupported xml/html tag <cloneCell> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:31: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/HyperNet.dox:34: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Go.dox:201: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:103: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:163: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:177: warning: Unsupported xml/html tag <masterCell> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <this> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:182: warning: Unsupported xml/html tag <cloneCell> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:184: warning: Unsupported xml/html tag <cloneCell> found
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Instance.dox:186: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:49: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:184: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:204: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Property.dox:367: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/QuadTree.dox:15: warning: Illegal command \n as part of a title section
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:78: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:81: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:84: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:87: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:90: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:95: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:98: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:101: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:104: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:108: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:111: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:114: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:117: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:120: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:123: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:127: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:131: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:135: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:139: warning: Found unknown command '\sreturn'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Query.h:357: warning: The following parameter of Hurricane::Query::setQuery(Cell *cell, const Box &area, const Transformation &transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0) is not documented:
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Property.dox:49: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Property.dox:183: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Property.dox:203: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Property.dox:367: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/QuadTree.dox:15: warning: Illegal command \n found as part of a title section
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:78: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:81: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:84: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:87: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:90: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:95: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:98: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:101: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:104: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:108: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:111: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:114: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:117: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:120: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:123: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:127: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:131: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:135: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:139: warning: Found unknown command '\sreturn'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/Query.dox:144: warning: The following parameter of Hurricane::Query::setQuery(Cell *cell, const Box &area, const Transformation &transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0) is not documented:
   parameter 'threshold'
-/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/PythonAttributes.dox:79: warning: Found unknown command '\Remark'
+/Users/roberttaylor/coriolis/hurricane/doc/hurricane/PythonAttributes.dox:79: warning: Found unknown command '\Remark'

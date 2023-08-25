@@ -53,6 +53,7 @@ class ExtensionBuilder(build_ext):
                     raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
     def build_cmake_extension(self, ext: CMakeExtension) -> None:
+        print(f"Building: {ext.name}") 
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cmake_args = []
 
@@ -76,6 +77,7 @@ class ExtensionBuilder(build_ext):
         install_dir = os.path.join(extdir, 'coriolis')
         os.makedirs(build_dir,exist_ok=True)
 
+        cmake_args += ["-Wno-dev"]
         if "USE_CCACHE" in env:
             cmake_args += ["-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"]
 
@@ -86,8 +88,10 @@ class ExtensionBuilder(build_ext):
         cmake_args += [f"-DPython_CORIOLISARCH={install_dir}"]
         cmake_args += [f"-DSYS_CONF_DIR={install_dir}"]
         cmake_args += [f"-DCORIOLIS_TOP={install_dir}"]
+        cmake_args += [f"-DCORIOLIS_DIR_SEARCH={install_dir}"]
         cmake_args += [f"-DCORIOLIS_USER_TOP={install_dir}"]
         cmake_args += [f"-DUSE_MANYLINUX=TRUE"]
+        cmake_args += ["-DCMAKE_VERBOSE_MAKEFILE=ON"]
 
         cmake_args += [f"-DPython_EXECUTABLE={sys.executable}"]
 
@@ -96,7 +100,7 @@ class ExtensionBuilder(build_ext):
         cmake_args += ["-DBUILD_DOC=TRUE"]
         cmake_args += ["-DCMAKE_BUILD_RPATH_USE_ORIGIN=1"]
         cmake_args += ["-DCMAKE_SKIP_BUILD_RPATH=FALSE"]
-        cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE"]
+        cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH='$ORIGIN/lib:$ORIGIN'"]
         cmake_args += ["-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"]
 

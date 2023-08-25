@@ -29,15 +29,7 @@
 #  The LEF C++ API library (zlib) : LEFDEF_ZLEF_LIBRARY
 #                                   LEFDEF_ZLEF_LIBRARY_RELEASE
 
-# Try to find a reasonable CORIOLIS_TOP value.
- if( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
-   set ( CORIOLIS_USER_TOP "$ENV{CORIOLIS_USER_TOP}" )
- else( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
-   if( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
-     set ( CORIOLIS_TOP "$ENV{CORIOLIS_TOP}" )
-   endif( NOT("$ENV{CORIOLIS_TOP}" STREQUAL "") )
- endif( NOT("$ENV{CORIOLIS_USER_TOP}" STREQUAL "") )
-
+  SETUP_SEARCH_DIR(CORIOLIS)
 
  macro( _find_lefdef_lib varname libname )
    find_library( LEFDEF_${varname}_LIBRARY_RELEASE NAMES ${libname}       PATHS ${LEFDEF_LIBRARY_DIR} )
@@ -66,21 +58,6 @@
 # Don't even bother under Win32
  if( UNIX )
    set( LEFDEF_FOUND "YES" )
-   set( LEFDEF_SEARCH_PATH "$ENV{CORIOLIS_TOP}"
-                           "$ENV{LEFDEF_TOP}"
-                           "/usr"
-                           "/opt/lefdef-5.8"
-                           "/opt/lefdef-5.7"
-                           "/opt/lefdef-5.6"
-                           "/opt/lefdef"
-                           "$ENV{HOME}/oa/lefdef/5.7-s038"
-                           "/soc/oa"
-                           )
-   message( "-- Components of LEFDEF_DIR_SEARCH:" )
-   foreach( PATH ${LEFDEF_SEARCH_PATH} )
-     message( "--   ${PATH}" )
-   endforeach()
- 
    set( LEFDEF_LIBRARIES           "" )
    set( LEFDEF_LIBRARY_SEARCH_PATH "" )
  
@@ -90,10 +67,14 @@
                                  DOC "The ${LEFDEF_INCLUDE_DIR_DESCRIPTION}" )
    message( STATUS "LEFDEF_INCLUDE_DIR: ${LEFDEF_INCLUDE_DIR}" )
  
-   find_path( LEFDEF_LIBRARY_DIR NAMES "libdef.so"
-                                 PATHS ${LEFDEF_SEARCH_PATH}
-                                 PATH_SUFFIXES "lib64" "lib"
-                                 DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
+  FIND_LIBRARY( LEFDEF_LIBRARY_DIR
+    NAMES def
+    PATHS ${CORIOLIS_DIR_SEARCH}
+    PATH_SUFFIXES lib64 lib
+    # Help the user find it if we cannot.
+    DOC "${LEFDEF_LIBRARY_DIR_DESCRIPTION}"
+  )
+
    message( STATUS "LEFDEF_LIBRARY_DIR: ${LEFDEF_LIBRARY_DIR}" )
  
    if( LEFDEF_INCLUDE_DIR AND LEFDEF_LIBRARY_DIR )

@@ -83,15 +83,18 @@
      qtX_add_resources( RCC_SRCS       Configuration.qrc )
                         
            add_library( configuration  ${cpps} ${mocCpps} ${RCC_SRCS} )
+ target_link_libraries( configuration  PRIVATE Qt5::Widgets )
  set_target_properties( configuration  PROPERTIES VERSION 1.0 SOVERSION 1 )
                         
            add_library( pytypemanager  ${pyTypeCpps} )
+ target_link_libraries( pytypemanager  PRIVATE isobar hurricane )
  set_target_properties( pytypemanager  PROPERTIES VERSION 1.0 SOVERSION 1 )
+ set_has_unresolved_symbols( pytypemanager)
 
     add_python_module3( "${pyCfgCpps}"
                         "${pyCfgIncludes}"
                         Cfg
-                        "pytypemanager;configuration;hurricane;${QtX_LIBRARIES};"
+                        "pytypemanager;configuration;hurricane;isobar;${QtX_LIBRARIES};"
                         include/coriolis2/hurricane/configuration
                       )
 
