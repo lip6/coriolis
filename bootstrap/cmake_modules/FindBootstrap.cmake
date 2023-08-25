@@ -1,5 +1,3 @@
-
-
 #
 # Setup CMake policies.
 #
@@ -82,6 +80,7 @@
  set(BUILD_SHARED_LIBS "ON")
 #set(DEBUG_FLAGS "-g -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC")
  set(DEBUG_FLAGS "-g")
+ set(CMAKE_CXX_STANDARD 17)
  if(CYGWIN)
    set(ADDITIONAL_FLAGS "-D_GLIBCXX_USE_C99")
    set(CXX_STANDARD "gnu++17")
@@ -89,6 +88,13 @@
    set(ADDTIONAL_FLAGS "")
    set(CXX_STANDARD "c++17")
  endif()
+
+ set(LINK_UNRESOLVED "-Wl,--unresolved-symbols=ignore-all")
+ if(APPLE)
+   set(LINK_UNRESOLVED "-undefined dynamic_lookup")
+ endif()
+  
+
 #set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
  set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
  set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -O2                ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
@@ -159,11 +165,15 @@ endif()
  endmacro()
 #
 # sets that a library is expected to have unresolved symbols
-# Usage:  set_library_unresolved_symbols(<PROJECT>)
+# Usage:  set_has_unresolved_symbols(<PROJECT>)
 # 
 # Should be used before set_libraries_path.
  macro(set_has_unresolved_symbols configname)
-	 set(${configname}_LIBRARIES "-Wl,--unresolved-symbols=ignore-all" ${${configname}_LIBRARIES})
+   if( TARGET ${configname} )
+     set_target_properties( ${configname} PROPERTIES LINK_FLAGS ${LINK_UNRESOLVED} )
+   else()
+     set(${configname}_LIBRARIES ${LINK_UNRESOLVED} ${${configname}_LIBRARIES})
+   endif()
  endmacro()
 
 #
@@ -295,34 +305,13 @@ endif()
 # Find Qwt, correlated to the Qt version.
 #
  macro(setup_qwt)
-   if(WITH_QT4)
-     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
-                               PATHS         /usr/include/qwt-qt4
-                                             /opt/local/libexec/qt4/include
-                                             /usr/include/qt4
-                                             /usr/include
-                               PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
-                              PATHS /opt/local/libexec/qt4/lib
-                                    /usr/lib64
-				    /usr/lib )
-   else()
-     find_path(QWT_INCLUDE_DIR NAMES         qwt.h
-                               PATHS         /usr/include/qt5
-                                             /usr/include
-                               PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
-                              PATHS /usr/lib64
-			            /usr/lib )
-   endif()
-
-   if( QWT_INCLUDE_DIR AND QWT_LIBRARY)
-     set(QWT_FOUND TRUE)
-   endif()
-
+   find_package(PkgConfig)
+   pkg_search_module(QWT REQUIRED Qt5Qwt6)
    if(QWT_FOUND)
+     set( QWT_LIBRARY ${QWT_LINK_LIBRARIES} )
+     set( QWT_INCLUDE_DIR ${QWT_CFLAGS} )
      if(NOT QWT_FIND_QUIETLY)
-       message(STATUS "-- Found Qwt: ${QWT_LIBRARY}")
+       message(STATUS "-- Found Qwt: libs:${QWT_LIBRARY} cflags:${QWT_INCLUDE_DIR}")
      endif()
    else()
      if(QWT_FIND_REQUIRED)
@@ -425,12 +414,12 @@ endif()
      list( GET clibSpec 2 soversion )
      set( pyDeplibs ${clib} ${deplibs} )
 
-             add_library( ${clib}      ${pyCpps} ) 
-   set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion})
-   #target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
-   target_link_libraries( ${clib}      ${deplibs} )
+     add_library( ${clib} ${pyCpps} ) 
+     set_target_properties( ${clib}      PROPERTIES VERSION ${version} SOVERSION ${soversion})
+     #target_compile_definitions( ${clib} PUBLIC Py_LIMITED_API=1)
+     target_link_libraries( ${clib}      ${deplibs} )
+     set_has_unresolved_symbols( ${clib} )
                  install( TARGETS      ${clib}  DESTINATION lib${LIB_SUFFIX} )
-     target_link_options( ${clib} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
    endif()
   
                      set( pytarget     "${pymodule}_target" )
@@ -443,8 +432,7 @@ endif()
                         )
 		#target_compile_definitions( ${pytarget} PUBLIC Py_LIMITED_API=1)
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
-   target_link_options( ${pytarget} PRIVATE "LINKER:--unresolved-symbols=ignore-all")
-
+   set_has_unresolved_symbols( ${pytarget} )
                  install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
    if( NOT ("${pyIncludes}" STREQUAL "None") )
                  install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
@@ -466,6 +454,7 @@ endif()
              add_library( ${pymodule}  MODULE ${pyCpps} ) 
    set_target_properties( ${pymodule}  PROPERTIES PREFIX "" )
    target_link_libraries( ${pymodule}  ${deplibs} )
+   set_has_unresolved_symbols( ${pymodule} )
    # target_compile_definitions( ${pymodule} PUBLIC Py_LIMITED_API=1)
 
                  install( TARGETS      ${pymodule}    DESTINATION ${Python_CORIOLISARCH} )

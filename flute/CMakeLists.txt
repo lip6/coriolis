@@ -19,6 +19,7 @@
  setup_python()
 
  find_package(PythonSitePackages REQUIRED)
+ find_package(Boost              REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
 

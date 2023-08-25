@@ -7,9 +7,9 @@
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
-                        ${QWT_INCLUDE_DIR}
                         ${QtX_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
+                        ${QWT_INCLUDE_DIR}
                       )
                    set( includes     bora/Constants.h
                                      bora/ParameterRange.h
@@ -98,15 +98,16 @@
                                      ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
-                                     ${QWT_LIBRARY}
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
+                                     ${QWT_LIBRARY}
                                       -lutil
                       )
 
            add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( bora         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries( bora         ${depLibs} )
+
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

@@ -57,6 +57,7 @@ format-jinja = """
 [tool.poetry.dependencies]
 python = "^3.8"
 find-libpython = "^0.3.0"
+patchelf = "^0"
 
 [tool.poetry.dev-dependencies]
 cmake = ">=3"
@@ -76,7 +77,7 @@ unittests = 'coriolis:unittests'
 yosys_coriolis = 'coriolis:yosys_coriolis'
 
 [build-system]
-requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
+requires = ["poetry-core", "setuptools", "cmake", "ninja", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.cibuildwheel.linux]

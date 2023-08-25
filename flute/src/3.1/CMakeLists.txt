@@ -5,6 +5,7 @@
                         ${HURRICANE_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Python_INCLUDE_DIRS}
+                        ${Boost_INCLUDE_DIRS}
                       )
 
                    set( includes      flute.h
@@ -34,6 +35,7 @@
                                       ${HURRICANE_LIBRARIES}
                                       ${UTILITIES_LIBRARY}
                                       ${Python3_LIBRARIES}
+                                      ${Boost_LIBRARIES}
                                       
                                       -lutil
                       )

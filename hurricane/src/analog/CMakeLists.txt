@@ -166,6 +166,7 @@
            add_library( analog      ${cpps} ${pyCpps} )
  set_target_properties( analog      PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries( analog      ${depLibs} )
+ set_has_unresolved_symbols( analog )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

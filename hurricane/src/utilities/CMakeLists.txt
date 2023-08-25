@@ -11,6 +11,7 @@
                        )             
                          
            add_library ( utils     ${cpps} )
+ target_link_libraries ( utils     hurricane )
  set_target_properties ( utils     PROPERTIES VERSION 1.0 SOVERSION 1 )
 
                install ( TARGETS   utils DESTINATION lib${LIB_SUFFIX} )
