@@ -76,6 +76,9 @@ isobar_sources = [
   'PyUnitRule.cpp',
   'PyPhysicalRule.cpp',
   'PyTwoLayersPhysicalRule.cpp',
+  'Script.cpp',
+  'PyCellViewer.cpp',
+  'PyErrorWidget.cpp',
 ]
 
 isobar = library(
