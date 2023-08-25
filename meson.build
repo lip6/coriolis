@@ -17,6 +17,9 @@ add_project_arguments(
   '-Wno-deprecated-declarations',
   '-Wno-unused-function',
   '-Wno-unused-private-field',
+  '-Wno-return-type-c-linkage',
+  '-Wno-unused-variable',
+  '-Wno-#pragma-messages',
   language: ['c','cpp']
 )
 
@@ -24,7 +27,11 @@ py = import('python').find_installation()
 py_deps = dependency('python3-embed', required: true)
 
 qt = import('qt5')
-qt_deps = dependency('qt5', modules: ['Core', 'Gui', 'Widgets'], required:true)
+qt_deps = dependency('qt5',
+  modules: ['Core', 'Gui', 'Widgets', 'PrintSupport', 'Svg'],
+  required:true
+)
+
 boost = dependency('boost', required: true)
 
 subdir('hurricane')
