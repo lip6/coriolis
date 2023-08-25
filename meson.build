@@ -21,9 +21,10 @@ add_project_arguments(
 )
 
 py = import('python').find_installation()
-py_deps = dependency('python3')
+py_deps = dependency('python3-embed', required: true)
+
 qt = import('qt5')
-qt_deps = dependency('qt5', modules: ['Core', 'Gui', 'Widgets'])
-boost = dependency('boost')
+qt_deps = dependency('qt5', modules: ['Core', 'Gui', 'Widgets'], required:true)
+boost = dependency('boost', required: true)
 
 subdir('hurricane')
