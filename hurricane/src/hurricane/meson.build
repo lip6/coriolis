@@ -1,4 +1,4 @@
-shared_library(
+hurricane = shared_library(
   'hurricane',
   'Record.cpp',
   'Slot.cpp',
@@ -91,7 +91,7 @@ shared_library(
   'PhysicalRule.cpp',
   'TwoLayersPhysicalRule.cpp',
 
-  dependencies: [qt_deps, boost, rapidjson],
+  dependencies: [qt_deps, boost, rapidjson, bzip2],
   include_directories: includes
 )
 

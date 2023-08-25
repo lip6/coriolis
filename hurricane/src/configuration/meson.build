@@ -27,6 +27,7 @@ configuration = library(
   mocs,
   resources,
   dependencies: [qt_deps, boost],
+  link_with: [hurricane, isobar],
   include_directories: includes
 )
 
@@ -35,6 +36,7 @@ pytypemanager = library(
   'ProxyProperty.cpp',
   'PyTypeManager.cpp',
   dependencies: [qt_deps, boost, py_deps],
+  link_with: [hurricane, isobar],
   include_directories: includes
 )
 
