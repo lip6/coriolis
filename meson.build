@@ -33,5 +33,8 @@ qt_deps = dependency('qt5',
 )
 
 boost = dependency('boost', required: true)
+flex = find_program('flex', required: true)
+bison = find_program('bison', required: true)
 
 subdir('hurricane')
+subdir('lefdef')
