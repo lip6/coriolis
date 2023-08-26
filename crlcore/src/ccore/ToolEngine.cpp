@@ -193,8 +193,8 @@ namespace CRL {
 
   ToolEngine::ToolEngine ( Cell* cell, bool verbose )
     : Super()
-    , _verbose                  (verbose)
     , _cell                     (cell)
+    , _verbose                  (verbose)
     , _placementModificationFlag(0)
     , _routingModificationFlag  (0)
     , _inRelationDestroy        (false)

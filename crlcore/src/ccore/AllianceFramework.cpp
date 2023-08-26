@@ -249,9 +249,6 @@ namespace CRL {
       System::get();
       AllianceFramework* af = new AllianceFramework ();
       af->_postCreate();
-    //if (not (flags & NoPythonInit))
-    //  System::runPythonInit();
-    //_singleton->bindLibraries();
     }
 
     return _singleton;
