@@ -1,4 +1,4 @@
-includes = include_directories(
+hurricane_includes = include_directories(
   'hurricane',
   'utilities',
   'isobar',

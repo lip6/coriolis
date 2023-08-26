@@ -86,7 +86,7 @@ isobar = library(
   isobar_sources,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [hurricane],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 
 py.extension_module(
@@ -94,7 +94,7 @@ py.extension_module(
   isobar_sources,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [isobar],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 
 

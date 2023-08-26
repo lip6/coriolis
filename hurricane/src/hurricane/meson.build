@@ -92,6 +92,6 @@ hurricane = shared_library(
   'TwoLayersPhysicalRule.cpp',
 
   dependencies: [qt_deps, boost, rapidjson, bzip2],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 

@@ -34,7 +34,7 @@ viewer_mocs = qt.compile_moc(
     'hurricane/viewer/ScriptWidget.h',
     'hurricane/viewer/AboutWindow.h'
   ],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 
 viewer_resources = qt.compile_resources(
@@ -105,14 +105,14 @@ viewer = shared_library(
   viewer_resources,
   dependencies: [qt_deps, py_deps,  boost, rapidjson],
   link_with: [hurricane, utils, configuration, pytypemanager, isobar, analog],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 
 py.extension_module(
   'Viewer',
   dependencies: [qt_deps, py_deps, boost, rapidjson],
   link_with: [hurricane, utils, configuration, pytypemanager, viewer, isobar, analog],
-  include_directories: includes
+  include_directories: hurricane_includes
 ) 
 
 

@@ -77,7 +77,7 @@ analog = shared_library(
   analog_py_files,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [hurricane, isobar, utils],
-  include_directories: includes
+  include_directories: hurricane_includes
 ) 
 
 py.extension_module(
@@ -85,7 +85,7 @@ py.extension_module(
   analog_py_files,
   dependencies: [qt_deps, py_deps, boost, rapidjson],
   link_with: [hurricane, utils, configuration, pytypemanager, isobar, analog],
-  include_directories: includes
+  include_directories: hurricane_includes
 ) 
 
 
