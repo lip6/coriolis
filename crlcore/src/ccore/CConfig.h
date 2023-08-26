@@ -24,9 +24,6 @@
 #   define  __CCONFIG_H__
 
 
-/* The root directory where CORIOLIS is to be installed. */
-#undef CORIOLIS_TOP
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 

@@ -40,7 +40,6 @@ namespace CRL {
                                 Environment            ();
                                ~Environment            ();
     // Accessors.
-      inline const std::string& getCORIOLIS_TOP        () const;
       inline const std::string& getDisplayStyle        () const;
       inline       long         getSCALE_X             () const;
       inline const std::string& getDISPLAY             () const;
@@ -90,7 +89,6 @@ namespace CRL {
              Record*            _getRecord             () const;
     protected:
     // Internal: Attributes.
-             std::string        _CORIOLIS_TOP;
              std::string        _displayStyle;
              long               _SCALE_X;
              std::string        _IN_LO;
@@ -117,7 +115,6 @@ namespace CRL {
 
 
   // Inline Member Functions.
-  inline const std::string&     Environment::getCORIOLIS_TOP        () const { return _CORIOLIS_TOP; }
   inline const std::string&     Environment::getDisplayStyle        () const { return _displayStyle; }
   inline       long             Environment::getSCALE_X             () const { return _SCALE_X; }
   inline const std::string&     Environment::getIN_LO               () const { return _IN_LO; }

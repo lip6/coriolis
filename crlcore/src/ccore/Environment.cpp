@@ -56,8 +56,7 @@ namespace CRL {
 // Class  :  "Environment".
 
   Environment::Environment ()
-    : _CORIOLIS_TOP       (CORIOLIS_TOP)
-    , _displayStyle       ()
+    : _displayStyle       ()
     , _SCALE_X            (10)
     , _IN_LO              ("vst")
     , _IN_PH              ("ap")
@@ -335,7 +334,6 @@ namespace CRL {
   Record *Environment::_getRecord () const
   {
     Record* record = new Record ( "<Environment>" );
-    record->add ( getSlot ( "_CORIOLIS_TOP"       , &_CORIOLIS_TOP        ) );
     record->add ( getSlot ( "_displayStyle"       , &_displayStyle        ) );
     record->add ( getSlot ( "_SCALE_X"            , &_SCALE_X             ) );
     record->add ( getSlot ( "_IN_LO"              , &_IN_LO               ) );
@@ -357,7 +355,6 @@ namespace CRL {
   {
     w->startObject();
     jsonWrite( w, "@typename"    , _getTypeName() );
-    jsonWrite( w, "_CORIOLIS_TOP", _CORIOLIS_TOP  );
     jsonWrite( w, "_displayStyle", _displayStyle  );
     jsonWrite( w, "_SCALE_X"     , _SCALE_X       );
     jsonWrite( w, "_IN_LO"       , _IN_LO         );
@@ -387,7 +384,6 @@ namespace CRL {
   JsonEnvironment::JsonEnvironment ( unsigned long flags )
     : JsonObject(flags)
   {
-    add( "_CORIOLIS_TOP", typeid(string)  );
     add( "_displayStyle", typeid(string)  );
     add( "_SCALE_X"     , typeid(int64_t) );
     add( "_IN_LO"       , typeid(string)  );
