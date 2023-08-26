@@ -1,0 +1,1 @@
+option('check-database', type : 'boolean', value : false, description: 'Build with database checking enabled. Very slow!')

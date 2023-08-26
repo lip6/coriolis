@@ -1,0 +1,17 @@
+block = files([
+  '__init__.py',
+  'bigvia.py',
+  'block.py',
+  'configuration.py',
+  'hfns1.py',
+  'hfns2.py',
+  'hfns3.py',
+  'hfns4.py',
+  'htree.py',
+  'iospecs.py',
+  'matrix.py',
+  'meson.build',
+  'rsmt.py',
+  'spares.py',
+  'timing.py',
+])

@@ -18,7 +18,7 @@
 #include <tuple>
 #include <iostream>
 #include <unordered_map>
-#include "coloquinte/coloquinte.hpp"
+#include "coloquinte.hpp"
 
 #include "hurricane/Timer.h"
 #include "hurricane/Name.h"

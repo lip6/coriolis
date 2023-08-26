@@ -90,8 +90,10 @@ hurricane = shared_library(
   'UnitRule.cpp',
   'PhysicalRule.cpp',
   'TwoLayersPhysicalRule.cpp',
+  'Text.cpp',
 
   dependencies: [qt_deps, boost, rapidjson, bzip2],
-  include_directories: includes
+  include_directories: hurricane_includes,
+  install: true,
 )
 

@@ -448,7 +448,6 @@ endif()
 #                      "inc_install_dir").
 #   * pymodule:        The name of the Python module (for "import PYMODULE").
 #   * deplibs:         The list of dependencies.
-#   * inc_install_dir: The directory into which install the includes.
 #
  macro( add_python_module3 pyCpps pyIncludes pymodule deplibs inc_install_dir )
              add_library( ${pymodule}  MODULE ${pyCpps} ) 
