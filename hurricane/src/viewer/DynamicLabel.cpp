@@ -72,8 +72,8 @@ namespace Hurricane {
     QFont  font   = Graphics::getFixedFont(QFont::Bold);
     int    cwidth = QFontMetrics(font).width('X');
 
-    if ( flags|NoIndent   ) _dynamicLabel->setIndent( 0 );
-    if ( flags|HalfIndent ) _dynamicLabel->setIndent( cwidth/2 );
+    if ( flags & NoIndent   ) _dynamicLabel->setIndent( 0 );
+    if ( flags & HalfIndent ) _dynamicLabel->setIndent( cwidth/2 );
     _dynamicLabel->setMinimumSize( QSize(cwidth*chars,QFontMetrics(font).height()) );
   }
 
