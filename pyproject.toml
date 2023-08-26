@@ -2,7 +2,7 @@
 name = "coriolis-eda"
 version = "2.5.5"
 description = "Place and Route for semiconductors"
-authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
+authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"

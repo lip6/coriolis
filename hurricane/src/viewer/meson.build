@@ -34,13 +34,24 @@ viewer_mocs = qt.compile_moc(
     'hurricane/viewer/ScriptWidget.h',
     'hurricane/viewer/AboutWindow.h'
   ],
-  include_directories: includes
+  include_directories: hurricane_includes
 )
 
 viewer_resources = qt.compile_resources(
   sources: 'CellViewer.qrc'
 )
 
+viewer_py = files([
+  'PyHSVr.cpp',
+  'PyDrawingStyle.cpp',
+  'PyDrawingGroup.cpp',
+  'PyDisplayStyle.cpp',
+  'PyHApplication.cpp',
+  'PyGraphics.cpp',
+  'PyViewer.cpp',
+  'PyAboutWindow.cpp'
+])
+ 
 viewer = shared_library(
   'viewer',
   'HApplication.cpp',
@@ -93,26 +104,22 @@ viewer = shared_library(
   'DesignBlob.cpp',
   'JsonConfiguration.cpp',
   'AboutWindow.cpp',
-  'PyHSVr.cpp',
-  'PyDrawingStyle.cpp',
-  'PyDrawingGroup.cpp',
-  'PyDisplayStyle.cpp',
-  'PyHApplication.cpp',
-  'PyGraphics.cpp',
-  'PyViewer.cpp',
-  'PyAboutWindow.cpp',
+  viewer_py,
   viewer_mocs,
   viewer_resources,
   dependencies: [qt_deps, py_deps,  boost, rapidjson],
-  link_with: [hurricane, utils, configuration, pytypemanager, isobar, analog],
-  include_directories: includes
+  link_with: [hurricane, utilities, configuration, pytypemanager, isobar, analog],
+  include_directories: hurricane_includes,
+  install: true,
 )
 
 py.extension_module(
   'Viewer',
-  dependencies: [qt_deps, py_deps, boost, rapidjson],
-  link_with: [hurricane, utils, configuration, pytypemanager, viewer, isobar, analog],
-  include_directories: includes
+  viewer_py,
+  dependencies: [qt_deps, py_mod_deps, boost, rapidjson],
+  link_with: [hurricane, utilities, configuration, pytypemanager, viewer, isobar, analog],
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
 ) 
-
 

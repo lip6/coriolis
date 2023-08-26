@@ -1,3 +1,38 @@
+analog_py_files = files([ 
+  'PyAnalog.cpp',
+  'PyCapacitorFamily.cpp',
+  'PyCapacitorParameter.cpp',
+  'PyCascode.cpp',
+  'PyChoiceParameter.cpp',
+  'PyCommonDrain.cpp',
+  'PyCommonGatePair.cpp',
+  'PyCommonSourcePair.cpp',
+  'PyCrossCoupledPair.cpp',
+  'PyDevice.cpp',
+  'PyDifferentialPair.cpp',
+  'PyFormFactorParameter.cpp',
+  'PyLayoutGenerator.cpp',
+  'PyLevelShifter.cpp',
+  'PyMCheckBoxParameter.cpp',
+  'PyMultiCapacitor.cpp',
+  'PyMatrix.cpp',
+  'PyParameter.cpp',
+  'PySimpleCurrentMirror.cpp',
+  'PySpinBoxParameter.cpp',
+  'PyStepParameter.cpp',
+  'PyStringParameter.cpp',
+  'PyFloatParameter.cpp',
+  'PyTransistor.cpp',
+  'PyTransistorFamily.cpp',
+  'PyTransistorPair.cpp',
+  'PyMatrixParameter.cpp',
+  'PyCapacitiesParameter.cpp',
+  'PyMultiCapacitor.cpp',
+  'PyResistorFamily.cpp',
+  'PyResistor.cpp'
+])
+
+
 analog = shared_library(
   'analog',
   'AnalogCellExtension.cpp',
@@ -39,50 +74,20 @@ analog = shared_library(
   'MetaResistor.cpp',
   'ResistorFamily.cpp',
   'Resistor.cpp',
- 
-  'PyAnalog.cpp',
-  'PyCapacitorFamily.cpp',
-  'PyCapacitorParameter.cpp',
-  'PyCascode.cpp',
-  'PyChoiceParameter.cpp',
-  'PyCommonDrain.cpp',
-  'PyCommonGatePair.cpp',
-  'PyCommonSourcePair.cpp',
-  'PyCrossCoupledPair.cpp',
-  'PyDevice.cpp',
-  'PyDifferentialPair.cpp',
-  'PyFormFactorParameter.cpp',
-  'PyLayoutGenerator.cpp',
-  'PyLevelShifter.cpp',
-  'PyMCheckBoxParameter.cpp',
-  'PyMultiCapacitor.cpp',
-  'PyMatrix.cpp',
-  'PyParameter.cpp',
-  'PySimpleCurrentMirror.cpp',
-  'PySpinBoxParameter.cpp',
-  'PyStepParameter.cpp',
-  'PyStringParameter.cpp',
-  'PyFloatParameter.cpp',
-  'PyTransistor.cpp',
-  'PyTransistorFamily.cpp',
-  'PyTransistorPair.cpp',
-  'PyMatrixParameter.cpp',
-  'PyCapacitiesParameter.cpp',
-  'PyMultiCapacitor.cpp',
-  'PyResistorFamily.cpp',
-  'PyResistor.cpp',
-
+  analog_py_files,
   dependencies: [qt_deps, py_deps, boost],
-  link_with: [hurricane, isobar, utils],
-  include_directories: includes
+  link_with: [hurricane, isobar, utilities],
+  include_directories: hurricane_includes,
+  install: true,
 ) 
 
 py.extension_module(
   'Analog',
-  dependencies: [qt_deps, py_deps, boost, rapidjson],
-  link_with: [hurricane, utils, configuration, pytypemanager, isobar, analog],
-  include_directories: includes
+  analog_py_files,
+  dependencies: [qt_deps, py_mod_deps, boost, rapidjson],
+  link_with: [hurricane, utilities, configuration, pytypemanager, isobar, analog],
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
 ) 
-
-
 

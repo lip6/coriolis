@@ -50,7 +50,7 @@ using namespace Hurricane;
               void*          getShadow       () const { return _shadow; };
               void*          getShadowMember () const { return (void*)((unsigned long)_shadow+_offset); };
               template<typename DBoType>
-              DBoType*       getAsType       () { return dynamic_cast<DBoType*>(_owner); };
+              DBoType*       getAsType       () { return dynamic_cast<DBoType*>(_owner); }
     public:
       virtual Name           getName         () const { return getPropertyName(); }
       virtual void           onCapturedBy    ( DBo* owner );

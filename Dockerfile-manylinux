@@ -6,9 +6,7 @@ RUN yum -y install epel-release && \
 RUN yum install -y \
  qt5-qtbase-devel qt5-qtsvg-devel \
  rapidjson-devel bison flex doxygen bzip2-devel flex-devel \
- boost-devel \
- boost-python boost-filesystem \
- boost-regex  boost-wave \
+ boost169-devel \
  python36-devel libxml2-devel \
  qwt-devel \
  ccache \
