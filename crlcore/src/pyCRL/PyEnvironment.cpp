@@ -145,7 +145,6 @@ extern "C" {
 
   
   // Standart Accessors (Attributes).
-  DirectGetStringAttribute(PyEnvironment_getCORIOLIS_TOP,getCORIOLIS_TOP,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getDisplayStyle,getDisplayStyle,PyEnvironment,Environment)
   DirectGetLongAttribute  (PyEnvironment_getSCALE_X     ,getSCALE_X     ,PyEnvironment,Environment)
   DirectGetStringAttribute(PyEnvironment_getIN_LO       ,getIN_LO       ,PyEnvironment,Environment)
@@ -190,9 +189,7 @@ extern "C" {
 
 
   PyMethodDef PyEnvironment_Methods[] =
-    { { "getCORIOLIS_TOP"       , (PyCFunction)PyEnvironment_getCORIOLIS_TOP       , METH_NOARGS
-                                , "Gets the symbolic technology file." }
-    , { "getDisplayStyle"       , (PyCFunction)PyEnvironment_getDisplayStyle       , METH_NOARGS
+    { { "getDisplayStyle"       , (PyCFunction)PyEnvironment_getDisplayStyle       , METH_NOARGS
                                 , "Gets the name of the display style currently in use." }
     , { "getSCALE_X"            , (PyCFunction)PyEnvironment_getSCALE_X            , METH_NOARGS
                                 , "Gets the SCALE_X factor (for fixed point computation)." }

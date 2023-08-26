@@ -46,7 +46,6 @@ namespace CRL {
       static inline bool                   getCatchCore  ();
       static inline const Utilities::Path& getPath       ( const std::string& );
       static inline bool                   setCatchCore  ( bool catchCore );
-      static inline void                   runPythonInit ();
     private:
       static System*                                      _singleton;
              bool                                         _catchCore;
@@ -59,14 +58,12 @@ namespace CRL {
       inline bool                   _getCatchCore  ();
              const Utilities::Path& _getPath       ( const std::string& );
       inline bool                   _setCatchCore  ( bool catchCore );
-             void                   _runPythonInit ();
   };
 
 
   inline bool                   System::getCatchCore  ()                         { return get()->_getCatchCore(); }
   inline const Utilities::Path& System::getPath       ( const std::string& key ) { return get()->_getPath(key); }
   inline bool                   System::setCatchCore  ( bool catchCore )         { return get()->_setCatchCore(catchCore); }
-  inline void                   System::runPythonInit ()                         { return get()->_runPythonInit(); }
 
 
 // -------------------------------------------------------------------
