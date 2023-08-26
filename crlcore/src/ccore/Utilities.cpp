@@ -114,9 +114,7 @@ namespace {
 
   std::string  environmentMapper ( std::string environmentName )
   {
-    if      ( environmentName == "HOME"                 ) return "home";
-    else if ( environmentName == "CORIOLIS_TOP"         ) return "coriolis_top";
-    else if ( environmentName == "STRATUS_MAPPING_NAME" ) return "stratus_mapping_name";
+    if ( environmentName == "STRATUS_MAPPING_NAME" ) return "stratus_mapping_name";
     return "";
   }
 
@@ -254,10 +252,6 @@ namespace CRL {
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
-      ( "home"                , boptions::value<string>()
-                              , "User's home directory." )
-      ( "coriolis_top"        , boptions::value<string>()->default_value(CORIOLIS_TOP)
-                              , "The root directory of the Coriolis installation tree." )
       ( "stratus_mapping_name", boptions::value<string>()
                               , "Stratus virtual cells mapping." );
 
@@ -265,77 +259,6 @@ namespace CRL {
     boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
     boptions::notify ( arguments );
 
-  // Force creation of singleton at this stage.
-  // cerr << "In System singleton creation." << endl;
-  // AllianceFramework::get();
-  // cerr << "AllianceFramework has been allocated." << endl;
-
-  // cerr << "std::string typeid name:" << typeid(string).name() << endl;
-
-  // Check for duplicated type_info initialization.
-    const boptions::variable_value& value = arguments["coriolis_top"];
-    if ( value.value().type() != typeid(string) ) {
-      throw Error("type_info RTTI tree has been initialized twice.\n\n"
-                  "        This may be due to incorrect import of Python modules, please ensure\n"
-                  "        that the CRL module is always imported first."
-                 );
-    }
-
-    if ( arguments.count("coriolis_top") ) {
-      _pathes.insert ( make_pair("coriolis_top", arguments["coriolis_top"].as<string>()) );
-    }
-
-    Utilities::Path sysConfDir ( SYS_CONF_DIR );
-    if ( not sysConfDir.absolute() ) {
-      if ( arguments.count("coriolis_top") ) {
-        // const boptions::variable_value& value = arguments["coriolis_top"];
-        // cerr << "value:"
-        //      << " empty:"     << boolalpha << value.empty()
-        //      << " defaulted:" << boolalpha << value.defaulted()
-        //      << endl;
-        // const type_info& info = value.value().type();
-        // cerr << "type_info:" << info.name()
-        //      << " vs. " << typeid(string).name() << endl;
-        // cerr << "Equal:" << boolalpha << (info == typeid(std::string)) << endl;
-
-        // const type_info& info2 = typeid(string);
-        // cerr << (void*)&(typeid(string))
-        //      << " vs. " << (void*)&info2
-        //      << " vs. " << (void*)&info
-        //      << endl;
-        // cerr << "any_cast<string>:" << boost::any_cast<string>(value.value()) << endl;
-
-        sysConfDir = arguments["coriolis_top"].as<string>() / sysConfDir;
-      } else {
-        cerr << Error("Environment variable CORIOLIS_TOP not set,"
-                      " may be unable to read configuration...") << endl;
-      }
-    }
-    sysConfDir /= "coriolis2";
-    _pathes.insert ( make_pair("etc" ,sysConfDir                    ) );
-    _pathes.insert ( make_pair("home",arguments["home"].as<string>()) );
-
-  // Early setting of python pathes to be able to execute configuration scripts.
-    Utilities::Path pythonSitePackages ( PYTHON_SITE_PACKAGES );
-    pythonSitePackages = arguments["coriolis_top"].as<string>() / pythonSitePackages;
-    _pathes.insert ( make_pair("pythonSitePackages",pythonSitePackages.toString()) );
-    // Utilities::Path crlcoreDir  = pythonSitePackages / "crlcore";
-    // Utilities::Path stratusDir  = pythonSitePackages / "stratus";
-    // Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
-    // Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
-    // Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
-    Utilities::Path etcDir      = _pathes["etc"];
-
-    Isobar::Script::addPath ( etcDir.toString() );
-    Isobar::Script::addPath ( sysConfDir.toString() );
-    Isobar::Script::addPath ( pythonSitePackages.toString() );
-    // Isobar::Script::addPath ( crlcoreDir.toString() );
-    // Isobar::Script::addPath ( stratusDir.toString() );
-    // Isobar::Script::addPath ( cumulusDir.toString() );
-    // Isobar::Script::addPath ( oroshiDir.toString() );
-    // Isobar::Script::addPath ( karakazeDir.toString() );
-
-  // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();
 
     Cfg::getParamBool  ("misc.catchCore"      ,false )->registerCb ( this, catchCoreChanged );
@@ -349,21 +272,12 @@ namespace CRL {
     Cfg::getParamInt   ("misc.maxTraceLevel"  ,0     )->registerCb ( this, maxTraceLevelChanged );
     Cfg::getParamString("stratus1.mappingName",""    )->registerCb ( this, stratus1MappingNameChanged );
 
-  // Immediate update from the configuration.
-  //catchCoreChanged     ( Cfg::getParamBool("misc.catchCore"    ) );
-  //verboseLevel1Changed ( Cfg::getParamBool("misc.verboseLevel1") );
-  //verboseLevel2Changed ( Cfg::getParamBool("misc.verboseLevel2") );
-  //infoChanged          ( Cfg::getParamBool("misc.info"         ) );
-  //paranoidChanged      ( Cfg::getParamBool("misc.paranoid"     ) );
-  //bugChanged           ( Cfg::getParamBool("misc.bug"          ) );
-  //logModeChanged       ( Cfg::getParamBool("misc.logMode"      ) );
-  //traceLevelChanged    ( Cfg::getParamInt ("misc.traceLevel"   ) );
-
     Utilities::Path stratusMappingName;
     if ( arguments.count("stratus_mapping_name") ) {
       Cfg::getParamString( "stratus1.mappingName")->setString ( arguments["stratus_mapping_name"].as<string>() );
     }
   }
+
 
 
   System *System::get ()
@@ -458,37 +372,6 @@ namespace CRL {
 
     return (*ipath).second;
   }
-
-
-  void  System::_runPythonInit ()
-  {
-    Utilities::Path sysConfDir         = getPath("etc");
-    Utilities::Path pythonSitePackages = getPath("pythonSitePackages");
-
-  //bool            systemConfFound = false;
-    Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
-    if ( systemConfFile.exists() ) {
-    //systemConfFound = true;
-    //cout << "  o  Reading python dot configuration:" << endl;
-    //cout << "     - <" << systemConfFile.string() << ">." << endl;
-
-      Isobar::Script* systemScript = Isobar::Script::create(systemConfFile.stem().toString());
-      systemScript->runFunction("coriolisConfigure",NULL,Isobar::Script::NoScriptArgs);
-      systemScript->destroy();
-    } else {
-      cerr << Warning("System configuration file:\n  <%s> not found."
-                     ,systemConfFile.toString().c_str()) << endl;
-    }
-
-  // Delayed printing, as we known only now whether VerboseLevel1 is requested.
-  //if ( cmess1.enabled() ) {
-  //  cmess1 << "  o  Reading Configuration. " << endl;
-  //  if (systemConfFound) cmess1 << "     - <" << systemConfFile.string() << ">." << endl;
-  //  if (homeConfFound)   cmess1 << "     - <" << homeConfFile.string() << ">." << endl;
-  //  if (dotConfFound)    cmess1 << "     - <" << dotConfFile.string() << ">." << endl;
-  //}
-  }
-
 
 // -------------------------------------------------------------------
 // Class  :  "CRL::IoFile".

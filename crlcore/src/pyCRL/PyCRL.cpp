@@ -106,16 +106,13 @@ extern "C" {
 
 
   static PyModuleDef  PyCRL_ModuleDef =
-    { PyModuleDef_HEAD_INIT
-    , "CRL"               /* m_name     */
-    , "Coriolis Core I/O framework"
-                          /* m_doc      */
-    , -1                  /* m_size     */
-    , PyCRL_Methods       /* m_methods  */
-    , NULL                /* m_reload   */
-    , NULL                /* m_traverse */
-    , NULL                /* m_clear    */
-    , NULL                /* m_free     */
+    { 
+      .m_base = PyModuleDef_HEAD_INIT,
+      .m_name = "CRL",
+      .m_doc = "Coriolis Core I/O framework",
+      .m_size =  -1,
+      .m_methods = PyCRL_Methods,
+//      .m_slots = PyCRL_Slots
     };
 
 
