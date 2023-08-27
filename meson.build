@@ -32,7 +32,7 @@ qt_deps = dependency('qt5',
   required:true
 )
 
-boost = dependency('boost', required: true)
+boost = dependency('boost', modules: ['program_options'], required: true)
 libxml2 = dependency('libxml2', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)

@@ -10,38 +10,43 @@ crlcore_includes = include_directories(
   'cif',
   'liberty',
   'toolbox',
-) + hurricane_includes
+  '../fonts'
+) 
  
+vst_parser_grammar =  custom_target('VstParserGrammar.cpp',
+  output: [ 'VstParserGrammar.cpp', 'VstParserGrammar.hpp' ],
+  input: 'alliance/vst/VstParserGrammar.yy',
+  command: [ bison, '-v', '-d', '-p', 'VST', '-o', '@OUTPUT0@', '-y', '@INPUT@' ]
+)
+
 vst_parser_scanner =  custom_target('VstParserScanner.cpp',
   output: [ 'VstParserScanner.cpp' ],
   input: 'alliance/vst/VstParserScanner.ll',
-  command: [ flex, '-PVST', '-o@OUTPUT@', '@INPUT@' ]
+  command: [ flex, '-PVST', '-o@OUTPUT@', '@INPUT@' ],
+  depends: vst_parser_grammar
 )
 
-vst_parser_grammar =  custom_target('VstParserGrammer.cpp',
-  output: [ 'VstParserGrammer.cpp', 'VstParserGrammer.hpp' ],
-  input: 'alliance/vst/VstParserGrammar.yy',
-  command: [ bison, '-v', '-d', '-p', 'VST', '-o', '@OUTPUT1@', '-y', '@INPUT@' ]
+ioc_parser_grammar =  custom_target('IocParserGrammar.cpp',
+  output: [ 'IocParserGrammar.cpp', 'IocParserGrammar.hpp' ],
+  input: 'ioc/IocParserGrammar.yy',
+  command: [ bison, '-v', '-d', '-p', 'Ioc', '-o', '@OUTPUT0@', '-y', '@INPUT@' ]
 )
-  
+ 
 ioc_parser_scanner =  custom_target('IocParserScanner.cpp',
   output: [ 'IocParserScanner.cpp' ],
   input: 'ioc/IocParserScanner.ll',
-  command: [ flex, '-PVST', '-o@OUTPUT@', '@INPUT@' ]
+  command: [ flex, '-PIoc', '-o@OUTPUT@', '@INPUT@' ],
+  depends: ioc_parser_grammar
 )
 
-ioc_parser_grammar =  custom_target('IocParserGrammer.cpp',
-  output: [ 'IocParserGrammer.cpp', 'IocParserGrammer.hpp' ],
-  input: 'ioc/IocParserGrammar.yy',
-  command: [ bison, '-v', '-d', '-p', 'VST', '-o', '@OUTPUT1@', '-y', '@INPUT@' ]
-)
- 
+
 
 ccore_mocs = qt.compile_moc(
   headers: [
     'crlcore/GraphicToolEngine.h'
   ],
-  include_directories: crlcore_includes
+  include_directories: crlcore_includes,
+  dependencies: Hurricane
 )
 
 crlcore = shared_library(
@@ -72,6 +77,13 @@ crlcore = shared_library(
   'alliance/ap/ApDriver.cpp',
   'gds/GdsDriver.cpp',
   'gds/GdsParser.cpp',
+
+  'toolbox/HyperNetPortOccurrences.cpp',
+  'toolbox/ToolBox.cpp',
+  'toolbox/UniqueCellOccurrences.cpp',
+  'toolbox/RoutingPads.cpp',
+  'toolbox/NamingScheme.cpp',
+
   'alliance/vst/VhdlBit.cpp',
   'alliance/vst/VhdlSignal.cpp',
   'alliance/vst/VhdlPortMap.cpp',
@@ -97,9 +109,8 @@ crlcore = shared_library(
   ioc_parser_grammar,
   ioc_parser_scanner,
 
-
-  link_with: [hurricane, lefdef],
-  dependencies: [qt_deps, py_deps, libxml2, boost]
+  dependencies: [qt_deps, py_deps, libxml2, boost, Hurricane, LefDef],
+  include_directories: [crlcore_includes, hurricane_includes]
 )
   
 
