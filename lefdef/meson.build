@@ -38,3 +38,7 @@ lefdef = shared_library(
   ],
 )
 
+LefDef = declare_dependency(
+  link_with: lefdef,
+  include_directories: lefdef_includes
+)

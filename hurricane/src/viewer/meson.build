@@ -108,7 +108,7 @@ viewer = shared_library(
   viewer_mocs,
   viewer_resources,
   dependencies: [qt_deps, py_deps,  boost, rapidjson],
-  link_with: [hurricane, utils, configuration, pytypemanager, isobar, analog],
+  link_with: [hurricane, utilities, configuration, pytypemanager, isobar, analog],
   include_directories: hurricane_includes
 )
 
@@ -116,7 +116,7 @@ py.extension_module(
   'Viewer',
   viewer_py,
   dependencies: [qt_deps, py_deps, boost, rapidjson],
-  link_with: [hurricane, utils, configuration, pytypemanager, viewer, isobar, analog],
+  link_with: [hurricane, utilities, configuration, pytypemanager, viewer, isobar, analog],
   include_directories: hurricane_includes
 ) 
 

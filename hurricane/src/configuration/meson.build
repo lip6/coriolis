@@ -27,7 +27,7 @@ configuration = shared_library(
   mocs,
   resources,
   dependencies: [qt_deps, boost],
-  link_with: [hurricane, isobar, utils],
+  link_with: [hurricane, isobar, utilities],
   include_directories: hurricane_includes
 )
 

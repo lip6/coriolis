@@ -1,4 +1,4 @@
-utils = shared_library(
+utilities = shared_library(
   'utils',
   'Path.cpp',
   'Dots.cpp',
