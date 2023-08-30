@@ -38,6 +38,8 @@ libxml2 = dependency('libxml2', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
 
+add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
+
 subdir('hurricane')
 subdir('lefdef')
 subdir('crlcore')

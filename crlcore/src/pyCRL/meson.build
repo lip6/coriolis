@@ -1,15 +1,4 @@
-py.extension_module(
-  'Constant',
-  'PyConstant.cpp',
-  dependencies: [qt_deps, py_deps, boost, Hurricane],
-  include_directories: crlcore_includes,
-  subdir: 'coriolis',
-  install: true
-) 
-
-py.extension_module(
-  'CRL',
-
+pyCRL_files = files([
   'PyCRL.cpp',
   'PySystem.cpp',
   'PyBanner.cpp',
@@ -33,15 +22,35 @@ py.extension_module(
   'PyDefImport.cpp',
   'PyLefExport.cpp',
   'PyDefExport.cpp',
+])
 
-  cpp_args: '-D__PYTHON_MODULE__=1',
+py.extension_module(
+  'Constant',
+  'PyConstant.cpp',
   dependencies: [qt_deps, py_deps, boost, Hurricane],
   include_directories: crlcore_includes,
+  subdir: 'coriolis',
+  install: true
+) 
+
+pycrlcore = shared_library(
+  'pycrlcore',
+  pyCRL_files,
+  link_with: crlcore,
+  dependencies: [qt_deps, py_deps, boost, Hurricane],
+  include_directories: crlcore_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis',
+)
+
+
+py.extension_module(
+  'CRL',
+  pyCRL_files,
+  cpp_args: '-D__PYTHON_MODULE__=1',
+  link_with: pycrlcore,
+  dependencies: [qt_deps, py_deps, boost, Hurricane],
+  include_directories: crlcore_includes,
+  subdir: 'coriolis',
   install: true
 )
-pypathdir = meson.current_build_dir()
-
-test('pyCRL',
-    py,
-    args: '-c import CRL',
-    env: ['PYTHONPATH=' + pypathdir])

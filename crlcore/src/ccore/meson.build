@@ -40,7 +40,18 @@ ioc_parser_scanner =  custom_target('IocParserScanner.cpp',
   depends: ioc_parser_grammar
 )
 
-
+acmsigda_parser_grammar =  custom_target('AcmSigdaParserGrammar.cpp',
+  output: [ 'AcmSigdaParserGrammar.cpp', 'AcmSigdaParserGrammar.hpp' ],
+  input: 'acmsigda/AcmSigdaParserGrammar.yy',
+  command: [ bison, '-v', '-d', '-p', 'AcmSigda_', '-o', '@OUTPUT0@', '-y', '@INPUT@' ]
+)
+ 
+acmsigda_parser_scanner =  custom_target('AcmSigdaParserScanner.cpp',
+  output: [ 'AcmSigdaParserScanner.cpp' ],
+  input: 'acmsigda/AcmSigdaParserScanner.ll',
+  command: [ flex, '-PAcmSigda_', '-o@OUTPUT@', '@INPUT@' ],
+  depends: acmsigda_parser_grammar
+)
 
 ccore_mocs = qt.compile_moc(
   headers: [
@@ -109,9 +120,11 @@ crlcore = shared_library(
   vst_parser_scanner,
   ioc_parser_grammar,
   ioc_parser_scanner,
+  acmsigda_parser_grammar,
+  acmsigda_parser_scanner,
 
   dependencies: [qt_deps, py_deps, libxml2, boost, Hurricane, LefDef],
-  include_directories: [crlcore_includes, hurricane_includes],
+  include_directories: [crlcore_includes],
   install: true,
   install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
