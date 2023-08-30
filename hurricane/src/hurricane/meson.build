@@ -92,6 +92,8 @@ hurricane = shared_library(
   'TwoLayersPhysicalRule.cpp',
 
   dependencies: [qt_deps, boost, rapidjson, bzip2],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 

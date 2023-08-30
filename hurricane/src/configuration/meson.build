@@ -28,7 +28,9 @@ configuration = shared_library(
   resources,
   dependencies: [qt_deps, boost],
   link_with: [hurricane, isobar, utilities],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 pytypemanager = shared_library(
@@ -37,7 +39,9 @@ pytypemanager = shared_library(
   'PyTypeManager.cpp',
   dependencies: [qt_deps, boost, py_deps],
   link_with: [hurricane, isobar],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 py.extension_module(
@@ -46,9 +50,11 @@ py.extension_module(
   'PyConfiguration.cpp',
   'PyLayoutDescription.cpp',
   'PyCfg.cpp',
-  dependencies: [qt_deps, py_deps, boost],
+  dependencies: [qt_deps, py_mod_deps, boost],
   link_with: [isobar, hurricane, configuration, pytypemanager],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
 ) 
 
 py.extension_module(
@@ -67,7 +73,9 @@ py.extension_module(
   'PyDiffusionLayer.cpp',
   'PyTransistorLayer.cpp',
   'PyHurricane3.cpp',
-  dependencies: hurricane_deps,
+  dependencies: [qt_deps, py_mod_deps, boost],
   link_with: [hurricane, configuration, pytypemanager],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
 )

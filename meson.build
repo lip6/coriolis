@@ -23,8 +23,9 @@ add_project_arguments(
   language: ['c','cpp']
 )
 
-py = import('python').find_installation()
+py = import('python').find_installation(pure:false)
 py_deps = dependency('python3-embed', required: true)
+py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHON_MODULE__=1')
 
 qt = import('qt5')
 qt_deps = dependency('qt5',

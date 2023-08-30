@@ -77,16 +77,18 @@ analog = shared_library(
   analog_py_files,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [hurricane, isobar, utilities],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 ) 
 
 py.extension_module(
   'Analog',
   analog_py_files,
-  dependencies: [qt_deps, py_deps, boost, rapidjson],
+  dependencies: [qt_deps, py_mod_deps, boost, rapidjson],
   link_with: [hurricane, utilities, configuration, pytypemanager, isobar, analog],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
 ) 
-
-
 

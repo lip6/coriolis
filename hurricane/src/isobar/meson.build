@@ -1,4 +1,4 @@
-isobar_sources = [
+isobar_sources = files([
   'ProxyProperty.cpp',
   'PythonAttributes.cpp',
   'PyBreakpoint.cpp',
@@ -79,22 +79,16 @@ isobar_sources = [
   'Script.cpp',
   'PyCellViewer.cpp',
   'PyErrorWidget.cpp',
-]
+])
 
 isobar = library(
   'isobar',
   isobar_sources,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [hurricane],
-  include_directories: hurricane_includes
-)
-
-py.extension_module(
-  'Isobar',
-  isobar_sources,
-  dependencies: [qt_deps, py_deps, boost],
-  link_with: [isobar],
-  include_directories: hurricane_includes
+  include_directories: hurricane_includes,
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 

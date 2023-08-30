@@ -10,7 +10,8 @@ crlcore_includes = include_directories(
   'cif',
   'liberty',
   'toolbox',
-  '../fonts'
+  '../fonts',
+  '.'
 ) 
  
 vst_parser_grammar =  custom_target('VstParserGrammar.cpp',
@@ -110,7 +111,9 @@ crlcore = shared_library(
   ioc_parser_scanner,
 
   dependencies: [qt_deps, py_deps, libxml2, boost, Hurricane, LefDef],
-  include_directories: [crlcore_includes, hurricane_includes]
+  include_directories: [crlcore_includes, hurricane_includes],
+  install: true,
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
   
 
