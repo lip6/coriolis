@@ -106,7 +106,7 @@ namespace {
   {
     Utilities::Path stratusMappingName ( p->asString() );
     if ( not stratusMappingName.absolute() ) {
-      stratusMappingName = System::getPath("etc") / stratusMappingName;
+      stratusMappingName = System::getPath("coriolis_top") / stratusMappingName;
     }
     setenv ( "STRATUS_MAPPING_NAME", stratusMappingName.toString().c_str(), 1 );
   }
@@ -115,6 +115,7 @@ namespace {
   std::string  environmentMapper ( std::string environmentName )
   {
     if ( environmentName == "STRATUS_MAPPING_NAME" ) return "stratus_mapping_name";
+    if ( environmentName == "CORIOLIS_TOP" ) return "coriolis_top";
     return "";
   }
 
@@ -249,15 +250,23 @@ namespace CRL {
         || ( signal(SIGSEGV, System::_trapSig) == SIG_ERR ) )
       System::_trapSig ( SIGTFLT );
 
+   const char* coriolis_top = getenv("CORIOLIS_TOP");
+
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
+      ( "coriolis_top", boptions::value<string>()->default_value(coriolis_top)
+                              , "Location of Corilois module." )
       ( "stratus_mapping_name", boptions::value<string>()
                               , "Stratus virtual cells mapping." );
 
     boptions::variables_map arguments;
     boptions::store  ( boptions::parse_environment(options,environmentMapper), arguments );
     boptions::notify ( arguments );
+
+    if ( arguments.count("coriolis_top") ) {
+      _pathes.insert ( make_pair("coriolis_top", arguments["coriolis_top"].as<string>()) );
+    }
 
     Cfg::Configuration::get ();
 
