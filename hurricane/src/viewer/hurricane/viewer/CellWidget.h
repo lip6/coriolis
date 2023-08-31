@@ -104,6 +104,7 @@ namespace Hurricane {
                              , Left    =0x0040
                              , Right   =0x0080
                              , Top     =0x0100
+                             , FillBox =0x0200
                              };
       enum    Flag           { NoFlags        =0x0000
                              , NoResetCommands=0x0001
@@ -193,7 +194,7 @@ namespace Hurricane {
               void                      drawRuler                  ( shared_ptr<Ruler> );
               void                      drawRulers                 ( QRect );
               void                      drawDisplayText            ( const QRect& , const char*, unsigned int flags=0 );
-              void                      drawDisplayText            ( const QPoint&, const char*, unsigned int flags=0, int angle=0 );
+              void                      drawDisplayText            ( const QPoint&, const char*, unsigned int flags=0, int angle=0, std::shared_ptr<QFont> font=std::shared_ptr<QFont>() );
               void                      drawScreenPolygon          ( const QPoint*, int count,     size_t plane=PlaneId::Working );
               void                      drawScreenPolygon          ( const QPolygon&,              size_t plane=PlaneId::Working );
               void                      drawScreenLine             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );

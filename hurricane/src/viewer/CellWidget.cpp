@@ -45,6 +45,7 @@
 #include "hurricane/Polygon.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/ExtensionGo.h"
+#include "hurricane/Text.h"
 
 #include "hurricane/viewer/Graphics.h"
 #include "hurricane/viewer/PaletteItem.h"
@@ -721,6 +722,18 @@ namespace Hurricane {
           _cellWidget->drawDisplayText( rectangle, netName, BigFont|Bold|Center|Frame );
         }
       }
+
+      return;
+    }
+
+    const Text* text = dynamic_cast<const Text*>(go);
+    if (text) {
+      _goCount++;
+      Box bb = transformation.getBox(text->getBoundingBox(basicLayer));
+      rectangle = _cellWidget->dbuToScreenRect( bb );
+      if ((rectangle.width() < 5) or (rectangle.height() < 5)) 
+        return;
+      _cellWidget->drawDisplayText( rectangle, text->getText().c_str(), FillBox|Left );
     }
   }
 
@@ -1388,7 +1401,6 @@ namespace Hurricane {
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );
           _drawingPlanes.setBrush( Graphics::getBrush(layer->getName(),getDarkening()) );
-
           if ( isDrawable(layer->getName()) ) {
             _drawingQuery.setBasicLayer( layer );
             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoMasterCells
@@ -1698,67 +1710,84 @@ namespace Hurricane {
 
   void  CellWidget::drawDisplayText ( const QRect& box, const char* text, unsigned int flags )
   {
-    QFont  font = Graphics::getNormalFont(flags&Bold);
+    shared_ptr<QFont> font = shared_ptr<QFont>( new QFont( Graphics::getNormalFont( flags&Bold )));
 
-    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
+    if (flags & BigFont)
+      font->setPointSize( Graphics::isHighDpi() ? 7 : 18 );
+    if (flags & FillBox) {
+      QFontMetrics metrics = QFontMetrics( *font );
+      float        width   = (float)metrics.width( text );
+      float        ptSize  = font->pointSizeF();
+      ptSize *= ((float)box.width() / width);
+      font->setPointSizeF( ptSize );
+    }
 
-    QFontMetrics metrics = QFontMetrics(font);
+    QFontMetrics metrics = QFontMetrics( *font );
     int          width   = metrics.width( text );
-  //int          height  = metrics.height ();
+  //int          height  = metrics.height();
     int          angle   = 0;
 
     if ( (width > box.width()) and (box.height() > 2*box.width()) )
       angle = -90;
 
-    drawDisplayText ( box.center(), text, flags, angle );
+    QPoint textBL ( box.center() );
+    if (flags & Top) {
+      textBL.ry() += box.height() / 2;
+    }
+    if (flags & Left) {
+      textBL.rx() -= box.width() / 2;
+    }
+
+    drawDisplayText( textBL, text, flags, angle, font );
   }
 
 
-  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, unsigned int flags, int angle )
+  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, unsigned int flags, int angle, shared_ptr<QFont> font )
   {
-    QPainter&    painter = _drawingPlanes.painter();
-    QPen         pen     = painter.pen ();
-    QBrush       brush   = painter.brush ();
-    QFont        font    = Graphics::getNormalFont(flags&Bold);
+    QPainter&    painter    = _drawingPlanes.painter();
+    QPen         pen        = painter.pen();
+    QBrush       brush      = painter.brush();
+
+    if (not font.get())
+      font = shared_ptr<QFont>( new QFont( Graphics::getNormalFont( flags&Bold )));
 
     painter.save();
-    if ( flags & Reverse ) painter.setPen ( Graphics::getPen("background") );
-    if ( flags & Reverse ) painter.setBackgroundMode ( Qt::OpaqueMode );
-    if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
+    if (flags & Reverse) painter.setPen( Graphics::getPen("background") );
+    if (flags & Reverse) painter.setBackgroundMode( Qt::OpaqueMode );
 
-    QFontMetrics metrics = QFontMetrics(font);
-    int          width   = metrics.width  ( text );
-    int          height  = metrics.height ();
+    QFontMetrics metrics = QFontMetrics  ( *font );
+    int          width   = metrics.width ( text );
+    int          height  = metrics.height();
 
-    pen.setStyle ( Qt::SolidLine );
-    pen.setColor ( painter.brush().color() );
+    pen.setStyle( Qt::SolidLine );
+    pen.setColor( painter.brush().color() );
 
-    brush.setStyle ( Qt::NoBrush );
+    brush.setStyle( Qt::NoBrush );
 
-    painter.setPen    ( pen );
-    painter.setBrush  ( brush );
-    painter.setFont   ( font );
-    painter.translate ( point );
-    painter.rotate    ( angle );
+    painter.setPen   ( pen );
+    painter.setBrush ( brush );
+    painter.setFont  ( *font );
+    painter.translate( point );
+    painter.rotate   ( angle );
 
     QPoint bottomLeft ( 0, 0);
-    if ( flags &  Center ) {
+    if (flags &  Center) {
       bottomLeft.rx() -= width /2;
       bottomLeft.ry() += height/2;
-    } else if ( flags & Top ) {
+    } else if (flags & Top) {
       bottomLeft.ry() += height;
-    } else if ( flags & Left ) {
+    } else if (flags & Left) {
     }
 
-    if ( flags & Frame ) {
-      if ( flags & Rounded )
-        painter.drawRoundedRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height, 8, 8 );
+    if (flags & Frame) {
+      if (flags & Rounded)
+        painter.drawRoundedRect( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height, 8, 8 );
       else
-        painter.drawRect ( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
+        painter.drawRect( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
     }
 
-    painter.drawText  ( bottomLeft.x(), bottomLeft.y()-metrics.descent(), text );
-    painter.restore   ();
+    painter.drawText( bottomLeft.x(), bottomLeft.y()-metrics.descent(), text );
+    painter.restore ();
   }
 
 
