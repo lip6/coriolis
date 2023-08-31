@@ -1604,6 +1604,14 @@ extern "C" {
     return NULL;                                             \
   }
 
+#define  PYTYPE_READY_NEW(TYPE)                                  \
+  if ( PyType_Ready( &PyType##TYPE ) < 0 ) {                 \
+    cerr << "[ERROR]\n"                                      \
+         << "  Failed to initialize <Py" #TYPE ">." << endl; \
+    return -1;                                             \
+  }
+
+
 
 #define  PYTYPE_READY_SUB(TYPE, TYPE_BASE)                   \
   PyType##TYPE.tp_base = &PyType##TYPE_BASE;                 \
