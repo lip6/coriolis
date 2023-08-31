@@ -13,6 +13,7 @@
 // |  C++ Module  :       "./PyCRL.cpp"                              |
 // +-----------------------------------------------------------------+
 
+#include <cstdio>
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyLibrary.h"
@@ -59,6 +60,7 @@ namespace CRL {
   using Isobar::__cs;
   using Isobar::getPyHash;
   using Vhdl::EntityExtension;
+  using Utilities::Path;
 
 
 #if !defined(__PYTHON_MODULE__)
@@ -93,7 +95,6 @@ extern "C" {
   // |                  "PyCRL" Module Methods                     |
   // x-------------------------------------------------------------x
 
-
   static PyMethodDef PyCRL_Methods[] =
     { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing      , METH_VARARGS
                               , "Partial build of a ring" }
@@ -105,23 +106,10 @@ extern "C" {
     };
 
 
-  static PyModuleDef  PyCRL_ModuleDef =
-    { 
-      .m_base = PyModuleDef_HEAD_INIT,
-      .m_name = "CRL",
-      .m_doc = "Coriolis Core I/O framework",
-      .m_size =  -1,
-      .m_methods = PyCRL_Methods,
-//      .m_slots = PyCRL_Slots
-    };
-
-
-
-
   // ---------------------------------------------------------------
   // Module Initialization  :  "initCRL ()"
 
-  PyMODINIT_FUNC PyInit_CRL ( void )
+  static int PyCRL_module_exec(PyObject* module)
   {
     cdebug_log(30,0) << "PyInit_CRL()" << endl;
 
@@ -148,30 +136,30 @@ extern "C" {
     PyLefExport_LinkPyType ();
     PyDefExport_LinkPyType ();
 
-    PYTYPE_READY ( System );
-    PYTYPE_READY ( Banner );
-    PYTYPE_READY ( CatalogState );
-    PYTYPE_READY ( Catalog );
-    PYTYPE_READY ( Environment );
-    PYTYPE_READY ( AllianceLibrary );
-    PYTYPE_READY ( CellGauge );
-    PYTYPE_READY ( RoutingGauge );
-    PYTYPE_READY ( RoutingLayerGaugeVector );
-    PYTYPE_READY ( RoutingLayerGaugeVectorIterator );
-    PYTYPE_READY ( RoutingLayerGauge );
-    PYTYPE_READY ( AllianceFramework );
-    PYTYPE_READY ( ToolEngine );
-    PYTYPE_READY ( ToolEngineCollection );
-    PYTYPE_READY ( ToolEngineCollectionLocator );
-    PYTYPE_READY ( AcmSigda );
-    // PYTYPE_READY ( Ispd05 );
-    PYTYPE_READY ( Spice );
-    PYTYPE_READY ( Blif );
-    PYTYPE_READY ( Gds );
-    PYTYPE_READY ( LefImport );
-    PYTYPE_READY ( DefImport );
-    PYTYPE_READY ( LefExport );
-    PYTYPE_READY ( DefExport );
+    PYTYPE_READY_NEW ( System );
+    PYTYPE_READY_NEW ( Banner );
+    PYTYPE_READY_NEW ( CatalogState );
+    PYTYPE_READY_NEW ( Catalog );
+    PYTYPE_READY_NEW ( Environment );
+    PYTYPE_READY_NEW ( AllianceLibrary );
+    PYTYPE_READY_NEW ( CellGauge );
+    PYTYPE_READY_NEW ( RoutingGauge );
+    PYTYPE_READY_NEW ( RoutingLayerGaugeVector );
+    PYTYPE_READY_NEW ( RoutingLayerGaugeVectorIterator );
+    PYTYPE_READY_NEW ( RoutingLayerGauge );
+    PYTYPE_READY_NEW ( AllianceFramework );
+    PYTYPE_READY_NEW ( ToolEngine );
+    PYTYPE_READY_NEW ( ToolEngineCollection );
+    PYTYPE_READY_NEW ( ToolEngineCollectionLocator );
+    PYTYPE_READY_NEW ( AcmSigda );
+    // PYTYPE_READY_NEW ( Ispd05 );
+    PYTYPE_READY_NEW ( Spice );
+    PYTYPE_READY_NEW ( Blif );
+    PYTYPE_READY_NEW ( Gds );
+    PYTYPE_READY_NEW ( LefImport );
+    PYTYPE_READY_NEW ( DefImport );
+    PYTYPE_READY_NEW ( LefExport );
+    PYTYPE_READY_NEW ( DefExport );
 
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcLib"     , &PyTypeAllianceLibrary  , "<AllianceLibrary>"  , false );
@@ -182,13 +170,6 @@ extern "C" {
     __cs.addType ( "alcFw"      , &PyTypeAllianceFramework, "<AllianceFramework>", false );
     __cs.addType ( "alcCatalog" , &PyTypeCatalog          , "<Catalog>"          , false );
     __cs.addType ( "alcCatStat" , &PyTypeCatalogState     , "<Catalog::State>"   , false );
-
-    PyObject* module = PyModule_Create( &PyCRL_ModuleDef );
-    if (module == NULL) {
-      cerr << "[ERROR]\n"
-           << "  Failed to initialize CRL module." << endl;
-      return NULL;
-    }
 
     Py_INCREF ( &PyTypeSystem );
     PyModule_AddObject ( module, "System", (PyObject*)&PyTypeSystem );
@@ -249,11 +230,38 @@ extern "C" {
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );
 
+    PyObject *name_obj;
+    Path name, dir;
+
+    name_obj = PyModule_GetFilenameObject((PyObject *)module);
+    name = Path(PyUnicode_AsUTF8(name_obj));
+    dir = name.dirname();
+  //  std::cout << "coriolis dir" << dir.toString() << std::endl;
+    setenv ( "CORIOLIS_TOP", (const char*) dir.toString().c_str(), 1);
+
     cdebug_log(30,0) << "CRL.so loaded " << (void*)&typeid(string) << endl;
-    return module;
+    return 0;
   }
 
-  
+  static struct PyModuleDef_Slot PyCRL_Slots[] = {
+    {Py_mod_exec, (void*) PyCRL_module_exec},
+    {0, NULL},
+  };
+
+  static PyModuleDef  PyCRL_ModuleDef =
+    {
+      .m_base = PyModuleDef_HEAD_INIT,
+      .m_name = "CRL",
+      .m_doc = "Coriolis Core I/O framework",
+      .m_size =  0,
+      .m_methods = PyCRL_Methods,
+      .m_slots = PyCRL_Slots,
+    };
+
+  PyMODINIT_FUNC PyInit_CRL(void)
+  {
+    return PyModuleDef_Init(&PyCRL_ModuleDef);
+  }
 } // End of extern "C".
 
 
