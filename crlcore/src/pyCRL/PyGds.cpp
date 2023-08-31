@@ -63,7 +63,6 @@ extern "C" {
   static PyObject* PyGds_save ( PyObject*, PyObject* args )
   {
     cdebug_log(30,0) << "PyGds_save()" << endl;
-
     HTRY
       PyObject* pyCell = NULL;
       if (PyArg_ParseTuple( args, "O:Gds.save", &pyCell )) {
@@ -78,7 +77,6 @@ extern "C" {
         return NULL;
       }
     HCATCH
-
     Py_RETURN_NONE;
   }
 
@@ -86,10 +84,8 @@ extern "C" {
   static PyObject* PyGds_load ( PyObject*, PyObject* args )
   {
     cdebug_log(30,0) << "PyGds_load()" << endl;
-
     char*     path  = NULL;
     uint32_t  flags = 0;
-    
     HTRY
       PyObject* pyLibrary = NULL;
       if (PyArg_ParseTuple( args, "Os|I:Gds.load", &pyLibrary, &path, &flags )) {
@@ -104,7 +100,23 @@ extern "C" {
         return NULL;
       }
     HCATCH
+    Py_RETURN_NONE;
+  }
 
+
+  static PyObject* PyGds_setTopCellName ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyGds_setTopCellName()" << endl;
+    char* topCellName = NULL;
+    HTRY
+      PyObject* pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "s:Gds.setTopCellName", &topCellName )) {
+        Gds::setTopCellName( string(topCellName) );
+      } else {
+        PyErr_SetString( ConstructorError, "Gds.setTopCellName(): Takes *one* str argument only." );
+        return NULL;
+      }
+    HCATCH
     Py_RETURN_NONE;
   }
 
@@ -113,10 +125,12 @@ extern "C" {
 
 
   PyMethodDef PyGds_Methods[] =
-    { { "save"                , (PyCFunction)PyGds_save     , METH_VARARGS|METH_STATIC
+    { { "save"                , (PyCFunction)PyGds_save          , METH_VARARGS|METH_STATIC
                               , "Save a complete Gds design." }
-    , { "load"                , (PyCFunction)PyGds_load     , METH_VARARGS|METH_STATIC
+    , { "load"                , (PyCFunction)PyGds_load          , METH_VARARGS|METH_STATIC
                               , "Load a Gds layout inside a Cell (cumulative)." }
+    , { "setTopCellName"      , (PyCFunction)PyGds_setTopCellName, METH_VARARGS|METH_STATIC
+                              , "The name of the main cell from the GDS (not to be renamed)." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 
@@ -140,6 +154,7 @@ extern "C" {
   {
     PyObject* constant;
     LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix       ,"NoGdsPrefix");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoBlockages       ,"NoBlockages");
     LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary,"Layer_0_IsBoundary");
   }
 

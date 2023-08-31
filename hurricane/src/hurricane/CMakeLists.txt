@@ -44,6 +44,7 @@
                                 hurricane/Filter.h
                                 hurricane/Go.h                    hurricane/Gos.h
                                 hurricane/ExtensionGo.h           hurricane/ExtensionGos.h
+                                hurricane/Text.h
                                 hurricane/Hook.h                  hurricane/Hooks.h
                                 hurricane/Horizontal.h            hurricane/Horizontals.h
                                 hurricane/HyperNet.h
@@ -163,6 +164,7 @@
                                 DeepNet.cpp
                                 HyperNet.cpp
                                 Go.cpp
+                                Text.cpp
                                 ExtensionGo.cpp
                                 Hook.cpp
                                 Instance.cpp

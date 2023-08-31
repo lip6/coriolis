@@ -31,13 +31,20 @@ namespace CRL {
 
   class Gds {
     public:
-      static const uint32_t  NoGdsPrefix        = (1<<0);
-      static const uint32_t  Layer_0_IsBoundary = (1<<1);
-      static const uint32_t  NoBlockages        = (1<<2);
+      static const uint32_t     NoGdsPrefix        = (1<<0);
+      static const uint32_t     Layer_0_IsBoundary = (1<<1);
+      static const uint32_t     NoBlockages        = (1<<2);
+      static       std::string  _topCellName;
     public:
-      static bool  save ( Cell* );
-      static bool  load ( Library*, std::string gdsPath, uint32_t flags=0 );
+             static bool         save           ( Cell* );
+             static bool         load           ( Library*, std::string gdsPath, uint32_t flags=0 );
+      inline static void         setTopCellName ( std::string );
+      inline static std::string  getTopCellName ();
   };
+
+  
+  inline void         Gds::setTopCellName ( std::string topCellName ) { _topCellName=topCellName; }
+  inline std::string  Gds::getTopCellName () { return _topCellName; }
 
 
 } // CRL namespace.

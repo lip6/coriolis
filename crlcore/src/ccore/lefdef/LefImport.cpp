@@ -357,7 +357,9 @@ namespace {
     if (not _cell) {
       if (name.empty())
         name = "EarlyLEFCell";
-      _cell = Cell::create( getLibrary(true), name );
+      _cell = getLibrary(true)->getCell( name );
+      if (not _cell)
+        _cell = Cell::create( getLibrary(true), name );
     }
     return _cell;
   }
@@ -533,20 +535,25 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    if (_gdsForeignDirectory.empty()) {
-      cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
-      return 0;
+    Cell* cell = parser->earlyGetCell( foreign->cellName() );
+
+    if (cell->getName() == "EarlyLEFCell") {
+      if (_gdsForeignDirectory.empty()) {
+        cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
+        return 0;
+      }
+
+      string gdsPath = _gdsForeignDirectory + "/" + foreign->cellName() + ".gds";
+      parser->setForeignPath( gdsPath );
+
+      Gds::setTopCellName( foreign->cellName() );
+      Gds::load( parser->getLibrary(), parser->getForeignPath()
+               , Gds::NoBlockages|Gds::Layer_0_IsBoundary);
     }
 
-    string gdsPath = _gdsForeignDirectory + "/" + foreign->cellName() + ".gds";
-    parser->setForeignPath( gdsPath );
     parser->setForeignPosition( Point( parser->fromUnitsMicrons( foreign->px() )
                                      , parser->fromUnitsMicrons( foreign->px() )));
 
-    Cell* cell = parser->earlyGetCell( foreign->cellName() );
-
-    Gds::load( parser->getLibrary(), parser->getForeignPath()
-             , Gds::NoGdsPrefix|Gds::NoBlockages|Gds::Layer_0_IsBoundary);
     for ( Net* net : cell->getNets() ) {
       if (net->isPower ()) parser->setGdsPower ( net );
       if (net->isGround()) parser->setGdsGround( net );
