@@ -25,7 +25,7 @@ def _setup_techno():
     tech = Technology.create( db, 'GF180MCU' )
 
     DbU.setPrecision( 2 )
-    DbU.setPhysicalsPerGrid( 0.005, DbU.UnitPowerMicro )
+    DbU.setPhysicalsPerGrid( 0.0005, DbU.UnitPowerMicro )
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         cfg.gdsDriver.metricDbu = 1e-09
         cfg.gdsDriver.dbuPerUu  = 0.001
