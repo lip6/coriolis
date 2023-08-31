@@ -65,8 +65,9 @@ class Yosys ( FlowTask ):
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Can\'t find design file "{}".'.format( design ))
             self.success = TaskFailed( e )
             return
-        if   design.suffix == '.v' : self._run_pass( 'read_verilog {}'.format( design.as_posix() ))
-        elif design.suffix == '.il': self._run_pass( 'read_ilang   {}'.format( design.as_posix() ))
+        design = Path( design )
+        if   design.suffix == '.v' : self._run_pass( 'read_verilog -sv {}'.format( design.as_posix() ))
+        elif design.suffix == '.il': self._run_pass( 'read_ilang       {}'.format( design.as_posix() ))
         else:
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Unsupported input format for "{}".'.format( design ))
             self.success = TaskFailed( e )
