@@ -38,7 +38,14 @@ libxml2 = dependency('libxml2', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
 
-add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
+if build_machine.system() == 'darwin'
+  add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
+  #deeply hacky - to fix needs to sort issues
+  # https://github.com/mesonbuild/meson-python/issues/3
+  # https://github.com/mesonbuild/meson/issues/12113
+  # and an issue with install_dir not being used by the rpath logic
+  add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
+endif
 
 subdir('hurricane')
 subdir('lefdef')
