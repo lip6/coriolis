@@ -49,6 +49,6 @@
                       )
 
                install( TARGETS       flute       DESTINATION lib${LIB_SUFFIX} )
-               install( FILES         ${includes} DESTINATION include/flute/3.1 ) 
-               install( FILES         POST9.dat
-                                      POWV9.dat   DESTINATION share/flute/3.1 ) 
+               install( FILES         ${includes} DESTINATION include/flute/3.1 )
+               install( FILES         POST9.dat POWV9.dat  
+		         DESTINATION ${Python_CORIOLISARCH})
