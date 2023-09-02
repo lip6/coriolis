@@ -1596,6 +1596,16 @@ namespace {
                       << " width=" << DbU::getValueString(width)
                       << " bgnextn=" << DbU::getValueString(bgnextn)
                       << " endextn=" << DbU::getValueString(endextn) << endl;
+    if (bgnextn < 0) {
+      cerr << Error( "GdsStream::xyToPath(): Negative BGNEXTN not supported yet (%s) layout will be incorrect."
+                   , DbU::getValueString(bgnextn).c_str()
+                   ) << endl;
+    }
+    if (endextn < 0) {
+      cerr << Error( "GdsStream::xyToPath(): Negative ENDEXTN not supported yet (%s) layout will be incorrect."
+                   , DbU::getValueString(endextn).c_str()
+                   ) << endl;
+    }
 
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
@@ -1640,13 +1650,13 @@ namespace {
       if (points[0].getX() == points[1].getX()) {
         hWidthCap = width;
         vWidthCap = bgnextn + twoGrid;
-        yadjust   = -vWidthCap/2 + twoGrid;
+      //yadjust   = -vWidthCap/2 + twoGrid;
         if (points[0].getY() > points[1].getY())
           yadjust = -yadjust;
       } else {
         hWidthCap = bgnextn + twoGrid;
         vWidthCap = width;
-        xadjust   = -hWidthCap/2 + twoGrid;
+      //xadjust   = -hWidthCap/2 + twoGrid;
         if (points[0].getX() > points[1].getX())
           xadjust = -xadjust;
       }
@@ -1680,7 +1690,7 @@ namespace {
           if (points[i-1].getX() == points[i].getX()) {
             hWidthCap = width;
             vWidthCap = endextn + twoGrid;
-            yadjust   = vWidthCap/2 - twoGrid;
+          //yadjust   = vWidthCap/2 + twoGrid;
             if (points[i-1].getY() > points[i].getY())
               yadjust = -yadjust;
           } else {
@@ -1688,7 +1698,7 @@ namespace {
                               << " twoGrid=" << DbU::getValueString(twoGrid) << endl;
             hWidthCap = endextn + twoGrid;
             vWidthCap = width;
-            xadjust   = hWidthCap/2 - twoGrid;
+          //xadjust   = hWidthCap/2 - twoGrid;
             if (points[i-1].getX() > points[i].getX())
               xadjust = -xadjust;
             cdebug_log(101,0) << "xadjust=" << DbU::getValueString(xadjust) << endl;
