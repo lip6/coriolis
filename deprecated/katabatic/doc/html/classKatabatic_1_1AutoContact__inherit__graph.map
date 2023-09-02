@@ -1,6 +1,0 @@
-<map id="AutoContact" name="AutoContact">
-<area shape="rect" id="node2" href="$classKatabatic_1_1AutoContactHTee.html" title="AutoContact H&#45;Tee (two H, one V) " alt="" coords="5,80,141,107"/>
-<area shape="rect" id="node3" href="$classKatabatic_1_1AutoContactTerminal.html" title="AutoContact Terminal (S/T is a Terminal) " alt="" coords="165,80,325,107"/>
-<area shape="rect" id="node4" href="$classKatabatic_1_1AutoContactTurn.html" title="AutoContact Turn (one H, one V) " alt="" coords="349,80,480,107"/>
-<area shape="rect" id="node5" href="$classKatabatic_1_1AutoContactVTee.html" title="AutoContact V&#45;Tee (one H, two V) " alt="" coords="505,80,639,107"/>
-</map>

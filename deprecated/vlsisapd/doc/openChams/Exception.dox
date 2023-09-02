@@ -1,9 +1,0 @@
-// -*- C++ -*-
-
-namespace OpenChams {
-/*! \class OpenChamsException
- *
- *  This class describes the exceptions throwed by the OpenChams library in case of errors.
- */
-
-}
