@@ -51,3 +51,4 @@ endif
 subdir('hurricane')
 subdir('lefdef')
 subdir('crlcore')
+subdir('flute')
