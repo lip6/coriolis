@@ -31,7 +31,6 @@ lefdef = shared_library(
 
   cpp_args: [
     '-Wno-format-extra-args',
-    '-Wno-error=int-to-void-pointer-cast',
     '-Wno-error=unused-but-set-variable',
     '-Wno-reorder-ctor',
     '-Wno-format'

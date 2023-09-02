@@ -2,7 +2,7 @@ project(
   'coriolis-eda',
   'c','cpp',
    version: '2.5.5',
-   meson_version: '>= 0.63.0',
+   meson_version: '>= 1.2.0',
    default_options: [
      'buildtype=debugoptimized',
      'c_std=c99',
@@ -20,6 +20,7 @@ add_project_arguments(
   '-Wno-return-type-c-linkage',
   '-Wno-unused-variable',
   '-Wno-#pragma-messages',
+  '-Wno-unknown-pragmas',
   language: ['c','cpp']
 )
 
@@ -34,7 +35,7 @@ qt_deps = dependency('qt5',
 )
 
 boost = dependency('boost', modules: ['program_options'], required: true)
-libxml2 = dependency('libxml2', required: true)
+libxml2 = dependency('libxml-2.0', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
 
