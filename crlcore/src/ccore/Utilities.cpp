@@ -21,6 +21,7 @@
 #include  <iomanip>
 
 #include  <boost/program_options.hpp>
+#include  <boost/process.hpp>
 namespace boptions = boost::program_options;
 
 #include  "hurricane/utilities/Path.h"
@@ -250,7 +251,25 @@ namespace CRL {
         || ( signal(SIGSEGV, System::_trapSig) == SIG_ERR ) )
       System::_trapSig ( SIGTFLT );
 
-   const char* coriolis_top = getenv("CORIOLIS_TOP");
+    std::string coriolis_top;
+    const char* coriolis_top_env = getenv("CORIOLIS_TOP");
+    if (coriolis_top_env) {
+      coriolis_top = coriolis_top_env;
+    } else {
+      //We're running as a binary and PyCRL hasn't been instantiated
+      // use python to find our where we should look
+      using namespace boost::process;
+      std::error_code ec;
+      ipstream out;
+      //TODO: will need fixing for windoews
+      system("python3 -c 'from coriolis import CRL; import os; print(os.path.abspath(os.path.dirname(CRL.__file__)))'", std_out > out, ec); 
+      if (ec) {
+          cerr << "Unable to find coriolis python package. Please set CORIOLIS_TOP environment variable\n";
+          exit ( 1 );
+      }
+
+      out >> coriolis_top;
+    }
 
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
@@ -268,6 +287,7 @@ namespace CRL {
       _pathes.insert ( make_pair("coriolis_top", arguments["coriolis_top"].as<string>()) );
     }
 
+    Isobar::Script::addPath ( coriolis_top );
     Cfg::Configuration::get ();
 
     Cfg::getParamBool  ("misc.catchCore"      ,false )->registerCb ( this, catchCoreChanged );
