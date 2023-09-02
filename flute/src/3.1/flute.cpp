@@ -75,7 +75,6 @@ void readLUT( string directory )
 
     
     string file = POWVFILE;
-    if (not directory.empty()) file.insert( 0, directory + "/share/flute/3.1/" );
 
     fpwv=fopen(file.c_str(), "r");
     if (fpwv == NULL) {
@@ -86,7 +85,6 @@ void readLUT( string directory )
 
 #if ROUTING==1
     file = POSTFILE;
-    if (not directory.empty()) file.insert( 0, directory + "/share/flute/3.1/" );
 
     fprt=fopen(file.c_str(), "r");
     if (fprt == NULL) {
