@@ -85,7 +85,7 @@ namespace {
       inline       bool               isVH                     () const;
                    bool               isUnmatchedLayer         ( string );
                    Library*           createLibrary            ();
-                   Cell*              earlyGetCell             ( string name="" );
+                   Cell*              earlyGetCell             ( bool& created, string name="" );
                    Net*               earlyGetNet              ( string name );
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
@@ -352,14 +352,16 @@ namespace {
   }
 
 
-  Cell* LefParser::earlyGetCell ( string name )
+  Cell* LefParser::earlyGetCell ( bool& created, string name )
   {
     if (not _cell) {
       if (name.empty())
         name = "EarlyLEFCell";
       _cell = getLibrary(true)->getCell( name );
-      if (not _cell)
+      if (not _cell) {
+        created = true;
         _cell = Cell::create( getLibrary(true), name );
+      }
     }
     return _cell;
   }
@@ -367,7 +369,8 @@ namespace {
 
   Net* LefParser::earlyGetNet ( string name )
   {
-    if (not _cell) earlyGetCell();
+    bool created = false;
+    if (not _cell) earlyGetCell( created );
     Net* net = _cell->getNet( name );
     if (not net)
       net = Net::create( _cell, name );
@@ -535,9 +538,10 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    Cell* cell = parser->earlyGetCell( foreign->cellName() );
+    bool  created = false;
+    Cell* cell    = parser->earlyGetCell( created, foreign->cellName() );
 
-    if (cell->getName() == "EarlyLEFCell") {
+    if (created) {
       if (_gdsForeignDirectory.empty()) {
         cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
         return 0;
@@ -648,13 +652,13 @@ namespace {
 
     parser->setCellGauge( nullptr );
 
+    bool       created  = false;
     string     cellName = macro->name();
     DbU::Unit  width    = 0;
     DbU::Unit  height   = 0;
-    Cell*      cell     = parser->earlyGetCell();
+    Cell*      cell     = parser->earlyGetCell( created );
 
     if (cell->getName() != Name(cellName)) {
-      cerr << cell << " -> " << cellName << endl;
       cell->setName( cellName );
     }
 
@@ -720,7 +724,8 @@ namespace {
 
   //cerr << "       @ _pinCbk: " << pin->name() << endl;
 
-    parser->earlyGetCell();
+    bool created = false;
+    parser->earlyGetCell( created );
 
     Net*      net     = nullptr;
     Net::Type netType = Net::Type::UNDEFINED;
