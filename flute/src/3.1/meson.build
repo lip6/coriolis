@@ -20,7 +20,7 @@ flute = shared_library(
 py.extension_module(
   'Flute',
   'PyFlute.cpp',
-  dependencies: [py_deps, Hurricane],
+  dependencies: [py_deps, Hurricane, CrlCore],
   include_directories: flute_includes,
   subdir: 'coriolis',
   install: true
