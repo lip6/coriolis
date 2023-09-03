@@ -18,6 +18,7 @@ flute = shared_library(
 
 
 py.extension_module(
+  'Flute',
   'PyFlute.cpp',
   dependencies: [py_deps, Hurricane],
   include_directories: flute_includes,
