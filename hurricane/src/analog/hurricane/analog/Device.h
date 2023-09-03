@@ -15,6 +15,7 @@
 
 
 #pragma once
+
 #include "hurricane/Cell.h"
 #include "hurricane/analog/StepParameter.h"
 #include "hurricane/analog/FloatParameter.h"
@@ -65,7 +66,12 @@ namespace Analog {
                                            Device                    (Hurricane::Library*
                                                                      , const Hurricane::Name& );
       static        void                   preCreate                 ( const Hurricane::Name& );
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
       virtual       void                   _postCreate               ( const Hurricane::Name& deviceName );
+#pragma clang diagnostic pop
+
       virtual       void                   _preDestroy               ();
       inline        Hurricane::Library*    getSubDevicesLibrary      ();
       inline        void                   addParameter              ( Parameter* parameter );
