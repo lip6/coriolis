@@ -14,7 +14,6 @@ flute = shared_library(
   dependencies: [Hurricane],
   include_directories: flute_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis',
 )
 
 
@@ -30,5 +29,5 @@ py.extension_module(
 install_data(
   'POST9.dat',
   'POWV9.dat',
-  install_dir: py.get_install_dir(pure: false) / 'coriolis',
+  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )

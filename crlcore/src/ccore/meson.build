@@ -126,7 +126,6 @@ crlcore = shared_library(
   dependencies: [qt_deps, py_deps, libxml2, boost, Hurricane, LefDef],
   include_directories: [crlcore_includes],
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
   
 

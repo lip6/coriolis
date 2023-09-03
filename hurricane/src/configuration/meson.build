@@ -30,7 +30,6 @@ configuration = shared_library(
   link_with: [hurricane, isobar, utilities],
   include_directories: hurricane_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 pytypemanager = shared_library(
@@ -41,7 +40,6 @@ pytypemanager = shared_library(
   link_with: [hurricane, isobar],
   include_directories: hurricane_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 py.extension_module(

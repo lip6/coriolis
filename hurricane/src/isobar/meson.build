@@ -88,7 +88,6 @@ isobar = library(
   link_with: [hurricane],
   include_directories: hurricane_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 

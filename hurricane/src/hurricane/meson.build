@@ -94,6 +94,5 @@ hurricane = shared_library(
   dependencies: [qt_deps, boost, rapidjson, bzip2],
   include_directories: hurricane_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 

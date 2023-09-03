@@ -46,6 +46,14 @@ if build_machine.system() == 'darwin'
   # https://github.com/mesonbuild/meson/issues/12113
   # and an issue with install_dir not being used by the rpath logic
   add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
+
+#elif build_machine.system() == 'linux'
+#  add_project_link_arguments('-Wl,-rpath-link=$ORIGIN', language: ['c','cpp'])
+#  add_project_link_arguments('-Wl,-rpath-link=$ORIGIN/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
+#  add_project_link_arguments('-Wl,-rpath-link=' + py.get_path('platlib') + '/coriolis', language: ['c','cpp'])
+#  add_project_link_arguments('-Wl,-rpath=\$ORIGIN', language: ['c','cpp'])
+#  add_project_link_arguments('-Wl,-rpath=\$ORIGIN/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
+#  add_project_link_arguments('-Wl,-rpath-link=' + py.get_path('platlib') + '/coriolis', language: ['c','cpp'])
 endif
 
 subdir('hurricane')

@@ -111,7 +111,6 @@ viewer = shared_library(
   link_with: [hurricane, utilities, configuration, pytypemanager, isobar, analog],
   include_directories: hurricane_includes,
   install: true,
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
 )
 
 py.extension_module(
