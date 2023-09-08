@@ -397,6 +397,7 @@ class Side ( object ):
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
         padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
         if self.conf.padsHavePosition:
+            self.pads.sort( key=itemgetter(0) )
             position = self.u
             for pad in self.pads:
                 trace( 550, '\tPlace pad {} @{}\n'.format(pad[1],DbU.getValueString(pad[0])) )
