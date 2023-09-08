@@ -963,9 +963,11 @@ namespace {
 
     if (_validSyntax) _stream >> _record;
 
-    UpdateSession::close();
-    _cell->setAbutmentBox( _cell->getBoundingBox() );
-    UpdateSession::open();
+    if (not useLayer0AsBoundary()) {
+      UpdateSession::close();
+      _cell->setAbutmentBox( _cell->getBoundingBox() );
+      UpdateSession::open();
+    }
     _cell = NULL;
     cdebug_log(101,-1) << "    GdsStream::readStructure() - return:" << _validSyntax << endl;
 
