@@ -963,7 +963,7 @@ namespace {
 
     if (_validSyntax) _stream >> _record;
 
-    if (not useLayer0AsBoundary()) {
+    if (not useLayer0AsBoundary() or _cell->getAbutmentBox().isEmpty()) {
       UpdateSession::close();
       _cell->setAbutmentBox( _cell->getBoundingBox() );
       UpdateSession::open();
@@ -1652,17 +1652,23 @@ namespace {
       if (points[0].getX() == points[1].getX()) {
         hWidthCap = width;
         vWidthCap = bgnextn + twoGrid;
-      //yadjust   = -vWidthCap/2 + twoGrid;
+        yadjust   = (-vWidthCap + twoGrid) / 2;
         if (points[0].getY() > points[1].getY())
           yadjust = -yadjust;
       } else {
         hWidthCap = bgnextn + twoGrid;
         vWidthCap = width;
-      //xadjust   = -hWidthCap/2 + twoGrid;
+        xadjust   = (-hWidthCap + twoGrid) / 2;
         if (points[0].getX() > points[1].getX())
           xadjust = -xadjust;
       }
     }
+    cdebug_log(101,0) << " twoGrid="   << DbU::getValueString(twoGrid)
+                      << " hWidthCap=" << DbU::getValueString(hWidthCap)
+                      << " vWidthCap=" << DbU::getValueString(vWidthCap)
+                      << " xadjust="   << DbU::getValueString(xadjust)
+                      << " yadjust="   << DbU::getValueString(yadjust)
+                      << endl;
     Contact* source = Contact::create( net
                                      , layer
                                      , points[0].getX() + xadjust
@@ -1692,7 +1698,7 @@ namespace {
           if (points[i-1].getX() == points[i].getX()) {
             hWidthCap = width;
             vWidthCap = endextn + twoGrid;
-          //yadjust   = vWidthCap/2 + twoGrid;
+            yadjust   = (vWidthCap + twoGrid) /2;
             if (points[i-1].getY() > points[i].getY())
               yadjust = -yadjust;
           } else {
@@ -1700,7 +1706,7 @@ namespace {
                               << " twoGrid=" << DbU::getValueString(twoGrid) << endl;
             hWidthCap = endextn + twoGrid;
             vWidthCap = width;
-          //xadjust   = hWidthCap/2 - twoGrid;
+            xadjust   = (hWidthCap - twoGrid) / 2;
             if (points[i-1].getX() > points[i].getX())
               xadjust = -xadjust;
             cdebug_log(101,0) << "xadjust=" << DbU::getValueString(xadjust) << endl;
