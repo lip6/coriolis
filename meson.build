@@ -38,6 +38,7 @@ boost = dependency('boost', modules: ['program_options'], required: true)
 libxml2 = dependency('libxml-2.0', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
+cmake = import('cmake')
 
 if build_machine.system() == 'darwin'
   add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
@@ -56,7 +57,13 @@ if build_machine.system() == 'darwin'
 #  add_project_link_arguments('-Wl,-rpath-link=' + py.get_path('platlib') + '/coriolis', language: ['c','cpp'])
 endif
 
+
+#not ideal, hopefully coloquinte can switch to useing more modern targets, or to using meson!
+coloquinte_sub = cmake.subproject('coloquinte')
+Coloquinte = coloquinte_sub.dependency('coloquinte')
+
 subdir('hurricane')
 subdir('lefdef')
 subdir('crlcore')
 subdir('flute')
+subdir('etesian')

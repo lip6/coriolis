@@ -45,8 +45,8 @@ include = [
 doc = ["pelican", "doxygen"]
 
 [build-system]
-requires = ["poetry-core", "setuptools", "poetry-dynamic-versioning", "meson", "meson-python", "ninja"]
-build-backend = 'mesonpy'
+requires = ["setuptools", "pdm-backend", "meson",  "ninja"]
+build-backend = "pdm.backend"
 
 [tool.cibuildwheel.linux]
 skip = ["cp36-*", "cp37-*", "pp*"]
