@@ -5,7 +5,8 @@ etesian_mocs = qt.compile_moc(
   dependencies: [Hurricane, CrlCore, Coloquinte],
 )
 
-configuration = shared_library(
+etesian = shared_library(
+  'etesian',
   'Configuration.cpp',
   'HFNS.cpp',
   'AddFeeds.cpp',
@@ -28,6 +29,7 @@ py.extension_module(
   'PyEtesianEngine.cpp',
   'PyGraphicEtesianEngine.cpp',
 
+  link_with: [configuration],
   dependencies: [Hurricane, CrlCore, Coloquinte],
   install: true,
   subdir: 'coriolis'

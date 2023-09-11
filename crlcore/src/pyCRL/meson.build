@@ -1,3 +1,5 @@
+pyCRL_includes = include_directories('.')
+
 pyCRL_files = files([
   'PyCRL.cpp',
   'PySystem.cpp',
@@ -31,7 +33,7 @@ py.extension_module(
   include_directories: crlcore_includes,
   subdir: 'coriolis',
   install: true
-) 
+)
 
 pycrlcore = shared_library(
   'pycrlcore',

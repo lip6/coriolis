@@ -21,6 +21,7 @@ add_project_arguments(
   '-Wno-unused-variable',
   '-Wno-#pragma-messages',
   '-Wno-unknown-pragmas',
+  '-Wno-unused-but-set-variable',
   language: ['c','cpp']
 )
 
