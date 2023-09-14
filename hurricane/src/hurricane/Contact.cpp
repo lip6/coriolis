@@ -120,7 +120,7 @@ Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Un
     throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
 
   const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( layer );
-  if (not basicLayer or basicLayer->getMaterial() != BasicLayer::Material::cut) return;
+  if (basicLayer and basicLayer->getMaterial() != BasicLayer::Material::cut) return;
   if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
   if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
@@ -150,7 +150,7 @@ Contact::Contact(Net* net, Component* anchor, const Layer* layer, DbU::Unit dx, 
     _anchorHook.attach(anchor->getBodyHook());
 
     const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( layer );
-    if (not basicLayer or basicLayer->getMaterial() != BasicLayer::Material::cut) return;
+    if (basicLayer and basicLayer->getMaterial() != BasicLayer::Material::cut) return;
     if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
     if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
