@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "Coriolis"
+name = "coriolis-eda"
 version = "0.0.0"
 description = "Place and Route for semiconductors"
 authors = ["Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr>"]
@@ -7,7 +7,7 @@ readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
 packages = [
-  { include = "Coriolis"},
+  { include = "coriolis"},
 ]
 include = [
   "COPYRIGHT.rst",
@@ -45,7 +45,14 @@ include = [
 [tool.poetry-dynamic-versioning]
 enable = true
 vcs = "git"
-style = "semver"
+style = "pep440"
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage="a", revision=distance) }}
+    {%- endif -%}
+"""
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -63,10 +70,10 @@ script = "builder.py"
 generate-setup-file = true
 
 [tool.poetry.scripts]
-blif2vst =  'Coriolis:blif2vst'
-tutorial = 'Coriolis:tutorial'
-unittests = 'Coriolis:unittests'
-yosys_coriolis = 'Coriolis:yosys_coriolis'
+blif2vst =  'coriolis:blif2vst'
+tutorial = 'coriolis:tutorial'
+unittests = 'coriolis:unittests'
+yosys_coriolis = 'coriolis:yosys_coriolis'
 
 [build-system]
 requires = ["poetry-core", "setuptools", "cmake", "ninja", "patchelf", "poetry-dynamic-versioning"]
