@@ -75,4 +75,5 @@ subdir('flute')
 subdir('etesian')
 subdir('anabatic')
 subdir('katana')
+subdir('equinox')
 
