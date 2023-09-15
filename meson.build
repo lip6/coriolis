@@ -76,4 +76,5 @@ subdir('etesian')
 subdir('anabatic')
 subdir('katana')
 subdir('equinox')
+subdir('solstice')
 
