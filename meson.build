@@ -22,6 +22,7 @@ add_project_arguments(
   '-Wno-#pragma-messages',
   '-Wno-unknown-pragmas',
   '-Wno-unused-but-set-variable',
+  '-Wno-overloaded-virtual',
   language: ['c','cpp']
 )
 
@@ -68,3 +69,5 @@ subdir('lefdef')
 subdir('crlcore')
 subdir('flute')
 subdir('etesian')
+subdir('anabatic')
+
