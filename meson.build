@@ -40,27 +40,23 @@ qt_deps = dependency('qt5',
   required:true
 )
 
+cmake =import('cmake')
+
 boost = dependency('boost', modules: ['program_options'], required: true)
 libxml2 = dependency('libxml-2.0', required: true)
 flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
-cmake = import('cmake')
+qt5qwt6 = dependency('Qt5Qwt6', required: true)
 
 if build_machine.system() == 'darwin'
   add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
-  #deeply hacky - to fix needs to sort issues
-  # https://github.com/mesonbuild/meson-python/issues/3
-  # https://github.com/mesonbuild/meson/issues/12113
-  # and an issue with install_dir not being used by the rpath logic
   add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
 
-#elif build_machine.system() == 'linux'
-#  add_project_link_arguments('-Wl,-rpath-link=$ORIGIN', language: ['c','cpp'])
-#  add_project_link_arguments('-Wl,-rpath-link=$ORIGIN/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
-#  add_project_link_arguments('-Wl,-rpath-link=' + py.get_path('platlib') + '/coriolis', language: ['c','cpp'])
-#  add_project_link_arguments('-Wl,-rpath=\$ORIGIN', language: ['c','cpp'])
-#  add_project_link_arguments('-Wl,-rpath=\$ORIGIN/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
-#  add_project_link_arguments('-Wl,-rpath-link=' + py.get_path('platlib') + '/coriolis', language: ['c','cpp'])
+  qwt_framework = qt5qwt6.get_pkgconfig_variable('libdir') / 'qwt.framework/Versions/6/Headers/'
+  qwt = declare_dependency(include_directories: include_directories(qwt_framework), dependencies: qt5qwt6)
+
+else
+  qwt = qt5qwt6
 endif
 
 
@@ -77,4 +73,6 @@ subdir('anabatic')
 subdir('katana')
 subdir('equinox')
 subdir('solstice')
+subdir('oroshi')
+subdir('bora')
 
