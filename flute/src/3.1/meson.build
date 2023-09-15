@@ -24,7 +24,7 @@ py.extension_module(
   include_directories: flute_includes,
   subdir: 'coriolis',
   install: true
-) 
+)
 
 
 install_data(
