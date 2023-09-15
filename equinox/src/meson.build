@@ -5,6 +5,8 @@ equinox_mocs = qt.compile_moc(
   dependencies: [CrlCore],
 )
 
+
+equinox_includes = include_directories('.', 'intervalTree/src')
 equinox = shared_library(
   'equinox',
 
@@ -20,7 +22,7 @@ equinox = shared_library(
   'intervalTree/src/IntervalTree.cpp',
   equinox_mocs,
 
-  include_directories: include_directories('intervalTree/src'),
+  include_directories: equinox_includes,
   dependencies: [CrlCore],
   install: true,
 )
