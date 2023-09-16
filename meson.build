@@ -75,4 +75,6 @@ subdir('equinox')
 subdir('solstice')
 subdir('oroshi')
 subdir('bora')
+subdir('unicorn')
+subdir('cumulus')
 

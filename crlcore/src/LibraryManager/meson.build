@@ -1,3 +1,5 @@
+librarymanager_includes = include_directories('.')
+
 librarymanager_mocs = qt.compile_moc(
   headers: [
     'crlcore/ViewsModel.h',
