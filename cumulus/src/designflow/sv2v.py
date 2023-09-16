@@ -2,7 +2,6 @@
 import os.path
 import subprocess
 from   pathlib import Path
-from   pyosys          import libyosys as yosys
 from   doit.exceptions import TaskFailed
 from   .task           import FlowTask
 
@@ -19,11 +18,12 @@ class Sv2v ( FlowTask ):
     FlagLog = 0x00000001
 
     @staticmethod
-    def mkRule ( rule, targets, depends, top=None, incdirs=[], libdirs=[], defines=[], flags=0 ):
+    def mkRule ( rule, targets, depends, top, incdirs=[], libdirs=[], defines=[], flags=0 ):
         return Sv2v( rule, targets, depends, top, incdirs, libdirs, defines, flags )
 
     def __init__ ( self, rule, targets, depends, top, incdirs, libdirs, defines, flags ):
         self.flags   = flags
+        self.top     = top
         self.incdirs = incdirs
         self.libdirs = libdirs
         self.defines = defines
@@ -31,10 +31,6 @@ class Sv2v ( FlowTask ):
         self.success = True
         targets = FlowTask._normFileList( targets )
         depends = FlowTask._normFileList( depends )
-        if top is not None:
-            self.top = top
-        else:
-            self.top = depends[0].stem
         if targets == []:
             targets.append( self.top + '.v' )
        #if self.flags & Sv2v.FlagLog:

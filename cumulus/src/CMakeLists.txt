@@ -18,7 +18,6 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/sv2v.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/svase.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosys.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosysnp.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/pnr.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/klayout.py

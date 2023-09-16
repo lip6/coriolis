@@ -2,7 +2,6 @@
 import os.path
 import subprocess
 from   pathlib import Path
-from   pyosys          import libyosys as yosys
 from   doit.exceptions import TaskFailed
 from   .task           import FlowTask
 
@@ -19,11 +18,12 @@ class Svase ( FlowTask ):
     FlagLog = 0x00000001
 
     @staticmethod
-    def mkRule ( rule, targets, depends, top=None, incdirs=[], libdirs=[], defines=[], svargs=[], flags=0 ):
+    def mkRule ( rule, targets, depends, top, incdirs=[], libdirs=[], defines=[], svargs=[], flags=0 ):
         return Svase( rule, targets, depends, top, incdirs, libdirs, defines, svargs, flags )
 
     def __init__ ( self, rule, targets, depends, top, incdirs, libdirs, defines, svargs, flags ):
         self.flags   = flags
+        self.top     = top
         self.svargs  = svargs
         self.incdirs = incdirs
         self.libdirs = libdirs
@@ -32,10 +32,6 @@ class Svase ( FlowTask ):
         self.success = True
         targets = FlowTask._normFileList( targets )
         depends = FlowTask._normFileList( depends )
-        if top is not None:
-            self.top = top
-        else:
-            self.top = depends[0].stem
         if targets == []:
             targets.append( self.top + '.v' )
        #if self.flags & Svase.FlagLog:
