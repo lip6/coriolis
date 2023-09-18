@@ -5,9 +5,9 @@ import sys
 def flush ():
     sys.stdout.flush()
     sys.stderr.flush()
-    
 
-import Cfg
+
+from coriolis import Cfg
 
 print( "" )
 print( "Test 7" )
@@ -152,13 +152,16 @@ for key in testDict:
     flush()
 flush()
 print( 'has key "machin":{}'.format('machin' in testDict) )
+flush()
 params = cfg.getParameters()
 print( 'params["test.master"] = %s' % params['test.master'] )
+flush()
 try:
     print( 'params.has_key("test.master") = {}'.format('test.master' in params) )
-   #print( 'params.has_key("test.master") = {}'.format(params.has_key('test.master') ))
+    #print( 'params.has_key("test.master") = {}'.format(params.has_key('test.master') ))
     print( 'params.has_key("test.slave6") = {}'.format('test.slave6' in params) )
     print( 'params["test.slave6"] = %s' % params['test.slave6'] )
+    flush()
 except KeyError as ke:
     print( ke )
 print( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" )

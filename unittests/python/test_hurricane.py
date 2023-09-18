@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 import sys
-import Cfg
-from   Hurricane3 import DbU, Point, Box, DataBase, Technology, LayerMask, \
+from coriolis import Cfg
+from coriolis.Hurricane import DbU, Point, Box, DataBase, Technology, \
                          BasicLayer, ViaLayer, RegularLayer
-from   overlay    import CfgCache
-from   technology import createBL
+from coriolis.helpers.overlay    import CfgCache
+from coriolis.helpers.technology import createBL
 
 def flush ():
     sys.stdout.flush()
@@ -155,7 +155,6 @@ def testDB ():
     print( "========================================" )
     db = DataBase.create()
     print( 'DataBase.getDB()={}'.format(DataBase.getDB()) )
-    print( 'DataBase.Flags.CreateLib={}'.format(DataBase.Flags.CreateLib) )
 
 
 def testTechnology ():
@@ -165,36 +164,6 @@ def testTechnology ():
     tech = Technology.create( DataBase.getDB(), 'test_techno' )
     print( 'tech={}'.format(tech) )
 
-
-def testLayerMask ():
-    print( "" )
-    print( "Test Hurricane::Layer::Mask" )
-    print( "========================================" )
-    mask16 = LayerMask( 16 )
-    print( 'mask16= {}'.format(mask16) )
-    mask32 = LayerMask( 16+32 )
-    print( 'mask16= {}'.format(mask32) )
-    maskAnd = mask16 & mask32
-    print( 'maskAnd={}'.format(maskAnd) )
-    try:
-        maskAnd = mask16 & 4
-        print( 'maskAnd={}'.format(maskAnd) )
-    except Exception as e:
-        print( 'Catched and exception...' )
-        print( e )
-    maskShift = maskAnd << 1
-    print( 'maskShift={}'.format(maskShift) )
-    maskNot = ~maskAnd
-    print( 'maskNot={}'.format(maskNot) )
-    print( 'maskAnd={}'.format(maskAnd) )
-    mask64 = LayerMask( 64+16 )
-    print( 'mask64={}'.format(mask64) )
-    mask64 &= LayerMask( 64 )
-    print( 'mask64={}'.format(mask64) )
-    mask64 |= LayerMask( 16 )
-    print( 'mask64={}'.format(mask64) )
-    mask64.fromString( '0x0000ffff' )
-    print( 'mask64={}'.format(mask64) )
 
 
 def testBasicLayer ():
@@ -220,7 +189,7 @@ def testBasicLayer ():
         flush()
         print( '| basicLayer={}'.format(layer) )
     flush()
- 
+
 
 if __name__ == '__main__':
     testDbU()
@@ -229,6 +198,5 @@ if __name__ == '__main__':
     testBox()
     testDB()
     testTechnology()
-    testLayerMask()
     testBasicLayer()
     sys.exit( 0 )
