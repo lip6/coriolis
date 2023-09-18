@@ -45,8 +45,8 @@ include = [
 doc = ["pelican", "doxygen"]
 
 [build-system]
-requires = ["setuptools", "pdm-backend", "meson",  "ninja"]
-build-backend = "pdm.backend"
+requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@mac-homebrew",  "ninja", "meson-python"]
+build-backend = "mesonpy"
 
 [tool.cibuildwheel.linux]
 skip = ["cp36-*", "cp37-*", "pp*"]
