@@ -117,7 +117,7 @@ py.extension_module(
   'Viewer',
   viewer_py,
   dependencies: [qt_deps, py_mod_deps, boost, rapidjson],
-  link_with: [hurricane, utilities, configuration, pytypemanager, viewer, isobar, analog],
+  link_with: [hurricane, utilities, configuration, pytypemanager, viewer, isobar, pyisobar, analog],
   include_directories: hurricane_includes,
   install: true,
   subdir: 'coriolis'

@@ -23,6 +23,7 @@ add_project_arguments(
   '-Wno-unknown-pragmas',
   '-Wno-unused-but-set-variable',
   '-Wno-overloaded-virtual',
+  '-pedantic',
   language: ['c','cpp']
 )
 

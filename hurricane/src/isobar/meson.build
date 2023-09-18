@@ -81,13 +81,22 @@ isobar_sources = files([
   'PyErrorWidget.cpp',
 ])
 
-isobar = library(
+pyisobar = static_library(
+  'pyisobar',
+  isobar_sources,
+  dependencies: [qt_deps, py_mod_deps, boost],
+  link_with: [hurricane],
+  include_directories: hurricane_includes,
+)
+
+isobar = static_library(
   'isobar',
   isobar_sources,
   dependencies: [qt_deps, py_deps, boost],
   link_with: [hurricane],
   include_directories: hurricane_includes,
-  install: true,
 )
+
+
 
 

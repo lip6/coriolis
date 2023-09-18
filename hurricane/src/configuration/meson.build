@@ -53,7 +53,7 @@ py.extension_module(
   include_directories: hurricane_includes,
   install: true,
   subdir: 'coriolis'
-) 
+)
 
 py.extension_module(
   'Hurricane3',
@@ -74,6 +74,6 @@ py.extension_module(
   dependencies: [qt_deps, py_mod_deps, boost],
   link_with: [hurricane, configuration, pytypemanager],
   include_directories: hurricane_includes,
-  install: true,
+  install: false, # wip
   subdir: 'coriolis'
 )

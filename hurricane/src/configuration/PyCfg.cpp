@@ -147,8 +147,10 @@ extern "C" {
                                                   , PyParameter_Methods
                                                   , PyParameter_Getsets
                                                   , PyTypeManager::NoCppDelete );
-    PyTypeManagerVector<string           >::create( module, PyTypeManager::NoCppDelete );
-    PyTypeManagerMap   <string,Parameter*>::create( module, PyTypeManager::NoCppDelete );
+    //PyTypeManagerVector<const std::string>::create( module, PyTypeManager::NoCppDelete );
+    PyTypeManagerVector<std::string      >::create( module, PyTypeManager::NoCppDelete );
+    PyTypeManagerMap   <const std::string,Parameter*>::create( module, PyTypeManager::NoCppDelete );
+    //PyTypeManagerMap   <std::string,Parameter*>::create( module, PyTypeManager::NoCppDelete );
     PyTypeManagerNonDBo<LayoutDescription>::create( module
                                                   , PyLayoutDescription_Methods
                                                   , NULL

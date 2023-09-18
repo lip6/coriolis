@@ -32,6 +32,16 @@ using namespace Hurricane;
 extern "C" {
 
 
+#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(BaseQuery,query,function)
+
+
+// +=================================================================+
+// |               "PyQuery" Python Module Code Part                 |
+// +=================================================================+
+
+#if defined(__PYTHON_MODULE__)
+
+
   class BaseQuery : public Query {
     public:
                     BaseQuery              ( PyQuery* );
@@ -116,16 +126,6 @@ extern "C" {
     if (PyCallable_Check(_masterCellCallback))
       PyObject_CallFunctionObjArgs( _masterCellCallback, _self, NULL );
   }
-
-
-#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(BaseQuery,query,function)
-
-
-// +=================================================================+
-// |               "PyQuery" Python Module Code Part                 |
-// +=================================================================+
-
-#if defined(__PYTHON_MODULE__)
 
 
   DirectSetLongAttribute(PyQuery_setThreshold    ,setThreshold    ,PyQuery,Query)

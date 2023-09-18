@@ -29,7 +29,25 @@
 
 namespace  Isobar {
 
-  
+
+using namespace Hurricane;
+
+extern "C" {
+
+
+#undef  ACCESS_OBJECT
+#undef  ACCESS_CLASS
+#define ACCESS_OBJECT           _baseObject._object
+#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
+#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Cell,cell,function)
+
+// x=================================================================x
+// |                "PyCell" Python Module Code Part                 |
+// x=================================================================x
+
+#if defined(__PYTHON_MODULE__)
+
+
   bool  pyListToStringSet ( PyObject* list, set<string>& v )
   {
     if (not PyList_Check(list)) return false;
@@ -47,24 +65,6 @@ namespace  Isobar {
     return true;
   }
 
-
-using namespace Hurricane;
-
-extern "C" {
-
-
-#undef  ACCESS_OBJECT
-#undef  ACCESS_CLASS
-#define ACCESS_OBJECT           _baseObject._object
-#define ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
-#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Cell,cell,function)
-
-
-// x=================================================================x
-// |                "PyCell" Python Module Code Part                 |
-// x=================================================================x
-
-#if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x

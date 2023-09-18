@@ -110,8 +110,8 @@ namespace Isobar3 {
   template< typename CppK, typename CppT >
   PyTypeManagerMapIterator<CppK,CppT>* PyTypeManagerMapIterator<CppK,CppT>::create ( PyObject* module, uint64_t flags )
   {
-    // cerr << "PyTypeManagerMap<"
-    //      << ::Hurricane::demangle(typeid(typename std::map<CppK,CppT>::iterator)) << ">::create()" << endl;
+    cerr << "PyTypeManagerMap<"
+          << ::Hurricane::demangle(typeid(typename std::map<CppK,CppT>::iterator)) << ">::create()" << endl;
     PyTypeManagerMapIterator<CppK,CppT>* manager = new PyTypeManagerMapIterator<CppK,CppT>( flags );
 
     string elementName = ::Hurricane::demangle(typeid(CppT));
@@ -120,6 +120,7 @@ namespace Isobar3 {
     string keyName = ::Hurricane::demangle(typeid(CppK));
     cppScope       = keyName.find_last_of( "::" );
     if (cppScope != std::string::npos) keyName = keyName.substr( cppScope+1 );
+    cerr << "cppScope: " << cppScope << std::endl;
 
     manager->_setTypeNames( "MapIteratorOf" + elementName + "By" + keyName );
     manager->_setupPyType();

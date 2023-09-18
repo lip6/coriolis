@@ -86,9 +86,9 @@ namespace Isobar3 {
 // -------------------------------------------------------------------
 // PyTypeObject & PyObject wrapper / manager.
 
-  
-  std::map< size_t       , PyTypeManager* >  PyTypeManager::_managerByCppTypes;
-  std::map< PyTypeObject*, PyTypeManager* >  PyTypeManager::_managerByPyTypes;
+
+  PyTypeManager::ManagerByCppTypes PyTypeManager::_managerByCppTypes;
+  PyTypeManager::ManagerByPyTypes PyTypeManager::_managerByPyTypes;
 
 
   PyTypeManager::~PyTypeManager ()

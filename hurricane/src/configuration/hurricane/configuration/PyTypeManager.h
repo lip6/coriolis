@@ -93,6 +93,8 @@ extern "C" {
   inline PyObject*& object2 ( PyObject*  o ) { return asIPtr(o)->_object2; }
   inline PyObject*& object2 ( PyTwoVoid* o ) { return o->_object2; }
 
+  using TypeInfoRef = std::reference_wrapper<const std::type_info>;
+
 
 // -------------------------------------------------------------------
 // PyTypeObject post-creation default hook.
@@ -196,10 +198,25 @@ extern "C" {
 // -------------------------------------------------------------------
 // Basic PyTypeObject & PyObject wrapper / manager.
 
+  struct Hasher {
+      std::size_t operator()(TypeInfoRef code) const
+      {
+          return code.get().hash_code();
+      }
+  };
+
+  struct EqualTo {
+      bool operator()(TypeInfoRef lhs, TypeInfoRef rhs) const
+      {
+          return lhs.get() == rhs.get();
+      }
+  };
+
+
 
   class PyTypeManager {
     public:
-      typedef std::map<size_t       ,PyTypeManager*>  ManagerByCppTypes;
+      typedef std::unordered_map<TypeInfoRef, PyTypeManager*, Hasher, EqualTo>  ManagerByCppTypes;
       typedef std::map<PyTypeObject*,PyTypeManager*>  ManagerByPyTypes;
     public:
       static const uint64_t  NoFlags      =  0;
@@ -260,6 +277,8 @@ extern "C" {
 
   inline PyTypeManager* PyTypeManager::get ( PyTypeObject* obType )
   {
+    std::cerr << "PyTypeManager::get ("<< obType->tp_name<<"): _managerByCppTypes=" << (void*)&_managerByCppTypes <<" _managerByPyType=" << (void*)&_managerByPyTypes << std::endl;
+
     auto element = _managerByPyTypes.find( obType );
     if (element == _managerByPyTypes.end())
       throw Error( "PyTypeManager::get(PyTypeObject*): Unregistered type <%s>."
@@ -270,19 +289,20 @@ extern "C" {
 
   template<typename CppT> inline bool  PyTypeManager::hasType ()
   {
-    auto element = _managerByCppTypes.find( typeid(CppT).hash_code() );
+    std::cerr << "PyTypeManager::hasType <"<< demangle(typeid(CppT).name()) <<">: hash: "<< typeid(CppT).hash_code() << " _managerByCppTypes=" << (void*)&_managerByCppTypes <<" _managerByPyType=" << (void*)&_managerByPyTypes << std::endl;
+    auto element = _managerByCppTypes.find( typeid(CppT) );
     return (element != _managerByCppTypes.end());
   }
 
 
   template<typename CppT> inline PyTypeManager* PyTypeManager::_get ()
   {
-    auto element = _managerByCppTypes.find( typeid(CppT).hash_code() );
+    auto element = _managerByCppTypes.find( typeid(CppT) );
     if (element == _managerByCppTypes.end()) {
       std::cerr << "PyTypeManager<CppT>::_get(): Unregistered type <"
                 << demangle(typeid(CppT).name()) << ">."  << std::endl;
       for ( auto item : _managerByCppTypes ) {
-        std::cerr << "| " << std::setw(30) << std::right << item.first
+        std::cerr << "| " << std::setw(30) << std::right << demangle(item.first.get().name())
                   << ":"  << item.second->_getTypeInfo() << std::endl;
       }
       throw Error( "PyTypeManager<CppT>::_get(): Unregistered type <%s>."
@@ -349,15 +369,16 @@ extern "C" {
     if (ProxyProperty::getOffset() == (size_t)-1)
       ProxyProperty::setOffset( offsetof( PyOneVoid, _object1 ));
 
-    // std::cerr << "PyTypeManager::add<" << demangle(typeid(CppT).name())
-    //           << "> hash=" << std::type_index(typeid(CppT)).hash_code()
-    //           << " manager=" << manager << std::endl;
-    if (not hashCode) hashCode = typeid(CppT).hash_code();
-    _managerByCppTypes[ hashCode                  ] = manager;
+    std::cerr << "PyTypeManager::add<" << demangle(typeid(CppT).name())
+               << "> hash= " << typeid(CppT).hash_code() << " hashCode = " << hashCode
+               << " manager=" << manager << std::endl;
+    std::cerr << "_managerByCppTypes=" << (void*)&_managerByCppTypes <<" _managerByPyType=" << (void*)&_managerByPyTypes << std::endl;
+
+    _managerByCppTypes[ typeid(CppT) ] = manager;
     _managerByPyTypes [ manager->_getTypeObject() ] = manager;
     manager->_addToModule( module );
     pyTypePostInit<CppT>( manager->_getTypeObject() );
-    // std::cerr << "_managerByCppTypes.size()=" << _managerByCppTypes.size() << std::endl;
+     std::cerr << "_managerByCppTypes.size()=" << _managerByCppTypes.size() << std::endl;
   }
 
 
