@@ -4,7 +4,7 @@
 # This file is part of the Coriolis Software.
 # Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
-# +-----------------------------------------------------------------+ 
+# +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
 # |          Alliance / Hurricane  Interface                        |
 # |                                                                 |
@@ -72,7 +72,7 @@ def truncPath ( path, maxlength=80 ):
     for i in range(-1,-len(components),-1):
         if len(trunc)+len(components[i]) >= maxlength: break
         if not len(trunc): trunc = components[i]
-        else:              trunc = os.path.join( components[i], trunc ) 
+        else:              trunc = os.path.join( components[i], trunc )
     return '...' + os.sep + trunc
 
 
@@ -113,7 +113,7 @@ class Tab ( object ):
         self._stepSize = stepSize
         self._tsize    = 0
         return
-    
+
     def inc ( self, step=1 ): self._tsize += step*self._stepSize
 
     def dec ( self, step=1 ):
@@ -122,7 +122,7 @@ class Tab ( object ):
         else:
             self._tsize  = 0
         return
-    
+
     def __str__ ( self ): return ' '*self._tsize
 
 
@@ -132,12 +132,12 @@ class Trace ( object ):
         self._tab   = Tab()
         self._level = 10000
         return
-  
+
     @property
     def level ( self ): return self._level
     @level.setter
     def level ( self, level ): self._level = level
-  
+
     def write ( self, level, arg1='', arg2=None ):
         if level < self._level: return
         sys.stdout.flush()
@@ -216,9 +216,8 @@ def initTechno ( argQuiet ):
     global ndaConfDir
     global technoDir
     global techno
-    
+
     quiet        = argQuiet
-    technoFiles  = [ sysConfDir+'/techno.conf' ]
     if os.getenv('HOME'):
         technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
     technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
@@ -240,7 +239,7 @@ def initTechno ( argQuiet ):
     technoDir = os.path.join( ndaConfDir, techno )
     if not quiet: print( '     - Technology: {}.'.format( techno ))
 
-  
+
 unitsLambda = True
 tab         = Tab()
 _trace      = Trace()
@@ -258,61 +257,12 @@ def setNdaTopDir ( ndaTopDirArg ):
         sys.path.append( ndaTopDir )
     return
 
-
 def staticInitialization ( quiet=True ):
-    global sysConfDir
-    global technoDir
-    global tab
-    global _trace
-    global unitsLambda
-    
-    if sysConfDir != None:
-        return
-    reSysConfDir = re.compile(r'.*etc\/coriolis2')
-    if not quiet: print( '  o  Locating configuration directory:' )
-    for path in sys.path:
-        if reSysConfDir.match(path):
-            sysConfDir = path
-            if not quiet: print( '     - "{}"'.format( sysConfDir ))
-            break
-    if not sysConfDir:
-        coriolisTop = os.getenv('CORIOLIS_TOP')
-        if coriolisTop == '/usr':
-            sysConfDir = '/etc/coriolis2'
-        elif coriolisTop:
-            sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
-        else:
-            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
-    if not quiet: print( '     - "{}"'.format( sysConfDir ))
-    initTechno( quiet )
-    return
-
+    pass
 
 def setSysConfDir ( quiet=False ):
     global sysConfDir
-  
-    if sysConfDir != None:
-        return
-    reSysConfDir = re.compile(r'.*etc\/coriolis2')
-    if not quiet: print( '  o  Locating configuration directory:' )
-    for path in sys.path:
-        if reSysConfDir.match(path):
-            sysConfDir = path
-            if not quiet: print( '     - "{}"'.format( sysConfDir ))
-            break
-    if not sysConfDir:
-        coriolisTop = os.getenv('CORIOLIS_TOP')
-        if coriolisTop == '/usr':
-            sysConfDir = '/etc/coriolis2'
-        elif coriolisTop:
-            sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
-        else:
-            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
-    if not quiet: print( '     - "{}"'.format( sysConfDir ))
-    sys.path.append( sysConfDir )
-    return
+    sysConfDir = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
 
 
 def netDirectionToStr ( netDir ):
@@ -321,7 +271,7 @@ def netDirectionToStr ( netDir ):
     if netDir & Net.Direction.DirOut:       flags[1] = 'o'
     if netDir & Net.Direction.ConnTristate: flags[2] = 't'
     if netDir & Net.Direction.ConnWiredOr:  flags[3] = 'w'
-    
+
     s = flags[0]+flags[1]+flags[2]+flags[3]+' '
     if   netDir == Net.Direction.UNDEFINED: s += '(UNDEFINED)'
     elif netDir == Net.Direction.IN:        s += '(IN)'
