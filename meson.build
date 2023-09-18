@@ -48,7 +48,12 @@ flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
 qt5qwt6 = dependency('Qt5Qwt6', required: true)
 
+
 if build_machine.system() == 'darwin'
+  add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
+  opt_var = cmake.subproject_options()
+  opt_var.add_cmake_defines({'CMAKE_OSX_DEPLOYMENT_TARGET':'13.0'})
+
   add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
   add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
 
@@ -58,7 +63,6 @@ if build_machine.system() == 'darwin'
 else
   qwt = qt5qwt6
 endif
-
 
 #not ideal, hopefully coloquinte can switch to useing more modern targets, or to using meson!
 coloquinte_sub = cmake.subproject('coloquinte')
