@@ -55,7 +55,7 @@ namespace Cfg {
     // Methods.
              ConfigurationWidget*      buildWidget         ( unsigned int flags );
              ConfigurationDialog*      buildDialog         ();
-      inline const std::map<const std::string,Parameter*>&
+      inline const std::map<std::string,Parameter*>&
                                        getParameters       () const;
              const std::set<LogEntry>& getLogs             ( unsigned int ilog ) const;
       inline unsigned int              getFlags            () const;
@@ -80,7 +80,7 @@ namespace Cfg {
     private:
     // Attributes.
       static Configuration*                         _singleton;
-      std::map<const std::string,Parameter*>              _parameters;
+      std::map<std::string,Parameter*>              _parameters;
       LayoutDescription                             _layout;
       unsigned int                                  _flags;
       std::map< unsigned int, std::set<LogEntry> >  _logSets;
@@ -90,7 +90,7 @@ namespace Cfg {
 
 
 // Inline Methods.
-  inline const std::map<const std::string,Parameter*>& Configuration::getParameters () const
+  inline const std::map<std::string,Parameter*>& Configuration::getParameters () const
   { return _parameters; }
 
   inline const LayoutDescription& Configuration::getLayout () const { return _layout; }
