@@ -264,6 +264,7 @@ extern "C" {
     if (element == _managerByPyTypes.end())
       throw Error( "PyTypeManager::get(PyTypeObject*): Unregistered type <%s>."
                  , obType->tp_name );
+    //std::cerr << "returning element "<< (*element) << " second " << (*element).second << std::endl;
     return (*element).second;
   }
 
@@ -434,12 +435,12 @@ extern "C" {
   template< typename CppT >
   inline PyObject* PyTypeManager::link ( CppT* object )
   {
-    // std::cerr << "PyTypeManager<CppT>::link() " << demangle(typeid(CppT).name())
-    //           << "* object = " << (void*)object << ":" << object << std::endl;
+    std::cerr << "PyTypeManager<CppT>::link() " << demangle(typeid(CppT).name())
+               << "* object = " << (void*)object << ":" << object << std::endl;
     if (not object) Py_RETURN_NONE;
     PyTypeManagerVTrunk<CppT>* manager = dynamic_cast< PyTypeManagerVTrunk<CppT>* >( _get<CppT>() );
-    // std::cerr << "_get<CppT>()=" << _get<CppT>() << endl;
-    // std::cerr << demangle(typeid(PyTypeManagerVTrunk<CppT>*).name()) << endl;
+    std::cerr << "_get<CppT>()=" << _get<CppT>() << endl;
+     std::cerr << demangle(typeid(PyTypeManagerVTrunk<CppT>*).name()) << endl;
     if (not manager)
       throw Error( "PyTypeManager<CppT>::link(): No manager for type <%s>."
                  , demangle(typeid(CppT).name()).c_str() );
@@ -1577,11 +1578,13 @@ namespace Isobar3 {
 // -------------------------------------------------------------------
 // Standard Python to C types converters.
 
+using Hurricane::demangle;
 
 template< typename T
         , typename std::enable_if< !std::is_pointer<T>::value, bool >::type = true >
 inline bool  pyToC ( PyObject* pyArg, T* arg )
 {
+  std::cerr << "template< typename T , typename std::enable_if< !std::is_pointer<T>::value, bool >::type = true > pyToC( PyObject* pyArg, T* arg ) " << " T = " << demangle(typeid(T).name()) <<std::endl;
   typedef typename std::remove_cv<T>::type  NonConstT;
   Isobar3::PyTypeManager* manager = Isobar3::PyTypeManager::_get<T>();
   if (not manager) {
@@ -1597,13 +1600,16 @@ inline bool  pyToC ( PyObject* pyArg, T* arg )
 template<typename T>
 inline bool  pyToC ( PyObject* pyArg, T** arg )
 {
+  std::cerr << "template<typename T> pyToC( PyObject* pyArg, T** arg ) " << " T = " << demangle(typeid(T).name()) <<std::endl;
+
   Isobar3::PyTypeManager* manager = Isobar3::PyTypeManager::_get<T>();
   if (not manager) {
-    std::cerr << "Isobar3::pyToC<T>(T*&): Unsupported type \"" << typeid(T).name() << "\"" << std::endl;
+    std::cerr << "Isobar3::pyToC<T>(T*&): Unsupported type \"" << demangle(typeid(T).name()) << "\"" << std::endl;
     return false;
   }
-  // std::cerr << "pyToC< " << demangle(typeid(T).name()) << " >() called." << std::endl;
+   std::cerr << "pyToC< " << demangle(typeid(T).name()) << " >() called." << std::endl;
   *arg = (T*)( Isobar3::object1( pyArg ));
+  std::cerr << "returning "<<std::endl;
   return true;
 }
 
@@ -1701,12 +1707,12 @@ namespace Isobar3 {
     const std::string nth[] = { "First", "Second" , "Third", "Fourth", "Fifth"
                               , "Sixth", "Seventh", "Eight", "Ninth" , "Tenth" };
 
-  //std::cerr << "Calling pyToC<" << demangle(typeid(typename Arg<T>::ValueT).name()) << ">" << std::endl;
-  //std::cerr << "Calling pyToC<" << demangle(typeid(&(as<T>( args[count]))).name()) << ">" << std::endl;
+  std::cerr << "Calling pyToC<" << demangle(typeid(typename Arg<T>::ValueT).name()) << ">" << std::endl;
+  std::cerr << "Calling pyToC<" << demangle(typeid(&(as<T>( args[count]))).name()) << ">" << std::endl;
   //success = success and pyToC< typename Arg<T>::ValueT >( pyArgs[count]
   //                                                      , &(as<T>( args[count])) );
     success = success and pyToC( pyArgs[count], &(as<T>( args[count])) );
-  //std::cerr << "success=" << success << std::endl;
+  std::cerr << "success=" << success << std::endl;
     if (not success) {
       message += "\n  " + getString(nth) + " X argument is not convertible to \"" + Hurricane::demangle(typeid(T).name()) + "\".";
       PyErr_SetString( Isobar3::ConstructorError, message.c_str() );
