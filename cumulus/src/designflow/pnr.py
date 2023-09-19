@@ -24,7 +24,7 @@ class PnR ( FlowTask ):
     textMode = True
 
     @staticmethod
-    def mkRule ( rule, targets=[], depends=[], script=None ):
+    def mkRule ( rule, targets=[], depends=[], script=None, topName=None ):
         """
         Creates a new rule instance (``doit`` task).
 
@@ -36,11 +36,12 @@ class PnR ( FlowTask ):
         :param script:  A callable, typically a ``scriptMain()`` function. The only
                         requirement is that it should accept one keyworded argument (``**kw``).
         """
-        return PnR( rule, targets, depends, script )
+        return PnR( rule, targets, depends, script, topName )
 
-    def __init__ ( self, rule, targets, depends, script ):
+    def __init__ ( self, rule, targets, depends, script, topName ):
         super().__init__( rule, targets, depends )
         self.script  = script
+        self.topName = topName
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -70,8 +71,10 @@ class PnR ( FlowTask ):
         if self.script and not callable(self.script):
             e = ErrorMessage( 1, 'PnR.doTask(): "script" argument is *not* callable.' )
             return TaskFailed( e )
-        if self.script:
-            self.script( **{} )
+        kw = {}
+        if self.script and self.topName:
+            kw[ 'loadCell' ] = self.topName
+            self.script( **kw )
         if not PnR.textMode:
            # Run in graphic mode.
             ha = Viewer.HApplication.create( [] )
