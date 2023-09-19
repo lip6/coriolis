@@ -110,8 +110,12 @@ class Yosys ( FlowTask ):
             self.success = TaskFailed( e )
             return
         design = Path( design )
-        if   design.suffix == '.v' : self.script.append( 'read_verilog -sv {}'.format( design.as_posix() ))
-        elif design.suffix == '.il': self.script.append( 'read_ilang       {}'.format( design.as_posix() ))
+        if   design.suffix == '.v'   :
+            self.script.append( 'read_verilog -sv {}'.format( design.as_posix() ))
+        elif design.suffix == '.il'  : self.script.append( 'read_ilang       {}'.format( design.as_posix() ))
+        elif design.suffix == '.uhdm':
+            self.script.append( 'plugin -i systemverilog' )
+            self.script.append( 'read_uhdm {}'.format( design.as_posix() ))
         else:
             e = ErrorMessage( 1, 'Yosys._loadDesign(): Unsupported input format for "{}".'.format( design ))
             self.success = TaskFailed( e )
@@ -193,7 +197,7 @@ class Yosys ( FlowTask ):
             e = ErrorMessage( 1, [ 'Yosys.doTask(): File not found "{}"'
                                  , '"{}"'.format( self.liberty.as_posix() ) ] )
             return TaskFailed( e )
-       #print( 'Yosys.doTask() on "{}"'.format( self.design ))
+        #print( 'Yosys.doTask() on "{}"'.format( self.main ))
         self._loadBlackboxes()
         if self.flags & Yosys.FlagSystemVerilog:
             self._loadSVDesign()

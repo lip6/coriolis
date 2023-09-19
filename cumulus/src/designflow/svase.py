@@ -37,6 +37,7 @@ class Svase ( FlowTask ):
        #if self.flags & Svase.FlagLog:
        #    self.log = Path( self.top + '.log' )
        #    targets.append( self.log )
+        targets.append( './slang-args.txt' )
         super().__init__( rule, targets, depends )
         self.addClean( targets )
 
