@@ -1,7 +1,18 @@
 # Workflow to build and test wheels.
 name: Wheel builder
 
-on: [push, pull_request]
+on: 
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - v**
+  release:
+    types:
+      - published
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -10,9 +21,62 @@ concurrency:
 permissions:
   contents: read # to fetch code (actions/checkout)
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}-manylinux2014
+  FALLBACK_TAG: ghcr.io/${{ github.repository }}-manylinux2014:main
+
 jobs:
+  build-custom-manylinux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.meta.outputs.labels || env.FALLBACK_TAG }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed Dockerfile
+        id: changed-files-specific
+        uses: tj-actions/changed-files@de0eba32790fb9bf87471b32855a30fc8f9d5fc6 #v37.4.0
+        with:
+          files: |
+            Dockerfile-manylinux
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc #v2.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        id: meta
+        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175 #v4.6.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825 #v4.1.1
+        with:
+          context: .
+          file: ./Dockerfile-manylinux
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   build_wheels:
     name: Build wheel for ${{ matrix.python }}-${{ matrix.buildplat[1] }}
+    needs: build-custom-manylinux
+    permissions:
+      packages: read
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
       # Ensure that a wheel builder finishes even if another fails
@@ -51,9 +115,16 @@ jobs:
           python-version: "3.x"
 
       - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@ca3acd2731eef11f1572ccb126356c2f9298d35e #v1.2.9
         with:
           key: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc #v2.2.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@66b46d086804a9e9782354100d96a3a445431bca # v2.14.0
@@ -62,12 +133,82 @@ jobs:
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
           CIBW_ENVIRONMENT: USE_CCACHE=1 CCACHE_DIR=/.ccache
           CIBW_CONTAINER_ENGINE: "docker; create_args: '--volume=${{ github.workspace  }}/.ccache:/.ccache'"
+          # overriede before-all in pyproject.toml
+          CIBW_BEFORE_ALL: ""
+          CIBW_MANYLINUX_X86_64_IMAGE: ${{ needs.build-custom-manylinux.outputs.tag }}
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./wheelhouse/*.whl
-#
+
+  test_upload_pypi:
+    # TODO: create an sdist that can build without a custom environment
+    needs: [build_wheels] 
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        buildplat:
+          - [ubuntu-20.04, manylinux_x86_64]
+            #- [ubuntu-20.04, musllinux_x86_64]
+            #- [macos-12, macosx_x86_64]
+            #- [windows-2019, win_amd64]
+        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        exclude:
+          # Don't build PyPy 32-bit windows
+          - buildplat: [windows-2019, win32]
+            python: "pp39"
+          - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
+            python: "pp39"
+ 
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@f8c70e705ffc13c3b4d1221169b84f12a75d6ca8 #v1.8.8
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+
+  upload_pypi:
+    # TODO: create an sdist that can build without a custom environment
+    if: github.event_name == 'release'
+    needs: [build_wheels] 
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildplat:
+          - [ubuntu-20.04, manylinux_x86_64]
+            #- [ubuntu-20.04, musllinux_x86_64]
+            #- [macos-12, macosx_x86_64]
+            #- [windows-2019, win_amd64]
+        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        exclude:
+          # Don't build PyPy 32-bit windows
+          - buildplat: [windows-2019, win32]
+            python: "pp39"
+          - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
+            python: "pp39"
+ 
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
 #  build_sdist:
 #    name: Build sdist
 #    runs-on: ubuntu-latest

@@ -73,7 +73,7 @@ class ExtensionBuilder(build_ext):
         env["CXXFLAGS"] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get("CXXFLAGS", ""), self.distribution.get_version())
         
         build_dir = os.path.join(self.build_temp, ext.sourcedir_rel)
-        install_dir = os.path.join(extdir, 'Coriolis')
+        install_dir = os.path.join(extdir, 'coriolis')
         os.makedirs(build_dir,exist_ok=True)
 
         if "USE_CCACHE" in env:
@@ -122,6 +122,7 @@ class ExtensionBuilder(build_ext):
 def build(setup_kwargs: Dict[str, Any]) -> None:
     cmake_modules = [
                      CMakeExtension("coloquinte", sourcedir="coloquinte"),
+                     CMakeExtension("lefdef", sourcedir="lefdef"),
                      CMakeExtension("Hurricane", sourcedir="hurricane"),
                      CMakeExtension("crlcore", sourcedir="crlcore"),
                      CMakeExtension("flute", sourcedir="flute"),
@@ -134,7 +135,7 @@ def build(setup_kwargs: Dict[str, Any]) -> None:
                      CMakeExtension("bora", sourcedir="bora"),
                      CMakeExtension("karakaze", sourcedir="karakaze"),
                      #CMakeExtension("knik", sourcedir="knik"),
-                     #CMakeExtension("unicorn", sourcedir="unicorn"),
+                     CMakeExtension("unicorn", sourcedir="unicorn"),
                      CMakeExtension("tutorial", sourcedir="tutorial"),
                      CMakeExtension("cumulus", sourcedir="cumulus"),
                      CMakeExtension("stratus1", sourcedir="stratus1"),
