@@ -72,8 +72,9 @@ class PnR ( FlowTask ):
             e = ErrorMessage( 1, 'PnR.doTask(): "script" argument is *not* callable.' )
             return TaskFailed( e )
         kw = {}
-        if self.script and self.topName:
-            kw[ 'loadCell' ] = self.topName
+        if self.script:
+            if self.topName:
+                kw[ 'loadCell' ] = self.topName
             self.script( **kw )
         if not PnR.textMode:
            # Run in graphic mode.
