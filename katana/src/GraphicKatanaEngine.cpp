@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
@@ -223,7 +223,7 @@ namespace Katana {
     KatanaEngine* katana = KatanaEngine::get( cell );
     if (not katana) {
       katana = KatanaEngine::create( cell );
-      katana->setPostEventCb( boost::bind(&GraphicKatanaEngine::postEvent,this) );
+      katana->setPostEventCb( std::bind(&GraphicKatanaEngine::postEvent,this) );
       katana->setViewer( _viewer );
       katana->printConfiguration();
       katana->digitalInit();
