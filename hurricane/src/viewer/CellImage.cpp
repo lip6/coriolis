@@ -17,8 +17,8 @@
 
 #include  <unistd.h>
 #include  <algorithm>
+#include  <functional>
 #include  <sstream>
-#include  <boost/bind.hpp>
 #include  <QApplication>
 #include  <QImage>
 #include  "hurricane/configuration/Configuration.h"
@@ -200,7 +200,7 @@ namespace Hurricane {
   //cerr << "(w,h) = (" << w << "," << h << ")"  << endl;
   //cerr << "(dw,dh) = (" << drawingWidth << "," << drawingHeight << ")"  << endl;
 
-    CellWidget::PainterCb_t cb = boost::bind( &CellImage::pageDecorate, this, _1 );
+    CellWidget::PainterCb_t cb = std::bind( &CellImage::pageDecorate, this, std::placeholders::_1 );
     _cellWidget->copyToImage( _image, cb );
 
     return _image;

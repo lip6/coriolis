@@ -16,8 +16,8 @@
 
 #include <unistd.h>
 #include <algorithm>
+#include <functional>
 #include <sstream>
-#include <boost/bind.hpp>
 #include <QApplication>
 #include <QPrinter>
 #include "hurricane/configuration/Configuration.h"
@@ -378,7 +378,7 @@ namespace Hurricane {
   //cerr << "  (xpaper,ypaper) =        (" << _xpaper << "," << _ypaper << ")"  << endl;
   //cerr << "  (dw,dh) =                (" << _drawingWidth << "," << _drawingHeight << ")"  << endl;
 
-    CellWidget::PainterCb_t cb = boost::bind( &CellPrinter::pageDecorate, this, _1 );
+    CellWidget::PainterCb_t cb = std::bind( &CellPrinter::pageDecorate, this, std::placeholders::_1 );
     _cellWidget->copyToPrinter( _xpaper, _ypaper, _printer, cb );
 
     _printer = NULL;

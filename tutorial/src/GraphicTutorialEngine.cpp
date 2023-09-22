@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#include <boost/bind.hpp>
+#include <functional>
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
