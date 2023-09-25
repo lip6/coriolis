@@ -693,11 +693,11 @@ class Corona ( object ):
                             if plug.getMasterNet().isGlobal():
                                 net = self.conf.cell.getNet( plug.getMasterNet().getName() )
                                 if not net:
-                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
-                                                           %  plug.getMasterNet().getName(), padCell.getName() )
+                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "{}" is not connected and there is no global net (in pad "{}").' \
+                                                           .format( plug.getMasterNet().getName(), padCell.getName() ))
                             else:
-                                raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
-                                                     %  plug.getMasterNet().getName(), padCell.getName() )
+                                raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "{}" is neither connected nor global (in pad "{}").' \
+                                                       .format( plug.getMasterNet().getName(), padCell.getName() ))
                         if net:
                             self.padRails.append( ( net
                                                   , component.getLayer()

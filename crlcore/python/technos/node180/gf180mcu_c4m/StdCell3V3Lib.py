@@ -99,6 +99,10 @@ def _routing():
     )
     af.addCellGauge(cg)
     af.setCellGauge('StdCell3V3Lib')
+    lg5 = af.getRoutingGauge('StdCell3V3Lib').getLayerGauge( 5 )
+    lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
+    env = af.getEnvironment()
+    env.setRegister( '.*sff.*' )
 
     # Place & Route setup
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
@@ -162,17 +166,8 @@ def _routing():
         cfg.katana.globalRipupLimit = 5
         cfg.katana.globalRipupLimit = [1, None]
         cfg.katana.longGlobalRipupLimit = 5
-        cfg.chip.padCoreSide = 'South'
-
-    # Plugins setup
-    with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         cfg.viewer.minimumSize = 500
         cfg.viewer.pixelThreshold = 10
-        cfg.chip.block.rails.count = 5
-        cfg.chip.block.rails.hWidth = u(2.68)
-        cfg.chip.block.rails.vWidth = u(2.68)
-        cfg.chip.block.rails.hSpacing = u(0.7)
-        cfg.chip.block.rails.vSpacing = u(0.7)
         cfg.clockTree.minimumSide = l(600)
         cfg.clockTree.buffer = 'buf_x1'
         cfg.clockTree.placerEngine = 'Etesian'

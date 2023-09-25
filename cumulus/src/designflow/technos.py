@@ -284,7 +284,6 @@ def setupGf180mcu_c4m ( checkToolkit=None
         cfg.misc.verboseLevel2       = True
         cfg.etesian.graphics         = 3
         cfg.etesian.spaceMargin      = 0.10
-        cfg.anabatic.topRoutingLayer = 'metal6'
         cfg.katana.eventsLimit       = 4000000
         af  = CRL.AllianceFramework.get()
         lg5 = af.getRoutingGauge('StdCell3V3Lib').getLayerGauge( 5 )

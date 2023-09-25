@@ -65,6 +65,7 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/niolib.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/libresocio.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/sky130.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/gf180mcu.py
                   )
               set ( pyPluginChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/__init__.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/constants.py
