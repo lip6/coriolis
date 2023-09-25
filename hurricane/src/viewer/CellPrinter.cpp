@@ -223,8 +223,8 @@ namespace Hurricane {
   //                 );
 
   // Rotate the painter for the cartouche if in A4+Landscape mode.
-    if (    (_printer->paperSize  () == QPrinter::A4)
-        and (_printer->orientation() == QPrinter::Landscape) ) {
+    if (    (_printer->pageLayout().pageSize().id() == QPageSize::A4)
+       and (_printer->pageLayout().orientation()    == QPageLayout::Landscape) ) {
       painter.translate ( _paperWidth - frameMargin(), frameMargin() );
       painter.rotate ( -90 );
     } else
@@ -326,7 +326,7 @@ namespace Hurricane {
 
     _printer = printer;
     _printer->setResolution ( _dpi );
-    _printer->setPageMargins( 0.0, 0.0, 0.0, 0.0, QPrinter::DevicePixel );
+    _printer->setPageMargins( QMarginsF(0.0, 0.0, 0.0, 0.0), QPageLayout::Millimeter );
 
     _paperWidth    = _printer->width ();
     _paperHeight   = _printer->height ();
@@ -336,7 +336,7 @@ namespace Hurricane {
     _ypaper        = (imageOnly) ? 0 : frameMargin();
 
   // Substract the cartouche size only for A4 format.
-    if ( _printer->orientation() == QPrinter::Landscape ) {
+    if ( _printer->pageLayout().orientation() == QPageLayout::Landscape ) {
       _drawingWidth -= cartoucheHeight();
     } else {
       _drawingHeight -= cartoucheHeight();

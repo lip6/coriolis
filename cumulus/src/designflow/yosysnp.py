@@ -2,7 +2,6 @@
 import os.path
 import subprocess
 from   pathlib import Path
-from   pyosys          import libyosys as yosys
 from   doit.exceptions import TaskFailed
 from   .task           import FlowTask
 

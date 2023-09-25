@@ -484,6 +484,19 @@ class Block ( object ):
         trace( 550, '\tCORE AB is {}\n'.format(self.conf.cell.getAbutmentBox()) )
         if self.conf.isCoreBlock:
             self.conf.setupICore()
+            minHCorona = self.conf.minHCorona
+            minVCorona = self.conf.minVCorona
+            innerBb    = Box( self.conf.coreAb )
+            innerBb.inflate( minHCorona, minVCorona )
+            coronaAb = self.conf.corona.getAbutmentBox()
+            if innerBb.getWidth() > coronaAb.getWidth():
+                raise ErrorMessage( 1, 'Core is too wide to fit into the corona, needs {} but only has {}.' \
+                                       .format( DbU.getValueString(innerBb .getWidth())
+                                              , DbU.getValueString(coronaAb.getWidth()) ) )
+            if innerBb.getHeight() > coronaAb.getHeight():
+                raise ErrorMessage( 1, 'Core is too tall to fit into the corona, needs {} but only has {}.' \
+                                       .format( DbU.getValueString(innerBb .getHeight())
+                                              , DbU.getValueString(coronaAb.getHeight()) ) )
         self.conf.setRoutingBb( self.conf.cellPnR.getAbutmentBox() )
 
     def flattenNets ( self ):

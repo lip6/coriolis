@@ -120,7 +120,7 @@ Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Un
     throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
 
   const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( layer );
-  if (not basicLayer or basicLayer->getMaterial() != BasicLayer::Material::cut) return;
+  if (not basicLayer or (basicLayer->getMaterial() != BasicLayer::Material::cut)) return;
   if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
   if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
@@ -150,7 +150,7 @@ Contact::Contact(Net* net, Component* anchor, const Layer* layer, DbU::Unit dx, 
     _anchorHook.attach(anchor->getBodyHook());
 
     const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( layer );
-    if (not basicLayer or basicLayer->getMaterial() != BasicLayer::Material::cut) return;
+    if (not basicLayer or (basicLayer->getMaterial() != BasicLayer::Material::cut)) return;
     if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
     if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
@@ -180,29 +180,33 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
   // *************************
   {
     DbU::Unit twoGrid = DbU::fromGrid( 2 );
+    DbU::Unit minSize = _layer->getMinimalSize();
     bool rvalue = true;
     if (_layer->isSymbolic()) {
-      if (not _width ) _width  = _layer->getMinimalSize();
-      if (not _height) _height = _layer->getMinimalSize();
+      if (not _width ) _width  = minSize;
+      if (not _height) _height = minSize;
     } else {
-      if ((_width) and _checkMinSize and (_width < _layer->getMinimalSize())) {
+      const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( _layer );
+      if (not basicLayer or basicLayer->getMaterial() != BasicLayer::Material::cut)
+        minSize = 0;
+      if ((_width) and _checkMinSize and (_width < minSize)) {
         cerr << Warning( "Contact::_postCheck(): Width %s is inferior to layer minimal size %s, bumping.\n"
                          "          (on %s)"
                        , DbU::getValueString(_width).c_str()
-                       , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                       , DbU::getValueString(minSize).c_str()
                        , getString(this).c_str() )
              << endl;
-        _width = _layer->getMinimalSize();
+        _width = minSize;
         rvalue = false;
       }
-      if ((_height) and _checkMinSize and (_height < _layer->getMinimalSize())) {
+      if ((_height) and _checkMinSize and (_height < minSize)) {
         cerr << Warning( "Contact::_postCheck(): Height %s is inferior to layer minimal size %s, bumping.\n"
                          "          (on %s)"
                        , DbU::getValueString(_height).c_str()
-                       , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                       , DbU::getValueString(minSize).c_str()
                        , getString(this).c_str() )
              << endl;
-        _height = _layer->getMinimalSize();
+        _height = minSize;
         rvalue = false;
       }
       if ((_width % twoGrid) and _checkMinSize) {

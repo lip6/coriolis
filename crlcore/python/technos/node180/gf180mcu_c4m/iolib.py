@@ -27,8 +27,9 @@ def _routing ():
         cfg.chip.block.rails.vWidth   = u(30.0)
         cfg.chip.block.rails.hSpacing = u( 6.0)
         cfg.chip.block.rails.vSpacing = u( 6.0)
-        cfg.chip.padCorner            = 'gf180mcu_fd_io__cor_5lm'
-        cfg.chip.padSpacers           = 'gf180mcu_fd_io__fill10_5lm,gf180mcu_fd_io__fill5_5lm,gf180mcu_fd_io__fill1_5lm'
+        #cfg.chip.padCorner            = 'gf180mcu_fd_io__cor'
+        #cfg.chip.padSpacers           = 'gf180mcu_fd_io__fill10,gf180mcu_fd_io__fill5,gf180mcu_fd_io__fill1'
+        cfg.chip.padCoreSide          = 'North'
     af = AllianceFramework.get()
     cg = CellGauge.create( 'LEF.GF_IO_Site'
                          , 'Metal2'  # pin layer name.
@@ -57,7 +58,6 @@ def _loadIoLib ( pdkDir ):
     print( '  o  Setup GF180MCU I/O library in {}.'.format( ioLib.getName() ))
     io.vprint( 1, '  o  Setup GF180MCU I/O library in {}.'.format( ioLib.getName() ))
     cellsDir = pdkDir / 'libraries' / 'gf180mcu_fd_io' / 'latest' / 'cells'
-    print( cellsDir )
     for lefFile in cellsDir.glob( '*/*_5lm.lef' ):
         print( lefFile )
         gdsFile = lefFile.with_suffix( '.gds' )
@@ -65,6 +65,12 @@ def _loadIoLib ( pdkDir ):
             Gds.setTopCellName( gdsFile.stem[:-4] )
             Gds.load( ioLib, gdsFile.as_posix(), Gds.Layer_0_IsBoundary|Gds.NoBlockages )
         LefImport.load( lefFile.as_posix() )
+    # Demote the VDD/VSS nets until we understand how that works.
+    for cell in ioLib.getCells():
+        for net in cell.getNets():
+            if net.getName() in ('VDD', 'VSS'):
+                net.setExternal( False )
+                net.setGlobal( False )
     af.wrapLibrary( ioLib, 1 ) 
 
 

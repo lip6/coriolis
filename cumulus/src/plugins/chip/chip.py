@@ -99,11 +99,14 @@ class Chip ( Block ):
             trace( 550, '\tminHCorona={}\n'.format(DbU.getValueString( minHCorona )))
             trace( 550, '\tminVCorona={}\n'.format(DbU.getValueString( minVCorona )))
         else:
+            print( '     - Using harness.' )
             self.padsCorona = harnessPads.Corona( self )
             self.padsCorona.doLayout()
         innerBb = Box( self.conf.coreAb )
         innerBb.inflate( minHCorona, minVCorona )
         coronaAb = self.conf.corona.getAbutmentBox()
+        trace( 550, '\tinnerBb:{}\n'.format(innerBb) )
+        trace( 550, '\tcoronaAb:{}\n'.format(coronaAb) )
         if innerBb.getWidth() > coronaAb.getWidth():
             raise ErrorMessage( 1, 'Core is too wide to fit into the corona, needs {} but only has {}.' \
                                    .format( DbU.getValueString(innerBb .getWidth())

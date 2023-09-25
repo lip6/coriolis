@@ -181,7 +181,7 @@ def _routing ():
         cfg.katana.globalRipupLimit = 5
         cfg.katana.globalRipupLimit = [1, None]
         cfg.katana.longGlobalRipupLimit = 5
-        cfg.chip.padCoreSide = 'South'
+        cfg.chip.padCoreSide = 'North'
         # Plugins setup
         cfg.clockTree.minimumSide = u(5.04) * 6
         cfg.clockTree.buffer = 'gf180mcu_fd_sc_mcu9t5v0__clkbuf_2'

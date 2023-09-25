@@ -15,6 +15,7 @@
 import sys
 import re
 import os.path
+import collections
 from   operator            import itemgetter
 from   ...                import Cfg
 from   ...Hurricane       import DataBase, Breakpoint, DbU, Box, Transformation, \
@@ -1449,7 +1450,22 @@ class BlockConf ( GaugeConf ):
         for ioPinSpec in self.ioPinsArg:
             self.ioPins.append( IoPin( *ioPinSpec ) )
         for line in range(len(self.ioPadsArg)):
-            self.chipConf.addIoPad( self.ioPadsArg[line], line )
+            bits = []
+            if not isinstance(self.ioPadsArg[line][-1],str) \
+               and isinstance(self.ioPadsArg[line][-1],collections.Iterable):
+                bits = self.ioPadsArg[line][-1]
+            elif isinstance(self.ioPadsArg[line][-1],int):
+                bits = range( self.ioPadsArg[line][-1] )
+            if bits != []:
+                for bit in bits:
+                    spec = [ self.ioPadsArg[line][0]
+                           , self.ioPadsArg[line][1]
+                           ]
+                    for i in range( 2, len(self.ioPadsArg[line])-1 ):
+                        spec.append( self.ioPadsArg[line][i].format( bit ))
+                    self.chipConf.addIoPad( spec, line )
+            else:
+                self.chipConf.addIoPad( self.ioPadsArg[line], line )
         trace( 550, ',-' )
 
     @property

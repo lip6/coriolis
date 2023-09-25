@@ -690,10 +690,10 @@ namespace Anabatic {
   bool Vertex::isH () const
   {
     GCell* gcell = getGCell();
-    if      (gcell->isDevice())   return isiHorizontal();
-    else if ((gcell->isHChannel())||(gcell->isHRail())) return true;
-    else if (gcell->isStrut()| gcell->isMatrix() )   return ((gcell->getWidth() > gcell->getHeight())||(gcell->getWidth() == gcell->getHeight()));
-    else                          return false;
+    if      ( gcell->isDevice())   return isiHorizontal();
+    else if ((gcell->isHChannel()) or (gcell->isHRail())) return true;
+    else if ( gcell->isStrut()     or  gcell->isMatrix()) return ((gcell->getWidth() > gcell->getHeight())||(gcell->getWidth() == gcell->getHeight()));
+    else                           return false;
   }
 
 

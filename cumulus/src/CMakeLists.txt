@@ -17,8 +17,8 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/dreal.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/sv2v.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/svase.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/surelog.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosys.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/designflow/yosysnp.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/pnr.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/designflow/klayout.py
@@ -65,6 +65,7 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/niolib.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/libresocio.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/sky130.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/gf180mcu.py
                   )
               set ( pyPluginChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/__init__.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/constants.py
