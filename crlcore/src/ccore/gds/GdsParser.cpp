@@ -810,6 +810,8 @@ namespace {
     if (cell) return cell;
 
     if (not Gds::getTopCellName().empty() and (cellName != Gds::getTopCellName())) {
+      cellName.insert( 0, "." );
+      cellName.insert( 0, Gds::getTopCellName() );
       workLibrary = _library->getLibrary( Gds::getTopCellName() );
       if (workLibrary) { 
         cell = workLibrary->getCell( cellName );
