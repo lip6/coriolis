@@ -337,8 +337,10 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
+    HTRY                                                                        \
     if (cobject->FUNC_NAME())                                                   \
       Py_RETURN_TRUE;                                                           \
+    HCATCH                                                                      \
     Py_RETURN_FALSE;                                                            \
   }
 
@@ -383,7 +385,11 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
-    return Py_BuildValue ("I",cobject->FUNC_NAME());                            \
+    PyObject* rvalue = NULL;                                                    \
+    HTRY                                                                        \
+      rvalue = Py_BuildValue ("I",cobject->FUNC_NAME());                        \
+    HCATCH                                                                      \
+    return rvalue;                                                              \
   }
 
 
@@ -394,7 +400,11 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
-    return Isobar::PyDbU_FromLong(cobject->FUNC_NAME());                        \
+    PyObject* rvalue = NULL;                                                    \
+    HTRY                                                                        \
+      rvalue = Isobar::PyDbU_FromLong(cobject->FUNC_NAME());                    \
+    HCATCH                                                                      \
+    return rvalue;                                                              \
   }
 
 
@@ -405,7 +415,11 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* args )            \
   {                                                                               \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                         \
-    return Py_BuildValue ("d",cobject->FUNC_NAME());                              \
+    PyObject* rvalue = NULL;                                                      \
+    HTRY                                                                          \
+      rvalue = Py_BuildValue ("d",cobject->FUNC_NAME());                          \
+    HCATCH                                                                        \
+    return rvalue;                                                                \
   }
 
 
@@ -416,7 +430,11 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                            \
   {                                                                               \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                         \
-    return Py_BuildValue ("s",cobject->FUNC_NAME().c_str());                      \
+    PyObject* rvalue = NULL;                                                      \
+    HTRY                                                                          \
+      rvalue = Py_BuildValue ("s",cobject->FUNC_NAME().c_str());                  \
+    HCATCH                                                                        \
+    return rvalue;                                                                \
   }
 
 
@@ -427,14 +445,18 @@ extern "C" {
   static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self )                          \
   {                                                                             \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#FUNC_NAME"()")                       \
-    return Py_BuildValue ("s",getString(cobject->FUNC_NAME()).c_str());         \
+    PyObject* rvalue = NULL;                                                    \
+    HTRY                                                                        \
+      rvalue = Py_BuildValue ("s",getString(cobject->FUNC_NAME()).c_str());     \
+    HCATCH                                                                      \
+    return rvalue;                                                              \
   }
 
 
 # define  accessorLayerFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                    \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )                 \
   {                                                                                  \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                     \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                   \
                                                                                      \
     Layer* rlayer = NULL;                                                            \
                                                                                      \
