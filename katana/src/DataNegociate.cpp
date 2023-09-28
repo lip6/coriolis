@@ -198,7 +198,9 @@ namespace Katana {
         _perpandicularFree.intersection( trackFree.inflate ( -sourceCap, -targetCap ) );
         cdebug_log(159,0) << "Source cap:"
                           << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
-      } else if (perpandicular->isFixedAxis() /*or _trackSegment->isDogleg()*/) {
+      } else if (       perpandicular->isFixedAxis()
+                and not perpandicular->isReduced()
+                /*or _trackSegment->isDogleg()*/) {
         RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
         Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
         if (track and (perpandicular->getAxis() == track->getAxis())) {

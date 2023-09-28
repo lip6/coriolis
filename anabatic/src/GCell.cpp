@@ -1838,6 +1838,7 @@ namespace Anabatic {
     for ( ; (isegment != iend) ; isegment++ ) {
       unsigned int segmentDepth = Session::getRoutingGauge()->getLayerDepth((*isegment)->getLayer());
 
+      if ((*isegment)->isNonPref()) continue;
       if (segmentDepth < depth) continue;
       if (segmentDepth > depth) break;
 

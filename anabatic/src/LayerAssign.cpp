@@ -214,24 +214,34 @@ namespace {
   {
     cdebug_log(149,1) << "RpsInRow::slacken()" << endl;
 
+    DbU::Unit hpitch = 0;
     for ( RoutingPad* rp : _rps ) {
       cdebug_log(149,0) << "Slacken from: " << rp << endl;
 
       if (rp->getLayer()) {
-        if (_anabatic->getConfiguration()->getLayerDepth(rp->getLayer()) == 1) {
+        size_t depth = _anabatic->getConfiguration()->getLayerDepth( rp->getLayer() );
+        if (depth == 1) {
           cdebug_log(149,0) << "In METAL2, skiping" << endl;
           continue;
         }
+        hpitch = _anabatic->getConfiguration()->getPitch( depth, Flags::AboveLayer );
       }
          
       for ( Component* component : rp->getSlaveComponents() ) {
         AutoContact* rpContact = Session::lookup( dynamic_cast<Contact*>(component) );
         if (rpContact) {
           cdebug_log(149,0) << "+ " << rpContact << endl;
+          if (hpitch) {
+            Box bb = rp->getBoundingBox();
+            if (bb.getHeight() / hpitch > 6) {
+              cdebug_log(149,0) << "| Terminal is tall enough (> 6 pitch), skipping." << endl;
+              continue;
+            }
+          }
           for ( AutoSegment* segment : rpContact->getAutoSegments() ) {
             cdebug_log(149,0) << "| " << segment << endl;
 
-            if (segment->isVertical()) {
+            if (segment->isVertical() and not segment->isNonPref()) {
               if (segment->getDepth() == 1) {
                 cdebug_log(149,0) << "| Slacken: " << segment << endl;
                 segment->changeDepth( 2, Flags::NoFlags );
