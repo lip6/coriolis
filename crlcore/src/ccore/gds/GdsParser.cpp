@@ -37,6 +37,7 @@ using namespace std;
 #include "hurricane/Diagonal.h"
 #include "hurricane/Rectilinear.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Text.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Library.h"
@@ -645,40 +646,41 @@ namespace {
 
   class GdsStream {
     public:
-      static const Layer* gdsToLayer           ( uint16_t gdsLayer, uint16_t datatype );
-    public:                                    
-      static       void   _staticInit          ();
-                          GdsStream            ( string gdsPath, uint32_t flags );
-      inline       bool   useGdsPrefix         () const;
-      inline       bool   useLayer0AsBoundary  () const;
-      inline       bool   isValidSyntax        () const;
-                   bool   misplacedRecord      ();
-      inline       void   resetStrans          ();
-                   bool   read                 ( Library* );
-                   bool   readFormatType       ();
-                   bool   readStructure        ();
-             const Layer* readLayerAndDatatype ();
-                   bool   readBoundary         ();
-                   bool   readPath             ();
-                   bool   readSref             ();
-                   bool   readAref             ();
-                   bool   readNode             ();
-                   bool   readBox              ();
-                   bool   readText             ();
-                   bool   readTextbody         ( const Layer* );
-                   bool   readStrans           ();
-                   bool   readProperty         ();
-                   void   xyToAbutmentBox      ();
-                   void   xyToComponent        ( const Layer* );
-                   void   xyToPath             ( uint16_t pathtype
-                                               , const Layer*
-                                               , DbU::Unit width
-                                               , DbU::Unit bgnextn
-                                               , DbU::Unit endextn );
-                   void   makeInstances        ();
-                   void   makeExternals        ();
-                   Net*   fusedNet             ();
-                   void   addNetReference      ( Net*, const Layer*, DbU::Unit x, DbU::Unit y );
+      static const Layer*  gdsToLayer           ( uint16_t gdsLayer, uint16_t datatype );
+    public:                                     
+      static       void    _staticInit          ();
+                           GdsStream            ( string gdsPath, uint32_t flags );
+                   Cell*   getCell              ( string cellName, bool create=false );
+      inline       bool    useGdsPrefix         () const;
+      inline       bool    useLayer0AsBoundary  () const;
+      inline       bool    isValidSyntax        () const;
+                   bool    misplacedRecord      ();
+      inline       void    resetStrans          ();
+                   bool    read                 ( Library* );
+                   bool    readFormatType       ();
+                   bool    readStructure        ();
+             const Layer*  readLayerAndDatatype ();
+                   bool    readBoundary         ();
+                   bool    readPath             ();
+                   bool    readSref             ();
+                   bool    readAref             ();
+                   bool    readNode             ();
+                   bool    readBox              ();
+                   bool    readText             ();
+                   bool    readTextbody         ( const Layer* );
+                   bool    readStrans           ();
+                   bool    readProperty         ();
+                   void    xyToAbutmentBox      ();
+                   void    xyToComponent        ( const Layer* );
+                   void    xyToPath             ( uint16_t pathtype
+                                                , const Layer*
+                                                , DbU::Unit width
+                                                , DbU::Unit bgnextn
+                                                , DbU::Unit endextn );
+                   void    makeInstances        ();
+                   void    makeExternals        ();
+                   Net*    fusedNet             ();
+                   void    addNetReference      ( Net*, const Layer*, DbU::Unit x, DbU::Unit y );
     private:
       struct DelayedInstance {
           inline DelayedInstance ( Cell* owner, string masterName, const Transformation& );
@@ -800,6 +802,34 @@ namespace {
   }
 
 
+  Cell* GdsStream::getCell ( string cellName, bool create )
+  {
+    if (not _library) return nullptr;
+    Library* workLibrary = _library;
+    Cell*    cell        = workLibrary->getCell( cellName );
+    if (cell) return cell;
+
+    if (not Gds::getTopCellName().empty() and (cellName != Gds::getTopCellName())) {
+      workLibrary = _library->getLibrary( Gds::getTopCellName() );
+      if (workLibrary) { 
+        cell = workLibrary->getCell( cellName );
+        if (cell) return cell;
+      } else {
+        if (not create) return nullptr;
+        workLibrary = Library::create( _library, Gds::getTopCellName() );
+      }
+    }
+
+    if (not create) return nullptr;
+
+    cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
+                        , cellName.c_str()
+                        , getString(_library).c_str()
+                        ) << endl;
+    return Cell::create( workLibrary, cellName );
+  }
+
+
   bool  GdsStream::misplacedRecord ()
   {
     cerr << Error( "GdsStream: Misplaced record %s.\n"
@@ -900,17 +930,9 @@ namespace {
     if (_record.isSTRNAME()) {
       if (_library) {
         string cellName = _record.getName();
-        if (useGdsPrefix()) cellName.insert( 0, "gds_" );
-        _cell = _library->getCell( cellName );
-        if (not _cell) {
-          cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
-                              , cellName.c_str()
-                              , getString(_library).c_str()
-                              ) << endl;
-          _cell = Cell::create( _library, cellName );
-        }
+        _cell = getCell( cellName, true );
+        _stream >> _record;
       }
-      _stream >> _record;
     }
 
     if (_record.isSTRCLASS()) { _stream >> _record; }
@@ -941,9 +963,11 @@ namespace {
 
     if (_validSyntax) _stream >> _record;
 
-    UpdateSession::close();
-    _cell->setAbutmentBox( _cell->getBoundingBox() );
-    UpdateSession::open();
+    if (not useLayer0AsBoundary() or _cell->getAbutmentBox().isEmpty()) {
+      UpdateSession::close();
+      _cell->setAbutmentBox( _cell->getBoundingBox() );
+      UpdateSession::open();
+    }
     _cell = NULL;
     cdebug_log(101,-1) << "    GdsStream::readStructure() - return:" << _validSyntax << endl;
 
@@ -1075,15 +1099,25 @@ namespace {
     }
 
     if (not _text.empty()) {
-      Net* net = _cell->getNet( _text );
-      if (not net) {
-        net = Net::create( _cell, _text );
-        net->setExternal( true );
-        if (_text.substr(0,3) == "vdd")     net->setType  ( Net::Type::POWER );
-        if (_text.substr(0,3) == "gnd")     net->setType  ( Net::Type::GROUND );
-        if (_text[ _text.size()-1 ] == '!') net->setGlobal( true );
+      if (static_cast<const BasicLayer*>(layer)->getMaterial() != BasicLayer::Material::other) {
+        Net* net = _cell->getNet( _text );
+        if (not net) {
+          net = Net::create( _cell, _text );
+          net->setExternal( true );
+          if (_text.substr(0,3) == "vdd")     net->setType  ( Net::Type::POWER );
+          if (_text.substr(0,3) == "gnd")     net->setType  ( Net::Type::GROUND );
+          if (_text[ _text.size()-1 ] == '!') net->setGlobal( true );
+        }
+        addNetReference( net, layer, xpos, ypos );
+      } else {
+        DbU::Unit textHeight = _scale * 500;
+        DbU::Unit textWidth  = _scale * 500 * _text.size();
+        Text::create( _cell, layer, Box( xpos
+                                       , ypos
+                                       , xpos + textWidth
+                                       , ypos + textHeight
+                                       ), _text );
       }
-      addNetReference( net, layer, xpos, ypos );
     }
 
     cdebug_log(101,-1) << "GdsStream::readTextbody() - return:" << _validSyntax << endl;
@@ -1260,7 +1294,6 @@ namespace {
       //      << " XR:" << _xReflection << " angle:" << _angle
       //      << " " << Transformation(xpos,ypos,orient)
       //      << " in " << _cell << endl;
-      if (useGdsPrefix()) masterName.insert( 0, "gds_" );
       _delayedInstances.push_back( DelayedInstance( _cell
                                                   , masterName
                                                   , Transformation(xpos,ypos,orient)) );
@@ -1565,6 +1598,16 @@ namespace {
                       << " width=" << DbU::getValueString(width)
                       << " bgnextn=" << DbU::getValueString(bgnextn)
                       << " endextn=" << DbU::getValueString(endextn) << endl;
+    if (bgnextn < 0) {
+      cerr << Error( "GdsStream::xyToPath(): Negative BGNEXTN not supported yet (%s) layout will be incorrect."
+                   , DbU::getValueString(bgnextn).c_str()
+                   ) << endl;
+    }
+    if (endextn < 0) {
+      cerr << Error( "GdsStream::xyToPath(): Negative ENDEXTN not supported yet (%s) layout will be incorrect."
+                   , DbU::getValueString(endextn).c_str()
+                   ) << endl;
+    }
 
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
@@ -1609,17 +1652,23 @@ namespace {
       if (points[0].getX() == points[1].getX()) {
         hWidthCap = width;
         vWidthCap = bgnextn + twoGrid;
-        yadjust   = -vWidthCap/2 + twoGrid;
+        yadjust   = (-vWidthCap + twoGrid) / 2;
         if (points[0].getY() > points[1].getY())
           yadjust = -yadjust;
       } else {
         hWidthCap = bgnextn + twoGrid;
         vWidthCap = width;
-        xadjust   = -hWidthCap/2 + twoGrid;
+        xadjust   = (-hWidthCap + twoGrid) / 2;
         if (points[0].getX() > points[1].getX())
           xadjust = -xadjust;
       }
     }
+    cdebug_log(101,0) << " twoGrid="   << DbU::getValueString(twoGrid)
+                      << " hWidthCap=" << DbU::getValueString(hWidthCap)
+                      << " vWidthCap=" << DbU::getValueString(vWidthCap)
+                      << " xadjust="   << DbU::getValueString(xadjust)
+                      << " yadjust="   << DbU::getValueString(yadjust)
+                      << endl;
     Contact* source = Contact::create( net
                                      , layer
                                      , points[0].getX() + xadjust
@@ -1649,7 +1698,7 @@ namespace {
           if (points[i-1].getX() == points[i].getX()) {
             hWidthCap = width;
             vWidthCap = endextn + twoGrid;
-            yadjust   = vWidthCap/2 - twoGrid;
+            yadjust   = (vWidthCap + twoGrid) /2;
             if (points[i-1].getY() > points[i].getY())
               yadjust = -yadjust;
           } else {
@@ -1657,7 +1706,7 @@ namespace {
                               << " twoGrid=" << DbU::getValueString(twoGrid) << endl;
             hWidthCap = endextn + twoGrid;
             vWidthCap = width;
-            xadjust   = hWidthCap/2 - twoGrid;
+            xadjust   = (hWidthCap - twoGrid) / 2;
             if (points[i-1].getX() > points[i].getX())
               xadjust = -xadjust;
             cdebug_log(101,0) << "xadjust=" << DbU::getValueString(xadjust) << endl;
@@ -1698,7 +1747,7 @@ namespace {
     cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
-      Cell* masterCell = _library->getCell( di._masterName );
+      Cell* masterCell = getCell( di._masterName );
 
       if (masterCell) {
         string    insName  = "sref_" + getString(_SREFCount++);
@@ -1710,6 +1759,9 @@ namespace {
                           , Instance::PlacementStatus::FIXED
                           );
           cdebug_log(101,0) << "| " << instance << " @" << di._transformation << " in " << di._owner << endl;
+      } else {
+        cerr << Error( "GdsStream::makeInstances(): Delayed sub-model (STRUCTURE) \"%s\" not found."
+                     , di._masterName.c_str() ) << endl;
       }
     }
     cdebug_tabw(101,-1);
@@ -1840,6 +1892,10 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::Gds".
 
+
+  std::string  Gds::_topCellName = "";
+
+
   bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
   //DebugSession::open( 101, 110 );
@@ -1856,6 +1912,7 @@ namespace CRL {
 
     Contact::enableCheckMinSize();
     UpdateSession::close();
+    Gds::setTopCellName( "" );
   //DebugSession::close();
 
     return true;

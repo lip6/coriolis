@@ -1,4 +1,5 @@
 
+import shutil
 from pathlib import Path
 from doit.exceptions import TaskFailed
 from .task import FlowTask
@@ -37,6 +38,9 @@ class Clean ( FlowTask ):
                 if filePath.is_file():
                     print( '   - {:<40} [removed]'.format( filePath.as_posix() ))
                     filePath.unlink()
+                elif filePath.is_dir():
+                    print( '   - {:<40} [removed (directory)]'.format( filePath.as_posix() ))
+                    shutil.rmtree( filePath )
                 else:
                     print( '   - {}'.format( filePath.as_posix() ))
         if doExtrasClean and len(self.extrasGlobs):

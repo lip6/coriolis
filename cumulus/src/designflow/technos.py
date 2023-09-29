@@ -70,6 +70,8 @@ def setupCMOS ( checkToolkit=None ):
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk$' )
+        env.addSYSTEM_LIBRARY( library=(Where.checkToolkit / 'cells' / 'niolib').as_posix()
+                             , mode   =CRL.Environment.Append )
 
     Yosys.setLiberty( Where.cellsTop / 'sxlib' / 'sxlib.lib' )
     ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
@@ -236,6 +238,57 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
         cfg.katana.eventsLimit       = 4000000
         af  = CRL.AllianceFramework.get()
         lg5 = af.getRoutingGauge( 'StdCellLib' ).getLayerGauge( 5 ) 
+        lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
+        env = af.getEnvironment()
+        env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
+
+    Yosys.setLiberty( liberty )
+    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
+
+
+def setupGf180mcu_c4m ( checkToolkit=None
+                      , pdkMasterTop=Path('/usr/share/open_pdks/C4M.gf180mcu') ):
+    from ..        import Cfg 
+    from ..        import Viewer
+    from ..        import CRL 
+    from ..helpers import overlay, l, u, n
+    from .yosys    import Yosys
+
+    if isinstance(pdkMasterTop,str):
+        pdkMasterTop = Path( pdkMasterTop )
+    if not pdkMasterTop.is_dir():
+        print( '[ERROR] technos.setupGf180mcu_c4m(): pdkMasterTop directory do *not* exists:' )
+        print( '        "{}"'.format(pdkMasterTop.as_posix()) )
+    #sys.path.append( (pdkMasterTop / 'libs.tech'
+    #                               / 'coriolis'
+    #                               / 'techno'
+    #                               / 'etc'
+    #                               / 'coriolis2').resolve().as_posix() )
+
+    Where( checkToolkit )
+
+    from ..technos.node180.gf180mcu_c4m import techno, StdCell3V3Lib, iolib
+    techno.setup()
+    StdCell3V3Lib.setup()
+    iolib.setup( Where.checkToolkit / '..' / 'gf180mcu-pdk' )
+
+    liberty  = pdkMasterTop / 'libs.ref' / 'StdCell3V3Lib' / 'liberty' / 'StdCell3V3Lib_nom.lib'
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore           = False
+        cfg.misc.minTraceLevel       = 12300
+        cfg.misc.maxTraceLevel       = 12400
+        cfg.misc.info                = False
+        cfg.misc.paranoid            = False
+        cfg.misc.bug                 = False
+        cfg.misc.logMode             = True
+        cfg.misc.verboseLevel1       = True
+        cfg.misc.verboseLevel2       = True
+        cfg.etesian.graphics         = 3
+        cfg.etesian.spaceMargin      = 0.10
+        cfg.katana.eventsLimit       = 4000000
+        af  = CRL.AllianceFramework.get()
+        lg5 = af.getRoutingGauge('StdCell3V3Lib').getLayerGauge( 5 )
         lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
         env = af.getEnvironment()
         env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )

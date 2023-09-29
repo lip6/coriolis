@@ -20,9 +20,11 @@ Core2Chip configuration for the FlexLib I/O pad library ("niolib").
 
 import sys
 import re
+from   ...           import Cfg 
 from   ...Hurricane  import DbU, DataBase, UpdateSession, Breakpoint, \
                             Transformation , Instance , Net
-from   ...CRL        import Catalog, AllianceFramework
+from   ...CRL        import Catalog, AllianceFramework, CellGauge
+from   ...helpers    import overlay, l, u, n
 from   ...helpers.io import ErrorMessage, WarningMessage
 from   .core2chip    import CoreToChip as BaseCoreToChip, IoNet, IoPad
 
@@ -40,6 +42,17 @@ class CoreToChip ( BaseCoreToChip ):
         self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.BIDIR, 'gpio', 'pad', ['i', 'o', 'oe'] )
                             ]
         self._getPadLib()
+        af = AllianceFramework.get()
+        cg = CellGauge.create( 'niolib'
+                             , 'METAL2'   # pin layer name.
+                             , l(   5.0)  # pitch.
+                             , l(1190.0)  # cell slice height.
+                             , l( 500.0)  # cell slice step.
+                             )
+        af.addCellGauge( cg )
+        self.conf.chipConf.ioPadGauge      = 'niolib'
+        self.conf.cfg.chip.padCoreSide     = 'North'
+        self.conf.cfg.chip.useAbstractPads = True
         return
 
     def _getPadLib ( self ):

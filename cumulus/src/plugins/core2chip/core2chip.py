@@ -375,6 +375,7 @@ class IoPad ( object ):
                         or self.nets[0].chipExtNetName.startswith('io_in') \
                         or self.nets[0].chipExtNetName.startswith('io_out')
             if hasEnable:
+                trace( 550, '\tself.nets = {}\n'.format( self.nets ))
                 if len(self.nets) < 2:
                     enableNet = self.coreToChip.newEnableForNet( self.nets[0] )
                     self.nets.append( self.coreToChip.getIoNet( enableNet ) )
@@ -387,6 +388,7 @@ class IoPad ( object ):
                 connexions.append( ( self.nets[0].chipIntNet      , padInfo.inputNet  ) )
                 connexions.append( ( self.coreToChip.newDummyNet(), padInfo.outputNet ) )
             if hasEnable:
+                trace( 550, '\tenable Pad={} <-> {}\n'.format( padInfo.enableNet, self.nets[1].chipIntNet ))
                 connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet  ) )
         elif (self.direction == IoPad.TRI_OUT) and (len(self.nets) < 2):
             self.nets[0].setFlags( IoNet.DoExtNet )
@@ -415,6 +417,11 @@ class IoPad ( object ):
                 connexions.append( ( self.nets[0].chipIntNet, padInfo.inputNet  ) )
                 connexions.append( ( self.nets[1].chipIntNet, padInfo.outputNet ) )
                 connexions.append( ( self.nets[2].chipIntNet, padInfo.enableNet ) )
+        for controlInfo in padInfo.controlNets:
+            controlNet = self.coreToChip.newControlForPad( self.ioPadConf, controlInfo )
+            self.nets.append( self.coreToChip.getIoNet( controlNet ) )
+            self.nets[-1].buildNets()
+            connexions.append( ( self.nets[-1].chipIntNet, controlInfo.name ) )
         if not self.coreToChip.useHarness():
             self.pads.append( Instance.create( self.coreToChip.chip
                                              , self.padInstanceName
@@ -448,13 +455,21 @@ class CoreToChip ( object ):
        to the core actually bearing information.
     """
 
+    class IoControlInfo ( object ):
+    
+        def __init__ ( self, name, defaultState ):
+            self.name         = name
+            self.defaultState = defaultState
+            pass
+
     class IoPadInfo ( object ):
 
-        def __init__ ( self, flags, padName, padNet, coreNets ):
-            self.flags    = flags
-            self.name     = padName
-            self.padNet   = padNet
-            self.coreNets = coreNets
+        def __init__ ( self, flags, padName, padNet, coreNets, controlNets=[] ):
+            self.flags       = flags
+            self.name        = padName
+            self.padNet      = padNet
+            self.coreNets    = coreNets
+            self.controlNets = [ CoreToChip.IoControlInfo( net[0], net[1] ) for net in controlNets ]
             return
 
         @property
@@ -508,6 +523,10 @@ class CoreToChip ( object ):
         if   not masterNetO:             masterNet = instance.getMasterCell().getNet( chipNet.getName() )
         elif isinstance(masterNetO,Net): masterNet = masterNetO
         else:                            masterNet = instance.getMasterCell().getNet( masterNetO )
+        if not masterNet:
+            raise ErrorMessage( 1, [ 'CoreToChip._connect(): No net "{}" in cell "{}".' \
+                                     .format( masterNetO, instance.getMasterCell().getName() )
+                                   ] )
         instance.getPlug( masterNet ).setNet( chipNet )
         return
 
@@ -571,6 +590,22 @@ class CoreToChip ( object ):
         self.dummyNetCount += 1
         return dummy
 
+    def newControlNet ( self, controlName, constantType ):
+        """
+        Create a new control signal, in *core* cell, to control the associated I/O pad.
+        The control signal is tied to a constant value, either zero or one.
+
+        :param controlName:  The name of the control net *in the core cell*.
+        :param constantType: Whether the control signal is set to zero or one.
+        """
+        instance = self.conf.constantsConf.createInstance( self.core, constantType )
+        control  = Net.create( self.core, controlName )
+        control.setExternal ( True )
+        control.setDirection( Net.Direction.OUT )
+        getPlugByName( instance, self.conf.constantsConf.output(constantType) ).setNet( control )
+        self.conf.addClonedCell( self.conf.core )
+        return control
+
     def newEnableForNet ( self, ioNet ):
         """
         Create a new enable signal, in *core* cell, to control the associated I/O pad.
@@ -582,13 +617,16 @@ class CoreToChip ( object ):
         else:
             raise ErrorMessage( 2, 'CoreToChip.newEnableForNet(): Net "{}" is neither IN nor OUT.' \
                                    .format(ioNet.coreNet.getName()) )
-        instance = self.conf.constantsConf.createInstance( self.core, constantType )
-        enable   = Net.create( self.core, ioNet.enableNetName )
-        enable.setExternal ( True )
-        enable.setDirection( Net.Direction.OUT )
-        getPlugByName( instance, self.conf.constantsConf.output(constantType) ).setNet( enable )
-        self.conf.addClonedCell( self.conf.core )
-        return enable
+        return self.newControlNet( ioNet.enableNetName, constantType )
+
+    def newControlForPad ( self, ioPadInfo, ioControlInfo ):
+        """
+        Create a new control signal, in *core* cell, to control the associated I/O pad.
+        This is to be used for all I/O pads controls nets, save the "enable" signal.
+        """
+        constantType   = ConstantsConf.ONE if ioControlInfo.defaultState else ConstantsConf.ZERO
+        controlNetName = '{}_{}'.format( ioPadInfo.instanceName, ioControlInfo.name )
+        return self.newControlNet( controlNetName, constantType )
 
     def getIoNet ( self, coreNet ):
         """

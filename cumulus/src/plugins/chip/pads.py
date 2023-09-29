@@ -397,6 +397,7 @@ class Side ( object ):
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
         padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
         if self.conf.padsHavePosition:
+            self.pads.sort( key=itemgetter(0) )
             position = self.u
             for pad in self.pads:
                 trace( 550, '\tPlace pad {} @{}\n'.format(pad[1],DbU.getValueString(pad[0])) )
@@ -692,11 +693,11 @@ class Corona ( object ):
                             if plug.getMasterNet().isGlobal():
                                 net = self.conf.cell.getNet( plug.getMasterNet().getName() )
                                 if not net:
-                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
-                                                           %  plug.getMasterNet().getName(), padCell.getName() )
+                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "{}" is not connected and there is no global net (in pad "{}").' \
+                                                           .format( plug.getMasterNet().getName(), padCell.getName() ))
                             else:
-                                raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
-                                                     %  plug.getMasterNet().getName(), padCell.getName() )
+                                raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "{}" is neither connected nor global (in pad "{}").' \
+                                                       .format( plug.getMasterNet().getName(), padCell.getName() ))
                         if net:
                             self.padRails.append( ( net
                                                   , component.getLayer()
