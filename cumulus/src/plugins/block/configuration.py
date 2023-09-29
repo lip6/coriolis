@@ -1452,7 +1452,7 @@ class BlockConf ( GaugeConf ):
         for line in range(len(self.ioPadsArg)):
             bits = []
             if not isinstance(self.ioPadsArg[line][-1],str) \
-               and isinstance(self.ioPadsArg[line][-1],collections.Iterable):
+               and isinstance(self.ioPadsArg[line][-1],collections.abc.Iterable):
                 bits = self.ioPadsArg[line][-1]
             elif isinstance(self.ioPadsArg[line][-1],int):
                 bits = range( self.ioPadsArg[line][-1] )
