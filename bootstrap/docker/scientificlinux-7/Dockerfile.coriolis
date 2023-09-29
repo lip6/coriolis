@@ -1,6 +1,0 @@
-
-FROM sl7.system
-
-COPY root/socInstaller.py       /root/socInstaller.py
-RUN  /root/socInstaller.py --docker --profile=SL7_64 --do-alliance --do-coriolis --benchs
-
