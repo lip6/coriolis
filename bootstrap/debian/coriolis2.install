@@ -1,6 +1,0 @@
-/etc
-/usr/bin
-/usr/lib/lib*.so.*
-/usr/lib/python*
-/usr/share/coriolis2
-/usr/share/doc/
