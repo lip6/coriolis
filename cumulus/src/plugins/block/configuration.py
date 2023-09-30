@@ -1564,7 +1564,10 @@ class BlockConf ( GaugeConf ):
                                        .format(netName)) )
                 return
         self.hTreeDatas.append( [ netName, flags ] );
-        self.useClockTree = True
+        net = self.cell.getNet( netName )
+        trace( 550,'\tBlockConf.useHTree() on "{}" -> {}\n'.format( netName, net ))
+        if net and net.isClock():
+            self.useClockTree = True
 
     def addTrackAvoid ( self, trackAvoid ):
         if self.cfg.anabatic.netBuilderStyle == 'VH,2RL':
