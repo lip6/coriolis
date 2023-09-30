@@ -36,10 +36,11 @@ class Blif2Vst ( FlowTask ):
 
     def __init__ ( self, rule, targets, depends, flags ):
         super().__init__( rule, targets, depends )
-        self.flags   = flags
+        self.flags = flags
         if not self.targets[0].suffix == '.vst':
             raise TargetNotVst( 'Blif2Vst.__init__(): First target *must* "{}" be a vst file.' \
                                 .format( self.targets[0] ))
+        self.targets.append( Path(self.file_depend(0).stem + '.spi') )
         self.addClean( self.targets )
 
     def __repr__ ( self ):
