@@ -69,7 +69,7 @@ def setupCMOS ( checkToolkit=None ):
         Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
-        env.setCLOCK( '^ck$|m_clock|^clk$' )
+        env.setCLOCK( '^ck$|m_clock|^clk' )
         env.addSYSTEM_LIBRARY( library=(Where.checkToolkit / 'cells' / 'niolib').as_posix()
                              , mode   =CRL.Environment.Append )
 
