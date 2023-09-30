@@ -59,7 +59,6 @@ def _loadIoLib ( pdkDir ):
     io.vprint( 1, '  o  Setup GF180MCU I/O library in {}.'.format( ioLib.getName() ))
     cellsDir = pdkDir / 'libraries' / 'gf180mcu_fd_io' / 'latest' / 'cells'
     for lefFile in cellsDir.glob( '*/*_5lm.lef' ):
-        print( lefFile )
         gdsFile = lefFile.with_suffix( '.gds' )
         if gdsFile.is_file():
             Gds.setTopCellName( gdsFile.stem[:-4] )
