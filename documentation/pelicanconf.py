@@ -69,12 +69,11 @@ DISPLAY_PAGES_ON_MENU = True
 #SOCIAL = (('Pelican'   , 'http://getpelican.com/' ),
 #          ('Python.org', 'http://python.org/'     ),
 #          ('Jinja2'    , 'http://jinja.pocoo.org/'),)
-SOCIAL = None
+SOCIAL = (('Matrix', 'element://vector/webapp/#/room/%23coriolis%3Amatrix.org?via=matrix.or'),)
 
 # Social widget
 LINKS  = (('Alliance/Coriolis'      , 'https://coriolis.lip6.fr/'),
-          ('CIAN Team Website'      , 'https://www-soc.lip6.fr/' ),
-          ('Free Silicon Foundation', 'https://f-si.org'         ),)
+          ('CIAN Team Website'      , 'https://largo.lip6.fr/'   ),)
 
 DEFAULT_PAGINATION = 10
 
@@ -138,8 +137,8 @@ NEST_HEADER_LOGO          =  '/images/common/Coriolis-logo-white-4-small.png'
 NEST_HEADER_IMAGES        =          'common/layout-motif-faded-4.png'
 NEST_LINKS_COLUMN_TITLE   = u'Links'
 NEST_SOCIAL_COLUMN_TITLE  = u'Social'
-NEST_SITEMAP_COLUMN_TITLE = u'Social'
+NEST_SITEMAP_COLUMN_TITLE = u'Map'
 NEST_COPYRIGHT            = u'Copyright © 2020-2020 Sorbonne Universite'
 
-MENUITEMS = [ ('Git'          , '/pages/gitlab.html' )
+MENUITEMS = [ ('Git'          , '/pages/github.html' )
             , ('Documentation', '/pages/documentation.html' ) ]
