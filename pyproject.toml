@@ -75,6 +75,7 @@ blif2vst =  'coriolis:blif2vst'
 tutorial = 'coriolis:tutorial'
 unittests = 'coriolis:unittests'
 yosys_coriolis = 'coriolis:yosys_coriolis'
+cgt = 'coriolis:cgt'
 
 [build-system]
 requires = ["poetry-core", "setuptools", "cmake", "ninja", "poetry-dynamic-versioning"]

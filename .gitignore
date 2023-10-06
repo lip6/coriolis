@@ -12,6 +12,7 @@ GRTAGS
 .projectile
 
 lefdef/src/lef/lef/lef.tab.h
+lefdef/src/def/def/def.tab.h
 
 man/
 rtf/
