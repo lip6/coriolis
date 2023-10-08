@@ -117,7 +117,7 @@ namespace Isobar3 {
     string elementName = ::Hurricane::demangle(typeid(CppT));
     size_t cppScope    = elementName.find_last_of( "::" );
     if (cppScope != std::string::npos) elementName = elementName.substr( cppScope+1 );
-    cerr << "elementName: " << elementName <<endl;
+    //cerr << "elementName: " << elementName <<endl;
     string keyName = ::Hurricane::demangle(typeid(CppK));
     cppScope       = keyName.find_last_of( "::" );
     if (cppScope != std::string::npos) keyName = keyName.substr( cppScope+1 );
@@ -218,9 +218,9 @@ namespace Isobar3 {
   template< typename CppK, typename CppT >
   PyObject* PyTypeManagerMap<CppK,CppT>::_getMpSubscript ( PyObject* self, PyObject* pyKey )
   {
-    std::cerr << "PyTypeManagerMap<CppK,CppT>::_getMpSubscript" << endl;
-    std::cerr << "CppK: " << demangle(typeid(CppK)) << std::endl;
-    std::cerr << "CppT: " << demangle(typeid(CppT)) << std::endl;
+    //std::cerr << "PyTypeManagerMap<CppK,CppT>::_getMpSubscript" << endl;
+    //std::cerr << "CppK: " << demangle(typeid(CppK)) << std::endl;
+    //std::cerr << "CppT: " << demangle(typeid(CppT)) << std::endl;
     std::map<CppK,CppT>* pmap = NULL;
     if (not pyToC(self,&pmap)) {
       std::string message = "PyTypeManagerMap<CppK,CppT>::_getMpSubscript(): pyToC<> failed. \".";
@@ -228,7 +228,7 @@ namespace Isobar3 {
       return NULL;
     }
     CppK key;
-    std::cerr << "extracting key, type: " << demangle(typeid(CppK)) << std::endl;
+    //std::cerr << "extracting key, type: " << demangle(typeid(CppK)) << std::endl;
     if (not pyToC( pyKey, &key )) {
       std::string message = "PyTypeManagerMap<CppK,CppT>::_getMpSubscript(): Unable to convert key.";
       PyErr_SetString( HurricaneError, message.c_str() );
@@ -266,10 +266,9 @@ namespace Isobar3 {
   template< typename CppK, typename CppT >
   PyTypeManagerMap<CppK,CppT>* PyTypeManagerMap<CppK,CppT>::create ( PyObject* module, uint64_t flags )
   {
-    cerr << "PyTypeManagerMap<"
-          << ::Hurricane::demangle(typeid(std::map<CppK,CppT>)) << ">::create()" << endl;
-
-    cerr << "CppK: " << demangle(typeid(CppK)) << endl <<" CppT: " << demangle(typeid(CppT)) << endl;
+    // cerr << "PyTypeManagerMap<"
+    //       << ::Hurricane::demangle(typeid(std::map<CppK,CppT>)) << ">::create()" << endl;
+    // cerr << "CppK: " << demangle(typeid(CppK)) << endl <<" CppT: " << demangle(typeid(CppT)) << endl;
 
     PyTypeManagerMap<CppK,CppT>* manager = new PyTypeManagerMap<CppK,CppT>( flags );
 
