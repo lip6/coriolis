@@ -89,6 +89,8 @@
 #include "hurricane/isobar/PyUnitRule.h"
 #include "hurricane/isobar/PyPhysicalRule.h"
 #include "hurricane/isobar/PyTwoLayersPhysicalRule.h"
+#include "hurricane/isobar/PyErrorWidget.h"
+#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/NetExternalComponents.h"
 #include <stddef.h>
 
@@ -615,6 +617,8 @@ extern "C" {
     PyUnitRule_LinkPyType();
     PyPhysicalRule_LinkPyType();
     PyTwoLayersPhysicalRule_LinkPyType();
+    PyErrorWidget_LinkPyType();
+    PyCellViewer_LinkPyType();
 
     PYTYPE_READY( AttributesHolder              )
     PYTYPE_READY( DebugSession                  )
@@ -683,6 +687,8 @@ extern "C" {
     PYTYPE_READY( QueryMask                     )
     PYTYPE_READY( DeviceDescriptor              )
     PYTYPE_READY( Rule                          )
+    PYTYPE_READY( ErrorWidget                   )
+    PYTYPE_READY( CellViewer                    )
 
     PYTYPE_READY_SUB( BasicLayer     , Layer    )
     PYTYPE_READY_SUB( RegularLayer   , Layer    )
@@ -880,7 +886,10 @@ extern "C" {
     PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
     Py_INCREF( &PyTypeDeviceDescriptor );
     PyModule_AddObject( module, "DeviceDescriptor"      , (PyObject*)&PyTypeDeviceDescriptor );
-    
+    Py_INCREF( &PyTypeErrorWidget );
+    PyModule_AddObject( module, "ErrorWidget"           , (PyObject*)&PyTypeErrorWidget );
+    Py_INCREF( &PyTypeCellViewer );
+    PyModule_AddObject( module, "CellViewer"            , (PyObject*)&PyTypeCellViewer );
     
     PyObject* dictionnary = PyModule_GetDict ( module );
 
@@ -906,6 +915,7 @@ extern "C" {
     PyCell_postModuleInit();
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
+    PyCellViewer_postModuleInit();
 
   //Py_AtExit( showAtExit );
 
