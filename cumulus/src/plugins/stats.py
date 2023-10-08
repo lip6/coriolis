@@ -23,7 +23,7 @@ import traceback
 from   ..helpers.io      import ErrorMessage, WarningMessage, catch
 from   ..helpers.overlay import UpdateSession
 from   ..helpers         import setTraceLevel, trace
-from   ..cumulus         import plugins
+from   ..                import plugins
 from   ..Hurricane       import Breakpoint, DbU, Box, Net, Cell, Instance, \
                                 Transformation
 

@@ -15,7 +15,7 @@
 
 import sys
 import traceback
-import Viewer
+from   ..           import Viewer
 from   ..helpers.io import ErrorMessage, WarningMessage, catch
 from   ..           import plugins
 
