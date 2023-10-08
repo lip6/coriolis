@@ -7,7 +7,7 @@
  #  arch="Linux.el7_64"
  #fi
 
-  arch="Linux.el9"
+  arch="Linux.x86_64"
   if [ "`hostname -s`" == "bop" ]; then
     echo "Building for RHEL 7"
     arch="Linux.el7_64"
