@@ -78,7 +78,7 @@ class Configuration ( object ):
         self.onLepka  = False
         self.onDocker = False
         hostname = socket.gethostname()
-        if hostname.startswith('lepka'): self.onLepka  = True
+        if hostname.startswith('lepka'): self.onLepka  = False
         else:                            self.onDocker = True
         scriptDir = os.path.abspath(os.getcwd())
         if scriptDir.endswith( 'coriolis/documentation' ) and not self.onLepka:

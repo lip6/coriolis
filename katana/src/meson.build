@@ -65,7 +65,7 @@ py.extension_module(
   katana_py,
 
   link_with: [katana],
-  dependencies: [Anabatic],
+  dependencies: [py_mod_deps, Anabatic],
   install: true,
   subdir: 'coriolis'
 )

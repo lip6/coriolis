@@ -23,6 +23,7 @@
 #include  <boost/program_options.hpp>
 #include  <boost/process.hpp>
 namespace boptions = boost::program_options;
+namespace bprocess = boost::process;
 
 #include  "hurricane/utilities/Path.h"
 #include  "hurricane/configuration/Configuration.h"
@@ -256,26 +257,25 @@ namespace CRL {
     if (coriolis_top_env) {
       coriolis_top = coriolis_top_env;
     } else {
-      //We're running as a binary and PyCRL hasn't been instantiated
-      // use python to find our where we should look
-      using namespace boost::process;
-      std::error_code ec;
-      ipstream out;
-      //TODO: will need fixing for windoews
-      system("python3 -c 'from coriolis import CRL; import os; print(os.path.abspath(os.path.dirname(CRL.__file__)))'", std_out > out, ec); 
-      if (ec) {
-          cerr << "Unable to find coriolis python package. Please set CORIOLIS_TOP environment variable\n";
-          exit ( 1 );
+      std::error_code     rvalue;
+      bprocess::ipstream  pipeout;
+      string command = "python3 -c 'from coriolis import CRL;"
+                                   "import os;"
+                                   "print( os.path.abspath(os.path.dirname( CRL.__file__ )))'";
+      bprocess::system( command, bprocess::std_out > pipeout, rvalue ); 
+      if (rvalue) {
+        cerr << "[ERROR] Unable to find coriolis python package.\n"
+             << "        Please set CORIOLIS_TOP environment variable." << endl;
+        exit( 1 );
       }
-
-      out >> coriolis_top;
+      pipeout >> coriolis_top;
     }
 
   // Environment variables reading.
     boptions::options_description options ("Environment Variables");
     options.add_options()
       ( "coriolis_top", boptions::value<string>()->default_value(coriolis_top)
-                              , "Location of Corilois module." )
+                              , "Location of Coriolis module." )
       ( "stratus_mapping_name", boptions::value<string>()
                               , "Stratus virtual cells mapping." );
 
