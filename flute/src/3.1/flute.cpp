@@ -75,6 +75,7 @@ void readLUT( string directory )
 
     
     string file = POWVFILE;
+    if (not directory.empty()) file.insert( 0, directory+"/" );
 
     fpwv=fopen(file.c_str(), "r");
     if (fpwv == NULL) {
@@ -85,6 +86,7 @@ void readLUT( string directory )
 
 #if ROUTING==1
     file = POSTFILE;
+    if (not directory.empty()) file.insert( 0, directory+"/" );
 
     fprt=fopen(file.c_str(), "r");
     if (fprt == NULL) {
