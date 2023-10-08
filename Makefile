@@ -23,6 +23,7 @@
 
  ISYS_ROOT = $(shell ./bootstrap/coriolisEnv.py --query-isys-root)
  INST_ROOT = $(shell ./bootstrap/coriolisEnv.py --query-inst-root)
+ WORK_ROOT = ${HOME}/coriolis-2.x/Linux.el9/Release.Shared
 
 
 help:
@@ -61,13 +62,14 @@ check_venv:
 	@if [ ! -d "./venv" ]; then python3 -m venv venv; fi
 
 
-poetry_deps: check_venv
-	@$(venv); poetry install --no-root 
+pdm_deps: check_venv
+	@$(venv); pdm install --no-self 
 
 
-install: check_dir poetry_deps
-	@$(venv); ./bootstrap/ccb.py $(DEVTOOLSET_OPTION) --project=coriolis --doc \
-	                                                  --make="$(SMP_FLAGS) install"
+install: check_dir pdm_deps
+	@meson setup $(WORK_ROOT)/build
+	@meson configure $(WORK_ROOT)/build --prefix $(WORK_ROOT)/install
+	@ninja -v -C $(WORK_ROOT)/build install
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
