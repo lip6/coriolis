@@ -211,8 +211,8 @@ namespace Isobar3 {
     PyTypeObject* ob_type = manager->_getTypeObject();
     ob_type->tp_iter      = (getiterfunc)&::Isobar3::_tpIter;
 
-    std::cerr << "Add to manager: <"
-              << ::Hurricane::demangle(typeid( Hurricane::Collection<CppT*> )) << ">" << std::endl;
+    //std::cerr << "Add to manager: <"
+    //          << ::Hurricane::demangle(typeid( Hurricane::Collection<CppT*> )) << ">" << std::endl;
     PyTypeManager::add< Hurricane::Collection<CppT*> >
       ( module, manager, typeid(Hurricane::Collection<CppT*>).hash_code() );
     PyTypeManagerLocator<CppT>::create( module, flags );
