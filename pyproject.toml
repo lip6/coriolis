@@ -6,6 +6,7 @@ authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
+requires-python = ">= 3.7"
 packages = [
   { include = "coriolis"},
 ]
@@ -42,7 +43,8 @@ include = [
   "unittests",
 ]
 [tool.pdm.dev-dependencies]
-doc = ["pelican", "doxygen"]
+doc = ["pelican", "docutils >=0.16", "markupsafe >= 2.0.0" ]
+#doc = ["pelican", "doxygen"]
 
 [build-system]
 requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@mac-homebrew",  "ninja", "meson-python == 0.13.2"]
