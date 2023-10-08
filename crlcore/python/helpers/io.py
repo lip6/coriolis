@@ -20,8 +20,8 @@ import os.path
 import re
 import traceback
 from   ..          import Cfg
-from   ..Hurricane import UpdateSession
-from   ..Viewer    import Graphics, ErrorWidget
+from   ..Hurricane import UpdateSession, ErrorWidget
+from   ..Viewer    import Graphics
 
 
 def textStackTrace ( trace, showIndent=True, scriptPath=None ):

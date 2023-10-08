@@ -21,8 +21,6 @@
 #include "hurricane/viewer/PyDrawingGroup.h"
 #include "hurricane/viewer/PyDisplayStyle.h"
 #include "hurricane/viewer/PyHSVr.h"
-#include "hurricane/isobar/PyErrorWidget.h"
-#include "hurricane/isobar/PyCellViewer.h"
 #include "hurricane/viewer/PyAboutWindow.h"
 
 
@@ -91,8 +89,6 @@ extern "C" {
     PyDisplayStyleVector_LinkPyType ();
     PyHApplication_LinkPyType ();
     PyGraphics_LinkPyType ();
-    PyErrorWidget_LinkPyType ();
-    PyCellViewer_LinkPyType ();
     PyAboutWindow_LinkPyType ();
     
     PYTYPE_READY ( HSVr );
@@ -107,15 +103,12 @@ extern "C" {
     PYTYPE_READY ( DisplayStyleVectorIterator );
     PYTYPE_READY ( HApplication );
     PYTYPE_READY ( Graphics );
-    PYTYPE_READY ( ErrorWidget );
-    PYTYPE_READY ( CellViewer );
     PYTYPE_READY ( AboutWindow );
     
     // Identifier string can take up to 10 characters.
     __cs.addType ( "hsvr"      , &PyTypeHSVr        , "<HSVr>"        , false );
     __cs.addType ( "displaySty", &PyTypeDisplayStyle, "<DisplayStyle>", false );
     __cs.addType ( "graphics"  , &PyTypeGraphics    , "<Graphics>"    , false );
-    __cs.addType ( "cellView"  , &PyTypeCellViewer  , "<CellViewer>"  , false );
     
     PyObject* module = PyModule_Create( &PyViewer_ModuleDef );
     if ( module == NULL ) {
@@ -130,15 +123,10 @@ extern "C" {
     PyModule_AddObject ( module, "HApplication", (PyObject*)&PyTypeHApplication );
     Py_INCREF ( &PyTypeGraphics );
     PyModule_AddObject ( module, "Graphics"    , (PyObject*)&PyTypeGraphics );
-    Py_INCREF ( &PyTypeCellViewer );
-    PyModule_AddObject ( module, "ErrorWidget" , (PyObject*)&PyTypeErrorWidget );
-    Py_INCREF ( &PyTypeErrorWidget );
-    PyModule_AddObject ( module, "CellViewer"  , (PyObject*)&PyTypeCellViewer );
     Py_INCREF ( &PyTypeAboutWindow );
     PyModule_AddObject ( module, "AboutWindow" , (PyObject*)&PyTypeAboutWindow );
     
     PyDisplayStyle_postModuleInit();
-    PyCellViewer_postModuleInit();
 
     cdebug_log(20,0) << "Viewer.so loaded " << (void*)&typeid(string) << endl;
 
