@@ -721,6 +721,28 @@ namespace Katana {
     //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;
     //   }
     // }
+
+    float maxUsage = 0.0f;
+    float maxCongestion = 0.0f;
+
+    for (GCell *cell : getGCells()) {
+      float usage = 0.0f;
+      float congestion = 0.0f;
+      for (Edge *edge : cell->getEdges()) {
+        unsigned dem = edge->getRealOccupancy();
+        unsigned cap = edge->getCapacity();
+        usage = std::max(usage, (float) dem / (float) std::max(cap, 1u));
+        if (dem > cap) {
+          congestion += (float) (dem - cap) / (float) std::max(cap, 1u);
+        }
+      }
+
+      auto box = cell->getBoundingBox();
+      std::cout << "GCell " << box.getXMin() << "-" << box.getXMax() << " x " << box.getYMin() << "-" << box.getYMax() << ": usage " << usage << ", congestion " << congestion << std::endl;
+    }
+
+    std::cout << "Max usage was " << maxUsage << std::endl;
+    std::cout << "Max congestion was " << maxCongestion << std::endl;
   }
 
 
