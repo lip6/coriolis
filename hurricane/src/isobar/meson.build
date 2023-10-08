@@ -90,4 +90,13 @@ isobar = library(
   install: true,
 )
 
+py.extension_module(
+  'Hurricane',
+  isobar_sources,
+  dependencies: [qt_deps, py_deps, boost],
+  link_with: [isobar, hurricane],
+  include_directories: hurricane_includes,
+  install: true,
+  subdir: 'coriolis'
+)
 

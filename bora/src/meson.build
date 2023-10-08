@@ -61,7 +61,7 @@ py.extension_module(
   bora_py,
 
   link_with: [bora],
-  dependencies: [Katana, qwt],
+  dependencies: [Katana, qwt, py_mod_deps],
   install: true,
   subdir: 'coriolis'
 )

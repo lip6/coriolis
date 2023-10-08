@@ -29,7 +29,7 @@ pyCRL_files = files([
 py.extension_module(
   'Constant',
   'PyConstant.cpp',
-  dependencies: [qt_deps, py_deps, boost, Hurricane],
+  dependencies: [qt_deps, py_mod_deps, boost, Hurricane],
   include_directories: crlcore_includes,
   subdir: 'coriolis',
   install: true
@@ -39,7 +39,7 @@ pycrlcore = shared_library(
   'pycrlcore',
   pyCRL_files,
   link_with: crlcore,
-  dependencies: [qt_deps, py_deps, boost, Hurricane],
+  dependencies: [qt_deps, boost, Hurricane],
   include_directories: crlcore_includes,
   install: true,
 )
@@ -48,9 +48,8 @@ pycrlcore = shared_library(
 py.extension_module(
   'CRL',
   pyCRL_files,
-  cpp_args: '-D__PYTHON_MODULE__=1',
   link_with: pycrlcore,
-  dependencies: [qt_deps, py_deps, boost, Hurricane],
+  dependencies: [qt_deps, py_mod_deps, boost, Hurricane],
   include_directories: crlcore_includes,
   subdir: 'coriolis',
   install: true

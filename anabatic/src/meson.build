@@ -1,3 +1,9 @@
+
+anabatic_py = files([
+  'PyStyleFlags.cpp',
+  'PyAnabatic.cpp'
+  ])
+
 anabatic = shared_library(
   'anabatic',
   'Constants.cpp',
@@ -30,18 +36,17 @@ anabatic = shared_library(
   'AntennaProtect.cpp',
   'PreRouteds.cpp',
   'AnabaticEngine.cpp',
+  anabatic_py,
 
   dependencies: [Etesian],
   install: true,
 )
 
 py.extension_module(
-  'pyanabatic',
-  'PyStyleFlags.cpp',
-  'PyAnabatic.cpp',
-
+  'Anabatic',
+  anabatic_py,
   link_with: [anabatic],
-  dependencies: [Etesian],
+  dependencies: [Etesian, py_mod_deps],
   install: true,
   subdir: 'coriolis'
 )

@@ -37,7 +37,7 @@ py.extension_module(
   unicorn_py,
 
   link_with: [unicorn],
-  dependencies: [Katana],
+  dependencies: [py_mod_deps,Katana],
   install: true,
   subdir: 'coriolis'
 )
