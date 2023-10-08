@@ -15,13 +15,13 @@
 
 import sys
 import traceback
-from   ..helpers           import setTraceLevel, trace
-from   ..helpers.io        import ErrorMessage, WarningMessage, catch
-from   ..helpers.overlay   import UpdateSession
-from   ..                  import plugins
-from   ..Hurricane         import Breakpoint, DbU, Box, Net, Cell, Instance, \
-                                  Transformation
-from   .chip.configuration import GaugeConf
+from   ..helpers            import setTraceLevel, trace
+from   ..helpers.io         import ErrorMessage, WarningMessage, catch
+from   ..helpers.overlay    import UpdateSession
+from   ..                   import plugins
+from   ..Hurricane          import Breakpoint, DbU, Box, Net, Cell, Instance, \
+                                   Transformation
+from   .block.configuration import GaugeConf
 
 
 DIRECT   = 0x0001

@@ -107,7 +107,7 @@ if __name__ == '__main__':
      
      rcode = yosys.run( options.design, top=options.top )
 
-   except Exception, e:
+   except Exception as e:
      catch( e )
      sys.exit(2)
 

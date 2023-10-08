@@ -16,7 +16,7 @@ try:
     import Viewer
     import CRL
     import plugins.rsave
-except Exception, e:
+except Exception as e:
     catch( e )
     sys.exit(2)
 
