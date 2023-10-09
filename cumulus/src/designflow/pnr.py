@@ -66,7 +66,7 @@ class PnR ( FlowTask ):
             print( 'PnR.doTask() run in interactive CGT mode.' )
             PnR.textMode = False
        #from .. import Etesian, Anabatic, Katana, Bora, Tramontana, Tutorial, Viewer, Unicorn
-        from .. import Etesian, Anabatic, Katana, Bora, Viewer, Unicorn
+        from .. import Etesian, Anabatic, Katana, Bora, Tramontana, Viewer, Unicorn
 
         ShellEnv().export()
         if self.script and not callable(self.script):
@@ -86,7 +86,7 @@ class PnR ( FlowTask ):
             unicorn.setApplicationName  ( 'cgt')
             unicorn.registerTool        ( Etesian.GraphicEtesianEngine.grab() )
             unicorn.registerTool        ( Katana.GraphicKatanaEngine.grab() )
-           #unicorn.registerTool        ( Tramontana.GraphicTramontanaEngine.grab() )
+            unicorn.registerTool        ( Tramontana.GraphicTramontanaEngine.grab() )
             unicorn.registerTool        ( Bora.GraphicBoraEngine.grab() )
            #unicorn.registerTool        ( Tutorial.GraphicTutorialEngine.grab() )
            #unicorn.setAnonNetSelectable(False)
