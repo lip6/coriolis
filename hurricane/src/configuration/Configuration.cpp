@@ -78,7 +78,8 @@ namespace Cfg {
 
   Parameter* Configuration::getParameter ( string name, Parameter::Type type ) const
   {
-    map<string,Parameter*>::const_iterator iparameter = _parameters.find(name);
+    map<const string,Parameter*>::const_iterator iparameter = _parameters.find(name);
+
     if ( iparameter == _parameters.end() ) return NULL;
 
     if ( type != Parameter::Unknown ) {
