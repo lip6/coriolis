@@ -11,7 +11,9 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
   ${Python_INCLUDE_DIRS})
 set(includes meltemi/MeltemiEngine.h)
+set(pyIncludes meltemi/PyMeltemiEngine.h)
 set(cpps MeltemiEngine.cpp)
+set(pyCpps PyMeltemiEngine.cpp)
 set(depLibs
     ${KATABATIC_LIBRARIES}
     ${CORIOLIS_PYTHON_LIBRARIES}
