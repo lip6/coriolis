@@ -1,7 +1,7 @@
 # Workflow to build and test wheels.
 name: Wheel builder
 
-on: 
+on:
   workflow_dispatch:
   pull_request:
   push:
@@ -86,9 +86,9 @@ jobs:
         # https://github.com/github/feedback/discussions/7835#discussioncomment-1769026
         buildplat:
           - [ubuntu-20.04, manylinux_x86_64]
-            #- [ubuntu-20.04, musllinux_x86_64]
-            #- [macos-12, macosx_x86_64]
-            #- [windows-2019, win_amd64]
+          -  [macos-13, macosx_x86_64]
+          #- [ubuntu-20.04, musllinux_x86_64]
+          #- [windows-2019, win_amd64]
         python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
@@ -125,17 +125,35 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+        if: runner.os == 'linux'
+
+      - name: Configure MacOSX Environment
+        if: runner.os == 'macOS'
+        run: |
+          export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 HOMEBREW_NO_ENV_HINTS=1
+          eval "$(brew shellenv)"
+          brew install -q qt@5 qwt-qt5 rapidjson boost ninja eigen
+          echo HOMEBREW_PREFIX="$HOMEBREW_PREFIX" >> $GITHUB_ENV
+          echo CCACHE_DIR="${{ github.workspace  }}/.ccache" >> $GITHUB_ENV
+          echo LDFLAGS="-L$HOMEBREW_PREFIX/opt/qt@5/lib -L$HOMEBREW_PREFIX/opt/qwt-qt5/lib" >> $GITHUB_ENV
+          echo CPPFLAGS="-I$HOMEBREW_PREFIX/opt/qt@5/include -I$HOMEBREW_PREFIX/opt/qwt-qt5/include" >> $GITHUB_ENV
+          echo PKG_CONFIG_PATH="$HOMEBREW_PREFIX/opt/qt@5/lib/pkgconfig:$HOMEBREW_PREFIX/opt/qwt-qt5/lib/pkgconfig" >> $GITHUB_ENV
+          echo CMAKE_FRAMEWORK_PATH="$HOMEBREW_PREFIX/opt/qt@5/lib/cmake/" >> $GITHUB_ENV
+
 
       - name: Build wheels
         uses: pypa/cibuildwheel@66b46d086804a9e9782354100d96a3a445431bca # v2.14.0
         env:
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.buildplat[1] }}
-          CIBW_ENVIRONMENT: USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64/boost169 BOOST_INCLUDEDIR=/usr/include/boost169
           CIBW_CONTAINER_ENGINE: "docker; create_args: '--volume=${{ github.workspace  }}/.ccache:/.ccache'"
-          # overriede before-all in pyproject.toml
+          # override before-all in pyproject.toml
           CIBW_BEFORE_ALL: ""
           CIBW_MANYLINUX_X86_64_IMAGE: ${{ needs.build-custom-manylinux.outputs.tag }}
+          CIBW_ENVIRONMENT_LINUX: |
+            USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64/boost169 BOOST_INCLUDEDIR=/usr/include/boost169
+          CIBW_BEFORE_BUILD: env
+
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
@@ -144,15 +162,15 @@ jobs:
 
   test_upload_pypi:
     # TODO: create an sdist that can build without a custom environment
-    needs: [build_wheels] 
+    needs: [build_wheels]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         buildplat:
           - [ubuntu-20.04, manylinux_x86_64]
+          - [macos-13, macosx_x86_64]
             #- [ubuntu-20.04, musllinux_x86_64]
-            #- [macos-12, macosx_x86_64]
             #- [windows-2019, win_amd64]
         python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
@@ -161,7 +179,7 @@ jobs:
             python: "pp39"
           - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
             python: "pp39"
- 
+
     environment: pypi
     permissions:
       id-token: write
@@ -179,14 +197,14 @@ jobs:
   upload_pypi:
     # TODO: create an sdist that can build without a custom environment
     if: github.event_name == 'release'
-    needs: [build_wheels] 
+    needs: [build_wheels]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         buildplat:
           - [ubuntu-20.04, manylinux_x86_64]
+          - [macos-13, macosx_x86_64]
             #- [ubuntu-20.04, musllinux_x86_64]
-            #- [macos-12, macosx_x86_64]
             #- [windows-2019, win_amd64]
         python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
@@ -195,7 +213,7 @@ jobs:
             python: "pp39"
           - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
             python: "pp39"
- 
+
     environment: pypi
     permissions:
       id-token: write
