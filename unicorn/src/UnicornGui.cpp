@@ -22,7 +22,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/isobar/Script.h"
 #include "hurricane/viewer/CellViewer.h"
-#include "hurricane/isobar/PyCellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AllianceFramework.h"

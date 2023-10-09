@@ -32,7 +32,9 @@ viewer_mocs = qt.compile_moc(
     'hurricane/viewer/DisplayFilterWidget.h',
     'hurricane/viewer/ControllerWidget.h',
     'hurricane/viewer/ScriptWidget.h',
-    'hurricane/viewer/AboutWindow.h'
+    'hurricane/viewer/AboutWindow.h',
+    'hurricane/viewer/PyErrorWidget.h',
+    'hurricane/viewer/PyCellViewer.h'
   ],
   include_directories: hurricane_includes
 )
@@ -49,7 +51,9 @@ viewer_py = files([
   'PyHApplication.cpp',
   'PyGraphics.cpp',
   'PyViewer.cpp',
-  'PyAboutWindow.cpp'
+  'PyAboutWindow.cpp',
+  'PyErrorWidget.cpp',
+  'PyCellViewer.cpp'
 ])
  
 viewer = shared_library(

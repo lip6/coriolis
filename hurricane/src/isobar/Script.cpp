@@ -21,7 +21,6 @@
 #include  "hurricane/Error.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/isobar/PyCell.h"
-#include  "hurricane/isobar/PyCellViewer.h"
 #include  "hurricane/isobar/Script.h"
 
 
@@ -29,7 +28,6 @@ namespace Isobar {
 
   using std::string;
   using Hurricane::Cell;
-  using Hurricane::CellViewer;
 
 
 // -------------------------------------------------------------------

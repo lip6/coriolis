@@ -257,6 +257,9 @@ namespace CRL {
     if (coriolis_top_env) {
       coriolis_top = coriolis_top_env;
     } else {
+      // In this case, we are running as a binary and PyCRL module hasn't been
+      // instanciated yet. Use Python to self-locate ourselves. That is, the
+      // full path to ".../site-packages/coriolis/".
       std::error_code     rvalue;
       bprocess::ipstream  pipeout;
       string command = "python3 -c 'from coriolis import CRL;"

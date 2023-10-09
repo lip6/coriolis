@@ -51,7 +51,7 @@
 #include "hurricane/viewer/DesignBlob.h"
 #include "hurricane/viewer/OpenBlobDialog.h"
 #include "hurricane/viewer/SelectCommand.h"
-#include "hurricane/isobar/PyCellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 
 
 namespace Hurricane {
