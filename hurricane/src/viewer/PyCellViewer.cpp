@@ -17,7 +17,7 @@
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyOccurrence.h"
-#include "hurricane/isobar/PyCellViewer.h"
+#include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/viewer/CellWidget.h"
 
 

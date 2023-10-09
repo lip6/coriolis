@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#include "hurricane/isobar/PyErrorWidget.h"
+#include "hurricane/viewer/PyErrorWidget.h"
 
 
 namespace  Isobar {
