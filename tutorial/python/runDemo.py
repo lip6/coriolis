@@ -25,7 +25,7 @@ try:
     from   coriolis.helpers         import trace, l, u, n
     from   coriolis.helpers.io      import showPythonTrace, ErrorMessage, WarningMessage
     from   coriolis.helpers.overlay import UpdateSession
-    import coriolis.cumulus.plugins as plugins
+    import coriolis.plugins as plugins
 except ImportError as e:
     serror = str(e)
     if serror.startswith('No module named'):

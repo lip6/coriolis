@@ -87,4 +87,5 @@ subdir('oroshi')
 subdir('bora')
 subdir('unicorn')
 subdir('cumulus')
+subdir('tutorial')
 
