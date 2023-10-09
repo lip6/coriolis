@@ -1,0 +1,45 @@
+include_directories(
+  ${MELTEMI_SOURCE_DIR}/src
+  ${COLOQUINTE_INCLUDE_DIR}
+  ${CORIOLIS_INCLUDE_DIR}
+  ${HURRICANE_INCLUDE_DIR}
+  ${CONFIGURATION_INCLUDE_DIR}
+  ${ETESIAN_INCLUDE_DIR}
+  ${ANABATIC_INCLUDE_DIR}
+  ${KATANA_INCLUDE_DIR}
+  ${QtX_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+  ${Python_INCLUDE_DIRS})
+set(includes meltemi/MeltemiEngine.h)
+set(cpps MeltemiEngine.cpp)
+set(depLibs
+    ${KATABATIC_LIBRARIES}
+    ${CORIOLIS_PYTHON_LIBRARIES}
+    ${CORIOLIS_LIBRARIES}
+    ${HURRICANE_PYTHON_LIBRARIES}
+    ${HURRICANE_GRAPHICAL_LIBRARIES}
+    ${HURRICANE_LIBRARIES}
+    ${ETESIAN_LIBRARIES}
+    ${ANABATIC_LIBRARIES}
+    ${KATANA_LIBRARIES}
+    ${CONFIGURATION_LIBRARY}
+    ${BOOKSHELF_LIBRARY}
+    ${CIF_LIBRARY}
+    ${AGDS_LIBRARY}
+    ${UTILITIES_LIBRARY}
+    ${LEFDEF_LIBRARIES}
+    ${COLOQUINTE_LIBRARIES}
+    ${OA_LIBRARIES}
+    ${QtX_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${LIBXML2_LIBRARIES}
+    ${Python3_LIBRARIES}
+    -lutil
+    ${LIBEXECINFO_LIBRARIES})
+
+add_library(meltemi ${cpps})
+set_target_properties(meltemi PROPERTIES VERSION 1.0 SOVERSION 1)
+target_link_libraries(meltemi ${depLibs})
+
+install(TARGETS meltemi DESTINATION lib${LIB_SUFFIX})
+install(FILES ${includes} ${mocIncludes} DESTINATION include/coriolis2/meltemi)
