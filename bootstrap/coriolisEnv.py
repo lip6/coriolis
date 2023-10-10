@@ -170,7 +170,7 @@ def guessShell ( defaultShell, osType ):
                 shellPath    = whichCommand.stdout.splitlines()[0].decode('utf8')
             else:
                 shellPath = shell
-            if not options.queryISysRoot and not options.queryInstRoot:
+            if not options.querySrcRoot and not options.queryInstRoot:
                 print( 'echo "[GUESSED] shellPath={}";'.format(shellPath) )
         except Exception:
             shellPath = u'/bin/bash'
@@ -195,7 +195,7 @@ if __name__ == "__main__":
   parser = optparse.OptionParser()  
  # Build relateds.
   parser.add_option ( "--query-inst-root", action="store_true" ,                dest="queryInstRoot" )
-  parser.add_option ( "--query-isys-root", action="store_true" ,                dest="queryISysRoot" )
+  parser.add_option ( "--query-src-root" , action="store_true" ,                dest="querySrcRoot"  )
   parser.add_option ( "--release"        , action="store_true" ,                dest="release"       )
   parser.add_option ( "--debug"          , action="store_true" ,                dest="debug"         )
   parser.add_option ( "--devel"          , action="store_true" ,                dest="devel"         )
@@ -272,7 +272,9 @@ if __name__ == "__main__":
   reDevtoolset = re.compile( r'/opt/rh/devtoolset-(?P<version>\d+)/root/etc/coriolis2.*' )
 
   buildDir  = buildType + "." + linkType
-  scriptDir = os.path.dirname ( os.path.abspath(__file__) )
+  scriptDir = os.path.dirname( os.path.abspath(__file__) )
+  srcRoot   = "not_in_src_tree"
+  instRoot  = "not_in_src_tree"
  #print( "echo \"Script Location: {}\";".format( scriptDir ))
   if scriptDir.startswith("/etc/coriolis2"):
       coriolisTop  = "/usr"
@@ -287,8 +289,10 @@ if __name__ == "__main__":
                          % { 'v':m.group('version') }
       elif scriptDir.startswith(os.getenv("HOME")+"/nightly/coriolis-2.x/"): 
           rootDir      = os.getenv("HOME") + "/nightly/coriolis-2.x"
-          coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+          instRoot     = "%s/%s/%s"   % ( rootDir, osType, buildDir )
+          coriolisTop  = "%s/install" % ( instRoot )
           sysconfDir   = scriptDir
+          srcRoot      = '/'.join( scriptDir.split('/')[:-2] )
           shellMessage = "Using Nightly build Coriolis 2 (%s)" % coriolisTop
       elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
             or scriptDir.startswith("/soc/coriolis2/"):
@@ -297,17 +301,23 @@ if __name__ == "__main__":
           shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
       else:
           if not rootDir:
-              scriptRoot = '/'.join( scriptDir.split('/')[:-2] )
-              if not os.path.exists(scriptRoot):
+              srcRoot = '/'.join( scriptDir.split('/')[:-2] )
+              if not os.path.exists(srcRoot):
                   rootDir      = os.getenv("HOME") + "/coriolis-2.x"
-                  coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
-                  sysconfDir   = coriolisTop + "/etc/coriolis2"
                   shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
               else:
-                  rootDir      = scriptRoot
-                  coriolisTop  = rootDir
-                  sysconfDir   = coriolisTop + "/etc/coriolis2"
+                  rootDir = '/'.join( scriptDir.split('/')[:-3] )
                   shellMessage = "Using script location Coriolis 2 (%s)" % rootDir
+              instRoot     = "%s/%s/%s"   % ( rootDir, osType, buildDir )
+              coriolisTop  = "%s/install" % ( instRoot )
+              sysconfDir   = coriolisTop + "/etc/coriolis2"
+
+  if options.queryInstRoot:
+      print( instRoot )
+      sys.exit( 0 )
+  if options.querySrcRoot:
+      print( srcRoot )
+      sys.exit( 0 )
 
   if osType.startswith("Cygwin"):
       strippedPath = "%s/lib:%s" % ( coriolisTop, strippedPath )
@@ -320,9 +330,8 @@ if __name__ == "__main__":
       if os.path.isdir(absLibDir): break
       libDir    = None
   if libDir is None:
-      if not options.queryISysRoot and not options.queryInstRoot:
-          print( 'echo "[ERROR] coriolisEnv.py, library directory not found."' )
-          sys.exit( 1 )
+      print( 'echo "[ERROR] coriolisEnv.py, library directory not found."' )
+      sys.exit( 1 )
 
   strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
   strippedLibraryPath = "%s:%s"  % ( absLibDir  , strippedLibraryPath )
@@ -377,11 +386,5 @@ if __name__ == "__main__":
                              , "buildDir"        : buildDir
                              , 'SHELL'           : shellBin
                              }
-  if options.queryISysRoot:
-      print( '{}/{}'.format( rootDir, osType ))
-      sys.exit( 0 )
-  if options.queryInstRoot:
-      print( coriolisTop )
-      sys.exit( 0 )
   print( evalScript )
   sys.exit( 0 )

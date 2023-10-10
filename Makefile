@@ -21,17 +21,18 @@
    SMP_FLAGS = -j$(shell nproc)
  endif
 
- ISYS_ROOT = $(shell ./bootstrap/coriolisEnv.py --query-isys-root)
- INST_ROOT = $(shell ./bootstrap/coriolisEnv.py --query-inst-root)
- WORK_ROOT = ${HOME}/coriolis-2.x/Linux.el9/Release.Shared
+ ISYS_ROOT         = $(shell ./bootstrap/coriolisEnv.py --query-inst-root)
+ SRC_ROOT          = $(shell ./bootstrap/coriolisEnv.py --query-src-root)
+ BUILD_ROOT        = $(ISYS_ROOT)/build
+ INST_ROOT         = $(ISYS_ROOT)/install
+ SRC_ALLIANCE_ROOT = $(SRC_ROOT)/alliance/alliance/src
 
 
 help:
 	@echo "============================================================================"; \
 	 echo "Coriolis build & install top Makefile";                                        \
 	 echo "";                                                                             \
-	 echo "This Makefile is only a wrapper around the Coriolis & Chams Builder tool";     \
-	 echo "(./boostrap/ccb.py)";                                                          \
+	 echo "This Makefile is only a wrapper around virtualenv, pdm & meson.";              \
 	 echo "";                                                                             \
 	 echo "To build it, simply type (in coriolis/, at the shell prompt):";                \
 	 echo "    ego@home:coriolis> make install";                                          \
@@ -39,10 +40,15 @@ help:
 	 echo "    ego@home:coriolis> make clean_build";                                      \
 	 echo "To fully remove build & install:";                                             \
 	 echo "    ego@home:coriolis> make uninstall";                                        \
+	 echo "To build Alliance";                                                            \
+	 echo "    ego@home:coriolis> make install_alliance";                                 \
+	 echo "    ";                                                                         \
+	 echo "    Note: The Alliance repository must have been cloned beforehand";           \
 	 echo "============================================================================"; \
-	 echo "SMP_FLAGS = $(SMP_FLAGS)" ;                                                    \
-	 echo "ISYS_ROOT = $(ISYS_ROOT)" ;                                                    \
-	 echo "INST_ROOT = $(INST_ROOT)" ;                                                    \
+	 echo "SMP_FLAGS  = $(SMP_FLAGS)" ;                                                   \
+	 echo "BUILD_ROOT = $(BUILD_ROOT)" ;                                                  \
+	 echo "INST_ROOT  = $(INST_ROOT)" ;                                                   \
+	 echo "SRC_ROOT   = $(SRC_ROOT)" ;                                                    \
 	 echo "============================================================================";
 
 
@@ -62,33 +68,56 @@ check_venv:
 	@if [ ! -d "./venv" ]; then python3 -m venv venv; fi
 
 
-pdm_deps: check_venv
+pip_pdm: check_venv
+	@$(venv); pip install pdm
+
+
+pdm_deps: pip_pdm
 	@$(venv); pdm install --no-self 
 
 
 install: check_dir pdm_deps
-	@meson setup $(WORK_ROOT)/build
-	@meson configure $(WORK_ROOT)/build --prefix $(WORK_ROOT)/install
-	@ninja -v -C $(WORK_ROOT)/build install
+	@meson setup $(BUILD_ROOT)
+	@meson configure $(BUILD_ROOT) --prefix $(INST_ROOT)
+	@ninja -v -C $(BUILD_ROOT) install
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
 	 echo "============================================================================"; \
 	 echo "It has been installed under the directory:";                                   \
 	 echo "    $(INST_ROOT)/{bin,lib,lib64,include,share,...}";                           \
-	 echo "";                                                                             \
-	 echo "You can start the tool by running:";                                           \
-	 echo "    ego@home:~> $(INST_ROOT)/bin/coriolis";                                    \
 	 echo "============================================================================";
 
 
 clean_build: check_dir
 	@echo "Removing the build tree only."; \
-	 echo "    $(INST_ROOT)/../build";     \
-	 rm -rf $(INST_ROOT)/../build
+	 echo "    $(BUILD_ROOT)";             \
+	 rm -rf $(BUILD_ROOT)
 
 
 uninstall: check_dir
 	@echo "Removing the whole build & install tree..."; \
-	 echo "    $(ISYS_ROOT)";                           \
-	 rm -rf $(ISYS_ROOT)
+	 echo "    $(INST_ROOT)";                           \
+	 rm -rf $(INST_ROOT)
+
+
+check_alliance_dir:
+	@if [ ! -d "$(SRC_ROOT)/alliance" ]; then            \
+	   echo "Alliance source repository not found in:";  \
+	   echo "    $(SRC_ROOT)/alliance";                  \
+	   echo "Stopping build.";                           \
+	   exit 1;                                           \
+	 fi
+
+
+install_alliance:
+	@export ALLIANCE_TOP=$(INST_ROOT);                                          \
+	 export LD_LIBRARY_PATH=$(INST_ROOT)/lib:${LD_LIBRARY_PATH};                \
+	 cd $(SRC_ALLIANCE_ROOT);                                                   \
+	 sed -i 's,dirs="\\$$newdirs documentation",dirs="$$newdirs",' ./autostuff; \
+	 ./autostuff clean; ./autostuff;                                            \
+	 mkdir -p $(BUILD_ROOT); cd $(BUILD_ROOT);                                  \
+	 $(SRC_ALLIANCE_ROOT)/configure --prefix=$(INST_ROOT) --enable-alc-shared;  \
+	 make -j1 install
+
+
