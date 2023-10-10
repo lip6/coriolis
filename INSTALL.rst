@@ -47,10 +47,10 @@ Building for Mac OSX
 To build on mac, first install _Homebrew: https://brew.sh
 
 To install the prereqisites:
-  
+
 .. code-block:: bash
 
-   brew install doxygen latex qt@5 qwt-qt5 rapidjson boost
+   brew install doxygen qt@5 qwt-qt5 rapidjson boost eigen
    brew install --cask mactex 
 
 .. code-block:: bash
