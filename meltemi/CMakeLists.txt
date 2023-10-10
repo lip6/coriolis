@@ -3,7 +3,6 @@ project(MELTEMI)
 
 set(ignoreVariables "${CMAKE_INSTALL_DIR}" "${BUILD_DOC}")
 
-
 list(INSERT CMAKE_MODULE_PATH 0
      "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
 find_package(Bootstrap REQUIRED)

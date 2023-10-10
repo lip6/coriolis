@@ -17,21 +17,26 @@
 
 #include "etesian/EtesianEngine.h"
 
-namespace Meltemi
-{
-    using Hurricane::Cell;
 
-    class MeltemiEngine : public Etesian::EtesianEngine
-    {
-    public:
-        typedef Etesian::EtesianEngine Super;
+namespace Meltemi {
+using Hurricane::Cell;
+using Hurricane::Name;
 
-        static MeltemiEngine *create(Cell *);
+class MeltemiEngine : public Etesian::EtesianEngine {
+ public:
+  typedef Etesian::EtesianEngine Super;
 
-    private:
-        MeltemiEngine(Cell *);
+  static const Name &staticGetName();
+  static MeltemiEngine *create(Cell *);
+  static MeltemiEngine *get(const Cell *);
 
-    protected:
-        virtual void _coloquinteCallback(coloquinte::PlacementStep step) override;
-    };
-}
+ private:
+  MeltemiEngine(Cell *);
+
+ protected:
+  virtual void _coloquinteCallback(coloquinte::PlacementStep step) override;
+
+ private:
+  static Name _toolName;
+};
+}  // namespace Meltemi
