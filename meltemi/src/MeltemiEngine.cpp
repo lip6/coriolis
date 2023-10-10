@@ -21,6 +21,17 @@ using Hurricane::Error;
 
 namespace Meltemi
 {
+    Name MeltemiEngine::_toolName = "Meltemi";
+
+    const Name &MeltemiEngine::staticGetName()
+    {
+        return _toolName;
+    }
+
+    MeltemiEngine *MeltemiEngine::get(const Cell *cell)
+    {
+        return static_cast<MeltemiEngine *>(ToolEngine::get(cell, staticGetName()));
+    }
 
     MeltemiEngine::MeltemiEngine(Cell *cell)
         : Super(cell)

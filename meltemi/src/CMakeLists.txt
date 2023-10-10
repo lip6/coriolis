@@ -13,7 +13,7 @@ include_directories(
 set(includes meltemi/MeltemiEngine.h)
 set(pyIncludes meltemi/PyMeltemiEngine.h)
 set(cpps MeltemiEngine.cpp)
-set(pyCpps PyMeltemiEngine.cpp)
+set(pyCpps PyMeltemi.cpp PyMeltemiEngine.cpp)
 set(depLibs
     ${KATABATIC_LIBRARIES}
     ${CORIOLIS_PYTHON_LIBRARIES}
@@ -42,6 +42,9 @@ set(depLibs
 add_library(meltemi ${cpps})
 set_target_properties(meltemi PROPERTIES VERSION 1.0 SOVERSION 1)
 target_link_libraries(meltemi ${depLibs})
+
+add_python_module("${pyCpps}" "${pyIncludes}" "Do_not_generate_C_library"
+                  Meltemi "meltemi;${depLibs}" include/coriolis2/meltemi)
 
 install(TARGETS meltemi DESTINATION lib${LIB_SUFFIX})
 install(FILES ${includes} ${mocIncludes} DESTINATION include/coriolis2/meltemi)
