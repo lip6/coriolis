@@ -11,13 +11,14 @@ AlignEscapedNewlines: Left
 AlignOperands: Align
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortEnumsOnASingleLine: true
-AllowShortFunctionsOnASingleLine: All
-AllowShortIfStatementsOnASingleLine: OnlyFirstIf
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 BinPackArguments: false
+BinPackParameters: true
 BitFieldColonSpacing: Both
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -25,7 +26,7 @@ BraceWrapping:
   AfterClass: false
   AfterControlStatement: MultiLine
   AfterEnum: false
-  AfterFunction: false
+  AfterFunction: true
   AfterNamespace: false
   AfterStruct: false
   AfterExternBlock: false
@@ -33,10 +34,10 @@ BraceWrapping:
   BeforeWhile: false
   IndentBraces: false
 BreakBeforeBinaryOperators: All
-BreakBeforeTernaryOperators: true
+BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeComma
-ColumnLimit: 0
-ConstructorInitializerIndentWidth: 4
+ColumnLimit: 100
+ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 0
 Cpp11BracedListStyle: true
 EmptyLineAfterAccessModifier: Never
@@ -48,10 +49,10 @@ IndentCaseBlocks: false
 IndentCaseLabels: false
 IndentExternBlock: AfterExternBlock
 IndentPPDirectives: None
-IndentWidth: 4
+IndentWidth: 2
 KeepEmptyLinesAtTheStartOfBlocks: true
 MaxEmptyLinesToKeep: 4
-NamespaceIndentation: None
+NamespaceIndentation: All
 PackConstructorInitializers: NextLine
 PointerAlignment: Left
 QualifierAlignment: Leave
@@ -71,17 +72,18 @@ SpaceBeforeParens: Custom
 SpaceBeforeParensOptions:
   AfterControlStatements: true
   AfterFunctionDeclarationName: true
-  AfterFunctionDeclarationName: true
   AfterFunctionDefinitionName: true
   AfterOverloadedOperator: true
   BeforeNonEmptyParentheses: false
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
-SpaceInEmptyBlock: true
-SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
+SpaceInEmptyBlock: true
 SpacesInAngles: Leave
-SpacesInCStyleCastParentheses: false
-SpacesInConditionalStatement: false
-SpacesInParentheses: false
+SpacesInParens: Custom
+SpacesInParensOptions:
+  InConditionalStatements: false
+  InCStyleCasts: false
+  InEmptyParentheses: false
+  Other: false
 UseTab: Never
