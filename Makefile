@@ -81,7 +81,7 @@ pdm_deps: pip_pdm
 install: check_dir pdm_deps
 	@$(venv); meson setup $(BUILD_ROOT)
 	@$(venv); meson configure $(BUILD_ROOT) --prefix $(INST_ROOT)
-	@$(venv); ninja -v -C $(BUILD_ROOT) install
+	@$(venv); ninja -C $(BUILD_ROOT) install
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
