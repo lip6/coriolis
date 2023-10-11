@@ -21,11 +21,12 @@
    SMP_FLAGS = -j$(shell nproc)
  endif
 
- ISYS_ROOT         = $(shell ./bootstrap/coriolisEnv.py --query-inst-root)
- SRC_ROOT          = $(shell ./bootstrap/coriolisEnv.py --query-src-root)
- BUILD_ROOT        = $(ISYS_ROOT)/build
- INST_ROOT         = $(ISYS_ROOT)/install
- SRC_ALLIANCE_ROOT = $(SRC_ROOT)/alliance/alliance/src
+ ISYS_ROOT    = $(shell ./bootstrap/coriolisEnv.py --query-inst-root)
+ SRC_ROOT     = $(shell ./bootstrap/coriolisEnv.py --query-src-root)
+ BUILD_ROOT   = $(ISYS_ROOT)/build
+ INST_ROOT    = $(ISYS_ROOT)/install
+ SRC_CORIOLIS = $(SRC_ROOT)/coriolis
+ SRC_ALLIANCE = $(SRC_ROOT)/alliance/alliance/src
 
 
 help:
@@ -45,18 +46,19 @@ help:
 	 echo "    ";                                                                         \
 	 echo "    Note: The Alliance repository must have been cloned beforehand";           \
 	 echo "============================================================================"; \
-	 echo "SMP_FLAGS  = $(SMP_FLAGS)" ;                                                   \
-	 echo "BUILD_ROOT = $(BUILD_ROOT)" ;                                                  \
-	 echo "INST_ROOT  = $(INST_ROOT)" ;                                                   \
-	 echo "SRC_ROOT   = $(SRC_ROOT)" ;                                                    \
+	 echo "SMP_FLAGS    = $(SMP_FLAGS)" ;                                                 \
+	 echo "BUILD_ROOT   = $(BUILD_ROOT)" ;                                                \
+	 echo "INST_ROOT    = $(INST_ROOT)" ;                                                 \
+	 echo "SRC_CORIOLIS = $(SRC_CORIOLIS)" ;                                              \
+	 echo "SRC_ALLIANCE = $(SRC_ALLIANCE)" ;                                              \
 	 echo "============================================================================";
 
 
 check_dir:
-	@if [ "`pwd`" != "${HOME}/coriolis-2.x/src/coriolis" ]; then      \
+	@if [ "`pwd`" != "$(SRC_CORIOLIS)" ]; then                        \
 	   echo "Coriolis uses a fixed directory from the user's root.";  \
 	   echo "You must put in:";                                       \
-	   echo "    <${HOME}/coriolis-2.x/src/coriolis>";                \
+	   echo "    <$(SRC_CORIOLIS)>";                                  \
 	   echo "Instead of:";                                            \
 	   echo "    <`pwd`>";                                            \
 	   echo "Stopping build.";                                        \
@@ -102,9 +104,9 @@ uninstall: check_dir
 
 
 check_alliance_dir:
-	@if [ ! -d "$(SRC_ROOT)/alliance" ]; then            \
+	@if [ ! -d "$(SRC_ALLIANCE)" ]; then                 \
 	   echo "Alliance source repository not found in:";  \
-	   echo "    $(SRC_ROOT)/alliance";                  \
+	   echo "    $(SRC_ALLIANCE)";                       \
 	   echo "Stopping build.";                           \
 	   exit 1;                                           \
 	 fi
@@ -113,11 +115,11 @@ check_alliance_dir:
 install_alliance:
 	@export ALLIANCE_TOP=$(INST_ROOT);                                          \
 	 export LD_LIBRARY_PATH=$(INST_ROOT)/lib:${LD_LIBRARY_PATH};                \
-	 cd $(SRC_ALLIANCE_ROOT);                                                   \
+	 cd $(SRC_ALLIANCE);                                                        \
 	 sed -i 's,dirs="\\$$newdirs documentation",dirs="$$newdirs",' ./autostuff; \
 	 ./autostuff clean; ./autostuff;                                            \
 	 mkdir -p $(BUILD_ROOT); cd $(BUILD_ROOT);                                  \
-	 $(SRC_ALLIANCE_ROOT)/configure --prefix=$(INST_ROOT) --enable-alc-shared;  \
+	 $(SRC_ALLIANCE)/configure --prefix=$(INST_ROOT) --enable-alc-shared;       \
 	 make -j1 install
 
 
