@@ -43,7 +43,7 @@ include = [
   "unittests",
 ]
 [tool.pdm.dev-dependencies]
-doc = ["pelican", "docutils >=0.16", "markupsafe >= 2.0.0", "meson-python == 0.13.2" ]
+doc = ["pelican", "docutils >=0.16", "markupsafe >= 2.0.0", "meson" ]
 #doc = ["pelican", "doxygen"]
 
 [build-system]
