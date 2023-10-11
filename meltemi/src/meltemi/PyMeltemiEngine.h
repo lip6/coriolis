@@ -17,6 +17,7 @@
 #pragma once
 #include "crlcore/PyToolEngine.h"
 #include "hurricane/isobar/PyHurricane.h"
+#include "etesian/PyEtesianEngine.h"
 #include "meltemi/MeltemiEngine.h"
 
 namespace Meltemi {
