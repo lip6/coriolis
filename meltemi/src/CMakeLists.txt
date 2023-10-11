@@ -39,7 +39,7 @@ set(depLibs
     -lutil
     ${LIBEXECINFO_LIBRARIES})
 
-add_library(meltemi ${cpps})
+add_library(meltemi ${cpps} ${pyCpps})
 set_target_properties(meltemi PROPERTIES VERSION 1.0 SOVERSION 1)
 target_link_libraries(meltemi ${depLibs})
 

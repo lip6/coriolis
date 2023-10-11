@@ -33,6 +33,7 @@
 namespace Meltemi {
 
 using CRL::PyToolEngine;
+using Etesian::PyEtesianEngine;
 using Hurricane::Bug;
 using Hurricane::Error;
 using Hurricane::Exception;
@@ -122,7 +123,8 @@ DBoDestroyAttribute(PyMeltemiEngine_destroy, PyMeltemiEngine)
         {NULL, NULL, 0, NULL} /* sentinel */
 };
 
-DBoDeleteMethod(MeltemiEngine) PyTypeObjectLinkPyType(MeltemiEngine)
+DBoDeleteMethod(MeltemiEngine)
+PyTypeObjectLinkPyType(MeltemiEngine)
 
 #else  // End of Python Module Code Part.
 
@@ -131,12 +133,10 @@ DBoDeleteMethod(MeltemiEngine) PyTypeObjectLinkPyType(MeltemiEngine)
 // +=================================================================+
 
 // Link/Creation Method.
-PyTypeInheritedObjectDefinitions(MeltemiEngine, Etesian::EtesianEngine);
+PyTypeInheritedObjectDefinitions(MeltemiEngine, ToolEngine);
 DBoLinkCreateMethod(MeltemiEngine);
 
 extern void PyMeltemiEngine_postModuleInit() {
-  // PyObject* constant;
-  // LoadObjectConstant(PyTypeMeltemiEngine.tp_dict,MeltemiEngine::SlowMotion,"SlowMotion");
 }
 
 #endif  // Shared Library Code Part.
