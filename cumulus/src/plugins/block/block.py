@@ -26,7 +26,7 @@ from   ...CRL             import AllianceFramework, RoutingLayerGauge
 from   ...helpers         import trace, dots, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
 from   ...helpers.overlay import UpdateSession
-from   ...                import Etesian, Anabatic, Katana
+from   ...                import Etesian, Meltemi, Anabatic, Katana
 from   ..                 import getParameter
 from   ..macro.macro      import Macro
 from   .                  import timing
@@ -470,7 +470,7 @@ class Block ( object ):
             self.conf.cfg.etesian.spaceMargin = blockSpaceMargin
             self.conf.cfg.apply()
             with UpdateSession():
-                etesian = Etesian.EtesianEngine.create( self.conf.cell )
+                etesian = Meltemi.MeltemiEngine.create( self.conf.cell )
                 if self.conf.fixedWidth:  etesian.setFixedAbWidth ( self.conf.fixedWidth  )
                 if self.conf.fixedHeight: etesian.setFixedAbHeight( self.conf.fixedHeight )
                 etesian.setDefaultAb()
@@ -673,13 +673,13 @@ class Block ( object ):
         if self.etesian:
             return
         if self.conf.isCoreBlock:
-            self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
+            self.etesian = Meltemi.MeltemiEngine.create( self.conf.corona )
             self.etesian.setBlock( self.conf.icore )
             if editor:
                 editor.setCell( self.conf.cellPnR )
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
-            self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
+            self.etesian = Meltemi.MeltemiEngine.create( self.conf.cell )
         self.flattenNets()
 
     def place ( self ):
