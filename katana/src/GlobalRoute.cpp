@@ -722,27 +722,35 @@ namespace Katana {
     //   }
     // }
 
-    float maxUsage = 0.0f;
-    float maxCongestion = 0.0f;
+    double maxUsage = 0.0;
+    double maxCongestion = 0.0;
+    double meanUsage = 0.0;
+    double meanCongestion = 0.0;
 
     for (GCell *cell : getGCells()) {
-      float usage = 0.0f;
-      float congestion = 0.0f;
+      double usage = 0.0;
+      double congestion = 0.0;
       for (Edge *edge : cell->getEdges()) {
         unsigned dem = edge->getRealOccupancy();
         unsigned cap = edge->getCapacity();
-        usage = std::max(usage, (float) dem / (float) std::max(cap, 1u));
+        usage = std::max(usage, (double) dem / (double) std::max(cap, 1u));
         if (dem > cap) {
-          congestion += (float) (dem - cap) / (float) std::max(cap, 1u);
+          congestion += (double) (dem - cap) / (double) std::max(cap, 1u);
         }
       }
 
       auto box = cell->getBoundingBox();
       std::cout << "GCell " << box.getXMin() << "-" << box.getXMax() << " x " << box.getYMin() << "-" << box.getYMax() << ": usage " << usage << ", congestion " << congestion << std::endl;
+      maxUsage = std::max(maxUsage, usage);
+      maxCongestion = std::max(maxCongestion, congestion);
+      meanUsage += usage;
+      meanCongestion += congestion;
     }
+    meanUsage /= getGCells().size();
+    meanCongestion /= getGCells().size();
 
-    std::cout << "Max usage was " << maxUsage << std::endl;
-    std::cout << "Max congestion was " << maxCongestion << std::endl;
+    std::cout << "Max usage was " << maxUsage << ", mean " << meanUsage << std::endl;
+    std::cout << "Max congestion was " << maxCongestion << ", mean " << meanCongestion  << std::endl;
   }
 
 
