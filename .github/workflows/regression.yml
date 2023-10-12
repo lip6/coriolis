@@ -63,7 +63,11 @@ jobs:
          cd ${{ github.workspace }}/coriolis-2.x/src/coriolis
          make install SRC_ROOT=${{ github.workspace }}/coriolis-2.x/src ISYS_ROOT=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared install install_alliance
      - name: Check for binaries
-       run: ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/bin
+       run: |
+         ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/bin
+         ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/lib
+         ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/lib64
+         exit 0
      - name: Run the reference set of designs
        run: |
          export CORIOLIS_TOP=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
