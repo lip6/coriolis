@@ -67,6 +67,7 @@ jobs:
          ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/bin
          ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/lib
          ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/lib64
+         find ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
          exit 0
      - name: Run the reference set of designs
        run: |
