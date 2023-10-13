@@ -46,7 +46,7 @@ jobs:
          make ENABLE_PYOSYS=1 config-gcc
          make ENABLE_PYOSYS=1 \
               PREFIX=${{ env.installDir }} \
-              PYTHON_DESTDIR=${{ env.installDir }}/lib64/python3/dist-packages \
+              PYTHON_DESTDIR=${{ env.installDir }}/lib/python3/dist-packages \
               LIBDIR=${{ env.installDir }}/lib64/yosys \
               DATDIR=${{ env.installDir }}/share/yosys \
               install
