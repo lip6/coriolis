@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 from   math           import sqrt, ceil
@@ -95,8 +95,8 @@ class NonUnitCapacitor(CapacitorUnit):
                 dummyAbutmentBoxPosition = [ self.abutmentBoxPosition[0], self.abutmentBoxPosition[1] - CapacitorUnit.computeAbutmentBoxDimensions( self, self.dummyCapDim )["height"] ] if self.direction == "vertical" else [ self.abutmentBoxPosition[0] + CapacitorUnit.computeAbutmentBoxDimensions( self, self.nonUnitCapDim )["width"] , self.abutmentBoxPosition[1] ]
 
                 dummyCapacitor = CapacitorUnit( self.device, self.capacitorType, dummyAbutmentBoxPosition, capDim = self.dummyCapDim )
-#                   activeCapacitor.create( b, t )
-                    dummyCapacitor.create ( b, t )
+#               activeCapacitor.create( b, t )
+                dummyCapacitor.create ( b, t )
 
             else : print("not drawing dummy")
 
