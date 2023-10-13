@@ -123,6 +123,10 @@ crlcore = shared_library(
   acmsigda_parser_grammar,
   acmsigda_parser_scanner,
 
+  cpp_args: [
+    '-DHAVE_LEFDEF',
+  ],
+
   dependencies: [qt_deps, py_deps, libxml2, thread_dep,  boost, Hurricane, LefDef],
   include_directories: [crlcore_includes],
   install: true,
