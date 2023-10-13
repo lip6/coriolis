@@ -33,7 +33,7 @@ lefdef = shared_library(
     '-Wno-format-extra-args',
     '-Wno-error=unused-but-set-variable',
     '-Wno-reorder-ctor',
-    '-Wno-format'
+    '-Wno-format',
   ],
 )
 
