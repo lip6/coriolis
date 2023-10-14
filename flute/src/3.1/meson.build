@@ -27,8 +27,8 @@ py.extension_module(
 )
 
 
-install_data(
+py.install_sources(
   'POST9.dat',
   'POWV9.dat',
-  install_dir: py.get_install_dir(pure: false) / 'coriolis'
+  subdir: 'coriolis',
 )
