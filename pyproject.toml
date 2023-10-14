@@ -42,10 +42,6 @@ include = [
   "unicorn",
   "unittests",
 ]
-[tool.pdm.dev-dependencies]
-doc = ["pelican", "docutils >=0.16", "markupsafe >= 2.0.0" ]
-#doc = ["pelican", "doxygen"]
-
 [build-system]
 requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake"]
 build-backend = "mesonpy"
@@ -69,3 +65,26 @@ before-all = '''
  wget
  wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz; tar -xzf lemon-1.3.1.tar.gz; cd lemon-1.3.1; mkdir build; cd build; cmake ..; make install; cd ../..
 '''
+
+[tool.pdm.dev-dependencies]
+doc = [
+    "pelican",
+    "docutils >=0.16",
+    "markupsafe >= 2.0.0"
+]
+dev = [
+    "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",
+    "ninja",
+    "meson-python == 0.13.2",
+    "cmake",
+]
+
+test = [
+    "pytest>=7.4.2",
+]
+
+
+[tool.pdm]
+plugins = [
+    "pdm-dotenv",
+]
