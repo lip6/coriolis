@@ -72,12 +72,14 @@ Ubuntu/Windows WSL2 Build Environment
 If you haven't already got them, install `build-essential` and `git`
 
 .. code-block:: bash
+   :class: linux
 
    sudo apt install build-essential git ccache
 
 Clone the repo:
 
 .. code-block:: bash
+   :class: linux
 
    git clone --recurse-submodules https://github.com/lip6/coriolis
    cd coriolis
@@ -85,6 +87,7 @@ Clone the repo:
 Install the build dependencies:
 
 .. code-block:: bash
+   :class: linux
 
    sudo apt install python3 python3-pip python3.10-venv \
                     doxygen pelican texlive-latex-recommended \
@@ -101,6 +104,7 @@ To build on Mac, first install _Homebrew: https://brew.sh. Be sure to follow all
 Clone the repo:
 
 .. code-block:: bash
+   :class: mac
 
    git clone --recurse-submodules https://github.com/lip6/coriolis
    cd coriolis
@@ -109,6 +113,7 @@ Clone the repo:
 To install the prereqisites:
 
 .. code-block:: bash
+   :class: mac
 
    brew install ccache doxygen pelican qt@5 qwt-qt5 rapidjson boost eigen
    brew install --cask mactex 
@@ -117,6 +122,7 @@ To install the prereqisites:
 We need to set some environment variables for finding the cask only components. We use dotenv to set these in the PDM venv (see below)
 
 .. code-block:: bash
+   :class: mac
 
    pip install python-dotenv
    dotenv set CMAKE_FRAMEWORK_PATH "$HOMEBREW_PREFIX/opt/qt@5/lib/cmake/"
@@ -130,17 +136,20 @@ Building Coriolis
 To build Python wheels, you'll need the `build` package if you don't already have it installed:
 
 .. code-block:: bash
+   :class: all
 
    pip3 install build
 
 
 .. code-block:: bash
+   :class: all
 
    python3 -m build -w
 
 The wheels can be found in dist and installed using pip:
 
 .. code-block:: bash
+   :class: all
 
    pip3 install dist/*.whl
 
@@ -153,6 +162,7 @@ For day-to-day development, its currently best to use meson and ninja directly. 
 We use PDM_ to manage our development environment, which uses Python's venv_ system.
 
 .. code-block:: bash
+   :class: all
 
    pip install pdm
 
@@ -161,12 +171,14 @@ Before starting, you'll likely want to install the `shell completion`_ and read 
 First we set up our pdm virtual environment:
 
 .. code-block:: bash
+   :class: all
 
    pdm install --no-self -d --plugins
    
 Below we are just using a local directory call builddir for our meson_ build directory, but you can put it wherever you like.
 
 .. code-block:: bash
+   :class: all
 
    pdm run meson setup builddir
    pdm run ninja -C builddir install
@@ -174,6 +186,7 @@ Below we are just using a local directory call builddir for our meson_ build dir
 You can then use `pdm run` to run any programs or scripts dependant on Coriolis, for example:
 
 .. code-block:: bash
+   :class: all
 
    pdm run unittests/python/test_hurricane.py
 
@@ -181,6 +194,7 @@ You can then use `pdm run` to run any programs or scripts dependant on Coriolis,
 You can also install locally using:
 
 .. code-block:: bash
+   :class: all
 
    pdm run meson setup builddir -Dpython.install_env=system
    pdm run ninja -C builddir install
@@ -189,6 +203,7 @@ You can also install locally using:
 For more configuration and install options, see:
 
 .. code-block:: bash
+   :class: all
 
    pdm run meson configure
 
