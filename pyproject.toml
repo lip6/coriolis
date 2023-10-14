@@ -47,7 +47,7 @@ doc = ["pelican", "docutils >=0.16", "markupsafe >= 2.0.0" ]
 #doc = ["pelican", "doxygen"]
 
 [build-system]
-requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@mac-homebrew",  "ninja", "meson-python == 0.13.2", "cmake"]
+requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake"]
 build-backend = "mesonpy"
 
 [tool.cibuildwheel.linux]
