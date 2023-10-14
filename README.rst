@@ -47,68 +47,20 @@ main components are the Hurricane database, the Etesian placer and the Katana
 router, but other tools can use the Hurricane database and the parsers
 provided.
 
-The user interface ``cgt`` is the prefered way to run Coriolis, but all
-Coriolis tools are Python modules and thus scriptable.
+Coriolus can be used via both the  ```cgt`` graphical tool <http://coriolis.lip6.fr/pages/users-guide.html#id24>`_ and via the `rich Python API <http://coriolis.lip6.fr/pages/python-tutorial.html>`_.
 
+Installation
+============
 
-Building Coriolis
-=================
-
-To build Coriolis, ensure the following prerequisites are met:
-
-* A C++11 compliant compiler.
-* Python 3.
-* make or ninja.
-* cmake.
-* bzip2
-* boost.
-* bison & flex.
-* Qt 5 & Qt 5 Svg.
-* Qwt
-* libxml2.
-* RapidJSON, http://rapidjson.org/ .
-* Eigen 3,  http://eigen.tuxfamily.org .
-* Lemon, http://lemon.cs.elte.hu/trac/lemon .
-* doxygen
-* pelican
-
-The build system relies on a fixed directory tree from the root
-of the user currently building it. Thus first step is to get a clone of
-the repository in the right place. Proceed as follow:
+Python 3.7 or later is required to use Coliolis. It can then be installed from `Pypi <https://pypi.org/>`_.
 
 .. code-block:: bash
+   pip3 install coriolis-eda
 
-   ego@home:~$ mkdir -p ~/coriolis-2.x/src/
-   ego@home:~$ cd ~/coriolis-2.x/src
-   ego@home:src$ git clone --recurse-submodules https://github.com/lip6/coriolis
-   ego@home:src$ cd coriolis
+Note for Windows, we currently only support running under WSL2.
 
-Then, build the tool:
+Documentation
+=============
 
-.. code-block:: bash
+The full documentation for Coriolis can be found at http://coriolis.lip6.fr/pages/documentation.html
 
-   ego@home:coriolis$ make install
-
-Coriolis gets installed at the root of the following tree: ::
-
-    ~/coriolis-2.x/OS.DISTRIB/Release.Shared/install/
-
-Where ``OS`` is the name of your operating system and ``DISTRIB`` your
-distribution (mileage may vary).
-
-
-Using Coriolis
-==============
-
-Prior to using Coriolis, you need to setup your UNIX environment by running
-the following command:
-
-.. code-block:: bash
-
-    ego@home:~$ eval `~/coriolis-2.x/OS.DISTRIB/Release.Shared/install/etc/coriolis2/coriolisEnv.py`
-
-Then you can launch the GUI:
-
-.. code-block:: bash
-
-    ego@home:~$ cgt -V
