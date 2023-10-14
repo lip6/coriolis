@@ -35,6 +35,7 @@ lefdef = shared_library(
     '-Wno-reorder-ctor',
     '-Wno-format',
   ],
+  install: true
 )
 
 LefDef = declare_dependency(
