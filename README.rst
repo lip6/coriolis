@@ -90,7 +90,7 @@ Install the build dependencies:
    :class: linux
 
    sudo apt install python3 python3-pip python3.10-venv \
-                    doxygen pelican texlive-latex-recommended \
+                    doxygen texlive-latex-recommended \
                     bison flex \
                     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
                     rapidjson-dev libboost-all-dev libeigen3-dev libxml2-dev
@@ -115,7 +115,7 @@ To install the prereqisites:
 .. code-block:: bash
    :class: mac
 
-   brew install ccache doxygen pelican qt@5 qwt-qt5 rapidjson boost eigen
+   brew install ccache doxygen qt@5 qwt-qt5 rapidjson boost eigen
    brew install --cask mactex 
 
 
@@ -235,7 +235,6 @@ You'll need the following prerequisites:
 * RapidJSON, http://rapidjson.org/ .
 * Eigen 3,  http://eigen.tuxfamily.org .
 * doxygen
-* pelican
 * latex
 
 
