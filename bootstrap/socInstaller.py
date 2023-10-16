@@ -210,18 +210,19 @@ class YosysCommand ( CommandArg ):
 
 class AllianceCommand ( CommandArg ):
 
-    def __init__ ( self, alcBin, fdLog=None ):
-        CommandArg.__init__ ( self, [ alcBin ], fdLog=fdLog )
+    def __init__ ( self, fdLog=None ):
+        CommandArg.__init__ ( self, [ 'make'
+                                    , '-f', 'Makefile.LIP6'
+                                    , 'install_alliance' ], fdLog=fdLog )
         return
 
 
 class CoriolisCommand ( CommandArg ):
 
-    def __init__ ( self, ccbBin, rootDir, threads=1, otherArgs=[], fdLog=None ):
-        CommandArg.__init__ ( self, [ ccbBin
-                                    , '--root='+rootDir
-                                    , '--project=coriolis'
-                                    , '--make=-j{} install'.format(threads)
+    def __init__ ( self, rootDir, threads=1, otherArgs=[], fdLog=None ):
+        CommandArg.__init__ ( self, [ 'make'
+                                    , '-f', 'Makefile.LIP6'
+                                    , 'install'
                                     ] + otherArgs
                                   , fdLog=fdLog )
         return
@@ -333,7 +334,6 @@ class Configuration ( object ):
         self._chrootMode   = None
         self._logs         = { 'alliance':None, 'coriolis':None, 'benchs':None }
         self._fds          = { 'alliance':None, 'coriolis':None, 'benchs':None }
-        self._ccbBin       = None
         self._benchsDir    = None
         self._masterHost   = self._detectMasterHost()
         self._success      = False
@@ -377,8 +377,6 @@ class Configuration ( object ):
         self._srcDir     = self._rootDir + '/src'
         self._logDir     = self._srcDir  + '/logs'
         self._yosysBin   = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/yosysInstaller.sh'
-        self._alcBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/allianceInstaller.sh'
-        self._ccbBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/ccb.py'
         self._benchsDir  = self._srcDir  + '/' + GitRepository.getLocalRepository(self._benchsRepo  ) + '/benchs'
         self._masterHost = self._detectMasterHost()
         return
@@ -444,7 +442,7 @@ class Configuration ( object ):
                 raise ErrorMessage( 1, [ 'Cannot find <allianceInstaller.sh>, should be here:'
                                        , '   "{}"'.format(self.alcBin)
                                        ] )
-            commands.append( AllianceCommand( self.alcBin, fdLog=self.fds['alliance'] ) )
+            commands.append( AllianceCommand( fdLog=self.fds['alliance'] ) )
         if self.doCoriolis:
             if not os.path.isfile( self.ccbBin ):
                 raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
@@ -453,19 +451,9 @@ class Configuration ( object ):
             otherArgs = []
             if self.debugArg: otherArgs.append( self.debugArg )
             if target == 'EL9':
-               #otherArgs.append( '--project=support' )
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
-               #commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-            if target == 'SL7_64':
-                otherArgs += [ '--project=support', '--qt4' ]
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-            elif target == 'SL6_64' or target == 'SL6':
-                otherArgs += [ '--project=support', '--devtoolset=8', '--qt4' ]
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
+                commands.append( CoriolisCommand( self.rootDir, 3, fdLog=self.fds['coriolis'] ) )
             elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
-                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
+                commands.append( CoriolisCommand( self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
         if self.doBenchs:
             commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
         if self.doPyBenchs:
