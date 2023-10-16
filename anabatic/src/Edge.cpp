@@ -390,7 +390,7 @@ namespace Anabatic {
       size_t truncate = (size_t)( (getCapacity()*2) / 3 );
       while ( _segments.size() > truncate ) {
         NetData* netData = anabatic->getNetData( _segments[truncate]->getNet() );
-        if (netData->isGlobalFixed ()) break;
+        if (netData->isGlobalFixed ()) break; // TODO: this looks like a mistake; shoudn't we continue
         if (netData->isGlobalRouted()) ++netCount;
         anabatic->ripup( _segments[truncate], Flags::Propagate );
       }
@@ -410,6 +410,20 @@ namespace Anabatic {
     return netCount;
   }
 
+
+  size_t  Edge::ripupAll ()
+  {
+    AnabaticEngine* anabatic = getAnabatic();
+    size_t          netCount = 0;
+
+    sort( _segments.begin(), _segments.end(), SortSegmentByLength(anabatic) );
+    for ( size_t i=0 ; i<_segments.size() ; ) {
+      NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+      if (netData->isGlobalFixed ()) continue;
+      if (netData->isGlobalRouted()) ++netCount;
+      anabatic->ripup( _segments[i], Flags::Propagate );
+    }
+  }
 
   void  Edge::_setSource ( GCell* source )
   {

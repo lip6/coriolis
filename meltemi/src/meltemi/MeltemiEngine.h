@@ -16,6 +16,7 @@
 #pragma once
 
 #include "etesian/EtesianEngine.h"
+#include "katana/KatanaEngine.h"
 
 
 namespace Meltemi {
@@ -38,5 +39,6 @@ class MeltemiEngine : public Etesian::EtesianEngine {
 
  private:
   static Name _toolName;
+  Katana::KatanaEngine *_katana;
 };
 }  // namespace Meltemi
