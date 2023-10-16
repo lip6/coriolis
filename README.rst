@@ -89,7 +89,7 @@ Install the build dependencies:
 .. code-block:: bash
    :class: linux
 
-   sudo apt install python3 python3-pip python3.10-venv \
+   sudo apt install python3 python3-pip python3-venv \
                     doxygen texlive-latex-recommended \
                     bison flex \
                     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
@@ -119,15 +119,13 @@ To install the prereqisites:
    brew install --cask mactex 
 
 
-We need to set some environment variables for finding the cask only components. We use dotenv to set these in the PDM venv (see below)
+We need to set some environment variables for finding the cask only components:
 
 .. code-block:: bash
    :class: mac
 
-   pip install python-dotenv
-   dotenv set CMAKE_FRAMEWORK_PATH "$HOMEBREW_PREFIX/opt/qt@5/lib/cmake/"
-   dotenv set PKG_CONFIG_PATH "$HOMEBREW_PREFIX/opt/qt@5/lib/pkgconfig:$HOMEBREW_PREFIX/opt/qwt-qt5/lib/pkgconfig"
-
+   export CMAKE_FRAMEWORK_PATH="$HOMEBREW_PREFIX/opt/qt@5/lib/cmake/"
+   export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/opt/qt@5/lib/pkgconfig:$HOMEBREW_PREFIX/opt/qwt-qt5/lib/pkgconfig"
 
 
 Building Coriolis
