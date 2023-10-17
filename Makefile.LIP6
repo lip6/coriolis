@@ -3,21 +3,24 @@
  venv      = source .venv/bin/activate
  localpath = export PATH=${HOME}/.local/bin:${PATH};
 
- NIGHTLY_DIR = 
+ REGRESSION_DIR = 
  ifneq ($(findstring nightly,$(shell pwd)),)
-   NIGHTLY_DIR = /nightly
+   REGRESSION_DIR = /nightly
+ endif
+ ifneq ($(findstring runner,$(shell pwd)),)
+   REGRESSION_DIR = /work/coriolis/coriolis
  endif
 
  SMP_FLAGS = 
  ifneq ($(shell which nproc 2> /dev/null),)
    SMP_FLAGS = -j$(shell nproc)
  endif
- SRC_DIR      = ${HOME}$(NIGHTLY_DIR)/coriolis-2.x/src
+ SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
  CORIOLIS_SRC = ${SRC_DIR}/coriolis
  ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
  BUILDTYPE    = release
- BUILDDIR     = ${HOME}$(NIGHTLY_DIR)/coriolis-2.x/$(BUILDTYPE)/build
- PREFIX       = ${HOME}$(NIGHTLY_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+ BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
+ PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
 
 
 help:
