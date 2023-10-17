@@ -3,7 +3,7 @@ name: Regression tests
 on:   [workflow_dispatch]
 
 env:
-   installDir: ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
+   installDir: ${{ github.workspace }}/coriolis-2.x/release/install
 
 jobs:
   Regression-Tests:
@@ -21,11 +21,11 @@ jobs:
        with:
          repository: lip6/alliance-check-toolkit
          path:       coriolis-2.x/src/alliance-check-toolkit
-     - uses: actions/checkout@v3
-       with:
-         repository: YosysHQ/yosys
-         path:       coriolis-2.x/src/yosys
-         ref:        yosys-0.24
+    #- uses: actions/checkout@v3
+    #  with:
+    #    repository: YosysHQ/yosys
+    #    path:       coriolis-2.x/src/yosys
+    #    ref:        yosys-0.24
      - name: Update APT cache
        run: sudo apt-get update
      - name: Install software dependencies
@@ -36,36 +36,34 @@ jobs:
                               libeigen3-dev liblemon-dev \
                               autotools-dev automake \
                               libxt-dev libxpm-dev libmotif-dev \
-                              tcl-dev libffi-dev
+                              tcl-dev libffi-dev \
+                              yowasp-yosys
      - name: ccache
        uses: hendrikmuhs/ccache-action@v1.2
-     - name: Build Yosys
+    #- name: Build Yosys
+    #  run: |
+    #    export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+    #    cd ${{ github.workspace }}/coriolis-2.x/src/yosys
+    #    make ENABLE_PYOSYS=1 config-gcc
+    #    make ENABLE_PYOSYS=1 \
+    #         PREFIX=${{ env.installDir }} \
+    #         PYTHON_DESTDIR=${{ env.installDir }}/lib64/python3/dist-packages \
+    #         LIBDIR=${{ env.installDir }}/lib64/yosys \
+    #         DATDIR=${{ env.installDir }}/share/yosys \
+    #         install
+    #    sudo ln -s ${{ env.installDir }}/bin/* /usr/bin/
+    #- name: Check Yosys share directory
+    #  run: ls -1 ${{ github.workspace }}/coriolis-2.x/release/install/share/yosys
+     - name: Build Coriolis & Alliance
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-         cd ${{ github.workspace }}/coriolis-2.x/src/yosys
-         make ENABLE_PYOSYS=1 config-gcc
-         make ENABLE_PYOSYS=1 \
-              PREFIX=${{ env.installDir }} \
-              PYTHON_DESTDIR=${{ env.installDir }}/lib64/python3/dist-packages \
-              LIBDIR=${{ env.installDir }}/lib64/yosys \
-              DATDIR=${{ env.installDir }}/share/yosys \
-              install
-         sudo ln -s ${{ env.installDir }}/bin/* /usr/bin/
-     - name: Check Yosys share directory
-       run: ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/share/yosys
-     - name: Build Alliance
-       run: |
-         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-         ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/allianceInstaller.sh --github-runner=${{ github.workspace }}
-     - name: Build Coriolis
-       run: |
-         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-         ${{ github.workspace }}/coriolis-2.x/src/coriolis/bootstrap/ccb.py --root=${{ github.workspace }}/coriolis-2.x --project=coriolis --make="-j4 install"
+         cd ${{ github.workspace }}/coriolis-2.x/src/coriolis
+         make -f Makefile.LIP6 install install_alliance
      - name: Check for binaries
-       run: ls -1 ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install/bin
+       run: ls -1 ${{ github.workspace }}/coriolis-2.x/release/install/bin
      - name: Run the reference set of designs
        run: |
-         export CORIOLIS_TOP=${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
+         export CORIOLIS_TOP=${{ github.workspace }}/coriolis-2.x/release/install
          cd ${{ github.workspace }}/coriolis-2.x/src/alliance-check-toolkit/benchs
          ../bin/crlenv.py --verbose
          ../bin/gopy.sh --github-runner
@@ -73,7 +71,7 @@ jobs:
 #      uses: actions/upload-artifact@v3
 #      with:
 #        name: installed-tree
-#        path: ${{ github.workspace }}/coriolis-2.x/Linux.x86_64/Release.Shared/install
+#        path: ${{ github.workspace }}/coriolis-2.x/release/install
 #        retention-days: 1
      - name: Archive test design set logs
        uses: actions/upload-artifact@v3
