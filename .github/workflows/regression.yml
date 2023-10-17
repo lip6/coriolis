@@ -31,13 +31,13 @@ jobs:
      - name: Install software dependencies
        run: >
          sudo apt-get install libboost-all-dev rapidjson-dev \
-                              python-dev-is-python3 python3-doit \
+                              python-dev-is-python3 python3-doit python3-pip \
                               qtbase5-dev qtbase5-dev-tools libqt5svg5-dev libqwt-qt5-dev \
                               libeigen3-dev liblemon-dev \
                               autotools-dev automake \
                               libxt-dev libxpm-dev libmotif-dev \
                               tcl-dev libffi-dev \
-                              yowasp-yosys
+         pip install meson yowasp-yosys
      - name: ccache
        uses: hendrikmuhs/ccache-action@v1.2
     #- name: Build Yosys
