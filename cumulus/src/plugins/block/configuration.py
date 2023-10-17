@@ -1564,6 +1564,7 @@ class BlockConf ( GaugeConf ):
                                        .format(netName)) )
                 return
         self.hTreeDatas.append( [ netName, flags ] );
+        self.useClockTree = True
 
     def addTrackAvoid ( self, trackAvoid ):
         if self.cfg.anabatic.netBuilderStyle == 'VH,2RL':
