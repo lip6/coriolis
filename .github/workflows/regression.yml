@@ -36,7 +36,7 @@ jobs:
                               libeigen3-dev liblemon-dev \
                               autotools-dev automake \
                               libxt-dev libxpm-dev libmotif-dev \
-                              tcl-dev libffi-dev \
+                              tcl-dev libffi-dev
          pip install meson yowasp-yosys
      - name: ccache
        uses: hendrikmuhs/ccache-action@v1.2
