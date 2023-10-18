@@ -11,7 +11,7 @@ from docutils.frontend import get_default_settings
 from docutils.parsers.rst import Parser
 from docutils.nodes import NodeVisitor
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_rst(text: str) -> docutils.nodes.document:
@@ -50,7 +50,7 @@ with open(filename) as f:
     doc = parse_rst(s)
     visitor = MyVisitor(doc)
     doc.walk(visitor)
-    for node in visitor.commands['mac']:
+    for node in visitor.commands['linux']:
         logging.debug(f"rawsource: {node.rawsource}, line: {node.line}")
         parts = bashlex.parse(node.rawsource)
         for n in parts:
@@ -77,7 +77,7 @@ async def run_commands(commands):
 
         logging.info(f'Running:\n{commands}')
         for cmd in commands:
-            print(f"- Running line {cmd[0]} of {filename}: '{cmd[1]}'")
+            print(f"- Running line {cmd[0]} of {filename}: '{cmd[1]}'", flush=True)
             write(cmd[1])
             write('\necho "====== RSTTESTER RETURN $? ======"\n')
             lines = []
@@ -86,7 +86,7 @@ async def run_commands(commands):
                 lines.append(line) if line != "" else None
                 data = await process.stdout.readline()
                 line = data.decode('utf-8').rstrip()
-                logging.debug(f'> {line}')
+                logging.info(f'> {line}')
 
             logging.debug(stdout_barrier.match(line))
             exitcode = int(stdout_barrier.match(line).group(1))
@@ -98,14 +98,14 @@ async def run_commands(commands):
                 errlines.append(line) if line != "" else None
                 data = await process.stderr.readline()
                 line = data.decode('utf-8').rstrip()
-                logging.debug(f'E {line}')
+                logging.info(f'E {line}')
 
             if (exitcode > 0):
-                print(f"- Command failed at line {cmd[0]}: '{cmd[1]}'")
-                print("- stdout:")
-                print('\n'.join(lines))
-                print("- stderr:")
-                print('\n'.join(errlines))
+                print(f"- Command failed at line {cmd[0]}: '{cmd[1]}'", flush=True)
+                print("- stdout:", flush=True)
+                print('\n'.join(lines), flush=True)
+                print("- stderr:", flush=True)
+                print('\n'.join(errlines), flush=True)
 
             logging.info(f"---- returned {exitcode}")
             logging.info(f"---- stdout:\n{lines}")
@@ -115,4 +115,4 @@ run(run_commands(commands))
 
 # with tempfile.TemporaryDirectory() as d:
 #    out, err = process.communicate(commands.encode('utf-8'))
-#    print(out.decode('utf-8'))
+#    print(out.decode('utf-8'), flush=True)
