@@ -1094,7 +1094,7 @@ namespace Anabatic {
   {
       std::cout << "Starting ripup"<< std::endl;
     for (GCell *cell : getGCells()) {
-      if (not gcell->isMatrix()) continue;
+      if (not cell->isMatrix()) continue;
       std::cout << "\tRipping up one cell " << cell->_getString() << std::endl;
       for (Edge *edge : cell->getEdges()) {
       std::cout << "\tRipping up one edge " << edge->_getString() << std::endl;
