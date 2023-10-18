@@ -74,7 +74,7 @@ If you haven't already got them, install `build-essential` and `git`
 .. code-block:: bash
    :class: linux
 
-   sudo apt install build-essential git ccache
+   sudo apt install -y build-essential git ccache
 
 Clone the repo:
 
@@ -89,11 +89,11 @@ Install the build dependencies:
 .. code-block:: bash
    :class: linux
 
-   sudo apt install python3 python3-pip python3-venv \
-                    doxygen texlive-latex-recommended \
-                    bison flex \
-                    qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
-                    rapidjson-dev libboost-all-dev libeigen3-dev libxml2-dev
+   sudo apt install -y python3 python3-pip python3-venv \
+                       doxygen texlive-latex-recommended \
+                       bison flex \
+                       qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
+                       rapidjson-dev libboost-all-dev libeigen3-dev libxml2-dev
 
 
 Mac OSX Build Environment
