@@ -54,11 +54,16 @@ jobs:
     #    sudo ln -s ${{ env.installDir }}/bin/* /usr/bin/
     #- name: Check Yosys share directory
     #  run: ls -1 ${{ github.workspace }}/coriolis-2.x/release/install/share/yosys
-     - name: Build Coriolis & Alliance
+     - name: Build Coriolis
        run: |
          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
          cd ${{ github.workspace }}/coriolis-2.x/src/coriolis
-         make -f Makefile.LIP6 install install_alliance
+         make -f Makefile.LIP6 install
+     - name: Build Alliance
+       run: |
+         export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+         cd ${{ github.workspace }}/coriolis-2.x/src/coriolis
+         make -f Makefile.LIP6 install_alliance
      - name: Check for binaries
        run: ls -1 ${{ github.workspace }}/coriolis-2.x/release/install/bin
      - name: Run the reference set of designs
