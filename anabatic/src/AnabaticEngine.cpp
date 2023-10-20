@@ -1097,6 +1097,10 @@ namespace Anabatic {
       if (not cell->isMatrix()) continue;
       std::cout << "\tRipping up one cell " << cell->_getString() << std::endl;
       for (Edge *edge : cell->getEdges()) {
+        if (edge == NULL) {
+        std::cout << "Edge is null" << std::endl;
+        continue;
+      }
       std::cout << "\tRipping up one edge " << edge->_getString() << std::endl;
         edge->ripupAll();
       }
