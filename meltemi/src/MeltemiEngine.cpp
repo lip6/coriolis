@@ -36,10 +36,6 @@ namespace Meltemi
     MeltemiEngine::MeltemiEngine(Cell *cell)
         : Super(cell)
     {
-        _katana = Katana::KatanaEngine::get(cell);
-        if (_katana == NULL) {
-            _katana = Katana::KatanaEngine::create(cell);
-        }
     }
 
     MeltemiEngine *MeltemiEngine::create(Cell *cell)
@@ -58,9 +54,17 @@ namespace Meltemi
         // Run the callback to read back the results in the circuit
         _coloquinteCallbackCore(step, true);
 
+
+        _katana = Katana::KatanaEngine::get(getCell());
+        if (_katana == NULL) {
+            _katana = Katana::KatanaEngine::create(getCell());
+        }
+
         // TODO: run the KatanaEngine global routing
         _katana->digitalInit();
         _katana->runGlobalRouter();
-        _katana->ripupAll();
+        _katana->destroy();
+
+        _katana = NULL;
     }
 }
