@@ -422,6 +422,9 @@ namespace Anabatic {
         std::cout << "\tSegment is null" << std::endl;
         continue;
       }
+      if (isEnding(_segments[i])) {
+        continue;
+      }
       std::cout << "\tRipping up segment " <<  _segments[i]->_getString() << std::endl;
       NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
       if (netData->isGlobalFixed ()) continue;
