@@ -390,7 +390,7 @@ namespace Anabatic {
       size_t truncate = (size_t)( (getCapacity()*2) / 3 );
       while ( _segments.size() > truncate ) {
         NetData* netData = anabatic->getNetData( _segments[truncate]->getNet() );
-        if (netData->isGlobalFixed ()) break; // TODO: this looks like a mistake; shoudn't we continue
+        if (netData->isGlobalFixed ()) break;
         if (netData->isGlobalRouted()) ++netCount;
         anabatic->ripup( _segments[truncate], Flags::Propagate );
       }
@@ -418,21 +418,17 @@ namespace Anabatic {
 
     sort( _segments.begin(), _segments.end(), SortSegmentByLength(anabatic) );
     for ( size_t i=0 ; i<_segments.size() ; ) {
-      if (_segments[i] == NULL) {
-        std::cout << "\tSegment is null" << std::endl;
-        continue;
+      if ((not _segments[i]) or isEnding(_segments[i])) {
+	++i; continue;
       }
-      if (isEnding(_segments[i])) {
-        continue;
-      }
-      std::cout << "\tRipping up segment " <<  _segments[i]->_getString() << std::endl;
       NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
       if (netData->isGlobalFixed ()) continue;
       if (netData->isGlobalRouted()) ++netCount;
       anabatic->ripup( _segments[i], Flags::Propagate );
-      std::cout << "\tRipup done" << std::endl;
     }
+    return netCount;
   }
+
 
   void  Edge::_setSource ( GCell* source )
   {

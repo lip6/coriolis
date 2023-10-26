@@ -1090,23 +1090,21 @@ namespace Anabatic {
     DebugSession::close();
   }
 
+
   void  AnabaticEngine::ripupAll ()
   {
-      std::cout << "Starting ripup"<< std::endl;
-    for (GCell *cell : getGCells()) {
+    openSession();
+    for ( GCell* cell : getGCells() ) {
       if (not cell->isMatrix()) continue;
-      std::cout << "\tRipping up one cell " << cell->_getString() << std::endl;
-      for (Edge *edge : cell->getEdges()) {
-        if (edge == NULL) {
-        std::cout << "Edge is null" << std::endl;
-        continue;
-      }
-      std::cout << "\tRipping up one edge " << edge->_getString() << std::endl;
+      for ( Edge* edge : cell->getEdges() ) {
+        if (not edge) continue;
         edge->ripupAll();
       }
     }
     _ovEdges.clear();
+    Session::close();
   }
+
 
   void  AnabaticEngine::cleanupGlobal ()
   {
