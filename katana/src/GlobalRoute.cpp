@@ -722,6 +722,7 @@ namespace Katana {
     //   }
     // }
 
+    return;
     double maxUsage = 0.0;
     double maxCongestion = 0.0;
     double meanUsage = 0.0;
