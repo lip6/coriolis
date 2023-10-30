@@ -1102,6 +1102,38 @@ namespace Anabatic {
       }
     }
     _ovEdges.clear();
+
+    // Explicitly destroy what remains
+    for ( Net* net : getCell()->getNets() ) {
+      if (net == _blockageNet) continue;
+      if (net->getType() == Net::Type::POWER ) continue;
+      if (net->getType() == Net::Type::GROUND) continue;
+
+      std::vector<Segment*> segments;
+      for( Segment* segment : net->getSegments() ) {
+        if (!Session::isGLayer(segment->getLayer())) {
+          continue;
+        }
+        segment->getSourceHook()->detach();
+        segment->getTargetHook()->detach();
+        segments.push_back(segment);
+      }
+      for (Segment *segment : segments) {
+        segment->destroy();
+      }
+
+      std::vector<Contact*> contacts;
+      for( Contact* contact : net->getContacts() ) {
+        if (!Session::isGLayer(contact->getLayer())) {
+          continue;
+        }
+        contacts.push_back(contact);
+      }
+      for (Contact *contact : contacts) {
+        contact->destroy();
+      }
+    }
+
     Session::close();
   }
 
