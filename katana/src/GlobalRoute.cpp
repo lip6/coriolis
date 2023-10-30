@@ -708,8 +708,11 @@ namespace Katana {
     Session::close();
     if (isChannelStyle()) {
       setupRoutingPlanes();
-      setupPowerRails();
-      protectRoutingPads();
+
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        protectRoutingPads();
+      }
     }
 
     setState( EngineState::EngineGlobalLoaded );

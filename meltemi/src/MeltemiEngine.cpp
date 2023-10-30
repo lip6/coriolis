@@ -14,9 +14,11 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/Error.h"
+#include "katana/Constants.h"
 
 #include "meltemi/MeltemiEngine.h"
 
+using Katana::Flags;
 using Hurricane::Error;
 
 namespace Meltemi
@@ -54,16 +56,17 @@ namespace Meltemi
         // Run the callback to read back the results in the circuit
         _coloquinteCallbackCore(step, true);
 
-
         _katana = Katana::KatanaEngine::get(getCell());
-        if (_katana == NULL) {
+        if (_katana == NULL)
+        {
             _katana = Katana::KatanaEngine::create(getCell());
         }
 
         // TODO: run the KatanaEngine global routing
         _katana->digitalInit();
-        _katana->runGlobalRouter();
+        _katana->runGlobalRouter(Flags::PlacementCallback);
         _katana->ripupAll();
+
         _katana->destroy();
 
         _katana = NULL;
