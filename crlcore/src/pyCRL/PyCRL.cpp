@@ -34,6 +34,7 @@
 #include "crlcore/PyAcmSigda.h"
 // #include "crlcore/PyIspd05.h"
 #include "crlcore/PySpice.h"
+#include "crlcore/PyVerilog.h"
 #include "crlcore/PyBlif.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
@@ -129,6 +130,7 @@ extern "C" {
     PyAcmSigda_LinkPyType ();
     // PyIspd05_LinkPyType ();
     PySpice_LinkPyType ();
+    PyVerilog_LinkPyType ();
     PyBlif_LinkPyType ();
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
@@ -154,6 +156,7 @@ extern "C" {
     PYTYPE_READY_NEW ( AcmSigda );
     // PYTYPE_READY_NEW ( Ispd05 );
     PYTYPE_READY_NEW ( Spice );
+    PYTYPE_READY_NEW ( Verilog );
     PYTYPE_READY_NEW ( Blif );
     PYTYPE_READY_NEW ( Gds );
     PYTYPE_READY_NEW ( LefImport );
@@ -205,6 +208,8 @@ extern "C" {
     // PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
     Py_INCREF ( &PyTypeSpice );
     PyModule_AddObject ( module, "Spice", (PyObject*)&PyTypeSpice );
+    Py_INCREF ( &PyTypeVerilog );
+    PyModule_AddObject ( module, "Verilog", (PyObject*)&PyTypeVerilog );
     Py_INCREF ( &PyTypeBlif );
     PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
     Py_INCREF ( &PyTypeGds );
@@ -224,6 +229,7 @@ extern "C" {
     PyRoutingLayerGauge_postModuleInit ();
     PyAllianceFramework_postModuleInit ();
     PySpice_postModuleInit ();
+    PyVerilog_postModuleInit ();
     PyGds_postModuleInit ();
     PyDefExport_postModuleInit ();
     
