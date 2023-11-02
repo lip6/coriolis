@@ -240,7 +240,7 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::digitalInit ()
+  void  KatanaEngine::digitalInit ( Flags flags )
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
     _runKatanaInit();
@@ -250,7 +250,7 @@ namespace Katana {
     Super::chipPrep();
 
     setupChannelMode();
-    setupGlobalGraph( 0 );
+    setupGlobalGraph( flags );
     if (not isChannelStyle()) {
       setupRoutingPlanes();
     }
@@ -258,15 +258,16 @@ namespace Katana {
     if (not setupPreRouteds()) {
       setState( Anabatic::EngineDriving );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
-    } else {
-      if (not isChannelStyle()) {
-        setupPowerRails();
-        Flags flags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
-        protectRoutingPads( flags );
-      }
     }
 
+    if (not isChannelStyle()) {
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+                      ? Flags::ProtectSelf : Flags::NoFlags;
+        protectRoutingPads( protectFlags );
+      }
+    }
     cdebug_tabw(155,-1);
   }
 
