@@ -88,6 +88,7 @@ namespace Anabatic {
                     void              remove               ( Segment* );
                     void              replace              ( Segment* orig, Segment* repl );
                     size_t            ripup                ();
+                    size_t            ripupAll             ();
       inline const  Flags&            flags                () const;
       inline        Flags&            flags                ();
       inline        void              revalidate           () const;
