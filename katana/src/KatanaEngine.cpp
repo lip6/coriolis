@@ -240,7 +240,7 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::digitalInit ()
+  void  KatanaEngine::digitalInit ( Flags flags )
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
     _runKatanaInit();
@@ -260,10 +260,12 @@ namespace Katana {
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
     } else {
       if (not isChannelStyle()) {
-        setupPowerRails();
-        Flags flags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
-        protectRoutingPads( flags );
+        if (!(flags & Flags::PlacementCallback)) {
+          setupPowerRails();
+          Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+                        ? Flags::ProtectSelf : Flags::NoFlags;
+          protectRoutingPads( protectFlags );
+        }
       }
     }
 

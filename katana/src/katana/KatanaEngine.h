@@ -129,7 +129,7 @@ namespace Katana {
               void                     setupGlobalGraph           ( uint32_t mode );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
-              void                     digitalInit                ();
+              void                     digitalInit                ( Flags flags=Flags::NoFlags );
               void                     analogInit                 ();
               void                     pairSymmetrics             ();
               void                     updateEstimateDensity      ( NetData*, double weight );

@@ -62,13 +62,13 @@ namespace Meltemi
             _katana = Katana::KatanaEngine::create(getCell());
         }
 
-        // TODO: run the KatanaEngine global routing
-        _katana->digitalInit();
+        // Run the KatanaEngine global routing
+        _katana->digitalInit(Flags::PlacementCallback);
         _katana->runGlobalRouter(Flags::PlacementCallback);
+
+        // Get rid of the global routing solution and the engine
         _katana->ripupAll();
-
         _katana->destroy();
-
         _katana = NULL;
     }
 }
