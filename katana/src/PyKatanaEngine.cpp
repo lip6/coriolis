@@ -153,19 +153,25 @@ extern "C" {
   }
 
 
-  PyObject* PyKatanaEngine_digitalInit ( PyKatanaEngine* self )
+  PyObject* PyKatanaEngine_digitalInit ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_digitalInit()" << endl;
 
     HTRY
       METHOD_HEAD("KatanaEngine.digitalInit()")
-      if (katana->getViewer()) {
-        if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::digitalInit,katana) )) {
-          PyErr_SetString( HurricaneError, "KatanaEngine::digitalInit() has thrown an exception (C++)." );
-          return NULL;
+      uint64_t  flags = 0;
+      if (PyArg_ParseTuple(args,"|L:KatanaEngine.digitalInit", &flags)) {
+        if (katana->getViewer()) {
+          if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::digitalInit,katana, flags) )) {
+            PyErr_SetString( HurricaneError, "KatanaEngine::digitalInit() has thrown an exception (C++)." );
+            return NULL;
+          }
+        } else {
+          katana->digitalInit( flags );
         }
       } else {
-        katana->digitalInit();
+        PyErr_SetString(ConstructorError, "KatanaEngine.digitalInit(): Invalid number/bad type of parameter.");
+        return NULL;
       }
     HCATCH
 
@@ -203,7 +209,7 @@ extern "C" {
     HTRY
       METHOD_HEAD("KatanaEngine.runGlobalRouter()")
       uint64_t  flags = 0;
-      if (PyArg_ParseTuple(args,"L:KatanaEngine.runGlobalRouter", &flags)) {
+      if (PyArg_ParseTuple(args,"|L:KatanaEngine.runGlobalRouter", &flags)) {
         if (katana->getViewer()) {
           if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runGlobalRouter,katana,flags) )) {
             PyErr_SetString( HurricaneError, "KatanaEngine::runGlobalrouter() has thrown an exception (C++)." );
@@ -344,7 +350,7 @@ extern "C" {
                                    , "Create a Katana engine on this cell." }
     , { "setViewer"                , (PyCFunction)PyKatanaEngine_setViewer               , METH_VARARGS
                                    , "Associate a Viewer to this KatanaEngine." }
-    , { "digitalInit"              , (PyCFunction)PyKatanaEngine_digitalInit             , METH_NOARGS
+    , { "digitalInit"              , (PyCFunction)PyKatanaEngine_digitalInit             , METH_VARARGS
                                    , "Setup Katana for digital routing." }
     , { "exclude"                  , (PyCFunction)PyKatanaEngine_exclude                 , METH_VARARGS
                                    , "Exclude a net from routing." }
