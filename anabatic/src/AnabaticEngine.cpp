@@ -1091,6 +1091,57 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::ripupAll ()
+  {
+    openSession();
+    for ( GCell* cell : getGCells() ) {
+      if (not cell->isMatrix()) continue;
+      for ( Edge* edge : cell->getEdges() ) {
+        if (not edge) continue;
+        edge->ripupAll();
+      }
+    }
+    _ovEdges.clear();
+
+    // Explicitly destroy what remains
+    for ( Net* net : getCell()->getNets() ) {
+      if (net == _blockageNet) continue;
+      if (net->getType() == Net::Type::POWER ) continue;
+      if (net->getType() == Net::Type::GROUND) continue;
+
+      std::vector<Segment*> segments;
+      for( Segment* segment : net->getSegments() ) {
+        if (!Session::isGLayer(segment->getLayer())) {
+          continue;
+        }
+        segment->getSourceHook()->detach();
+        segment->getTargetHook()->detach();
+        segments.push_back(segment);
+      }
+      for (Segment *segment : segments) {
+        segment->destroy();
+      }
+
+      std::vector<Contact*> contacts;
+      for( Contact* contact : net->getContacts() ) {
+        if (!Session::isGLayer(contact->getLayer())) {
+          continue;
+        }
+        contacts.push_back(contact);
+      }
+      for (Contact *contact : contacts) {
+        contact->destroy();
+      }
+
+      for( RoutingPad* rp : net->getRoutingPads() ) {
+        rp->getBodyHook()->detach();
+      }
+    }
+
+    Session::close();
+  }
+
+
   void  AnabaticEngine::cleanupGlobal ()
   {
     UpdateSession::open();
