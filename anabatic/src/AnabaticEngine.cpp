@@ -1132,6 +1132,10 @@ namespace Anabatic {
       for (Contact *contact : contacts) {
         contact->destroy();
       }
+
+      for( RoutingPad* rp : net->getRoutingPads() ) {
+        rp->getBodyHook()->detach();
+      }
     }
 
     Session::close();
