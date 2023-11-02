@@ -126,7 +126,7 @@ namespace Katana {
               void                     setInterrupt               ( bool );
               void                     createChannels             ();
               void                     setupRoutingPlanes         ();
-              void                     setupGlobalGraph           ( uint32_t mode );
+              void                     setupGlobalGraph           ( Flags flags=Flags::NoFlags );
               void                     annotateGlobalGraph        ();
               void                     setFixedPreRouted          ();
               void                     digitalInit                ( Flags flags=Flags::NoFlags );

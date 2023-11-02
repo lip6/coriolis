@@ -380,12 +380,15 @@ namespace Katana {
   }
 
 
-  void  KatanaEngine::setupGlobalGraph ( uint32_t mode )
+  void  KatanaEngine::setupGlobalGraph ( Flags flags )
   {
     Cell* cell = getCell();
 
     cell->flattenNets( Cell::Flags::BuildRings|Cell::Flags::WarnOnUnplacedInstances );
-    cell->createRoutingPadRings( Cell::Flags::BuildRings );
+
+    if (!(flags & Flags::PlacementCallback)) {
+      cell->createRoutingPadRings( Cell::Flags::BuildRings );
+    }
 
     startMeasures();
 
@@ -499,6 +502,15 @@ namespace Katana {
 
     if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
     Breakpoint::stop( 100, "Bloated cells from previous placement iteration." );
+
+    if (not isChannelStyle()) {
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+                      ? Flags::ProtectSelf : Flags::NoFlags;
+        protectRoutingPads( protectFlags );
+      }
+    }
 
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;
