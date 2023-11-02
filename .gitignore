@@ -10,6 +10,7 @@ GPATH
 GRTAGS
 .dir-locals.el
 .projectile
+.vscode
 
 lefdef/src/lef/lef/lef.tab.h
 lefdef/src/def/def/def.tab.h
@@ -22,6 +23,7 @@ latex/
 build/
 venv/
 coriolis.egg-info/
+.pdm-python
 
 bootstrap/coriolis2.spec
 
