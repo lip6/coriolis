@@ -1080,6 +1080,18 @@ namespace Etesian {
   }
 
   void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
+
+    // Graphical update
+    GraphicUpdate conf = getUpdateConf();
+    bool updatePlacement = conf == GraphicUpdate::UpdateAll;
+    if  (conf == GraphicUpdate::LowerBound &&
+         step == coloquinte::PlacementStep::LowerBound) {
+      updatePlacement = true;
+    }
+    _coloquinteCallbackCore(step, updatePlacement);
+  }
+
+  void EtesianEngine::_coloquinteCallbackCore(coloquinte::PlacementStep step, bool updatePlacement) {
     auto placement = _circuit->solution();
     if (step == coloquinte::PlacementStep::LowerBound) {
       *_placementLB = placement;
@@ -1088,13 +1100,7 @@ namespace Etesian {
       *_placementUB = placement;
     }
 
-    // Graphical update
-    GraphicUpdate conf = getUpdateConf();
-    if (conf == GraphicUpdate::UpdateAll) {
-      _updatePlacement(&placement);
-    }
-    else if (conf == GraphicUpdate::LowerBound &&
-             step == coloquinte::PlacementStep::LowerBound) {
+    if (updatePlacement) {
       _updatePlacement(&placement);
     }
   }
