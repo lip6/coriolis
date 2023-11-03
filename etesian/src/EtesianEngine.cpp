@@ -862,7 +862,7 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      if (instanceId >= instancesNb) {
+      if (instanceId >= (int) instancesNb) {
         // This will be an error
         ++instanceId;
         continue;
@@ -918,7 +918,7 @@ namespace Etesian {
       dots.dot();
     }
 
-    if (instanceId != instancesNb) {
+    if (instanceId != (int) instancesNb) {
       throw Error( "EtesianEngine::toColoquinte(): %d  leaf instances, but expected %d\n"
                    "        maybe a virtual flattening problem."
                  , instanceId, instancesNb 
