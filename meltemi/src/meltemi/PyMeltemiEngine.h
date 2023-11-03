@@ -22,28 +22,28 @@
 
 namespace Meltemi {
 
-extern "C" {
+  extern "C" {
 
-// -------------------------------------------------------------------
-// Python Object  :  "PyMeltemiEngine".
+  // -------------------------------------------------------------------
+  // Python Object  :  "PyMeltemiEngine".
 
-typedef struct {
-  CRL::PyToolEngine _baseObject;
-} PyMeltemiEngine;
+  typedef struct {
+      CRL::PyToolEngine _baseObject;
+  } PyMeltemiEngine;
 
-// -------------------------------------------------------------------
-// Functions & Types exported to "PyMeltemi.ccp".
+  // -------------------------------------------------------------------
+  // Functions & Types exported to "PyMeltemi.ccp".
 
-extern PyTypeObject PyTypeMeltemiEngine;
-extern PyMethodDef PyMeltemiEngine_Methods[];
+  extern PyTypeObject PyTypeMeltemiEngine;
+  extern PyMethodDef  PyMeltemiEngine_Methods[];
 
-extern PyObject* PyMeltemiEngine_Link(Meltemi::MeltemiEngine*);
-extern void PyMeltemiEngine_LinkPyType();
-extern void PyMeltemiEngine_postModuleInit();
+  extern PyObject* PyMeltemiEngine_Link (Meltemi::MeltemiEngine*);
+  extern void      PyMeltemiEngine_LinkPyType ();
+  extern void      PyMeltemiEngine_postModuleInit ();
 
 #define IsPyMeltemiEngine(v) ((v)->ob_type == &PyTypeMeltemiEngine)
-#define PYMELTEMIENGINE(v) ((PyMeltemiEngine*)(v))
+#define PYMELTEMIENGINE(v)   ((PyMeltemiEngine*)(v))
 #define PYMELTEMIENGINE_O(v) (PYMELTEMIENGINE(v)->_baseObject._object)
-}  // extern "C".
+  }  // extern "C".
 
 }  // namespace Meltemi
