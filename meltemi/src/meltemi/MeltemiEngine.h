@@ -37,8 +37,14 @@ namespace Meltemi {
     protected:
       virtual void _coloquinteCallback (coloquinte::PlacementStep step) override;
 
+      std::vector<std::pair<coloquinte::Rectangle, float>> computeCongestionMap();
+
     private:
       static Name           _toolName;
       Katana::KatanaEngine* _katana;
+
+      // Cell width and height before expansion takes place
+      std::vector<int> _cellWidth;
+      std::vector<int> _cellHeight;
   };
 }  // namespace Meltemi
