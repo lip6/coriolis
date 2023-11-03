@@ -18,57 +18,56 @@
 
 #include "meltemi/MeltemiEngine.h"
 
-using Katana::Flags;
 using Hurricane::Error;
+using Katana::Flags;
 
-namespace Meltemi
-{
-    Name MeltemiEngine::_toolName = "Meltemi";
+namespace Meltemi {
+  Name MeltemiEngine::_toolName = "Meltemi";
 
-    const Name &MeltemiEngine::staticGetName()
+  const Name& MeltemiEngine::staticGetName()
+  {
+    return _toolName;
+  }
+
+  MeltemiEngine* MeltemiEngine::get(const Cell* cell)
+  {
+    return static_cast<MeltemiEngine*>(ToolEngine::get(cell, staticGetName()));
+  }
+
+  MeltemiEngine::MeltemiEngine(Cell* cell)
+    : Super(cell)
+  {
+  }
+
+  MeltemiEngine* MeltemiEngine::create(Cell* cell)
+  {
+    if (! cell)
+      throw Error("MeltemiEngine::create(): NULL cell argument.");
+
+    MeltemiEngine* meltemi = new MeltemiEngine(cell);
+
+    meltemi->_postCreate();
+    return meltemi;
+  }
+
+  void MeltemiEngine::_coloquinteCallback(coloquinte::PlacementStep step)
+  {
+    // Run the callback to read back the results in the circuit
+    _coloquinteCallbackCore(step, true);
+
+    _katana = Katana::KatanaEngine::get(getCell());
+    if (_katana == NULL)
     {
-        return _toolName;
+      _katana = Katana::KatanaEngine::create(getCell());
     }
 
-    MeltemiEngine *MeltemiEngine::get(const Cell *cell)
-    {
-        return static_cast<MeltemiEngine *>(ToolEngine::get(cell, staticGetName()));
-    }
+    // Run the KatanaEngine global routing
+    _katana->digitalInit(Flags::PlacementCallback);
+    _katana->runGlobalRouter(Flags::PlacementCallback);
 
-    MeltemiEngine::MeltemiEngine(Cell *cell)
-        : Super(cell)
-    {
-    }
-
-    MeltemiEngine *MeltemiEngine::create(Cell *cell)
-    {
-        if (!cell)
-            throw Error("MeltemiEngine::create(): NULL cell argument.");
-
-        MeltemiEngine *meltemi = new MeltemiEngine(cell);
-
-        meltemi->_postCreate();
-        return meltemi;
-    }
-
-    void MeltemiEngine::_coloquinteCallback(coloquinte::PlacementStep step)
-    {
-        // Run the callback to read back the results in the circuit
-        _coloquinteCallbackCore(step, true);
-
-        _katana = Katana::KatanaEngine::get(getCell());
-        if (_katana == NULL)
-        {
-            _katana = Katana::KatanaEngine::create(getCell());
-        }
-
-        // Run the KatanaEngine global routing
-        _katana->digitalInit(Flags::PlacementCallback);
-        _katana->runGlobalRouter(Flags::PlacementCallback);
-
-        // Get rid of the global routing solution and the engine
-        _katana->ripupAll();
-        _katana->destroy();
-        _katana = NULL;
-    }
-}
+    // Get rid of the global routing solution and the engine
+    _katana->ripupAll();
+    _katana->destroy();
+    _katana = NULL;
+  }
+}  // namespace Meltemi
