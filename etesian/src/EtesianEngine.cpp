@@ -1090,15 +1090,15 @@ namespace Etesian {
   }
 
   void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
+    _coloquinteCallbackCore(step, _needsGraphicUpdate(step));
+  }
 
-    // Graphical update
+  bool EtesianEngine::_needsGraphicUpdate(coloquinte::PlacementStep step) {
     GraphicUpdate conf = getUpdateConf();
-    bool updatePlacement = conf == GraphicUpdate::UpdateAll;
-    if  (conf == GraphicUpdate::LowerBound &&
-         step == coloquinte::PlacementStep::LowerBound) {
-      updatePlacement = true;
+    if (conf == GraphicUpdate::UpdateAll) {
+      return true;
     }
-    _coloquinteCallbackCore(step, updatePlacement);
+    return (conf == GraphicUpdate::LowerBound && step == coloquinte::PlacementStep::LowerBound);
   }
 
   void EtesianEngine::_coloquinteCallbackCore(coloquinte::PlacementStep step, bool updatePlacement) {

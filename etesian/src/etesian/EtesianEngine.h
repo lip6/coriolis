@@ -189,6 +189,7 @@ namespace Etesian {
     protected:
       virtual void           _coloquinteCallback(coloquinte::PlacementStep step);
       void                   _coloquinteCallbackCore(coloquinte::PlacementStep step, bool updatePlacement);
+      bool                   _needsGraphicUpdate(coloquinte::PlacementStep step);
 
     private:
       inline  uint32_t       _getNewDiodeId   ();
