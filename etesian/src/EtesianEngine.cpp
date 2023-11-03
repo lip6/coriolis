@@ -1043,6 +1043,8 @@ namespace Etesian {
     _placementLB = new coloquinte::PlacementSolution ();
     _placementUB = new coloquinte::PlacementSolution ( *_placementLB );
 
+    _circuit->exportIspd("etesian");
+
     return instancesNb-fixedNb;
   }
 
