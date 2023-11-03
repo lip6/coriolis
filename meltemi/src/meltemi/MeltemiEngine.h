@@ -20,25 +20,25 @@
 
 
 namespace Meltemi {
-using Hurricane::Cell;
-using Hurricane::Name;
+  using Hurricane::Cell;
+  using Hurricane::Name;
 
-class MeltemiEngine : public Etesian::EtesianEngine {
- public:
-  typedef Etesian::EtesianEngine Super;
+  class MeltemiEngine : public Etesian::EtesianEngine {
+    public:
+      typedef Etesian::EtesianEngine Super;
 
-  static const Name &staticGetName();
-  static MeltemiEngine *create(Cell *);
-  static MeltemiEngine *get(const Cell *);
+      static const Name&    staticGetName ();
+      static MeltemiEngine* create (Cell*);
+      static MeltemiEngine* get (const Cell*);
 
- private:
-  MeltemiEngine(Cell *);
+    private:
+      MeltemiEngine(Cell*);
 
- protected:
-  virtual void _coloquinteCallback(coloquinte::PlacementStep step) override;
+    protected:
+      virtual void _coloquinteCallback (coloquinte::PlacementStep step) override;
 
- private:
-  static Name _toolName;
-  Katana::KatanaEngine *_katana;
-};
+    private:
+      static Name           _toolName;
+      Katana::KatanaEngine* _katana;
+  };
 }  // namespace Meltemi
