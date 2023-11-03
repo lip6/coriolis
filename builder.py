@@ -133,6 +133,7 @@ def build(setup_kwargs: Dict[str, Any]) -> None:
                      CMakeExtension("etesian", sourcedir="etesian"),
                      CMakeExtension("anabatic", sourcedir="anabatic"),
                      CMakeExtension("katana", sourcedir="katana"),
+                     CMakeExtension("meltemi", sourcedir="meltemi"),
                      CMakeExtension("equinox", sourcedir="equinox"),
                      CMakeExtension("solstice", sourcedir="solstice"),
                      CMakeExtension("oroshi", sourcedir="oroshi"),
