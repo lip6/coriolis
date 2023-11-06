@@ -73,11 +73,11 @@ namespace Meltemi {
     // Read the placement back
     _coloquinteCallbackCore(step, true);
 
-
-    // Run the KatanaEngine global routing
+    // Disable error messages when running Katana
     unsigned mask = mstream::getActiveMask();
     mstream::disable((unsigned)-1);
 
+    // Run the KatanaEngine global routing
     _katana = Katana::KatanaEngine::get(getCell());
     if (_katana == NULL)
     {
@@ -85,8 +85,6 @@ namespace Meltemi {
     }
     _katana->digitalInit(Flags::PlacementCallback);
     _katana->runGlobalRouter(Flags::PlacementCallback);
-
-    mstream::enable(mask);
 
 
     // Use the congestion info to inflate the cells
@@ -99,6 +97,9 @@ namespace Meltemi {
     _katana->ripupAll();
     _katana->destroy();
     _katana = NULL;
+
+    // Reenable error messages
+    mstream::enable(mask);
   }
 
   std::vector<std::pair<coloquinte::Rectangle, float>> MeltemiEngine::computeCongestionMap()
