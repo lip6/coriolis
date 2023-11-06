@@ -398,9 +398,7 @@ namespace Anabatic {
 
     _diodeCell = DataBase::getDB()->getCell( _configuration->getDiodeName() );;
     if (not _diodeCell) {
-      cerr << Warning( "AnabaticEngine::_postCreate() Unable to find \"%s\" diode cell."
-                     , _configuration->getDiodeName().c_str()
-                     ) << endl;
+      cmess1 << Warning("AnabaticEngine::_postCreate() Unable to find \"%s\" diode cell.", _configuration->getDiodeName().c_str()) << endl;
     }
 
     UpdateSession::open();
