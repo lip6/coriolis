@@ -94,6 +94,12 @@ namespace Meltemi {
     // Appears in the Coloquinte log
     std::cout << "\tBloat " << averageExpansion;
 
+    /*
+     * TODO:
+     *  * Find benchmarks that are difficult to route
+     *  * Evaluate history methods (keeping expansion information between iterations)
+     *  * Assess the impact of incorporating these in Coloquinte directly
+    */
 
     // Get rid of the global routing solution and the engine
     _katana->ripupAll();
