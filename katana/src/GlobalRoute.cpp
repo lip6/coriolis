@@ -646,7 +646,7 @@ namespace Katana {
       set<const Net*,Net::CompareByName>  nets;
       set<Segment*  ,DBo::CompareById  >  segments;
 
-      cerr << "  o  Global routing did not complete." << endl;
+      cmess1 << "  o  Global routing did not complete." << endl;
       for ( size_t iEdge = 0 ; iEdge<ovEdges.size() ; ++iEdge ) {
         unsigned int edgeOverflow = ovEdges[iEdge]->getRealOccupancy() - ovEdges[iEdge]->getCapacity();
         ovHistogram.addSample( (float)edgeOverflow, 0 );
