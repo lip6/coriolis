@@ -88,9 +88,11 @@ namespace Meltemi {
 
 
     // Use the congestion info to inflate the cells
-    auto congestion = computeCongestionMap();
-    auto expansion  = _circuit->computeCellExpansion(congestion);
-    _circuit->expandCellsByFactor(expansion);
+    auto   congestion       = computeCongestionMap();
+    auto   expansion        = _circuit->computeCellExpansion(congestion);
+    double averageExpansion = _circuit->expandCellsByFactor(expansion);
+    // Appears in the Coloquinte log
+    std::cout << "\tBloat " << averageExpansion;
 
 
     // Get rid of the global routing solution and the engine
