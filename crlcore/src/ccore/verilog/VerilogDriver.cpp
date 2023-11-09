@@ -112,6 +112,21 @@ namespace CRL {
     return bus;
   }
 
+  static bool _cellHasNetPlug(Cell* cell, Net* net)
+  {
+    for(Instance* instance: cell->getInstances()) // go through all cells instances that form our cell
+    {
+      for(Plug* plug: instance->getPlugs()) // plugs are connect points of the cells
+      {
+        if (plug->getNet() == net)
+        {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   static void _write_cell(ofstream &out, Cell* cell)
   {
     out << std::endl;
@@ -307,6 +322,12 @@ namespace CRL {
         Net* net = plug->getMasterNet();
         if(net->isPower() || net->isGround()) // VDD and VSS are not part of Verilog netlist
         {
+          continue;
+        }
+        if (!instance->isTerminalNetlist()&&
+            !_cellHasNetPlug(instance->getMasterCell(), net))
+        {
+          // the plug is redundant and actually has no connection inside cell
           continue;
         }
         // insert in sorted order
