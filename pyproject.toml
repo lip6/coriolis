@@ -1,12 +1,12 @@
 [project]
 name = "coriolis-eda"
-version = "2.5.5"
 description = "Place and Route for semiconductors"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
 requires-python = ">= 3.7"
+dynamic = ["version"]
 packages = [
   { include = "coriolis"},
 ]
@@ -83,6 +83,8 @@ test = [
     "pytest>=7.4.2",
 ]
 
+[tool.pdm.version]
+source = "scm"
 
 [tool.pdm]
 plugins = [
