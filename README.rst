@@ -197,6 +197,7 @@ For more configuration and install options, see:
 .. _venv: https://www.dataquest.io/blog/a-complete-guide-to-python-virtual-environments/#how-to-use-python-environments
 .. _shell completion: https://pdm.fming.dev/latest/#shell-completion
 .. _using pdm with virtual environments: https://pdm.fming.dev/latest/usage/venv/
+.. _PDM: https://pdm-project.org/
    
 Other operating systems
 =======================
