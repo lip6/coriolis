@@ -164,7 +164,7 @@ First we set up our pdm virtual environment:
 
    pdm install --no-self -d --plugins
    
-Below we are just using a local directory call builddir for our meson_ build directory, but you can put it wherever you like.
+Below we are just using a local directory call builddir for our _meson build directory, but you can put it wherever you like.
 
 .. code-block:: bash
 
@@ -198,6 +198,7 @@ For more configuration and install options, see:
 .. _shell completion: https://pdm.fming.dev/latest/#shell-completion
 .. _using pdm with virtual environments: https://pdm.fming.dev/latest/usage/venv/
 .. _PDM: https://pdm-project.org/
+.. _meson: https://mesonbuild.com/
    
 Other operating systems
 =======================
