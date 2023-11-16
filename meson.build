@@ -1,7 +1,6 @@
 project(
   'coriolis-eda',
   'c','cpp',
-   version: '2.5.5',
    meson_version: '>= 1.2.0',
    default_options: [
      'buildtype=debugoptimized',
