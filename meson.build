@@ -76,6 +76,12 @@ else
 endif
 
 
+doxygen = find_program('doxygen', required: true)
+dot = find_program('dot', required: true)
+
+docdir = join_paths(get_option('datadir'), 'doc')
+htmldir = join_paths(docdir,  'html')
+
 if build_machine.system() == 'darwin'
   add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
 
