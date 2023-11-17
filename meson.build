@@ -81,6 +81,22 @@ dot = find_program('dot', required: true)
 
 docdir = join_paths(get_option('datadir'), 'doc')
 htmldir = join_paths(docdir,  'html')
+docsiteurl = get_option('docs-siteurl')
+
+if get_option('docs')
+  doxygen = find_program('doxygen', required: true)
+  dot = find_program('dot', required: true)
+  pelican = find_program('pelican', required: true)
+  rst2latex = find_program('rst2latex', 'rst2latex.py', required: true)
+  pdflatex = find_program('pdflatex', required: true)
+else
+  doxygen = disabler()
+  dot = disabler()
+  pelican = disabler()
+  rst2latex = disabler()
+  pdflatex = disabler()
+endif
+
 
 if build_machine.system() == 'darwin'
   add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
