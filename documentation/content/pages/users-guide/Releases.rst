@@ -5,7 +5,7 @@ Release Notes
 =============
 
 Release 1.0.1475
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 This is the first preliminary release of the |Coriolis2| framework.
 
@@ -32,7 +32,7 @@ will be avalaible later.
 
 
 Release 1.0.1963
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Release 1963 is alpha. All the tools from |Coriolis1| have been ported into
 this release.
@@ -50,7 +50,7 @@ this release.
 
 
 Release 1.0.2049
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Release `2049` is Alpha.
 
@@ -66,7 +66,7 @@ Release `2049` is Alpha.
 
 
 Release v2.0.1
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 #. Migrated the repository from |svn| to |git|, and release complete sources.
    As a consequence, we drop the distribution packaging support and give
@@ -76,7 +76,7 @@ Release v2.0.1
 
 
 Release v2.1
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 #. Replace the old simulated annealing placer |Mauka| by the analytical placer
    |Etesian| and its legalization and detailed placement tools.
@@ -93,7 +93,7 @@ Release v2.1
 
 
 Release v2.2
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 #. Added JSON import/export of the whole Hurricane DataBase. Two save mode
    are supported: *Cell* mode (standalone) or *Blob* mode, which dump the
@@ -101,7 +101,7 @@ Release v2.2
 
 
 Release v2.3
-~~~~~~~~~~~~
+^^^^^^^^^^^^
 
 #. Reverts to a more standard organisation of the branches. **devel_anabatic** is
    closed and we go on with **master** (stable version) and **devel**.
