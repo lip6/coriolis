@@ -1,4 +1,4 @@
-# Doxyfile 1.9.8
+"#oxyfile 1.9.8
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -42,13 +42,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Hurricane Analog"
+PROJECT_NAME           = "Oroshi - Analog Devices Layout"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 3.0
+PROJECT_NUMBER         = @VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -68,7 +68,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @DOCBUILDDIR@
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -140,7 +140,17 @@ REPEAT_BRIEF           = YES
 # the entity):The $name class, The $name widget, The $name file, is, provides,
 # specifies, contains, represents, a, an and the.
 
-ABBREVIATE_BRIEF       =
+ABBREVIATE_BRIEF       = "The $name class" \
+                         "The $name widget" \
+                         "The $name file" \
+                         is \
+                         provides \
+                         specifies \
+                         contains \
+                         represents \
+                         a \
+                         an \
+                         the
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # doxygen will generate a detailed section even if there is only a brief
@@ -243,7 +253,7 @@ PYTHON_DOCSTRING       = YES
 # documentation from any documented member that it re-implements.
 # The default value is: YES.
 
-INHERIT_DOCS           = NO
+INHERIT_DOCS           = YES
 
 # If the SEPARATE_MEMBER_PAGES tag is set to YES then doxygen will produce a new
 # page for each member. If set to NO, the documentation of a member will be part
@@ -274,37 +284,44 @@ TAB_SIZE               = 2
 # @} or use a double escape (\\{ and \\})
 
 ALIASES                = "function=\fn" \
-                         "important=\par Important:\n" \
-                         "caution=\par Caution:\n" \
-                         "remark=\par Remark:\n" \
-                         "sample=\par Sample:\n" \
-                         "Return=<b>Returns:</b>" \
-                         "unsigned=\c unsigned" \
-                         "POD=\c POD" \
+                         "important=\par Important:^^" \
+                         "remark=\par Remark:^^" \
+                         "sreturn=\b Returns:" \
                          "True=\b True" \
                          "true=\b true" \
                          "False=\b False" \
                          "false=\b false" \
-                         "public=\c public" \
-                         "protected=\c protected" \
-                         "private=\c private" \
-                         "static=\c static" \
-                         "virtual=\c virtual" \
-                         "this=\c this" \
                          "VERTICAL=\b VERTICAL" \
                          "HORIZONTAL=\b HORIZONTAL" \
                          "NULL=\c NULL" \
-                         "stream=\c stream" \
-                         "iostream=\c iostream" \
-                         "stdin=\c stdin" \
-                         "stdout=\c stdout" \
-                         "stderr=\c stderr" \
-                         "string=\c string" \
                          "vector=\c vector" \
-                         "list=\c list" \
-                         "map=\c map" \
-                         "set=\c set" \
-                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"
+                         "Collection=\c Collection" \
+                         "Collections=\c Collections" \
+                         "Box=\c Box" \
+                         "box=\c box" \
+                         "Layer=\c Layer" \
+                         "Layers=\c Layers" \
+                         "Net=\c Net" \
+                         "Nets=\c Nets" \
+                         "Pin=\c Pin" \
+                         "Pins=\c Pins" \
+                         "Plug=\c Plug" \
+                         "Plugs=\c Plugs" \
+                         "RoutingPad=\c RoutingPad" \
+                         "RoutingPads=\c RoutingPads" \
+                         "Cell=\c Cell" \
+                         "Cells=\c Cells" \
+                         "ToolEngine=\c ToolEngine" \
+                         "ToolEngines=\c ToolEngines" \
+                         "GCell=\c GCell" \
+                         "GCells=\c GCells" \
+                         "Splitter=\c Splitter" \
+                         "Splitters=\c Splitters" \
+                         "SplitterContact=\c SplitterContact" \
+                         "SplitterContacts=\c SplitterContacts" \
+                         "Hurricane=<a href='../hurricane/Index.html'>Hurricane</a>" \
+                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>" \
+                         "red{1}=<span class=\"red\">\1</span>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -588,7 +605,7 @@ EXTRACT_LOCAL_METHODS  = NO
 # are hidden.
 # The default value is: NO.
 
-EXTRACT_ANON_NSPACES   = NO
+EXTRACT_ANON_NSPACES   = YES
 
 # If this flag is set to YES, the name of an unnamed parameter in a declaration
 # will be determined by the corresponding definition. By default unnamed
@@ -657,7 +674,7 @@ CASE_SENSE_NAMES       = YES
 # scope will be hidden.
 # The default value is: NO.
 
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 
 # If the HIDE_COMPOUND_REFERENCE tag is set to NO (default) then doxygen will
 # append additional text to a page's title, such as Class Reference. If set to
@@ -952,7 +969,7 @@ WARN_LINE_FORMAT       = "at line $line of file $file"
 # specified the warning and error messages are written to standard output
 # (stdout).
 
-WARN_LOGFILE           = doxygen.warn.log
+WARN_LOGFILE           =
 
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
@@ -964,7 +981,14 @@ WARN_LOGFILE           = doxygen.warn.log
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = MainPage.dox
+INPUT                  = @TOP_SRCDIR@/oroshi/python/stack.py \
+                         @TOP_SRCDIR@/oroshi/python/wip_transistor.py \
+                         @TOP_SRCDIR@/oroshi/python/wip_dp.py \
+                         @TOP_SRCDIR@/oroshi/python/wip_csp.py \
+                         @TOP_SRCDIR@/oroshi/python/capacitorunit.py \
+                         @TOP_SRCDIR@/oroshi/python/capacitormatrix.py \
+                         @TOP_SRCDIR@/oroshi/python/capacitorrouted.py \
+                         @TOP_SRCDIR@/oroshi/python/capacitorvrtracks.py
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1004,9 +1028,7 @@ INPUT_FILE_ENCODING    =
 # provided as doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.h \
-                         *.cpp \
-                         *.dox
+FILE_PATTERNS          = *.py
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -1071,7 +1093,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = images
+IMAGE_PATH             = @DOCDIR@/images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1264,7 +1286,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = oroshi
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1291,7 +1313,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = header.html
+HTML_HEADER            = "@DOCDIR@/header.html"
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1301,7 +1323,7 @@ HTML_HEADER            = header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = footer.html
+HTML_FOOTER            = "@DOCDIR@/footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1313,7 +1335,7 @@ HTML_FOOTER            = footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = SoC.css
+HTML_STYLESHEET        = "@DOCDIR@/SoC.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1902,7 +1924,7 @@ EXTRA_SEARCH_MAPPINGS  =
 # If the GENERATE_LATEX tag is set to YES, doxygen will generate LaTeX output.
 # The default value is: YES.
 
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -1959,7 +1981,7 @@ COMPACT_LATEX          = NO
 # The default value is: a4.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be used to specify one or more LaTeX package names
 # that should be included in the LaTeX output. The package can be specified just
@@ -1988,7 +2010,7 @@ EXTRA_PACKAGES         =
 # description of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = header.tex
+LATEX_HEADER           = "@DOCDIR@/header.tex"
 
 # The LATEX_FOOTER tag can be used to specify a user-defined LaTeX footer for
 # the generated LaTeX document. The footer should contain everything after the
@@ -2087,7 +2109,7 @@ LATEX_EMOJI_DIRECTORY  =
 # readers/editors.
 # The default value is: NO.
 
-GENERATE_RTF           = NO
+GENERATE_RTF           = YES
 
 # The RTF_OUTPUT tag is used to specify where the RTF docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2142,7 +2164,7 @@ RTF_EXTENSIONS_FILE    =
 # classes and files.
 # The default value is: NO.
 
-GENERATE_MAN           = NO
+GENERATE_MAN           = YES
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2364,7 +2386,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = __DOXYGEN_PROCESSOR__
+PREDEFINED             = __DOXYGEN__
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
@@ -2402,13 +2424,15 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               =
+TAGFILES               = "@TAGDIR@/hurricane.tag=../hurricane" \
+                         "@TAGDIR@/viewer.tag=../viewer" \
+                         "@TAGDIR@/crlcore.tag=../crlcore"
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = html/hurricane.tag
+GENERATE_TAGFILE       = @TAGDIR@/oroshi.tag
 
 # If the ALLEXTERNALS tag is set to YES, all external classes and namespaces
 # will be listed in the class and namespace index. If set to NO, only the

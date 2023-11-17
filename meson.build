@@ -52,6 +52,12 @@ flex = find_program('flex', required: true)
 bison = find_program('bison', required: true)
 thread_dep = dependency('threads')
 
+doxygen = find_program('doxygen', required: true)
+dot = find_program('dot', required: true)
+
+docdir = join_paths(get_option('datadir'), 'doc')
+htmldir = join_paths(docdir,  'html')
+
 if build_machine.system() == 'darwin'
   add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
 
@@ -83,9 +89,9 @@ subdir('katana')
 subdir('tramontana')
 subdir('equinox')
 subdir('solstice')
+subdir('unicorn')
 subdir('oroshi')
 subdir('bora')
-subdir('unicorn')
 subdir('cumulus')
 subdir('tutorial')
 

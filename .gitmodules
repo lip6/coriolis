@@ -4,8 +4,6 @@
 	url = https://github.com/Coloquinte/PlaceRoute.git
 	branch = main
 	update = merge
-[submodule "pelican-plugins"]
+[submodule "documentation/pelican-plugins"]
 	path = documentation/pelican-plugins
-	url = https://github.com/getpelican/pelican-plugins.git
-	branch = main
-	update = merge
+	url = https://github.com/getpelican/pelican-plugins
