@@ -42,13 +42,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = Hurricane
+PROJECT_NAME           = "Unicorn - Coriolis GUI"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 3.0
+PROJECT_NUMBER         = @VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -68,7 +68,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @DOCBUILDDIR@
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -274,9 +274,10 @@ TAB_SIZE               = 2
 # @} or use a double escape (\\{ and \\})
 
 ALIASES                = "function=\fn" \
-                         "important=\par Important:\n" \
-                         "caution=\par Caution:" \
-                         "sample=\par Sample:\n" \
+                         "important=\par Important:^^" \
+                         "caution=\par Caution:^^" \
+                         "remark=\par Remark:^^" \
+                         "sample=\par Sample:^^" \
                          "Return=<b>Returns:</b>" \
                          "unsigned=\c unsigned" \
                          "POD=\c POD" \
@@ -410,7 +411,7 @@ AUTOLINK_SUPPORT       = YES
 # diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -951,7 +952,7 @@ WARN_LINE_FORMAT       = "at line $line of file $file"
 # specified the warning and error messages are written to standard output
 # (stdout).
 
-WARN_LOGFILE           = doxygen.warn.log
+WARN_LOGFILE           =
 
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
@@ -963,165 +964,9 @@ WARN_LOGFILE           = doxygen.warn.log
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = Generalities.dox \
-                         ../../src/hurricane/hurricane/DebugSession.h \
-                         DebugSession.dox \
-                         JsonSupport.dox \
-                         Initializer.dox \
-                         ../../src/hurricane/hurricane/Initializer.h \
-                         JsonObject.dox \
-                         ../../src/hurricane/hurricane/JsonObject.h \
-                         ../../src/hurricane/hurricane/JsonReader.h \
-                         Hurricane.dox \
-                         ../../src/hurricane/hurricane/Commons.h \
-                         Commons.dox \
-                         ../../src/hurricane/hurricane/Exception.h \
-                         ../../src/hurricane/hurricane/Error.h \
-                         ../../src/hurricane/hurricane/Warning.h \
-                         ../../src/hurricane/hurricane/Interruption.h \
-                         Exception.dox \
-                         Error.dox \
-                         Warning.dox \
-                         Interruption.dox \
-                         ../../src/hurricane/hurricane/Collection.h \
-                         ../../src/hurricane/hurricane/ListCollection.h \
-                         ../../src/hurricane/hurricane/MapCollection.h \
-                         ../../src/hurricane/hurricane/SetCollection.h \
-                         ../../src/hurricane/hurricane/VectorCollection.h \
-                         Collection.dox \
-                         ../../src/hurricane/hurricane/Locator.h \
-                         ../../src/hurricane/hurricane/Locator.h \
-                         Locator.dox \
-                         ../../src/hurricane/hurricane/Filter.h \
-                         Filter.dox \
-                         ../../src/hurricane/hurricane/Relation.h \
-                         Relation.dox \
-                         StandardRelation.dox \
-                         ../../src/hurricane/hurricane/Tabulation.h \
-                         Tabulation.dox \
-                         ../../src/hurricane/hurricane/DbU.h \
-                         DbU.dox \
-                         ../../src/hurricane/hurricane/Points.h \
-                         ../../src/hurricane/hurricane/Point.h \
-                         Point.dox \
-                         ../../src/hurricane/hurricane/Boxes.h \
-                         ../../src/hurricane/hurricane/Box.h \
-                         Box.dox \
-                         ../../src/hurricane/hurricane/Intervals.h \
-                         ../../src/hurricane/hurricane/Interval.h \
-                         Interval.dox \
-                         ../../src/hurricane/hurricane/Transformation.h \
-                         Transformation.dox \
-                         ../../src/hurricane/hurricane/Names.h \
-                         ../../src/hurricane/hurricane/Name.h \
-                         Name.dox \
-                         ../../src/hurricane/hurricane/DBos.h \
-                         ../../src/hurricane/hurricane/DBo.h \
-                         DBo.dox \
-                         ../../src/hurricane/hurricane/DataBase.h \
-                         DataBase.dox \
-                         ../../src/hurricane/hurricane/PhysicalRule.h \
-                         PhysicalRule.dox \
-                         ../../src/hurricane/hurricane/Technology.h \
-                         Technology.dox \
-                         ../../src/hurricane/hurricane/Layers.h \
-                         ../../src/hurricane/hurricane/Layer.h \
-                         Layer.dox \
-                         ../../src/hurricane/hurricane/BasicLayer.h \
-                         BasicLayer.dox \
-                         ../../src/hurricane/hurricane/RegularLayer.h \
-                         RegularLayer.dox \
-                         ../../src/hurricane/hurricane/ViaLayer.h \
-                         ViaLayer.dox \
-                         ../../src/hurricane/hurricane/ContactLayer.h \
-                         ContactLayer.dox \
-                         ../../src/hurricane/hurricane/DiffusionLayer.h \
-                         DiffusionLayer.dox \
-                         ../../src/hurricane/hurricane/TransistorLayer.h \
-                         TransistorLayer.dox \
-                         ../../src/hurricane/hurricane/Libraries.h \
-                         ../../src/hurricane/hurricane/Library.h \
-                         Library.dox \
-                         ../../src/hurricane/hurricane/Entities.h \
-                         ../../src/hurricane/hurricane/Entity.h \
-                         Entity.dox \
-                         ../../src/hurricane/hurricane/Cells.h \
-                         ../../src/hurricane/hurricane/Cell.h \
-                         Cell.dox \
-                         ../../src/hurricane/hurricane/Nets.h \
-                         ../../src/hurricane/hurricane/Net.h \
-                         Net.dox \
-                         ../../src/hurricane/hurricane/HyperNet.h \
-                         HyperNet.dox \
-                         ../../src/hurricane/hurricane/Gos.h \
-                         ../../src/hurricane/hurricane/Go.h \
-                         Go.dox \
-                         ../../src/hurricane/hurricane/Instances.h \
-                         ../../src/hurricane/hurricane/Instance.h \
-                         Instance.dox \
-                         ../../src/hurricane/hurricane/Components.h \
-                         ../../src/hurricane/hurricane/Component.h \
-                         Component.dox \
-                         ../../src/hurricane/hurricane/Plugs.h \
-                         ../../src/hurricane/hurricane/Plug.h \
-                         Plug.dox \
-                         ../../src/hurricane/hurricane/Contacts.h \
-                         ../../src/hurricane/hurricane/Contact.h \
-                         Contact.dox \
-                         ../../src/hurricane/hurricane/Pins.h \
-                         ../../src/hurricane/hurricane/Pin.h \
-                         Pin.dox \
-                         ../../src/hurricane/hurricane/Segments.h \
-                         ../../src/hurricane/hurricane/Segment.h \
-                         Segment.dox \
-                         ../../src/hurricane/hurricane/Verticals.h \
-                         ../../src/hurricane/hurricane/Vertical.h \
-                         Vertical.dox \
-                         ../../src/hurricane/hurricane/Horizontals.h \
-                         ../../src/hurricane/hurricane/Horizontal.h \
-                         Horizontal.dox \
-                         ../../src/hurricane/hurricane/Pads.h \
-                         ../../src/hurricane/hurricane/Pad.h \
-                         Pad.dox \
-                         ../../src/hurricane/hurricane/Polygon.h \
-                         Polygon.dox \
-                         ../../src/hurricane/hurricane/Diagonal.h \
-                         Diagonal.dox \
-                         ../../src/hurricane/hurricane/Rubbers.h \
-                         ../../src/hurricane/hurricane/Rubber.h \
-                         RoutingPad.dox \
-                         ../../src/hurricane/hurricane/RoutingPad.h \
-                         Rubber.dox \
-                         ../../src/hurricane/hurricane/Quarks.h \
-                         ../../src/hurricane/hurricane/Quark.h \
-                         Quark.dox \
-                         ../../src/hurricane/hurricane/Properties.h \
-                         ../../src/hurricane/hurricane/Property.h \
-                         Property.dox \
-                         PrivateProperty.dox \
-                         SharedProperty.dox \
-                         StandardSharedProperty.dox \
-                         StandardPrivateProperty.dox \
-                         ../../src/hurricane/hurricane/Hooks.h \
-                         ../../src/hurricane/hurricane/Hook.h \
-                         Hook.dox \
-                         ../../src/hurricane/hurricane/Pathes.h \
-                         ../../src/hurricane/hurricane/Path.h \
-                         Path.dox \
-                         ../../src/hurricane/hurricane/Occurrences.h \
-                         ../../src/hurricane/hurricane/Occurrence.h \
-                         Occurrence.dox \
-                         ../../src/hurricane/hurricane/QuadTree.h \
-                         QuadTree.dox \
-                         ../../src/hurricane/hurricane/Slices.h \
-                         ../../src/hurricane/hurricane/Slice.h \
-                         Slice.dox \
-                         ../../src/hurricane/hurricane/Query.h \
-                         Query.dox \
-                         ../../src/hurricane/hurricane/UpdateSession.h \
-                         UpdateSession.dox \
-                         ../../src/isobar/hurricane/isobar/PythonAttributes.h \
-                         PythonAttributes.dox
+INPUT                  = @TOP_SRCDIR@/unicorn/src/unicorn/UnicornGui.h \
+                         @DOCDIR@/Unicorn.dox \
+                         @DOCDIR@/UnicornGui.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1228,7 +1073,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = images
+IMAGE_PATH             = @DOCDIR@/images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1421,7 +1266,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = unicorn
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1448,7 +1293,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = header.html
+HTML_HEADER            = @DOCDIR@/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1458,7 +1303,7 @@ HTML_HEADER            = header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = footer.html
+HTML_FOOTER            = @DOCDIR@/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1470,7 +1315,7 @@ HTML_FOOTER            = footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = SoC.css
+HTML_STYLESHEET        = @DOCDIR@/SoC.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -2059,7 +1904,7 @@ EXTRA_SEARCH_MAPPINGS  =
 # If the GENERATE_LATEX tag is set to YES, doxygen will generate LaTeX output.
 # The default value is: YES.
 
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2116,7 +1961,7 @@ COMPACT_LATEX          = NO
 # The default value is: a4.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be used to specify one or more LaTeX package names
 # that should be included in the LaTeX output. The package can be specified just
@@ -2145,7 +1990,7 @@ EXTRA_PACKAGES         =
 # description of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = header.tex
+LATEX_HEADER           = @DOCDIR@/header.tex
 
 # The LATEX_FOOTER tag can be used to specify a user-defined LaTeX footer for
 # the generated LaTeX document. The footer should contain everything after the
@@ -2559,13 +2404,15 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               =
+TAGFILES               = "@TAGDIR@/hurricane.tag=../hurricane" \
+                         "@TAGDIR@/viewer.tag=../viewer" \
+                         "@TAGDIR@/crlcore.tag=../crlcore"
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = "@TAGDIR@/hurricane.tag"
+GENERATE_TAGFILE       = "@TAGDIR@/unicorn.tag"
 
 # If the ALLEXTERNALS tag is set to YES, all external classes and namespaces
 # will be listed in the class and namespace index. If set to NO, only the
@@ -2605,7 +2452,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # set to NO
 # The default value is: NO.
 
-HAVE_DOT               = YES
+HAVE_DOT               = NO
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
 # to run in parallel. When set to 0 doxygen will base this on the number of
@@ -2664,7 +2511,7 @@ DOT_FONTPATH           =
 # Possible values are: NO, YES, TEXT, GRAPH and BUILTIN.
 # The default value is: YES.
 
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = TEXT
 
 # If the COLLABORATION_GRAPH tag is set to YES then doxygen will generate a
 # graph for each documented class showing the direct and indirect implementation
