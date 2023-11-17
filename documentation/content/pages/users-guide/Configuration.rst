@@ -18,7 +18,7 @@ Coriolis Configuration & Initialisation
 
 
 General Software Architecture
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Coriolis| has been built with respect of the classical paradigm that the
 computational intensive parts have been written in C++, and almost
@@ -40,7 +40,7 @@ two methods:
 
 
 Configuration & User's Settings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All configurations files are shipped under the form of |Python| modules.
 They are to be loaded through ``import`` statements. The user's configuration
@@ -84,7 +84,7 @@ For example, to use |MOSIS| 180nm, you can put in your :cb:`./coriolis2/setting.
 
 
 A Comprehensive Example of :cb:`./coriolis2/setting.py`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
