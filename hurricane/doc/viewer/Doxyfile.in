@@ -1,4 +1,4 @@
-# Doxyfile 1.9.8
+# Doxyfile @DOCDIR@/1.9.8
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -27,7 +27,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 
-# This tag specifies the encoding used for all characters in the configuration
+@DOCDIR/# This tag specifies the encoding used for all characters in the configuration
 # file that follow. The default is UTF-8 which is also the encoding used for all
 # text before the first occurrence of this tag. Doxygen uses libiconv (or the
 # iconv built into libc) for the transcoding. See
@@ -42,13 +42,13 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Seabreeze - Routing Toolbox"
+PROJECT_NAME           = "Hurricane Design Viewer"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = 1.0
+PROJECT_NUMBER         = @VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -68,7 +68,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @DOCBUILDDIR@
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -140,17 +140,7 @@ REPEAT_BRIEF           = YES
 # the entity):The $name class, The $name widget, The $name file, is, provides,
 # specifies, contains, represents, a, an and the.
 
-ABBREVIATE_BRIEF       = "The $name class" \
-                         "The $name widget" \
-                         "The $name file" \
-                         is \
-                         provides \
-                         specifies \
-                         contains \
-                         represents \
-                         a \
-                         an \
-                         the
+ABBREVIATE_BRIEF       =
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # doxygen will generate a detailed section even if there is only a brief
@@ -253,7 +243,7 @@ PYTHON_DOCSTRING       = YES
 # documentation from any documented member that it re-implements.
 # The default value is: YES.
 
-INHERIT_DOCS           = YES
+INHERIT_DOCS           = NO
 
 # If the SEPARATE_MEMBER_PAGES tag is set to YES then doxygen will produce a new
 # page for each member. If set to NO, the documentation of a member will be part
@@ -284,44 +274,37 @@ TAB_SIZE               = 2
 # @} or use a double escape (\\{ and \\})
 
 ALIASES                = "function=\fn" \
-                         "important=\par Important:\n" \
-                         "remark=\par Remark:\n" \
-                         "sreturn=\b Returns:" \
+                         "important=\par Important:^^" \
+                         "caution=\par Caution:^^" \
+                         "remark=\par Remark:^^" \
+                         "sample=\par Sample:^^" \
+                         "Return=<b>Returns:</b>" \
+                         "unsigned=\c unsigned" \
+                         "POD=\c POD" \
                          "True=\b True" \
                          "true=\b true" \
                          "False=\b False" \
                          "false=\b false" \
+                         "public=\c public" \
+                         "protected=\c protected" \
+                         "private=\c private" \
+                         "static=\c static" \
+                         "virtual=\c virtual" \
+                         "this=\c this" \
                          "VERTICAL=\b VERTICAL" \
                          "HORIZONTAL=\b HORIZONTAL" \
                          "NULL=\c NULL" \
+                         "stream=\c stream" \
+                         "iostream=\c iostream" \
+                         "stdin=\c stdin" \
+                         "stdout=\c stdout" \
+                         "stderr=\c stderr" \
+                         "string=\c string" \
                          "vector=\c vector" \
-                         "Collection=\c Collection" \
-                         "Collections=\c Collections" \
-                         "Box=\c Box" \
-                         "box=\c box" \
-                         "Layer=\c Layer" \
-                         "Layers=\c Layers" \
-                         "Net=\c Net" \
-                         "Nets=\c Nets" \
-                         "Pin=\c Pin" \
-                         "Pins=\c Pins" \
-                         "Plug=\c Plug" \
-                         "Plugs=\c Plugs" \
-                         "RoutingPad=\c RoutingPad" \
-                         "RoutingPads=\c RoutingPads" \
-                         "Cell=\c Cell" \
-                         "Cells=\c Cells" \
-                         "ToolEngine=\c ToolEngine" \
-                         "ToolEngines=\c ToolEngines" \
-                         "GCell=\c GCell" \
-                         "GCells=\c GCells" \
-                         "Splitter=\c Splitter" \
-                         "Splitters=\c Splitters" \
-                         "SplitterContact=\c SplitterContact" \
-                         "SplitterContacts=\c SplitterContacts" \
-                         "Hurricane=<a href='../hurricane/Index.html'>Hurricane</a>" \
-                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>" \
-                         "red{1}=<span class=\"red\">\1</span>"
+                         "list=\c list" \
+                         "map=\c map" \
+                         "set=\c set" \
+                         "STL=<a href='http://www.sgi.com/tech/stl/'>STL</a>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -428,7 +411,7 @@ AUTOLINK_SUPPORT       = YES
 # diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -605,7 +588,7 @@ EXTRACT_LOCAL_METHODS  = NO
 # are hidden.
 # The default value is: NO.
 
-EXTRACT_ANON_NSPACES   = YES
+EXTRACT_ANON_NSPACES   = NO
 
 # If this flag is set to YES, the name of an unnamed parameter in a declaration
 # will be determined by the corresponding definition. By default unnamed
@@ -674,7 +657,7 @@ CASE_SENSE_NAMES       = YES
 # scope will be hidden.
 # The default value is: NO.
 
-HIDE_SCOPE_NAMES       = YES
+HIDE_SCOPE_NAMES       = NO
 
 # If the HIDE_COMPOUND_REFERENCE tag is set to NO (default) then doxygen will
 # append additional text to a page's title, such as Class Reference. If set to
@@ -853,7 +836,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            = DoxygenLayout.xml
+LAYOUT_FILE            =
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -981,19 +964,21 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = Seabreeze.dox \
-                         ../src/Seabreeze/Node.h \
-                         ../src/Node.cpp \
-                         Node.dox \
-                         ../src/Seabreeze/Tree.h \
-                         ../src/Tree.cpp \
-                         Tree.dox \
-                         ../src/Seabreeze/Seabreeze.h \
-                         ../src/Seabreeze.cpp \
-                         Seabreeze.dox \
-                         ../src/katabatic/SeabreezeEngine.h \
-                         ../src/SeabreezeEngine.cpp \
-                         SeabreezeEngine.dox
+
+INPUT                  = @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/CellImage.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/CellPrinter.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/CellViewer.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/CellWidget.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/DisplayStyle.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/Graphics.h \
+                         @TOP_SRCDIR@/hurricane/src/viewer/hurricane/viewer/InspectorWidget.h \
+                         @DOCDIR@/CellImage.dox \
+                         @DOCDIR@/CellPrinter.dox \
+                         @DOCDIR@/CellViewer.dox \
+                         @DOCDIR@/CellWidget.dox \
+                         @DOCDIR@/DisplayStyle.dox \
+                         @DOCDIR@/Graphics.dox \
+                         @DOCDIR@/InspectorWidget.dox
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1080,7 +1065,7 @@ EXCLUDE_SYMBOLS        =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH           = .
+EXAMPLE_PATH           =
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -1100,7 +1085,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = images
+IMAGE_PATH             = @DOCDIR@/images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -1293,7 +1278,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = viewer
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1320,7 +1305,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = header.html
+HTML_HEADER            = "@DOCDIR@/header.html"
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1330,7 +1315,7 @@ HTML_HEADER            = header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = footer.html
+HTML_FOOTER            = "@DOCDIR@/footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1342,7 +1327,7 @@ HTML_FOOTER            = footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = SoC.css
+HTML_STYLESHEET        = "@DOCDIR@/SoC.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1988,7 +1973,7 @@ COMPACT_LATEX          = NO
 # The default value is: a4.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-PAPER_TYPE             = a4wide
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be used to specify one or more LaTeX package names
 # that should be included in the LaTeX output. The package can be specified just
@@ -2017,7 +2002,7 @@ EXTRA_PACKAGES         =
 # description of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = header.tex
+LATEX_HEADER           = "@DOCDIR@/header.tex"
 
 # The LATEX_FOOTER tag can be used to specify a user-defined LaTeX footer for
 # the generated LaTeX document. The footer should contain everything after the
@@ -2116,7 +2101,7 @@ LATEX_EMOJI_DIRECTORY  =
 # readers/editors.
 # The default value is: NO.
 
-GENERATE_RTF           = YES
+GENERATE_RTF           = NO
 
 # The RTF_OUTPUT tag is used to specify where the RTF docs will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2171,7 +2156,7 @@ RTF_EXTENSIONS_FILE    =
 # classes and files.
 # The default value is: NO.
 
-GENERATE_MAN           = YES
+GENERATE_MAN           = NO
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of
@@ -2393,7 +2378,7 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = __DOXYGEN__
+PREDEFINED             = __DOXYGEN_PROCESSOR__
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
@@ -2431,15 +2416,13 @@ SKIP_FUNCTION_MACROS   = YES
 # the path). If a tag file is not located in the directory in which doxygen is
 # run, you must also specify the path to the tagfile here.
 
-TAGFILES               = ../../hurricane/doc/hurricane/html/hurricane.tag=../hurricane \
-                         ../../hurricane/doc/viewer/html/viewer.tag=../viewer \
-                         ../../crlcore/doc/crlcore/html/crlcore.tag=../crlcore
+TAGFILES               = "@TAGDIR@/hurricane.tag=../hurricane"
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create a
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = html/Seabreeze.tag
+GENERATE_TAGFILE       = "@TAGDIR@/viewer.tag"
 
 # If the ALLEXTERNALS tag is set to YES, all external classes and namespaces
 # will be listed in the class and namespace index. If set to NO, only the
@@ -2780,7 +2763,7 @@ DOT_GRAPH_MAX_NODES    = 50
 # Minimum value: 0, maximum value: 1000, default value: 0.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-MAX_DOT_GRAPH_DEPTH    = 0
+MAX_DOT_GRAPH_DEPTH    = 4
 
 # Set the DOT_MULTI_TARGETS tag to YES to allow dot to generate multiple output
 # files in one run (i.e. multiple -o and -T options on the command line). This
