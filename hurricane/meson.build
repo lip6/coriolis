@@ -1,5 +1,5 @@
-bzip2 = cc.find_library('bz2', required: true)
-rapidjson = dependency('RapidJSON', required: true)
+bzip2 = cc.find_library('bz2', required: build)
+rapidjson = dependency('RapidJSON', required: build)
 subdir('src')
 subdir('doc/hurricane')
 subdir('doc/viewer')
