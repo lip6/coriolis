@@ -1,0 +1,251 @@
+\hypertarget{classHurricane_1_1Go}{}\doxysection{Hurricane\+::Go Class Reference}
+\label{classHurricane_1_1Go}\index{Hurricane::Go@{Hurricane::Go}}
+
+
+\mbox{\hyperlink{classHurricane_1_1Go}{Go}} description ({\bfseries{API}})  
+
+
+
+
+Inheritance diagram for Hurricane\+::Go\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classHurricane_1_1Go__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Go_a0fd2574d3e2e0157230209acdc1b8aa6}{is\+Materialized}} () const
+\item 
+virtual void \mbox{\hyperlink{classHurricane_1_1Go_a8251eba8fabfca57f574921c6c85728f}{materialize}} ()=0
+\item 
+virtual void \mbox{\hyperlink{classHurricane_1_1Go_af79318dc9cbbed85aea1bb8f16eb9724}{unmaterialize}} ()=0
+\item 
+virtual void \mbox{\hyperlink{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}{invalidate}} (bool propagate\+Flag=true)
+\item 
+virtual void \mbox{\hyperlink{classHurricane_1_1Go_a54c4351dbbf4045e1aa89f06bb893402}{translate}} (const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dx, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dy)=0
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{classHurricane_1_1Go_a1057be4198a7b64c32a2ac3c7d560014}{auto\+Materialization\+Is\+Disabled}} ()
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1Go_ab0b1ca3c606247e1ebd7cab8fa828b04}{enable\+Auto\+Materialization}} ()
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1Go_a0d49d22a3788e8001e58152e62b9f3cc}{disable\+Auto\+Materialization}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Go}{Go}} description ({\bfseries{API}}) 
+
+\hypertarget{classHurricane_1_1Go_secGoIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Go_secGoIntro}
+The Gos represent the category of graphical objects.
+
+They are stored in a fast geometric access data structure \+: a quadtree (let us recall that the organization of each quadtree depends essentially of the geometrical envelope of those objects and of their number).\hypertarget{classHurricane_1_1Go_secGoMaterialization}{}\doxysubsection{Materialization}\label{classHurricane_1_1Go_secGoMaterialization}
+A graphical object can be materialized or not.
+
+A graphical object is said materialized when it is effectively inserted into a quadtree. It has then a graphical appearance (it\textquotesingle{}s the least it can do) but also it will be taken into account within each collection which uses quadtrees in order to find its constituents (like the collection returned by the call cell-\/$>$Get\+Components\+Under(area) for instance).
+
+On the other hand, non materialized graphic objects will neither be visible nor taken into account by those collections. This may be a significant advantage in some situations and a great drawback in others.
+
+\begin{DoxyRemark}{Remarks}
+{\bfseries{Plugs are never materialized}}.
+\end{DoxyRemark}
+\hypertarget{classHurricane_1_1Go_secGoUpdateSessions}{}\doxysubsection{Update sessions}\label{classHurricane_1_1Go_secGoUpdateSessions}
+The location of an object within its quadtree depends of its bounding box, if a modification of this one must occur for any reason, the object must be removed from the quadtree before doing the modification and re-\/inserted after, at the right place, according to its new bounding box.
+
+Furthermore the change on an object may lead to changes on other ones. For instance the move of a contact will forcefully affect the components which are anchored on it, and so forth ...
+
+Furthermore it may be interesting to apply many modifications at the same time, avoiding so intermediate or useless multiple updates (many changes on the same object but also on different objects lying in different unrelated cells).
+
+type\+: In order to control this process we must operate in three steps
+
+Open an update session. Do all the needed modifications. Close the update session.
+
+type\+: Let us examine the following piece of code which illustrates that 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{UpdateSession::open();}
+\DoxyCodeLine{ }
+\DoxyCodeLine{contact-\/>setLayer(...);}
+\DoxyCodeLine{contact-\/>setSize(...);}
+\DoxyCodeLine{contact-\/>setPosition(...);}
+\DoxyCodeLine{ }
+\DoxyCodeLine{UpdateSession::close();}
+
+\end{DoxyCode}
+ The call to the generic function {\bfseries{Update\+Session\+::open()}} allows to open a new update\+\_\+session.
+
+The three following lines call upon functions which modify the contact and, for the last one, also the components which directly or indirectly bear on it.
+
+At last the call to the generic function {\bfseries{Update\+Session\+::close()}} allows to close the last update session currently open.
+
+type\+: What does really happen ?
+
+The update sesion is a shared property which is put at its creation on the top of a FIFO stack. The last update cession placed on the top of this stack represents the current session.
+
+When the object is modified \+: the method {\bfseries{\mbox{\hyperlink{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}{Go\+::invalidate()}}}} which we will detail later is called upon. The purpose of this method is to de-\/materialize all materialized objects affected directly or indirectly by this modification and notify those objects to the current update session. Each of those objects then becomes an owner of this update session which is, let us recall it, a shared property.
+
+Finally, when the current update session is closed, it is simply unstacked and destroyed. While being destroyed, it materializes again the objects which are still attached to it, that is those which were de-\/materialized within the modification phase (and only those ones) and which were not destroyed in between (invaluable contribution of the shared property).\hypertarget{classHurricane_1_1Go_secGoConstructionAndDestruction}{}\doxysubsection{Construction and destruction}\label{classHurricane_1_1Go_secGoConstructionAndDestruction}
+Graphic objects are, by default, automatically materialized at their creation (unless the plugs which are never materialized) and forcefully de-\/materialized at their destruction.
+
+Nevertheless it is possible to inhibit temporarily the automatic materialization in some cases (like within the loading phase for instance) and to execute the materialization a posteriory and in a global way.\+This allows to avoid multiple updates of the quadtree. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Go_a1057be4198a7b64c32a2ac3c7d560014}\label{classHurricane_1_1Go_a1057be4198a7b64c32a2ac3c7d560014}} 
+\index{Hurricane::Go@{Hurricane::Go}!autoMaterializationIsDisabled@{autoMaterializationIsDisabled}}
+\index{autoMaterializationIsDisabled@{autoMaterializationIsDisabled}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{autoMaterializationIsDisabled()}{autoMaterializationIsDisabled()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Go\+::auto\+Materialization\+Is\+Disabled (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if the automatic materialization is disabled. \mbox{\Hypertarget{classHurricane_1_1Go_a0fd2574d3e2e0157230209acdc1b8aa6}\label{classHurricane_1_1Go_a0fd2574d3e2e0157230209acdc1b8aa6}} 
+\index{Hurricane::Go@{Hurricane::Go}!isMaterialized@{isMaterialized}}
+\index{isMaterialized@{isMaterialized}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{isMaterialized()}{isMaterialized()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Go\+::is\+Materialized (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if the \mbox{\hyperlink{classHurricane_1_1Go}{Go}} is materialized, that is, inserted in the \mbox{\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}}. \mbox{\Hypertarget{classHurricane_1_1Go_ab0b1ca3c606247e1ebd7cab8fa828b04}\label{classHurricane_1_1Go_ab0b1ca3c606247e1ebd7cab8fa828b04}} 
+\index{Hurricane::Go@{Hurricane::Go}!enableAutoMaterialization@{enableAutoMaterialization}}
+\index{enableAutoMaterialization@{enableAutoMaterialization}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{enableAutoMaterialization()}{enableAutoMaterialization()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::enable\+Auto\+Materialization (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxySeeAlso}{See also}
+Go\+::\+Disable\+Auto\+Materialization(). 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classHurricane_1_1Go_a0d49d22a3788e8001e58152e62b9f3cc}\label{classHurricane_1_1Go_a0d49d22a3788e8001e58152e62b9f3cc}} 
+\index{Hurricane::Go@{Hurricane::Go}!disableAutoMaterialization@{disableAutoMaterialization}}
+\index{disableAutoMaterialization@{disableAutoMaterialization}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{disableAutoMaterialization()}{disableAutoMaterialization()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::disable\+Auto\+Materialization (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Those two static member functions allows to inhibit or restore the automatic materialization of all graphic objects.
+
+When the automatic materialization is inhibited, the postponed materialization of dematerialized objects has to be taken in charge explicitely by the developper (it will not be automatically done at the restore of the automatic mode).
+
+The following sample code shows how to proceed \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Cell* LoadCellFromFile ( ... )}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{   Cell* cell = \mbox{\hyperlink{classHurricane_1_1Cell_ad803afb3e52bea3bf3d520e353b162e0}{Cell::create}}( ... );}
+\DoxyCodeLine{ }
+\DoxyCodeLine{   \textcolor{keywordtype}{bool} enabledFlag = not \mbox{\hyperlink{classHurricane_1_1Go_a1057be4198a7b64c32a2ac3c7d560014}{Go::autoMaterializationIsDisabled}}();}
+\DoxyCodeLine{   \mbox{\hyperlink{classHurricane_1_1Go_a0d49d22a3788e8001e58152e62b9f3cc}{Go::disableAutoMaterialization}}(); \textcolor{comment}{// we force the mode}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{   ... \textcolor{comment}{// we open the file and load the cell }}
+\DoxyCodeLine{ }
+\DoxyCodeLine{   \textcolor{keywordflow}{if} (enabledFlag) \textcolor{comment}{// we restore the initial state if needed}}
+\DoxyCodeLine{     \mbox{\hyperlink{classHurricane_1_1Go_ab0b1ca3c606247e1ebd7cab8fa828b04}{Go::enableAutoMaterialization}}();}
+\DoxyCodeLine{ }
+\DoxyCodeLine{   cell-\/>materialize(); \textcolor{comment}{// delayed materialization of cell content}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{   \textcolor{keywordflow}{return} cell;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classHurricane_1_1Go_a8251eba8fabfca57f574921c6c85728f}\label{classHurricane_1_1Go_a8251eba8fabfca57f574921c6c85728f}} 
+\index{Hurricane::Go@{Hurricane::Go}!materialize@{materialize}}
+\index{materialize@{materialize}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{materialize()}{materialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::materialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Triggers the materialization, that is, insert into the relevant \mbox{\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}}. \mbox{\Hypertarget{classHurricane_1_1Go_af79318dc9cbbed85aea1bb8f16eb9724}\label{classHurricane_1_1Go_af79318dc9cbbed85aea1bb8f16eb9724}} 
+\index{Hurricane::Go@{Hurricane::Go}!unmaterialize@{unmaterialize}}
+\index{unmaterialize@{unmaterialize}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{unmaterialize()}{unmaterialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::unmaterialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Withdrawn the \mbox{\hyperlink{classHurricane_1_1Go}{Go}} from it\textquotesingle{}s \mbox{\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}}. \mbox{\Hypertarget{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}\label{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}} 
+\index{Hurricane::Go@{Hurricane::Go}!invalidate@{invalidate}}
+\index{invalidate@{invalidate}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{invalidate()}{invalidate()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::invalidate (\begin{DoxyParamCaption}\item[{bool}]{propagate\+Flag = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+This method must be called before a change of the object geometry.
+
+It is within this function that the object captures or not the current update session, which involves its future re-\/materialization when the time commes.
+
+It is also within this function that all objects, whose geometry will be affected directly or indirectly by the object change, must be invalidated. The flag {\ttfamily $<$propagate\+Flag$>$} allows to limit the propagation in some cases (i.\+e. when the contact size changes, objects anchored on it are not affected and there is no need to invalidate them).
+
+An already dematerialized object must not be taken in count in the current update session, but its propagation, if required, must be systematically executed.
+
+\begin{DoxyParagraph}{Sample\+:}
+We give as an example the implementation for the instances \+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Instance::invalidate ( \textcolor{keywordtype}{bool} propagateFlag )}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  Inherit::invalidate(\textcolor{keyword}{false});}
+\DoxyCodeLine{ }
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (propagateFlag) \{}
+\DoxyCodeLine{    forEach(Plug*, iplug, GetConnectedPlugs()) \{}
+\DoxyCodeLine{      iplug-\/>invalidate(\textcolor{keyword}{true});}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Component::invalidate ( \textcolor{keywordtype}{bool} propagateFlag )}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  Inherit::invalidate(\textcolor{keyword}{false});}
+\DoxyCodeLine{ }
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (propagateFlag) \{}
+\DoxyCodeLine{    forEach(Component*, icomponent, GetSlaveComponents()) \{}
+\DoxyCodeLine{      icomponent-\/>invalidate(\textcolor{keyword}{false});}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} \mbox{\hyperlink{classHurricane_1_1Contact_aec627634d5b6cfc5079a02b1b518b50e}{Contact::setLayer}} ( Layer* layer )}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (!layer) \textcolor{keywordflow}{throw} Error(\textcolor{stringliteral}{"{}Can't set layer : null layer"{}});}
+\DoxyCodeLine{ }
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (layer != \_layer) \{}
+\DoxyCodeLine{    \textcolor{comment}{// we do the change only if necessary}}
+\DoxyCodeLine{    \mbox{\hyperlink{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}{invalidate}}(\textcolor{keyword}{false}); \textcolor{comment}{// done before the modification}}
+\DoxyCodeLine{ }
+\DoxyCodeLine{    \_layer = layer;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} \mbox{\hyperlink{classHurricane_1_1Instance_a8890d2e1b2ba2542997454297e63512f}{Instance::setTransformation}}(\textcolor{keyword}{const} Transformation\& transformation)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (transformation != \_transformation) \{}
+\DoxyCodeLine{    \textcolor{comment}{// we do the change only if necessary}}
+\DoxyCodeLine{    \mbox{\hyperlink{classHurricane_1_1Go_a5ee451e118fe8cace16989c0f3a6d855}{invalidate}}(\textcolor{keyword}{true}); \textcolor{comment}{// done before the modification}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \_transformation = transformation;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Go_a54c4351dbbf4045e1aa89f06bb893402}\label{classHurricane_1_1Go_a54c4351dbbf4045e1aa89f06bb893402}} 
+\index{Hurricane::Go@{Hurricane::Go}!translate@{translate}}
+\index{translate@{translate}!Hurricane::Go@{Hurricane::Go}}
+\doxysubsubsection{\texorpdfstring{translate()}{translate()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Go\+::translate (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dx,  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Translate the graphic object of the quantity {\ttfamily $<$dx$>$} and {\ttfamily $<$dy$>$}.
+
+This virtual method should be specialized for a new kind of graphic object. 
+
+Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a41bf66ffda0c0ceaaebc67acd72d5b36}{Hurricane\+::\+Routing\+Pad}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Go.\+h\item 
+Go.\+dox\end{DoxyCompactItemize}

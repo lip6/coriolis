@@ -1,0 +1,93 @@
+\hypertarget{classHurricane_1_1BasicLayer}{}\doxysection{Hurricane\+::Basic\+Layer Class Reference}
+\label{classHurricane_1_1BasicLayer}\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+
+
+\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} description ({\bfseries{API}})  
+
+
+
+
+Inheritance diagram for Hurricane\+::Basic\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=203pt]{classHurricane_1_1BasicLayer__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHurricane_1_1BasicLayer_1_1Material}{Material}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{classHurricane_1_1BasicLayer_1_1Material}{Material}} \& \mbox{\hyperlink{classHurricane_1_1BasicLayer_aeb7fd37db4ecf8e56e1992d6350fac58}{get\+Material}} () const
+\item 
+const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classHurricane_1_1BasicLayer_aaae9fcd776eb83407b4566614eafc41f}{get\+Real\+Name}} () const
+\item 
+void \mbox{\hyperlink{classHurricane_1_1BasicLayer_a766c6dc1120de2066b15411861f5d4f8}{set\+Blockage\+Layer}} (\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$layer)
+\item 
+void \mbox{\hyperlink{classHurricane_1_1BasicLayer_aa5aa1e1079c14d7e9c05799d14e726af}{set\+Real\+Name}} (const char $\ast$real\+Name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1BasicLayer_adff716f670e03c59ff970cd4fee298b6}{create}} (\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$technology, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, const \mbox{\hyperlink{classHurricane_1_1BasicLayer_1_1Material}{Material}} \&material, uint32\+\_\+t gds2\+Layer=0, uint32\+\_\+t gds2\+Datatype=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&minimal\+Size=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&minimal\+Spacing=0)
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} description ({\bfseries{API}}) 
+
+For a more complete description of the Layers object, please refer to \mbox{\hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}}.
+
+For purpose of Basic\+Layers, also see \mbox{\hyperlink{classHurricane_1_1BasicLayer_1_1Material}{Basic\+Layer\+::\+Material}}. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1BasicLayer_adff716f670e03c59ff970cd4fee298b6}\label{classHurricane_1_1BasicLayer_adff716f670e03c59ff970cd4fee298b6}} 
+\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}!create@{create}}
+\index{create@{create}!Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$ Hurricane\+::\+Basic\+Layer\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$}]{technology,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer_1_1Material}{Material}} \&}]{material,  }\item[{uint32\+\_\+t}]{gds2\+Layer = {\ttfamily 0},  }\item[{uint32\+\_\+t}]{gds2\+Datatype = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{minimal\+Size = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{minimal\+Spacing = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a new basic layer named {\ttfamily $<$name$>$}, of type {\ttfamily $<$material$>$} for the given technology (some geometrical characteristics can also be specified).
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if the technology is null, if the name is }
+empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask.
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The extract number is a kind of logic number. In example the CP layer which represent a poly layer should have the same extract number as the CPG layer which represent a poly layer used to realize the transistor gates. While extractions process, layers which have the same extract number are considered as equivalents. A null value indicates that the extraction should ignore this layer. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1BasicLayer_aeb7fd37db4ecf8e56e1992d6350fac58}\label{classHurricane_1_1BasicLayer_aeb7fd37db4ecf8e56e1992d6350fac58}} 
+\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}!getMaterial@{getMaterial}}
+\index{getMaterial@{getMaterial}!Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+\doxysubsubsection{\texorpdfstring{getMaterial()}{getMaterial()}}
+{\footnotesize\ttfamily const Basic\+Layer\+::\+Type \& Hurricane\+::\+Basic\+Layer\+::get\+Material (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the basic layer material. \mbox{\Hypertarget{classHurricane_1_1BasicLayer_aaae9fcd776eb83407b4566614eafc41f}\label{classHurricane_1_1BasicLayer_aaae9fcd776eb83407b4566614eafc41f}} 
+\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}!getRealName@{getRealName}}
+\index{getRealName@{getRealName}!Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+\doxysubsubsection{\texorpdfstring{getRealName()}{getRealName()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& Hurricane\+::\+Basic\+Layer\+::get\+Real\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the real (process) layer name, for GDS. \mbox{\Hypertarget{classHurricane_1_1BasicLayer_a766c6dc1120de2066b15411861f5d4f8}\label{classHurricane_1_1BasicLayer_a766c6dc1120de2066b15411861f5d4f8}} 
+\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}!setBlockageLayer@{setBlockageLayer}}
+\index{setBlockageLayer@{setBlockageLayer}!Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+\doxysubsubsection{\texorpdfstring{setBlockageLayer()}{setBlockageLayer()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Basic\+Layer\+::set\+Blockage\+Layer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Associate a blockage layer to this one. This is only meaningful for routing layers (\mbox{\hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer}}). \mbox{\Hypertarget{classHurricane_1_1BasicLayer_aa5aa1e1079c14d7e9c05799d14e726af}\label{classHurricane_1_1BasicLayer_aa5aa1e1079c14d7e9c05799d14e726af}} 
+\index{Hurricane::BasicLayer@{Hurricane::BasicLayer}!setRealName@{setRealName}}
+\index{setRealName@{setRealName}!Hurricane::BasicLayer@{Hurricane::BasicLayer}}
+\doxysubsubsection{\texorpdfstring{setRealName()}{setRealName()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Basic\+Layer\+::set\+Real\+Name (\begin{DoxyParamCaption}\item[{const char $\ast$}]{real\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Set the real (process) layer name, for GDS. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Basic\+Layer.\+h\item 
+Basic\+Layer.\+dox\end{DoxyCompactItemize}
