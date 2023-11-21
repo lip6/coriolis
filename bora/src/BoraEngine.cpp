@@ -110,22 +110,9 @@ namespace Bora {
 
   void  BoraEngine::_runBoraInit ()
   {
-    Utilities::Path pythonSitePackages = System::getPath("pythonSitePackages");
-    Utilities::Path confFile           = "coriolis/bora/initHook.py";
-    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
-
-    if (systemConfFile.exists()) {
-    //Isobar::Script::addPath( systemConfDir.toString() );
-
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
-      script->addKwArgument( "bora"    , (PyObject*)PyBoraEngine_Link(this) );
-      script->runFunction  ( "boraHook", getCell() );
-
-    //Isobar::Script::removePath( systemConfDir.toString() );
-    } else {
-      cerr << Warning( "Bora system configuration file:\n  <%s> not found."
-                     , systemConfFile.toString().c_str() ) << endl;
-    }
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create( "coriolis.bora.initHook" );
+    script->addKwArgument( "bora"    , (PyObject*)PyBoraEngine_Link(this) );
+    script->runFunction  ( "boraHook", getCell() );
   }
 
 
