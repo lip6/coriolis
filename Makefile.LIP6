@@ -63,9 +63,12 @@ $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm: $(HOME)/.local/bin/pdm
 	@$(localpath) pdm install --no-self -d --plugins
 
 
-install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm
+configure:
 	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
-	@$(localpath) pdm run ninja -C $(BUILDDIR) install
+
+
+install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
+	@$(localpath) pdm run meson install -C $(BUILDDIR)
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
@@ -73,6 +76,13 @@ install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm
 	 echo "It has been installed under the directory:";                                   \
 	 echo "    $(PREFIX)/{bin,lib,lib64,include,share,...}";                              \
 	 echo "============================================================================";
+
+
+install_docs: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
+	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) \
+	                                                  -Donly-docs=true   \
+	                                                  -Ddocs=true
+	@$(localpath) pdm run meson install -C $(BUILDDIR)
 
 
 install_alliance:
