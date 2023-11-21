@@ -3,7 +3,7 @@ cdata.set('VERSION', meson.project_version())
 
 cdata.set('TOP_SRCDIR', meson.project_source_root())
 cdata.set('DOCDIR', meson.current_source_dir())
-cdata.set('DOCBUILDDIR', meson.current_build_dir() / 'oroshi')
+cdata.set('DOCBUILDDIR', meson.current_build_dir() / 'doc')
 cdata.set('TAGDIR', meson.project_build_root())
 
 doxyfile = configure_file(
@@ -16,7 +16,7 @@ doxyfile = configure_file(
 oroshi_docs = custom_target(
   'oroshi-docs',
   input: doxyfile,
-  output: 'oroshi',
+  output: 'doc',
   command: [doxygen, doxyfile],
   depends: [hurricane_docs, viewer_docs, crlcore_docs],
   install: true,
