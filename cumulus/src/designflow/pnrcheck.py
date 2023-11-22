@@ -29,8 +29,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
 
     if not (flags & NoSynthesis):
         ruleYosys  = Yosys   .mkRule( 'yosys', vlogDesignName+'.v' )
-        ruleB2V    = Blif2Vst.mkRule( 'b2v'  , [ vhdlDesignName+'.vst'
-                                               , vlogDesignName+'.spi' ]
+        ruleB2V    = Blif2Vst.mkRule( 'b2v'  , [ vhdlDesignName+'.vst' ]
                                              , [ruleYosys]
                                              , flags=0 )
         rtlDepends = [ ruleB2V ]
