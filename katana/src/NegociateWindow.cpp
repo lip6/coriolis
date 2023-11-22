@@ -210,7 +210,7 @@ namespace {
         //if (isVH) TrackMarker::create( rp, depth+2 );
         }
         if (rlDepth == 1) {
-          if (depth+1 < rg->getDepth())
+          if ((depth == 0) and (depth+1 < rg->getDepth()))
             TrackMarker::create( rp, depth+1 );
         }
       }
