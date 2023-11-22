@@ -259,7 +259,14 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "flags: " << flags << endl;
     if ((rpDepth == 0) or (rpDepth == 2)) {
+      const Layer* contactLayer = Session::getBuildContactLayer( 1 );
+      size_t       wireDepth    = RoutingGauge::nlayerdepth;
       cdebug_log(145,0) << "case: METAL1 or METAL3 RoutingPad." << endl;
+      if (rpDepth == 2) {
+        cdebug_log(145,0) << "METAL3 override." << endl;
+        contactLayer = Session::getRoutingLayer( 2 );
+        wireDepth    = 2;
+      }
 
       if (flags & HAccess) {
         cdebug_log(145,0) << "case: HAccess" << endl;
@@ -267,8 +274,8 @@ namespace Anabatic {
         if ( ((flags & VSmall) and not ((flags & UseNonPref))) or (flags & Punctual) ) {
           cdebug_log(145,0) << "case: VSmall and *not* UseNonPref" << endl;
   
-          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(1) );
-          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), contactLayer );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal, wireDepth );
           rpSourceContact = subContact1;
 
           flags &= ~UseNonPref;
