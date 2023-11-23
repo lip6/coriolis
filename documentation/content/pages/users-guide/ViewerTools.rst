@@ -182,7 +182,7 @@ Etesian Configuration Parameters
 |``etesian.densityVariation``       | TypePercentage   | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | Control deviation from uniform density in the |
-|                                   | placement, as a percentage of area.           |
+|                                   | placement, as a percentage of area            |
 +-----------------------------------+------------------+----------------------------+
 |``etesian.effort``                 | TypeInt          | :cb:`2`                    |
 |                                   +------------------+----------------------------+
@@ -238,12 +238,12 @@ be equal to `100%` or (``NNNN+0``) if the detailed routing has been successfull.
 In the event of a failure, on a saturated design, you may tweak the three
 following configuration parameters:
 
-#. ``katana.hTrackReservedLocal``, the number of track reserved for local routing,
+#. ``katana.hTracksReservedLocal``, the number of track reserved for local routing,
    that quantity is substracted from the edge capacities (global routing) to
    give a sense of the cluttering inside the GCells.
-#. ``katana.vTrackReservedLocal``, same as above.
+#. ``katana.vTracksReservedLocal``, same as above.
 #. ``etesian.spaceMargin``, increases the free area of the overall design so the
-   routing density decrease.
+   routing density decreases.
 
 The idea is to increase the horizontal and vertical local track reservation until
 the detailed router succeeds. But in doing so we make the task of the global router
