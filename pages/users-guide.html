@@ -125,18 +125,8 @@
 <li><a class="reference internal" href="#credits-license" id="toc-entry-3">Credits &amp; License</a></li>
 <li><a class="reference internal" href="#complete-design-flow-examples" id="toc-entry-4">Complete Design Flow &amp; Examples</a></li>
 <li><a class="reference internal" href="#installation" id="toc-entry-5">Installation</a></li>
-<li><a class="reference internal" href="#building-from-source" id="toc-entry-6">Building from Source</a><ul>
-<li><a class="reference internal" href="#building-a-debug-enabled-version" id="toc-entry-7">Building a Debug Enabled Version</a></li>
-<li><a class="reference internal" href="#installing-on-debian-9-ubuntu-18-or-compatible-distributions" id="toc-entry-8">Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions</a></li>
-<li><a class="reference internal" href="#additionnal-requirement-under-macos" id="toc-entry-9">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#cgt-the-graphical-interface" id="toc-entry-10">CGT - The Graphical Interface</a><ul>
-<li><a class="reference internal" href="#overview" id="toc-entry-11">Overview</a></li>
-<li><a class="reference internal" href="#viewer-tools-1" id="toc-entry-12">Viewer &amp; Tools</a></li>
-<li><a class="reference internal" href="#the-controller-1" id="toc-entry-13">The Controller</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#building-from-source" id="toc-entry-6">Building from Source</a></li>
+<li><a class="reference internal" href="#cgt-the-graphical-interface" id="toc-entry-7">CGT - The Graphical Interface</a></li>
 </ul>
 </div>
 <!-- -*- Mode: rst; explicit-buffer-name: "definition.rst<documentation/etc>" -*- -->
@@ -226,7 +216,7 @@ examples are supplied in the repository <tt class="docutils literal"><span class
 <div class="section" id="building-from-source">
 <h2><a class="toc-backref" href="#toc-entry-6">Building from Source</a></h2>
 <div class="section" id="building-a-debug-enabled-version">
-<h3><a class="toc-backref" href="#toc-entry-7">Building a Debug Enabled Version</a></h3>
+<h3>Building a Debug Enabled Version</h3>
 <p>The <tt class="docutils literal">Release.Shared</tt> default version of the <span class="sc">Coriolis</span> is built stripped of symbols
 and optimized so that it makes analysing a core dump after a crash difficult. In the
 (unlikely) case of a crash, you may want to build, alongside the optimized version,
@@ -260,7 +250,7 @@ a debug one which allows forensic examination by <span class="cb">gdb</span> (or
 <p></p>
 </div>
 <div class="section" id="installing-on-debian-9-ubuntu-18-or-compatible-distributions">
-<h3><a class="toc-backref" href="#toc-entry-8">Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions</a></h3>
+<h3>Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions</h3>
 <p>First, install or check that the required prerequisites are installed:</p>
 <div class="highlight"><pre><span></span>dummy@lepka:~&gt;<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>build-essential<span class="w"> </span>binutils-dev<span class="w">                     </span><span class="se">\</span>
 <span class="w">                                       </span>git<span class="w"> </span>cmake<span class="w"> </span>bison<span class="w"> </span>flex<span class="w"> </span>gcc<span class="w"> </span>python-dev<span class="w">              </span><span class="se">\</span>
@@ -293,7 +283,7 @@ dummy@lepka:coriolis&gt;<span class="w"> </span>./bootstrap/ccb.py<span class="w
 </pre></div>
 </div>
 <div class="section" id="additionnal-requirement-under-macos">
-<h3><a class="toc-backref" href="#toc-entry-9">Additionnal Requirement under <span class="sc">MacOS</span></a></h3>
+<h3>Additionnal Requirement under <span class="sc">MacOS</span></h3>
 <p><span class="sc">Coriolis</span> makes use of the <span class="cb">boost::python</span> module, but the <span class="sc">MacPorts</span> <span class="cb">boost</span>
 seems unable to work with the <span class="sc">Python</span> bundled with <span class="sc">MacOS</span>. So you have to install
 both of them from <span class="sc">MacPorts</span>:</p>
@@ -363,9 +353,9 @@ infinite loop if it's called again in, say <span class="cb">~/.bashrc</span>.</p
 </div>
 </div>
 <div class="section" id="cgt-the-graphical-interface">
-<h2><a class="toc-backref" href="#toc-entry-10">CGT - The Graphical Interface</a></h2>
+<h2><a class="toc-backref" href="#toc-entry-7">CGT - The Graphical Interface</a></h2>
 <div class="section" id="overview">
-<h3><a class="toc-backref" href="#toc-entry-11">Overview</a></h3>
+<h3>Overview</h3>
 <p>The <span class="sc">Coriolis</span> graphical interface is split up into two windows.</p>
 <ul class="simple">
 <li>The <strong>Viewer</strong>, with the following features:<ul>
@@ -395,7 +385,7 @@ They are closely related to Configuration &amp; Initialisation.</li>
 <p> <img alt="Controller Basic Snapshot" class="align-middle" src="../pages/images/Controller-1.png" style="width: 80%;" /> </p>
 </div>
 <div class="section" id="viewer-tools-1">
-<span id="viewer-tools"></span><h3><a class="toc-backref" href="#toc-entry-12">Viewer &amp; Tools</a></h3>
+<span id="viewer-tools"></span><h3>Viewer &amp; Tools</h3>
 <div class="section" id="stratus-netlist-capture">
 <h4><span class="sc">Stratus</span> Netlist Capture</h4>
 <p><span class="sc">Stratus</span> is the replacement for <span class="sc">GenLib</span> procedural netlist capture language.
@@ -1083,7 +1073,7 @@ To generate one set this flag to <span class="cb">True</span></td>
 </div>
 </div>
 <div class="section" id="the-controller-1">
-<span id="the-controller"></span><h3><a class="toc-backref" href="#toc-entry-13">The Controller</a></h3>
+<span id="the-controller"></span><h3>The Controller</h3>
 <p>The <em>Controller</em> window is composed of seven tabs:</p>
 <ol class="arabic simple">
 <li><a class="reference internal" href="#the-look-tab">The Look Tab</a> to select the display style.</li>
