@@ -63,11 +63,15 @@ $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm: $(HOME)/.local/bin/pdm
 	@$(localpath) pdm install --no-self -d --plugins
 
 
-configure:
+setup:
 	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
 
 
-install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
+configure:
+	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+
+
+install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup
 	@$(localpath) pdm run meson install -C $(BUILDDIR)
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
