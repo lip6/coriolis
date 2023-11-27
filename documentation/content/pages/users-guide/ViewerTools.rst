@@ -242,11 +242,12 @@ following configuration parameters:
    routing; that quantity is always substracted from the edge capacities during
    global routing, to give more freedom to the detailed router.
 #. ``katana.vTrackReservedMin``, same as above for vertical routing.
-#. ``katana.hTrackReservedLocal``, maximum number of track reserved for horizontal
-   local routing (access to the cell pins).
-#. ``katana.vTrackReservedLocal``, same as above for vertical routing.
 #. ``etesian.spaceMargin``, increases the free area of the overall design so the
    routing density decrease.
+..
+  #. ``katana.hTrackReservedLocal``, maximum number of track reserved for horizontal
+     local routing (access to the cell pins).
+  #. ``katana.vTrackReservedLocal``, same as above for vertical routing.
 
 The idea is to increase the horizontal and vertical local track reservation until
 the detailed router succeeds. But in doing so we make the task of the global router
