@@ -137,8 +137,8 @@ A Comprehensive Example of :cb:`./coriolis2/setting.py`
    # P&R related parameters.
    Cfg.getParamString    ( 'anabatic.routingGauge'       ).setString    ( 'msxlib4' )
    Cfg.getParamString    ( 'anabatic.topRoutingLayer'    ).setString    ( 'METAL4'  )
-   Cfg.getParamInt       ( 'katana.hTracksReservedLocal' ).setInt       ( 6         )
-   Cfg.getParamInt       ( 'katana.vTracksReservedLocal' ).setInt       ( 3         )
+   Cfg.getParamInt       ( 'katana.hTracksReservedMin'   ).setInt       ( 3         )
+   Cfg.getParamInt       ( 'katana.vTracksReservedMin'   ).setInt       ( 2         )
 
    Cfg.Configuration.popDefaultPriority()
 
