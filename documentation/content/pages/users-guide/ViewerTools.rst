@@ -238,10 +238,13 @@ be equal to `100%` or (``NNNN+0``) if the detailed routing has been successfull.
 In the event of a failure, on a saturated design, you may tweak the three
 following configuration parameters:
 
-#. ``katana.hTrackReservedLocal``, the number of track reserved for local routing,
-   that quantity is substracted from the edge capacities (global routing) to
-   give a sense of the cluttering inside the GCells.
-#. ``katana.vTrackReservedLocal``, same as above.
+#. ``katana.hTrackReservedMin``, minimum number of track reserved for horizontal
+   routing; that quantity is always substracted from the edge capacities during
+   global routing, to give more freedom to the detailed router.
+#. ``katana.vTrackReservedMin``, same as above for vertical routing.
+#. ``katana.hTrackReservedLocal``, maximum number of track reserved for horizontal
+   local routing (access to the cell pins).
+#. ``katana.vTrackReservedLocal``, same as above for vertical routing.
 #. ``etesian.spaceMargin``, increases the free area of the overall design so the
    routing density decrease.
 
