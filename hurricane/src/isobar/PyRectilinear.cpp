@@ -258,6 +258,44 @@ extern "C" {
   }
 
 
+  static PyObject* PyRectilinear_getAsBiggestRectangles ( PyRectilinear *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "Rectilinear.getAsBiggestRectangles()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Rectilinear.getAsBiggestRectangles()" )
+      
+      PyObject* pyList = NULL;
+      PyObject* pyHT   = NULL;
+      PyObject* pyVT   = NULL;
+      if (not PyArg_ParseTuple( args, "O|OO:Rectilinear.getAsBiggestRectangles", &pyList, &pyHT, &pyVT )) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsBiggestRectangles(): Must have exactly one parameter." );
+        return NULL;
+      }
+      if (not PyList_Check(pyList)) {
+        PyErr_SetString( ConstructorError, "Rectilinear.getAsBiggestRectangles(): Argument must be a list." );
+        return NULL;
+      }
+
+      PyList_SetSlice( pyList, 0, PyList_Size(pyList), NULL );
+      vector<Box> boxes;
+      if (pyHT and pyVT)
+        rectilinear->getAsBiggestRectangles( boxes, PyAny_AsLong(pyHT), PyAny_AsLong(pyVT) );
+      else
+        rectilinear->getAsBiggestRectangles( boxes );
+      for ( size_t i=0 ; i<boxes.size() ; ++i ) {
+        PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
+        if (not pyBox) { return NULL; }
+    
+        pyBox->_object = new Box ( boxes[i] );
+        PyList_Append( pyList, (PyObject*)pyBox );
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyRectilinear Attribute Method table.
 
