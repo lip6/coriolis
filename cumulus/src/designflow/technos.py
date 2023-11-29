@@ -73,7 +73,7 @@ def setupCMOS ( checkToolkit=None ):
         env.addSYSTEM_LIBRARY( library=(Where.checkToolkit / 'cells' / 'niolib').as_posix()
                              , mode   =CRL.Environment.Append )
 
-    Yosys.setLiberty( Where.cellsTop / 'sxlib' / 'sxlib.lib' )
+    Yosys.setLiberty( Where.allianceTop / 'cells' / 'sxlib' / 'sxlib.lib' )
     ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
 
     path = None
