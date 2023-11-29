@@ -855,7 +855,7 @@ namespace Etesian {
     int maxBloatSize = _surface->width() / 8;
     if (bloatFactor != 1.0) {
       ostringstream bf;
-      bf << fixed << setprecision(2) << bloatFactor << "%";
+      bf << fixed << setprecision(2) << "x " << bloatFactor;
       cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
     }
     int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
