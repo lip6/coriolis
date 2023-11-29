@@ -45,6 +45,7 @@ stdColors = \
     , 'Tan'           : '210,180,140'  # Shade of Browns
     , 'Yellow'        : '255,255,0'    # Shade of Yellows.
     , 'LightYellow'   : '255,255,224'
+    , 'Purple'        : '160,32,240'
     }
 
 
