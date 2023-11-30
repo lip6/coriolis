@@ -783,6 +783,8 @@ namespace Etesian {
       return 0;
     }
 
+    cmess1 << ::Dots::asPercentage( "     - Effective density"
+                                  , (float)usedLength/(float)totalLength ) << endl;
     cmess1 << ::Dots::asPercentage( "     - Effective space margin"
                                   , (float)(totalLength-usedLength)/(float)totalLength ) << endl;
 
@@ -792,12 +794,16 @@ namespace Etesian {
       ostringstream os1;
       os1 << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
       cmess1 << ::Dots::asString    ( "     - Registers (DFF) ", os1.str() ) << endl;
-      cmess1 << ::Dots::asPercentage( "     - Registers (DFF) area "
+      cmess1 << ::Dots::asPercentage( "     - Registers (DFF) density "
                                   , (float)(registerLength)/(float)totalLength ) << endl;
-      ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
-      ostringstream os2;
-      os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
-      cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
+      if (_bufferCount != 0) {
+        // Seems unused
+        // Related to (now unused) code in HFNS.cpp for clock tree insertion
+        ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
+        ostringstream os2;
+        os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
+        cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
+      }
     }
     cout.flush();
 
@@ -814,6 +820,17 @@ namespace Etesian {
     vector<bool> cellIsObstruction( instancesNb+1 );
     vector<CellRowPolarity> cellRowPolarity( instancesNb+1, CellRowPolarity::SAME );
 
+    // Compute a bloat factor to reach (1 - densityVariation) density
+    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
+    if (bloatFactor != 1.0) {
+      ostringstream bf;
+      bf << fixed << setprecision(2) << "x " << bloatFactor;
+      cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
+    }
+    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
+    // Limit the maximum size of cells after bloat to avoid placement issues
+    int maxBloatSize = _surface->width() / 8;
+
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
   //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
@@ -821,6 +838,7 @@ namespace Etesian {
 
     int instanceId       = 0;
     if (getBlockInstance()) {
+      // Translate the fixed instances
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
@@ -849,17 +867,7 @@ namespace Etesian {
       }
     }
 
-    // Compute a bloat factor to be reach 1 - densityVariation density
-    double bloatFactor = std::max(1.0, (1.0 - getDensityVariation()) * totalLength / usedLength);
-    // Limit the maximum size of cells after bloat to avoid placement issues
-    int maxBloatSize = _surface->width() / 8;
-    if (bloatFactor != 1.0) {
-      ostringstream bf;
-      bf << fixed << setprecision(2) << "x " << bloatFactor;
-      cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
-    }
-    int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
-
+    // Translate the placeable instances
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       if (instanceId >= (int) instancesNb) {
@@ -887,6 +895,7 @@ namespace Etesian {
       int xpos  = instanceAb.getXMin() / hpitch;
       int ypos  = instanceAb.getYMin() / vpitch;
 
+      // Huge hack to solve a specific DRC issue in Flexlib
       string masterName = getString( instance->getMasterCell()->getName() );
       if (isFlexLib and not instance->isFixed() and (masterName == "buf_x8"))
          ++xsize;
