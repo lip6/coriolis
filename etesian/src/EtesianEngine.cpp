@@ -1171,10 +1171,10 @@ namespace Etesian {
 
     cmess1 << _circuit->report() << std::endl;
 
-    cmess1 << "  o  Global placement." << endl;
+    cmess1 << "  o  Global placement (effort " << getPlaceEffort() << ")" << endl;
     globalPlace();
 
-    cmess1 << "  o  Detailed Placement." << endl;
+    cmess1 << "  o  Detailed Placement (effort " << getPlaceEffort() << ")" << endl;
     detailedPlace();
 
   //toHurricane();
