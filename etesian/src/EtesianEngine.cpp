@@ -828,8 +828,6 @@ namespace Etesian {
       cmess1 << ::Dots::asString( "     - Coloquinte cell bloat factor ", bf.str() ) << endl;
     }
     int rowHeight = (getSliceHeight() + vpitch - 1) / vpitch;
-    // Limit the maximum size of cells after bloat to avoid placement issues
-    int maxBloatSize = _surface->width() / 8;
 
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
@@ -1048,8 +1046,7 @@ namespace Etesian {
 
     // Apply changes to match target density variation; we add a small margin to be safer
     float rowSideMarginInCellHeight = 0.3;
-    float maxExpansionInRowWidth = 1.0 / 8.0;
-    _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight, maxExpansionInRowWidth);
+    _circuit->expandCellsToDensity(1.0 - getDensityVariation(), rowSideMarginInCellHeight);
 
     _circuit->check();
     _placementLB = new coloquinte::PlacementSolution ();
