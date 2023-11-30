@@ -112,7 +112,7 @@ def _routing():
         cfg.etesian.aspectRatio = 1.00
         cfg.etesian.aspectRatio = [10, 1000]
         cfg.etesian.spaceMargin = 0.10
-        cfg.etesian.uniformDensity = True
+        cfg.etesian.densityVariation = 0.05
         cfg.etesian.routingDriven = False
         cfg.etesian.latchUpDistance = u(30.0 - 1.0)
         cfg.etesian.diodeName = 'diode_w1'
