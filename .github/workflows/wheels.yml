@@ -33,7 +33,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      tag: ${{ steps.meta.outputs.tags || env.FALLBACK_TAG }}
+      tag: ${{ steps.meta.outputs.labels || env.FALLBACK_TAG }}
 
     steps:
       - name: Checkout repository
@@ -164,7 +164,6 @@ jobs:
     # TODO: create an sdist that can build without a custom environment
     needs: [build_wheels]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     strategy:
       matrix:
         buildplat:
