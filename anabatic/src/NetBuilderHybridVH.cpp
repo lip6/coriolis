@@ -70,7 +70,7 @@ namespace Anabatic {
 
   
   void  NetBuilderHybridVH::doRp_AutoContacts ( GCell*        gcell
-                                              , Component*    rp
+                                              , RoutingPad*   rp
                                               , AutoContact*& source
                                               , AutoContact*& target
                                               , uint64_t      flags
@@ -80,7 +80,7 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilderHybridVH::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags )
+  AutoContact* NetBuilderHybridVH::doRp_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access()" << endl;
     cdebug_log(145,0) << rp << endl;

@@ -42,6 +42,7 @@ namespace Anabatic {
   using  Hurricane::Name;
   using  Hurricane::Layer;
   using  Hurricane::DbU;
+  using  Hurricane::Point;
   using  Hurricane::RoutingPad;
   using  Hurricane::Cell;
   using  CRL::CellGauge;
@@ -67,6 +68,7 @@ namespace Anabatic {
               bool               isGContact           ( const Layer* ) const;
               bool               isTwoMetals          () const;
               bool               isHybrid             () const;
+              bool               isM1Offgrid          () const;
               bool               isHV                 () const;
               bool               isVH                 () const;
       inline  std::string        getNetBuilderStyle   () const;
@@ -104,7 +106,7 @@ namespace Anabatic {
               Layer*             getContactLayer      ( size_t depth ) const;
               DbU::Unit          getSliceHeight       () const;
               DbU::Unit          getSliceStep         () const;
-              DbU::Unit          getPitch             ( size_t depth, Flags flags ) const;
+              DbU::Unit          getPitch             ( size_t depth, Flags flags=Flags::NoFlags ) const;
               DbU::Unit          getOffset            ( size_t depth ) const;
               DbU::Unit          getWireWidth         ( size_t depth ) const;
               DbU::Unit          getPWireWidth        ( size_t depth ) const;
@@ -134,6 +136,8 @@ namespace Anabatic {
               float              getEdgeHScaling      () const;
               int                getGlobalIterations  () const;
               DbU::Unit          isOnRoutingGrid      ( RoutingPad* ) const;
+              void               getPositions         ( RoutingPad* , Point& source, Point& target ) const;
+              void               checkRoutingPadSize  ( RoutingPad* ) const;
               bool               selectRpComponent    ( RoutingPad* ) const;
       inline  void               setRoutingStyle      ( StyleFlags );
       inline  void               resetRoutingStyle    ( StyleFlags );

@@ -1563,8 +1563,10 @@ namespace Anabatic {
 
     uint32_t driverCount = 0;
     for ( auto rp : rps ) {
-      if (not _anabatic->getConfiguration()->selectRpComponent(rp))
-        cerr << Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+      if (not _anabatic->getConfiguration()->selectRpComponent(rp)) {
+        if (not _anabatic->getConfiguration()->isM1Offgrid())
+          cerr << Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+      }
 
       cdebug_log(112,0) << "@ rp: " << rp << ", getCenter(): " << rp->getBoundingBox().getCenter() << endl;
       Point  center   = rp->getBoundingBox().getCenter();
