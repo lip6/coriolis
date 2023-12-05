@@ -138,6 +138,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getExtensionCap       ( const Layer* );
       static  inline DbU::Unit                         getNearestTrackAxis   ( const Layer*,  DbU::Unit, uint32_t mode );
       static  inline Point                             getNearestGridPoint   ( Point, Box constraints );
+      static  inline void                              getPositions          ( RoutingPad*, Point&, Point& );
       static  inline size_t                            getSegmentStackSize   ();
       static  inline size_t                            getContactStackSize   ();
       static  inline const vector<AutoSegment*>&       getInvalidateds       (); 
@@ -286,6 +287,7 @@ namespace Anabatic {
   inline Flags                             Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
   inline Point                             Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
   inline DbU::Unit                         Session::getNearestTrackAxis  ( const Layer* layer, DbU::Unit axis, uint32_t mode ) { return get("getNearestTrackAxis()")->_getNearestTrackAxis(layer,axis,mode); }
+  inline void                              Session::getPositions         ( RoutingPad* rp, Point& source, Point& target ) { getConfiguration()->getPositions(rp,source,target); }
                                            
   inline void                              Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
   inline void                              Session::_doglegReset         () { _doglegs.clear(); }
