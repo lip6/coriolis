@@ -167,6 +167,9 @@
 .. |man|                            replace:: :cb:`man`
 
 
+.. |BUG|                            replace:: **BUG**
+.. |NEW|                            replace:: **NEW**
+.. |CHANGE|                         replace:: **CHANGE**
 .. |KeyUp|                          replace:: :fboxtt:`Up`
 .. |KeyDown|                        replace:: :fboxtt:`Down`
 .. |KeyLeft|                        replace:: :fboxtt:`Left`
