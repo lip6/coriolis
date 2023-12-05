@@ -1,6 +1,6 @@
 [project]
 name = "coriolis-eda"
-version = "2.5.5"
+dynamic = ["version"]
 description = "Place and Route for semiconductors"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
@@ -43,7 +43,7 @@ include = [
   "unittests",
 ]
 [build-system]
-requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake"]
+requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake", "dunamai"]
 build-backend = "mesonpy"
 
 [tool.cibuildwheel.linux]
@@ -66,6 +66,10 @@ before-all = '''
  wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz; tar -xzf lemon-1.3.1.tar.gz; cd lemon-1.3.1; mkdir build; cd build; cmake ..; make install; cd ../..
 '''
 
+[tool.pdm.version]
+source = "scm"
+getter = "_build_utils.version"
+
 [tool.pdm.dev-dependencies]
 doc = [
     "pelican",
@@ -78,6 +82,7 @@ dev = [
     "ninja",
     "meson-python == 0.13.2",
     "cmake",
+    "dunamai"
 ]
 
 test = [
