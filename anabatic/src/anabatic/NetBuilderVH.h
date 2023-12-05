@@ -28,8 +28,8 @@ namespace Anabatic {
                             NetBuilderVH       ();
       virtual              ~NetBuilderVH       ();
       static  std::string   getStyle           ();
-      virtual void          doRp_AutoContacts  ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
-      virtual AutoContact*  doRp_Access        ( GCell*, Component*, uint64_t  flags );
+      virtual void          doRp_AutoContacts  ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags );
+      virtual AutoContact*  doRp_Access        ( GCell*, RoutingPad*, uint64_t  flags );
     private:                                     
       virtual bool          _do_1G_1PinM2      ();
       virtual bool          _do_xG_1PinM2      ();

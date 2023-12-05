@@ -67,7 +67,7 @@ namespace Anabatic {
 
   
   void  NetBuilderM2::doRp_AutoContacts ( GCell*        gcell
-                                        , Component*    rp
+                                        , RoutingPad*   rp
                                         , AutoContact*& source
                                         , AutoContact*& target
                                         , uint64_t      flags
@@ -85,7 +85,7 @@ namespace Anabatic {
     Flags        direction      = Session::getDirection ( rpDepth );
     DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
 
-    getPositions( rp, sourcePosition, targetPosition );
+    Session::getPositions( rp, sourcePosition, targetPosition );
 
     if (sourcePosition.getX() > targetPosition.getX()) swap( sourcePosition, targetPosition );
     if (sourcePosition.getY() > targetPosition.getY()) swap( sourcePosition, targetPosition );
@@ -156,7 +156,7 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilderM2::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags )
+  AutoContact* NetBuilderM2::doRp_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access()" << endl;
     cdebug_log(145,0) << rp << endl;
@@ -168,7 +168,7 @@ namespace Anabatic {
     DbU::Unit    viaSide        = Session::getDContactWidth();
     DbU::Unit    ypitch         = Session::getDVerticalPitch();
 
-    getPositions( rp, sourcePosition, targetPosition );
+    Session::getPositions( rp, sourcePosition, targetPosition );
 
     if (sourcePosition.getX() > targetPosition.getX()) swap( sourcePosition, targetPosition );
     if (sourcePosition.getY() > targetPosition.getY()) swap( sourcePosition, targetPosition );
