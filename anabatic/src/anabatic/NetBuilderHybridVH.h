@@ -28,10 +28,10 @@ namespace Anabatic {
                             NetBuilderHybridVH       ();
       virtual              ~NetBuilderHybridVH       ();
       static  std::string   getStyle                 ();
-      virtual void          doRp_AutoContacts        ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
-      virtual AutoContact*  doRp_Access              ( GCell*, Component*, uint64_t  flags );
-              AutoContact*  doRp_AccessEastWestPin   ( GCell* , RoutingPad* );
-              AutoContact*  doRp_AccessNorthSouthPin ( GCell* , RoutingPad* );
+      virtual void          doRp_AutoContacts        ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags );
+      virtual AutoContact*  doRp_Access              ( GCell*, RoutingPad*, uint64_t  flags );
+              AutoContact*  doRp_AccessEastWestPin   ( GCell*, RoutingPad* );
+              AutoContact*  doRp_AccessNorthSouthPin ( GCell*, RoutingPad* );
     private:                                     
               bool          doRp_xG_1M1        ( RoutingPad* );
               bool          doRp_1G_1PinM2     ( RoutingPad* );
