@@ -104,6 +104,9 @@ Coriolis Documentation
         
          `Oroshi Reference <../doc/oroshi/index.html>`_ |br|
          Analog devices generators
+        
+         `Technical Log <{filename}/pages/technical-log/TechnicalLog_HTML.rst>`_ |br|
+         Technical logs (history of changes & fixes).
 
 
 Third Party Documentation
