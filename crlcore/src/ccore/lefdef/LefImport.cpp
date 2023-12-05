@@ -37,6 +37,7 @@
 #include "hurricane/Cell.h"
 #include "hurricane/Library.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/DebugSession.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
 #include "crlcore/RoutingGauge.h"
@@ -69,12 +70,62 @@ namespace {
     vdd->setType    ( Net::Type::POWER );
   }
 #endif
+  
+
+  class PinRectilinearFilter {
+    public:
+                        PinRectilinearFilter ( DbU::Unit xThreshold=0
+                                             , DbU::Unit yThreshold=0
+                                             , uint32_t  flags=LefImport::PinFilter_NOFLAGS );
+             bool       match                ( const Box& candidate, const Box& best );
+      inline DbU::Unit  getXThreshold        () const;
+      inline DbU::Unit  getYThreshold        () const;
+      inline uint32_t   getFlags             () const;
+      inline void       setXThreshold        ( DbU::Unit );
+      inline void       setYThreshold        ( DbU::Unit );
+      inline void       setFlags             ( uint32_t );
+    private:
+      DbU::Unit  _xThreshold;
+      DbU::Unit  _yThreshold;
+      uint32_t   _flags;
+  };
+
+  
+  PinRectilinearFilter::PinRectilinearFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+    : _xThreshold(xThreshold)
+    , _yThreshold(yThreshold)
+    , _flags     (flags)
+  { }
+
+
+  inline DbU::Unit  PinRectilinearFilter::getXThreshold () const                 { return _xThreshold; }
+  inline DbU::Unit  PinRectilinearFilter::getYThreshold () const                 { return _yThreshold; }
+  inline uint32_t   PinRectilinearFilter::getFlags      () const                 { return _flags; }
+  inline void       PinRectilinearFilter::setXThreshold ( DbU::Unit xThreshold ) { _xThreshold=xThreshold; }
+  inline void       PinRectilinearFilter::setYThreshold ( DbU::Unit yThreshold ) { _yThreshold=yThreshold; }
+  inline void       PinRectilinearFilter::setFlags      ( uint32_t flags )       { _flags=flags; }
+
+
+  bool  PinRectilinearFilter::match ( const Box& candidate, const Box& best )
+  {
+    if (candidate.getWidth () < _xThreshold) return false;
+    if (candidate.getHeight() < _yThreshold) return false;
+    if (_flags & LefImport::PinFilter_TALLEST) return (candidate.getHeight() > best.getHeight());
+    if (_flags & LefImport::PinFilter_WIDEST ) return (candidate.getWidth () > best.getWidth ());
+    if (_flags & LefImport::PinFilter_LARGEST) {
+      float candidateArea = (float)candidate.getWidth() * (float)candidate.getHeight();
+      float bestArea      = (float)best     .getWidth() * (float)best     .getHeight();
+      return (candidateArea > bestArea);
+    }
+    return false;
+  }
 
 
   class LefParser {
     public:
       static       void               setMergeLibrary          ( Library* );
       static       void               setGdsForeignDirectory   ( string );
+      static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -136,32 +187,33 @@ namespace {
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
     private:                                               
-      static       string              _gdsForeignDirectory;
-      static       Library*            _mergeLibrary;
-                   string              _file;
-                   string              _libraryName;
-                   Library*            _library;
-                   string              _foreignPath;
-                   Point               _foreignPosition;
-                   Net*                _gdsPower;
-                   Net*                _gdsGround;
-                   Cell*               _cell;
-                   Net*                _net;
-                   string              _busBits;
-                   double              _unitsMicrons;
-                   DbU::Unit           _oneGrid;
+      static       string                _gdsForeignDirectory;
+      static       Library*              _mergeLibrary;
+      static       PinRectilinearFilter  _pinFilter;
+                   string                _file;
+                   string                _libraryName;
+                   Library*              _library;
+                   string                _foreignPath;
+                   Point                 _foreignPosition;
+                   Net*                  _gdsPower;
+                   Net*                  _gdsGround;
+                   Cell*                 _cell;
+                   Net*                  _net;
+                   string                _busBits;
+                   double                _unitsMicrons;
+                   DbU::Unit             _oneGrid;
                    map< string, vector<Component*> >  _pinComponents;
-      static       map<string,Layer*>  _layerLut;
-                   vector<string>      _unmatchedLayers;
-                   vector<string>      _errors;
-                   int                 _nthMetal;
-                   int                 _nthCut;
-                   int                 _nthRouting;
-                   RoutingGauge*       _routingGauge;
-                   CellGauge*          _cellGauge;
-                   DbU::Unit           _minTerminalWidth;
-      static       DbU::Unit           _coreSiteX;
-      static       DbU::Unit           _coreSiteY;
+      static       map<string,Layer*>    _layerLut;
+                   vector<string>        _unmatchedLayers;
+                   vector<string>        _errors;
+                   int                   _nthMetal;
+                   int                   _nthCut;
+                   int                   _nthRouting;
+                   RoutingGauge*         _routingGauge;
+                   CellGauge*            _cellGauge;
+                   DbU::Unit             _minTerminalWidth;
+      static       DbU::Unit             _coreSiteX;
+      static       DbU::Unit             _coreSiteY;
   };
 
 
@@ -215,11 +267,12 @@ namespace {
   }
 
 
-  string              LefParser::_gdsForeignDirectory = "";
-  Library*            LefParser::_mergeLibrary = nullptr;
-  map<string,Layer*>  LefParser::_layerLut;
-  DbU::Unit           LefParser::_coreSiteX = 0;
-  DbU::Unit           LefParser::_coreSiteY = 0;
+  string                LefParser::_gdsForeignDirectory = "";
+  Library*              LefParser::_mergeLibrary = nullptr;
+  PinRectilinearFilter  LefParser::_pinFilter;
+  map<string,Layer*>    LefParser::_layerLut;
+  DbU::Unit             LefParser::_coreSiteX = 0;
+  DbU::Unit             LefParser::_coreSiteY = 0;
 
 
   void  LefParser::setMergeLibrary ( Library* library )
@@ -228,6 +281,14 @@ namespace {
 
   void  LefParser::setGdsForeignDirectory ( string path )
   { _gdsForeignDirectory = path; }
+
+
+  void  LefParser::setPinFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+  {
+    _pinFilter.setXThreshold( xThreshold );
+    _pinFilter.setYThreshold( yThreshold );
+    _pinFilter.setFlags     ( flags );
+  }
 
 
   void  LefParser::reset ()
@@ -861,7 +922,9 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-    //cerr << "       @ _pinStdPostProcess" << endl;
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+      DebugSession::open( 100, 110 );
+    cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
       string              pinName    = element.first;
@@ -926,14 +989,13 @@ namespace {
         }
         Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
         if (rectilinear) {
-          cerr << "       > " << rectilinear << endl;
+          cdebug_log(100,0) << "+ " << rectilinear << endl;
           if (rectilinear->getLayer()->getMask() != metal1->getMask())
             continue;
 
           vector<Box> boxes;
-          rectilinear->getAsRectangles( boxes );
-
           if (component->getNet()->isSupply()) {
+            rectilinear->getAsRectangles( boxes );
             ongrids.push_back( Horizontal::create( rectilinear->getNet()
                                                  , rectilinear->getLayer()
                                                  , boxes.front().getYCenter()
@@ -943,21 +1005,65 @@ namespace {
                                                  )
                                  );
           } else {
-            for ( const Box& box : boxes ) {
-              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
-                                                                , ab.getXMax()
-                                                                , box.getXCenter()
-                                                                , Constant::Nearest );
-              DbU::Unit xmin = std::min( box.getXMin(), nearestX - gaugeMetal2->getViaWidth()/2 );
-              DbU::Unit xmax = std::max( box.getXMax(), nearestX + gaugeMetal2->getViaWidth()/2 );
+            rectilinear->getAsBiggestRectangles( boxes
+                                               , _pinFilter.getXThreshold()
+                                               , _pinFilter.getYThreshold() );
+            Box best;
+            for ( const Box& candidate : boxes ) {
+              if (_pinFilter.match(candidate,best))
+                best = candidate;
+            }
+            if (not best.isEmpty()) {
+#if EXTENDED_COVERAGE
+              DbU::Unit ymin = gaugeMetal2->getTrackPosition( ab.getYMin()
+                                                            , ab.getXMax()
+                                                            , best.getYMin() + gaugeMetal2->getViaWidth()/2
+                                                            , Constant::Superior );
+              DbU::Unit ymax = gaugeMetal2->getTrackPosition( ab.getYMin()
+                                                            , ab.getXMax()
+                                                            , best.getYMax() - gaugeMetal2->getViaWidth()/2
+                                                            , Constant::Inferior );
               ongrids.push_back( Vertical::create( rectilinear->getNet()
                                                  , rectilinear->getLayer()
-                                                 , (xmax+xmin)/2
-                                                 ,  xmax-xmin
-                                                 , box.getYMin()
-                                                 , box.getYMax()
+                                                 , best.getXCenter()
+                                                 , best.getWidth()
+                                                 , ymin - gaugeMetal2->getViaWidth()/2
+                                                 , ymax + gaugeMetal2->getViaWidth()/2
                                                  )
                                  );
+              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
+#endif
+              ongrids.push_back( Vertical::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , best.getXCenter()
+                                                 , best.getWidth()
+                                                 , best.getYMin() 
+                                                 , best.getYMax()
+                                                 )
+                               );
+              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
+            }
+#if THIS_IS_DISABLED
+            for ( const Box& box : boxes ) {
+              cdebug_log(100,0) << "| " << box << endl;
+            // Assume M2 is horizontal.
+              DbU::Unit ymin = gaugeMetal2->getTrackPosition( ab.getYMin()
+                                                            , ab.getXMax()
+                                                            , box.getYMin() + gaugeMetal2->getViaWidth()/2
+                                                            , Constant::Superior );
+              DbU::Unit ymax = gaugeMetal2->getTrackPosition( ab.getYMin()
+                                                            , ab.getXMax()
+                                                            , box.getYMax() - gaugeMetal2->getViaWidth()/2
+                                                            , Constant::Inferior );
+              ongrids.push_back( Vertical::create( rectilinear->getNet()
+                                                 , rectilinear->getLayer()
+                                                 , box.getXCenter()
+                                                 , box.getWidth()
+                                                 , ymin - gaugeMetal2->getViaWidth()/2
+                                                 , ymax + gaugeMetal2->getViaWidth()/2
+                                                 )
+                                 );
+              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
               // DbU::Unit neighbor = nearestY
               //   + ((nearestY > box.getYCenter()) ? 1 : -1) * gaugeMetal2->getPitch();
               
@@ -973,6 +1079,7 @@ namespace {
               //                    );
               // }
             }
+#endif
           }
         }
       }
@@ -990,6 +1097,10 @@ namespace {
         }
       }
     }
+
+    cdebug_tabw(100,-1);
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+      DebugSession::close();
   }
 
 
@@ -1214,4 +1325,12 @@ namespace CRL {
   }
 
 
-}  // End of CRL namespace.
+  void  LefImport::setPinFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setPinFilter( xThreshold, yThreshold, flags );
+#endif
+  }
+
+
+}  // CRL namespace.
