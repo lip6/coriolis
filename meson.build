@@ -1,7 +1,7 @@
 project(
   'coriolis-eda',
   'c','cpp',
-   version: '2.5.5',
+   version:  run_command('_build_utils/version.py').stdout().strip(),
    meson_version: '>= 1.2.0',
    default_options: [
      'buildtype=debugoptimized',
