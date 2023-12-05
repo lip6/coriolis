@@ -14,11 +14,10 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_LEF_IMPORT_H
-#define  CRL_LEF_IMPORT_H
-
+#pragma  once
 #include <string>
 
+#include <hurricane/DbU.h>
 namespace Hurricane {
   class Library;
 }
@@ -26,17 +25,22 @@ namespace Hurricane {
 
 namespace CRL {
 
+  using Hurricane::DbU;
+
 
   class LefImport {
+    public:
+      static const uint32_t  PinFilter_NOFLAGS = 0;
+      static const uint32_t  PinFilter_TALLEST = (1<<0);
+      static const uint32_t  PinFilter_WIDEST  = (1<<1);
+      static const uint32_t  PinFilter_LARGEST = (1<<2);
     public:
       static void                reset                  ();
       static Hurricane::Library* load                   ( std::string fileName );
       static void                setMergeLibrary        ( Hurricane::Library* );
       static void                setGdsForeignDirectory ( std::string path );
+      static void                setPinFilter           ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
   };
 
 
 }  // CRL namespace.
-
-
-#endif  // CRL_DEF_IMPORT_H
