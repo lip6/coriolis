@@ -38,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::PyAny_AsLong;
   using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
@@ -125,6 +126,24 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setPinFilter ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setPinFilter()" << endl;
+    HTRY
+      PyObject*     pyXThreshold = NULL;
+      PyObject*     pyYThreshold = NULL;
+      unsigned int  flags        = 0;
+      if (PyArg_ParseTuple( args, "OOI:LefImport.setPinFilter", &pyXThreshold, &pyYThreshold, &flags )) {
+        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyXThreshold), flags );
+      } else {
+        PyErr_SetString ( ConstructorError, "LefImport.setPinFilter(): Bad type or bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Destroy (Attribute).
 
 
@@ -137,6 +156,8 @@ extern "C" {
                                 , "Merge into this library instead of creating a new one." }
     , { "setGdsForeignDirectory", (PyCFunction)PyLefImport_setGdsForeignDirectory, METH_VARARGS|METH_STATIC
                                 , "Set the directory where to find FOREIGN GDS files." }
+    , { "setPinFilter"          , (PyCFunction)PyLefImport_setPinFilter          , METH_VARARGS|METH_STATIC
+                                , "Select the way Rectilinear pins are converted to one rectangle." }
   //, { "destroy"               , (PyCFunction)PyLefImport_destroy  , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
@@ -156,6 +177,16 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,LefImport)
+
+
+  extern  void  PyLefImport_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_NOFLAGS,"PinFilter_NOFLAGS");
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_TALLEST,"PinFilter_TALLEST");
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_WIDEST ,"PinFilter_WIDEST" );
+    LoadObjectConstant(PyTypeLefImport.tp_dict,LefImport::PinFilter_LARGEST,"PinFilter_LARGEST" );
+  }
 
 
 #endif  // End of Shared Library Code Part.

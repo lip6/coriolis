@@ -231,6 +231,7 @@ extern "C" {
     PySpice_postModuleInit ();
     PyVerilog_postModuleInit ();
     PyGds_postModuleInit ();
+    PyLefImport_postModuleInit ();
     PyDefExport_postModuleInit ();
     
   //PyObject* dictionnary = PyModule_GetDict ( module );
