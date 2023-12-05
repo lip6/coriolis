@@ -72,7 +72,7 @@ namespace Anabatic {
 
   
   void  NetBuilderHV::doRp_AutoContacts ( GCell*        gcell
-                                        , Component*    rp
+                                        , RoutingPad*   rp
                                         , AutoContact*& source
                                         , AutoContact*& target
                                         , uint64_t      flags
@@ -97,7 +97,7 @@ namespace Anabatic {
     Flags        direction      = Session::getDirection ( rpDepth );
     DbU::Unit    viaSide        = Session::getViaWidth  ( rpDepth );
 
-    getPositions( rp, sourcePosition, targetPosition );
+    Session::getPositions( rp, sourcePosition, targetPosition );
 
     GCell* sourceGCell = Session::getAnabatic()->getGCellUnder( sourcePosition );
     GCell* targetGCell = Session::getAnabatic()->getGCellUnder( targetPosition );
@@ -242,7 +242,7 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilderHV::doRp_Access ( GCell* gcell, Component* rp, uint64_t flags )
+  AutoContact* NetBuilderHV::doRp_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
 
@@ -266,6 +266,7 @@ namespace Anabatic {
         cdebug_log(145,0) << "METAL3 override." << endl;
         contactLayer = Session::getRoutingLayer( 2 );
         wireDepth    = 2;
+        flags       &= ~(Punctual|VSmall);
       }
 
       if (flags & HAccess) {
@@ -471,7 +472,7 @@ namespace Anabatic {
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
-    Component* globalRp = NULL;
+    RoutingPad* globalRp = NULL;
     if      (east()) globalRp = getRoutingPads()[getRoutingPads().size()-1];
     else if (west()) globalRp = getRoutingPads()[0];
     else {
@@ -1334,7 +1335,8 @@ namespace Anabatic {
         uint64_t     flags     = checkRoutingPadSize( getRoutingPads()[0] );
 
         if (flags & VSmall) {
-          doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
+        doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
+        //contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
           contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
           AutoSegment::create( contact1, contact2, Flags::Vertical );
 
@@ -1366,8 +1368,11 @@ namespace Anabatic {
         setSouthWestContact( (east()) ? contact2 : contact3 );
         setNorthEastContact( (east()) ? contact3 : contact2 );
       } else {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-        AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
+        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
+        AutoContact* contact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( contact1, contact2, Flags::Horizontal );
+        contact1 = contact2;
+        contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact1, contact2, Flags::Vertical );
         AutoContact* contact3 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact2, contact3, Flags::Vertical );
@@ -1397,8 +1402,8 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1M1_1M2() [Managed Configuration]" << endl;
 
-    Component* rpL1;
-    Component* rpL2;
+    RoutingPad* rpL1;
+    RoutingPad* rpL2;
     if (getRoutingPads()[0]->getLayer() == Session::getBuildRoutingLayer(0)) {
       rpL1 = getRoutingPads()[0];
       rpL2 = getRoutingPads()[1];
@@ -1471,7 +1476,7 @@ namespace Anabatic {
     cdebug_log(145,0) << "east:      " << east() << endl;
     cdebug_log(145,0) << "west:      " << west() << endl;
 
-    Component* rpM3 = NULL;
+    RoutingPad* rpM3 = NULL;
     if (getRoutingPads()[0]->getLayer() == Session::getBuildRoutingLayer(2))
       rpM3 = getRoutingPads()[0];
 
@@ -1535,7 +1540,7 @@ namespace Anabatic {
       }
       
     // All RoutingPad are M1.
-      Component* southWestRp = getRoutingPads()[0];
+      RoutingPad* southWestRp = getRoutingPads()[0];
       cdebug_log(145,0) << "| Initial S-W Global RP: " << southWestRp << endl;
       // for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       //   if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
@@ -1557,7 +1562,7 @@ namespace Anabatic {
         AutoSegment::create( rpContact, getSouthWestContact(), Flags::Horizontal );
       }
 
-      Component* northEastRp = getRoutingPads()[getRoutingPads().size()-1];
+      RoutingPad* northEastRp = getRoutingPads()[getRoutingPads().size()-1];
       cdebug_log(145,0) << "| Initial N-E Global RP: " << northEastRp << endl;
 
       if (getRoutingPads().size() > 1) {
@@ -1593,7 +1598,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_4G_1M2() [Managed Configuration]" << endl;
 
-    Component* rpL2 = getRoutingPads()[0];
+    RoutingPad* rpL2 = getRoutingPads()[0];
     cdebug_log(145,0) << "rpL2 := " << rpL2 << endl;
 
     AutoContact* rpL2ContactSource = NULL;
@@ -1620,7 +1625,7 @@ namespace Anabatic {
                       << (int)getConnexity().fields.globals << "G_"
                       << (int)getConnexity().fields.M2 << "M2() [Managed Configuration - x]" << endl;
 
-    Component* biggestRp = getRoutingPads()[0];
+    RoutingPad* biggestRp = getRoutingPads()[0];
     for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       doRp_StairCaseH( getGCell(), getRoutingPads()[i-1], getRoutingPads()[i] );
       if (getRoutingPads()[i]->getBoundingBox().getWidth() > biggestRp->getBoundingBox().getWidth())
@@ -1768,7 +1773,7 @@ namespace Anabatic {
     }
 
     AutoContact* unusedContact = NULL;
-    Component*   rp            = getRoutingPads()[0];
+    RoutingPad*  rp            = getRoutingPads()[0];
 
     if (west() and not south()) {
       setSouthWestContact( doRp_Access( getGCell(), rp, HAccess ) );
@@ -1964,7 +1969,7 @@ namespace Anabatic {
     cdebug_log(145,1) << "NetBuilderHV::singleGCell() " << net << endl;
 
     vector<RoutingPad*>  rpM1s;
-    Component*           rpM2  = NULL;
+    RoutingPad*          rpM2  = NULL;
     RoutingPad*          rpPin = NULL;
 
     for ( RoutingPad* rp : net->getRoutingPads() ) {

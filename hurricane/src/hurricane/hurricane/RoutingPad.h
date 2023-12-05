@@ -53,6 +53,11 @@ namespace Hurricane {
       static const uint32_t IsOnSegment        = (1 << 4); 
       static const uint32_t IsOnPad            = (1 << 5); 
       static const uint32_t ComponentSelection = BiggestArea|HighestLayer|LowestLayer;
+      static const uint32_t HSmall             = (1 << 6); 
+      static const uint32_t VSmall             = (1 << 7); 
+      static const uint32_t Punctual           = (1 << 8); 
+      static const uint32_t M1Offgrid          = (1 << 9); 
+      static const uint32_t SizeFlags          = HSmall|VSmall|Punctual|M1Offgrid;
     public:
       static RoutingPad*   create                ( Net*, Occurrence, uint32_t flags=0 );
       static RoutingPad*   create                ( Pin* );
@@ -60,6 +65,11 @@ namespace Hurricane {
     // Accessors.
               bool         isPlacedOccurrence    ( uint32_t flags ) const;
       inline  bool         isAtTopLevel          () const;
+      inline  bool         isHSmall              () const;
+      inline  bool         isVSmall              () const;
+      inline  bool         isPunctual            () const;
+      inline  bool         isM1Offgrid           () const;
+      inline  uint32_t     getFlags              () const;
       inline  Occurrence   getOccurrence         () const;
               Occurrence   getPlugOccurrence     ();
       virtual const Layer* getLayer              () const;
@@ -75,11 +85,14 @@ namespace Hurricane {
               DbU::Unit    getSourceY            () const;
               DbU::Unit    getTargetX            () const;
               DbU::Unit    getTargetY            () const;
+              std::string  getStringFlags        () const;
     // Mutators.                                 
       virtual void         translate             ( const DbU::Unit& dx, const DbU::Unit& dy );
               void         setExternalComponent  ( Component* );
               Component*   setOnBestComponent    ( uint32_t flags );
               void         restorePlugOccurrence ();
+      inline  void         setFlags              ( uint32_t );
+      inline  void         unsetFlags            ( uint32_t );
     // Miscellaeous.
       template<typename T>
               T*           _getEntityAs          () const;
@@ -95,11 +108,19 @@ namespace Hurricane {
     private:
     // Attributes.
       Occurrence  _occurrence;
+      uint32_t    _flags;
   };
 
   
   inline  bool        RoutingPad::isAtTopLevel  () const { return _occurrence.getPath().isEmpty(); }
+  inline  bool        RoutingPad::isHSmall      () const { return (_flags & HSmall); }
+  inline  bool        RoutingPad::isVSmall      () const { return (_flags & VSmall); }
+  inline  bool        RoutingPad::isPunctual    () const { return (_flags & Punctual); }
+  inline  bool        RoutingPad::isM1Offgrid   () const { return (_flags & M1Offgrid); }
+  inline  uint32_t    RoutingPad::getFlags      () const { return _flags; }
   inline  Occurrence  RoutingPad::getOccurrence () const { return _occurrence; };
+  inline  void        RoutingPad::setFlags      ( uint32_t flags ) { _flags |=  flags; }
+  inline  void        RoutingPad::unsetFlags    ( uint32_t flags ) { _flags &= ~flags; }
 
 
   template<typename T>

@@ -231,6 +231,10 @@ namespace Anabatic {
 
   bool  Configuration::isHybrid () const
   { return _routingStyle & StyleFlags::Hybrid; }
+
+
+  bool  Configuration::isM1Offgrid () const
+  { return _routingStyle & StyleFlags::M1Offgrid; }
   
 
   bool  Configuration::isHV () const
@@ -509,11 +513,10 @@ namespace Anabatic {
 
       Component* candidate = dynamic_cast<Segment*>( component );
       if (not candidate
-         or  (candidate->getLayer()->getMask() != metal1->getMask()) )
-        candidate = dynamic_cast<Pin*>(component);
-      if (not candidate)
+         or  (candidate->getLayer()->getMask() != metal1->getMask()) ) {
         candidate = dynamic_cast<Pad*>( component );
-      if (not candidate) continue;
+        if (not candidate) continue;
+      }
 
       Box        bb       = transformation.getBox( candidate->getBoundingBox() );
       DbU::Unit  trackPos = 0;
@@ -559,16 +562,80 @@ namespace Anabatic {
       }
     }
 
+    bool rvalue = false;
     if (bestComponent) {
       rp->setExternalComponent( bestComponent );
       cdebug_log(112,0) << "Using best candidate:" << bestComponent << endl;
       cdebug_tabw(112,-1);
-      return true;
+      rvalue = true;
     }
 
+    checkRoutingPadSize( rp );
     cdebug_tabw(112,-1);
-    return false;
+    return rvalue;
 #endif
+  }
+
+  
+  void  Configuration::getPositions ( RoutingPad* rp, Point& source, Point& target ) const
+  {
+    source = rp->getSourcePosition();
+    target = rp->getTargetPosition();
+
+    if (source == target) return;
+    if (source.getX() > target.getX()) std::swap( source, target );
+    if (source.getY() > target.getY()) std::swap( source, target );
+
+    if (not getRoutingGauge()->isSymbolic()) {
+      size_t    rpDepth   = getLayerDepth( rp->getLayer() );
+      Flags     direction = getDirection ( rpDepth );
+      DbU::Unit wwidth    = getWireWidth ( rpDepth ) / 2;
+      cdebug_log(145,0) << "Not a symbolic gauge, shrink positions of " << DbU::getValueString(wwidth)  << endl;
+      if (rpDepth == 0) return;
+      if (direction.contains(Flags::Horizontal)) {
+        cdebug_log(145,0) << "H shrink" << endl;
+        source.translate(  wwidth, 0 );
+        target.translate( -wwidth, 0 );
+      } else {
+        cdebug_log(145,0) << "V shrink" << endl;
+        source.translate( 0,  wwidth );
+        target.translate( 0, -wwidth );
+      }
+    } else {
+      cdebug_log(145,0) << "Symbolic gauge, no shrink" << endl;
+    }
+  }
+
+
+  void  Configuration::checkRoutingPadSize ( RoutingPad* rp ) const
+  {
+    Point  source;
+    Point  target;
+
+    size_t rpDepth = getLayerDepth( rp->getLayer() );
+    if (rpDepth == 0) ++rpDepth;
+    else return;
+
+    getPositions( rp, source, target );
+
+    DbU::Unit width  = abs( target.getX() - source.getX() );
+    DbU::Unit height = abs( target.getY() - source.getY() );
+
+    uint64_t flags = 0;
+    flags |= (width  < 3*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
+    flags |= (height < 3*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
+    flags |= ((width == 0) && (height == 0)) ? RoutingPad::Punctual : 0;
+  //if ((flags & RoutingPad::HSmall) and (flags & RoutingPad::VSmall))
+  //   flags |= RoutingPad::Punctual;
+
+    rp->unsetFlags( RoutingPad::SizeFlags );
+    rp->setFlags  ( flags );
+    cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << rpDepth << "]:"
+               << DbU::getValueString(getPitch(rpDepth)) << " "
+               << ((flags & RoutingPad::HSmall  ) ? "HSmall "   : " ")
+               << ((flags & RoutingPad::VSmall  ) ? "VSmall "   : " ")
+               << ((flags & RoutingPad::Punctual) ? "Punctual " : " ")
+               << endl;
   }
   
 

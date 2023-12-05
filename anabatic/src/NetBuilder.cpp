@@ -228,73 +228,19 @@ namespace Anabatic {
 // Class  :  "NetBuilder".
 
   
-  void  NetBuilder::getPositions ( Component* anchor, Point& source, Point& target )
+  uint64_t  NetBuilder::checkRoutingPadSize ( RoutingPad* rp )
   {
-    Segment* segment   = dynamic_cast<Segment*>( anchor );
-    if (segment) {
-      source = segment->getSourcePosition();
-      target = segment->getTargetPosition();
-    } else {
-      RoutingPad* rp = dynamic_cast<RoutingPad*>( anchor );
-      if (rp) {
-        source = rp->getSourcePosition();
-        target = rp->getTargetPosition();
-      } else {
-        source = anchor->getPosition();
-        target = anchor->getPosition();
-        return;
-      }
-    }
-
-    if (source == target) return;
-    if (source.getX() > target.getX()) swap( source, target );
-    if (source.getY() > target.getY()) swap( source, target );
-
-    if (not Session::getRoutingGauge()->isSymbolic()) {
-      size_t    rpDepth   = Session::getLayerDepth( anchor->getLayer() );
-      Flags     direction = Session::getDirection ( rpDepth );
-      DbU::Unit wwidth    = Session::getWireWidth (rpDepth) / 2;
-      cdebug_log(145,0) << "Not a symbolic gauge, shrink positions of " << DbU::getValueString(wwidth)  << endl;
-      if (rpDepth == 0) return;
-      if (direction.contains(Flags::Horizontal)) {
-        cdebug_log(145,0) << "H shrink" << endl;
-        source.translate(  wwidth, 0 );
-        target.translate( -wwidth, 0 );
-      } else {
-        cdebug_log(145,0) << "V shrink" << endl;
-        source.translate( 0,  wwidth );
-        target.translate( 0, -wwidth );
-      }
-    } else {
-      cdebug_log(145,0) << "Symbolic gauge, no shrink" << endl;
-    }
-  }
-
-
-  uint64_t  NetBuilder::checkRoutingPadSize ( Component* anchor )
-  {
-    Point  source;
-    Point  target;
-
-    size_t anchorDepth = Session::getLayerDepth( anchor->getLayer() );
-    if (anchorDepth == 0) ++anchorDepth;
-
-    NetBuilder::getPositions( anchor, source, target );
-
-    DbU::Unit width  = abs( target.getX() - source.getX() );
-    DbU::Unit height = abs( target.getY() - source.getY() );
-
-    uint64_t flags = 0;
-    flags |= (width  < 3*Session::getPitch(anchorDepth)) ? NetBuilder::HSmall   : 0;
-    flags |= (height < 3*Session::getPitch(anchorDepth)) ? NetBuilder::VSmall   : 0;
-    flags |= ((width == 0) && (height == 0))             ? NetBuilder::Punctual : 0;
-
-    cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << anchorDepth << "]:"
-               << DbU::getValueString(Session::getPitch(anchorDepth)) << " "
-               << ((flags & NetBuilder::HSmall) ? "HSmall " : " ")
-               << ((flags & NetBuilder::VSmall) ? "VSmall " : " ")
-               << endl;
-
+    uint32_t rpFlags = rp->getFlags();
+    uint32_t flags   = 0;
+    flags |= (rpFlags & RoutingPad::VSmall   ) ? VSmall    : 0;
+    flags |= (rpFlags & RoutingPad::HSmall   ) ? HSmall    : 0;
+    flags |= (rpFlags & RoutingPad::Punctual ) ? Punctual  : 0;
+    flags |= (rpFlags & RoutingPad::M1Offgrid) ? M1Offgrid : 0;
+    cdebug_log(145,0) << "::checkRoutingPadSize(): "
+                      << ((flags & NetBuilder::HSmall  ) ? "HSmall "   : " ")
+                      << ((flags & NetBuilder::VSmall  ) ? "VSmall "   : " ")
+                      << ((flags & NetBuilder::Punctual) ? "Punctual " : " ")
+                      << rp << endl;
     return flags;
   }
 
@@ -1045,7 +991,7 @@ namespace Anabatic {
   }
 
 
-  void  NetBuilder::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 )
+  void  NetBuilder::doRp_StairCaseH ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 )
   {
     cdebug_log(145,0) << "doRp_StairCaseH()" << endl;
 
@@ -1079,7 +1025,7 @@ namespace Anabatic {
   }
 
 
-  void  NetBuilder::doRp_StairCaseV ( GCell* gcell, Component* rp1, Component* rp2 )
+  void  NetBuilder::doRp_StairCaseV ( GCell* gcell, RoutingPad* rp1, RoutingPad* rp2 )
   {
     cdebug_log(145,0) << "doRp_StairCaseV()" << endl;
 
@@ -1302,7 +1248,7 @@ namespace Anabatic {
     cdebug_log(145,1) << "NetBuilder::singleGCell() " << net << endl;
 
     vector<RoutingPad*>  rpM1s;
-    Component*           rpM2 = NULL;
+    RoutingPad*          rpM2 = NULL;
 
     for ( RoutingPad* rp : net->getRoutingPads() ) {
       if (      Session::getRoutingGauge()->getLayerDepth(rp->getLayer())
