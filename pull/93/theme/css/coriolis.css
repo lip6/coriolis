@@ -1,0 +1,162 @@
+
+/* Boostrap customization. */
+.header-container {
+  min-height: 100px;
+  margin:     0;
+  margin-top: -24px;
+}
+
+.header-nav > .nav > div.dropdown > button {
+  font-weight: bold;
+}
+
+.header-nav > .nav > div.dropdown > .dropdown-menu {
+  background-color: rgba(0.14, 0.40, 0.53, 0.7);
+/*background-color: #356689;*/
+}
+
+.header-nav > .nav > div.dropdown > .dropdown-menu a {
+  text-transform:   none;
+  margin-left:      4px;
+}
+
+.header-nav > .nav > div.dropdown > .dropdown-menu a:hover {
+  background-color: black;
+}
+
+/* ReST customization. */
+.content p, .content ul > li {
+  text-align: justify;
+}
+
+p.credit {
+  margin-left:        10%;
+  margin-right:       10%;
+  font-size:          110%;
+}
+
+p.credit span.left {
+  float:              left;
+/*white-space:        nowrap;*/
+}
+
+p.credit span.right {
+  float:              right;
+/*white-space:        nowrap;*/
+}
+
+.sc {
+  font-variant:       small-caps;
+  font-size:          120%;
+}
+
+div#contents {
+  background-color: white;
+  border-left:      3px solid rgba(235,35,68,1);
+  padding:          15px;
+}
+
+@media (min-width: 1200px) {
+  div#contents {
+  /*position:         absolute;*/
+    position:         fixed;
+    float:            left;
+    top:              260px;
+    left:             20px;
+  }
+}
+
+div#contents p.topic-title {
+  font-size:      16px;
+  line-height:    1.285714285714286em; 
+  font-weight:    600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+div#contents ul {
+  padding-left: 15px;
+  list-style:   none;
+}
+
+div#contents ul > li > a {
+  font-size:   12px;
+  line-height: 1.285714285714286em; 
+  font-weight: 600;
+}
+
+/*
+#sidebar.affix-top {
+  position:         fixed;
+  margin-top:       260px;
+  left:             2%;
+  background-color: red;
+}
+
+#sidebar.affix {
+  top:              10%;
+  left:             2%;
+}
+*/
+
+span.cb {
+  font-family: "courrier";
+  font-weight: bold;
+}
+
+div.note {
+/*
+  margin:             8px 2% 0px 2%;
+  border:             1px none #ffbb44;
+  border-left-width:  4px;
+  border-left-style:  solid;
+  padding:            1px 10pt 1px 55px;
+  background:         #ffdd66 url('../_static/images/clipboard.png') no-repeat 0% 50%;;
+  font-size:          90%
+ */
+  margin:             8px 10% 0px 2%;
+/*padding:            10px 5pt 1px 35px;*/
+  padding:            1px 10px 5px 35px;
+  border-left:        4px solid #f6b73c;
+  background:         #fff3d4;
+  font-size:          90%
+}
+
+div.note > p.admonition-title {
+  font-family:        "courrier", "andale mono", monospace;
+  font-weight:        bold;
+  font-size:          110%
+}
+
+div.note::before
+{
+/*
+ *position:                relative;
+ *top:                     1px;
+ *display:                 inline-block;
+ *font-family:             'Glyphicons Halflings';
+ *font-style:              normal;
+ *font-weight:             400;
+ *line-height:             1;
+ *-webkit-font-smoothing:  antialiased;
+ *-moz-osx-font-smoothing: grayscale;
+ */
+
+  font-family:             'FontAwesome';
+  content:                  "";
+  font-size:                200%;
+  float:                    left;
+  margin:                   15px 0px 0px -30px;
+  *-webkit-font-smoothing:  antialiased;
+  *-moz-osx-font-smoothing: grayscale;
+}
+
+td, th {
+  padding-left:  10px;
+  padding-right: 10px;
+}
+
+.content td img {
+  margin-top:    0px;
+  margin-bottom: 0px;
+}
