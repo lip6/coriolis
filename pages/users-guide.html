@@ -578,13 +578,19 @@ be equal to <cite>100%</cite> or (<tt class="docutils literal">NNNN+0</tt>) if t
 In the event of a failure, on a saturated design, you may tweak the three
 following configuration parameters:</p>
 <ol class="arabic simple">
-<li><tt class="docutils literal">katana.hTrackReservedLocal</tt>, the number of track reserved for local routing,
-that quantity is substracted from the edge capacities (global routing) to
-give a sense of the cluttering inside the GCells.</li>
-<li><tt class="docutils literal">katana.vTrackReservedLocal</tt>, same as above.</li>
+<li><tt class="docutils literal">katana.hTrackReservedMin</tt>, minimum number of track reserved for horizontal
+routing; that quantity is always substracted from the edge capacities during
+global routing, to give more freedom to the detailed router.</li>
+<li><tt class="docutils literal">katana.vTrackReservedMin</tt>, same as above for vertical routing.</li>
 <li><tt class="docutils literal">etesian.spaceMargin</tt>, increases the free area of the overall design so the
 routing density decrease.</li>
 </ol>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">../documentation/content/pages/users-guide/ViewerTools.rst</tt>, line 247)</p>
+Enumerated list ends without a blank line; unexpected unindent.</div>
+<!-- #. ``katana.hTrackReservedLocal``, maximum number of track reserved for horizontal
+   local routing (access to the cell pins).
+#. ``katana.vTrackReservedLocal``, same as above for vertical routing. -->
 <p>The idea is to increase the horizontal and vertical local track reservation until
 the detailed router succeeds. But in doing so we make the task of the global router
 more and more difficult as the capacity of the edges decreases, and at some point
