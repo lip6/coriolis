@@ -186,6 +186,65 @@ def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
             break
 
 
+def setupMOSIS ( checkToolkit=None, cellsTop=None ):
+    from   ..        import Cfg 
+    from   ..        import Viewer
+    from   ..        import CRL 
+    from   ..helpers import overlay, l, u, n
+    from   .yosys    import Yosys
+    import coriolis.technos.node180.scn6m_deep_09
+
+    Where( checkToolkit )
+    if cellsTop is None:
+        cellsTop = Where.cellsTop
+    else:
+        if isinstance(cellsTop,str):
+            cellsTop = Path( cellsTop )
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore               = False
+        cfg.misc.info                    = False
+        cfg.misc.paranoid                = False
+        cfg.misc.bug                     = False
+        cfg.misc.logMode                 = True
+        cfg.misc.verboseLevel1           = True
+        cfg.misc.verboseLevel2           = True
+        cfg.misc.minTraceLevel           = 1900
+        cfg.misc.maxTraceLevel           = 3000
+        cfg.katana.eventsLimit           = 1000000
+        cfg.etesian.graphics             = 3
+        cfg.etesian.spaceMargin          = 0.05
+        cfg.etesian.aspectRatio          = 1.0 
+        cfg.anabatic.edgeLenght          = 24
+        cfg.anabatic.edgeWidth           = 8
+        cfg.katana.termSatReservedLocal  = 6 
+        cfg.katana.termSatThreshold      = 9 
+
+        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+        af  = CRL.AllianceFramework.get()
+        env = af.getEnvironment()
+        env.setCLOCK( '^ck$|m_clock|^clk$' )
+
+        sxlib   = cellsTop / 'nsxlib'
+        iolib   = cellsTop / 'niolib'
+        liberty = sxlib    / 'nsxlib.lib'
+        env.addSYSTEM_LIBRARY( library=iolib.as_posix(), mode=CRL.Environment.Prepend )
+        env.addSYSTEM_LIBRARY( library=sxlib.as_posix(), mode=CRL.Environment.Prepend )
+        if not sxlib.is_dir():
+            print( '[ERROR] technos.setupCMOS45(): nsxlib directory do *not* exists:' )
+            print( '        "{}"'.format(sxlib.as_posix()) )
+
+    Yosys.setLiberty( liberty )
+    #ShellEnv.RDS_TECHNO_NAME = (Where.checkToolkit / 'etc' / 'FreePDK45.rds').as_posix()
+
+    path = None
+    for pathVar in [ 'PATH', 'path' ]:
+        if pathVar in os.environ:
+            path = os.environ[ pathVar ]
+            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
+            break
+
+
 def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
     from ..        import Cfg 
     from ..        import Viewer
@@ -447,3 +506,69 @@ def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None ):
 
     Yosys.setLiberty( liberty )
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
+
+
+def setupAMS350 ( checkToolkit=None, ndaTop=None, cellsTop=None ):
+    from   ..        import Cfg 
+    from   ..        import Viewer
+    from   ..        import CRL 
+    from   ..helpers import setNdaTopDir, overlay, l, u, n
+    from   .yosys    import Yosys
+
+    if isinstance(ndaTop,str):
+        ndaTop = Path( ndaTop )
+    setNdaTopDir( ndaTop.as_posix() )
+    if not ndaTop.is_dir():
+        print( '[ERROR] technos.setupAMS350(): ndaTop directory do *not* exists:' )
+        print( '        "{}"'.format(ndaTop.as_posix()) )
+    import NDA.node350.c35b4
+
+    Where( checkToolkit )
+    if cellsTop is None:
+        cellsTop = Where.cellsTop
+    else:
+        if isinstance(cellsTop,str):
+            cellsTop = Path( cellsTop )
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore               = False
+        cfg.misc.info                    = False
+        cfg.misc.paranoid                = False
+        cfg.misc.bug                     = False
+        cfg.misc.logMode                 = True
+        cfg.misc.verboseLevel1           = True
+        cfg.misc.verboseLevel2           = True
+        cfg.misc.minTraceLevel           = 1900
+        cfg.misc.maxTraceLevel           = 3000
+        cfg.katana.eventsLimit           = 1000000
+        cfg.etesian.graphics             = 3
+        cfg.etesian.spaceMargin          = 0.05
+        cfg.etesian.aspectRatio          = 1.0 
+        cfg.anabatic.edgeLenght          = 24
+        cfg.anabatic.edgeWidth           = 8
+        cfg.katana.termSatReservedLocal  = 6 
+        cfg.katana.termSatThreshold      = 9 
+
+        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+        af  = CRL.AllianceFramework.get()
+        env = af.getEnvironment()
+        env.setCLOCK( '^ck$|m_clock|^clk$' )
+
+        sxlib   = cellsTop / 'nsxlib'
+        iolib   = cellsTop / 'niolib'
+        liberty = sxlib    / 'nsxlib.lib'
+        env.addSYSTEM_LIBRARY( library=iolib.as_posix(), mode=CRL.Environment.Prepend )
+        env.addSYSTEM_LIBRARY( library=sxlib.as_posix(), mode=CRL.Environment.Prepend )
+        if not sxlib.is_dir():
+            print( '[ERROR] technos.setupAMS350(): nsxlib directory do *not* exists:' )
+            print( '        "{}"'.format(sxlib.as_posix()) )
+
+    Yosys.setLiberty( liberty )
+    #ShellEnv.RDS_TECHNO_NAME = (Where.checkToolkit / 'etc' / 'FreePDK45.rds').as_posix()
+
+    path = None
+    for pathVar in [ 'PATH', 'path' ]:
+        if pathVar in os.environ:
+            path = os.environ[ pathVar ]
+            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
+            break
