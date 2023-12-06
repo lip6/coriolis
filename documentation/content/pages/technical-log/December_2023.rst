@@ -23,7 +23,7 @@ Occured on ``benchs/RISC-V/Minerva/sky130_c4m/``.
 .. image:: {static}/images/notes/Katana-Debug_3.png
    :alt:   Faulty _do_xG_1M3 (no South) configuration.
    :align: center
-   :width: 40%
+   :width: 60%
 
 
 |CHANGE| Reorganization of the size detection of ``RoutingPad``
