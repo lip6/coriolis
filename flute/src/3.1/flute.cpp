@@ -1471,9 +1471,9 @@ void plottree(Tree t)
     int i;
 
     for (i=0; i<2*t.deg-2; i++) {
-        printf("%d %d\n", t.branch[i].x, t.branch[i].y);
-        printf("%d %d\n\n", t.branch[t.branch[i].n].x,
-               t.branch[t.branch[i].n].y);
+        printf("%lld %lld\n", (long long) t.branch[i].x, (long long) t.branch[i].y);
+        printf("%lld %lld\n\n", (long long) t.branch[t.branch[i].n].x,
+               (long long) t.branch[t.branch[i].n].y);
     }
 }
 
