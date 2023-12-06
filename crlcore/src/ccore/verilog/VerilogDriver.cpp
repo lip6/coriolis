@@ -142,6 +142,10 @@ namespace CRL {
           continue;
         }
         net = plug->getNet();
+        if(!net)
+        {
+          continue; // unconnected plug
+        }
         if(net->isExternal()) // propogates through ports
         {
           ports.push_back(net);
@@ -323,6 +327,10 @@ namespace CRL {
         if(net->isPower() || net->isGround()) // VDD and VSS are not part of Verilog netlist
         {
           continue;
+        }
+        if (!plug->getNet())
+        {
+          continue; // unconnected plug
         }
         if (!instance->isTerminalNetlist()&&
             !_cellHasNetPlug(instance->getMasterCell(), net))
