@@ -350,8 +350,14 @@ namespace CRL {
       // declare connections
       for (auto it = conns.begin(); it != conns.end(); ++it)
       {
+        auto minfo = _wire2bus(getString((*it)->getMasterNet()->getName()));
         auto &info = net2bus[(*it)->getNet()];
-        out << "    ." << getString((*it)->getMasterNet()->getName()) << "(" << info.first;
+        out << "    ." << minfo.first;
+        if (minfo.second >= 0) // indexed wire
+        {
+          out << "[" << info.second << "]";
+        }
+        out << "(" << info.first;
         if (info.second >= 0) // indexed wire
         {
           out << "[" << info.second << "]";
