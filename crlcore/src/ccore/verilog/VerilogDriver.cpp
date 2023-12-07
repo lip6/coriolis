@@ -243,14 +243,9 @@ namespace CRL {
       {
         out << "  inout ";
       }
-      else if (dir == Net::Direction::OUT)
+      else // if direction undefined assume it is output
       {
         out << "  output ";
-      }
-      else
-      {
-        std::cerr << "Undetermined direction " << dir << " for the net \"" << name << "\"" << std::endl;
-        assert(false);
       }
       if (idx_min >= 0)
       {
