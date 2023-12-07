@@ -142,6 +142,10 @@ namespace CRL {
           continue;
         }
         net = plug->getNet();
+        if(!net)
+        {
+          continue; // unconnected plug
+        }
         if(net->isExternal()) // propogates through ports
         {
           ports.push_back(net);
@@ -239,14 +243,9 @@ namespace CRL {
       {
         out << "  inout ";
       }
-      else if (dir == Net::Direction::OUT)
+      else // if direction undefined assume it is output
       {
         out << "  output ";
-      }
-      else
-      {
-        std::cerr << "Undetermined direction " << dir << " for the net \"" << name << "\"" << std::endl;
-        assert(false);
       }
       if (idx_min >= 0)
       {
@@ -323,6 +322,10 @@ namespace CRL {
         if(net->isPower() || net->isGround()) // VDD and VSS are not part of Verilog netlist
         {
           continue;
+        }
+        if (!plug->getNet())
+        {
+          continue; // unconnected plug
         }
         if (!instance->isTerminalNetlist()&&
             !_cellHasNetPlug(instance->getMasterCell(), net))
