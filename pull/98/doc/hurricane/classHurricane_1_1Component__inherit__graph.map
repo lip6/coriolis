@@ -1,0 +1,16 @@
+<map id="Hurricane::Component" name="Hurricane::Component">
+<area shape="rect" id="node1" title="Component description (API)" alt="" coords="511,157,679,184"/>
+<area shape="rect" id="node5" href="$classHurricane_1_1Contact.html" title="Contact description (API)" alt="" coords="739,5,881,32"/>
+<area shape="rect" id="node7" href="$classHurricane_1_1Diagonal.html" title="Diagonal description (API)" alt="" coords="735,56,885,83"/>
+<area shape="rect" id="node8" href="$classHurricane_1_1Pad.html" title="Pad description (API)" alt="" coords="752,107,868,133"/>
+<area shape="rect" id="node9" href="$classHurricane_1_1Plug.html" title="Plug description (API)" alt="" coords="749,157,871,184"/>
+<area shape="rect" id="node10" href="$classHurricane_1_1Polygon.html" title="Polygon description (API)" alt="" coords="737,208,883,235"/>
+<area shape="rect" id="node11" href="$classHurricane_1_1RoutingPad.html" title="RoutingPad description (API)" alt="" coords="727,259,893,285"/>
+<area shape="rect" id="node12" href="$classHurricane_1_1Segment.html" title="Segment description (API)" alt="" coords="735,309,885,336"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1Go.html" title="Go description (API)" alt="" coords="352,157,463,184"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API)." alt="" coords="173,157,304,184"/>
+<area shape="rect" id="node4" href="$classHurricane_1_1DBo.html" title="DataBase object root class (API)." alt="" coords="5,157,125,184"/>
+<area shape="rect" id="node6" href="$classHurricane_1_1Pin.html" title="Pin description (API)" alt="" coords="965,5,1078,32"/>
+<area shape="rect" id="node13" href="$classHurricane_1_1Horizontal.html" title="Horizontal description (API)" alt="" coords="941,284,1101,311"/>
+<area shape="rect" id="node14" href="$classHurricane_1_1Vertical.html" title="Vertical description (API)" alt="" coords="950,335,1093,361"/>
+</map>
