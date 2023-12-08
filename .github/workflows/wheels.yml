@@ -151,7 +151,7 @@ jobs:
           CIBW_BEFORE_ALL: ""
           CIBW_MANYLINUX_X86_64_IMAGE: ${{ needs.build-custom-manylinux.outputs.tag }}
           CIBW_ENVIRONMENT_LINUX: |
-            USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64/boost169 BOOST_INCLUDEDIR=/usr/include/boost169
+            USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64/boost169 BOOST_INCLUDEDIR=/usr/include/boost169 PKG_CONFIG_PATH=`python3 -c "import sysconfig; sysconfig.get_config_var('LIBPC')"`
           CIBW_BEFORE_BUILD: env
 
 
