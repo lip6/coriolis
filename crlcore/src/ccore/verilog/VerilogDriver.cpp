@@ -146,17 +146,14 @@ namespace CRL {
         {
           continue; // unconnected plug
         }
-        if(net->isExternal()) // propogates through ports
+        if(nets.insert(net).second) // the insertion happend, net was not there before
         {
-          ports.push_back(net);
-          nets.insert(net); // collect all nets we use
-        }
-        else
-        {
-          if(!nets.insert(net).second) // the insertion not happend as it was already there
+          if(net->isExternal()) // propogates through ports
           {
-            // this net was already enumerated in some other cell
-            // so this wire used at least between two cells and need to be declared
+            ports.push_back(net);
+          }
+          else
+          {
             wires.push_back(net);
           }
         }
