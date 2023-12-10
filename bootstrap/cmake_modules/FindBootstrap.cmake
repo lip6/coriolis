@@ -244,9 +244,6 @@ endif()
      set(pydevelArg "Development.Module")
    endif()
    find_package(Python 3 REQUIRED COMPONENTS Interpreter ${pydevelArg} )
-   if (USE_MANYLINUX)
-     unset(Python3_LIBRARIES)
-   endif()
  endmacro()
 
 
