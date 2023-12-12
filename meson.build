@@ -41,8 +41,10 @@ if not py_deps.found()
   py_deps = dependency('python3', required: true)
 endif
 
-py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHON_MODULE__=1')
+python_libpython_link += '-T' + meson.source_root() /  'libpython3.11.ld'
+py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHON_MODULE__=1', link_args: python_libpython_link)
 
+py_mod_deps.
 qt = import('qt5', disabler: true)
 qt_deps = dependency('qt5',
   modules: ['Core', 'Gui', 'Widgets', 'PrintSupport', 'Svg'],
