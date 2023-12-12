@@ -38,15 +38,14 @@ endif
 py = import('python').find_installation(pure:false)
 py_orig_deps = dependency('python3', required: true)
 
-python_libpython_link = '-T' + meson.source_root() /  'libpython3.11.ld'
 if build_machine.system() == 'linux'
   python_libpython_link = '-Wl,--warn-unresolved-symbols'
 elif build_machine.system() == 'darwin'
-  python_libpython_link = '@' + python_libpython_link
+  python_libpython_link = '-Wl,@' + meson.source_root() /  'libpython3.11.ld'
 endif
 
-py_deps = declare_dependency(dependencies: py_orig_deps, link_args: python_libpython_link)
-py_mod_deps = declare_dependency(dependencies: py_orig_deps, compile_args: '-D__PYTHON_MODULE__=1', link_args: python_libpython_link)
+py_deps = declare_dependency(dependencies: py_orig_deps, link_args: [python_libpython_link])
+py_mod_deps = declare_dependency(dependencies: py_orig_deps, compile_args: '-D__PYTHON_MODULE__=1', link_args: [python_libpython_link])
 
 qt = import('qt5', disabler: true)
 qt_deps = dependency('qt5',
