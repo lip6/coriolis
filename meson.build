@@ -40,7 +40,7 @@ py_orig_deps = dependency('python3', required: true)
 
 #python_libpython_link = '-T' + meson.source_root() /  'libpython3.11.ld'
 if build_machine.system() == 'linux'
-  python_libpython_link = '-Wl,-z-undefs'
+  python_libpython_link = '-Wl,--warn-unresolved-symbols'
 elif build_machine.system() == 'darwin'
   python_libpython_link = '-undefined dynamic_lookup'
   # todo, investiage using -U 
