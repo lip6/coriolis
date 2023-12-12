@@ -7,7 +7,6 @@ project(
      'buildtype=debugoptimized',
      'c_std=c99',
      'cpp_std=c++17',
-     'b_lundef=false',
    ],
 )
 
@@ -41,7 +40,7 @@ py_orig_deps = dependency('python3', required: true)
 
 #python_libpython_link = '-T' + meson.source_root() /  'libpython3.11.ld'
 if build_machine.system() == 'linux'
-  python_libpython_link = '-Wl,--allow-shlib-undefined'
+  python_libpython_link = '-Wl,-z-undefs'
 elif build_machine.system() == 'darwin'
   python_libpython_link = '-undefined dynamic_lookup'
   # todo, investiage using -U 
