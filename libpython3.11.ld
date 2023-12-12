@@ -1,1442 +1,1442 @@
-EXTERN(PyMarshal_WriteObjectToString)
-EXTERN(PyThread_release_lock)
-EXTERN(_PyModule_Clear)
-EXTERN(PyNumber_Xor)
-EXTERN(PyBytes_DecodeEscape)
-EXTERN(PyObject_Realloc)
-EXTERN(_PyArg_VaParseTupleAndKeywordsFast_SizeT)
-EXTERN(_Py_stat)
-EXTERN(_PyErr_GetExcInfo)
-EXTERN(Py_Is)
-EXTERN(PyImport_AddModule)
-EXTERN(_PyArg_ParseStack_SizeT)
-EXTERN(PyUnicodeTranslateError_GetObject)
-EXTERN(PyFrame_GetLocals)
-EXTERN(_PyObject_Call)
-EXTERN(PyUnicodeDecodeError_GetEncoding)
-EXTERN(PyModule_AddFunctions)
-EXTERN(PyNumber_Negative)
-EXTERN(PyList_Size)
-EXTERN(PyObject_CallFinalizer)
-EXTERN(PyNumber_FloorDivide)
-EXTERN(PyErr_Restore)
-EXTERN(PySequence_Tuple)
-EXTERN(PyThread_set_key_value)
-EXTERN(PyCapsule_SetContext)
-EXTERN(PyInit__collections)
-EXTERN(PySlice_Unpack)
-EXTERN(_PyBytesWriter_Resize)
-EXTERN(PyErr_BadArgument)
-EXTERN(_PyArg_VaParseTupleAndKeywords_SizeT)
-EXTERN(PyUnicodeDecodeError_GetEnd)
-EXTERN(PyObject_Format)
-EXTERN(PyNumber_Check)
-EXTERN(PyOS_strtol)
-EXTERN(PyFile_OpenCodeObject)
-EXTERN(PyUnicode_FSConverter)
-EXTERN(PyMarshal_WriteObjectToFile)
-EXTERN(_PyImport_IsInitialized)
-EXTERN(_PyTime_MulDiv)
-EXTERN(PyPreConfig_InitIsolatedConfig)
-EXTERN(PyImport_Import)
-EXTERN(PyCapsule_GetDestructor)
-EXTERN(_PyObject_Dump)
-EXTERN(PyStatus_Ok)
-EXTERN(PyOS_mystrnicmp)
-EXTERN(PyThread_GetInfo)
-EXTERN(_PyLong_DivmodNear)
-EXTERN(PyCode_GetVarnames)
-EXTERN(PyPickleBuffer_GetBuffer)
-EXTERN(_PyOS_URandom)
-EXTERN(PyThread_get_stacksize)
-EXTERN(PyFile_WriteString)
-EXTERN(PyToken_TwoChars)
-EXTERN(Py_SetPath)
-EXTERN(_PyTime_GetSystemClockWithInfo)
-EXTERN(_PyType_CheckConsistency)
-EXTERN(_PyLong_Size_t_Converter)
-EXTERN(PyCMethod_New)
-EXTERN(_PyAccu_Finish)
-EXTERN(PyType_GenericNew)
-EXTERN(PySequence_Length)
-EXTERN(PyTuple_GetItem)
-EXTERN(PyUnicode_Split)
-EXTERN(_Py_HashPointer)
-EXTERN(_PyThreadState_Swap)
-EXTERN(PyLong_FromSize_t)
-EXTERN(PyBuffer_IsContiguous)
-EXTERN(Py_InitializeFromConfig)
-EXTERN(PyWideStringList_Append)
-EXTERN(PyOS_Readline)
-EXTERN(PyDict_GetItem)
-EXTERN(PyUnicode_EncodeLocale)
-EXTERN(PyErr_SetFromErrnoWithFilenameObjects)
-EXTERN(PyUnicode_InternFromString)
-EXTERN(PyErr_PrintEx)
-EXTERN(_Py_LegacyLocaleDetected)
-EXTERN(_PyUnicode_DecodeUnicodeEscapeStateful)
-EXTERN(PyInit__signal)
-EXTERN(PyUnicode_FromWideChar)
-EXTERN(PyErr_ExceptionMatches)
-EXTERN(PyCodec_LookupError)
-EXTERN(_PyObject_LookupSpecialId)
-EXTERN(_PyTime_AsNanosecondsObject)
-EXTERN(PyUnicode_Tailmatch)
-EXTERN(_PyMem_RawStrdup)
-EXTERN(PyComplex_FromCComplex)
-EXTERN(_PyUnicode_Ready)
-EXTERN(PyMarshal_ReadObjectFromString)
-EXTERN(_PySet_NextEntry)
-EXTERN(PyBytes_AsString)
-EXTERN(_PyLong_FormatWriter)
-EXTERN(PyCapsule_Import)
-EXTERN(PyConfig_SetArgv)
-EXTERN(PyLong_FromUnicodeObject)
-EXTERN(_PyErr_ExceptionMatches)
-EXTERN(_PyObject_MakeTpCall)
-EXTERN(_Py_FatalRefcountErrorFunc)
-EXTERN(Py_PreInitializeFromArgs)
-EXTERN(PySymtable_Lookup)
-EXTERN(_PyConfig_FromDict)
-EXTERN(PyObject_CallNoArgs)
-EXTERN(PyUnicodeTranslateError_GetStart)
-EXTERN(PyToken_ThreeChars)
-EXTERN(PySys_FormatStdout)
-EXTERN(PyUnicode_Contains)
-EXTERN(PyRun_StringFlags)
-EXTERN(PyRun_AnyFileFlags)
-EXTERN(PyImport_ImportFrozenModuleObject)
-EXTERN(_PyLong_FromTime_t)
-EXTERN(_PyObject_NextNotImplemented)
-EXTERN(PyInit_faulthandler)
-EXTERN(PyDictProxy_New)
-EXTERN(PyFloat_FromString)
-EXTERN(PyFrame_GetGenerator)
-EXTERN(PyList_Insert)
-EXTERN(_PyDict_NewPresized)
-EXTERN(_PyErr_ProgramDecodedTextObject)
-EXTERN(PyPickleBuffer_Release)
-EXTERN(_PyLong_FileDescriptor_Converter)
-EXTERN(_Py_fstat)
-EXTERN(_PyImport_GetModuleAttrString)
-EXTERN(PyEval_GetFuncDesc)
-EXTERN(PyTraceBack_Print)
-EXTERN(_PyUnicode_ToTitlecase)
-EXTERN(PySys_AddXOption)
-EXTERN(PyBytes_Repr)
-EXTERN(Py_BuildValue)
-EXTERN(PyNumber_Lshift)
-EXTERN(Py_IsFalse)
-EXTERN(_PyArena_Free)
-EXTERN(PyConfig_InitPythonConfig)
-EXTERN(_PyAccu_Accumulate)
-EXTERN(PyUnicode_DecodeUTF8Stateful)
-EXTERN(PyUnicodeDecodeError_SetReason)
-EXTERN(_PyUnicode_FromASCII)
-EXTERN(PyBuffer_FromContiguous)
-EXTERN(PyOS_AfterFork_Parent)
-EXTERN(PyDict_DelItemString)
-EXTERN(_Py_fopen_obj)
-EXTERN(PyEval_ThreadsInitialized)
-EXTERN(PyMem_SetAllocator)
-EXTERN(PyTuple_Size)
-EXTERN(PySequence_Repeat)
-EXTERN(_PyUnicodeTranslateError_Create)
-EXTERN(_Py_HashDouble)
-EXTERN(PyCode_GetCode)
-EXTERN(PyFrame_GetCode)
-EXTERN(PyEval_EvalCode)
-EXTERN(PyNumber_InPlaceFloorDivide)
-EXTERN(PyOS_AfterFork)
-EXTERN(_PyConfig_InitCompatConfig)
-EXTERN(PyType_GetModule)
-EXTERN(PySet_Add)
-EXTERN(PyThread_allocate_lock)
-EXTERN(PyUnicode_Fill)
-EXTERN(Py_AtExit)
-EXTERN(Py_ReprLeave)
-EXTERN(PyCodec_RegisterError)
-EXTERN(PyDict_New)
-EXTERN(PyInit__locale)
-EXTERN(PyIndex_Check)
-EXTERN(_Py_hashtable_size)
-EXTERN(PyThreadState_New)
-EXTERN(PyCFunction_Call)
-EXTERN(PyUnicode_IsIdentifier)
-EXTERN(PyUnicode_RichCompare)
-EXTERN(PyImport_ImportModuleLevelObject)
-EXTERN(_PyOS_InterruptOccurred)
-EXTERN(Py_IsTrue)
-EXTERN(_Py_NewReference)
-EXTERN(PyObject_GetAttr)
-EXTERN(PyStatus_Error)
-EXTERN(_PyErr_BadInternalCall)
-EXTERN(_PyDict_SetItemId)
-EXTERN(_PyEval_GetBuiltin)
-EXTERN(PyList_Sort)
-EXTERN(_Py_dg_freedtoa)
-EXTERN(PyUnicodeDecodeError_SetEnd)
-EXTERN(PyThread_delete_key_value)
-EXTERN(PyModule_FromDefAndSpec2)
-EXTERN(_Py_CoerceLegacyLocale)
-EXTERN(_PyTime_AsNanoseconds)
-EXTERN(PyCode_NewEmpty)
-EXTERN(PyRun_InteractiveOneFlags)
-EXTERN(_Py_c_abs)
-EXTERN(PyNumber_InPlaceAnd)
-EXTERN(PyCode_Addr2Location)
-EXTERN(_PyBytes_Repeat)
-EXTERN(PyObject_CallMethod)
-EXTERN(PyThread_free_lock)
-EXTERN(PyObject_Dir)
-EXTERN(PyFloat_Unpack2)
-EXTERN(PyObject_AsReadBuffer)
-EXTERN(PyCapsule_GetName)
-EXTERN(PyCodec_StreamWriter)
-EXTERN(_PyUnicodeWriter_WriteStr)
-EXTERN(_Py_Get_Getpath_CodeObject)
-EXTERN(PyFloat_Unpack4)
-EXTERN(PyArg_VaParse)
-EXTERN(_PyUnicode_AsUnicode)
-EXTERN(_Py_dg_stdnan)
-EXTERN(_PyType_LookupId)
-EXTERN(PyBytes_FromStringAndSize)
-EXTERN(PyLong_FromLong)
-EXTERN(_PyThreadState_SetCurrent)
-EXTERN(_PyObject_GetDictPtr)
-EXTERN(PyList_New)
-EXTERN(PyFloat_Unpack8)
-EXTERN(Py_Exit)
-EXTERN(PyUnicode_AppendAndDel)
-EXTERN(PySequence_In)
-EXTERN(PyBytes_FromFormatV)
-EXTERN(PyUnicodeEncodeError_GetEncoding)
-EXTERN(PyList_SetItem)
-EXTERN(PyStatus_Exit)
-EXTERN(_PyErr_CheckSignalsTstate)
-EXTERN(_Py_PreInitializeFromPyArgv)
-EXTERN(_PyErr_StackItemToExcInfoTuple)
-EXTERN(PyObject_GenericSetAttr)
-EXTERN(PyThread_delete_key)
-EXTERN(_PyMem_RawWcsdup)
-EXTERN(PyHash_GetFuncDef)
-EXTERN(PySys_Audit)
-EXTERN(_PyUnicode_IsXidContinue)
-EXTERN(PyMapping_Length)
-EXTERN(_Py_Sigset_Converter)
-EXTERN(_Py_DecodeLocaleEx)
-EXTERN(_PyUnicode_ToTitleFull)
-EXTERN(_Py_hashtable_get)
-EXTERN(_PyDict_Next)
-EXTERN(_PyObject_CheckConsistency)
-EXTERN(_PyBytesWriter_Finish)
-EXTERN(_PyTime_localtime)
-EXTERN(PyObject_Init)
-EXTERN(PyInterpreterState_ThreadHead)
-EXTERN(PyArg_VaParseTupleAndKeywords)
-EXTERN(PyUnicode_DecodeLatin1)
-EXTERN(PyWrapper_New)
-EXTERN(PyThreadState_Clear)
-EXTERN(PyUnicode_Find)
-EXTERN(_PyWideStringList_AsList)
-EXTERN(_PyUnicode_ToDigit)
-EXTERN(PyStructSequence_InitType2)
-EXTERN(_Py_dg_dtoa)
-EXTERN(PyErr_GetExcInfo)
-EXTERN(PyNumber_ToBase)
-EXTERN(_PyMem_SetDefaultAllocator)
-EXTERN(PyUnicode_AsDecodedObject)
-EXTERN(_PyFunction_Vectorcall)
-EXTERN(PyNumber_Subtract)
-EXTERN(PySys_SetArgv)
-EXTERN(_PyArg_ParseTupleAndKeywordsFast_SizeT)
-EXTERN(_PyUnicode_IsDigit)
-EXTERN(PyImport_ExecCodeModuleEx)
-EXTERN(PyType_GenericAlloc)
-EXTERN(PyErr_WarnExplicitObject)
-EXTERN(PySequence_DelSlice)
-EXTERN(PyVectorcall_Function)
-EXTERN(_PyTime_AsTimevalTime_t)
-EXTERN(_PyBytes_DecodeEscape)
-EXTERN(_PyErr_FormatFromCauseTstate)
-EXTERN(_PyArg_UnpackKeywordsWithVararg)
-EXTERN(PySequence_Contains)
-EXTERN(PyDict_Update)
-EXTERN(Py_GetCopyright)
-EXTERN(_PyOS_URandomNonblock)
-EXTERN(PyObject_VectorcallMethod)
-EXTERN(PySys_ResetWarnOptions)
-EXTERN(_Py_DecodeUTF8Ex)
-EXTERN(PyUnicode_AsUTF8AndSize)
-EXTERN(PyObject_Bytes)
-EXTERN(PyObject_GET_WEAKREFS_LISTPTR)
-EXTERN(PyObject_RichCompareBool)
-EXTERN(PyInstanceMethod_New)
-EXTERN(PyContext_Enter)
-EXTERN(PyInit_xxsubtype)
-EXTERN(PyUnicode_AsRawUnicodeEscapeString)
-EXTERN(PyConfig_SetBytesString)
-EXTERN(_PyArg_UnpackStack)
-EXTERN(PyCode_NewWithPosOnlyArgs)
-EXTERN(_PyDict_GetItemIdWithError)
-EXTERN(PyGC_Enable)
-EXTERN(PyFile_WriteObject)
-EXTERN(PyTuple_New)
-EXTERN(PyStatus_Exception)
-EXTERN(PyCapsule_SetDestructor)
-EXTERN(_Py_NewInterpreter)
-EXTERN(_Py_FreeCharPArray)
-EXTERN(_PyBytesWriter_Dealloc)
-EXTERN(_PyUnicode_IsTitlecase)
-EXTERN(PyThread_set_stacksize)
-EXTERN(PyErr_SetInterruptEx)
-EXTERN(PyEval_CallMethod)
-EXTERN(_PyGen_Finalize)
-EXTERN(PyInit_pwd)
-EXTERN(_PyImport_GetModuleAttr)
-EXTERN(_Py_ClearStandardStreamEncoding)
-EXTERN(_PyDictView_Intersect)
-EXTERN(_PyThread_CurrentExceptions)
-EXTERN(PyLong_AsDouble)
-EXTERN(PyFunction_GetGlobals)
-EXTERN(_Py_DisplaySourceLine)
-EXTERN(PyMarshal_ReadShortFromFile)
-EXTERN(PyLong_GetInfo)
-EXTERN(_PyTime_FromMillisecondsObject)
-EXTERN(_Py_set_inheritable)
-EXTERN(PySlice_GetIndices)
-EXTERN(PyModule_GetNameObject)
-EXTERN(_PyInterpreterID_New)
-EXTERN(_PyThreadState_DeleteCurrent)
-EXTERN(_PyUnicode_AsLatin1String)
-EXTERN(PyRun_FileEx)
-EXTERN(_PyThreadState_UncheckedGet)
-EXTERN(PyUnicode_AsLatin1String)
-EXTERN(PyInterpreterState_Delete)
-EXTERN(_PyUnicode_FormatAdvancedWriter)
-EXTERN(PyEval_RestoreThread)
-EXTERN(_PyCodec_DecodeText)
-EXTERN(PyODict_New)
-EXTERN(PyUnicode_CompareWithASCIIString)
-EXTERN(Py_SetPythonHome)
-EXTERN(_PyDict_GetItemStringWithError)
-EXTERN(_Py_FatalError_TstateNULL)
-EXTERN(_PyThread_at_fork_reinit)
-EXTERN(_PyUnicodeWriter_WriteLatin1String)
-EXTERN(_PyStructSequence_InitType)
-EXTERN(Py_XNewRef)
-EXTERN(_Py_GetForceASCII)
-EXTERN(PyEval_GetFuncName)
-EXTERN(_PyInterpreterState_Enable)
-EXTERN(PyComplex_AsCComplex)
-EXTERN(_PyTime_ObjectToTimeval)
-EXTERN(Py_GetProgramName)
-EXTERN(PyContextVar_Get)
-EXTERN(PyNumber_Multiply)
-EXTERN(PyMem_Calloc)
-EXTERN(PyCFunction_GetSelf)
-EXTERN(PyObject_Calloc)
-EXTERN(PyUnicode_Splitlines)
-EXTERN(_Py_DumpDecimal)
-EXTERN(_PyObject_CallMethodIdObjArgs)
-EXTERN(_PyCrossInterpreterData_Lookup)
-EXTERN(PySequence_DelItem)
-EXTERN(PyConfig_Clear)
-EXTERN(PyCapsule_GetContext)
-EXTERN(_PyThreadState_Init)
-EXTERN(PyCodec_StrictErrors)
-EXTERN(PySys_GetXOptions)
-EXTERN(PyUnicode_ReadChar)
-EXTERN(_PyImport_AcquireLock)
-EXTERN(_PyLong_Frexp)
-EXTERN(PyErr_WarnFormat)
-EXTERN(Py_FrozenMain)
-EXTERN(PyDict_Items)
-EXTERN(PyThreadState_GetID)
-EXTERN(PyList_SetSlice)
-EXTERN(PyInterpreterState_New)
-EXTERN(_PyWeakref_GetWeakrefCount)
-EXTERN(_PyTraceBack_FromFrame)
-EXTERN(PyCodec_Register)
-EXTERN(PyObject_AsWriteBuffer)
-EXTERN(PyWeakref_NewRef)
-EXTERN(PyErr_RangedSyntaxLocationObject)
-EXTERN(PyContext_CopyCurrent)
-EXTERN(_Py_GetLocaleEncodingObject)
-EXTERN(PyUnicode_EncodeFSDefault)
-EXTERN(PySys_GetObject)
-EXTERN(_PyUnicode_EncodeUTF7)
-EXTERN(_PyTime_FromNanoseconds)
-EXTERN(PyExceptionClass_Name)
-EXTERN(PyUnicodeEncodeError_SetReason)
-EXTERN(PyUnicode_Resize)
-EXTERN(PySequence_Index)
-EXTERN(_Py_IsCoreInitialized)
-EXTERN(PyType_GetFlags)
-EXTERN(_PyUnicode_FastFill)
-EXTERN(PyDict_Keys)
-EXTERN(PyUnicode_DecodeLocaleAndSize)
-EXTERN(PyErr_WarnExplicit)
-EXTERN(_PyInterpreterState_RequireIDRef)
-EXTERN(_Py_EncodeLocaleRaw)
-EXTERN(PyImport_GetMagicNumber)
-EXTERN(_PySet_Update)
-EXTERN(PyCapsule_IsValid)
-EXTERN(PyFile_FromFd)
-EXTERN(_PyLong_UnsignedLongLong_Converter)
-EXTERN(_PyMem_Strdup)
-EXTERN(Py_Finalize)
-EXTERN(PyFloat_GetMax)
-EXTERN(PyInit__tokenize)
-EXTERN(PyGILState_Ensure)
-EXTERN(_Py_get_xoption)
-EXTERN(_PyUnicode_EncodeCharmap)
-EXTERN(PyCodec_IncrementalDecoder)
-EXTERN(PySequence_List)
-EXTERN(PyErr_Clear)
-EXTERN(PyThread_create_key)
-EXTERN(PyObject_Length)
-EXTERN(PyCapsule_New)
-EXTERN(_PyDict_CheckConsistency)
-EXTERN(_Py_DumpHexadecimal)
-EXTERN(PyLong_FromSsize_t)
-EXTERN(PyThreadState_Delete)
-EXTERN(PyContext_New)
-EXTERN(_Py_c_diff)
-EXTERN(PyObject_GenericGetDict)
-EXTERN(PyConfig_Read)
-EXTERN(PyThreadState_DeleteCurrent)
-EXTERN(PySys_WriteStderr)
-EXTERN(PyUnicode_DecodeASCII)
-EXTERN(PyUnicodeTranslateError_GetReason)
-EXTERN(_PyCode_GetExtra)
-EXTERN(PyNumber_InPlaceMultiply)
-EXTERN(_PyArg_UnpackKeywords)
-EXTERN(PyArg_ValidateKeywordArguments)
-EXTERN(PyModule_GetState)
-EXTERN(_PyObject_GetState)
-EXTERN(_PyEval_AddPendingCall)
-EXTERN(PyThreadState_GetInterpreter)
-EXTERN(_PyErr_SetHandledException)
-EXTERN(PyLong_FromVoidPtr)
-EXTERN(PyFloat_Pack2)
-EXTERN(PyThreadState_EnterTracing)
-EXTERN(_PyUnicodeWriter_Init)
-EXTERN(PyModule_SetDocString)
-EXTERN(_Py_read)
-EXTERN(_Py_convert_optional_to_ssize_t)
-EXTERN(PyErr_NewExceptionWithDoc)
-EXTERN(PyFloat_Pack4)
-EXTERN(_PyRuntimeState_Init)
-EXTERN(_PyTraceback_Add)
-EXTERN(_PyArg_CheckPositional)
-EXTERN(_PyDict_ContainsId)
-EXTERN(PyErr_SyntaxLocationEx)
-EXTERN(PyObject_Malloc)
-EXTERN(_Py_parse_inf_or_nan)
-EXTERN(PyFloat_Pack8)
-EXTERN(PyNumber_InPlaceRemainder)
-EXTERN(_Py_hashtable_clear)
-EXTERN(PyCode_GetFreevars)
-EXTERN(_PyArg_VaParseTupleAndKeywordsFast)
-EXTERN(PyOS_AfterFork_Child)
-EXTERN(PyThread_tss_get)
-EXTERN(PySet_Pop)
-EXTERN(PyObject_DelItem)
-EXTERN(PySeqIter_New)
-EXTERN(_PyTime_ObjectToTimespec)
-EXTERN(PySequence_SetSlice)
-EXTERN(PyOS_double_to_string)
-EXTERN(PyObject_IsTrue)
-EXTERN(PyStatus_IsError)
-EXTERN(PyImport_GetModule)
-EXTERN(PyFloat_GetInfo)
-EXTERN(PyRun_SimpleString)
-EXTERN(PyCapsule_SetPointer)
-EXTERN(_PyFloat_DebugMallocStats)
-EXTERN(_PyTuple_DebugMallocStats)
-EXTERN(_PyArg_NoKwnames)
-EXTERN(PyInit__stat)
-EXTERN(PyObject_GetArenaAllocator)
-EXTERN(_PyPreConfig_InitCompatConfig)
-EXTERN(PyUnicode_FromFormat)
-EXTERN(PyLong_AsUnsignedLongLong)
-EXTERN(_PyObject_DebugMallocStats)
-EXTERN(PyObject_CallMethodObjArgs)
-EXTERN(_PyErr_Fetch)
-EXTERN(PyObject_Str)
-EXTERN(_PyTime_AsMicroseconds)
-EXTERN(PyException_GetCause)
-EXTERN(PyUnicode_AsUTF32String)
-EXTERN(_PyTime_FromTimeval)
-EXTERN(Py_IncRef)
-EXTERN(_PyLong_Lshift)
-EXTERN(_PyCode_Validate)
-EXTERN(PyInit__operator)
-EXTERN(PyOS_snprintf)
-EXTERN(PyInit_errno)
-EXTERN(_PyErr_FormatFromCause)
-EXTERN(_PyUnicode_EqualToASCIIString)
-EXTERN(_PyDict_GetItem_KnownHash)
-EXTERN(PyUnicode_DecodeUTF16Stateful)
-EXTERN(_PyCodecInfo_GetIncrementalDecoder)
-EXTERN(PySequence_SetItem)
-EXTERN(_PyUnicode_ToFoldedFull)
-EXTERN(_Py_strhex_bytes_with_sep)
-EXTERN(_Py_FdIsInteractive)
-EXTERN(PyTuple_Pack)
-EXTERN(PyBytes_FromFormat)
-EXTERN(_PyThreadState_DeleteExcept)
-EXTERN(PyUnicode_CopyCharacters)
-EXTERN(_PyTime_AsTimeval)
-EXTERN(PyUnicode_AsUCS4)
-EXTERN(PyCell_New)
-EXTERN(_PySequence_BytesToCharpArray)
-EXTERN(PyThreadState_GetFrame)
-EXTERN(_PyArg_Parse_SizeT)
-EXTERN(_PyObject_LookupAttr)
-EXTERN(Py_SetRecursionLimit)
-EXTERN(_Py_c_prod)
-EXTERN(PyDict_Size)
-EXTERN(PyComplex_ImagAsDouble)
-EXTERN(PyNumber_Add)
-EXTERN(_PyList_DebugMallocStats)
-EXTERN(Py_GetExecPrefix)
-EXTERN(PyUnicodeDecodeError_GetStart)
-EXTERN(_PyAccu_FinishAsList)
-EXTERN(_Py_hashtable_steal)
-EXTERN(PyMemoryView_FromBuffer)
-EXTERN(_PyUnicode_IsPrintable)
-EXTERN(_PyWideStringList_Extend)
-EXTERN(_PyArgv_AsWstrList)
-EXTERN(_PyObject_FastCall)
-EXTERN(PyComplex_FromDoubles)
-EXTERN(_Py_get_inheritable)
-EXTERN(_PyImport_FixupBuiltin)
-EXTERN(_PyObject_CallMethod)
-EXTERN(PyTraceMalloc_Untrack)
-EXTERN(PyInit__sre)
-EXTERN(PyUnicode_AsASCIIString)
-EXTERN(PyDescr_NewMethod)
-EXTERN(PyThreadState_SetAsyncExc)
-EXTERN(_PyTime_AsSecondsDouble)
-EXTERN(_PyList_Extend)
-EXTERN(PyUnicode_Concat)
-EXTERN(Py_CompileStringExFlags)
-EXTERN(_Py_wreadlink)
-EXTERN(PyRun_FileExFlags)
-EXTERN(PyGen_New)
-EXTERN(_PyDict_DelItemId)
-EXTERN(_PyObject_RealIsSubclass)
-EXTERN(PyCodec_BackslashReplaceErrors)
-EXTERN(_Py_UTF8_Edit_Cost)
-EXTERN(PyArg_ParseTuple)
-EXTERN(PyUnicode_DecodeUTF7Stateful)
-EXTERN(_PyTime_AsTimeval_clamp)
-EXTERN(_PyDict_DelItemIf)
-EXTERN(PyObject_Call)
-EXTERN(PyGC_Disable)
-EXTERN(PyRun_AnyFile)
-EXTERN(_Py_WriteIndentedMargin)
-EXTERN(PyObject_CallFunction)
-EXTERN(PyMem_Realloc)
-EXTERN(_PyArena_Malloc)
-EXTERN(PyFunction_GetKwDefaults)
-EXTERN(Py_FatalError)
-EXTERN(PyType_SUPPORTS_WEAKREFS)
-EXTERN(PyInit__thread)
-EXTERN(PyUnicode_New)
-EXTERN(PyUnicode_Format)
-EXTERN(PySet_Size)
-EXTERN(_PyEval_SliceIndex)
-EXTERN(_PyLong_Rshift)
-EXTERN(PyUnicodeEncodeError_SetStart)
-EXTERN(PyObject_SetAttr)
-EXTERN(PyCodec_NameReplaceErrors)
-EXTERN(PyThread_tss_alloc)
-EXTERN(_PyCode_CheckLineNumber)
-EXTERN(_PyLong_GCD)
-EXTERN(PyObject_HashNotImplemented)
-EXTERN(PyObject_IsSubclass)
-EXTERN(Py_NewInterpreter)
-EXTERN(PyFunction_GetCode)
-EXTERN(_Py_c_pow)
-EXTERN(PyErr_SetFromErrno)
-EXTERN(PyModule_New)
-EXTERN(PyMemoryView_GetContiguous)
-EXTERN(PyObject_SelfIter)
-EXTERN(_PyObject_GC_New)
-EXTERN(PyModule_GetName)
-EXTERN(PyBuffer_FillContiguousStrides)
-EXTERN(PyPickleBuffer_FromObject)
-EXTERN(_Py_wgetcwd)
-EXTERN(Py_GetPythonHome)
-EXTERN(_Py_c_quot)
-EXTERN(_Py_wfopen)
-EXTERN(PyCFunction_GetFunction)
-EXTERN(PyCapsule_SetName)
-EXTERN(PyCFunction_GetFlags)
-EXTERN(PyEval_SetProfile)
-EXTERN(PyInit__ast)
-EXTERN(PyObject_HasAttr)
-EXTERN(_PyUnicodeWriter_WriteSubstring)
-EXTERN(_PyErr_WriteUnraisableMsg)
-EXTERN(_PySys_GetAttr)
-EXTERN(PyUnicode_InternImmortal)
-EXTERN(_PyUnicode_IsAlpha)
-EXTERN(PySys_AddAuditHook)
-EXTERN(_PyObject_CallMethodId)
-EXTERN(_PyTrash_end)
-EXTERN(PyObject_Type)
-EXTERN(PyImport_ExecCodeModuleWithPathnames)
-EXTERN(PySequence_GetItem)
-EXTERN(_PyEval_SignalReceived)
-EXTERN(PyMember_GetOne)
-EXTERN(PySys_FormatStderr)
-EXTERN(PyStructSequence_InitType)
-EXTERN(PyUnicode_FSDecoder)
-EXTERN(PyType_Ready)
-EXTERN(PyObject_VectorcallDict)
-EXTERN(_PyObject_DebugTypeStats)
-EXTERN(_PyDict_MaybeUntrack)
-EXTERN(Py_GetPlatform)
-EXTERN(PyNumber_InPlacePower)
-EXTERN(PyType_ClearCache)
-EXTERN(PyRun_InteractiveLoop)
-EXTERN(_PyObject_CheckCrossInterpreterData)
-EXTERN(PyDict_Values)
-EXTERN(PyNumber_Long)
-EXTERN(PyErr_SetString)
-EXTERN(_PyArena_AddPyObject)
-EXTERN(PyNumber_InPlaceTrueDivide)
-EXTERN(PyInterpreterState_GetDict)
-EXTERN(_Py_EncodeUTF8Ex)
-EXTERN(PyState_RemoveModule)
-EXTERN(PyFrame_GetBack)
-EXTERN(PyDict_Clear)
-EXTERN(PyException_SetContext)
-EXTERN(_PyState_AddModule)
-EXTERN(PyBool_FromLong)
-EXTERN(PyNumber_InPlaceLshift)
-EXTERN(PyMemoryView_FromObject)
-EXTERN(_Py_hashtable_hash_ptr)
-EXTERN(PyStructSequence_GetItem)
-EXTERN(PyUnicode_Partition)
-EXTERN(_Py_IsFinalizing)
-EXTERN(PyCode_Optimize)
-EXTERN(PyThread_tss_delete)
-EXTERN(_PyArg_BadArgument)
-EXTERN(_PyTraceMalloc_GetTraceback)
-EXTERN(PyMapping_Values)
-EXTERN(PyModule_GetFilename)
-EXTERN(PyInterpreterState_Next)
-EXTERN(PyBuffer_ToContiguous)
-EXTERN(_PyUnicode_AsASCIIString)
-EXTERN(Py_AddPendingCall)
-EXTERN(PyErr_Occurred)
-EXTERN(PyType_GetModuleByDef)
-EXTERN(_PyDict_DebugMallocStats)
-EXTERN(PyFrozenSet_New)
-EXTERN(_PyLong_FromBytes)
-EXTERN(PyModule_AddObject)
-EXTERN(_PyEval_SliceIndexNotNone)
-EXTERN(PyThread_tss_is_created)
-EXTERN(_Py_DecRef)
-EXTERN(Py_DecodeLocale)
-EXTERN(_PyBytes_FormatEx)
-EXTERN(PyErr_GivenExceptionMatches)
-EXTERN(PyThread_start_new_thread)
-EXTERN(_Py_FatalErrorFunc)
-EXTERN(_Py_GetErrorHandler)
-EXTERN(PyRun_InteractiveLoopFlags)
-EXTERN(PyInterpreterState_Clear)
-EXTERN(PyUnicode_BuildEncodingMap)
-EXTERN(Py_GetPrefix)
-EXTERN(PyObject_CallFinalizerFromDealloc)
-EXTERN(PyMarshal_ReadLastObjectFromFile)
-EXTERN(PySys_SetPath)
-EXTERN(PyErr_ResourceWarning)
-EXTERN(PyCodec_Decoder)
-EXTERN(PyUnicode_AsCharmapString)
-EXTERN(PyOS_getsig)
-EXTERN(PyNumber_Rshift)
-EXTERN(PyByteArray_FromStringAndSize)
-EXTERN(PyNumber_InPlaceXor)
-EXTERN(Py_EnterRecursiveCall)
-EXTERN(_PyDict_MergeEx)
-EXTERN(Py_LeaveRecursiveCall)
-EXTERN(PyByteArray_FromObject)
-EXTERN(PyBuffer_GetPointer)
-EXTERN(PyCode_GetCellvars)
-EXTERN(_PyType_Lookup)
-EXTERN(_PyImport_ReleaseLock)
-EXTERN(PyLong_FromDouble)
-EXTERN(Py_NewRef)
-EXTERN(Py_InitializeEx)
-EXTERN(PyNumber_Positive)
-EXTERN(PyBytes_Size)
-EXTERN(_PyCrossInterpreterData_NewObject)
-EXTERN(Py_UniversalNewlineFgets)
-EXTERN(PyErr_Print)
-EXTERN(PySequence_InPlaceConcat)
-EXTERN(_PyRun_InteractiveLoopObject)
-EXTERN(PyStatus_IsExit)
-EXTERN(PyNumber_InPlaceRshift)
-EXTERN(PySequence_Size)
-EXTERN(PyObject_GetItem)
-EXTERN(PyErr_SetHandledException)
-EXTERN(_PyCodec_LookupTextEncoding)
-EXTERN(_PyTime_FromTimespec)
-EXTERN(PyObject_GetIter)
-EXTERN(_Py_GetAllocatedBlocks)
-EXTERN(_PyObject_CallFunction_SizeT)
-EXTERN(_Py_open)
-EXTERN(_PyErr_Display)
-EXTERN(PyObject_GC_IsFinalized)
-EXTERN(PyWeakref_GetObject)
-EXTERN(_PyInterpreterState_GetIDObject)
-EXTERN(Py_GenericAlias)
-EXTERN(PyUnicode_AsUCS4Copy)
-EXTERN(PyThread_get_thread_native_id)
-EXTERN(PyMemoryView_FromMemory)
-EXTERN(_PySlice_FromIndices)
-EXTERN(PyMarshal_ReadLongFromFile)
-EXTERN(PyOS_BeforeFork)
-EXTERN(PyObject_InitVar)
-EXTERN(_Py_DumpTracebackThreads)
-EXTERN(PyList_Append)
-EXTERN(PyThreadState_Swap)
-EXTERN(_PyTime_FromNanosecondsObject)
-EXTERN(PyObject_GetBuffer)
-EXTERN(_PyLong_UnsignedInt_Converter)
-EXTERN(PyThread_get_thread_ident)
-EXTERN(_PyObject_SetAttrId)
-EXTERN(PyNumber_AsSsize_t)
-EXTERN(_PyTime_AsMilliseconds)
-EXTERN(PyMember_SetOne)
-EXTERN(_PyImport_SetModule)
-EXTERN(_PyRun_AnyFileObject)
-EXTERN(Py_ExitStatusException)
-EXTERN(PyErr_FormatV)
-EXTERN(PyInit__string)
-EXTERN(PyErr_SyntaxLocationObject)
-EXTERN(PyEval_GetGlobals)
-EXTERN(_PyObject_CallMethod_SizeT)
-EXTERN(PyMapping_Check)
-EXTERN(_PyTime_gmtime)
-EXTERN(PyObject_DelItemString)
-EXTERN(_PyCrossInterpreterData_Release)
-EXTERN(PyUnicode_Append)
-EXTERN(Py_ReprEnter)
-EXTERN(_Py_strhex)
-EXTERN(_PyTime_GetPerfCounterWithInfo)
-EXTERN(PyModule_AddObjectRef)
-EXTERN(PyMapping_HasKeyString)
-EXTERN(Py_GetArgcArgv)
-EXTERN(PyInit__codecs)
-EXTERN(PyUnicode_DecodeCharmap)
-EXTERN(PyObject_CallFunctionObjArgs)
-EXTERN(PyModule_NewObject)
-EXTERN(PyImport_ImportModuleNoBlock)
-EXTERN(_PyUnicode_FindMaxChar)
-EXTERN(_Py_IncRef)
-EXTERN(PyFloat_GetMin)
-EXTERN(PyUnicode_AsWideCharString)
-EXTERN(_PyImport_FixupExtensionObject)
-EXTERN(PySequence_Check)
-EXTERN(PyBytes_Concat)
-EXTERN(PyDescr_NewClassMethod)
-EXTERN(_PyTime_ObjectToTime_t)
-EXTERN(_PyTime_GetMonotonicClock)
-EXTERN(_PyErr_ChainExceptions)
-EXTERN(PyObject_GetAIter)
-EXTERN(PyUnicodeDecodeError_GetObject)
-EXTERN(_Py_hashtable_new_full)
-EXTERN(_PyTuple_Resize)
-EXTERN(PyStatus_NoMemory)
-EXTERN(PyEval_AcquireThread)
-EXTERN(_PyTime_AsTimespec)
-EXTERN(PyThreadState_LeaveTracing)
-EXTERN(PyNumber_Power)
-EXTERN(PyUnicodeEncodeError_GetEnd)
-EXTERN(PyErr_SetFromErrnoWithFilename)
-EXTERN(PyErr_ProgramText)
-EXTERN(PyCapsule_GetPointer)
-EXTERN(PyDict_GetItemString)
-EXTERN(_Py_gitversion)
-EXTERN(_PyUnicode_IsXidStart)
-EXTERN(_PyUnicode_WideCharString_Opt_Converter)
-EXTERN(PyFrame_LocalsToFast)
-EXTERN(_PyImport_SetModuleString)
-EXTERN(_PyObject_GenericSetAttrWithDict)
-EXTERN(_Py_GetLocaleEncoding)
-EXTERN(_PyObject_GC_NewVar)
-EXTERN(_Py_set_inheritable_async_safe)
-EXTERN(PyNumber_TrueDivide)
-EXTERN(PyFunction_SetKwDefaults)
-EXTERN(_PyLong_UnsignedShort_Converter)
-EXTERN(PyMarshal_Init)
-EXTERN(PyObject_GC_UnTrack)
-EXTERN(PyFrame_FastToLocals)
-EXTERN(PyInterpreterState_GetID)
-EXTERN(PyNumber_Absolute)
-EXTERN(_PyCrossInterpreterData_RegisterClass)
-EXTERN(PyFunction_SetClosure)
-EXTERN(_Py_hashtable_new)
-EXTERN(_PyLong_FromByteArray)
-EXTERN(PyOS_setsig)
-EXTERN(_PyTraceBack_Print_Indented)
-EXTERN(PySys_SetObject)
-EXTERN(PyFrame_GetLineNumber)
-EXTERN(PyUnicode_AsEncodedUnicode)
-EXTERN(PyUnicode_DecodeRawUnicodeEscape)
-EXTERN(PyGen_NewWithQualName)
-EXTERN(PyEval_SetTrace)
-EXTERN(PyNumber_Divmod)
-EXTERN(_Py_DecodeUTF8_surrogateescape)
-EXTERN(PyObject_GenericSetDict)
-EXTERN(PyUnicode_FromStringAndSize)
-EXTERN(PyGC_IsEnabled)
-EXTERN(_PyArg_ParseTuple_SizeT)
-EXTERN(_PyErr_CheckSignals)
-EXTERN(PyCallable_Check)
-EXTERN(_PyErr_TrySetFromCause)
-EXTERN(_Py_device_encoding)
-EXTERN(PyNumber_InPlaceSubtract)
-EXTERN(PyLong_AsUnsignedLongMask)
-EXTERN(PyInterpreterState_Head)
-EXTERN(PyUnicode_DecodeUTF7)
-EXTERN(_PyLong_FromUid)
-EXTERN(Py_SetStandardStreamEncoding)
-EXTERN(_Py_VaBuildValue_SizeT)
-EXTERN(PyObject_SetAttrString)
-EXTERN(_PyUnicode_IsCaseIgnorable)
-EXTERN(PyUnicode_DecodeUTF8)
-EXTERN(_PyInterpreterState_SetConfig)
-EXTERN(PyContextVar_Reset)
-EXTERN(PyThread_tss_free)
-EXTERN(PyImport_AppendInittab)
-EXTERN(PySet_Clear)
-EXTERN(_Py_FatalErrorFormat)
-EXTERN(PyUnicode_Compare)
-EXTERN(PyFunction_GetAnnotations)
-EXTERN(PyThread_acquire_lock)
-EXTERN(PyUnicode_AsUnicode)
-EXTERN(PyCode_New)
-EXTERN(PyInit_posix)
-EXTERN(PyErr_SetFromErrnoWithFilenameObject)
-EXTERN(PySet_Contains)
-EXTERN(PySlice_GetIndicesEx)
-EXTERN(Py_GetCompiler)
-EXTERN(_PyUnicode_ToDecimalDigit)
-EXTERN(Py_CompileString)
-EXTERN(_PyObject_LookupSpecial)
-EXTERN(_PyInterpreterID_LookUp)
-EXTERN(PyUnicode_FromString)
-EXTERN(PyObject_Repr)
-EXTERN(PyState_FindModule)
-EXTERN(Py_IsNone)
-EXTERN(_PyPathConfig_ClearGlobal)
-EXTERN(PyMethod_Function)
-EXTERN(PyErr_SetObject)
-EXTERN(_PyObject_FunctionStr)
-EXTERN(_Py_HandleSystemExit)
-EXTERN(PyEval_MergeCompilerFlags)
-EXTERN(_Py_IsLocaleCoercionTarget)
-EXTERN(_PyUnicode_XStrip)
-EXTERN(PyObject_CallObject)
-EXTERN(_Py_Dealloc)
-EXTERN(_PyUnicode_IsCased)
-EXTERN(PyUnicode_FromKindAndData)
-EXTERN(PyCodec_StreamReader)
-EXTERN(_PyUnicodeWriter_Finish)
-EXTERN(PyUnicode_DecodeFSDefaultAndSize)
-EXTERN(_PyGen_SetStopIterationValue)
-EXTERN(_PyInterpreterState_GetConfigCopy)
-EXTERN(PyDict_Contains)
-EXTERN(PyUnicode_Substring)
-EXTERN(PyRun_InteractiveOneObject)
-EXTERN(_PyRuntime_Initialize)
-EXTERN(_PyRun_SimpleFileObject)
-EXTERN(PyNumber_Or)
-EXTERN(PyUnicode_RSplit)
-EXTERN(PyRun_SimpleFileExFlags)
-EXTERN(Py_DecRef)
-EXTERN(PyUnicode_DecodeUTF32Stateful)
-EXTERN(_PyBytes_Join)
-EXTERN(_Py_gitidentifier)
-EXTERN(PyType_FromSpec)
-EXTERN(PyInit_gc)
-EXTERN(PyConfig_InitIsolatedConfig)
-EXTERN(PyMethod_New)
-EXTERN(Py_SetProgramName)
-EXTERN(PyUnicodeTranslateError_GetEnd)
-EXTERN(_PyRuntimeState_Fini)
-EXTERN(PyUnicode_FromUnicode)
-EXTERN(PyBytes_FromString)
-EXTERN(PyUnicodeTranslateError_SetStart)
-EXTERN(_PyArg_ParseTupleAndKeywords_SizeT)
-EXTERN(Py_FinalizeEx)
-EXTERN(_PyAST_Compile)
-EXTERN(_PyInterpreterState_LookUpID)
-EXTERN(_PyUnicode_WideCharString_Converter)
-EXTERN(PyImport_GetModuleDict)
-EXTERN(PySys_HasWarnOptions)
-EXTERN(PyModule_AddIntConstant)
-EXTERN(PyUnicode_InternInPlace)
-EXTERN(PyObject_LengthHint)
-EXTERN(PyContext_Exit)
-EXTERN(_PyModule_ClearDict)
-EXTERN(PyConfig_SetString)
-EXTERN(PyConfig_SetBytesArgv)
-EXTERN(PyEval_EvalFrameEx)
-EXTERN(PyUnicodeEncodeError_SetEnd)
-EXTERN(PyIter_Check)
-EXTERN(PyState_AddModule)
-EXTERN(PyInit__tracemalloc)
-EXTERN(PySys_AddWarnOptionUnicode)
-EXTERN(PyObject_IS_GC)
-EXTERN(PyContext_Copy)
-EXTERN(PyUnicode_DecodeFSDefault)
-EXTERN(PyStaticMethod_New)
-EXTERN(_PyType_Name)
-EXTERN(PyInit__symtable)
-EXTERN(PyInit_time)
-EXTERN(_Py_str_to_int)
-EXTERN(_Py_GetConfig)
-EXTERN(PyCell_Set)
-EXTERN(PyContextVar_New)
-EXTERN(PyNumber_MatrixMultiply)
-EXTERN(PyRun_SimpleStringFlags)
-EXTERN(PyCoro_New)
-EXTERN(PyModule_AddStringConstant)
-EXTERN(PyUnicode_GetLength)
-EXTERN(_PyErr_Clear)
-EXTERN(_PyUnicode_JoinArray)
-EXTERN(PyAsyncGen_New)
-EXTERN(PyWideStringList_Insert)
-EXTERN(_PyTime_AsTimespec_clamp)
-EXTERN(_Py_wrealpath)
-EXTERN(_PyDebugAllocatorStats)
-EXTERN(_Py_VaBuildStack)
-EXTERN(PyEval_CallFunction)
-EXTERN(_PyGILState_GetInterpreterStateUnsafe)
-EXTERN(_Py_string_to_number_with_underscores)
-EXTERN(_Py_strhex_bytes)
-EXTERN(_PyUnicode_EQ)
-EXTERN(PyException_GetContext)
-EXTERN(PyEval_GetBuiltins)
-EXTERN(PyMapping_HasKey)
-EXTERN(_PyAccu_Init)
-EXTERN(PyImport_ImportModuleLevel)
-EXTERN(PyGC_Collect)
-EXTERN(_PyUnicodeWriter_Dealloc)
-EXTERN(_PyTrash_begin)
-EXTERN(PyStructSequence_NewType)
-EXTERN(_PyUnicode_IsNumeric)
-EXTERN(PyThread_exit_thread)
-EXTERN(PyInit__imp)
-EXTERN(_PyLong_AsByteArray)
-EXTERN(PyThread_init_thread)
-EXTERN(PyUnicode_Count)
-EXTERN(PyErr_SetImportError)
-EXTERN(_PyCodecInfo_GetIncrementalEncoder)
-EXTERN(PyEval_GetFrame)
-EXTERN(PyLong_FromUnsignedLong)
-EXTERN(PyUnicode_FromEncodedObject)
-EXTERN(PyMem_RawMalloc)
-EXTERN(_PyUnicode_EqualToASCIIId)
-EXTERN(_PyBytes_FromHex)
-EXTERN(_PyObject_GC_Resize)
-EXTERN(Py_GetProgramFullPath)
-EXTERN(PyEval_EvalCodeEx)
-EXTERN(_Py_PreInitializeFromConfig)
-EXTERN(_Py_write)
-EXTERN(PyArg_Parse)
-EXTERN(PyInstanceMethod_Function)
-EXTERN(PyObject_Free)
-EXTERN(_Py_SourceAsString)
-EXTERN(_PyObject_GetMethod)
-EXTERN(_PyErr_Restore)
-EXTERN(PyGILState_GetThisThreadState)
-EXTERN(PyUnicodeDecodeError_Create)
-EXTERN(_PyTime_GetSystemClock)
-EXTERN(PyLong_AsSsize_t)
-EXTERN(_PyLong_NumBits)
-EXTERN(PyErr_SyntaxLocation)
-EXTERN(PyNumber_And)
-EXTERN(PyType_FromSpecWithBases)
-EXTERN(_Py_DumpExtensionModules)
-EXTERN(_PyEval_RequestCodeExtraIndex)
-EXTERN(PyObject_GC_Del)
-EXTERN(_Py_BreakPoint)
-EXTERN(_PyErr_GetHandledException)
-EXTERN(PyLong_AsLongLongAndOverflow)
-EXTERN(_PyDict_Contains_KnownHash)
-EXTERN(PyCode_Addr2Line)
-EXTERN(PyRun_AnyFileExFlags)
-EXTERN(_Py_HashBytes)
-EXTERN(PyOS_strtoul)
-EXTERN(_PyArg_VaParse_SizeT)
-EXTERN(PyImport_ReloadModule)
-EXTERN(_PyDict_DelItem_KnownHash)
-EXTERN(PyObject_ASCII)
-EXTERN(_PyObject_GenericGetAttrWithDict)
-EXTERN(PyObject_RichCompare)
-EXTERN(PySequence_Fast)
-EXTERN(PyMapping_Items)
-EXTERN(PyObject_GC_Track)
-EXTERN(PyUnicode_AsEncodedString)
-EXTERN(PyDict_Copy)
-EXTERN(PyUnicodeEncodeError_GetObject)
-EXTERN(Py_Main)
-EXTERN(_PyUnicode_FormatLong)
-EXTERN(PyModule_GetFilenameObject)
-EXTERN(PyLong_AsVoidPtr)
-EXTERN(_PyEval_SetTrace)
-EXTERN(PyFunction_SetDefaults)
-EXTERN(_Py_WriteIndent)
-EXTERN(PyUnicodeTranslateError_SetEnd)
-EXTERN(_PyUnicode_ToUppercase)
-EXTERN(Py_EncodeLocale)
-EXTERN(PyDict_SetItemString)
-EXTERN(_PyDict_HasOnlyStringKeys)
-EXTERN(_PyWarnings_Init)
-EXTERN(PyCFunction_NewEx)
-EXTERN(PyCodec_ReplaceErrors)
-EXTERN(_PyEval_GetSwitchInterval)
-EXTERN(PyErr_NewException)
-EXTERN(_PyBytesWriter_WriteBytes)
-EXTERN(_PyArg_ParseStackAndKeywords_SizeT)
-EXTERN(PyDict_GetItemWithError)
-EXTERN(_PyBytes_Resize)
-EXTERN(PyStructSequence_SetItem)
-EXTERN(_PyErr_NormalizeException)
-EXTERN(PyObject_GC_IsTracked)
-EXTERN(PyUnicode_Replace)
-EXTERN(PyInit__functools)
-EXTERN(PyLong_AsLongLong)
-EXTERN(Py_CompileStringFlags)
-EXTERN(_PyTime_GetPerfCounter)
-EXTERN(PyErr_NormalizeException)
-EXTERN(PyList_GetSlice)
-EXTERN(PyLong_AsUnsignedLong)
-EXTERN(PyThreadState_Get)
-EXTERN(_PyTime_Add)
-EXTERN(PyUnicode_AsUTF8String)
-EXTERN(_PyThreadState_Prealloc)
-EXTERN(PyErr_WriteUnraisable)
-EXTERN(PySlice_New)
-EXTERN(_PyUnicode_AsUTF8String)
-EXTERN(PyFunction_GetDefaults)
-EXTERN(PyFrame_FastToLocalsWithError)
-EXTERN(_PyErr_SetObject)
-EXTERN(_PyLong_FormatAdvancedWriter)
-EXTERN(PyMethod_Self)
-EXTERN(_PyBytesWriter_Init)
-EXTERN(_Py_hashtable_compare_direct)
-EXTERN(_Py_CheckRecursiveCall)
-EXTERN(PyType_GetSlot)
-EXTERN(PyUnicode_AsWideChar)
-EXTERN(PyObject_AsCharBuffer)
-EXTERN(_PyObject_GetCrossInterpreterData)
-EXTERN(_Py_ClearArgcArgv)
-EXTERN(PyObject_GetAttrString)
-EXTERN(PyDescr_NewMember)
-EXTERN(PyBuffer_Release)
-EXTERN(PyEval_EvalFrame)
-EXTERN(_Py_set_blocking)
-EXTERN(PyList_Reverse)
-EXTERN(_PyUnicodeWriter_WriteChar)
-EXTERN(PyCodec_KnownEncoding)
-EXTERN(_PyTime_FromSecondsObject)
-EXTERN(PyDict_SetDefault)
-EXTERN(_PyType_GetDocFromInternalDoc)
-EXTERN(_PyNumber_Index)
-EXTERN(PyEval_AcquireLock)
-EXTERN(PyUnicode_FromObject)
-EXTERN(PyAIter_Check)
-EXTERN(PyEval_CallObjectWithKeywords)
-EXTERN(_PyCodec_Lookup)
-EXTERN(PyMarshal_ReadObjectFromFile)
-EXTERN(_Py_c_sum)
-EXTERN(_PyUnicode_EncodeUTF16)
-EXTERN(PyType_GetModuleState)
-EXTERN(PyOS_string_to_double)
-EXTERN(PyType_GetName)
-EXTERN(_PyInterpreterState_IDIncref)
-EXTERN(_PyUnicode_FastCopyCharacters)
-EXTERN(PyMarshal_WriteLongToFile)
-EXTERN(_Py_Uid_Converter)
-EXTERN(PyObject_SetItem)
-EXTERN(PyUnicode_Decode)
-EXTERN(PyOS_vsnprintf)
-EXTERN(PySys_SetArgvEx)
-EXTERN(PyType_IsSubtype)
-EXTERN(PyRun_SimpleFile)
-EXTERN(Py_GetVersion)
-EXTERN(_PyFrame_IsEntryFrame)
-EXTERN(PyNumber_Float)
-EXTERN(PyCallIter_New)
-EXTERN(Py_MakePendingCalls)
-EXTERN(PyBuffer_SizeFromFormat)
-EXTERN(_PyUnicodeWriter_PrepareKindInternal)
-EXTERN(_PyDeadline_Get)
-EXTERN(PyCodec_Unregister)
-EXTERN(_PyUnicodeWriter_PrepareInternal)
-EXTERN(PyEval_ReleaseThread)
-EXTERN(PyErr_WarnExplicitFormat)
-EXTERN(PyFunction_GetClosure)
-EXTERN(PyErr_SetImportErrorSubclass)
-EXTERN(PyFloat_FromDouble)
-EXTERN(_Py_get_env_flag)
-EXTERN(PyCompile_OpcodeStackEffectWithJump)
-EXTERN(PyBytes_FromObject)
-EXTERN(Py_RunMain)
-EXTERN(_PyCodec_EncodeText)
-EXTERN(_PyRuntime_Finalize)
-EXTERN(Py_PreInitialize)
-EXTERN(_Py_fstat_noraise)
-EXTERN(_PyUnicode_ToUpperFull)
-EXTERN(_PyObject_IsFreed)
-EXTERN(PyFunction_New)
-EXTERN(PyObject_CheckBuffer)
-EXTERN(_Py_open_noraise)
-EXTERN(PyBuffer_FillInfo)
-EXTERN(_Py_hashtable_destroy)
-EXTERN(PyNumber_Index)
-EXTERN(PyList_AsTuple)
-EXTERN(_PyLong_FromGid)
-EXTERN(_PyUnicodeWriter_WriteASCIIString)
-EXTERN(PyInit_itertools)
-EXTERN(PyCodec_Encoder)
-EXTERN(_PyLong_FormatBytesWriter)
-EXTERN(PyUnicode_Join)
-EXTERN(PyEval_SaveThread)
-EXTERN(Py_GetPath)
-EXTERN(_Py_SetLocaleFromEnv)
-EXTERN(_Py_GetConfigsAsDict)
-EXTERN(PySequence_Count)
-EXTERN(PyOS_InterruptOccurred)
-EXTERN(PyException_SetTraceback)
-EXTERN(PyDescr_IsData)
-EXTERN(PySequence_GetSlice)
-EXTERN(PyUnicode_AsUnicodeEscapeString)
-EXTERN(PyUnicode_FindChar)
-EXTERN(_PyDict_GetItemWithError)
-EXTERN(PyUnicode_DecodeUTF16)
-EXTERN(PyType_Modified)
-EXTERN(PyLong_FromString)
-EXTERN(PyUnicode_DecodeUnicodeEscape)
-EXTERN(PySequence_InPlaceRepeat)
-EXTERN(_PyEval_GetBuiltinId)
-EXTERN(PySequence_Concat)
-EXTERN(PyNumber_InPlaceOr)
-EXTERN(_PyInterpreterState_GetMainModule)
-EXTERN(_PyType_CalculateMetaclass)
-EXTERN(Py_FdIsInteractive)
-EXTERN(PyLong_AsSize_t)
-EXTERN(_PyArg_ParseStackAndKeywords)
-EXTERN(PyUnicodeDecodeError_GetReason)
-EXTERN(_PyUnicode_ScanIdentifier)
-EXTERN(PyNumber_Remainder)
-EXTERN(_PyArg_NoPositional)
-EXTERN(_PyArg_ParseTupleAndKeywordsFast)
-EXTERN(PyOS_mystricmp)
-EXTERN(PyFrame_GetBuiltins)
-EXTERN(PyObject_SetArenaAllocator)
-EXTERN(PyDict_Next)
-EXTERN(PyMapping_GetItemString)
-EXTERN(_PyUnicode_EncodeUTF32)
-EXTERN(_PyLong_AsTime_t)
-EXTERN(_PyDeadline_Init)
-EXTERN(_PyConfig_AsDict)
-EXTERN(PyNumber_InPlaceAdd)
-EXTERN(_PyThreadState_GetDict)
-EXTERN(_PyModule_CreateInitialized)
-EXTERN(_PyObject_LookupAttrId)
-EXTERN(Py_Initialize)
-EXTERN(PyBytes_AsStringAndSize)
-EXTERN(_Py_CheckFunctionResult)
-EXTERN(PyInit__io)
-EXTERN(PyToken_OneChar)
-EXTERN(_Py_strhex_with_sep)
-EXTERN(_PyUnicode_IsUppercase)
-EXTERN(PyUnicode_DecodeLocale)
-EXTERN(PyCodec_Decode)
-EXTERN(PyODict_DelItem)
-EXTERN(PyNumber_InPlaceMatrixMultiply)
-EXTERN(PyEval_InitThreads)
-EXTERN(PyUnicode_AsDecodedUnicode)
-EXTERN(_PyWeakref_ClearRef)
-EXTERN(PyObject_CopyData)
-EXTERN(_PyLong_UnsignedLong_Converter)
-EXTERN(PyFloat_AsDouble)
-EXTERN(PyUnicode_Translate)
-EXTERN(PyLong_FromLongLong)
-EXTERN(_PyDict_SetItem_KnownHash)
-EXTERN(PyErr_SetInterrupt)
-EXTERN(_PyNamespace_New)
-EXTERN(_PyStack_AsDict)
-EXTERN(_PyContext_NewHamtForTests)
-EXTERN(_PyLong_Copy)
-EXTERN(PyMem_SetupDebugHooks)
-EXTERN(_PyCode_SetExtra)
-EXTERN(PyComplex_RealAsDouble)
-EXTERN(_PyInterpreterState_RequiresIDRef)
-EXTERN(PyErr_WarnEx)
-EXTERN(PyType_FromModuleAndSpec)
-EXTERN(_Py_hashtable_set)
-EXTERN(PyUnicode_AsUTF16String)
-EXTERN(_PyModuleSpec_IsInitializing)
-EXTERN(_PyMem_SetupAllocators)
-EXTERN(_PyErr_Print)
-EXTERN(PyLong_AsUnsignedLongLongMask)
-EXTERN(PySet_Discard)
-EXTERN(PyDescr_NewGetSet)
-EXTERN(_PyErr_SetNone)
-EXTERN(PyFile_OpenCode)
-EXTERN(PyInit__abc)
-EXTERN(PyThread_acquire_lock_timed)
-EXTERN(_PyEval_EvalFrameDefault)
-EXTERN(_PyOS_IsMainThread)
-EXTERN(_PyErr_ChainStackItem)
-EXTERN(PyUnicode_AsUnicodeAndSize)
-EXTERN(PyErr_Display)
-EXTERN(PyInit__weakref)
-EXTERN(_PyUnicode_IsDecimalDigit)
-EXTERN(PyUnicode_DecodeUTF32)
-EXTERN(_PyEval_SetSwitchInterval)
-EXTERN(_PyEval_SignalAsyncExc)
-EXTERN(PyUnicode_GetSize)
-EXTERN(PyUnicode_AsEncodedObject)
-EXTERN(_Py_DumpTraceback)
-EXTERN(_PyErr_SetKeyError)
-EXTERN(PyUnicode_FromOrdinal)
-EXTERN(PyCodec_XMLCharRefReplaceErrors)
-EXTERN(PyByteArray_Size)
-EXTERN(PyMapping_Keys)
-EXTERN(_PyAccu_Destroy)
-EXTERN(PyUnicodeEncodeError_GetStart)
-EXTERN(PyInterpreterState_Get)
-EXTERN(PyImport_ExecCodeModule)
-EXTERN(PyObject_Vectorcall)
-EXTERN(_PyUnicode_DecodeRawUnicodeEscapeStateful)
-EXTERN(PyCodec_Encode)
-EXTERN(_PyDict_SizeOf)
-EXTERN(_PyDictView_New)
-EXTERN(PyErr_ProgramTextObject)
-EXTERN(_PyBytesWriter_Prepare)
-EXTERN(PyErr_SetNone)
-EXTERN(PyException_SetCause)
-EXTERN(_Py_dup)
-EXTERN(PyObject_CheckReadBuffer)
-EXTERN(_PyUnicode_ToLowercase)
-EXTERN(PyRun_String)
-EXTERN(PyCFunction_New)
-EXTERN(PyClassMethod_New)
-EXTERN(_PyObject_Call_Prepend)
-EXTERN(PyThread_get_key_value)
-EXTERN(_Py_hashtable_foreach)
-EXTERN(PyModule_ExecDef)
-EXTERN(PyErr_GetHandledException)
-EXTERN(PyTraceMalloc_Track)
-EXTERN(_PyBytes_ReverseFind)
-EXTERN(_PyImport_GetModuleId)
-EXTERN(PyByteArray_Resize)
-EXTERN(_PyObject_GetAttrId)
-EXTERN(_PyLong_Format)
-EXTERN(PyList_GetItem)
-EXTERN(Py_VaBuildValue)
-EXTERN(PyObject_Print)
-EXTERN(PyByteArray_AsString)
-EXTERN(PyLong_AsLong)
-EXTERN(PyFile_SetOpenCodeHook)
-EXTERN(PyObject_GenericGetAttr)
-EXTERN(PyObject_Hash)
-EXTERN(_PyObject_CallMethodId_SizeT)
-EXTERN(_Py_dg_infinity)
-EXTERN(PyPreConfig_InitPythonConfig)
-EXTERN(Py_GetRecursionLimit)
-EXTERN(_PyWideStringList_Clear)
-EXTERN(PyInterpreterState_Main)
-EXTERN(Py_GETENV)
-EXTERN(_PyEval_SetProfile)
-EXTERN(PyImport_ImportModule)
-EXTERN(_PyGen_FetchStopIterationValue)
-EXTERN(Py_BytesMain)
-EXTERN(PyImport_ExecCodeModuleObject)
-EXTERN(PyDescr_NewWrapper)
-EXTERN(PyErr_Format)
-EXTERN(PySet_New)
-EXTERN(PyObject_Not)
-EXTERN(PyDict_DelItem)
-EXTERN(_PyUnicode_IsWhitespace)
-EXTERN(_Py_EncodeLocaleEx)
-EXTERN(_PyLong_Sign)
-EXTERN(_PyInterpreterState_IDInitref)
-EXTERN(PyConfig_SetWideStringList)
-EXTERN(_PyLong_AsInt)
-EXTERN(_PyMem_GetAllocatorName)
-EXTERN(PyFunction_GetModule)
-EXTERN(PyUnicodeDecodeError_SetStart)
-EXTERN(_PyErr_NoMemory)
-EXTERN(PyThread_ReInitTLS)
-EXTERN(PyUnicode_AsUTF8)
-EXTERN(PyUnicode_RPartition)
-EXTERN(_PyErr_SetString)
-EXTERN(_PyObject_IsAbstract)
-EXTERN(PyNumber_Invert)
-EXTERN(PyObject_CallOneArg)
-EXTERN(PyObject_ClearWeakRefs)
-EXTERN(_Py_dg_strtod)
-EXTERN(_Py_VaBuildStack_SizeT)
-EXTERN(PyFile_NewStdPrinter)
-EXTERN(_PyObject_FastCallDictTstate)
-EXTERN(PyVectorcall_Call)
-EXTERN(_PyMem_GetCurrentAllocatorName)
-EXTERN(PyContextVar_Set)
-EXTERN(PyType_GetQualName)
-EXTERN(_PyUnicode_CheckConsistency)
-EXTERN(_Py_write_noraise)
-EXTERN(PyFrame_GetGlobals)
-EXTERN(_Py_get_blocking)
-EXTERN(PyUnicode_FromFormatV)
-EXTERN(PyErr_BadInternalCall)
-EXTERN(_PyErr_Format)
-EXTERN(_Py_HashPointerRaw)
-EXTERN(_PyLong_New)
-EXTERN(PyUnicodeTranslateError_SetReason)
-EXTERN(PyDict_MergeFromSeq2)
-EXTERN(PyFrame_New)
-EXTERN(PyFunction_NewWithQualName)
-EXTERN(PyMem_RawCalloc)
-EXTERN(PyCodec_IncrementalEncoder)
-EXTERN(_PyType_GetTextSignatureFromInternalDoc)
-EXTERN(_PyObject_NewVar)
-EXTERN(PyStructSequence_New)
-EXTERN(PyODict_SetItem)
-EXTERN(_PyThread_CurrentFrames)
-EXTERN(_PyTime_GetMonotonicClockWithInfo)
-EXTERN(PyImport_GetMagicTag)
-EXTERN(_PyWideStringList_Copy)
-EXTERN(_PyCode_ConstantKey)
-EXTERN(PyImport_ExtendInittab)
-EXTERN(PyEval_GetLocals)
-EXTERN(PyRun_FileFlags)
-EXTERN(_Py_SetProgramFullPath)
-EXTERN(PyRun_File)
-EXTERN(_PyFloat_FormatAdvancedWriter)
-EXTERN(PyMem_Free)
-EXTERN(PyErr_NoMemory)
-EXTERN(PyCompile_OpcodeStackEffect)
-EXTERN(_PyObject_New)
-EXTERN(_PyInterpreterState_GetConfig)
-EXTERN(PyFunction_SetAnnotations)
-EXTERN(PyInit_atexit)
-EXTERN(_PyUnicode_ToLowerFull)
-EXTERN(_Py_closerange)
-EXTERN(PyThreadState_GetDict)
-EXTERN(PyWeakref_NewProxy)
-EXTERN(PySlice_AdjustIndices)
-EXTERN(PyModuleDef_Init)
-EXTERN(PyModule_Create2)
-EXTERN(_Py_GetEnv)
-EXTERN(PyMem_RawFree)
-EXTERN(_PyUnicode_Equal)
-EXTERN(PyLong_AsLongAndOverflow)
-EXTERN(_Py_c_neg)
-EXTERN(_PyUnicode_ToNumeric)
-EXTERN(_PyTrash_cond)
-EXTERN(PyThreadState_Next)
-EXTERN(PyMapping_Size)
-EXTERN(PyIter_Send)
-EXTERN(_PyArena_New)
-EXTERN(PyTuple_GetSlice)
-EXTERN(PySys_WriteStdout)
-EXTERN(PyCodec_IgnoreErrors)
-EXTERN(PyFile_GetLine)
-EXTERN(_Py_Gid_Converter)
-EXTERN(PyMem_GetAllocator)
-EXTERN(PyErr_SetExcInfo)
-EXTERN(PyTraceBack_Here)
-EXTERN(_Py_normpath)
-EXTERN(PySys_AddWarnOption)
-EXTERN(PyImport_AddModuleObject)
-EXTERN(PyGILState_Check)
-EXTERN(PyCell_Get)
-EXTERN(PyArg_UnpackTuple)
-EXTERN(PyUnicodeEncodeError_GetReason)
-EXTERN(PyRun_InteractiveOne)
-EXTERN(_Py_InitializeMain)
-EXTERN(PyEval_ReleaseLock)
-EXTERN(_PyObject_HasLen)
-EXTERN(PyMapping_SetItemString)
-EXTERN(Py_CompileStringObject)
-EXTERN(_Py_add_one_to_index_C)
-EXTERN(PyLong_FromUnsignedLongLong)
-EXTERN(PyThread_tss_create)
-EXTERN(PyModule_AddType)
-EXTERN(PyObject_AsFileDescriptor)
-EXTERN(PyImport_ImportFrozenModule)
-EXTERN(_Py_add_one_to_index_F)
-EXTERN(PyException_GetTraceback)
-EXTERN(_PyUnicode_TransformDecimalAndSpaceToASCII)
-EXTERN(_PyDict_Pop)
-EXTERN(PyObject_Size)
-EXTERN(PyErr_Fetch)
-EXTERN(_PyUnicode_InsertThousandsGrouping)
-EXTERN(PyFrame_GetLasti)
-EXTERN(_PyObject_AssertFailed)
-EXTERN(_PyInterpreterState_GetEvalFrameFunc)
-EXTERN(_PyErr_GetTopmostException)
-EXTERN(PyModule_GetDict)
-EXTERN(PyDict_Merge)
-EXTERN(PyArg_ParseTupleAndKeywords)
-EXTERN(_Py_ResetForceASCII)
-EXTERN(_PyUnicode_IsLinebreak)
-EXTERN(_PyTime_FromSeconds)
-EXTERN(PyMem_Malloc)
-EXTERN(PyBytes_ConcatAndDel)
-EXTERN(_PyInterpreterState_SetEvalFrameFunc)
-EXTERN(_PyStructSequence_NewType)
-EXTERN(_PyUnicode_Copy)
-EXTERN(_PySys_GetSizeOf)
-EXTERN(PyByteArray_Concat)
-EXTERN(_PyArg_ParseStack)
-EXTERN(_PyUnicode_IsLowercase)
-EXTERN(_Py_RestoreSignals)
-EXTERN(_PyObject_RealIsInstance)
-EXTERN(PyUnicode_WriteChar)
-EXTERN(PyThread_tss_set)
-EXTERN(_PyBytes_Find)
-EXTERN(PyRun_AnyFileEx)
-EXTERN(PyModule_GetDef)
-EXTERN(PyTuple_SetItem)
-EXTERN(Py_PreInitializeFromBytesArgs)
-EXTERN(_PySlice_GetLongIndices)
-EXTERN(_PyBytesWriter_Alloc)
-EXTERN(PyOS_FSPath)
-EXTERN(PyDict_SetItem)
-EXTERN(Py_GetBuildInfo)
-EXTERN(PyIter_Next)
-EXTERN(PyObject_IsInstance)
-EXTERN(PyMem_RawRealloc)
-EXTERN(Py_IsInitialized)
-EXTERN(PyUnicode_GetDefaultEncoding)
-EXTERN(Py_EndInterpreter)
-EXTERN(_Py_GetLocaleconvNumeric)
-EXTERN(_PyUnicode_FromId)
-EXTERN(_PyArg_NoKeywords)
-EXTERN(PyErr_CheckSignals)
-EXTERN(PyObject_HasAttrString)
-EXTERN(_PyCode_New)
-EXTERN(PyImport_GetImporter)
-EXTERN(_Py_BuildValue_SizeT)
-EXTERN(PyRun_SimpleFileEx)
-EXTERN(PyGILState_Release)
-EXTERN(_PySequence_IterSearch)
-EXTERN(_PyInterpreterState_IDDecref)
-EXTERN(_PyUnicode_DecodeUnicodeEscapeInternal)
-EXTERN(_PyTuple_MaybeUntrack)
-EXTERN(_Py_DumpASCII)
+-U PyMarshal_WriteObjectToString
+-U PyThread_release_lock
+-U _PyModule_Clear
+-U PyNumber_Xor
+-U PyBytes_DecodeEscape
+-U PyObject_Realloc
+-U _PyArg_VaParseTupleAndKeywordsFast_SizeT
+-U _Py_stat
+-U _PyErr_GetExcInfo
+-U Py_Is
+-U PyImport_AddModule
+-U _PyArg_ParseStack_SizeT
+-U PyUnicodeTranslateError_GetObject
+-U PyFrame_GetLocals
+-U _PyObject_Call
+-U PyUnicodeDecodeError_GetEncoding
+-U PyModule_AddFunctions
+-U PyNumber_Negative
+-U PyList_Size
+-U PyObject_CallFinalizer
+-U PyNumber_FloorDivide
+-U PyErr_Restore
+-U PySequence_Tuple
+-U PyThread_set_key_value
+-U PyCapsule_SetContext
+-U PyInit__collections
+-U PySlice_Unpack
+-U _PyBytesWriter_Resize
+-U PyErr_BadArgument
+-U _PyArg_VaParseTupleAndKeywords_SizeT
+-U PyUnicodeDecodeError_GetEnd
+-U PyObject_Format
+-U PyNumber_Check
+-U PyOS_strtol
+-U PyFile_OpenCodeObject
+-U PyUnicode_FSConverter
+-U PyMarshal_WriteObjectToFile
+-U _PyImport_IsInitialized
+-U _PyTime_MulDiv
+-U PyPreConfig_InitIsolatedConfig
+-U PyImport_Import
+-U PyCapsule_GetDestructor
+-U _PyObject_Dump
+-U PyStatus_Ok
+-U PyOS_mystrnicmp
+-U PyThread_GetInfo
+-U _PyLong_DivmodNear
+-U PyCode_GetVarnames
+-U PyPickleBuffer_GetBuffer
+-U _PyOS_URandom
+-U PyThread_get_stacksize
+-U PyFile_WriteString
+-U PyToken_TwoChars
+-U Py_SetPath
+-U _PyTime_GetSystemClockWithInfo
+-U _PyType_CheckConsistency
+-U _PyLong_Size_t_Converter
+-U PyCMethod_New
+-U _PyAccu_Finish
+-U PyType_GenericNew
+-U PySequence_Length
+-U PyTuple_GetItem
+-U PyUnicode_Split
+-U _Py_HashPointer
+-U _PyThreadState_Swap
+-U PyLong_FromSize_t
+-U PyBuffer_IsContiguous
+-U Py_InitializeFromConfig
+-U PyWideStringList_Append
+-U PyOS_Readline
+-U PyDict_GetItem
+-U PyUnicode_EncodeLocale
+-U PyErr_SetFromErrnoWithFilenameObjects
+-U PyUnicode_InternFromString
+-U PyErr_PrintEx
+-U _Py_LegacyLocaleDetected
+-U _PyUnicode_DecodeUnicodeEscapeStateful
+-U PyInit__signal
+-U PyUnicode_FromWideChar
+-U PyErr_ExceptionMatches
+-U PyCodec_LookupError
+-U _PyObject_LookupSpecialId
+-U _PyTime_AsNanosecondsObject
+-U PyUnicode_Tailmatch
+-U _PyMem_RawStrdup
+-U PyComplex_FromCComplex
+-U _PyUnicode_Ready
+-U PyMarshal_ReadObjectFromString
+-U _PySet_NextEntry
+-U PyBytes_AsString
+-U _PyLong_FormatWriter
+-U PyCapsule_Import
+-U PyConfig_SetArgv
+-U PyLong_FromUnicodeObject
+-U _PyErr_ExceptionMatches
+-U _PyObject_MakeTpCall
+-U _Py_FatalRefcountErrorFunc
+-U Py_PreInitializeFromArgs
+-U PySymtable_Lookup
+-U _PyConfig_FromDict
+-U PyObject_CallNoArgs
+-U PyUnicodeTranslateError_GetStart
+-U PyToken_ThreeChars
+-U PySys_FormatStdout
+-U PyUnicode_Contains
+-U PyRun_StringFlags
+-U PyRun_AnyFileFlags
+-U PyImport_ImportFrozenModuleObject
+-U _PyLong_FromTime_t
+-U _PyObject_NextNotImplemented
+-U PyInit_faulthandler
+-U PyDictProxy_New
+-U PyFloat_FromString
+-U PyFrame_GetGenerator
+-U PyList_Insert
+-U _PyDict_NewPresized
+-U _PyErr_ProgramDecodedTextObject
+-U PyPickleBuffer_Release
+-U _PyLong_FileDescriptor_Converter
+-U _Py_fstat
+-U _PyImport_GetModuleAttrString
+-U PyEval_GetFuncDesc
+-U PyTraceBack_Print
+-U _PyUnicode_ToTitlecase
+-U PySys_AddXOption
+-U PyBytes_Repr
+-U Py_BuildValue
+-U PyNumber_Lshift
+-U Py_IsFalse
+-U _PyArena_Free
+-U PyConfig_InitPythonConfig
+-U _PyAccu_Accumulate
+-U PyUnicode_DecodeUTF8Stateful
+-U PyUnicodeDecodeError_SetReason
+-U _PyUnicode_FromASCII
+-U PyBuffer_FromContiguous
+-U PyOS_AfterFork_Parent
+-U PyDict_DelItemString
+-U _Py_fopen_obj
+-U PyEval_ThreadsInitialized
+-U PyMem_SetAllocator
+-U PyTuple_Size
+-U PySequence_Repeat
+-U _PyUnicodeTranslateError_Create
+-U _Py_HashDouble
+-U PyCode_GetCode
+-U PyFrame_GetCode
+-U PyEval_EvalCode
+-U PyNumber_InPlaceFloorDivide
+-U PyOS_AfterFork
+-U _PyConfig_InitCompatConfig
+-U PyType_GetModule
+-U PySet_Add
+-U PyThread_allocate_lock
+-U PyUnicode_Fill
+-U Py_AtExit
+-U Py_ReprLeave
+-U PyCodec_RegisterError
+-U PyDict_New
+-U PyInit__locale
+-U PyIndex_Check
+-U _Py_hashtable_size
+-U PyThreadState_New
+-U PyCFunction_Call
+-U PyUnicode_IsIdentifier
+-U PyUnicode_RichCompare
+-U PyImport_ImportModuleLevelObject
+-U _PyOS_InterruptOccurred
+-U Py_IsTrue
+-U _Py_NewReference
+-U PyObject_GetAttr
+-U PyStatus_Error
+-U _PyErr_BadInternalCall
+-U _PyDict_SetItemId
+-U _PyEval_GetBuiltin
+-U PyList_Sort
+-U _Py_dg_freedtoa
+-U PyUnicodeDecodeError_SetEnd
+-U PyThread_delete_key_value
+-U PyModule_FromDefAndSpec2
+-U _Py_CoerceLegacyLocale
+-U _PyTime_AsNanoseconds
+-U PyCode_NewEmpty
+-U PyRun_InteractiveOneFlags
+-U _Py_c_abs
+-U PyNumber_InPlaceAnd
+-U PyCode_Addr2Location
+-U _PyBytes_Repeat
+-U PyObject_CallMethod
+-U PyThread_free_lock
+-U PyObject_Dir
+-U PyFloat_Unpack2
+-U PyObject_AsReadBuffer
+-U PyCapsule_GetName
+-U PyCodec_StreamWriter
+-U _PyUnicodeWriter_WriteStr
+-U _Py_Get_Getpath_CodeObject
+-U PyFloat_Unpack4
+-U PyArg_VaParse
+-U _PyUnicode_AsUnicode
+-U _Py_dg_stdnan
+-U _PyType_LookupId
+-U PyBytes_FromStringAndSize
+-U PyLong_FromLong
+-U _PyThreadState_SetCurrent
+-U _PyObject_GetDictPtr
+-U PyList_New
+-U PyFloat_Unpack8
+-U Py_Exit
+-U PyUnicode_AppendAndDel
+-U PySequence_In
+-U PyBytes_FromFormatV
+-U PyUnicodeEncodeError_GetEncoding
+-U PyList_SetItem
+-U PyStatus_Exit
+-U _PyErr_CheckSignalsTstate
+-U _Py_PreInitializeFromPyArgv
+-U _PyErr_StackItemToExcInfoTuple
+-U PyObject_GenericSetAttr
+-U PyThread_delete_key
+-U _PyMem_RawWcsdup
+-U PyHash_GetFuncDef
+-U PySys_Audit
+-U _PyUnicode_IsXidContinue
+-U PyMapping_Length
+-U _Py_Sigset_Converter
+-U _Py_DecodeLocaleEx
+-U _PyUnicode_ToTitleFull
+-U _Py_hashtable_get
+-U _PyDict_Next
+-U _PyObject_CheckConsistency
+-U _PyBytesWriter_Finish
+-U _PyTime_localtime
+-U PyObject_Init
+-U PyInterpreterState_ThreadHead
+-U PyArg_VaParseTupleAndKeywords
+-U PyUnicode_DecodeLatin1
+-U PyWrapper_New
+-U PyThreadState_Clear
+-U PyUnicode_Find
+-U _PyWideStringList_AsList
+-U _PyUnicode_ToDigit
+-U PyStructSequence_InitType2
+-U _Py_dg_dtoa
+-U PyErr_GetExcInfo
+-U PyNumber_ToBase
+-U _PyMem_SetDefaultAllocator
+-U PyUnicode_AsDecodedObject
+-U _PyFunction_Vectorcall
+-U PyNumber_Subtract
+-U PySys_SetArgv
+-U _PyArg_ParseTupleAndKeywordsFast_SizeT
+-U _PyUnicode_IsDigit
+-U PyImport_ExecCodeModuleEx
+-U PyType_GenericAlloc
+-U PyErr_WarnExplicitObject
+-U PySequence_DelSlice
+-U PyVectorcall_Function
+-U _PyTime_AsTimevalTime_t
+-U _PyBytes_DecodeEscape
+-U _PyErr_FormatFromCauseTstate
+-U _PyArg_UnpackKeywordsWithVararg
+-U PySequence_Contains
+-U PyDict_Update
+-U Py_GetCopyright
+-U _PyOS_URandomNonblock
+-U PyObject_VectorcallMethod
+-U PySys_ResetWarnOptions
+-U _Py_DecodeUTF8Ex
+-U PyUnicode_AsUTF8AndSize
+-U PyObject_Bytes
+-U PyObject_GET_WEAKREFS_LISTPTR
+-U PyObject_RichCompareBool
+-U PyInstanceMethod_New
+-U PyContext_Enter
+-U PyInit_xxsubtype
+-U PyUnicode_AsRawUnicodeEscapeString
+-U PyConfig_SetBytesString
+-U _PyArg_UnpackStack
+-U PyCode_NewWithPosOnlyArgs
+-U _PyDict_GetItemIdWithError
+-U PyGC_Enable
+-U PyFile_WriteObject
+-U PyTuple_New
+-U PyStatus_Exception
+-U PyCapsule_SetDestructor
+-U _Py_NewInterpreter
+-U _Py_FreeCharPArray
+-U _PyBytesWriter_Dealloc
+-U _PyUnicode_IsTitlecase
+-U PyThread_set_stacksize
+-U PyErr_SetInterruptEx
+-U PyEval_CallMethod
+-U _PyGen_Finalize
+-U PyInit_pwd
+-U _PyImport_GetModuleAttr
+-U _Py_ClearStandardStreamEncoding
+-U _PyDictView_Intersect
+-U _PyThread_CurrentExceptions
+-U PyLong_AsDouble
+-U PyFunction_GetGlobals
+-U _Py_DisplaySourceLine
+-U PyMarshal_ReadShortFromFile
+-U PyLong_GetInfo
+-U _PyTime_FromMillisecondsObject
+-U _Py_set_inheritable
+-U PySlice_GetIndices
+-U PyModule_GetNameObject
+-U _PyInterpreterID_New
+-U _PyThreadState_DeleteCurrent
+-U _PyUnicode_AsLatin1String
+-U PyRun_FileEx
+-U _PyThreadState_UncheckedGet
+-U PyUnicode_AsLatin1String
+-U PyInterpreterState_Delete
+-U _PyUnicode_FormatAdvancedWriter
+-U PyEval_RestoreThread
+-U _PyCodec_DecodeText
+-U PyODict_New
+-U PyUnicode_CompareWithASCIIString
+-U Py_SetPythonHome
+-U _PyDict_GetItemStringWithError
+-U _Py_FatalError_TstateNULL
+-U _PyThread_at_fork_reinit
+-U _PyUnicodeWriter_WriteLatin1String
+-U _PyStructSequence_InitType
+-U Py_XNewRef
+-U _Py_GetForceASCII
+-U PyEval_GetFuncName
+-U _PyInterpreterState_Enable
+-U PyComplex_AsCComplex
+-U _PyTime_ObjectToTimeval
+-U Py_GetProgramName
+-U PyContextVar_Get
+-U PyNumber_Multiply
+-U PyMem_Calloc
+-U PyCFunction_GetSelf
+-U PyObject_Calloc
+-U PyUnicode_Splitlines
+-U _Py_DumpDecimal
+-U _PyObject_CallMethodIdObjArgs
+-U _PyCrossInterpreterData_Lookup
+-U PySequence_DelItem
+-U PyConfig_Clear
+-U PyCapsule_GetContext
+-U _PyThreadState_Init
+-U PyCodec_StrictErrors
+-U PySys_GetXOptions
+-U PyUnicode_ReadChar
+-U _PyImport_AcquireLock
+-U _PyLong_Frexp
+-U PyErr_WarnFormat
+-U Py_FrozenMain
+-U PyDict_Items
+-U PyThreadState_GetID
+-U PyList_SetSlice
+-U PyInterpreterState_New
+-U _PyWeakref_GetWeakrefCount
+-U _PyTraceBack_FromFrame
+-U PyCodec_Register
+-U PyObject_AsWriteBuffer
+-U PyWeakref_NewRef
+-U PyErr_RangedSyntaxLocationObject
+-U PyContext_CopyCurrent
+-U _Py_GetLocaleEncodingObject
+-U PyUnicode_EncodeFSDefault
+-U PySys_GetObject
+-U _PyUnicode_EncodeUTF7
+-U _PyTime_FromNanoseconds
+-U PyExceptionClass_Name
+-U PyUnicodeEncodeError_SetReason
+-U PyUnicode_Resize
+-U PySequence_Index
+-U _Py_IsCoreInitialized
+-U PyType_GetFlags
+-U _PyUnicode_FastFill
+-U PyDict_Keys
+-U PyUnicode_DecodeLocaleAndSize
+-U PyErr_WarnExplicit
+-U _PyInterpreterState_RequireIDRef
+-U _Py_EncodeLocaleRaw
+-U PyImport_GetMagicNumber
+-U _PySet_Update
+-U PyCapsule_IsValid
+-U PyFile_FromFd
+-U _PyLong_UnsignedLongLong_Converter
+-U _PyMem_Strdup
+-U Py_Finalize
+-U PyFloat_GetMax
+-U PyInit__tokenize
+-U PyGILState_Ensure
+-U _Py_get_xoption
+-U _PyUnicode_EncodeCharmap
+-U PyCodec_IncrementalDecoder
+-U PySequence_List
+-U PyErr_Clear
+-U PyThread_create_key
+-U PyObject_Length
+-U PyCapsule_New
+-U _PyDict_CheckConsistency
+-U _Py_DumpHexadecimal
+-U PyLong_FromSsize_t
+-U PyThreadState_Delete
+-U PyContext_New
+-U _Py_c_diff
+-U PyObject_GenericGetDict
+-U PyConfig_Read
+-U PyThreadState_DeleteCurrent
+-U PySys_WriteStderr
+-U PyUnicode_DecodeASCII
+-U PyUnicodeTranslateError_GetReason
+-U _PyCode_GetExtra
+-U PyNumber_InPlaceMultiply
+-U _PyArg_UnpackKeywords
+-U PyArg_ValidateKeywordArguments
+-U PyModule_GetState
+-U _PyObject_GetState
+-U _PyEval_AddPendingCall
+-U PyThreadState_GetInterpreter
+-U _PyErr_SetHandledException
+-U PyLong_FromVoidPtr
+-U PyFloat_Pack2
+-U PyThreadState_EnterTracing
+-U _PyUnicodeWriter_Init
+-U PyModule_SetDocString
+-U _Py_read
+-U _Py_convert_optional_to_ssize_t
+-U PyErr_NewExceptionWithDoc
+-U PyFloat_Pack4
+-U _PyRuntimeState_Init
+-U _PyTraceback_Add
+-U _PyArg_CheckPositional
+-U _PyDict_ContainsId
+-U PyErr_SyntaxLocationEx
+-U PyObject_Malloc
+-U _Py_parse_inf_or_nan
+-U PyFloat_Pack8
+-U PyNumber_InPlaceRemainder
+-U _Py_hashtable_clear
+-U PyCode_GetFreevars
+-U _PyArg_VaParseTupleAndKeywordsFast
+-U PyOS_AfterFork_Child
+-U PyThread_tss_get
+-U PySet_Pop
+-U PyObject_DelItem
+-U PySeqIter_New
+-U _PyTime_ObjectToTimespec
+-U PySequence_SetSlice
+-U PyOS_double_to_string
+-U PyObject_IsTrue
+-U PyStatus_IsError
+-U PyImport_GetModule
+-U PyFloat_GetInfo
+-U PyRun_SimpleString
+-U PyCapsule_SetPointer
+-U _PyFloat_DebugMallocStats
+-U _PyTuple_DebugMallocStats
+-U _PyArg_NoKwnames
+-U PyInit__stat
+-U PyObject_GetArenaAllocator
+-U _PyPreConfig_InitCompatConfig
+-U PyUnicode_FromFormat
+-U PyLong_AsUnsignedLongLong
+-U _PyObject_DebugMallocStats
+-U PyObject_CallMethodObjArgs
+-U _PyErr_Fetch
+-U PyObject_Str
+-U _PyTime_AsMicroseconds
+-U PyException_GetCause
+-U PyUnicode_AsUTF32String
+-U _PyTime_FromTimeval
+-U Py_IncRef
+-U _PyLong_Lshift
+-U _PyCode_Validate
+-U PyInit__operator
+-U PyOS_snprintf
+-U PyInit_errno
+-U _PyErr_FormatFromCause
+-U _PyUnicode_EqualToASCIIString
+-U _PyDict_GetItem_KnownHash
+-U PyUnicode_DecodeUTF16Stateful
+-U _PyCodecInfo_GetIncrementalDecoder
+-U PySequence_SetItem
+-U _PyUnicode_ToFoldedFull
+-U _Py_strhex_bytes_with_sep
+-U _Py_FdIsInteractive
+-U PyTuple_Pack
+-U PyBytes_FromFormat
+-U _PyThreadState_DeleteExcept
+-U PyUnicode_CopyCharacters
+-U _PyTime_AsTimeval
+-U PyUnicode_AsUCS4
+-U PyCell_New
+-U _PySequence_BytesToCharpArray
+-U PyThreadState_GetFrame
+-U _PyArg_Parse_SizeT
+-U _PyObject_LookupAttr
+-U Py_SetRecursionLimit
+-U _Py_c_prod
+-U PyDict_Size
+-U PyComplex_ImagAsDouble
+-U PyNumber_Add
+-U _PyList_DebugMallocStats
+-U Py_GetExecPrefix
+-U PyUnicodeDecodeError_GetStart
+-U _PyAccu_FinishAsList
+-U _Py_hashtable_steal
+-U PyMemoryView_FromBuffer
+-U _PyUnicode_IsPrintable
+-U _PyWideStringList_Extend
+-U _PyArgv_AsWstrList
+-U _PyObject_FastCall
+-U PyComplex_FromDoubles
+-U _Py_get_inheritable
+-U _PyImport_FixupBuiltin
+-U _PyObject_CallMethod
+-U PyTraceMalloc_Untrack
+-U PyInit__sre
+-U PyUnicode_AsASCIIString
+-U PyDescr_NewMethod
+-U PyThreadState_SetAsyncExc
+-U _PyTime_AsSecondsDouble
+-U _PyList_Extend
+-U PyUnicode_Concat
+-U Py_CompileStringExFlags
+-U _Py_wreadlink
+-U PyRun_FileExFlags
+-U PyGen_New
+-U _PyDict_DelItemId
+-U _PyObject_RealIsSubclass
+-U PyCodec_BackslashReplaceErrors
+-U _Py_UTF8_Edit_Cost
+-U PyArg_ParseTuple
+-U PyUnicode_DecodeUTF7Stateful
+-U _PyTime_AsTimeval_clamp
+-U _PyDict_DelItemIf
+-U PyObject_Call
+-U PyGC_Disable
+-U PyRun_AnyFile
+-U _Py_WriteIndentedMargin
+-U PyObject_CallFunction
+-U PyMem_Realloc
+-U _PyArena_Malloc
+-U PyFunction_GetKwDefaults
+-U Py_FatalError
+-U PyType_SUPPORTS_WEAKREFS
+-U PyInit__thread
+-U PyUnicode_New
+-U PyUnicode_Format
+-U PySet_Size
+-U _PyEval_SliceIndex
+-U _PyLong_Rshift
+-U PyUnicodeEncodeError_SetStart
+-U PyObject_SetAttr
+-U PyCodec_NameReplaceErrors
+-U PyThread_tss_alloc
+-U _PyCode_CheckLineNumber
+-U _PyLong_GCD
+-U PyObject_HashNotImplemented
+-U PyObject_IsSubclass
+-U Py_NewInterpreter
+-U PyFunction_GetCode
+-U _Py_c_pow
+-U PyErr_SetFromErrno
+-U PyModule_New
+-U PyMemoryView_GetContiguous
+-U PyObject_SelfIter
+-U _PyObject_GC_New
+-U PyModule_GetName
+-U PyBuffer_FillContiguousStrides
+-U PyPickleBuffer_FromObject
+-U _Py_wgetcwd
+-U Py_GetPythonHome
+-U _Py_c_quot
+-U _Py_wfopen
+-U PyCFunction_GetFunction
+-U PyCapsule_SetName
+-U PyCFunction_GetFlags
+-U PyEval_SetProfile
+-U PyInit__ast
+-U PyObject_HasAttr
+-U _PyUnicodeWriter_WriteSubstring
+-U _PyErr_WriteUnraisableMsg
+-U _PySys_GetAttr
+-U PyUnicode_InternImmortal
+-U _PyUnicode_IsAlpha
+-U PySys_AddAuditHook
+-U _PyObject_CallMethodId
+-U _PyTrash_end
+-U PyObject_Type
+-U PyImport_ExecCodeModuleWithPathnames
+-U PySequence_GetItem
+-U _PyEval_SignalReceived
+-U PyMember_GetOne
+-U PySys_FormatStderr
+-U PyStructSequence_InitType
+-U PyUnicode_FSDecoder
+-U PyType_Ready
+-U PyObject_VectorcallDict
+-U _PyObject_DebugTypeStats
+-U _PyDict_MaybeUntrack
+-U Py_GetPlatform
+-U PyNumber_InPlacePower
+-U PyType_ClearCache
+-U PyRun_InteractiveLoop
+-U _PyObject_CheckCrossInterpreterData
+-U PyDict_Values
+-U PyNumber_Long
+-U PyErr_SetString
+-U _PyArena_AddPyObject
+-U PyNumber_InPlaceTrueDivide
+-U PyInterpreterState_GetDict
+-U _Py_EncodeUTF8Ex
+-U PyState_RemoveModule
+-U PyFrame_GetBack
+-U PyDict_Clear
+-U PyException_SetContext
+-U _PyState_AddModule
+-U PyBool_FromLong
+-U PyNumber_InPlaceLshift
+-U PyMemoryView_FromObject
+-U _Py_hashtable_hash_ptr
+-U PyStructSequence_GetItem
+-U PyUnicode_Partition
+-U _Py_IsFinalizing
+-U PyCode_Optimize
+-U PyThread_tss_delete
+-U _PyArg_BadArgument
+-U _PyTraceMalloc_GetTraceback
+-U PyMapping_Values
+-U PyModule_GetFilename
+-U PyInterpreterState_Next
+-U PyBuffer_ToContiguous
+-U _PyUnicode_AsASCIIString
+-U Py_AddPendingCall
+-U PyErr_Occurred
+-U PyType_GetModuleByDef
+-U _PyDict_DebugMallocStats
+-U PyFrozenSet_New
+-U _PyLong_FromBytes
+-U PyModule_AddObject
+-U _PyEval_SliceIndexNotNone
+-U PyThread_tss_is_created
+-U _Py_DecRef
+-U Py_DecodeLocale
+-U _PyBytes_FormatEx
+-U PyErr_GivenExceptionMatches
+-U PyThread_start_new_thread
+-U _Py_FatalErrorFunc
+-U _Py_GetErrorHandler
+-U PyRun_InteractiveLoopFlags
+-U PyInterpreterState_Clear
+-U PyUnicode_BuildEncodingMap
+-U Py_GetPrefix
+-U PyObject_CallFinalizerFromDealloc
+-U PyMarshal_ReadLastObjectFromFile
+-U PySys_SetPath
+-U PyErr_ResourceWarning
+-U PyCodec_Decoder
+-U PyUnicode_AsCharmapString
+-U PyOS_getsig
+-U PyNumber_Rshift
+-U PyByteArray_FromStringAndSize
+-U PyNumber_InPlaceXor
+-U Py_EnterRecursiveCall
+-U _PyDict_MergeEx
+-U Py_LeaveRecursiveCall
+-U PyByteArray_FromObject
+-U PyBuffer_GetPointer
+-U PyCode_GetCellvars
+-U _PyType_Lookup
+-U _PyImport_ReleaseLock
+-U PyLong_FromDouble
+-U Py_NewRef
+-U Py_InitializeEx
+-U PyNumber_Positive
+-U PyBytes_Size
+-U _PyCrossInterpreterData_NewObject
+-U Py_UniversalNewlineFgets
+-U PyErr_Print
+-U PySequence_InPlaceConcat
+-U _PyRun_InteractiveLoopObject
+-U PyStatus_IsExit
+-U PyNumber_InPlaceRshift
+-U PySequence_Size
+-U PyObject_GetItem
+-U PyErr_SetHandledException
+-U _PyCodec_LookupTextEncoding
+-U _PyTime_FromTimespec
+-U PyObject_GetIter
+-U _Py_GetAllocatedBlocks
+-U _PyObject_CallFunction_SizeT
+-U _Py_open
+-U _PyErr_Display
+-U PyObject_GC_IsFinalized
+-U PyWeakref_GetObject
+-U _PyInterpreterState_GetIDObject
+-U Py_GenericAlias
+-U PyUnicode_AsUCS4Copy
+-U PyThread_get_thread_native_id
+-U PyMemoryView_FromMemory
+-U _PySlice_FromIndices
+-U PyMarshal_ReadLongFromFile
+-U PyOS_BeforeFork
+-U PyObject_InitVar
+-U _Py_DumpTracebackThreads
+-U PyList_Append
+-U PyThreadState_Swap
+-U _PyTime_FromNanosecondsObject
+-U PyObject_GetBuffer
+-U _PyLong_UnsignedInt_Converter
+-U PyThread_get_thread_ident
+-U _PyObject_SetAttrId
+-U PyNumber_AsSsize_t
+-U _PyTime_AsMilliseconds
+-U PyMember_SetOne
+-U _PyImport_SetModule
+-U _PyRun_AnyFileObject
+-U Py_ExitStatusException
+-U PyErr_FormatV
+-U PyInit__string
+-U PyErr_SyntaxLocationObject
+-U PyEval_GetGlobals
+-U _PyObject_CallMethod_SizeT
+-U PyMapping_Check
+-U _PyTime_gmtime
+-U PyObject_DelItemString
+-U _PyCrossInterpreterData_Release
+-U PyUnicode_Append
+-U Py_ReprEnter
+-U _Py_strhex
+-U _PyTime_GetPerfCounterWithInfo
+-U PyModule_AddObjectRef
+-U PyMapping_HasKeyString
+-U Py_GetArgcArgv
+-U PyInit__codecs
+-U PyUnicode_DecodeCharmap
+-U PyObject_CallFunctionObjArgs
+-U PyModule_NewObject
+-U PyImport_ImportModuleNoBlock
+-U _PyUnicode_FindMaxChar
+-U _Py_IncRef
+-U PyFloat_GetMin
+-U PyUnicode_AsWideCharString
+-U _PyImport_FixupExtensionObject
+-U PySequence_Check
+-U PyBytes_Concat
+-U PyDescr_NewClassMethod
+-U _PyTime_ObjectToTime_t
+-U _PyTime_GetMonotonicClock
+-U _PyErr_ChainExceptions
+-U PyObject_GetAIter
+-U PyUnicodeDecodeError_GetObject
+-U _Py_hashtable_new_full
+-U _PyTuple_Resize
+-U PyStatus_NoMemory
+-U PyEval_AcquireThread
+-U _PyTime_AsTimespec
+-U PyThreadState_LeaveTracing
+-U PyNumber_Power
+-U PyUnicodeEncodeError_GetEnd
+-U PyErr_SetFromErrnoWithFilename
+-U PyErr_ProgramText
+-U PyCapsule_GetPointer
+-U PyDict_GetItemString
+-U _Py_gitversion
+-U _PyUnicode_IsXidStart
+-U _PyUnicode_WideCharString_Opt_Converter
+-U PyFrame_LocalsToFast
+-U _PyImport_SetModuleString
+-U _PyObject_GenericSetAttrWithDict
+-U _Py_GetLocaleEncoding
+-U _PyObject_GC_NewVar
+-U _Py_set_inheritable_async_safe
+-U PyNumber_TrueDivide
+-U PyFunction_SetKwDefaults
+-U _PyLong_UnsignedShort_Converter
+-U PyMarshal_Init
+-U PyObject_GC_UnTrack
+-U PyFrame_FastToLocals
+-U PyInterpreterState_GetID
+-U PyNumber_Absolute
+-U _PyCrossInterpreterData_RegisterClass
+-U PyFunction_SetClosure
+-U _Py_hashtable_new
+-U _PyLong_FromByteArray
+-U PyOS_setsig
+-U _PyTraceBack_Print_Indented
+-U PySys_SetObject
+-U PyFrame_GetLineNumber
+-U PyUnicode_AsEncodedUnicode
+-U PyUnicode_DecodeRawUnicodeEscape
+-U PyGen_NewWithQualName
+-U PyEval_SetTrace
+-U PyNumber_Divmod
+-U _Py_DecodeUTF8_surrogateescape
+-U PyObject_GenericSetDict
+-U PyUnicode_FromStringAndSize
+-U PyGC_IsEnabled
+-U _PyArg_ParseTuple_SizeT
+-U _PyErr_CheckSignals
+-U PyCallable_Check
+-U _PyErr_TrySetFromCause
+-U _Py_device_encoding
+-U PyNumber_InPlaceSubtract
+-U PyLong_AsUnsignedLongMask
+-U PyInterpreterState_Head
+-U PyUnicode_DecodeUTF7
+-U _PyLong_FromUid
+-U Py_SetStandardStreamEncoding
+-U _Py_VaBuildValue_SizeT
+-U PyObject_SetAttrString
+-U _PyUnicode_IsCaseIgnorable
+-U PyUnicode_DecodeUTF8
+-U _PyInterpreterState_SetConfig
+-U PyContextVar_Reset
+-U PyThread_tss_free
+-U PyImport_AppendInittab
+-U PySet_Clear
+-U _Py_FatalErrorFormat
+-U PyUnicode_Compare
+-U PyFunction_GetAnnotations
+-U PyThread_acquire_lock
+-U PyUnicode_AsUnicode
+-U PyCode_New
+-U PyInit_posix
+-U PyErr_SetFromErrnoWithFilenameObject
+-U PySet_Contains
+-U PySlice_GetIndicesEx
+-U Py_GetCompiler
+-U _PyUnicode_ToDecimalDigit
+-U Py_CompileString
+-U _PyObject_LookupSpecial
+-U _PyInterpreterID_LookUp
+-U PyUnicode_FromString
+-U PyObject_Repr
+-U PyState_FindModule
+-U Py_IsNone
+-U _PyPathConfig_ClearGlobal
+-U PyMethod_Function
+-U PyErr_SetObject
+-U _PyObject_FunctionStr
+-U _Py_HandleSystemExit
+-U PyEval_MergeCompilerFlags
+-U _Py_IsLocaleCoercionTarget
+-U _PyUnicode_XStrip
+-U PyObject_CallObject
+-U _Py_Dealloc
+-U _PyUnicode_IsCased
+-U PyUnicode_FromKindAndData
+-U PyCodec_StreamReader
+-U _PyUnicodeWriter_Finish
+-U PyUnicode_DecodeFSDefaultAndSize
+-U _PyGen_SetStopIterationValue
+-U _PyInterpreterState_GetConfigCopy
+-U PyDict_Contains
+-U PyUnicode_Substring
+-U PyRun_InteractiveOneObject
+-U _PyRuntime_Initialize
+-U _PyRun_SimpleFileObject
+-U PyNumber_Or
+-U PyUnicode_RSplit
+-U PyRun_SimpleFileExFlags
+-U Py_DecRef
+-U PyUnicode_DecodeUTF32Stateful
+-U _PyBytes_Join
+-U _Py_gitidentifier
+-U PyType_FromSpec
+-U PyInit_gc
+-U PyConfig_InitIsolatedConfig
+-U PyMethod_New
+-U Py_SetProgramName
+-U PyUnicodeTranslateError_GetEnd
+-U _PyRuntimeState_Fini
+-U PyUnicode_FromUnicode
+-U PyBytes_FromString
+-U PyUnicodeTranslateError_SetStart
+-U _PyArg_ParseTupleAndKeywords_SizeT
+-U Py_FinalizeEx
+-U _PyAST_Compile
+-U _PyInterpreterState_LookUpID
+-U _PyUnicode_WideCharString_Converter
+-U PyImport_GetModuleDict
+-U PySys_HasWarnOptions
+-U PyModule_AddIntConstant
+-U PyUnicode_InternInPlace
+-U PyObject_LengthHint
+-U PyContext_Exit
+-U _PyModule_ClearDict
+-U PyConfig_SetString
+-U PyConfig_SetBytesArgv
+-U PyEval_EvalFrameEx
+-U PyUnicodeEncodeError_SetEnd
+-U PyIter_Check
+-U PyState_AddModule
+-U PyInit__tracemalloc
+-U PySys_AddWarnOptionUnicode
+-U PyObject_IS_GC
+-U PyContext_Copy
+-U PyUnicode_DecodeFSDefault
+-U PyStaticMethod_New
+-U _PyType_Name
+-U PyInit__symtable
+-U PyInit_time
+-U _Py_str_to_int
+-U _Py_GetConfig
+-U PyCell_Set
+-U PyContextVar_New
+-U PyNumber_MatrixMultiply
+-U PyRun_SimpleStringFlags
+-U PyCoro_New
+-U PyModule_AddStringConstant
+-U PyUnicode_GetLength
+-U _PyErr_Clear
+-U _PyUnicode_JoinArray
+-U PyAsyncGen_New
+-U PyWideStringList_Insert
+-U _PyTime_AsTimespec_clamp
+-U _Py_wrealpath
+-U _PyDebugAllocatorStats
+-U _Py_VaBuildStack
+-U PyEval_CallFunction
+-U _PyGILState_GetInterpreterStateUnsafe
+-U _Py_string_to_number_with_underscores
+-U _Py_strhex_bytes
+-U _PyUnicode_EQ
+-U PyException_GetContext
+-U PyEval_GetBuiltins
+-U PyMapping_HasKey
+-U _PyAccu_Init
+-U PyImport_ImportModuleLevel
+-U PyGC_Collect
+-U _PyUnicodeWriter_Dealloc
+-U _PyTrash_begin
+-U PyStructSequence_NewType
+-U _PyUnicode_IsNumeric
+-U PyThread_exit_thread
+-U PyInit__imp
+-U _PyLong_AsByteArray
+-U PyThread_init_thread
+-U PyUnicode_Count
+-U PyErr_SetImportError
+-U _PyCodecInfo_GetIncrementalEncoder
+-U PyEval_GetFrame
+-U PyLong_FromUnsignedLong
+-U PyUnicode_FromEncodedObject
+-U PyMem_RawMalloc
+-U _PyUnicode_EqualToASCIIId
+-U _PyBytes_FromHex
+-U _PyObject_GC_Resize
+-U Py_GetProgramFullPath
+-U PyEval_EvalCodeEx
+-U _Py_PreInitializeFromConfig
+-U _Py_write
+-U PyArg_Parse
+-U PyInstanceMethod_Function
+-U PyObject_Free
+-U _Py_SourceAsString
+-U _PyObject_GetMethod
+-U _PyErr_Restore
+-U PyGILState_GetThisThreadState
+-U PyUnicodeDecodeError_Create
+-U _PyTime_GetSystemClock
+-U PyLong_AsSsize_t
+-U _PyLong_NumBits
+-U PyErr_SyntaxLocation
+-U PyNumber_And
+-U PyType_FromSpecWithBases
+-U _Py_DumpExtensionModules
+-U _PyEval_RequestCodeExtraIndex
+-U PyObject_GC_Del
+-U _Py_BreakPoint
+-U _PyErr_GetHandledException
+-U PyLong_AsLongLongAndOverflow
+-U _PyDict_Contains_KnownHash
+-U PyCode_Addr2Line
+-U PyRun_AnyFileExFlags
+-U _Py_HashBytes
+-U PyOS_strtoul
+-U _PyArg_VaParse_SizeT
+-U PyImport_ReloadModule
+-U _PyDict_DelItem_KnownHash
+-U PyObject_ASCII
+-U _PyObject_GenericGetAttrWithDict
+-U PyObject_RichCompare
+-U PySequence_Fast
+-U PyMapping_Items
+-U PyObject_GC_Track
+-U PyUnicode_AsEncodedString
+-U PyDict_Copy
+-U PyUnicodeEncodeError_GetObject
+-U Py_Main
+-U _PyUnicode_FormatLong
+-U PyModule_GetFilenameObject
+-U PyLong_AsVoidPtr
+-U _PyEval_SetTrace
+-U PyFunction_SetDefaults
+-U _Py_WriteIndent
+-U PyUnicodeTranslateError_SetEnd
+-U _PyUnicode_ToUppercase
+-U Py_EncodeLocale
+-U PyDict_SetItemString
+-U _PyDict_HasOnlyStringKeys
+-U _PyWarnings_Init
+-U PyCFunction_NewEx
+-U PyCodec_ReplaceErrors
+-U _PyEval_GetSwitchInterval
+-U PyErr_NewException
+-U _PyBytesWriter_WriteBytes
+-U _PyArg_ParseStackAndKeywords_SizeT
+-U PyDict_GetItemWithError
+-U _PyBytes_Resize
+-U PyStructSequence_SetItem
+-U _PyErr_NormalizeException
+-U PyObject_GC_IsTracked
+-U PyUnicode_Replace
+-U PyInit__functools
+-U PyLong_AsLongLong
+-U Py_CompileStringFlags
+-U _PyTime_GetPerfCounter
+-U PyErr_NormalizeException
+-U PyList_GetSlice
+-U PyLong_AsUnsignedLong
+-U PyThreadState_Get
+-U _PyTime_Add
+-U PyUnicode_AsUTF8String
+-U _PyThreadState_Prealloc
+-U PyErr_WriteUnraisable
+-U PySlice_New
+-U _PyUnicode_AsUTF8String
+-U PyFunction_GetDefaults
+-U PyFrame_FastToLocalsWithError
+-U _PyErr_SetObject
+-U _PyLong_FormatAdvancedWriter
+-U PyMethod_Self
+-U _PyBytesWriter_Init
+-U _Py_hashtable_compare_direct
+-U _Py_CheckRecursiveCall
+-U PyType_GetSlot
+-U PyUnicode_AsWideChar
+-U PyObject_AsCharBuffer
+-U _PyObject_GetCrossInterpreterData
+-U _Py_ClearArgcArgv
+-U PyObject_GetAttrString
+-U PyDescr_NewMember
+-U PyBuffer_Release
+-U PyEval_EvalFrame
+-U _Py_set_blocking
+-U PyList_Reverse
+-U _PyUnicodeWriter_WriteChar
+-U PyCodec_KnownEncoding
+-U _PyTime_FromSecondsObject
+-U PyDict_SetDefault
+-U _PyType_GetDocFromInternalDoc
+-U _PyNumber_Index
+-U PyEval_AcquireLock
+-U PyUnicode_FromObject
+-U PyAIter_Check
+-U PyEval_CallObjectWithKeywords
+-U _PyCodec_Lookup
+-U PyMarshal_ReadObjectFromFile
+-U _Py_c_sum
+-U _PyUnicode_EncodeUTF16
+-U PyType_GetModuleState
+-U PyOS_string_to_double
+-U PyType_GetName
+-U _PyInterpreterState_IDIncref
+-U _PyUnicode_FastCopyCharacters
+-U PyMarshal_WriteLongToFile
+-U _Py_Uid_Converter
+-U PyObject_SetItem
+-U PyUnicode_Decode
+-U PyOS_vsnprintf
+-U PySys_SetArgvEx
+-U PyType_IsSubtype
+-U PyRun_SimpleFile
+-U Py_GetVersion
+-U _PyFrame_IsEntryFrame
+-U PyNumber_Float
+-U PyCallIter_New
+-U Py_MakePendingCalls
+-U PyBuffer_SizeFromFormat
+-U _PyUnicodeWriter_PrepareKindInternal
+-U _PyDeadline_Get
+-U PyCodec_Unregister
+-U _PyUnicodeWriter_PrepareInternal
+-U PyEval_ReleaseThread
+-U PyErr_WarnExplicitFormat
+-U PyFunction_GetClosure
+-U PyErr_SetImportErrorSubclass
+-U PyFloat_FromDouble
+-U _Py_get_env_flag
+-U PyCompile_OpcodeStackEffectWithJump
+-U PyBytes_FromObject
+-U Py_RunMain
+-U _PyCodec_EncodeText
+-U _PyRuntime_Finalize
+-U Py_PreInitialize
+-U _Py_fstat_noraise
+-U _PyUnicode_ToUpperFull
+-U _PyObject_IsFreed
+-U PyFunction_New
+-U PyObject_CheckBuffer
+-U _Py_open_noraise
+-U PyBuffer_FillInfo
+-U _Py_hashtable_destroy
+-U PyNumber_Index
+-U PyList_AsTuple
+-U _PyLong_FromGid
+-U _PyUnicodeWriter_WriteASCIIString
+-U PyInit_itertools
+-U PyCodec_Encoder
+-U _PyLong_FormatBytesWriter
+-U PyUnicode_Join
+-U PyEval_SaveThread
+-U Py_GetPath
+-U _Py_SetLocaleFromEnv
+-U _Py_GetConfigsAsDict
+-U PySequence_Count
+-U PyOS_InterruptOccurred
+-U PyException_SetTraceback
+-U PyDescr_IsData
+-U PySequence_GetSlice
+-U PyUnicode_AsUnicodeEscapeString
+-U PyUnicode_FindChar
+-U _PyDict_GetItemWithError
+-U PyUnicode_DecodeUTF16
+-U PyType_Modified
+-U PyLong_FromString
+-U PyUnicode_DecodeUnicodeEscape
+-U PySequence_InPlaceRepeat
+-U _PyEval_GetBuiltinId
+-U PySequence_Concat
+-U PyNumber_InPlaceOr
+-U _PyInterpreterState_GetMainModule
+-U _PyType_CalculateMetaclass
+-U Py_FdIsInteractive
+-U PyLong_AsSize_t
+-U _PyArg_ParseStackAndKeywords
+-U PyUnicodeDecodeError_GetReason
+-U _PyUnicode_ScanIdentifier
+-U PyNumber_Remainder
+-U _PyArg_NoPositional
+-U _PyArg_ParseTupleAndKeywordsFast
+-U PyOS_mystricmp
+-U PyFrame_GetBuiltins
+-U PyObject_SetArenaAllocator
+-U PyDict_Next
+-U PyMapping_GetItemString
+-U _PyUnicode_EncodeUTF32
+-U _PyLong_AsTime_t
+-U _PyDeadline_Init
+-U _PyConfig_AsDict
+-U PyNumber_InPlaceAdd
+-U _PyThreadState_GetDict
+-U _PyModule_CreateInitialized
+-U _PyObject_LookupAttrId
+-U Py_Initialize
+-U PyBytes_AsStringAndSize
+-U _Py_CheckFunctionResult
+-U PyInit__io
+-U PyToken_OneChar
+-U _Py_strhex_with_sep
+-U _PyUnicode_IsUppercase
+-U PyUnicode_DecodeLocale
+-U PyCodec_Decode
+-U PyODict_DelItem
+-U PyNumber_InPlaceMatrixMultiply
+-U PyEval_InitThreads
+-U PyUnicode_AsDecodedUnicode
+-U _PyWeakref_ClearRef
+-U PyObject_CopyData
+-U _PyLong_UnsignedLong_Converter
+-U PyFloat_AsDouble
+-U PyUnicode_Translate
+-U PyLong_FromLongLong
+-U _PyDict_SetItem_KnownHash
+-U PyErr_SetInterrupt
+-U _PyNamespace_New
+-U _PyStack_AsDict
+-U _PyContext_NewHamtForTests
+-U _PyLong_Copy
+-U PyMem_SetupDebugHooks
+-U _PyCode_SetExtra
+-U PyComplex_RealAsDouble
+-U _PyInterpreterState_RequiresIDRef
+-U PyErr_WarnEx
+-U PyType_FromModuleAndSpec
+-U _Py_hashtable_set
+-U PyUnicode_AsUTF16String
+-U _PyModuleSpec_IsInitializing
+-U _PyMem_SetupAllocators
+-U _PyErr_Print
+-U PyLong_AsUnsignedLongLongMask
+-U PySet_Discard
+-U PyDescr_NewGetSet
+-U _PyErr_SetNone
+-U PyFile_OpenCode
+-U PyInit__abc
+-U PyThread_acquire_lock_timed
+-U _PyEval_EvalFrameDefault
+-U _PyOS_IsMainThread
+-U _PyErr_ChainStackItem
+-U PyUnicode_AsUnicodeAndSize
+-U PyErr_Display
+-U PyInit__weakref
+-U _PyUnicode_IsDecimalDigit
+-U PyUnicode_DecodeUTF32
+-U _PyEval_SetSwitchInterval
+-U _PyEval_SignalAsyncExc
+-U PyUnicode_GetSize
+-U PyUnicode_AsEncodedObject
+-U _Py_DumpTraceback
+-U _PyErr_SetKeyError
+-U PyUnicode_FromOrdinal
+-U PyCodec_XMLCharRefReplaceErrors
+-U PyByteArray_Size
+-U PyMapping_Keys
+-U _PyAccu_Destroy
+-U PyUnicodeEncodeError_GetStart
+-U PyInterpreterState_Get
+-U PyImport_ExecCodeModule
+-U PyObject_Vectorcall
+-U _PyUnicode_DecodeRawUnicodeEscapeStateful
+-U PyCodec_Encode
+-U _PyDict_SizeOf
+-U _PyDictView_New
+-U PyErr_ProgramTextObject
+-U _PyBytesWriter_Prepare
+-U PyErr_SetNone
+-U PyException_SetCause
+-U _Py_dup
+-U PyObject_CheckReadBuffer
+-U _PyUnicode_ToLowercase
+-U PyRun_String
+-U PyCFunction_New
+-U PyClassMethod_New
+-U _PyObject_Call_Prepend
+-U PyThread_get_key_value
+-U _Py_hashtable_foreach
+-U PyModule_ExecDef
+-U PyErr_GetHandledException
+-U PyTraceMalloc_Track
+-U _PyBytes_ReverseFind
+-U _PyImport_GetModuleId
+-U PyByteArray_Resize
+-U _PyObject_GetAttrId
+-U _PyLong_Format
+-U PyList_GetItem
+-U Py_VaBuildValue
+-U PyObject_Print
+-U PyByteArray_AsString
+-U PyLong_AsLong
+-U PyFile_SetOpenCodeHook
+-U PyObject_GenericGetAttr
+-U PyObject_Hash
+-U _PyObject_CallMethodId_SizeT
+-U _Py_dg_infinity
+-U PyPreConfig_InitPythonConfig
+-U Py_GetRecursionLimit
+-U _PyWideStringList_Clear
+-U PyInterpreterState_Main
+-U Py_GETENV
+-U _PyEval_SetProfile
+-U PyImport_ImportModule
+-U _PyGen_FetchStopIterationValue
+-U Py_BytesMain
+-U PyImport_ExecCodeModuleObject
+-U PyDescr_NewWrapper
+-U PyErr_Format
+-U PySet_New
+-U PyObject_Not
+-U PyDict_DelItem
+-U _PyUnicode_IsWhitespace
+-U _Py_EncodeLocaleEx
+-U _PyLong_Sign
+-U _PyInterpreterState_IDInitref
+-U PyConfig_SetWideStringList
+-U _PyLong_AsInt
+-U _PyMem_GetAllocatorName
+-U PyFunction_GetModule
+-U PyUnicodeDecodeError_SetStart
+-U _PyErr_NoMemory
+-U PyThread_ReInitTLS
+-U PyUnicode_AsUTF8
+-U PyUnicode_RPartition
+-U _PyErr_SetString
+-U _PyObject_IsAbstract
+-U PyNumber_Invert
+-U PyObject_CallOneArg
+-U PyObject_ClearWeakRefs
+-U _Py_dg_strtod
+-U _Py_VaBuildStack_SizeT
+-U PyFile_NewStdPrinter
+-U _PyObject_FastCallDictTstate
+-U PyVectorcall_Call
+-U _PyMem_GetCurrentAllocatorName
+-U PyContextVar_Set
+-U PyType_GetQualName
+-U _PyUnicode_CheckConsistency
+-U _Py_write_noraise
+-U PyFrame_GetGlobals
+-U _Py_get_blocking
+-U PyUnicode_FromFormatV
+-U PyErr_BadInternalCall
+-U _PyErr_Format
+-U _Py_HashPointerRaw
+-U _PyLong_New
+-U PyUnicodeTranslateError_SetReason
+-U PyDict_MergeFromSeq2
+-U PyFrame_New
+-U PyFunction_NewWithQualName
+-U PyMem_RawCalloc
+-U PyCodec_IncrementalEncoder
+-U _PyType_GetTextSignatureFromInternalDoc
+-U _PyObject_NewVar
+-U PyStructSequence_New
+-U PyODict_SetItem
+-U _PyThread_CurrentFrames
+-U _PyTime_GetMonotonicClockWithInfo
+-U PyImport_GetMagicTag
+-U _PyWideStringList_Copy
+-U _PyCode_ConstantKey
+-U PyImport_ExtendInittab
+-U PyEval_GetLocals
+-U PyRun_FileFlags
+-U _Py_SetProgramFullPath
+-U PyRun_File
+-U _PyFloat_FormatAdvancedWriter
+-U PyMem_Free
+-U PyErr_NoMemory
+-U PyCompile_OpcodeStackEffect
+-U _PyObject_New
+-U _PyInterpreterState_GetConfig
+-U PyFunction_SetAnnotations
+-U PyInit_atexit
+-U _PyUnicode_ToLowerFull
+-U _Py_closerange
+-U PyThreadState_GetDict
+-U PyWeakref_NewProxy
+-U PySlice_AdjustIndices
+-U PyModuleDef_Init
+-U PyModule_Create2
+-U _Py_GetEnv
+-U PyMem_RawFree
+-U _PyUnicode_Equal
+-U PyLong_AsLongAndOverflow
+-U _Py_c_neg
+-U _PyUnicode_ToNumeric
+-U _PyTrash_cond
+-U PyThreadState_Next
+-U PyMapping_Size
+-U PyIter_Send
+-U _PyArena_New
+-U PyTuple_GetSlice
+-U PySys_WriteStdout
+-U PyCodec_IgnoreErrors
+-U PyFile_GetLine
+-U _Py_Gid_Converter
+-U PyMem_GetAllocator
+-U PyErr_SetExcInfo
+-U PyTraceBack_Here
+-U _Py_normpath
+-U PySys_AddWarnOption
+-U PyImport_AddModuleObject
+-U PyGILState_Check
+-U PyCell_Get
+-U PyArg_UnpackTuple
+-U PyUnicodeEncodeError_GetReason
+-U PyRun_InteractiveOne
+-U _Py_InitializeMain
+-U PyEval_ReleaseLock
+-U _PyObject_HasLen
+-U PyMapping_SetItemString
+-U Py_CompileStringObject
+-U _Py_add_one_to_index_C
+-U PyLong_FromUnsignedLongLong
+-U PyThread_tss_create
+-U PyModule_AddType
+-U PyObject_AsFileDescriptor
+-U PyImport_ImportFrozenModule
+-U _Py_add_one_to_index_F
+-U PyException_GetTraceback
+-U _PyUnicode_TransformDecimalAndSpaceToASCII
+-U _PyDict_Pop
+-U PyObject_Size
+-U PyErr_Fetch
+-U _PyUnicode_InsertThousandsGrouping
+-U PyFrame_GetLasti
+-U _PyObject_AssertFailed
+-U _PyInterpreterState_GetEvalFrameFunc
+-U _PyErr_GetTopmostException
+-U PyModule_GetDict
+-U PyDict_Merge
+-U PyArg_ParseTupleAndKeywords
+-U _Py_ResetForceASCII
+-U _PyUnicode_IsLinebreak
+-U _PyTime_FromSeconds
+-U PyMem_Malloc
+-U PyBytes_ConcatAndDel
+-U _PyInterpreterState_SetEvalFrameFunc
+-U _PyStructSequence_NewType
+-U _PyUnicode_Copy
+-U _PySys_GetSizeOf
+-U PyByteArray_Concat
+-U _PyArg_ParseStack
+-U _PyUnicode_IsLowercase
+-U _Py_RestoreSignals
+-U _PyObject_RealIsInstance
+-U PyUnicode_WriteChar
+-U PyThread_tss_set
+-U _PyBytes_Find
+-U PyRun_AnyFileEx
+-U PyModule_GetDef
+-U PyTuple_SetItem
+-U Py_PreInitializeFromBytesArgs
+-U _PySlice_GetLongIndices
+-U _PyBytesWriter_Alloc
+-U PyOS_FSPath
+-U PyDict_SetItem
+-U Py_GetBuildInfo
+-U PyIter_Next
+-U PyObject_IsInstance
+-U PyMem_RawRealloc
+-U Py_IsInitialized
+-U PyUnicode_GetDefaultEncoding
+-U Py_EndInterpreter
+-U _Py_GetLocaleconvNumeric
+-U _PyUnicode_FromId
+-U _PyArg_NoKeywords
+-U PyErr_CheckSignals
+-U PyObject_HasAttrString
+-U _PyCode_New
+-U PyImport_GetImporter
+-U _Py_BuildValue_SizeT
+-U PyRun_SimpleFileEx
+-U PyGILState_Release
+-U _PySequence_IterSearch
+-U _PyInterpreterState_IDDecref
+-U _PyUnicode_DecodeUnicodeEscapeInternal
+-U _PyTuple_MaybeUntrack
+-U _Py_DumpASCII

@@ -38,12 +38,11 @@ endif
 py = import('python').find_installation(pure:false)
 py_orig_deps = dependency('python3', required: true)
 
-#python_libpython_link = '-T' + meson.source_root() /  'libpython3.11.ld'
+python_libpython_link = '-T' + meson.source_root() /  'libpython3.11.ld'
 if build_machine.system() == 'linux'
   python_libpython_link = '-Wl,--warn-unresolved-symbols'
 elif build_machine.system() == 'darwin'
-  python_libpython_link = '-undefined dynamic_lookup'
-  # todo, investiage using -U 
+  python_libpython_link = '@' + python_libpython_link
 endif
 
 py_deps = declare_dependency(dependencies: py_orig_deps, link_args: python_libpython_link)
