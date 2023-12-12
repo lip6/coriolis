@@ -1092,6 +1092,7 @@ namespace {
         cerr << Error( "GdsStream::readTextbody(): Discarted text is \"%s\"."
                      , _text.c_str()
                      ) << endl;
+        return _validSyntax;
       }
     }
     else {
