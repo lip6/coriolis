@@ -7,6 +7,7 @@ project(
      'buildtype=debugoptimized',
      'c_std=c99',
      'cpp_std=c++17',
+     'b_lundef=false',
    ],
 )
 
