@@ -98,8 +98,13 @@ namespace Katana {
 
     RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer(_base->getLayer());
     Interval      newAxisSpan ( _base->getSourcePosition(), _base->getTargetPosition() );
+  //newAxisSpan.inflate( base()->getExtensionCap( Anabatic::Flags::NoFlags ));
     Track*        ntrack      = plane->getTrackByPosition( newAxisSpan.getVMin(), Constant::Superior );
 
+    cdebug_log(159,0) << "getSourceU():        " << DbU::getValueString( _base->getSourceU() ) << endl;
+    cdebug_log(159,0) << "getTargetU():        " << DbU::getValueString( _base->getTargetU() ) << endl;
+    cdebug_log(159,0) << "getSourcePosition(): " << DbU::getValueString( _base->getSourcePosition() ) << endl;
+    cdebug_log(159,0) << "getTargetPosition(): " << DbU::getValueString( _base->getTargetPosition() ) << endl;
     cdebug_log(159,0) << "new Axis span: " << newAxisSpan << endl;
     
     if (ntrack) {

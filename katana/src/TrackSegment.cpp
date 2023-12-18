@@ -487,7 +487,7 @@ namespace Katana {
 
     if (isNonPref()) {
       Interval perpandicularSpan ( getAxis() );
-      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
+      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ));
 
       _sourceU = perpandicularSpan.getVMin();
       _targetU = perpandicularSpan.getVMax();
