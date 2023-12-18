@@ -459,7 +459,7 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
 
 
-def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None ):
+def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None, useHV=False ):
     from ..        import Cfg 
     from ..        import Viewer
     from ..        import CRL 
@@ -482,8 +482,8 @@ def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None ):
 
     from coriolis.technos.node180.gf180mcu import techno
     from coriolis.technos.node180.gf180mcu import mcu9t5v0
-    techno.setup()
-    mcu9t5v0.setup( cellsTop )
+    techno.setup( useHV )
+    mcu9t5v0.setup( cellsTop, useHV )
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.misc.catchCore           = False
@@ -496,7 +496,7 @@ def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None ):
         cfg.misc.verboseLevel1       = False
         cfg.misc.verboseLevel2       = False
         cfg.etesian.graphics         = 2
-        cfg.anabatic.topRoutingLayer = 'm4'
+        cfg.anabatic.topRoutingLayer = 'Metal5'
         cfg.katana.eventsLimit       = 4000000
         af  = CRL.AllianceFramework.get()
        #lg5 = af.getRoutingGauge( 'mcu9t' ).getLayerGauge( 5 ) 
