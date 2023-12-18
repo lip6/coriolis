@@ -120,6 +120,7 @@ namespace {
 
   void  propagateCagedConstraints ( TrackElement* segment, set<TrackElement*>& faileds )
   {
+    DebugSession::open( segment->getNet(), 150, 160 );
     cdebug_log(159,0) << "propagateCagedConstraints(): " << segment << endl;
 
     if (not segment->isFixed()) return;
@@ -217,6 +218,7 @@ namespace {
     }
 
     cdebug_tabw(159,-1);
+    DebugSession::close();
   }
 
 

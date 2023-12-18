@@ -10,6 +10,7 @@ pdfcontent = files(
 
 
 rstcontent = files(
+  'etc/definitions.rst',
   'content/pages/design-flow/DesignFlow_HTML.rst',
   'content/pages/design-flow/QuickStart.rst',
   'content/pages/documentation.rst',

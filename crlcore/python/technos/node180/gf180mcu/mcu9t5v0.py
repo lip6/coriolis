@@ -27,11 +27,15 @@ def _routing ( useHV ):
     rg   = RoutingGauge.create('mcu9t5v0')
     rg.setSymbolic( False )
     if useHV:
-        dirM1 = RoutingLayerGauge.Vertical
-        dirM2 = RoutingLayerGauge.Horizontal
+        dirM1           = RoutingLayerGauge.Vertical
+        dirM2           = RoutingLayerGauge.Horizontal
+        netBuilderStyle = 'HV,3RL+'
+        routingStyle    = StyleFlags.HV|StyleFlags.M1Offgrid
     else:
-        dirM1 = RoutingLayerGauge.Horizontal
-        dirM2 = RoutingLayerGauge.Vertical
+        dirM1           = RoutingLayerGauge.Horizontal
+        dirM2           = RoutingLayerGauge.Vertical
+        netBuilderStyle = 'VH,3RL+'
+        routingStyle    = StyleFlags.VH|StyleFlags.M1Offgrid
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal1' )         # metal
                                 , dirM1                             # preferred routing direction
@@ -168,8 +172,8 @@ def _routing ( useHV ):
         cfg.anabatic.globalIterations = [ 1, 100 ]
         cfg.anabatic.gcell.displayMode = 1
         cfg.anabatic.gcell.displayMode = (("Boundary", 1), ("Density", 2))
-        cfg.anabatic.netBuilderStyle = 'VH,3RL+'
-        cfg.anabatic.routingStyle = StyleFlags.VH|StyleFlags.M1Offgrid
+        cfg.anabatic.netBuilderStyle = netBuilderStyle
+        cfg.anabatic.routingStyle = routingStyle
         cfg.katana.disableStackedVias = False
         cfg.katana.hTracksReservedLocal = 4
         cfg.katana.hTracksReservedLocal = [0, 20]
