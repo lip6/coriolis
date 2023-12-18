@@ -1,7 +1,7 @@
 .. -*- Mode: rst -*-
 
 
-.. Hurricane doxygen doc links.
+.. Hurricane/doxygen doc links.
 .. _Breakpoint:             ../doc/hurricane/classHurricane_1_1Breakpoint.html
 .. _UpdateSession:          ../doc/hurricane/classHurricane_1_1UpdateSession.html
 .. _Layer:                  ../doc/hurricane/classHurricane_1_1Layer.html
@@ -23,7 +23,6 @@
 .. _Contact:                ../doc/hurricane/classHurricane_1_1Contact.html
 .. _Contacts:               ../doc/hurricane/classHurricane_1_1Contact.html
 .. _Pad:                    ../doc/hurricane/classHurricane_1_1Pad.html
-.. _RoutingPad:             ../doc/hurricane/classHurricane_1_1RoutingPad.html
 .. _RoutingPads:            ../doc/hurricane/classHurricane_1_1RoutingPad.html
 .. _Horizontal:             ../doc/hurricane/classHurricane_1_1Horizontal.html
 .. _Vertical:               ../doc/hurricane/classHurricane_1_1Vertical.html

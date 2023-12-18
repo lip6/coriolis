@@ -20,6 +20,7 @@
 #include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
@@ -51,6 +52,7 @@ namespace Anabatic {
   using  Hurricane::tab;
   using  Hurricane::Warning;
   using  Hurricane::Error;
+  using  Hurricane::DebugSession;
   using  Hurricane::Transformation;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
@@ -464,11 +466,14 @@ namespace Anabatic {
 
   bool  Configuration::selectRpComponent ( RoutingPad* rp ) const
   {
+    DebugSession::open( rp->getNet(), 112, 120 );
     cdebug_log(112,1) << "selectRpComponent(): " << rp << endl;
+  //rp->setFlags( RoutingPad::SelectedComponent );
 
     if (rp->isAtTopLevel()) {
       cdebug_log(112,0) << "> RP is at top level, must not change it." << endl;
       cdebug_tabw(112,-1);
+      DebugSession::close();
       return true;
     }
 
@@ -476,9 +481,17 @@ namespace Anabatic {
 #if BETTER_FOR_TSMC
     rp->setOnBestComponent( RoutingPad::BiggestArea );
     cdebug_tabw(112,-1);
+    DebugSession::close();
     return true;
 #else
+    if (rp->hasSelectedComponent()) {
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return not rp->isM1Offgrid();
+    }
+    
     Box                ab             = rp->getCell()->getAbutmentBox();
+    const Layer*       via12          = getContactLayer( 0 );
     const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
     RoutingLayerGauge* gauge          = getLayerGauge( 1 );
     Occurrence         occurrence     = rp->getPlugOccurrence();
@@ -491,11 +504,15 @@ namespace Anabatic {
     if (current and (current->getLayer()->getMask() != metal1->getMask())) {
       cdebug_log(112,0) << "> using default non-metal1 segment." << endl;
       cdebug_tabw(112,-1);
+      DebugSession::close();
       return true;
     }
 
-    DbU::Unit  bestSpan      = 0;
-    Component* bestComponent = NULL;
+    DbU::Unit  bestSpan         = 0;
+    Component* ongridComponent  = NULL;
+    Component* offgridComponent = NULL;
+    DbU::Unit  viaShrink        = _rg->getViaWidth( (size_t)0 ) / 2
+                                + via12->getBottomEnclosure( Layer::EnclosureH );
 
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {
@@ -507,7 +524,7 @@ namespace Anabatic {
 
       if (dynamic_cast<Pin*>(component)) {
         cdebug_log(112,0) << "  Pins are always considered best candidates:" << component << endl;
-        bestComponent = component;
+        ongridComponent = component;
         break;
       }
 
@@ -523,6 +540,7 @@ namespace Anabatic {
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
       
+      bb.inflate( -viaShrink );
       if (gauge->isVertical()) {
         trackPos = gauge->getTrackPosition( ab.getXMin()
                                           , ab.getXMax()
@@ -532,8 +550,8 @@ namespace Anabatic {
         maxPos = bb.getXMax();
 
         cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(bb.getXMin()) << endl;
-        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(bb.getXMax()) << endl;
+        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
+        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
       } else {
         trackPos = gauge->getTrackPosition( ab.getYMin()
@@ -544,8 +562,8 @@ namespace Anabatic {
         maxPos = bb.getYMax();
 
         cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(bb.getYMin()) << endl;
-        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(bb.getYMax()) << endl;
+        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
+        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
       }
 
@@ -553,25 +571,39 @@ namespace Anabatic {
       cdebug_log(112,0) << "| " << transformation << endl;
       cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
       cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
+      cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
+                        <<         DbU::getValueString(maxPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        if (not bestComponent or (bestSpan < maxPos-minPos)) {
-          bestComponent = component;
-          bestSpan      = maxPos - minPos;
+        if (not ongridComponent or (bestSpan < maxPos-minPos)) {
+          ongridComponent = component;
+          bestSpan        = maxPos - minPos;
         }
+      } else {
+        cdebug_log(112,0) << "Component is offgrid." << endl;
+        offgridComponent = candidate;
       }
     }
 
     bool rvalue = false;
-    if (bestComponent) {
-      rp->setExternalComponent( bestComponent );
-      cdebug_log(112,0) << "Using best candidate:" << bestComponent << endl;
-      cdebug_tabw(112,-1);
+    if (ongridComponent) {
+      rp->setExternalComponent( ongridComponent );
+      cdebug_log(112,0) << "Using best candidate:" << ongridComponent << endl;
       rvalue = true;
+    } else {
+      if (not offgridComponent)
+        throw Error( "Configuration::selectRpComponent(): On %s,\n"
+                     "        No suitable external component found."
+                   , getString(rp).c_str()
+                   );
+      rp->setExternalComponent( offgridComponent );
+      rp->setFlags( RoutingPad::M1Offgrid );
+      cdebug_log(112,0) << "Using offgrid candidate:" << offgridComponent << endl;
     }
 
     checkRoutingPadSize( rp );
     cdebug_tabw(112,-1);
+    DebugSession::close();
     return rvalue;
 #endif
   }
@@ -624,11 +656,11 @@ namespace Anabatic {
     uint64_t flags = 0;
     flags |= (width  < 3*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
     flags |= (height < 3*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
-    flags |= ((width == 0) && (height == 0)) ? RoutingPad::Punctual : 0;
-  //if ((flags & RoutingPad::HSmall) and (flags & RoutingPad::VSmall))
-  //   flags |= RoutingPad::Punctual;
+  //flags |= ((width == 0) && (height == 0)) ? RoutingPad::Punctual : 0;
+    if ((flags & RoutingPad::HSmall) and (flags & RoutingPad::VSmall))
+      flags |= RoutingPad::Punctual;
 
-    rp->unsetFlags( RoutingPad::SizeFlags );
+    rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
     rp->setFlags  ( flags );
     cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << rpDepth << "]:"
                << DbU::getValueString(getPitch(rpDepth)) << " "
