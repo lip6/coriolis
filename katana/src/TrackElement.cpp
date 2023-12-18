@@ -185,7 +185,6 @@ namespace Katana {
   TrackElement*  TrackElement::getSymmetric         () { return NULL; }
 // Mutators.
   void           TrackElement::addTrackCount        ( int32_t ) { }
-  void           TrackElement::setTrack             ( Track* track ) { _track = track; }
   void           TrackElement::setSymmetric         ( TrackElement* ) { }
   void           TrackElement::updateFreedomDegree  () { }
   void           TrackElement::setDoglegLevel       ( uint32_t ) { }
@@ -274,6 +273,14 @@ namespace Katana {
   {
     if (not _track or (getNet() == cost.getNet())) return;
     _overlapCostCallback( this, cost );
+  }
+
+
+  void  TrackElement::setTrack ( Track* track )
+  {
+    cdebug_log(155,0) << "TrackElement::setTrack(): " << this << endl;
+    cdebug_log(155,0) << "  -> " << track << endl;
+    _track = track;
   }
 
 

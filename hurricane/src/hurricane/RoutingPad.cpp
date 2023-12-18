@@ -269,12 +269,14 @@ namespace Hurricane {
   }
 
 
-  std::string  RoutingPad::getStringFlags () const {
+  std::string  RoutingPad::getStringFlags () const
+  {
     string s;
-    s += ((_flags & HSmall   ) ? "h" : "-");
-    s += ((_flags & VSmall   ) ? "v" : "-");
-    s += ((_flags & Punctual ) ? "p" : "-");
-    s += ((_flags & M1Offgrid) ? "o" : "-");
+    s += ((_flags & SelectedComponent) ? "S" : "-");
+    s += ((_flags & HSmall           ) ? "h" : "-");
+    s += ((_flags & VSmall           ) ? "v" : "-");
+    s += ((_flags & Punctual         ) ? "p" : "-");
+    s += ((_flags & M1Offgrid        ) ? "o" : "-");
     return s;
   }
 

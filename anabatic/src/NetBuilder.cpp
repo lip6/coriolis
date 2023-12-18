@@ -1196,7 +1196,10 @@ namespace Anabatic {
 
   bool  NetBuilder::_do_1G_1M1_1PinM3 ()
   {
-    throw Error ( "%s::_do_1G_1M1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    throw Error ( "%s::_do_1G_1M1_1PinM3() method *not* reimplemented from base class.\n"
+                  "        On %s"
+                , getTypeName().c_str()
+                , getString(getNet()).c_str() );
     return false;
   }
 

@@ -167,9 +167,9 @@
 .. |man|                            replace:: :cb:`man`
 
 
-.. |BUG|                            replace:: **BUG**
-.. |NEW|                            replace:: **NEW**
-.. |CHANGE|                         replace:: **CHANGE**
+.. |BUG|                            replace:: **BUG** |
+.. |NEW|                            replace:: **NEW** |
+.. |CHANGE|                         replace:: **CHANGE** |
 .. |KeyUp|                          replace:: :fboxtt:`Up`
 .. |KeyDown|                        replace:: :fboxtt:`Down`
 .. |KeyLeft|                        replace:: :fboxtt:`Left`
@@ -264,3 +264,6 @@
 .. |blif|                           replace:: :cb:`blif`
 .. |kgr|                            replace:: :cb:`kgr`
 .. |dot_conf|                       replace:: :cb:`.conf`
+
+.. Link to Hurricane doc (Doxygen)
+.. _RoutingPad:                     {static}/doc/hurricane/classHurricane_1_1RoutingPad.html

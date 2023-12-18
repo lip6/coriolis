@@ -25,26 +25,30 @@ namespace Anabatic {
 
   class NetBuilderVH : public NetBuilder {
     public:
-                            NetBuilderVH       ();
-      virtual              ~NetBuilderVH       ();
-      static  std::string   getStyle           ();
-      virtual void          doRp_AutoContacts  ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags );
-      virtual AutoContact*  doRp_Access        ( GCell*, RoutingPad*, uint64_t  flags );
+                            NetBuilderVH             ();
+      virtual              ~NetBuilderVH             ();
+      static  std::string   getStyle                 ();
+      virtual void          doRp_AutoContacts        ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags );
+      virtual AutoContact*  doRp_Access              ( GCell*, RoutingPad*, uint64_t  flags );
+              AutoContact*  doRp_AccessNorthSouthPin ( GCell*, RoutingPad* );
+              AutoContact*  doRp_AccessEastWestPin   ( GCell*, RoutingPad* );
     private:                                     
-      virtual bool          _do_1G_1PinM2      ();
-      virtual bool          _do_xG_1PinM2      ();
-      virtual bool          _do_1G_1PinM3      ();
-      virtual bool          _do_xG_1PinM3      ();
-      virtual bool          _do_1G_1M1         ();
-      virtual bool          _do_1G_xM1         ();
-      virtual bool          _do_2G_1M1         ();
-      virtual bool          _do_xG_xM1_xM3     ();
-      virtual bool          _do_xG             ();
-      virtual bool          _do_2G             ();
-      virtual bool          _do_globalSegment  ();
-      virtual void          singleGCell        ( AnabaticEngine*, Net* );
-    public:
-      virtual string        getTypeName        () const;
+      virtual bool          _do_1G_1PinM2            ();
+      virtual bool          _do_xG_1PinM2            ();
+      virtual bool          _do_1G_1PinM3            ();
+      virtual bool          _do_xG_1PinM3            ();
+      virtual bool          _do_1G_1M1               ();
+      virtual bool          _do_1G_xM1               ();
+      virtual bool          _do_2G_1M1               ();
+      virtual bool          _do_xG_xM1_xM3           ();
+      virtual bool          _do_1G_1M1_1PinM3        ();
+      virtual bool          _do_xG                   ();
+      virtual bool          _do_2G                   ();
+      virtual bool          _do_globalSegment        ();
+      virtual void          singleGCell              ( AnabaticEngine*, Net* );
+              bool          _do_1G_xM1_1PinM3        ();
+    public:                                          
+      virtual string        getTypeName              () const;
   };
 
 

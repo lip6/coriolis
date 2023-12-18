@@ -31,6 +31,7 @@ namespace Anabatic {
       static  std::string   getStyle                 ();
       virtual void          doRp_AutoContacts        ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags );
       virtual AutoContact*  doRp_Access              ( GCell*, RoutingPad*, uint64_t  flags );
+              AutoContact*  doRp_AccessOffgrid       ( GCell*, RoutingPad*, uint64_t  flags );
               AutoContact*  doRp_AccessNorthSouthPin ( GCell*, RoutingPad* );
               AutoContact*  doRp_AccessEastWestPin   ( GCell*, RoutingPad* );
     private:                                        

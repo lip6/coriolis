@@ -58,6 +58,7 @@ namespace Hurricane {
       static const uint32_t Punctual           = (1 << 8); 
       static const uint32_t M1Offgrid          = (1 << 9); 
       static const uint32_t SizeFlags          = HSmall|VSmall|Punctual|M1Offgrid;
+      static const uint32_t SelectedComponent  = (1 << 10); 
     public:
       static RoutingPad*   create                ( Net*, Occurrence, uint32_t flags=0 );
       static RoutingPad*   create                ( Pin* );
@@ -69,6 +70,7 @@ namespace Hurricane {
       inline  bool         isVSmall              () const;
       inline  bool         isPunctual            () const;
       inline  bool         isM1Offgrid           () const;
+      inline  bool         hasSelectedComponent  () const;
       inline  uint32_t     getFlags              () const;
       inline  Occurrence   getOccurrence         () const;
               Occurrence   getPlugOccurrence     ();
@@ -112,15 +114,16 @@ namespace Hurricane {
   };
 
   
-  inline  bool        RoutingPad::isAtTopLevel  () const { return _occurrence.getPath().isEmpty(); }
-  inline  bool        RoutingPad::isHSmall      () const { return (_flags & HSmall); }
-  inline  bool        RoutingPad::isVSmall      () const { return (_flags & VSmall); }
-  inline  bool        RoutingPad::isPunctual    () const { return (_flags & Punctual); }
-  inline  bool        RoutingPad::isM1Offgrid   () const { return (_flags & M1Offgrid); }
-  inline  uint32_t    RoutingPad::getFlags      () const { return _flags; }
-  inline  Occurrence  RoutingPad::getOccurrence () const { return _occurrence; };
-  inline  void        RoutingPad::setFlags      ( uint32_t flags ) { _flags |=  flags; }
-  inline  void        RoutingPad::unsetFlags    ( uint32_t flags ) { _flags &= ~flags; }
+  inline  bool        RoutingPad::isAtTopLevel         () const { return _occurrence.getPath().isEmpty(); }
+  inline  bool        RoutingPad::isHSmall             () const { return (_flags & HSmall); }
+  inline  bool        RoutingPad::isVSmall             () const { return (_flags & VSmall); }
+  inline  bool        RoutingPad::isPunctual           () const { return (_flags & Punctual); }
+  inline  bool        RoutingPad::isM1Offgrid          () const { return (_flags & M1Offgrid); }
+  inline  bool        RoutingPad::hasSelectedComponent () const { return (_flags & SelectedComponent); }
+  inline  uint32_t    RoutingPad::getFlags             () const { return _flags; }
+  inline  Occurrence  RoutingPad::getOccurrence        () const { return _occurrence; };
+  inline  void        RoutingPad::setFlags             ( uint32_t flags ) { _flags |=  flags; }
+  inline  void        RoutingPad::unsetFlags           ( uint32_t flags ) { _flags &= ~flags; }
 
 
   template<typename T>
