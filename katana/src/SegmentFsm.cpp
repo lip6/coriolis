@@ -558,6 +558,8 @@ namespace Katana {
       Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getSourcePosition(), Constant::Superior );
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
+      cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition()) << endl;
+      cdebug_log(155,0) << "  -> baseTrack:" << baseTrack << endl;
 
       for ( Track* ptrack : Tracks_Range::get(perpPlane,_constraint) ) {
         _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,ptrack->getAxis(),0) );
