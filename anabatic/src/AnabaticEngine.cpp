@@ -1177,7 +1177,10 @@ namespace Anabatic {
     }
     cleanupGlobal();
 
-    if (not _configuration->isTwoMetals()) relaxOverConstraineds();
+    if (not _configuration->isTwoMetals()) {
+      if (_configuration->getDirection((size_t)0) & Flags::Vertical)
+        relaxOverConstraineds();
+    }
 
     _state = EngineActive;
   }
@@ -1776,7 +1779,8 @@ namespace Anabatic {
     UpdateSession::open();
     
     for ( auto rp : rps ) {
-      if (not _configuration->selectRpComponent(rp))
+      bool offgrid = _configuration->selectRpComponent(rp);
+      if (not offgrid and not _configuration->isM1Offgrid())
         cerr << Warning( "AnabaticEngine::computeEdgeCapacities(): %s has no components on grid.", getString(rp).c_str() ) << endl;
 
       Point  center = rp->getBoundingBox().getCenter();

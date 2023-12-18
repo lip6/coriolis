@@ -789,23 +789,28 @@ namespace Anabatic {
           // cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
         }
       }
-    }
-
-    if (flags & Flags::Target) {
-      if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
-      else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
-      else                                   cap = getViaToSameCap  (depth);
-      // cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
-      //                   << " VIA cap:" << DbU::getValueString(cap)
-      //                   << " t:" << (getFlags() & SegSourceBottom)
-      //                   << " b:" << (getFlags() & SegSourceTop)
-      //                   << endl;
-      if (not (flags & Flags::NoSegExt)) {
-        // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
-        if (getDuTarget() > cap) {
-          cap = getDuTarget();
-          // cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+    } else {
+      if (flags & Flags::Target) {
+        if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
+        else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
+        else                                   cap = getViaToSameCap  (depth);
+        // cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
+        //                   << " VIA cap:" << DbU::getValueString(cap)
+        //                   << " t:" << (getFlags() & SegSourceBottom)
+        //                   << " b:" << (getFlags() & SegSourceTop)
+        //                   << endl;
+        if (not (flags & Flags::NoSegExt)) {
+          // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
+          if (getDuTarget() > cap) {
+            cap = getDuTarget();
+            // cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+          }
         }
+      } else {
+        cap = getViaToBottomCap( depth );
+        // cdebug_log(150,0) << "getExtensionCap(): (force bottom) flags:" << getFlags()
+        //                   << " VIA cap:" << DbU::getValueString(cap)
+        //                   << endl;
       }
     }
 
@@ -823,6 +828,7 @@ namespace Anabatic {
 
     if (getLayer()->isSymbolic() and (cap < getWidth()/2)) cap  = getWidth()/2;
     if (not (flags & Flags::LayerCapOnly))                 cap += getLayer()->getMinimalSpacing()/2;
+    // cdebug_log(150,0) << "getExtensionCap(): cap=" << DbU::getValueString(cap) << endl;
     return cap;
   }
 
