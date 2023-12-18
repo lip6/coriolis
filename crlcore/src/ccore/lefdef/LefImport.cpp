@@ -1033,14 +1033,26 @@ namespace {
                                  );
               cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
 #endif
-              ongrids.push_back( Vertical::create( rectilinear->getNet()
-                                                 , rectilinear->getLayer()
-                                                 , best.getXCenter()
-                                                 , best.getWidth()
-                                                 , best.getYMin() 
-                                                 , best.getYMax()
-                                                 )
-                               );
+            //if (gaugeMetal2->isHorizontal()) {
+              if (best.getWidth() < best.getHeight()) {
+                ongrids.push_back( Vertical::create( rectilinear->getNet()
+                                                   , rectilinear->getLayer()
+                                                   , best.getXCenter()
+                                                   , best.getWidth()
+                                                   , best.getYMin() 
+                                                   , best.getYMax()
+                                                   )
+                                 );
+              } else {
+                ongrids.push_back( Horizontal::create( rectilinear->getNet()
+                                                     , rectilinear->getLayer()
+                                                     , best.getYCenter()
+                                                     , best.getHeight()
+                                                     , best.getXMin() 
+                                                     , best.getXMax()
+                                                     )
+                                 );
+              }
               cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
             }
 #if THIS_IS_DISABLED
