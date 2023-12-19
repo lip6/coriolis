@@ -185,11 +185,15 @@ namespace Etesian {
     private:                                  
                              EtesianEngine    ( const EtesianEngine& );
               EtesianEngine& operator=        ( const EtesianEngine& );
+
+    protected:
+      virtual void           _coloquinteCallback(coloquinte::PlacementStep step);
+      void                   _coloquinteCallbackCore(coloquinte::PlacementStep step, bool updatePlacement);
+
     private:
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
               void           _updatePlacement ( const coloquinte::PlacementSolution* );
-              void           _coloquinteCallback(coloquinte::PlacementStep step);
               void           _checkNotAFeed   ( Occurrence occurrence ) const;
   };
 

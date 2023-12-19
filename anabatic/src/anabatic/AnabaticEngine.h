@@ -254,6 +254,7 @@ namespace Anabatic {
       inline        int               incStamp                ();
                     Contact*          breakAt                 ( Segment*, GCell* );
                     void              ripup                   ( Segment*, Flags );
+                    void              ripupAll                ();
                     bool              unify                   ( Contact* );
     // Global routing related functions.                      
                     void              globalRoute             ();

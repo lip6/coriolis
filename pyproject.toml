@@ -6,7 +6,7 @@ authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
-requires-python = ">= 3.7"
+requires-python = ">= 3.8.1"
 packages = [
   { include = "coriolis"},
 ]
@@ -69,7 +69,8 @@ before-all = '''
 [tool.pdm.dev-dependencies]
 doc = [
     "pelican",
-    "docutils >=0.16",
+    "pelican-pdf",
+    "docutils >= 0.20",
     "markupsafe >= 2.0.0"
 ]
 dev = [

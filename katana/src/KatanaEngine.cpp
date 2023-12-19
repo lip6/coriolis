@@ -221,26 +221,13 @@ namespace Katana {
 
   void  KatanaEngine::_runKatanaInit ()
   {
-    Utilities::Path pythonSitePackages = System::getPath( "pythonSitePackages" );
-    Utilities::Path confFile           = "coriolis/katana/initHook.py";
-    Utilities::Path systemConfFile     = pythonSitePackages / confFile;
-
-    if (systemConfFile.exists()) {
-    //Isobar::Script::addPath( systemConfDir.toString() );
-
-      dbo_ptr<Isobar::Script> script = Isobar::Script::create( confFile.toPyModPath() );
-      script->addKwArgument( "katana"    , (PyObject*)PyKatanaEngine_Link(this) );
-      script->runFunction  ( "katanaHook", getCell() );
-
-    //Isobar::Script::removePath( systemConfDir.toString() );
-    } else {
-      cerr << Warning( "Katana system configuration file:\n  <%s> not found."
-                     , systemConfFile.toString().c_str() ) << endl;
-    }
+    dbo_ptr<Isobar::Script> script = Isobar::Script::create( "coriolis.katana.initHook" );
+    script->addKwArgument( "katana"    , (PyObject*)PyKatanaEngine_Link(this) );
+    script->runFunction  ( "katanaHook", getCell() );
   }
 
 
-  void  KatanaEngine::digitalInit ()
+  void  KatanaEngine::digitalInit ( Flags flags )
   {
     cdebug_log(155,1) << "KatanaEngine::_initDataBase()" << endl;
     _runKatanaInit();
@@ -250,7 +237,7 @@ namespace Katana {
     Super::chipPrep();
 
     setupChannelMode();
-    setupGlobalGraph( 0 );
+    setupGlobalGraph( flags );
     if (not isChannelStyle()) {
       setupRoutingPlanes();
     }
@@ -258,15 +245,16 @@ namespace Katana {
     if (not setupPreRouteds()) {
       setState( Anabatic::EngineDriving );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
-    } else {
-      if (not isChannelStyle()) {
-        setupPowerRails();
-        Flags flags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
-        protectRoutingPads( flags );
-      }
     }
 
+    if (not isChannelStyle()) {
+      if (!(flags & Flags::PlacementCallback)) {
+        setupPowerRails();
+        Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+                      ? Flags::ProtectSelf : Flags::NoFlags;
+        protectRoutingPads( protectFlags );
+      }
+    }
     cdebug_tabw(155,-1);
   }
 

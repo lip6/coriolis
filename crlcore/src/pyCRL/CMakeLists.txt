@@ -56,6 +56,7 @@
                                     PyAcmSigda.cpp
                                    #PyIspd05.cpp
                                     PySpice.cpp
+                                    PyVerilog.cpp
                                     PyBlif.cpp
                                     PyGds.cpp
                                     PyLefImport.cpp
@@ -80,6 +81,7 @@
                                     crlcore/PyAcmSigda.h
                                    #crlcore/PyIspd05.h
                                     crlcore/PySpice.h
+                                    crlcore/PyVerilog.h
                                     crlcore/PyBlif.h
                                     crlcore/PyGds.h
                                     crlcore/PyLefImport.h

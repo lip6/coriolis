@@ -63,7 +63,7 @@ extern "C" {
   static PyModuleDef  PyEtesian_ModuleDef =
     { PyModuleDef_HEAD_INIT
     , "Etesian"           /* m_name     */
-    , "Standard cell analytical placer (based on SimPL)."
+    , "Standard cell analytical placer."
                           /* m_doc      */
     , -1                  /* m_size     */
     , PyEtesian_Methods   /* m_methods  */

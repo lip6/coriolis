@@ -541,6 +541,11 @@ namespace Anabatic {
   {
     _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
     _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags );
+      _sourcePosition -= halfCap;
+      _targetPosition += halfCap;
+    }
   }
 
 
@@ -562,6 +567,11 @@ namespace Anabatic {
     bool      coherency      = true;
     DbU::Unit sourcePosition = _horizontal->getSource()->getX() - getExtensionCap(Flags::Source);
     DbU::Unit targetPosition = _horizontal->getTarget()->getX() + getExtensionCap(Flags::Target);
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags );
+      sourcePosition -= halfCap;
+      targetPosition += halfCap;
+    }
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << "extensionCap: " << DbU::getValueString(getExtensionCap(Flags::Source)) << endl;

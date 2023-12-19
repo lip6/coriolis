@@ -63,6 +63,8 @@ div#contents {
     float:            left;
     top:              260px;
     left:             20px;
+    width:            30%;
+    z-index:          -1;
   }
 }
 

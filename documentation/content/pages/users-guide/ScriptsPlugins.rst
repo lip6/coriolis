@@ -91,7 +91,7 @@ This typical script can be executed in two ways:
 
 
 Plugins
-~~~~~~~
+^^^^^^^
 
 Plugins are |Python| scripts specially crafted to integrate with |cgt|.
 Their entry point is a :cb:`scriptMain()` method as described in 
@@ -302,7 +302,7 @@ by the clock tree plugin after the netlist clock sub-nets creation.
 
 
 A Simple Example: AM2901
-~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 To illustrate the capabilities of |Coriolis| tools and |Python| scripting, a small
 example, derived from the |Alliance| :cb:`AM2901` is supplied.

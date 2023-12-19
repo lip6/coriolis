@@ -1,31 +1,18 @@
 #!/bin/bash
 
+ document=`basename -s .rst $1`
+ current_source_dir=$2
+ stylesheet=$3
+ rst2latex=$4
+ pdflatex=$5
+ echo "Generating: ${document}.pdf from $current_source_dir with stylesheet $stylesheet"
 
-#echo "Args:     $*"
+ $rst2latex --use-latex-toc --stylesheet=$stylesheet ${document}.rst ${document}-raw.tex
+ sed "s%\(include.*\){\(\..*\)}%\1{$current_source_dir/\2}%" \
+     's, \\& \\\\multicolumn{2}{l|}{,  \\& \\\\multicolumn{2}{p{0.6\\\\DUtablewidth}|}{,' \
+     ${document}-raw.tex > ${document}.tex
+ $pdflatex ${document}
 
- document=`basename -s .rst ${@:$#}`
-  sources=${@:1:$(($# -1))}
-
- echo "Document: ${document}.rst"
- echo "Sources:  ${sources}"
-
- rm -f ${document}.rst
- for source in ${sources}; do
-   source=`basename ${source}`
-   if [ "${source}" != "pdfHeader.rst" ]; then
-     tail -n +4 ${source} | \
-       sed 's,:ref:`\([^`]*\)`,`\1`_,' \
-       >> ${document}.rst
-   else
-     cat ${source} >> ${document}.rst
-   fi
- done
- export TEXINPUTS=../etc/images//:./images//:
- rst2latex --use-latex-toc --stylesheet=../etc/SoC-ReST.tex ${document}.rst ${document}-raw.tex
- sed 's, \\& \\\\multicolumn{2}{l|}{,  \\& \\\\multicolumn{2}{p{0.6\\\\DUtablewidth}|}{,' ${document}-raw.tex > ${document}.tex
- pdflatex ${document}
- pdflatex ${document}
- 
  rm -f ${document}.rst     \
        ${document}-raw.tex \
        ${document}.tex     \

@@ -811,13 +811,14 @@ namespace Katana {
 
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
       if (_segments[i]) {
-        bool inTrackRange = false;
+        bool      inTrackRange = false;
+        Interval  axisSpan;
 
         if (_segments[i]->isNonPref()) {
-          DbU::Unit min = 0;
-          DbU::Unit max = 0;
-          _segments[i]->base()->getCanonical( min, max );
-          inTrackRange = Interval(min,max).contains( _axis );
+          axisSpan = Interval ( _segments[i]->base()->getSourcePosition()
+                              , _segments[i]->base()->getTargetPosition() );
+          axisSpan.inflate( _segments[i]->base()->getExtensionCap( Anabatic::Flags::NoFlags ));
+          inTrackRange = axisSpan.contains( _axis );
         } else {
           Interval trackRange ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
                               , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
@@ -835,13 +836,16 @@ namespace Katana {
           cerr << "[CHECK] incoherency at " << i << " "
                << _segments[i] << " is detached." << endl;
           coherency = false;
-        } else { 
+        } else {
           if ( (_segments[i]->getTrack() != this) and not inTrackRange ) {
             cerr << "[CHECK] incoherency at " << i << " "
-                 << _segments[i] << " is in track "
-                 << _segments[i]->getTrack() << endl;
+                 << _segments[i] << " (span="
+                 << _segments[i]->getTrackSpan() << ") " << axisSpan
+                 << "\n        is in track "
+                 << this                         <<  "\n        instead of "
+                 << _segments[i]->getTrack()
+                 << endl;
             coherency = false;
-            cerr << _segments[i]->getTrackSpan() << endl;
           }
         }
         if ( (_segments[i]->getAxis() != getAxis()) and not inTrackRange ) {

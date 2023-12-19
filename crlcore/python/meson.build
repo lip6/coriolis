@@ -37,6 +37,14 @@ py.install_sources(
 )
 
 py.install_sources(
+  'technos/node180/gf180mcu_c4m/__init__.py',
+  'technos/node180/gf180mcu_c4m/techno.py',
+  'technos/node180/gf180mcu_c4m/StdCell3V3Lib.py',
+  'technos/node180/gf180mcu_c4m/iolib.py',
+  subdir: 'coriolis/technos/node180/gf180mcu_c4m',
+)
+
+py.install_sources(
   'technos/node180/scn6m_deep_09/__init__.py',
   'technos/node180/scn6m_deep_09/alliance.py',
   'technos/node180/scn6m_deep_09/analog.py',

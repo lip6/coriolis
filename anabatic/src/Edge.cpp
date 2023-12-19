@@ -411,6 +411,25 @@ namespace Anabatic {
   }
 
 
+  size_t  Edge::ripupAll ()
+  {
+    AnabaticEngine* anabatic = getAnabatic();
+    size_t          netCount = 0;
+
+    sort( _segments.begin(), _segments.end(), SortSegmentByLength(anabatic) );
+    for ( size_t i=0 ; i<_segments.size() ; ) {
+      if ((not _segments[i]) or isEnding(_segments[i])) {
+	++i; continue;
+      }
+      NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+      if (netData->isGlobalFixed ()) continue;
+      if (netData->isGlobalRouted()) ++netCount;
+      anabatic->ripup( _segments[i], Flags::Propagate );
+    }
+    return netCount;
+  }
+
+
   void  Edge::_setSource ( GCell* source )
   {
     if (source == _target)

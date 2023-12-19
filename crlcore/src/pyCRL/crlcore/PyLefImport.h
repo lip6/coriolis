@@ -15,9 +15,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_PY_LEF_IMPORT_H
-#define CRL_PY_LEF_IMPORT_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/LefImport.h"
 
@@ -42,6 +40,7 @@ extern "C" {
   extern  PyMethodDef   PyLefImport_Methods[];
 
   extern  void          PyLefImport_LinkPyType();
+  extern  void          PyLefImport_postModuleInit();
 
 
 #define IsPyLefImport(v)    ( (v)->ob_type == &PyTypeLefImport )
@@ -51,5 +50,3 @@ extern "C" {
 }  // extern "C".
 
 }  // CRL namespace.
-
-#endif  // CRL_PY_LEF_IMPORT_H

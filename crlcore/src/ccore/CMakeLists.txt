@@ -106,6 +106,8 @@
                                                spice/SpiceParser.cpp
                                                spice/SpiceDriver.cpp
                            )
+                       set ( verilog_cpps      verilog/VerilogDriver.cpp
+                           )
                        set ( bookshelf_cpps    bookshelf/BookshelfParser.cpp
                                                bookshelf/BookshelfDriver.cpp
                            )
@@ -299,6 +301,7 @@
                                         ${ispd05_cpps}
                                         ${blif_cpps}
                                         ${spice_cpps}
+                                        ${verilog_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
                              )

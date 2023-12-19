@@ -4,6 +4,9 @@
 CGT - The Graphical Interface
 =============================
 
+Overview
+--------
+
 The |Coriolis| graphical interface is split up into two windows.
 
 * The **Viewer**, with the following features:
@@ -35,10 +38,10 @@ Features are detailed in `Viewer & Tools`_.
 .. _Viewer & Tools:
 
 Viewer & Tools
-~~~~~~~~~~~~~~
+--------------
 
 |Stratus| Netlist Capture
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Stratus| is the replacement for |GenLib| procedural netlist capture language.
 It is designed as a set of |Python| classes, and comes with it's own documentation
@@ -46,7 +49,7 @@ It is designed as a set of |Python| classes, and comes with it's own documentati
 
 
 The |Hurricane| Data-Base
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The |Alliance| flow is based on the |MBK| data-base, which has one data-structure
 for each view. That is, |LOFIG| for the *logical* view and |PHFIG| for the *physical*
@@ -77,7 +80,7 @@ As for the second release, |Coriolis| can be used only for three purposes :
 
 
 Synthetizing and loading a design
----------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Coriolis| supports several file formats. It can load all file format
 from the |Alliance| toolchain (.ap for layout, behavioural and structural vhdl .vbe and .vst),
@@ -106,7 +109,7 @@ and write Alliance designs and libraries directly.
 
 
 Etesian -- Placer
------------------
+^^^^^^^^^^^^^^^^^
 
 The |Etesian| placer is a state of the art (as of 2015) analytical placer. It is 
 within ``5%`` of other placers' solutions, but is normally a bit worse than ePlace.
@@ -206,7 +209,7 @@ Etesian Configuration Parameters
 
 
 Katana -- Global Router
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 
 The quality of |Katana| global routing solutions are equivalent to those of FGR_ 1.0.
 For an in-depth description of |Katana| algorithms, you may download the thesis of
@@ -217,7 +220,7 @@ The global router is now deterministic.
 
 
 Katana -- Detailed Router
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 |Katana| no longer suffers from the limitations of |Nero|. It can route big designs
 as its runtime and memory footprint is almost linear (with respect to the number
@@ -363,7 +366,7 @@ All the defaults value given below are from the default |Alliance| technology
 .. _Python Scripts in Cgt:
 
 Executing Python Scripts in Cgt
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Python/Stratus scripts can be executed either in text or graphical mode.
 
@@ -386,7 +389,7 @@ For more explanation on Python scripts see `Python Interface to Coriolis`.
 
 
 Printing & Snapshots
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 Printing or saving into a |pdf| is fairly simple, just use the **File -> Print**
 menu or the |CTRL_P| shortcut to open the dialog box.
@@ -419,7 +422,7 @@ Saving into an image is subject to the same remarks as for |pdf|.
 
 
 Memento of Shortcuts in Graphic Mode
-------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The main application binary is |cgt|.
 
@@ -501,7 +504,7 @@ The main application binary is |cgt|.
 
 
 Cgt Command Line Options
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Appart from the obvious ``--text`` options, all can be used for text and graphical mode.
 
@@ -553,7 +556,7 @@ Some Examples :
 
 
 Miscellaneous Settings
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 +---------------------------------------+------------------+----------------------------+
 | Parameter Identifier                  |   Type           |  Default                   |
@@ -606,7 +609,7 @@ Miscellaneous Settings
 .. _The Controller:
 
 The Controller
-~~~~~~~~~~~~~~
+--------------
 
 The *Controller* window is composed of seven tabs:
 
@@ -625,7 +628,7 @@ The *Controller* window is composed of seven tabs:
 .. _The Look Tab:
 
 The Look Tab
-------------
+^^^^^^^^^^^^
 
 You can select how the layout will be displayed. There is a special one
 ``Printer.Coriolis`` specifically designed for `Printing & Snapshots`_.
@@ -639,7 +642,7 @@ You should select it prior to calling the print or snapshot dialog boxes.
 .. _The Filter Tab:
 
 The Filter Tab
---------------
+^^^^^^^^^^^^^^
 
 The filter tab let you select what hierarchical levels of your design will be
 displayed. Hierarchy level are numbered top-down: the level 0 corresponds to
@@ -670,7 +673,7 @@ unit used to display coordinates.
 .. _The Layers&Go Tab:
 
 The Layers&Go Tab
------------------
+^^^^^^^^^^^^^^^^^
 
 Control the individual display of all *layers* and *Gos*.
 
@@ -692,7 +695,7 @@ For each layer/Go there are two check boxes:
 .. _The Netlist Tab:
 
 The Netlist Tab
----------------
+^^^^^^^^^^^^^^^
 
 The *Netlist* tab shows the list of nets... By default the tab is not
 *synched* with the displayed Cell. To see the nets you must check the
@@ -711,7 +714,7 @@ is highlighted in the *Viewer*.
 .. _The Selection Tab:
 
 The Selection Tab
------------------
+^^^^^^^^^^^^^^^^^
 
 The *Selection* tab lists all the components currently selected. They
 can be filtered thanks to the filter pattern.
@@ -731,7 +734,7 @@ the ``t`` key...
 .. _The Inspector Tab:
 
 The Inspector Tab
------------------
+^^^^^^^^^^^^^^^^^
 
 This tab is very useful, but mostly for |Coriolis| developpers. It allows
 to browse through the live DataBase. The *Inspector* provides three entry points:
@@ -758,7 +761,7 @@ its fields using the right/left arrows.
 .. _The Settings Tab:
 
 The Settings Tab
-----------------
+^^^^^^^^^^^^^^^^
 
 Here comes the description of the *Settings* tab.
 

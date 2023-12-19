@@ -3,6 +3,7 @@ subdir('src/LibraryManager')
 subdir('src/cyclop')
 subdir('src/pyCRL')
 subdir('python')
+subdir('doc/crlcore')
 
 CrlCore = declare_dependency(
   link_with: [crlcore, librarymanager, pycrlcore],
