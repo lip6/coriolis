@@ -24,6 +24,7 @@ build/
 venv/
 coriolis.egg-info/
 .pdm-python
+.doit.db
 
 bootstrap/coriolis2.spec
 

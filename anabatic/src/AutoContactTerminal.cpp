@@ -475,6 +475,25 @@ namespace Anabatic {
           setHeight( _segment->getContactWidth() );
         }
 
+        if (canDrag()) {
+          AutoContact* opposite      = _segment->getOppositeAnchor(this);
+          AutoSegment* perpandicular = opposite->getPerpandicular( _segment );
+          if (perpandicular) {
+            cdebug_log(145,0) << "Draging H interval ["
+                              << DbU::getValueString(getCBXMin()) << " "
+                              << DbU::getValueString(getCBXMax()) << "]" << endl;
+            Point onGrid = Session::getNearestGridPoint( Point(perpandicular->getAxis(),getY())
+                                                       , getConstraintBox() );
+            DbU::Unit x = onGrid.getX();
+            x = std::min( x, getCBXMax() );
+            x = std::max( x, getCBXMin() );
+            setX( x );
+            cdebug_log(145,0) << "Dragging to X @" << DbU::getValueString(x)
+                              << " pitched:" << DbU::getValueString(onGrid.getX())
+                              << " " << getConstraintBox() << endl;
+          }
+        }
+
         if (not getUConstraints(Flags::Vertical).contains(axis)) {
           cdebug_log(145,0) << "Cached: " << _segment << endl;
           message << "Terminal horizontal segment Y " << DbU::getValueString(axis)
@@ -503,7 +522,7 @@ namespace Anabatic {
           AutoContact* opposite      = _segment->getOppositeAnchor(this);
           AutoSegment* perpandicular = opposite->getPerpandicular( _segment );
           if (perpandicular) {
-            cdebug_log(145,0) << "Draging V interval ["
+            cdebug_log(145,0) << "Dragging V interval ["
                               << DbU::getValueString(getCBYMin()) << " "
                               << DbU::getValueString(getCBYMax()) << "]" << endl;
             DbU::Unit y = perpandicular->getAxis();

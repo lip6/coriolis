@@ -160,10 +160,14 @@ namespace Katana {
 
   Track* RoutingPlane::getTrackByPosition ( DbU::Unit axis, uint32_t mode ) const
   {
+    if (_tracks.empty())     return nullptr;
+    if (axis < getAxisMin()) return _tracks.front();
+    if (axis > getAxisMax()) return _tracks.back();
+    
     size_t index = getLayerGauge()->getTrackIndex( getAxisMin(), getAxisMax(), axis, mode );
     if (index == getTracksSize()) {
-      if (not index) return NULL;
-      if ((mode == Constant::Superior) or (mode == Constant::Exact)) return NULL;
+      if (not index) return nullptr;
+      if ((mode == Constant::Superior) or (mode == Constant::Exact)) return nullptr;
       --index;
     }
 

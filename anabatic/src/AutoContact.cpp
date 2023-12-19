@@ -392,38 +392,39 @@ namespace Anabatic {
 
   void  AutoContact::showTopologyError ( const std::string& message, Flags flags )
   {
-    Component*    anchor      = NULL;
-    Horizontal**  horizontals = new Horizontal* [10];
-    Vertical**    verticals   = new Vertical*   [10];
+    Component*     anchor      = NULL;
+    Horizontal**   horizontals = new Horizontal* [10];
+    Vertical**     verticals   = new Vertical*   [10];
+    ostringstream  strError;
 
-    if (not (flags & Flags::CParanoid)) cparanoid.setStreamMask( mstream::PassThrough );
-
+    strError << "In topology of " << this << "\n";
     _getTopology ( base(), anchor, horizontals, verticals, 10 );
  
-    cparanoid << Error("In topology of %s",getString(this).c_str()) << endl;
-    if (anchor) cparanoid << "        A: " << anchor << endl;
+    if (anchor) strError << "        A: " << anchor << "\n";
 
     for ( size_t i=0 ; (i<10) and (horizontals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( horizontals[i] );
       if (autoSegment != NULL)
-        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        strError << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << "\n"; 
       else
-        cparanoid << "        ?: " << horizontals[i] << endl; 
+        strError << "        ?: " << horizontals[i] << "\n"; 
     }
 
     for ( size_t i=0 ; (i<10) and (verticals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( verticals[i] );
       if (autoSegment != NULL)
-        cparanoid << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << endl; 
+        strError << "        " << (autoSegment->isGlobal()?'G':'L') << ": " << autoSegment << "\n"; 
       else
-        cparanoid << "        ?: " << verticals[i] << endl; 
+        strError << "        ?: " << verticals[i] << "\n"; 
     }
 
-    cparanoid << "        " << message  << endl;
-    if (not (flags & Flags::CParanoid)) cparanoid.unsetStreamMask( mstream::PassThrough );
-
+    strError << "        " << message  << "\n";
+    Error  error ( strError.str().c_str() );
+    
     delete [] horizontals;
     delete [] verticals;
+
+    throw error;
   }
 
 

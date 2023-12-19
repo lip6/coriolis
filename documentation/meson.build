@@ -10,6 +10,7 @@ pdfcontent = files(
 
 
 rstcontent = files(
+  'etc/definitions.rst',
   'content/pages/design-flow/DesignFlow_HTML.rst',
   'content/pages/design-flow/QuickStart.rst',
   'content/pages/documentation.rst',
@@ -41,6 +42,8 @@ rstcontent = files(
   'content/pages/stratus/Patterns.rst',
   'content/pages/stratus/Stratus_HTML.rst',
   'content/pages/symbolic-layout.rst',
+  'content/pages/technical-log/TechnicalLog_HTML.rst',
+  'content/pages/technical-log/December_2023.rst',
   'content/pages/users-guide/Configuration.rst',
   'content/pages/users-guide/DesignFlow.rst',
   'content/pages/users-guide/Installation.rst',

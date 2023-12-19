@@ -17,7 +17,7 @@ from   coriolis.Anabatic        import StyleFlags
 __all__ = [ "setup" ]
 
 
-def _routing ():
+def _routing ( useHV ):
     """
     Define the routing gauge along with the various P&R tool parameters.
     """
@@ -26,9 +26,19 @@ def _routing ():
     tech = db.getTechnology()
     rg   = RoutingGauge.create('mcu9t5v0')
     rg.setSymbolic( False )
+    if useHV:
+        dirM1           = RoutingLayerGauge.Vertical
+        dirM2           = RoutingLayerGauge.Horizontal
+        netBuilderStyle = 'HV,3RL+'
+        routingStyle    = StyleFlags.HV|StyleFlags.M1Offgrid
+    else:
+        dirM1           = RoutingLayerGauge.Horizontal
+        dirM2           = RoutingLayerGauge.Vertical
+        netBuilderStyle = 'VH,3RL+'
+        routingStyle    = StyleFlags.VH|StyleFlags.M1Offgrid
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal1' )         # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , dirM1                             # preferred routing direction
                                 , RoutingLayerGauge.PinOnly         # layer usage
                                 , 0                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -40,7 +50,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal2' )         # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , dirM2                             # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 1                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -52,7 +62,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal3' )         # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , dirM1                             # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 2                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -64,7 +74,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal4' )         # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , dirM2                             # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 3                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -76,7 +86,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal5' )         # metal
-                                , RoutingLayerGauge.Horizontal      # preferred routing direction
+                                , dirM1                             # preferred routing direction
                                 , RoutingLayerGauge.Default         # layer usage
                                 , 4                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -88,7 +98,7 @@ def _routing ():
                                 , u(0.0 ) ))                        # obstacle dW
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'MetalTop' )       # metal
-                                , RoutingLayerGauge.Vertical        # preferred routing direction
+                                , dirM2                             # preferred routing direction
                                 , RoutingLayerGauge.PowerSupply     # layer usage
                                 , 5                                 # depth
                                 , 0.0                               # density (deprecated)
@@ -112,7 +122,7 @@ def _routing ():
 
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         env = af.getEnvironment()
-        env.setRegister( '.*__dff.*' )
+        env.setRegister( '.*_dff.*' )
         # Place & Route setup
         cfg.viewer.minimumSize = 500
         cfg.viewer.pixelThreshold = 2
@@ -148,10 +158,10 @@ def _routing ():
         )
         cfg.anabatic.routingGauge = 'mcu9t5v0'
         cfg.anabatic.cellGauge = 'LEF.GF018hv5v_green_sc9'
-        cfg.anabatic.globalLengthThreshold = 1450
+        cfg.anabatic.globalLengthThreshold = 30*u(5.04)
         cfg.anabatic.saturateRatio = 0.90
         cfg.anabatic.saturateRp = 10
-       #cfg.anabatic.topRoutingLayer = 'mt2'
+        cfg.anabatic.topRoutingLayer = 'Metal5'
         cfg.anabatic.edgeLength = 192
         cfg.anabatic.edgeWidth = 32
         cfg.anabatic.edgeCostH = 9.0
@@ -162,8 +172,8 @@ def _routing ():
         cfg.anabatic.globalIterations = [ 1, 100 ]
         cfg.anabatic.gcell.displayMode = 1
         cfg.anabatic.gcell.displayMode = (("Boundary", 1), ("Density", 2))
-        cfg.anabatic.netBuilderStyle = 'VH,3RL+'
-        cfg.anabatic.routingStyle = StyleFlags.VH
+        cfg.anabatic.netBuilderStyle = netBuilderStyle
+        cfg.anabatic.routingStyle = routingStyle
         cfg.katana.disableStackedVias = False
         cfg.katana.hTracksReservedLocal = 4
         cfg.katana.hTracksReservedLocal = [0, 20]
@@ -302,6 +312,8 @@ def _loadStdLib ( cellsTop ):
         io.vprint( 2, '     (__file__="{}")'.format( os.path.abspath( __file__ )))
         LefImport.load( (cellsTop / '..' / 'tech' / 'gf180mcu_6LM_1TM_9K_9t_tech.lef').as_posix() )
         LefImport.setMergeLibrary( cellLib )
+        #LefImport.setPinFilter( u(0.84), u(0.26), LefImport.PinFilter_WIDEST )
+        LefImport.setPinFilter( u(0.26), u(0.26), LefImport.PinFilter_WIDEST )
         for cellDir in cellsTop.iterdir():
             for lefFile in sorted(cellDir.glob('*.lef')):
                 LefImport.load( lefFile.as_posix() )
@@ -321,7 +333,7 @@ def _loadIoLib ():
             , Gds.NoGdsPrefix )
 
 
-def setup ( cellsTop ):
-    _routing()
+def setup ( cellsTop, useHV ):
+    _routing( useHV )
     _loadStdLib( cellsTop )
     #_loadIoLib()

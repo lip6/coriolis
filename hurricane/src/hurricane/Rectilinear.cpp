@@ -38,6 +38,7 @@
 #include "hurricane/Cell.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DebugSession.h"
 
 
 namespace {
@@ -48,54 +49,154 @@ namespace {
   using Hurricane::Box;
   using Hurricane::Interval;
   using Hurricane::Rectilinear;
+  using Hurricane::DebugSession;
+
+  
+// -------------------------------------------------------------------
+// Class  :  "SweepInterval".
 
 
-  class SweepInterval : public Interval {
+  class SweepInterval {
     public:
-      inline                SweepInterval ( DbU::Unit vmin , DbU::Unit vmax, DbU::Unit xmin  );
-      inline                SweepInterval ( Interval&, DbU::Unit xmin );
-      inline SweepInterval& inflate       ( DbU::Unit dvMin, DbU::Unit dvMax );
-      inline SweepInterval& merge         ( DbU::Unit v );
-      inline DbU::Unit      getXMin       () const;
-      inline void           setXMin       ( DbU::Unit );
-      inline string         _getString    () const;
+      inline                 SweepInterval    ();
+      inline                 SweepInterval    ( const SweepInterval& );
+      inline                 SweepInterval    ( DbU::Unit vmin , DbU::Unit vmax, DbU::Unit xmin  );
+      inline                 SweepInterval    ( Interval&, DbU::Unit xmin );
+      inline bool            isEmpty          () const;
+      inline bool            isKeep           () const;
+      inline bool            isNewLeft        () const;
+      inline bool            isExactMatch     () const;
+      inline bool            isSplinter       () const;
+      inline bool            isPonctual       () const;
+      inline uint32_t        getId            () const;
+      inline DbU::Unit       getVMin          () const;
+      inline DbU::Unit       getVMax          () const;
+      inline DbU::Unit       getSize          () const;
+      inline const Interval& getSpan          () const;
+      inline void            inflate          ( DbU::Unit dvMin, DbU::Unit dvMax );
+      inline void            updateSpan       ( const Interval& );
+      inline void            merge            ( DbU::Unit v );
+      inline DbU::Unit       getXMin          () const;
+      inline void            setXMin          ( DbU::Unit );
+      inline void            setKeep          ();
+      inline void            setNewLeft       ();
+      inline void            setExactMatch    ();
+      inline void            setSplinter      ();
+      inline void            unsetNewLeft     ();
+      inline void            unsetSplinter    ();
+      inline void            clearUpdateFlags ();
+      inline string          _getString       () const;
+      inline bool            operator<        ( const SweepInterval& ) const;
     private:
+      const  uint32_t  NOFLAGS     = 0;
+      const  uint32_t  UPDATED     = (1<<0);
+      const  uint32_t  CARVED      = (1<<1);
+      const  uint32_t  ENLARGED    = (1<<2);
+      const  uint32_t  EMPTY       = (1<<3);
+      const  uint32_t  NEW_LEFT    = (1<<4);
+      const  uint32_t  KEEP        = (1<<5);
+      const  uint32_t  EXACT_MATCH = (1<<6);
+      const  uint32_t  SPLINTER    = (1<<7);
+      static uint32_t  _idCounter;
+    private:
+      uint32_t   _id;
+      Interval   _span;
+      Interval   _nextSpan;
       DbU::Unit  _xMin;
+      uint32_t   _flags;
   };
+
+
+  uint32_t  SweepInterval::_idCounter = 0;
+
+  
+  inline  SweepInterval::SweepInterval ()
+    : _id   (_idCounter++)
+    , _span ()
+    , _xMin (0)
+    , _flags(EMPTY|NEW_LEFT)
+  { }
 
   
   inline  SweepInterval::SweepInterval ( DbU::Unit vmin , DbU::Unit vmax, DbU::Unit xmin )
-    : Interval(vmin,vmax)
-    , _xMin   (xmin)
+    : _id   (_idCounter++)
+    , _span (vmin,vmax)
+    , _xMin (xmin)
+    , _flags(NOFLAGS|NEW_LEFT)
   { }
-  
+
+
   inline  SweepInterval::SweepInterval ( Interval& base, DbU::Unit xmin )
-    : Interval(base)
-    , _xMin   (xmin)
+    : _id   (_idCounter++)
+    , _span (base)
+    , _xMin (xmin)
+    , _flags(NEW_LEFT)
   { }
   
-  inline SweepInterval& SweepInterval::inflate       ( DbU::Unit dvMin, DbU::Unit dvMax ) { Interval::inflate(dvMin,dvMax); return *this; }
-  inline SweepInterval& SweepInterval::merge         ( DbU::Unit v )                      { Interval::merge(v); return *this; }
-  inline DbU::Unit      SweepInterval::getXMin       () const                             { return _xMin; }
-  inline void           SweepInterval::setXMin       ( DbU::Unit xmin )                   { _xMin=xmin; }
+
+  inline  SweepInterval::SweepInterval ( const SweepInterval& other )
+    : _id   (_idCounter++)
+    , _span (other._span)
+    , _xMin (other._xMin)
+    , _flags(other._flags)
+  { }
+
+
+  inline bool  SweepInterval::operator< ( const SweepInterval& o ) const
+  {
+    if (_span.getVMin() != o._span.getVMin()) return _span.getVMin() < o._span.getVMin();
+    if (_span.getVMax() != o._span.getVMax()) return _span.getVMax() < o._span.getVMax();
+    if (_xMin != o._xMin) return _xMin < o._xMin;
+    return _id < o._id;
+  }
+
+
+  inline bool            SweepInterval::isEmpty          () const                             { return (_flags & EMPTY); }
+  inline bool            SweepInterval::isKeep           () const                             { return (_flags & KEEP); }
+  inline bool            SweepInterval::isNewLeft        () const                             { return (_flags & NEW_LEFT); }
+  inline bool            SweepInterval::isExactMatch     () const                             { return (_flags & EXACT_MATCH); }
+  inline bool            SweepInterval::isSplinter       () const                             { return (_flags & SPLINTER); }
+  inline bool            SweepInterval::isPonctual       () const                             { return _span.isPonctual(); }
+  inline uint32_t        SweepInterval::getId            () const                             { return _id; }
+  inline const Interval& SweepInterval::getSpan          () const                             { return _span; }
+  inline DbU::Unit       SweepInterval::getVMin          () const                             { return _span.getVMin(); }
+  inline DbU::Unit       SweepInterval::getVMax          () const                             { return _span.getVMax(); }
+  inline DbU::Unit       SweepInterval::getSize          () const                             { return _span.getSize(); }
+  inline void            SweepInterval::inflate          ( DbU::Unit dvMin, DbU::Unit dvMax ) { _span.inflate(dvMin,dvMax); }
+  inline void            SweepInterval::merge            ( DbU::Unit v )                      { _span.merge(v); }
+  inline DbU::Unit       SweepInterval::getXMin          () const                             { return _xMin; }
+  inline void            SweepInterval::setXMin          ( DbU::Unit xmin )                   { _xMin=xmin; }
+  inline void            SweepInterval::setKeep          ()                                   { _flags |= KEEP; }
+  inline void            SweepInterval::setNewLeft       ()                                   { _flags |= NEW_LEFT; }
+  inline void            SweepInterval::setExactMatch    ()                                   { _flags |= EXACT_MATCH; }
+  inline void            SweepInterval::setSplinter      ()                                   { _flags |= SPLINTER; }
+  inline void            SweepInterval::unsetNewLeft     ()                                   { _flags &= ~NEW_LEFT; }
+  inline void            SweepInterval::unsetSplinter    ()                                   { _flags &= ~SPLINTER; }
+  inline void            SweepInterval::clearUpdateFlags ()                                   { _flags &= ~(KEEP | NEW_LEFT | EXACT_MATCH); }
+  inline void            SweepInterval::updateSpan       ( const Interval& v )                { _span.intersection(v); }
+  
 
   inline string  SweepInterval::_getString () const
   {
     string s;
-    s += "@"  + DbU::getValueString(_xMin);
-    s += " [" + DbU::getValueString(getVMin());
-    s += " "  + DbU::getValueString(getVMax()) + "]";
+    s += "<SI @"  + DbU::getValueString(_xMin);
+    s += " [" + DbU::getValueString(_span.getVMin());
+    s += " "  + DbU::getValueString(_span.getVMax()) + "]>";
     return s;
   }
 
 
-} // Anonymous namespace.
+}
 
 
 GETSTRING_VALUE_SUPPORT(::SweepInterval);
 
 
 namespace {
+
+  
+// -------------------------------------------------------------------
+// Class  :  "SweepLine".
 
   
   class SweepLine {
@@ -314,6 +415,339 @@ namespace {
       cdebug_log(17,0) << "| " << b << endl;
   }
 
+  
+// -------------------------------------------------------------------
+// Class  :  "SweepLineBig".
+
+  
+  class SweepLineBig {
+    public:
+            SweepLineBig   ( const Rectilinear*
+                           , vector<Box>&
+                           , DbU::Unit xThreshold
+                           , DbU::Unit yThreshold );
+           ~SweepLineBig   ();
+      void  addVEdge       ( DbU::Unit ymin, DbU::Unit ymax, DbU::Unit x );
+      void  loadVEdges     ();
+      void  updateLeftSide ();
+      void  process        ( Interval );
+      void  process        ( const pair< DbU::Unit, list<Interval> >& );
+      void  flushBoxes     ( const Interval& );
+      void  toBox          ( SweepInterval& );
+      void  asRectangles   ();
+    private:
+      const Rectilinear*                         _rectilinear;
+      vector<Box>&                               _boxes;
+      list< pair< DbU::Unit, list<Interval> > >  _vedges;
+      list< SweepInterval >                      _sweepLine;
+      list< SweepInterval >                      _leftSides;
+      DbU::Unit                                  _currX;
+      DbU::Unit                                  _xThreshold;
+      DbU::Unit                                  _yThreshold;
+  };
+
+
+  SweepLineBig::SweepLineBig ( const Rectilinear* r
+                             , vector<Box>&       boxes
+                             , DbU::Unit          xThreshold
+                             , DbU::Unit          yThreshold )
+    : _rectilinear(r)
+    , _boxes      (boxes)
+    , _vedges     ()
+    , _sweepLine  ()
+    , _leftSides  ()
+    , _currX      (0)
+    , _xThreshold (xThreshold)
+    , _yThreshold (yThreshold)
+  {
+    cdebug_log(17,1) << "SweepLineBig::SweepLineBig()" << endl;
+    cdebug_log(17,0) << "_xThreshold=" << DbU::getValueString(_xThreshold) << endl;
+    cdebug_log(17,0) << "_yThreshold=" << DbU::getValueString(_yThreshold) << endl;
+  }
+
+  
+  SweepLineBig::~SweepLineBig ()
+  {
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  SweepLineBig::addVEdge ( DbU::Unit ymin, DbU::Unit ymax, DbU::Unit x )
+  {
+    if (ymin > ymax) std::swap( ymin, ymax );
+
+    cdebug_log(17,1) << "SweepLineBig::addVEdge() @"<< DbU::getValueString(x)
+                     << " [" << DbU::getValueString(ymin)
+                     << " "  << DbU::getValueString(ymax) << "]"  << endl;
+
+    bool inserted = false;
+    for ( auto ix = _vedges.begin() ; ix != _vedges.end() ; ++ix ) {
+      cdebug_log(17,0) << "| Looking @" << DbU::getValueString(ix->first)
+                       << " size=" << ix->second.size() << endl;
+
+      if (ix->first > x) {
+        _vedges.insert( ix, make_pair( x, list<Interval>() ));
+        cdebug_log(17,0) << "+ add new @" << DbU::getValueString(x) << endl;
+        --ix;
+      }
+      if (ix->first == x) {
+        for ( auto iintv = ix->second.begin() ; iintv != ix->second.end() ; ++iintv ) {
+          if (iintv->getVMin() >= ymax) {
+            ix->second.insert( iintv, Interval(ymin,ymax) );
+            inserted = true;
+            break;
+          }
+        }
+        if (not inserted) {
+          ix->second.push_back( Interval(ymin,ymax) );
+          inserted = true;
+        }
+        break;
+      }
+    }
+    if (not inserted) {
+      cdebug_log(17,0) << "+ add new (back) @" << DbU::getValueString(x) << endl;
+      _vedges.push_back( make_pair( x, list<Interval>() ));
+      _vedges.back().second.push_back( Interval(ymin,ymax) );
+    }
+
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  SweepLineBig::loadVEdges ()
+  {
+    const vector<Point>& points = _rectilinear->getPoints();
+    for ( size_t i=0 ; i<points.size()-1 ; ++i ) {
+      const Point& source = points[  i ];
+      const Point& target = points[ (i+1) % points.size() ];
+      DbU::Unit dx = target.getX() - source.getX();
+    //DbU::Unit dy = target.getY() - source.getY();
+      if (dx == 0) {
+        addVEdge( source.getY(), target.getY(), source.getX() );
+      }
+    }
+  }
+
+
+  void  SweepLineBig::toBox ( SweepInterval& intv )
+  {
+    if (intv.getXMin() == _currX) return;
+    if ((_xThreshold > 0) and (_currX - intv.getXMin() < _xThreshold)) return;
+    if ((_yThreshold > 0) and (intv.getSize()          < _yThreshold)) return;
+
+    _boxes.push_back( Box( intv.getXMin(), intv.getVMin()
+                         , _currX        , intv.getVMax() ));
+    cdebug_log(17,0) << "  toBox() " << _boxes.back() << endl;
+  }
+
+  
+  void  SweepLineBig::updateLeftSide ()
+  {
+    cdebug_log(17,1) << "SweepLineBig::updateLeftSide() @" << DbU::getValueString(_currX) << endl;
+    for ( auto isweep = _sweepLine.begin() ; isweep != _sweepLine.end() ; ++isweep ) {
+      cdebug_log(17,1) << "Sweep " << *isweep << endl;
+      DbU::Unit leftX = _currX;
+      for ( auto ileft = _leftSides.begin() ; (ileft != _leftSides.end()) ; ++ileft ) {
+        cdebug_log(17,0) << "| Left side " << *ileft << endl;
+        if (ileft->isNewLeft()) {
+          ileft->unsetNewLeft();
+          continue;
+        }
+        if (isweep->getSpan() == ileft->getSpan()) {
+          cdebug_log(17,0) << "> Exact match" << endl;
+          isweep->setExactMatch();
+          ileft ->setKeep();
+          continue;
+        }
+        if (isweep->getSpan().contains( ileft->getSpan() )) {
+          cdebug_log(17,0) << "> Contained" << endl;
+          ileft->setKeep();
+          continue;
+        }
+        if (ileft->getSpan().contains( isweep->getSpan() )) {
+          cdebug_log(17,0) << "> Full shrink" << endl;
+          if (not ileft->isSplinter()) toBox( *ileft );
+          ileft->setKeep();
+          _leftSides.push_back( SweepInterval( isweep->getVMax(), ileft->getVMax(), ileft->getXMin() ) );
+          _leftSides.back().setSplinter();
+          cdebug_log(17,0) << "+ Add remainder " << _leftSides.back() << endl;
+          ileft->updateSpan( isweep->getSpan() );
+          ileft->unsetSplinter();
+          isweep->setExactMatch();
+          continue;
+        }
+        if (isweep->getSpan().intersect( ileft->getSpan() )) {
+          cdebug_log(17,0) << "> Intersect" << endl;
+          toBox( *ileft );
+          ileft->updateSpan( isweep->getSpan() );
+          ileft->unsetSplinter();
+          if (not ileft->isPonctual()) ileft->setKeep();
+          cdebug_log(17,0) << "> Shrinked span " << *ileft << endl;
+          continue;
+        }
+      }
+
+      if (not isweep->isExactMatch()) {
+        _leftSides.push_back( SweepInterval( *isweep ));
+        _leftSides.back().setXMin( leftX );
+        _leftSides.back().setKeep();
+        cdebug_log(17,0) << "+ Added span " << _leftSides.back() << endl;
+      }
+      cdebug_tabw(17,-1);
+    }
+
+    cdebug_log(17,0) << "Clean sweepline flags" << endl;
+    for ( auto isweep = _sweepLine.begin() ; isweep != _sweepLine.end() ; ++isweep ) {
+      isweep->clearUpdateFlags();
+    }
+    _leftSides.sort();
+    cdebug_log(17,0) << "Delete closed left sides & clean flags" << endl;
+    for ( auto ileft = _leftSides.begin() ; ileft != _leftSides.end() ; ) {
+      cdebug_log(17,0) << "| " << *ileft << endl;
+      auto ileftNext = ileft;
+      ileftNext++;
+      if (ileftNext != _leftSides.end()) {
+        if (   (ileft->getSpan().getVMin() == ileftNext->getSpan().getVMin())
+           and (ileft->getSpan().getVMax() == ileftNext->getSpan().getVMax())) {
+          cdebug_log(17,0) << "> Remove duplicate " << *ileftNext << endl;
+          _leftSides.erase( ileftNext );
+          continue;
+        }
+      }
+      if (not ileft->isKeep()) {
+        cdebug_log(17,0) << "> Remove/close " << *ileft << endl;
+        auto ileftNext = ileft;
+        ++ileftNext;
+        if (not ileft->isSplinter()) {
+          toBox( *ileft );
+        }
+        _leftSides.erase( ileft );
+        ileft = ileftNext;
+        continue;
+      }
+      ileft->clearUpdateFlags();
+      ileft++;
+    }
+    cdebug_tabw(17,-1);
+  }
+  
+
+  void  SweepLineBig::process ( Interval v )
+  {
+    cdebug_log(17,1) << "SweepLineBig::process(Interval&) "
+                     << " [" << DbU::getValueString(v.getVMin())
+                     << " "  << DbU::getValueString(v.getVMax()) << "]"  << endl;
+    bool done = false;
+    for ( auto iintv = _sweepLine.begin() ; iintv != _sweepLine.end() ; ++iintv ) {
+      cdebug_log(17,0) << "> Sweepline element " << *iintv << endl;
+    // Extractor p. 9 (a).
+      if (v.getVMax() < iintv->getVMin()) {
+        cdebug_log(17,0) << "case (a): new left side" << endl;
+        _sweepLine.insert( iintv, SweepInterval(v,_currX) );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (f).
+      if (   (v.getVMin() == iintv->getVMin()) 
+         and (v.getVMax() == iintv->getVMax()) ) {
+        cdebug_log(17,0) << "case (f): closing right side" << endl;
+        _sweepLine.erase( iintv );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (b).
+      if (v.getVMax() == iintv->getVMin()) {
+        cdebug_log(17,0) << "case (b): extend min" << endl;
+        iintv->merge( v.getVMin() );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (g).
+      if (v.getVMax() == iintv->getVMax()) {
+        cdebug_log(17,0) << "case (g): carve" << endl;
+        iintv->inflate( 0, v.getVMin() - iintv->getVMax() );
+        cdebug_log(17,0) << "| " << (*iintv) << endl; 
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (h).
+      if (v.getVMin() == iintv->getVMin()) {
+        cdebug_log(17,0) << "case (h): carve" << endl;
+        iintv->inflate(iintv->getVMin() - v.getVMax(), 0 );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (c).
+      if (   (v.getVMin() > iintv->getVMin()) 
+         and (v.getVMax() < iintv->getVMax()) ) {
+        cdebug_log(17,0) << "case (c): carve" << endl;
+        DbU::Unit wholeVMin = iintv->getVMin();
+        iintv->inflate( iintv->getVMin() - v.getVMax(), 0 );
+        cdebug_log(17,0) << "| " << (*iintv) << endl; 
+        _sweepLine.insert( iintv, SweepInterval( wholeVMin, v.getVMin(), _currX ) );
+        cdebug_log(17,0) << "| " << (*iintv) << endl; 
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (d,e).
+      if (v.getVMin() == iintv->getVMax()) {
+        cdebug_log(17,0) << "case (d,e): merge" << endl;
+        auto iintvNext = iintv;
+        ++iintvNext;
+      // Extractor p. 9 (d).
+        if (iintvNext == _sweepLine.end()) {
+          cdebug_log(17,0) << "case (d): end of vertical line" << endl;
+          iintv->merge( v.getVMax() );
+          iintv->setXMin( _currX );
+        } else {
+        // Extractor p. 9 (d).
+          if (v.getVMax() < iintvNext->getVMin()) {
+            cdebug_log(17,0) << "case (d): extend max" << endl;
+            iintv->merge( v.getVMax() );
+            iintv->setXMin( _currX );
+          } else {
+          // Extractor p. 9 (e).
+            cdebug_log(17,0) << "case (e): interval joining" << endl;
+            iintv->merge( iintvNext->getVMax() );
+            iintv->setXMin( _currX );
+            _sweepLine.erase( iintvNext );
+          }
+        }
+        done = true;
+        break;
+      }
+    }
+    if (not done) {
+      _sweepLine.push_back( SweepInterval(v,_currX) );
+    }
+
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  SweepLineBig::process ( const pair< DbU::Unit, list<Interval> >& intervals )
+  {
+    cdebug_log(17,1) << "SweepLineBig::process() @"<< DbU::getValueString(intervals.first)
+                     << " size=" << intervals.second.size() << endl;
+    _currX = intervals.first;
+    for ( const Interval& v : intervals.second ) process( v );
+    updateLeftSide();
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  SweepLineBig::asRectangles ()
+  {
+    loadVEdges();
+    for ( auto intervals : _vedges ) {
+      process( intervals );
+    }
+    cdebug_log(17,0) << "SweepLineBig::asRectangles() size=" << _boxes.size() << endl;
+    for ( const Box& b : _boxes )
+      cdebug_log(17,0) << "| " << b << endl;
+  }
+
 
 } // Anonymous namespace.
 
@@ -475,6 +909,20 @@ namespace Hurricane {
     rectangles.clear();
     if (not isRectilinear()) return false;
     SweepLine( this, rectangles ).asRectangles();
+    return true;
+  }
+
+
+  bool  Rectilinear::getAsBiggestRectangles ( std::vector<Box>& rectangles
+                                            , DbU::Unit         xThreshold
+                                            , DbU::Unit         yThreshold
+                                            ) const
+  {
+  //DebugSession::open( 17, 18 );
+    rectangles.clear();
+    if (not isRectilinear()) return false;
+    SweepLineBig( this, rectangles, xThreshold, yThreshold ).asRectangles();
+  //DebugSession::close();
     return true;
   }
 

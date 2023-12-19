@@ -88,13 +88,14 @@ namespace Anabatic {
 
   class NetBuilder {
     public:
-      enum FunctionFlags { NoFlags         = (1 <<  0)
-                         , SortDecreasing  = (1 <<  1)
-                         , HAccess         = (1 <<  2)
-                         , HAccessEW       = (1 <<  3)
-                         , VSmall          = (1 <<  4)
-                         , HSmall          = (1 <<  5)
-                         , Punctual        = (1 <<  6)
+      enum FunctionFlags { NoFlags         = 0
+                         , SortDecreasing  = (1 <<  0)
+                         , HAccess         = (1 <<  1)
+                         , HAccessEW       = (1 <<  2)
+                         , VSmall          = (1 <<  3)
+                         , HSmall          = (1 <<  4)
+                         , Punctual        = (1 <<  5)
+                         , M1Offgrid       = (1 <<  6)
                          , HCollapse       = (1 <<  7)
                          , VCollapse       = (1 <<  8)
                          , Terminal        = (1 <<  9)
@@ -145,8 +146,7 @@ namespace Anabatic {
     public:
       template< typename BuilderT >
       static  void                          load                   ( AnabaticEngine*, Net* );
-      static  void                          getPositions           ( Component* anchor, Point& source, Point& target );
-      static  uint64_t                      checkRoutingPadSize    ( Component* anchor );
+      static  uint64_t                      checkRoutingPadSize    ( RoutingPad* rp );
       static  Hook*                         getSegmentOppositeHook ( Hook* hook );
       static  uint64_t                      getSegmentHookType     ( Hook* hook );
       static  void                          sortHookByX            ( vector<Hook*>&       , uint64_t flags=NoFlags );
@@ -209,12 +209,12 @@ namespace Anabatic {
       inline  void                          addToFixSegments       ( AutoSegment* );
               bool                          push                   ( Hook* to, AutoContact* contact, uint64_t flags=0 );
               bool                          isInsideBlockage       ( GCell*, Component* ) const;
-      virtual void                          doRp_AutoContacts      ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
-      virtual AutoContact*                  doRp_Access            ( GCell*, Component*, uint64_t  flags ) = 0;
+      virtual void                          doRp_AutoContacts      ( GCell*, RoutingPad*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
+      virtual AutoContact*                  doRp_Access            ( GCell*, RoutingPad*, uint64_t  flags ) = 0;
       virtual AutoContact*                  doRp_AccessPad         ( RoutingPad*, uint64_t flags );
       virtual AutoContact*                  doRp_AccessAnalog      ( GCell*, RoutingPad*, uint64_t flags );
-              void                          doRp_StairCaseH        ( GCell*, Component* rp1, Component* rp2 );
-              void                          doRp_StairCaseV        ( GCell*, Component* rp1, Component* rp2 );
+              void                          doRp_StairCaseH        ( GCell*, RoutingPad* rp1, RoutingPad* rp2 );
+              void                          doRp_StairCaseV        ( GCell*, RoutingPad* rp1, RoutingPad* rp2 );
               void                          _load                  ( AnabaticEngine*, Net* );
     private:                                                       
       virtual bool                          _do_xG                 ();

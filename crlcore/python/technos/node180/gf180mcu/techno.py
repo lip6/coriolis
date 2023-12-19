@@ -15,7 +15,52 @@ from   coriolis.helpers.overlay         import CfgCache
 __all__ = [ 'setup' ]
 
 
-def _setup_techno():
+class VIAS ( object ):
+    """
+    Create all the VIAs in the technology. The enclosures of the VIAs
+    are choosen according to the kind of routing gauge : HV or VH.
+    Be sure to make them coherent.
+
+    The enclosure are given for the HV case.
+
+    * Side : size of the *square* central cut (hole).
+    * BHE  : Bottom Horizontal Enclosure.
+    * BVE  : Bottom Vertical Enclosure.
+    * THE  : Top Horizontal Enclosure.
+    * TVE  : Top Vertical Enclosure.
+    """
+
+    #
+    #            Name     | BMetal  | Cut   | TMetal    | Side| BHE | BVH | THE | TVE  |
+    #            0        | 1       | 2     | 3         | 4   | 5   | 6   | 7   | 8    |
+    ViaDatas = ( ( 'VIA12', 'Metal1', 'Via1', 'Metal2'  , 0.22, 0.06, 0.00, 0.06, 0.01 )
+               , ( 'VIA23', 'Metal2', 'Via2', 'Metal3'  , 0.26, 0.06, 0.01, 0.01, 0.06 )
+               , ( 'VIA34', 'Metal3', 'Via3', 'Metal4'  , 0.26, 0.01, 0.06, 0.06, 0.01 )
+               , ( 'VIA45', 'Metal4', 'Via4', 'Metal5'  , 0.26, 0.06, 0.01, 0.01, 0.06 )
+               , ( 'VIA5T', 'Metal5', 'Via5', 'MetalTop', 0.26, 0.01, 0.06, 0.06, 0.01 )
+               )
+
+    def __init__ ( self, useHV ):
+        self.useHV = useHV
+
+    def setup ( self, tech ):
+        if self.useHV:
+            bhindex = 5
+            bvindex = 6
+            thindex = 7
+            tvindex = 8
+        else:
+            bhindex = 6
+            bvindex = 5
+            thindex = 8
+            tvindex = 7
+        for datas in VIAS.ViaDatas:
+            VIA = createVia( tech, datas[0], datas[1], datas[2], datas[3], u(datas[4]) )
+            setEnclosures( VIA, tech.getLayer(datas[1]), ( u(datas[bhindex]), u(datas[bvindex]) ))
+            setEnclosures( VIA, tech.getLayer(datas[3]), ( u(datas[thindex]), u(datas[tvindex]) ))
+
+
+def _setup_techno( useHV ):
     io.vprint( 1, '  o  Setup GF180MCU technology.' )
     io.vprint( 2, '     (__file__="{}")'.format( os.path.abspath( __file__ )))
 
@@ -79,21 +124,22 @@ def _setup_techno():
     CONT = createVia( tech, 'CONT_POLY2', 'Poly2', 'Contact', 'Metal1', u(0.22) )
     setEnclosures( CONT, Poly2 , u(0.07) )
     setEnclosures( CONT, Metal1, u(0.12) )
-    VIA12 = createVia( tech, 'VIA12', 'Metal1', 'Via1', 'Metal2', u(0.26) )
-    setEnclosures( VIA12, Metal1, (u(0.06), u(0.00)) )
-    setEnclosures( VIA12, Metal2, (u(0.06), u(0.01)) )
-    VIA23 = createVia( tech, 'VIA23', 'Metal2', 'Via2', 'Metal3', u(0.26) )
-    setEnclosures( VIA23, Metal2, (u(0.06), u(0.01)) )
-    setEnclosures( VIA23, Metal3, (u(0.01), u(0.06)) )
-    VIA34 = createVia( tech, 'VIA34', 'Metal3', 'Via3', 'Metal4', u(0.26) )
-    setEnclosures( VIA34, Metal3, (u(0.01), u(0.06)) )
-    setEnclosures( VIA34, Metal4, (u(0.06), u(0.01)) )
-    VIA45 = createVia( tech, 'VIA45', 'Metal4', 'Via4', 'Metal5', u(0.26) )
-    setEnclosures( VIA45, Metal4, (u(0.06), u(0.01)) )
-    setEnclosures( VIA45, Metal5, (u(0.01), u(0.06)) )
-    VIA5T = createVia( tech, 'VIA5T', 'Metal5', 'Via5', 'MetalTop', u(0.26) )
-    setEnclosures( VIA5T, Metal5  , (u(0.01), u(0.06)) )
-    setEnclosures( VIA5T, MetalTop, (u(0.06), u(0.01)) )
+    VIAS( useHV ).setup( tech )
+    #VIA12 = createVia( tech, 'VIA12', 'Metal1', 'Via1', 'Metal2', u(0.26) )
+    #setEnclosures( VIA12, Metal1, (u(0.06), u(0.00)) )
+    #setEnclosures( VIA12, Metal2, (u(0.06), u(0.01)) )
+    #VIA23 = createVia( tech, 'VIA23', 'Metal2', 'Via2', 'Metal3', u(0.26) )
+    #setEnclosures( VIA23, Metal2, (u(0.06), u(0.01)) )
+    #setEnclosures( VIA23, Metal3, (u(0.01), u(0.06)) )
+    #VIA34 = createVia( tech, 'VIA34', 'Metal3', 'Via3', 'Metal4', u(0.26) )
+    #setEnclosures( VIA34, Metal3, (u(0.01), u(0.06)) )
+    #setEnclosures( VIA34, Metal4, (u(0.06), u(0.01)) )
+    #VIA45 = createVia( tech, 'VIA45', 'Metal4', 'Via4', 'Metal5', u(0.26) )
+    #setEnclosures( VIA45, Metal4, (u(0.06), u(0.01)) )
+    #setEnclosures( VIA45, Metal5, (u(0.01), u(0.06)) )
+    #VIA5T = createVia( tech, 'VIA5T', 'Metal5', 'Via5', 'MetalTop', u(0.26) )
+    #setEnclosures( VIA5T, Metal5  , (u(0.01), u(0.06)) )
+    #setEnclosures( VIA5T, MetalTop, (u(0.06), u(0.01)) )
 
     Border = createBL( tech, 'Border', BasicLayer.Material.other, gds2Layer=63  )
 
@@ -307,8 +353,8 @@ def _setup_display():
     Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
 
 
-def setup():
-    _setup_techno()
+def setup( useHV ):
+    _setup_techno( useHV )
     _setup_display()
     try:
         from .techno_fix import fix
