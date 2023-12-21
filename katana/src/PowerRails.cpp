@@ -510,8 +510,8 @@ namespace {
                       << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
                       << ")" << endl;
 
-    // if ( type == Constant::PinOnly ) {
-    //   cdebug_log(159,0) << "  Layer is PinOnly." << endl;
+    // if ( (type == Constant::PinOnly) or (type == Constant::LocalOnly) ) {
+    //   cdebug_log(159,0) << "  Layer is PinOnly or LocalOnly." << endl;
     //   return;
     // }
 
@@ -813,7 +813,7 @@ namespace {
 
       _planes.insert( make_pair(basicLayer,new Plane(lg->getLayer(),rp)) );
 
-    //if (lg->getType() == Constant::PinOnly) continue;
+    //if (not lg->isUsable()) continue;
       const BasicLayer* blockageLayer = dynamic_cast<const BasicLayer*>( lg->getBlockageLayer() );
       if (not blockageLayer) continue;
 
@@ -981,6 +981,12 @@ namespace {
 
     if (not activePlane) return;
 
+    if (static_cast<const BasicLayer*>(activePlane->getLayer())->getMaterial()
+       != BasicLayer::Material::blockage)
+      setStopCellFlags( Cell::Flags::AbstractedSupply );
+    else
+      unsetStopCellFlags( Cell::Flags::AbstractedSupply );
+
     cmess1 << "     - PowerRails in " << activePlane->getLayer()->getName() << " ..." << endl;
     Query::doQuery();
   }
@@ -1103,6 +1109,7 @@ namespace {
                                 << " " << basicLayer << endl;
             
               _powerRailsPlanes.merge( bb, rootNet );
+            } else {
             }
           }
         }
@@ -1195,7 +1202,6 @@ namespace Katana {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
-    query.setStopCellFlags( Cell::Flags::AbstractedSupply );
     for ( BasicLayer* layer : technology->getBasicLayers() ) {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )

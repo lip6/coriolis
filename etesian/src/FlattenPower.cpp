@@ -952,7 +952,7 @@ namespace Etesian {
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     RoutingGauge* rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
     if (not rg) 
-      throw Error( "EtesianEngine::falttenPower(): No routing gauge named \"%s\"", gaugeName.c_str() );
+      throw Error( "EtesianEngine::flattenPower(): No routing gauge named \"%s\"", gaugeName.c_str() );
 
   //DebugSession::open( 150, 160 );
     UpdateSession::open();
@@ -962,8 +962,7 @@ namespace Etesian {
     query.setStopCellFlags( Cell::Flags::AbstractedSupply );
 
     for ( BasicLayer* layer : technology->getBasicLayers() ) {
-      if (   (layer->getMaterial() != BasicLayer::Material::metal)
-         and (layer->getMaterial() != BasicLayer::Material::blockage) )
+      if (layer->getMaterial() != BasicLayer::Material::metal)
         continue;
       if (not query.hasBasicLayer(layer)) continue;
 
