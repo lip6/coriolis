@@ -1220,7 +1220,7 @@ namespace Katana {
   {
     if (not getKatanaEngine()->getTrackFill()) return;
     if (getIndex() % getKatanaEngine()->getTrackFill() != 0) return;
-    if (getLayerGauge()->getType() == Constant::PinOnly) return;
+    if (not getLayerGauge()->isUsable()) return;
     if (getLayerGauge()->getDepth() > getKatanaEngine()->getConfiguration()->getAllowedDepth()) return;
 
     Net* fillNet = getKatanaEngine()->getCell()->getNet( "dummy_filler_net" );

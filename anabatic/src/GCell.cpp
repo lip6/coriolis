@@ -324,7 +324,7 @@ namespace Anabatic {
       _fragmentations[i] = 0.0;
       _globalsCount  [i] = 0.0;
 
-      if (Session::getRoutingGauge()->getLayerGauge(i)->getType() == Constant::PinOnly)
+      if (not Session::getRoutingGauge()->getLayerGauge(i)->isUsable())
         ++_pinDepth;
     }
 
@@ -1349,7 +1349,7 @@ namespace Anabatic {
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
       RoutingLayerGauge* rlg = Session::getLayerGauge( depth );
-      if (rlg->getType() & Constant::PinOnly) continue;
+      if (not rlg->isUsable()) continue;
       if (_densities[depth] >= 0.9) {
         if (depth+2 < _depth) {
           Edge* edge = (rlg->getDirection() == Constant::Vertical) ? getNorthEdge()
@@ -1557,6 +1557,8 @@ namespace Anabatic {
       int contiguousNonSaturated = 0;
       for ( size_t i=0 ; i<_depth ; i++ ) {
         uLengths2[i] += _blockages[i];
+        if (Session::getLayerGauge(i)->getType() & Constant::LocalOnly)
+          continue;
         if (Session::getLayerGauge(i)->getType() & Constant::PinOnly)
           continue;
         if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)

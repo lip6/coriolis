@@ -38,8 +38,9 @@ namespace Constant {
                       , Unusable          = (1 << 4)
                       , PowerSupply       = (1 << 5)
                       , PinOnly           = (1 << 6)
-                      , Default           = (1 << 7)
-                      , BottomPowerSupply = (1 << 8)
+                      , LocalOnly         = (1 << 7)
+                      , Default           = (1 << 8)
+                      , BottomPowerSupply = (1 << 9)
                       };
 
   enum Round          { Superior          = (1 << 10)
@@ -94,6 +95,7 @@ namespace CRL {
     // Accessors.                       
       inline  bool                      isHorizontal     () const;
       inline  bool                      isVertical       () const;
+      inline  bool                      isUsable         () const;
       inline  const Layer*              getLayer         () const;
       inline  const Layer*              getBlockageLayer () const;
               unsigned int              getDepth         () const;
@@ -178,6 +180,8 @@ namespace CRL {
 
   inline  bool                      RoutingLayerGauge::isHorizontal     () const { return (_direction == Constant::Direction::Horizontal); }
   inline  bool                      RoutingLayerGauge::isVertical       () const { return (_direction == Constant::Direction::Vertical); }
+  inline  bool                      RoutingLayerGauge::isUsable         () const { return     (_type != Constant::LayerGaugeType::PinOnly)
+                                                                                          and (_type != Constant::LayerGaugeType::LocalOnly); }
   inline  const Layer*              RoutingLayerGauge::getLayer         () const { return _layer; }
   inline  unsigned int              RoutingLayerGauge::getDepth         () const { return _depth; }
   inline  const Layer*              RoutingLayerGauge::getBlockageLayer () const { return _blockageLayer; }
@@ -270,6 +274,7 @@ inline void  from ( Constant::LayerGaugeType& type, const std::string& s )
 {
   if      (s == "Unusable"          ) type = Constant::Unusable;
   else if (s == "PinOnly"           ) type = Constant::PinOnly;
+  else if (s == "LocalOnly"         ) type = Constant::LocalOnly;
   else if (s == "PowerSupply"       ) type = Constant::PowerSupply;
   else if (s == "PowerSupply|Bottom") type = Constant::BottomPowerSupply;
   else {
@@ -289,6 +294,7 @@ inline std::string  getString<const Constant::LayerGaugeType*>
     case Constant::Bottom:            return "Bottom (error)";
     case Constant::Unusable:          return "Unusable";
     case Constant::PinOnly:           return "PinOnly";
+    case Constant::LocalOnly:         return "LocalOnly";
     case Constant::Default:           return "Default";
     case Constant::PowerSupply:       return "PowerSupply";
     case Constant::BottomPowerSupply: return "PowerSupply|Bottom";
@@ -311,6 +317,7 @@ inline std::string  getString<const Constant::LayerGaugeType>
     case Constant::Bottom:            return "Bottom (error)";
     case Constant::Unusable:          return "Unusable";
     case Constant::PinOnly:           return "PinOnly";
+    case Constant::LocalOnly:         return "LocalOnly";
     case Constant::Default:           return "Default";
     case Constant::PowerSupply:       return "PowerSupply";
     case Constant::BottomPowerSupply: return "PowerSupply|Bottom";
