@@ -175,6 +175,8 @@ class GaugeConf ( object ):
                 continue
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
                 continue
+            if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.LocalOnly:
+                continue
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.BottomPowerSupply:
                 continue
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PowerSupply:

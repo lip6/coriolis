@@ -90,7 +90,7 @@ namespace {
       cdebug_tabw(145,-1);
       return;
     }
-    if (Session::getRoutingGauge()->getLayerType(usedComponent->getLayer()) == Constant::PinOnly) {
+    if (not Session::getRoutingGauge()->isUsable(usedComponent->getLayer())) {
       cdebug_tabw(145,-1);
       return;
     }

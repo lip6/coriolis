@@ -54,14 +54,14 @@ namespace Anabatic {
         if (layerGauges[depth]->getDirection() != Constant::Horizontal) continue;
         _capacities[depth] = layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getYMin()
                                                                , span.getVMax() - ab.getYMin() );
-      //cdebug_log(110,0) << "Horizontal edge capacity:" << capacity << endl;
+      //cdebug_log(110,0) << "Horizontal edge capacity:" << _capacities[depth] << endl;
       }
 
       if (_flags & Flags::Vertical) {
         if (layerGauges[depth]->getDirection() != Constant::Vertical) continue;
         _capacities[depth] = layerGauges[depth]->getTrackNumber( span.getVMin() - ab.getXMin()
                                                                , span.getVMax() - ab.getXMin() );
-      //cdebug_log(110,0) << "Vertical edge capacity:" << capacity << endl;
+      //cdebug_log(110,0) << "Vertical edge capacity:" << _capacities[depth] << endl;
       }
     }
   }
