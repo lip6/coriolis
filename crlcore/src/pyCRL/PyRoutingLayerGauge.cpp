@@ -111,6 +111,7 @@ extern "C" {
         case Constant::BottomPowerSupply:
         case Constant::PowerSupply:
         case Constant::PinOnly:
+        case Constant::LocalOnly:
         case Constant::Default: break;
         default:
           PyErr_SetString ( ConstructorError, "Bad value for type argument of RoutingLayerGauge.create()." );
@@ -267,6 +268,7 @@ extern "C" {
   DirectGetUIntAttribute  (PyRoutingLayerGauge_getDirection    ,getDirection    ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetUIntAttribute  (PyRoutingLayerGauge_getType         ,getType         ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetDoubleAttribute(PyRoutingLayerGauge_getDensity      ,getDensity      ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetBoolAttribute  (PyRoutingLayerGauge_isUsable        ,isUsable        ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getOffset       ,getOffset       ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getPitch        ,getPitch        ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfPitch    ,getHalfPitch    ,PyRoutingLayerGauge,RoutingLayerGauge)
@@ -286,6 +288,8 @@ extern "C" {
   PyMethodDef PyRoutingLayerGauge_Methods[] =
     { { "create"                , (PyCFunction)PyRoutingLayerGauge_create          , METH_VARARGS|METH_STATIC
                                 , "Create a new RoutingLayerGauge." }
+    , { "isUsable"              , (PyCFunction)PyRoutingLayerGauge_isUsable        , METH_NOARGS
+                                , "Tells if the layer is usable for standard routing." }
     , { "getLayer"              , (PyCFunction)PyRoutingLayerGauge_getLayer        , METH_NOARGS
                                 , "Returns the associated routing layer." }
     , { "getBlockageLayer"      , (PyCFunction)PyRoutingLayerGauge_getBlockageLayer, METH_NOARGS
@@ -357,6 +361,7 @@ extern "C" {
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Vertical         ,"Vertical"    );
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Unusable         ,"Unusable"    );
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PinOnly          ,"PinOnly"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::LocalOnly        ,"LocalOnly"   );
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PowerSupply      ,"PowerSupply" );
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::BottomPowerSupply,"BottomPowerSupply" );
     LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Default          ,"Default"     );

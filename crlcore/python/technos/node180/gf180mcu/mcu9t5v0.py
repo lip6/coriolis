@@ -39,7 +39,7 @@ def _routing ( useHV ):
     rg.addLayerGauge(
         RoutingLayerGauge.create( tech.getLayer( 'Metal1' )         # metal
                                 , dirM1                             # preferred routing direction
-                                , RoutingLayerGauge.PinOnly         # layer usage
+                                , RoutingLayerGauge.LocalOnly       # layer usage
                                 , 0                                 # depth
                                 , 0.0                               # density (deprecated)
                                 , u(0.0)                            # track offset from AB
