@@ -258,6 +258,7 @@ namespace Katana {
     _doRemovalEvents();
   //if (checkTrack) checkTrack->check( overlaps, "Session::_revalidate() - check track 82 @270." );
 
+    cdebug_log(159,1) << "Processing Track insert event" << endl;
     for ( const Event& event : _insertEvents ) {
       if (event._segment) {
         if (event._segment->getAxis() != event._axis) event._segment->setAxis( event._axis );
@@ -266,6 +267,7 @@ namespace Katana {
       if (event._marker) event._track->insert( event._marker );
     }
     _insertEvents.clear();
+    cdebug_log(159,-1) << "Insert events processeds" << endl;
     _doRemovalEvents( false );
   //if (checkTrack) checkTrack->check( overlaps, "Session::_revalidate() - check track 82 @270." );
 
@@ -418,14 +420,20 @@ namespace Katana {
                       << "\n               @" << DbU::getValueString(axis)
                       << " " << track << endl;
 
-    if ( check and (segment->getTrack() != NULL) ) {
-      cerr << Bug("Session::addInsertEvent(): Segment already in Track."
-                 "\n      %s."
-                 "\n      to %s."
-                 ,getString(segment).c_str()
-                 ,getString(track).c_str()
-                 ) << endl;
-      return;
+    if (segment->getTrack()) {
+      if (segment->isForwardSetTrack()) {
+        segment->unsetFlags( TElemForwardSetTrack );
+      } else {
+        if (check) {
+          cerr << Bug( "Session::addInsertEvent(): Segment already in Track."
+                       "\n      %s."
+                       "\n      to %s."
+                     , getString(segment).c_str()
+                     , getString(track).c_str()
+                     )  << endl;
+          return;
+        }
+      }
     }
 
     _insertEvents.push_back( Event(segment,track,axis) );

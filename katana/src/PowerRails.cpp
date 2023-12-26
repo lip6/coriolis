@@ -38,6 +38,7 @@
 #include "anabatic/GCell.h"
 #include "katana/RoutingPlane.h"
 #include "katana/TrackFixedSegment.h"
+#include "katana/TrackBlockage.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -1050,7 +1051,7 @@ namespace {
       }
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
-      if ( segment != NULL ) {
+      if (segment) {
         _goMatchCount++;
         cdebug_log(159,0) << "  Merging PowerRail element: " << segment << endl;
 
@@ -1073,46 +1074,74 @@ namespace {
         transformation.applyOn ( bb );
 
         _powerRailsPlanes.merge ( bb, rootNet );
-      } else {
-        const Contact* contact = dynamic_cast<const Contact*>(component);
-        if ( contact != NULL ) {
-          _goMatchCount++;
+        return;
+      }
 
-          Box bb = contact->getBoundingBox ( basicLayer );
-          transformation.applyOn ( bb );
+      const Contact* contact = dynamic_cast<const Contact*>(component);
+      if (contact) {
+        _goMatchCount++;
 
-          cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
-                      << " " << basicLayer << endl;
+        Box bb = contact->getBoundingBox ( basicLayer );
+        transformation.applyOn ( bb );
+
+        cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
+                          << " " << basicLayer << endl;
           
-          _powerRailsPlanes.merge ( bb, rootNet );
-        } else {
-          const Pad* pad = dynamic_cast<const Pad*>(component);
-          if (pad != NULL) {
-            _goMatchCount++;
+        _powerRailsPlanes.merge ( bb, rootNet );
+        return;
+      }
 
-            Box bb = pad->getBoundingBox( basicLayer );
+      const Pad* pad = dynamic_cast<const Pad*>(component);
+      if (pad) {
+        _goMatchCount++;
+
+        Box bb = pad->getBoundingBox( basicLayer );
+        transformation.applyOn( bb );
+          
+        cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+                          << " " << basicLayer << endl;
+        
+        _powerRailsPlanes.merge( bb, rootNet );
+        return;
+      }
+
+      const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>(component);
+      if (rectilinear and (rectilinear->getPoints().size() == 5)) {
+        _goMatchCount++;
+
+        Box bb = rectilinear->getBoundingBox( basicLayer );
+        transformation.applyOn( bb );
+          
+        cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
+                          << " " << basicLayer << endl;
+            
+        _powerRailsPlanes.merge( bb, rootNet );
+        return;
+      }
+
+      if (rectilinear) {
+        if (not _powerRailsPlanes.getActivePlane()->getLayer()->isBlockage()) return;
+        _goMatchCount++;
+
+        RoutingPlane*      plane = _powerRailsPlanes.getActivePlane()->getRoutingPlane();
+        RoutingLayerGauge* rlg   = plane->getLayerGauge();
+        DbU::Unit          delta = plane->getLayerGauge()->getPitch() - 1;
+        vector<Box> boxes;
+        rectilinear->getAsRectangles( boxes );
+        if (rlg->isHorizontal()) {
+          for ( Box bb : boxes ) {
             transformation.applyOn( bb );
-          
-            cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
-                              << " " << basicLayer << endl;
-            
-            _powerRailsPlanes.merge( bb, rootNet );
-          } else {
-            const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>(component);
-            if (rectilinear and (rectilinear->getPoints().size() == 5)) {
-              _goMatchCount++;
+            DbU::Unit axisMin = bb.getYMin() - delta;
+            DbU::Unit axisMax = bb.getYMax() + delta;
 
-              Box bb = rectilinear->getBoundingBox( basicLayer );
-              transformation.applyOn( bb );
-          
-              cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
-                                << " " << basicLayer << endl;
-            
-              _powerRailsPlanes.merge( bb, rootNet );
-            } else {
+            Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
+            for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
+              TrackElement* element = TrackBlockage::create ( track, bb );
+              cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
             }
           }
         }
+        return;
       }
     }
   }
