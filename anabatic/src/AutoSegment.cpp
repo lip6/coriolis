@@ -807,7 +807,8 @@ namespace Anabatic {
           }
         }
       } else {
-        cap = getViaToBottomCap( depth );
+      //cap = getViaToBottomCap( depth );
+        cap = getViaToSameCap( depth );
         // cdebug_log(150,0) << "getExtensionCap(): (force bottom) flags:" << getFlags()
         //                   << " VIA cap:" << DbU::getValueString(cap)
         //                   << endl;
