@@ -21,6 +21,7 @@ katana = shared_library(
   'Block.cpp',
   'DataNegociate.cpp',
   'DataSymmetric.cpp',
+  'TrackBlockage.cpp',
   'TrackCost.cpp',
   'TrackElement.cpp',
   'TrackElements.cpp',
