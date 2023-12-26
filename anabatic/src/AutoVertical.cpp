@@ -433,7 +433,7 @@ namespace Anabatic {
     _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
     _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
     if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags );
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
       _sourcePosition -= halfCap;
       _targetPosition += halfCap;
     }
@@ -459,7 +459,7 @@ namespace Anabatic {
     DbU::Unit sourcePosition = _vertical->getSource()->getY() - getExtensionCap(Flags::Source);
     DbU::Unit targetPosition = _vertical->getTarget()->getY() + getExtensionCap(Flags::Target);
     if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags );
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
       sourcePosition -= halfCap;
       targetPosition += halfCap;
     }
