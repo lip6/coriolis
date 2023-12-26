@@ -137,6 +137,7 @@ namespace {
 
     if ( not track ) {
       cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
+      DebugSession::close();
       return;
     }
 
@@ -168,12 +169,15 @@ namespace {
 
     if (minConstraint > maxConstraint) {
       cerr << Bug( "%s have too tight caging constraints.", getString(segment).c_str() ) << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
       return;
     }
     if ( (minConstraint <= uside.getVMin()) and (maxConstraint >= uside.getVMax()) ) {
       cdebug_log(159,0) << "No constraints [" << DbU::getValueString(minConstraint)
                   << ":"                << DbU::getValueString(maxConstraint)
                   << " vs. " << uside << endl;
+      DebugSession::close();
       return;
     }
 
@@ -204,6 +208,7 @@ namespace {
     if (perpandiculars.size() == 0) {
       cdebug_log(159,0) << "No perpandiculars to " << segment << endl;
       cdebug_tabw(159,-1);
+      DebugSession::close();
       return;
     }
 
