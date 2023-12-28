@@ -624,6 +624,7 @@ namespace Katana {
     _eventQueue.load( _segments );
     cmess2 << "        <queue:" <<  right << setw(8) << setfill('0') << _eventQueue.size() << ">" << endl;
     if (cdebug.enabled(9000)) _eventQueue.dump();
+    _statistics.setLoadedEventsCount( _eventQueue.size() );
 
     size_t count = 0;
     _katana->setStage( StageNegociate );
@@ -668,69 +669,69 @@ namespace Katana {
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
 
-      // if (event->getSegment()->getNet()->getId() == 239546) {
-      //   UpdateSession::close();
-      //   ostringstream message;
-      //   message << "After processing an event from Net id:239546\n" << event;
-      //   Breakpoint::stop( 0, message.str() );
-      //   UpdateSession::open();
-      // }
+    //if (event->getSegment()->getNet()->getId() == 239546) {
+    //  UpdateSession::close();
+    //  ostringstream message;
+    //  message << "After processing an event from Net id:239546\n" << event;
+    //  Breakpoint::stop( 0, message.str() );
+    //  UpdateSession::open();
+    //}
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );
     //} 
 
-      // if (RoutingEvent::getProcesseds() == 65092) {
-      //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "Overlap has happened" );
-      //   UpdateSession::open();
-      // }
+    //if (RoutingEvent::getProcesseds() == 65092) {
+    //  UpdateSession::close();
+    //  Breakpoint::stop( 0, "Overlap has happened" );
+    //  UpdateSession::open();
+    //}
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
+    _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );
   //_pack( count, true );
-      _negociateRepair();
+    _negociateRepair();
 
-      if (_katana->getConfiguration()->runRealignStage()) {
-        cmess1 << "     o  Realign Stage." << endl;
-        
-        cdebug_log(159,0) << "Loadind realign queue." << endl;
-        _katana->setStage( StageRealign );
-        for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
-          RoutingEvent* event = _eventHistory.getNth(i);
-          if (not event->isCloned() and event->getSegment()->canRealign())
-            event->reschedule( _eventQueue, 0 );
+    if (_katana->getConfiguration()->runRealignStage()) {
+      cmess1 << "     o  Realign Stage." << endl;
+      
+      cdebug_log(159,0) << "Loadind realign queue." << endl;
+      _katana->setStage( StageRealign );
+      for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+        RoutingEvent* event = _eventHistory.getNth(i);
+        if (not event->isCloned() and event->getSegment()->canRealign())
+          event->reschedule( _eventQueue, 0 );
+      }
+      _eventQueue.commit();
+      cmess2 << "        <realign.queue:" <<  right << setw(8) << setfill('0')
+             << _eventQueue.size() << ">" << setfill(' ') << endl;
+      count = 0;
+      while ( not _eventQueue.empty() and not isInterrupted() ) {
+        RoutingEvent* event = _eventQueue.pop();
+        if (tty::enabled()) {
+          cmess2 << "        <realign.event:" << tty::bold << setw(8) << setfill('0')
+                 << RoutingEvent::getProcesseds() << tty::reset
+                 << " remains:" << right << setw(8) << setfill('0')
+                 << _eventQueue.size() << ">"
+                 << setfill(' ') << tty::reset << tty::cr;
+          cmess2.flush();
+        } else {
+          cmess2 << "        <realign.event:" << setw(8) << setfill('0')
+                 << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                 << event->getEventLevel() << ":" << event->getPriority() << "> "
+                 << event->getSegment()
+                 << endl;
+          cmess2.flush();
         }
-        _eventQueue.commit();
-        cmess2 << "        <realign.queue:" <<  right << setw(8) << setfill('0')
-               << _eventQueue.size() << ">" << setfill(' ') << endl;
-        count = 0;
-        while ( not _eventQueue.empty() and not isInterrupted() ) {
-          RoutingEvent* event = _eventQueue.pop();
-          if (tty::enabled()) {
-            cmess2 << "        <realign.event:" << tty::bold << setw(8) << setfill('0')
-                   << RoutingEvent::getProcesseds() << tty::reset
-                   << " remains:" << right << setw(8) << setfill('0')
-                   << _eventQueue.size() << ">"
-                   << setfill(' ') << tty::reset << tty::cr;
-            cmess2.flush();
-          } else {
-            cmess2 << "        <realign.event:" << setw(8) << setfill('0')
-                   << RoutingEvent::getProcesseds() << setfill(' ') << " "
-                   << event->getEventLevel() << ":" << event->getPriority() << "> "
-                   << event->getSegment()
-                   << endl;
-            cmess2.flush();
-          }
-          event->process( _eventQueue, _eventHistory, _eventLoop );
-          count++;
-          if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
-        }
-
-        _negociateRepair();
+        event->process( _eventQueue, _eventHistory, _eventLoop );
+        count++;
+        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
       }
 
-      if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
-  //}
+      _negociateRepair();
+    }
+
+    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
     size_t eventsCount = _eventHistory.size();
 
@@ -860,9 +861,14 @@ namespace Katana {
 
   void  NegociateWindow::printStatistics () const
   {
+    float ripupRatio = 100.0 * _statistics.getRipupRatio();
+    ostringstream os;
+    os << setprecision(2) << fixed << ripupRatio << "%";
+
     cmess1 << "  o  Computing statistics." << endl;
-    cmess1 << Dots::asSizet("     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
-    cmess1 << Dots::asSizet("     - Unique Events Total"
+    cmess1 << Dots::asString( "     - Event ripup ratio", os.str() ) << endl;
+    cmess1 << Dots::asSizet ( "     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
+    cmess1 << Dots::asSizet ( "     - Unique Events Total"
                            ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
     cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
     _katana->printCompletion();

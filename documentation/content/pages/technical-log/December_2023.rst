@@ -158,3 +158,14 @@ In the ``dodo.py``, add:
 .. code-block:: python
 
    setupGF180MCU_GF( checkToolkit='../../..', pdkTop='../../../../gf180mcu-pdk', useHV=False )
+
+
+|NEW| Display the "ripup ratio" in Katana::Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This ratio is an attempt at characterizing the *hardness* of a design
+(very elusive concept). It is crudely done for now, as it is just a
+ratio between the initial number of events (which is equal to the
+number of |TrackElements| to place). It do not take into account the
+dogleg creation process that will introduce more primary events
+as the net topologie are slackened.
