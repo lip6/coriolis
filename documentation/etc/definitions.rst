@@ -267,3 +267,8 @@
 
 .. Link to Hurricane doc (Doxygen)
 .. _RoutingPad:                     {static}/doc/hurricane/classHurricane_1_1RoutingPad.html
+.. |AutoSegment|                    replace:: :cb:`AutoSegment`
+.. |AutoSegments|                   replace:: :cb:`AutoSegments`
+.. |TrackElement|                   replace:: :cb:`TrackElement`
+.. |TrackElements|                  replace:: :cb:`TrackElements`
+
