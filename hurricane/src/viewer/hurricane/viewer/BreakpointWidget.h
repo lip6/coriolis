@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_BREAKPOINT_WIDGET_H
-#define  HURRICANE_BREAKPOINT_WIDGET_H
-
+#pragma  once
 #include <QEventLoop>
 #include <QDialog>
 class QLabel;
@@ -28,27 +26,27 @@ namespace Hurricane {
 
   class BreakpointWidget : public QDialog {
       Q_OBJECT;
-
     public:
-            BreakpointWidget ( QWidget* parent=NULL);
-      void  setMessage       ( const QString& );
-      int   getStopLevel     () const;
-      void  setStopLevel     ( int );
-      int   execNoModal      ();
+      static void  readQtSettings   ();
+      static void  saveQtSettings   ();
+    public:
+                   BreakpointWidget ( QWidget* parent=NULL);
+             void  setMessage       ( const QString& );
+             int   getStopLevel     () const;
+             void  setStopLevel     ( int );
+             int   execNoModal      ();
     public slots:
-      void  updateStopLevel  ( int );
+             void  updateStopLevel  ( int );
     protected slots:
-      void  raiseFinished    ( int );
-
+             void  raiseFinished    ( int );
     private:
-      QLabel*     _message;
-      QSpinBox*   _stopLevel;
-      bool        _isFinished;
-      QEventLoop* _eventLoop;
+      static QByteArray  _geometry;
+             QLabel*     _message;
+             QSpinBox*   _stopLevel;
+             bool        _isFinished;
+             QEventLoop* _eventLoop;
   };
 
 
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_BREAKPOINT_WIDGET_H

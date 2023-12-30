@@ -14,10 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_CONTROLLER_WIDGET_H
-#define  HURRICANE_CONTROLLER_WIDGET_H
-
-
+#pragma  once
 #include <QTabWidget>
 class QCheckBox;
 class QComboBox;
@@ -57,6 +54,8 @@ namespace Hurricane {
     public:
                          ControllerTab      ( QWidget* parent=NULL );
       inline CellWidget* getCellWidget      ();
+      virtual void       saveQtSettings     ( size_t viewerId ) const;
+      virtual void       readQtSettings     ( size_t viewerId );
     public slots:           
       virtual void       setCellWidget      ( CellWidget* );
       virtual void       setCell            ( Cell* );
@@ -86,6 +85,8 @@ namespace Hurricane {
     public slots:
               void            setCellWidget   ( CellWidget* );
       virtual void            graphicsUpdated ();
+      virtual void            saveQtSettings  ( size_t viewerId ) const;
+      virtual void            readQtSettings  ( size_t viewerId );
 
     protected:
       GraphicsWidget* _graphics;
@@ -105,6 +106,8 @@ namespace Hurricane {
     public:
                                    TabDisplayFilter ( QWidget* parent=NULL );
       inline  DisplayFilterWidget* getDisplayFilter ();
+      virtual void                 saveQtSettings   ( size_t viewerId ) const;
+      virtual void                 readQtSettings   ( size_t viewerId );
     public slots:
       virtual void                 setCellWidget    ( CellWidget* );
 
@@ -126,6 +129,8 @@ namespace Hurricane {
     public:
                              TabPalette      ( QWidget* parent=NULL );
       inline  PaletteWidget* getPalette      ();
+      virtual void           saveQtSettings  ( size_t viewerId ) const;
+      virtual void           readQtSettings  ( size_t viewerId );
     public slots:
       virtual void           setCellWidget   ( CellWidget* );
       virtual void           graphicsUpdated ();
@@ -152,6 +157,8 @@ namespace Hurricane {
       inline  QCheckBox*     getSyncSelection   ();
       virtual void           cellPreModificate  ();
       virtual void           cellPostModificate ();
+      virtual void           saveQtSettings     ( size_t viewerId ) const;
+      virtual void           readQtSettings     ( size_t viewerId );
     public slots:           
       virtual void           setCell            ( Cell* );
       virtual void           setCellWidget      ( CellWidget* );
@@ -313,6 +320,8 @@ namespace Hurricane {
              void                 setCellWidget       ( CellWidget* );
     //inline int                  addSetting          ( QWidget* page, const QString& label );
              void                 insertTabAfter      ( const QString& ref, QWidget*, const QString& label );
+             void                 saveQtSettings      ( size_t viewerId ) const;
+             void                 readQtSettings      ( size_t viewerId );
     public slots:                                     
              void                 graphicsUpdated     ();
              void                 cellPreModificate   ();
@@ -347,7 +356,4 @@ namespace Hurricane {
 //inline int                  ControllerWidget::addSetting          ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
 
 
-}  // End of Hurricane namespace.
-
-
-#endif  // __HURRICANE_CONTROLLER_WIDGET__
+}  // Hurricane namespace.
