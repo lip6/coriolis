@@ -82,11 +82,16 @@ namespace Hurricane {
       typedef  std::map< const QString, boost::any >  ActionLut;
       typedef  bool (QWidget::* SlotMethod)();
     public:
+      static  inline const std::vector<CellViewer*>&
+                                    getAllViewers ();
       static  void                  notify                    ( CellViewer*, unsigned int flags );
     public:
                                     CellViewer                ( QWidget* parent=NULL );
       virtual                      ~CellViewer                ();
       inline  bool                  isToolInterrupted         () const;
+      inline  size_t                getSettingsId             () const;
+              void                  readQtSettings            ();
+              void                  saveQtSettings            ();
               void                  refreshTitle              ();
               QMenu*                createDebugMenu           ();
               bool                  hasMenu                   ( const QString& path ) const;
@@ -175,6 +180,7 @@ namespace Hurricane {
               void                  _runScript                ( QString scriptPath );
 
     protected:                     
+      static std::vector<CellViewer*> _allViewers;
       static QString                  _prefixWPath;
              Observer<CellViewer>     _cellObserver;
              QString                  _applicationName;
@@ -205,6 +211,8 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline const std::vector<CellViewer*>&
+                               CellViewer::getAllViewers           () { return _allViewers; }
   inline bool                  CellViewer::isToolInterrupted       () const { return _toolInterrupt; }
   inline Observer<CellViewer>* CellViewer::getCellObserver         () { return &_cellObserver; }
   inline CellWidget*           CellViewer::getCellWidget           () { return _cellWidget; }
@@ -225,6 +233,14 @@ namespace Hurricane {
 
   inline void  CellViewer::setDbuMode ( int mode )
   { _cellWidget->setDbuMode(mode); }
+
+  inline size_t CellViewer::getSettingsId () const
+  {
+    for ( size_t i=0; i<_allViewers.size() ; ++i ) {
+      if (_allViewers[i] == this) return i;
+    }
+    return 0;
+  }
 
 
 } // Hurricane namespace.
