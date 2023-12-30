@@ -14,11 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_DISPLAY_FILTER_WIDGET_H
-#define  HURRICANE_DISPLAY_FILTER_WIDGET_H
-
-
-#include  <QWidget>
+#pragma  once
+#include <QWidget>
 
 class QSpinBox;
 class QCheckBox;
@@ -36,6 +33,8 @@ namespace Hurricane {
     public:
                   DisplayFilterWidget  ( QWidget* parent=NULL );
       void        setCellWidget        ( CellWidget* );
+      void        saveQtSettings       ( size_t viewerId ) const;
+      void        readQtSettings       ( size_t viewerId );
     signals:                           
       void        queryFilterChanged   ();
       void        dbuModeChanged       ( unsigned int mode, DbU::UnitPower );
@@ -76,5 +75,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_DISPLAY_FILTER_WIDGET_H 

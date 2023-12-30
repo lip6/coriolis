@@ -15,6 +15,7 @@
 
 
 #include <limits>
+#include <QSettings>
 #include <QLabel>
 #include <QCheckBox>
 #include <QPushButton>
@@ -534,5 +535,32 @@ namespace Hurricane {
       iitem->second->changeStyle ();
   }
 
+
+  void  PaletteWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString   fallbackKey = QString( "CellViewer/%1/controller/palette/fallback/visible" ).arg( viewerId );
+    if (not settings.contains(fallbackKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/palette").arg(viewerId) );
+    for ( auto item : _layerItems ) {
+      QString itemKey = QString("%1/visible").arg( getString(item.first).c_str() );
+      if (not settings.contains(itemKey)) continue;
+      item.second->setItemVisible   ( settings.value( itemKey ).toBool() );
+      item.second->setItemSelectable( settings.value( itemKey.replace("visible","selectable") ).toBool() );
+    }
+    settings.endGroup();
+  }
+  
+
+  void  PaletteWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/palette").arg(viewerId) );
+    for ( auto item : _layerItems ) {
+      settings.setValue( QString( "%1/visible"    ).arg(getString(item.first).c_str()), item.second->isItemVisible   () );
+      settings.setValue( QString( "%1/selectable" ).arg(getString(item.first).c_str()), item.second->isItemSelectable() );
+    } 
+    settings.endGroup();
+  }
 
 } // Hurricane namespace.

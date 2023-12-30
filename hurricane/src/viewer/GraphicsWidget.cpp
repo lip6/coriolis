@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QLabel>
 #include <QRadioButton>
 #include <QButtonGroup>
@@ -133,5 +134,28 @@ namespace Hurricane {
   //setStyle( 0 );
   }
 
+
+  void  GraphicsWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString   checkKey = QString( "CellViewer/%1/controller/graphics/displayStyle" ).arg( viewerId );
+    if (not settings.contains(checkKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/graphics").arg(viewerId) );
+    int styleId = settings.value( "displayStyle" ).toInt();
+    if (styleId >= 0) {
+      _cellWidget->setStyle( (size_t)styleId );
+      _stylesGroup->button( styleId )->setChecked( true );
+    }
+    settings.endGroup();
+  }
+  
+
+  void  GraphicsWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/graphics").arg(viewerId) );
+    settings.setValue( "displayStyle" , _stylesGroup->checkedId() );
+    settings.endGroup();
+  }
 
 }  // Hurricane namespace.

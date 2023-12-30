@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_LIBRARY_MANAGER_H
-#define  CRL_LIBRARY_MANAGER_H
-
+#pragma  once
 #include <QWidget>
 #include "hurricane/Observer.h"
 
@@ -54,6 +52,8 @@ namespace CRL {
     public:
                                LibraryManager     ( QWidget* parent=NULL );
                               ~LibraryManager     ();
+              void             readQtSettings     ();
+              void             saveQtSettings     ();
       inline  void             setCellViewer      ( CellViewer* );
       inline  CellViewer*      getCellViewer      () const;
       inline  LibrariesWidget* getLibrariesWidget () const;
@@ -78,5 +78,3 @@ namespace CRL {
 
 
 }  // CRL namespace.
-
-#endif  // CRL_LIBRARY_WIDGET_H
