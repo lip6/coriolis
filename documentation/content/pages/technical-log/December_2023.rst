@@ -169,3 +169,29 @@ ratio between the initial number of events (which is equal to the
 number of |TrackElements| to place). It do not take into account the
 dogleg creation process that will introduce more primary events
 as the net topologie are slackened.
+
+
+|NEW| Support saving & restoring positions and settings of graphic windows
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The positions of the windows and *some* of the settings of the controller
+can be saved and restored. The saving does not occurs at the closing of
+the application. You have to take a *snapshot* of the state using the
+``File -> Save settings`` menu. This allow to restart the application
+in an initial state of your choosing and not at point you left it the
+last time it was run.
+
+Widgets supporting the saving of their configuration gets two more methods:
+
+.. code:: C++
+
+   MyWidget::saveQtSettings();
+   MyWidget::readQtSettings();
+
+Currently we are saving:
+
+* ``UnicornGui``
+* ``CellViewer``
+* ``LibraryManager``
+* ``ControllerWidget`` and some of it's tabs.
+* ``Breakpoint``

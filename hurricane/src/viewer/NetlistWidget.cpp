@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QFontMetrics>
 #include <QLabel>
 #include <QLineEdit>
@@ -184,5 +185,24 @@ namespace Hurricane {
     if ( net ) emit netFitted ( net );
   }
 
+
+  void  NetlistWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString   checkKey = QString( "CellViewer/%1/controller/netlist/filterPattern" ).arg( viewerId );
+    if (not settings.contains(checkKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/netlist").arg(viewerId) );
+    _filterPatternLineEdit->setText( settings.value( "filterPattern" ).toString() );
+    settings.endGroup();
+  }
+  
+
+  void  NetlistWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/netlist").arg(viewerId) );
+    settings.setValue( "filterPattern", _filterPatternLineEdit->text() );
+    settings.endGroup();
+  }
 
 } // End of Hurricane namespace.
