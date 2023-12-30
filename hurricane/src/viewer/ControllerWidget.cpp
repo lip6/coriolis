@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QAction>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -77,6 +78,14 @@ namespace Hurricane {
   { }
 
 
+  void  ControllerTab::readQtSettings ( size_t viewerId )
+  { }
+  
+
+  void  ControllerTab::saveQtSettings ( size_t viewerId ) const
+  { }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::TabGraphics".
 
@@ -107,6 +116,14 @@ namespace Hurricane {
   { _graphics->rereadGraphics(); }
 
 
+  void  TabGraphics::readQtSettings ( size_t viewerId )
+  { _graphics->readQtSettings( viewerId ); }
+  
+
+  void  TabGraphics::saveQtSettings ( size_t viewerId ) const
+  {  _graphics->saveQtSettings( viewerId );}
+
+
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::TabDisplayFilter".
 
@@ -131,6 +148,14 @@ namespace Hurricane {
       _displayFilter->setCellWidget ( cellWidget );
     }
   }
+
+
+  void  TabDisplayFilter::readQtSettings ( size_t viewerId )
+  { _displayFilter->readQtSettings( viewerId ); }
+  
+
+  void  TabDisplayFilter::saveQtSettings ( size_t viewerId ) const
+  {  _displayFilter->saveQtSettings( viewerId );}
 
 
 // -------------------------------------------------------------------
@@ -168,6 +193,14 @@ namespace Hurricane {
 
   void  TabPalette::graphicsUpdated ()
   { _palette->rereadGraphics(); }
+
+
+  void  TabPalette::readQtSettings ( size_t viewerId )
+  { _palette->readQtSettings( viewerId ); }
+  
+
+  void  TabPalette::saveQtSettings ( size_t viewerId ) const
+  {  _palette->saveQtSettings( viewerId );}
 
 
 // -------------------------------------------------------------------
@@ -278,6 +311,14 @@ namespace Hurricane {
     setSyncNetlist( _syncNetlist->isChecked() );
   }
 
+
+
+  void  TabNetlist::readQtSettings ( size_t viewerId )
+  { _netlistBrowser->readQtSettings( viewerId ); }
+  
+
+  void  TabNetlist::saveQtSettings ( size_t viewerId ) const
+  {  _netlistBrowser->saveQtSettings( viewerId );}
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::TabNetlist".
@@ -670,6 +711,42 @@ namespace Hurricane {
     addTab( tab, label );
   }
   
+
+  void  ControllerWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString sizeKey = QString( "CellViewer/%1/controller/geometry" ).arg( viewerId );
+    if (not settings.contains(sizeKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller").arg(viewerId) );
+    restoreGeometry( settings.value( "geometry" ).toByteArray() );
+    _tabGraphics     ->readQtSettings( viewerId );
+    _tabPalette      ->readQtSettings( viewerId );
+    _tabDisplayFilter->readQtSettings( viewerId );
+    _tabNetlist      ->readQtSettings( viewerId );
+    _tabHierarchy    ->readQtSettings( viewerId );
+    _tabSelection    ->readQtSettings( viewerId );
+    _tabInspector    ->readQtSettings( viewerId );
+    _tabSettings     ->readQtSettings( viewerId );
+    settings.endGroup();
+  }
+  
+
+  void  ControllerWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller").arg(viewerId) );
+    settings.setValue( "geometry", saveGeometry() );
+    _tabGraphics     ->saveQtSettings( viewerId );
+    _tabPalette      ->saveQtSettings( viewerId );
+    _tabDisplayFilter->saveQtSettings( viewerId );
+    _tabNetlist      ->saveQtSettings( viewerId );
+    _tabHierarchy    ->saveQtSettings( viewerId );
+    _tabSelection    ->saveQtSettings( viewerId );
+    _tabInspector    ->saveQtSettings( viewerId );
+    _tabSettings     ->saveQtSettings( viewerId );
+    settings.endGroup();
+  }
+
 
 // -------------------------------------------------------------------
 // Class  :  "ControllerWidget::GraphicsObserver".

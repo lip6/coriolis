@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QPointer>
 #include <QApplication>
 #include <QLabel>
@@ -27,6 +28,30 @@
 
 
 namespace Hurricane {
+
+
+  QByteArray  BreakpointWidget::_geometry;
+
+
+  void  BreakpointWidget::readQtSettings ()
+  {
+    QSettings settings;
+    QString   sizeKey = QString( "BreakpointWidget/geometry" );
+    if (not settings.contains(sizeKey)) return;
+    settings.beginGroup( QString("BreakpointWidget") );
+    _geometry = settings.value( "geometry" ).toByteArray();
+    settings.endGroup();
+  }
+
+
+  void  BreakpointWidget::saveQtSettings ()
+  {
+    if (_geometry.isNull()) return;
+    QSettings settings;
+    settings.beginGroup( QString("BreakpointWidget") );
+    settings.setValue( "geometry", _geometry );
+    settings.endGroup();
+  }
 
 
   BreakpointWidget::BreakpointWidget ( QWidget* parent )
@@ -75,8 +100,6 @@ namespace Hurricane {
 
   int  BreakpointWidget::execNoModal ()
   {
-    static QRect position;
-    
     if (isVisible()) return -1;
 
     // while (QApplication::hasPendingEvents()) {
@@ -87,7 +110,7 @@ namespace Hurricane {
 
     _isFinished = false;
     show ();
-    if (not position.isNull()) setGeometry( position );
+    if (not _geometry.isNull()) restoreGeometry( _geometry );
 
   // Snipet code from Qt's QDialog.
     _eventLoop = new QEventLoop ();
@@ -95,7 +118,7 @@ namespace Hurricane {
     _eventLoop->exec( QEventLoop::DialogExec );
     _eventLoop = NULL;
 
-    position = geometry();
+    _geometry = saveGeometry();
     if (guard.isNull()) return QDialog::Rejected;
 
     return result();

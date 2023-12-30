@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <QSettings>
 #include <QLabel>
 #include <QCheckBox>
 #include <QSpinBox>
@@ -436,5 +437,57 @@ namespace Hurricane {
     }
   }
 
+
+  void  DisplayFilterWidget::readQtSettings ( size_t viewerId )
+  {
+    QSettings settings;
+    QString   checkKey = QString( "CellViewer/%1/controller/displayFilter/hierarchyStartLevel" ).arg( viewerId );
+    if (not settings.contains(checkKey)) return;
+    settings.beginGroup( QString("CellViewer/%1/controller/displayFilter").arg(viewerId) );
+
+    _cellWidget->setStartLevel( settings.value( "hierarchyStartLevel" ).toInt() );
+    _cellWidget->setStopLevel ( settings.value( "hierarchyStopLevel"  ).toInt() );
+
+    Query::Mask  queryFilter = _cellWidget->getQueryFilter();
+    queryFilter.unset( Query::DoMasterCells|Query::DoTerminalCells|Query::DoComponents );
+    if (settings.value( "processMasterCells"   ).toBool()) queryFilter.set( Query::DoMasterCells   );
+    if (settings.value( "processTerminalCells" ).toBool()) queryFilter.set( Query::DoTerminalCells );
+    if (settings.value( "processComponents"    ).toBool()) queryFilter.set( Query::DoComponents    );
+    _cellWidget->setQueryFilter( queryFilter );
+
+    switch ( settings.value( "rubbers" ).toInt() ) {
+      case CellWidget::Steiner:     _cellWidget->setRubberShape( CellWidget::Steiner ); break;
+      case CellWidget::Centric:     _cellWidget->setRubberShape( CellWidget::Centric ); break;
+      case CellWidget::Barycentric: _cellWidget->setRubberShape( CellWidget::Barycentric ); break;
+    }
+
+    switch ( settings.value( "layoutMode" ).toInt() ) {
+      case 0: _cellWidget->changeDbuMode( DbU::Symbolic, _cellWidget->getUnitPower() ); break;
+      case 1: _cellWidget->changeDbuMode( DbU::Grid    , _cellWidget->getUnitPower() ); break;
+      case 2: _cellWidget->changeDbuMode( DbU::Physical, DbU::Micro ); break;
+      case 3: _cellWidget->changeDbuMode( DbU::Physical, DbU::Nano  ); break;
+    }
+    settings.endGroup();
+  }
+  
+
+  void  DisplayFilterWidget::saveQtSettings ( size_t viewerId ) const
+  {
+    QSettings settings;
+    settings.beginGroup( QString("CellViewer/%1/controller/displayFilter").arg(viewerId) );
+    settings.setValue( "hierarchyStartLevel" , _startSpinBox   ->value    () );
+    settings.setValue( "hierarchyStopLevel"  , _stopSpinBox    ->value    () );
+    settings.setValue( "processMasterCells"  , _doMasterCells  ->isChecked() );
+    settings.setValue( "processTerminalCells", _doTerminalCells->isChecked() );
+    settings.setValue( "processComponents"   , _doComponents   ->isChecked() );
+    settings.setValue( "rubbers"             , (int)_cellWidget->getRubberShape() );
+    int layoutMode = 0;
+    if (_cellWidget->symbolicMode()) layoutMode = 0;
+    if (_cellWidget->gridMode())     layoutMode = 1;
+    if (_cellWidget->physicalMode() and (_cellWidget->getUnitPower() == DbU::Micro)) layoutMode = 2;
+    if (_cellWidget->physicalMode() and (_cellWidget->getUnitPower() == DbU::Nano )) layoutMode = 3;
+    settings.setValue( "layoutMode", layoutMode );
+    settings.endGroup();
+  }
 
 }

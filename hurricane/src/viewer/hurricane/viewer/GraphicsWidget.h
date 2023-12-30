@@ -14,11 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_GRAPHICS_WIDGET_H
-#define  HURRICANE_GRAPHICS_WIDGET_H
-
-
-#include  <QWidget>
+#pragma  once
+#include <QWidget>
 class QGridLayout;
 class QButtonGroup;
 
@@ -37,6 +34,8 @@ namespace Hurricane {
       void  readGraphics   ();
       void  resetGraphics  ();
       void  rereadGraphics ();
+      void  saveQtSettings ( size_t viewerId ) const;
+      void  readQtSettings ( size_t viewerId );
     public slots:
       void  changeStyle    ();
       void  setStyle       ( int id );
@@ -50,5 +49,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-#endif
