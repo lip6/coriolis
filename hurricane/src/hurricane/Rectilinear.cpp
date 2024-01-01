@@ -196,13 +196,13 @@ namespace {
 
   
 // -------------------------------------------------------------------
-// Class  :  "SweepLine".
+// Class  :  "VSweepLine".
 
   
-  class SweepLine {
+  class VSweepLine {
     public:
-            SweepLine    ( const Rectilinear*, vector<Box>& );
-           ~SweepLine    ();
+            VSweepLine    ( const Rectilinear*, vector<Box>& );
+           ~VSweepLine    ();
       void  addVEdge     ( DbU::Unit ymin, DbU::Unit ymax, DbU::Unit x );
       void  loadVEdges   ();
       void  process      ( Interval );
@@ -219,7 +219,7 @@ namespace {
   };
 
 
-  SweepLine::SweepLine ( const Rectilinear* r, vector<Box>& boxes )
+  VSweepLine::VSweepLine ( const Rectilinear* r, vector<Box>& boxes )
     : _rectilinear(r)
     , _boxes      (boxes)
     , _vedges     ()
@@ -227,21 +227,21 @@ namespace {
     , _prevX      (0)
     , _currX      (0)
   {
-    cdebug_log(17,1) << "SweepLine::SweepLine()" << endl;
+    cdebug_log(17,1) << "VSweepLine::VSweepLine()" << endl;
   }
 
   
-  SweepLine::~SweepLine ()
+  VSweepLine::~VSweepLine ()
   {
     cdebug_tabw(17,-1);
   }
 
 
-  void  SweepLine::addVEdge ( DbU::Unit ymin, DbU::Unit ymax, DbU::Unit x )
+  void  VSweepLine::addVEdge ( DbU::Unit ymin, DbU::Unit ymax, DbU::Unit x )
   {
     if (ymin > ymax) std::swap( ymin, ymax );
 
-    cdebug_log(17,1) << "SweepLine::addVEdge() @"<< DbU::getValueString(x)
+    cdebug_log(17,1) << "VSweepLine::addVEdge() @"<< DbU::getValueString(x)
                      << " [" << DbU::getValueString(ymin)
                      << " "  << DbU::getValueString(ymax) << "]"  << endl;
 
@@ -280,7 +280,7 @@ namespace {
   }
 
 
-  void  SweepLine::loadVEdges ()
+  void  VSweepLine::loadVEdges ()
   {
     const vector<Point>& points = _rectilinear->getPoints();
     for ( size_t i=0 ; i<points.size()-1 ; ++i ) {
@@ -295,7 +295,7 @@ namespace {
   }
 
 
-  void  SweepLine::toBox ( SweepInterval& intv )
+  void  VSweepLine::toBox ( SweepInterval& intv )
   {
     if (intv.getXMin() == _currX) return;
     _boxes.push_back( Box( intv.getXMin(), intv.getVMin()
@@ -304,9 +304,9 @@ namespace {
   }
 
 
-  void  SweepLine::process ( Interval v )
+  void  VSweepLine::process ( Interval v )
   {
-    cdebug_log(17,1) << "SweepLine::process(Interval&) "
+    cdebug_log(17,1) << "VSweepLine::process(Interval&) "
                      << " [" << DbU::getValueString(v.getVMin())
                      << " "  << DbU::getValueString(v.getVMax()) << "]"  << endl;
     bool done = false;
@@ -394,9 +394,9 @@ namespace {
   }
 
 
-  void  SweepLine::process ( const pair< DbU::Unit, list<Interval> >& intervals )
+  void  VSweepLine::process ( const pair< DbU::Unit, list<Interval> >& intervals )
   {
-    cdebug_log(17,1) << "SweepLine::process() @"<< DbU::getValueString(intervals.first)
+    cdebug_log(17,1) << "VSweepLine::process() @"<< DbU::getValueString(intervals.first)
                      << " size=" << intervals.second.size() << endl;
     _currX = intervals.first;
     for ( const Interval& v : intervals.second ) process( v );
@@ -404,18 +404,238 @@ namespace {
   }
 
 
-  void  SweepLine::asRectangles ()
+  void  VSweepLine::asRectangles ()
   {
     loadVEdges();
     for ( auto intervals : _vedges ) {
       process( intervals );
     }
-    cdebug_log(17,0) << "SweepLine::asRectangles() size=" << _boxes.size() << endl;
+    cdebug_log(17,0) << "VSweepLine::asRectangles() size=" << _boxes.size() << endl;
     for ( const Box& b : _boxes )
       cdebug_log(17,0) << "| " << b << endl;
   }
 
   
+// -------------------------------------------------------------------
+// Class  :  "HSweepLine".
+
+  
+  class HSweepLine {
+    public:
+            HSweepLine    ( const Rectilinear*, vector<Box>& );
+           ~HSweepLine    ();
+      void  addHEdge     ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit y );
+      void  loadHEdges   ();
+      void  process      ( Interval );
+      void  process      ( const pair< DbU::Unit, list<Interval> >& );
+      void  toBox        ( SweepInterval& );
+      void  asRectangles ();
+    private:
+      const Rectilinear*                         _rectilinear;
+      vector<Box>&                               _boxes;
+      list< pair< DbU::Unit, list<Interval> > >  _vedges;
+      list< SweepInterval >                      _sweepLine;
+      DbU::Unit                                  _prevY;
+      DbU::Unit                                  _currY;
+  };
+
+
+  HSweepLine::HSweepLine ( const Rectilinear* r, vector<Box>& boxes )
+    : _rectilinear(r)
+    , _boxes      (boxes)
+    , _vedges     ()
+    , _sweepLine  ()
+    , _prevY      (0)
+    , _currY      (0)
+  {
+    cdebug_log(17,1) << "HSweepLine::HSweepLine()" << endl;
+  }
+
+  
+  HSweepLine::~HSweepLine ()
+  {
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  HSweepLine::addHEdge ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit y )
+  {
+    if (xmin > xmax) std::swap( xmin, xmax );
+
+    cdebug_log(17,1) << "HSweepLine::addHEdge() @"<< DbU::getValueString(y)
+                     << " [" << DbU::getValueString(xmin)
+                     << " "  << DbU::getValueString(xmax) << "]"  << endl;
+
+    bool inserted = false;
+    for ( auto iy = _vedges.begin() ; iy != _vedges.end() ; ++iy ) {
+      cdebug_log(17,0) << "| Looking @" << DbU::getValueString(iy->first)
+                       << " size=" << iy->second.size() << endl;
+
+      if (iy->first > y) {
+        _vedges.insert( iy, make_pair( y, list<Interval>() ));
+        cdebug_log(17,0) << "+ add new @" << DbU::getValueString(y) << endl;
+        --iy;
+      }
+      if (iy->first == y) {
+        for ( auto iintv = iy->second.begin() ; iintv != iy->second.end() ; ++iintv ) {
+          if (iintv->getVMin() >= xmax) {
+            iy->second.insert( iintv, Interval(xmin,xmax) );
+            inserted = true;
+            break;
+          }
+        }
+        if (not inserted) {
+          iy->second.push_back( Interval(xmin,xmax) );
+          inserted = true;
+        }
+        break;
+      }
+    }
+    if (not inserted) {
+      cdebug_log(17,0) << "+ add new (back) @" << DbU::getValueString(y) << endl;
+      _vedges.push_back( make_pair( y, list<Interval>() ));
+      _vedges.back().second.push_back( Interval(xmin,xmax) );
+    }
+
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  HSweepLine::loadHEdges ()
+  {
+    const vector<Point>& points = _rectilinear->getPoints();
+    for ( size_t i=0 ; i<points.size()-1 ; ++i ) {
+      const Point& source = points[  i ];
+      const Point& target = points[ (i+1) % points.size() ];
+      DbU::Unit dy = target.getY() - source.getY();
+      if (dy == 0) {
+        addHEdge( source.getX(), target.getX(), source.getY() );
+      }
+    }
+  }
+
+
+  void  HSweepLine::toBox ( SweepInterval& intv )
+  {
+    if (intv.getXMin() == _currY) return;
+    _boxes.push_back( Box( intv.getVMin(), intv.getXMin()
+                         , intv.getVMax(), _currY ));
+    intv.setXMin( _currY );
+  }
+
+
+  void  HSweepLine::process ( Interval v )
+  {
+    cdebug_log(17,1) << "HSweepLine::process(Interval&) "
+                     << " [" << DbU::getValueString(v.getVMin())
+                     << " "  << DbU::getValueString(v.getVMax()) << "]"  << endl;
+    bool done = false;
+    for ( auto iintv = _sweepLine.begin() ; iintv != _sweepLine.end() ; ++iintv ) {
+    // Extractor p. 9 (a).
+      if (v.getVMax() < iintv->getVMin()) {
+        _sweepLine.insert( iintv, SweepInterval(v,_currY) );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (f).
+      if (   (v.getVMin() == iintv->getVMin()) 
+         and (v.getVMax() == iintv->getVMax()) ) {
+        toBox( *iintv );
+        _sweepLine.erase( iintv );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (b).
+      if (v.getVMax() == iintv->getVMin()) {
+        toBox( *iintv );
+        iintv->merge( v.getVMin() );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (g).
+      if (v.getVMax() == iintv->getVMax()) {
+        toBox( *iintv );
+        cdebug_log(17,0) << "case (g): carve" << endl;
+        iintv->inflate( 0, v.getVMin() - iintv->getVMax() );
+        cdebug_log(17,0) << "| " << (*iintv) << endl; 
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (h).
+      if (v.getVMin() == iintv->getVMin()) {
+        toBox( *iintv );
+        iintv->inflate(iintv->getVMin() - v.getVMax(), 0 );
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (c).
+      if (   (v.getVMin() > iintv->getVMin()) 
+         and (v.getVMax() < iintv->getVMax()) ) {
+        toBox( *iintv );
+        cdebug_log(17,0) << "case (c): carve" << endl;
+        DbU::Unit wholeVMin = iintv->getVMin();
+        iintv->inflate( iintv->getVMin() - v.getVMax(), 0 );
+        cdebug_log(17,0) << "| " << (*iintv) << endl; 
+        _sweepLine.insert( iintv, SweepInterval( wholeVMin, v.getVMin(), _currY ) );
+        cdebug_log(17,0) << "| " << (*(--iintv)) << endl; 
+        done = true;
+        break;
+      }
+    // Extractor p. 9 (d,e).
+      if (v.getVMin() == iintv->getVMax()) {
+        auto iintvNext = iintv;
+        ++iintvNext;
+      // Extractor p. 9 (d).
+        if (iintvNext == _sweepLine.end()) {
+          toBox( *iintv );
+          iintv->merge( v.getVMax() );
+        } else {
+        // Extractor p. 9 (d).
+          if (v.getVMax() < iintvNext->getVMin()) {
+            toBox( *iintv );
+            iintv->merge( v.getVMax() );
+          } else {
+          // Extractor p. 9 (e).
+            toBox( *iintv );
+            toBox( *iintvNext );
+            iintv->merge( iintvNext->getVMax() );
+            _sweepLine.erase( iintvNext );
+          }
+        }
+        done = true;
+        break;
+      }
+    }
+    if (not done) {
+      _sweepLine.push_back( SweepInterval(v,_currY) );
+    }
+
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  HSweepLine::process ( const pair< DbU::Unit, list<Interval> >& intervals )
+  {
+    cdebug_log(17,1) << "HSweepLine::process() @"<< DbU::getValueString(intervals.first)
+                     << " size=" << intervals.second.size() << endl;
+    _currY = intervals.first;
+    for ( const Interval& v : intervals.second ) process( v );
+    cdebug_tabw(17,-1);
+  }
+
+
+  void  HSweepLine::asRectangles ()
+  {
+    loadHEdges();
+    for ( auto intervals : _vedges ) {
+      process( intervals );
+    }
+    cdebug_log(17,0) << "HSweepLine::asRectangles() size=" << _boxes.size() << endl;
+    for ( const Box& b : _boxes )
+      cdebug_log(17,0) << "| " << b << endl;
+  }
+  
+
 // -------------------------------------------------------------------
 // Class  :  "SweepLineBig".
 
@@ -904,11 +1124,14 @@ namespace Hurricane {
   }
 
 
-  bool  Rectilinear::getAsRectangles ( std::vector<Box>& rectangles ) const
+  bool  Rectilinear::getAsRectangles ( std::vector<Box>& rectangles, uint32_t flags ) const
   {
     rectangles.clear();
     if (not isRectilinear()) return false;
-    SweepLine( this, rectangles ).asRectangles();
+    if (flags & VSliced)
+      VSweepLine( this, rectangles ).asRectangles();
+    else
+      HSweepLine( this, rectangles ).asRectangles();
     return true;
   }
 
