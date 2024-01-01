@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_RECTILINEAR_H
-#define PY_RECTILINEAR_H
-
+#pragma  once
 #include "hurricane/isobar/PyComponent.h"
 #include "hurricane/Rectilinear.h"
 
@@ -40,8 +38,9 @@ namespace  Isobar {
     extern  PyTypeObject  PyTypeRectilinear;
     extern  PyMethodDef   PyRectilinear_Methods[];
 
-    extern  PyObject* PyRectilinear_Link       ( Hurricane::Rectilinear* object );
-    extern  void      PyRectilinear_LinkPyType ();
+    extern  PyObject* PyRectilinear_Link           ( Hurricane::Rectilinear* object );
+    extern  void      PyRectilinear_LinkPyType     ();
+    extern  void      PyRectilinear_postModuleInit ();
 
 
 #define IsPyRectilinear(v)    ( (v)->ob_type == &PyTypeRectilinear )
@@ -52,5 +51,3 @@ namespace  Isobar {
   }  // extern "C".
 
 }  // Isobar namespace.
-
-#endif // PY_RECTILINEAR_H

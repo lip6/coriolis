@@ -44,7 +44,8 @@ namespace Hurricane {
     public:
       typedef Component Super;
       static const uint32_t IsRectilinear = (1<<0);
-  
+      static const uint32_t VSliced       = (1<<1);
+      static const uint32_t HSliced       = (1<<2);
     public:
       static        Rectilinear*   create            ( Net*, const Layer*, const vector<Point>& );
     // Accessors.                  
@@ -58,7 +59,7 @@ namespace Hurricane {
       virtual       Point          getPoint          ( size_t i ) const;
       virtual const Layer*         getLayer          () const;
       inline        Points         getContour        () const;
-                    bool           getAsRectangles   ( std::vector<Box>& ) const;
+                    bool           getAsRectangles   ( std::vector<Box>&, uint32_t flags=VSliced ) const;
                     bool           getAsBiggestRectangles
                                                      ( std::vector<Box>&
                                                      , DbU::Unit xThreshold=0
