@@ -193,8 +193,9 @@ extern "C" {
     HTRY
       METHOD_HEAD( "Rectilinear.getAsRectangles()" )
       
-      PyObject* pyList = NULL;
-      if (not PyArg_ParseTuple( args, "O:Rectilinear.getAsRectangles", &pyList )) {
+      PyObject*    pyList  = NULL;
+      unsigned int pyFlags = Rectilinear::VSliced;
+      if (not PyArg_ParseTuple( args, "O|I:Rectilinear.getAsRectangles", &pyList, &pyFlags )) {
         PyErr_SetString( ConstructorError, "Rectilinear.getAsRectangles(): Must have exactly one parameter." );
         return NULL;
       }
@@ -205,7 +206,7 @@ extern "C" {
 
       PyList_SetSlice( pyList, 0, PyList_Size(pyList), NULL );
       vector<Box> boxes;
-      rectilinear->getAsRectangles( boxes );
+      rectilinear->getAsRectangles( boxes, pyFlags );
       for ( size_t i=0 ; i<boxes.size() ; ++i ) {
         PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
         if (not pyBox) { return NULL; }
@@ -294,6 +295,15 @@ extern "C" {
   // Link/Creation Method.
   DBoLinkCreateMethod(Rectilinear)
   PyTypeInheritedObjectDefinitions(Rectilinear,Component)
+
+
+  extern  void  PyRectilinear_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeRectilinear.tp_dict,Rectilinear::VSliced,"VSliced");
+    LoadObjectConstant(PyTypeRectilinear.tp_dict,Rectilinear::HSliced,"HSliced");
+  }
 
 #endif  // Shared Library Code Part.
 
