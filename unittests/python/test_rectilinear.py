@@ -17,7 +17,7 @@ def testRectilinear ( editor ):
     with UpdateSession():
         cell = AllianceFramework.get().createCell( 'Rectilinear' )
         cell.setTerminalNetlist( True )
-        cell.setAbutmentBox( Box( l(-5.0), l(-5.0), l(524.0), l(200.0) ) )
+        cell.setAbutmentBox( Box( l(-5.0), l(-5.0), l(704.0), l(200.0) ) )
        #cell.setAbutmentBox( Box( l(-5.0), l(-5.0), l(21.0), l(35.0) ) )
     if editor:
         editor.setCell( cell )
@@ -28,6 +28,7 @@ def testRectilinear ( editor ):
     metal2     = technology.getLayer( "METAL2"     ) 
     metal3     = technology.getLayer( "METAL3"     ) 
     metal4     = technology.getLayer( "METAL4"     ) 
+    metal5     = technology.getLayer( "METAL5"     ) 
     poly       = technology.getLayer( "POLY"       )
     ptrans     = technology.getLayer( "PTRANS"     )
     ntrans     = technology.getLayer( "NTRANS"     )
@@ -161,6 +162,12 @@ def testRectilinear ( editor ):
         for box in boxes:
             box.translate( l(360.0), l(0.0) )
             Pad.create( net, metal4, box )
+        boxes = []
+        r.getAsRectangles( boxes, Rectilinear.HSliced )
+       #print( 'boxes={}'.format( boxes ))
+        for box in boxes:
+            box.translate( l(540.0), l(0.0) )
+            Pad.create( net, metal5, box )
 
     Gds.save( cell )
 
