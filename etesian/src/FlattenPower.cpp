@@ -856,72 +856,75 @@ namespace {
   {
     cdebug_log(159,0) << "addToPowerRail: go=" << go << endl;
     const Component* component = dynamic_cast<const Component*>( go );
-    if (component) {
-      if (    _framework->isPad(getMasterCell())
-         and ( (_routingGauge->getLayerDepth(component->getLayer()) < 2)
-             or (component->getLayer()->getBasicLayers().getFirst()->getMaterial()
-                != BasicLayer::Material::blockage) ) )
-        return;
+    if (not component) return;
+    
+    if (    _framework->isPad(getMasterCell())
+       and ( (_routingGauge->getLayerDepth(component->getLayer()) < 2)
+           or (component->getLayer()->getBasicLayers().getFirst()->getMaterial()
+              != BasicLayer::Material::blockage) ) )
+      return;
 
-      Net* rootNet = _blockageNet;
-      if (not _isBlockagePlane) {
-        rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
-        if (not NetExternalComponents::isExternal(component)) return;
-      }
-      if (not rootNet) {
-        cdebug_log(159,0) << "  rootNet is NULL, not taken into account." << endl;
-        return;
-      }
-      cdebug_log(159,0) << "  rootNet " << rootNet << " "
-                        << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
+    Net* rootNet = _blockageNet;
+    if (not _isBlockagePlane) {
+      rootNet = _powerRailsPlanes.getRootNet(component->getNet(),getPath());
+      if (not NetExternalComponents::isExternal(component)) return;
+    }
+    if (not rootNet) {
+      cdebug_log(159,0) << "  rootNet is NULL, not taken into account." << endl;
+      return;
+    }
+    cdebug_log(159,0) << "  rootNet " << rootNet << " "
+                      << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
 
-      const Segment* segment = dynamic_cast<const Segment*>( component );
-      if (segment) {
-        _goMatchCount++;
-        cdebug_log(159,0) << "  Merging PowerRail element: " << segment << endl;
+    const Segment* segment = dynamic_cast<const Segment*>( component );
+    if (segment) {
+      _goMatchCount++;
+      cdebug_log(159,0) << "  Merging PowerRail element: " << segment << endl;
 
-        Box bb = segment->getBoundingBox( basicLayer );
+      Box bb = segment->getBoundingBox( basicLayer );
+      transformation.applyOn( bb );
+      _powerRailsPlanes.merge( bb, rootNet );
+      return;
+    }
+
+    const Contact* contact = dynamic_cast<const Contact*>( component );
+    if (contact) {
+      _goMatchCount++;
+
+      Box bb = contact->getBoundingBox( basicLayer );
+      transformation.applyOn( bb );
+
+      cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
+                  << " " << basicLayer << endl;
+      
+      _powerRailsPlanes.merge( bb, rootNet );
+      return;
+    }
+
+    const Pad* pad = dynamic_cast<const Pad*>( component );
+    if (pad) {
+      _goMatchCount++;
+
+      Box bb = pad->getBoundingBox( basicLayer );
+      transformation.applyOn( bb );
+    
+      cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+                        << " " << basicLayer << endl;
+      
+      _powerRailsPlanes.merge( bb, rootNet );
+      return;
+    }
+
+    const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>( component );
+    if (rectilinear) {
+      _goMatchCount++;
+      cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " " << basicLayer << endl;
+      vector<Box> boxes;
+      rectilinear->getAsRectangles( boxes, Rectilinear::HSliced );
+      for ( Box bb : boxes ) {
         transformation.applyOn( bb );
+        cdebug_log(159,0) << "  | " << " bb:" << bb << endl;
         _powerRailsPlanes.merge( bb, rootNet );
-      } else {
-        const Contact* contact = dynamic_cast<const Contact*>( component );
-        if (contact) {
-          _goMatchCount++;
-
-          Box bb = contact->getBoundingBox( basicLayer );
-          transformation.applyOn( bb );
-
-          cdebug_log(159,0) << "  Merging PowerRail element: " << contact << " bb:" << bb
-                      << " " << basicLayer << endl;
-          
-          _powerRailsPlanes.merge( bb, rootNet );
-        } else {
-          const Pad* pad = dynamic_cast<const Pad*>( component );
-          if (pad) {
-            _goMatchCount++;
-
-            Box bb = pad->getBoundingBox( basicLayer );
-            transformation.applyOn( bb );
-          
-            cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
-                              << " " << basicLayer << endl;
-            
-            _powerRailsPlanes.merge( bb, rootNet );
-          } else {
-            const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>( component );
-            if (rectilinear and (rectilinear->getPoints().size() == 5)) {
-              _goMatchCount++;
-
-              Box bb = rectilinear->getBoundingBox( basicLayer );
-              transformation.applyOn( bb );
-          
-              cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
-                                << " " << basicLayer << endl;
-            
-              _powerRailsPlanes.merge( bb, rootNet );
-            }
-          }
-        }
       }
     }
   }
