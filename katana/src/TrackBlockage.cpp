@@ -222,14 +222,18 @@ namespace Katana {
 
   string  TrackBlockage::_getString () const
   {
-    string s1 = string("<TrackBlockage ")
-              + "[" + getString(getTrack()->getIndex()) + "] "
-              + getString(getLayer()->getName()) + " @"
-              + DbU::getValueString(getTrack()->getAxis())
-              + " ["   + DbU::getValueString(_sourceU)
-              +  ":"   + DbU::getValueString(_targetU) + "]"
-              +  " "   + DbU::getValueString(_targetU-_sourceU)
-              + " FBN>";
+    string s1 = string("<TrackBlockage ");
+    if (getTrack()) {
+      s1 += "[" + getString(getTrack()->getIndex()) + "] "
+         + getString(getLayer()->getName()) + " @"
+         + DbU::getValueString(getTrack()->getAxis());
+    } else {
+      s1 += "[i] layer @axis";
+    }
+    s1 += " [" + DbU::getValueString(_sourceU)
+       +  ":"  + DbU::getValueString(_targetU) + "]"
+       +  " "  + DbU::getValueString(_targetU-_sourceU)
+       +  " FBN>";
     return s1;
   }
 
