@@ -413,3 +413,6 @@ namespace Hurricane {
   
 
 } // Hurricane namespace.
+
+
+INSPECTOR_PR_SUPPORT(Hurricane::Query::Mask);
