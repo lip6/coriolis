@@ -246,15 +246,6 @@ namespace Katana {
       setState( Anabatic::EngineDriving );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
     }
-
-    if (not isChannelStyle()) {
-      if (!(flags & Flags::PlacementCallback)) {
-        setupPowerRails();
-        Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
-        protectRoutingPads( protectFlags );
-      }
-    }
     cdebug_tabw(155,-1);
   }
 
