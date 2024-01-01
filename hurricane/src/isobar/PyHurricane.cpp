@@ -901,6 +901,7 @@ extern "C" {
     PyBasicLayer_postModuleInit();
     PyPin_postModuleInit();
     PyRoutingPad_postModuleInit();
+    PyRectilinear_postModuleInit();
     PyNet_postModuleInit();
     PyNetRoutingState_postModuleInit();
     PyCell_postModuleInit();
