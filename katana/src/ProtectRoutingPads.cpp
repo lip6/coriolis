@@ -37,6 +37,7 @@
 #include "katana/RoutingPlane.h"
 #include "katana/TrackSegment.h"
 #include "katana/TrackFixedSegment.h"
+#include "katana/TrackFixedSpan.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -78,19 +79,22 @@ namespace {
     Name            padNetName     = "pad";
     Component*      usedComponent  = rp->_getEntityAs<Component>();
     Path            path           = rp->getOccurrence().getPath();
+    Net*            net            = rp->getNet();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
     if (dynamic_cast<Plug*>(usedComponent)) {
       cerr << Error( "Katana::protectRoutingPad(): A RoutingPad of \"%s\" is still on it's Plug.\n"
                      "        (%s)"
-                   , getString(rp->getNet()->getName()).c_str()
+                   , getString(net->getName()).c_str()
                    , getString(usedComponent).c_str()
                    ) << endl;
       cdebug_tabw(145,-1);
       return;
     }
-    if (not Session::getRoutingGauge()->isUsable(usedComponent->getLayer())) {
+    RoutingLayerGauge* rlg = Session::getLayerGauge( rp->getLayer() );
+    if (not (  (rlg->getType() == Constant::Default  )
+            or (rlg->getType() == Constant::LocalOnly))) {
       cdebug_tabw(145,-1);
       return;
     }
@@ -99,8 +103,8 @@ namespace {
     cdebug_log(145,0) << "masterNet:  " << masterNet << endl;
 
     if (CatalogExtension::isPad(masterNet->getCell())) {
-      if (   rp->getNet()->isPower()
-         or (rp->getNet()->getName() == padNetName) ) {
+      if (   net->isPower()
+         or (net->getName() == padNetName) ) {
         cdebug_tabw(145,-1);
         return;
       }
@@ -126,6 +130,7 @@ namespace {
       DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
                                 - wireWidth/2
                                 - DbU::fromLambda(0.1);
+      DbU::Unit     cap       = plane->getLayer()->getMinimalSpacing() / 2;
       DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
       Box           bb        ( segments[i]->getBoundingBox() );
 
@@ -133,6 +138,7 @@ namespace {
 
       cdebug_log(145,0) << "@ " << segments[i] << " bb:" << bb << endl;
       cdebug_log(145,0) << "delta=" << DbU::getValueString(delta) << endl;
+      cdebug_log(145,0) << "cap=" << DbU::getValueString(cap) << endl;
 
       if ( direction == Flags::Horizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
@@ -140,15 +146,41 @@ namespace {
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-          Horizontal* segment = Horizontal::create ( rp->getNet()
-                                                   , segments[i]->getLayer()
-                                                   , track->getAxis()
-                                                   , wireWidth
-                                                   , bb.getXMin()+extension
-                                                   , bb.getXMax()-extension
-                                                   );
-          TrackFixedSegment::create ( track, segment );
-          cdebug_log(145,0) << "| " << segment << endl;
+          cdebug_log(145,0) << "> track " << track << endl;
+          // Horizontal* segment = Horizontal::create ( net
+          //                                          , segments[i]->getLayer()
+          //                                          , track->getAxis()
+          //                                          , wireWidth
+          //                                          , bb.getXMin()+extension
+          //                                          , bb.getXMax()-extension
+          //                                          );
+          // TrackFixedSegment::create ( track, segment );
+          // cdebug_log(145,0) << "| " << segment << endl;
+          Interval termSpan = Interval( bb.getXMin(), bb.getXMax() ).inflate( cap );
+          Interval freeSpan = track->getFreeInterval( bb.getXCenter() );
+          cdebug_log(145,0) << "| termSpan " << termSpan << endl;
+          cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
+          bool overlap  = false;
+          bool conflict = false;
+          if (not freeSpan.contains(termSpan)) {
+            overlap = true;
+            size_t ovBegin = 0;
+            size_t ovEnd   = 0;
+            track->getOverlapBounds( termSpan, ovBegin, ovEnd );
+            for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
+              TrackElement*   overlaped = track->getSegment( ovBegin );
+              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
+              if (fixedSpan) {
+                if (not fixedSpan->isBlockage())
+                  fixedSpan->setNet( nullptr );
+              } else
+                conflict = true;
+            }
+          }
+          if (not conflict) {
+            TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+            cdebug_log(145,0) << "| " << element << endl;
+          }
         }
       } else {
         DbU::Unit axisMin = bb.getXMin() - delta;
@@ -156,18 +188,39 @@ namespace {
 
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-          Vertical* segment = Vertical::create ( rp->getNet()
-                                               , segments[i]->getLayer()
-                                               , track->getAxis()
-                                               , wireWidth
-                                               , bb.getYMin()+extension
-                                               , bb.getYMax()-extension
-                                               );
-          TrackFixedSegment::create ( track, segment );
-          cdebug_log(145,0) << "| " << segment << endl;
+          // Vertical* segment = Vertical::create ( net
+          //                                      , segments[i]->getLayer()
+          //                                      , track->getAxis()
+          //                                      , wireWidth
+          //                                      , bb.getYMin()+extension
+          //                                      , bb.getYMax()-extension
+          //                                      );
+          // TrackFixedSegment::create ( track, segment );
+          // cdebug_log(145,0) << "| " << segment << endl;
+          Interval termSpan = Interval( bb.getYMin(), bb.getYMax() );
+          Interval freeSpan = track->getFreeInterval( bb.getYCenter() );
+          bool     overlap  = false;
+          bool     conflict = false;
+          if (not freeSpan.contains(termSpan)) {
+            TrackElement* overlaped = track->getSegment( bb.getXCenter() );
+            if (overlaped) {
+              overlap = true;
+              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
+              if (fixedSpan) {
+                if (not fixedSpan->isBlockage())
+                  fixedSpan->setNet( nullptr );
+              } else
+                conflict = true;
+            }
+          }
+          if (not conflict) {
+            TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+            cdebug_log(145,0) << "| " << element << endl;
+          }
         }
       }
     }
+    Session::revalidate();
     cdebug_tabw(145,-1);
   }
 

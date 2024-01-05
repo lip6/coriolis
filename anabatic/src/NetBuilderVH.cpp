@@ -57,6 +57,7 @@ namespace Anabatic {
   using Hurricane::Warning;
   using Hurricane::Error;
   using Hurricane::Pin;
+  using Constant::LayerGaugeType;
 
   
   NetBuilderVH::NetBuilderVH ()
@@ -182,18 +183,36 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
 
-    AutoContact* rpContactSource = NULL;
-    AutoContact* rpContactTarget = NULL;
-    const Layer* rpLayer         = rp->getLayer();
-    size_t       rpDepth         = Session::getLayerDepth( rp->getLayer() );
+    AutoSegment*       segment         = nullptr;
+    AutoContact*       rpContactSource = nullptr;
+    AutoContact*       rpContactTarget = nullptr;
+    const Layer*       rpLayer         = rp->getLayer();
+    size_t             rpDepth         = Session::getLayerDepth( rpLayer );
+    RoutingLayerGauge* rlg             = Session::getLayerGauge( rpLayer );
+    uint64_t           offgridFlag     = 0;
 
     flags |= checkRoutingPadSize( rp );
     doRp_AutoContacts( gcell, rp, rpContactSource, rpContactTarget, flags );
     const Layer* viaLayer1 = Session::getBuildContactLayer( 1 );
 
-    if (rp->isM1Offgrid() or (flags & HSmall)) {
+    if (rp->isM1Offgrid() /*or (flags & HSmall)*/) {
       AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
-      AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
+      Flags  segFlags = Flags::NoFlags;
+      size_t segDepth = 1;
+      offgridFlag |= AutoSegment::SegForOffgrid;
+      if (rlg->getType() == LayerGaugeType::LocalOnly) {
+        segDepth = 0;
+        if (flags & VSmall) {
+          segment = AutoSegment::create( rpContactSource
+                                       , subContact1
+                                       , segFlags|Flags::Vertical|Flags::UseNonPref
+                                       , segDepth );
+          rpContactSource = subContact1;
+          subContact1     = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
+          segFlags       |= Flags::Unbreakable;
+        }
+      }
+      AutoSegment::create( rpContactSource, subContact1, segFlags|Flags::Horizontal, segDepth );
       rpContactSource = subContact1;
     }
 
@@ -203,7 +222,7 @@ namespace Anabatic {
         cdebug_log(145,0) << "case not(HAccess|HAccessEW)" << endl;
         AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
         AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
-        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  );
+        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  )->setFlags( offgridFlag );
         AutoSegment::create( subContact1,     subContact2, Flags::Horizontal);
         rpContactSource = subContact2;
       } else {
@@ -215,7 +234,7 @@ namespace Anabatic {
           else
             subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
       
-          AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+          AutoSegment::create( rpContactSource, subContact1, Flags::Vertical )->setFlags( offgridFlag );
           rpContactSource = subContact1;
         }
       }

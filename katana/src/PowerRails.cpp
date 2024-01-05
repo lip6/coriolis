@@ -38,7 +38,7 @@
 #include "anabatic/GCell.h"
 #include "katana/RoutingPlane.h"
 #include "katana/TrackFixedSegment.h"
-#include "katana/TrackBlockage.h"
+#include "katana/TrackFixedSpan.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -1132,7 +1132,7 @@ namespace {
 
             Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
             for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-              TrackElement* element = TrackBlockage::create ( track, bb );
+              TrackElement* element = TrackFixedSpan::create ( nullptr, bb, track );
               cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
             }
           }

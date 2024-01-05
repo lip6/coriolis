@@ -466,15 +466,22 @@ namespace Katana {
     vector<TrackElement*>::const_iterator  lowerBound
       = lower_bound( _segments.begin(), _segments.end(), position, SourceCompare() );
     begin = lowerBound - _segments.begin();
+    cdebug_log(155,0) << "  lower_bound begin=" << begin << endl;
 
-  // This is suspicious.
-  // I guess this has been written for the case of overlapping segments from the same
-  // net, we find the first one of the overlapped sets. But what if they are not overlapping
-  // but still from the same net?
     size_t sameNetDelta = 0;
     if (begin < _segments.size()) {
-      for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet())
-            ; --begin, ++sameNetDelta );
+      Interval span     = _segments[begin]->getCanonicalInterval();
+      size_t   minBegin = begin;
+      for ( size_t i=begin; (i > 0) and (_segments[i-1]->getNet() == _segments[i]->getNet())
+            ; --i ) {
+        Interval current = _segments[i-1]->getCanonicalInterval();
+        if (current.intersect(span)) {
+          span.merge( current );
+          minBegin = i - 1;
+        }
+      }
+      sameNetDelta = begin - minBegin;
+      begin        = minBegin;
     }
 
     state = 0;
@@ -718,6 +725,11 @@ namespace Katana {
       if (begin != npos) {
         minFree = getOccupiedInterval(begin).getVMax();
         cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " begin:" << begin << endl;
+      }
+    } else {
+      if (state & BeginIsSegmentMax) {
+        if (_segments[begin]->getNet() != net)
+          minFree = getOccupiedInterval(begin).getVMax();
       }
     }
 
