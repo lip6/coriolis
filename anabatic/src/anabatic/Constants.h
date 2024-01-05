@@ -97,6 +97,7 @@ namespace Anabatic {
       static const BaseFlags  DoglegOnRight       ;
       static const BaseFlags  WithNeighbors       ;
       static const BaseFlags  NoCheckLayer        ;
+      static const BaseFlags  NoCheckGCell        ;
       static const BaseFlags  HalfSlacken         ;
       static const BaseFlags  NoGCellShrink       ;
       static const BaseFlags  CParanoid           ;
@@ -111,6 +112,8 @@ namespace Anabatic {
       static const BaseFlags  NoSegExt            ;
       static const BaseFlags  NullLength          ;
       static const BaseFlags  OnVSmall            ;
+      static const BaseFlags  Unbreakable         ;
+      static const BaseFlags  ForOffgrid          ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

@@ -712,6 +712,10 @@ namespace Katana {
         _constraints.inflate( Session::getSliceHeight() );
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
+    } else {
+      if (_segment->isForOffgrid()) {
+        _constraints.inflate( _segment->getPitch() );
+      }
     }
 
     if (_segment->isShortDogleg()) {

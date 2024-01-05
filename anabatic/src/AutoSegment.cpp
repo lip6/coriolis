@@ -2551,7 +2551,7 @@ namespace Anabatic {
 
     cdebug_log(149,0) << "isSource:" << isSource << endl;
 
-    makeDogleg( from->getGCell(), Flags::NoCheckLayer );
+    makeDogleg( from->getGCell(), Flags::NoCheckLayer|Flags::NoCheckGCell );
     if (doglegs.size() == index) {
       cdebug_tabw(149,-1);
       return NULL;
@@ -2704,7 +2704,7 @@ namespace Anabatic {
       return 0;
     }
 
-    if (doglegGCell->getSide(getDirection()).intersect(getSpanU())) {
+    if ((flags & Flags::NoCheckGCell) or doglegGCell->getSide(getDirection()).intersect(getSpanU())) {
       cdebug_log(149,0) << "Dogleg in " << this << " spanU:" << getSpanU() << endl;
       rflags = _makeDogleg( doglegGCell, flags );
     } else {
@@ -2829,7 +2829,7 @@ namespace Anabatic {
     DbU::Unit    verticalWidth   = Session::getDVerticalWidth();
     if (not Session::getAnabatic()->getConfiguration()->isGMetal(hurricaneSegment->getLayer())) {
       size_t depth = Session::getAnabatic()->getConfiguration()->getLayerDepth( hurricaneSegment->getLayer() );
-      if (depth > 2) {
+      if ((depth == 0) or (depth > 2)) {
         horizontalLayer = verticalLayer = hurricaneSegment->getLayer();
         horizontalWidth = Session::getAnabatic()->getConfiguration()->getWireWidth( depth );
         verticalWidth   = Session::getAnabatic()->getConfiguration()->getPWireWidth( depth );
@@ -3073,9 +3073,10 @@ namespace Anabatic {
     } else
       throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
 
-    if (wPitch > 1) segment->setFlags( SegWide );
-    if (source->canDrag() or target->canDrag()) segment->setFlags( SegDrag );
-    if (dir & Flags::UseNonPref)  segment->setFlags( SegNonPref );
+    if (wPitch > 1)                                      segment->setFlags( SegWide );
+    if (source->canDrag() or target->canDrag())          segment->setFlags( SegDrag );
+    if (dir & Flags::UseNonPref)                         segment->setFlags( SegNonPref );
+    if (dir & Flags::Unbreakable)                        segment->setFlags( SegUnbreakable );
     if (dir.contains(Flags::UseNonPref|Flags::OnVSmall)) segment->setFlags( SegOnVSmall );
 
     return segment;

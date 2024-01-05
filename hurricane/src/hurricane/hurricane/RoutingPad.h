@@ -57,6 +57,7 @@ namespace Hurricane {
       static const uint32_t VSmall             = (1 << 7); 
       static const uint32_t Punctual           = (1 << 8); 
       static const uint32_t M1Offgrid          = (1 << 9); 
+      static const uint32_t UserCenter         = (1 << 10); 
       static const uint32_t SizeFlags          = HSmall|VSmall|Punctual|M1Offgrid;
       static const uint32_t SelectedComponent  = (1 << 10); 
     public:
@@ -70,7 +71,9 @@ namespace Hurricane {
       inline  bool         isVSmall              () const;
       inline  bool         isPunctual            () const;
       inline  bool         isM1Offgrid           () const;
+      inline  bool         hasUserCenter         () const;
       inline  bool         hasSelectedComponent  () const;
+      inline  Point        getUserCenter         () const;
       inline  uint32_t     getFlags              () const;
       inline  Occurrence   getOccurrence         () const;
               Occurrence   getPlugOccurrence     ();
@@ -92,6 +95,7 @@ namespace Hurricane {
       virtual void         translate             ( const DbU::Unit& dx, const DbU::Unit& dy );
               void         setExternalComponent  ( Component* );
               Component*   setOnBestComponent    ( uint32_t flags );
+      inline  void         setUserCenter         ( const Point& );
               void         restorePlugOccurrence ();
       inline  void         setFlags              ( uint32_t );
       inline  void         unsetFlags            ( uint32_t );
@@ -111,6 +115,7 @@ namespace Hurricane {
     // Attributes.
       Occurrence  _occurrence;
       uint32_t    _flags;
+      Point       _userCenter;
   };
 
   
@@ -120,10 +125,13 @@ namespace Hurricane {
   inline  bool        RoutingPad::isPunctual           () const { return (_flags & Punctual); }
   inline  bool        RoutingPad::isM1Offgrid          () const { return (_flags & M1Offgrid); }
   inline  bool        RoutingPad::hasSelectedComponent () const { return (_flags & SelectedComponent); }
+  inline  bool        RoutingPad::hasUserCenter        () const { return (_flags & UserCenter); }
+  inline  Point       RoutingPad::getUserCenter        () const { return (hasUserCenter()) ? _userCenter : getCenter(); }
   inline  uint32_t    RoutingPad::getFlags             () const { return _flags; }
   inline  Occurrence  RoutingPad::getOccurrence        () const { return _occurrence; };
   inline  void        RoutingPad::setFlags             ( uint32_t flags ) { _flags |=  flags; }
   inline  void        RoutingPad::unsetFlags           ( uint32_t flags ) { _flags &= ~flags; }
+  inline  void        RoutingPad::setUserCenter        ( const Point& center ) { _flags |=  UserCenter; _userCenter = center; }
 
 
   template<typename T>

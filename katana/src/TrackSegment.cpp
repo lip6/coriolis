@@ -180,6 +180,7 @@ namespace Katana {
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
   bool           TrackSegment::isWeakGlobal         () const { return _base->isWeakGlobal(); }
   bool           TrackSegment::isUnbreakable        () const { return _base->isUnbreakable() and not _base->isWeakGlobal(); }
+  bool           TrackSegment::isForOffgrid         () const { return _base->isForOffgrid(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
   bool           TrackSegment::isDrag               () const { return _base->isDrag(); }

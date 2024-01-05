@@ -1568,8 +1568,8 @@ namespace Anabatic {
           cerr << Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ) << endl;
       }
 
-      cdebug_log(112,0) << "@ rp: " << rp << ", getCenter(): " << rp->getBoundingBox().getCenter() << endl;
-      Point  center   = rp->getBoundingBox().getCenter();
+      cdebug_log(112,0) << "@ rp: " << rp << ", getUserCenter(): " << rp->getUserCenter() << endl;
+      Point  center   = rp->getUserCenter();
       GCell* gcell    = _anabatic->getGCellUnder( center );
       Box    bb       = rp->getBoundingBox();
       bool   isDriver = false;
