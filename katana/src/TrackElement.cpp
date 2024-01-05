@@ -143,6 +143,7 @@ namespace Katana {
   bool           TrackElement::isStrongTerminal     ( Flags ) const { return false; }
   bool           TrackElement::isStrap              () const { return false; }
   bool           TrackElement::isUnbreakable        () const { return false; }
+  bool           TrackElement::isForOffgrid         () const { return false; }
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
   bool           TrackElement::isShortDogleg        () const { return false; }
