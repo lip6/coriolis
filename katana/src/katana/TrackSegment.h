@@ -73,6 +73,7 @@ namespace Katana {
       virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
       virtual bool                  isUnbreakable          () const;
+      virtual bool                  isForOffgrid           () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isShortDogleg          () const;

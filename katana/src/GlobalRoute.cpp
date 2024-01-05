@@ -506,8 +506,11 @@ namespace Katana {
     if (not isChannelStyle()) {
       if (!(flags & Flags::PlacementCallback)) {
         setupPowerRails();
-        Flags protectFlags = (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
-                      ? Flags::ProtectSelf : Flags::NoFlags;
+        Flags protectFlags = Flags::NoFlags;
+        if (getConfiguration()->getNetBuilderStyle() == "VH,2RL")
+          protectFlags |= Flags::ProtectSelf;
+        if (getConfiguration()->getLayerGauge(0)->getType() == Constant::LocalOnly)
+          protectFlags |= Flags::ProtectSelf;
         protectRoutingPads( protectFlags );
       }
     }
