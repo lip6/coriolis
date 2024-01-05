@@ -508,6 +508,7 @@ namespace Anabatic {
       return true;
     }
 
+    Point      ongridCenter;
     DbU::Unit  bestSpan         = 0;
     Component* ongridComponent  = NULL;
     Component* offgridComponent = NULL;
@@ -578,6 +579,10 @@ namespace Anabatic {
         if (not ongridComponent or (bestSpan < maxPos-minPos)) {
           ongridComponent = component;
           bestSpan        = maxPos - minPos;
+          if (gauge->isVertical())
+            ongridCenter = Point( trackPos, bb.getCenter().getY() );
+          else
+            ongridCenter = Point( bb.getCenter().getX(), trackPos );
         }
       } else {
         cdebug_log(112,0) << "Component is offgrid." << endl;
@@ -588,6 +593,7 @@ namespace Anabatic {
     bool rvalue = false;
     if (ongridComponent) {
       rp->setExternalComponent( ongridComponent );
+      rp->setUserCenter( ongridCenter );
       cdebug_log(112,0) << "Using best candidate:" << ongridComponent << endl;
       rvalue = true;
     } else {

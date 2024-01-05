@@ -62,6 +62,8 @@ namespace {
   void  propagateConstraintFromRp ( RoutingPad* rp )
   {
     cdebug_log(146,1) << "propagateConstraintFromRp() - " << rp << endl;
+    RoutingLayerGauge* rlg          = Session::getLayerGauge( rp->getLayer() );
+    bool               allowOffgrid = (rlg->getType() == Constant::LocalOnly);
 
     for ( Component* component : rp->getSlaveComponents() ) {
       cdebug_log(146,0) << "slave component: " << component << endl;
@@ -74,19 +76,25 @@ namespace {
 
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
+        set<AutoSegment*>  offgridSegments;
 
         for ( AutoSegment* segment : sourceContact->getAutoSegments() ) {
           cdebug_log(146,0) << "Examining: " << segment << endl;
-          AutoContact* targetContact = segment->getOppositeAnchor(sourceContact);
+          AutoContact* targetContact = segment->getOppositeAnchor( sourceContact );
 
           if (targetContact) {
+            if (allowOffgrid and (segment->getLayer() == rp->getLayer()) and segment->isNonPref()) {
+              cdebug_log(146,0) << "On offgrid stack " << segment << endl;
+              offgridSegments.insert( segment );
+              continue;
+            }
             if (segment->isHorizontal()) {
               cdebug_log(146,0) << "On horizontal stack " << segment << endl;
               horizontalSegments.insert( segment );
-            } else {
-              cdebug_log(146,0) << "On vertical stack " << segment << endl;
-              verticalSegments.insert( segment );
+              continue;
             }
+            cdebug_log(146,0) << "On vertical stack " << segment << endl;
+            verticalSegments.insert( segment );
           }
         }
 
@@ -94,7 +102,7 @@ namespace {
         cdebug_log(146,0) << "Propagate constraint on horizontal segments" << endl;
 
         for ( AutoSegment* horizontal : horizontalSegments ) {
-          AutoContact* contact = NULL;
+          AutoContact* contact = nullptr;
           for ( AutoSegment* aligned : horizontal->getAligneds(Flags::WithSelf) ) {
             cdebug_log(146,0) << "aligned horizontal: " << aligned << endl;
 
@@ -121,7 +129,7 @@ namespace {
         cdebug_log(146,0) << "Propagate constraint on vertical segments" << endl;
 
         for ( AutoSegment* vertical : verticalSegments ) {
-          AutoContact* contact = NULL;
+          AutoContact* contact = nullptr;
           for ( AutoSegment* aligned : vertical->getAligneds(Flags::WithSelf) ) {
             cdebug_log(146,0) << "aligned vertical: " << aligned << endl;
 
@@ -140,6 +148,33 @@ namespace {
                                             , Flags::Vertical|Flags::WarnOnError );
             }
           } 
+        }
+
+        // Special case of offgrid segments (usually local M1).
+        cdebug_log(146,0) << "Propagate constraint on offgrid segments" << endl;
+
+        for ( AutoSegment* perpandicular : offgridSegments ) {
+          AutoContact* targetContact     = perpandicular->getOppositeAnchor( sourceContact );
+          Box          nonPrefConstraint = constraintBox;
+          Box          ongridConstraint  = constraintBox;
+          if (rlg->isHorizontal()) {
+            nonPrefConstraint.inflate( 0, rlg->getPitch(), 0, rlg->getPitch() );
+          } else {
+            nonPrefConstraint.inflate( rlg->getPitch(), 0, rlg->getPitch(), 0 );
+          }
+          ongridConstraint.inflate( rlg->getPitch() );
+
+          cdebug_log(146,0) << "perpandicular offgrid: " << perpandicular << endl;
+          targetContact->setConstraintBox( nonPrefConstraint );
+          cdebug_log(146,0) << "Apply to first turn: " << targetContact << endl;
+          if (not targetContact->isTurn()) continue;
+
+          AutoSegment* parallel = targetContact->getPerpandicular( perpandicular );
+          cdebug_log(146,0) << "parallel offgrid: " << parallel << endl;
+          targetContact = parallel->getOppositeAnchor( targetContact );
+          if (not targetContact) continue;
+          targetContact->setConstraintBox( ongridConstraint );
+          cdebug_log(146,0) << "Apply to second turn: " << targetContact << endl;
         }
       }
     }

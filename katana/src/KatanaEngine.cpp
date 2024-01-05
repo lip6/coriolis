@@ -482,16 +482,7 @@ namespace Katana {
           }
 
           cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
-          Segment*  segment = element->getSegment();
-          Interval  segmentUSpan;
-
-          source = segment->getSourcePosition();
-          target = segment->getTargetPosition();
-          if (track->getDirection() == Flags::Vertical)
-            segmentUSpan = Interval( source.getY(), target.getY() );
-          else
-            segmentUSpan = Interval( source.getX(), target.getX() );
-
+          Interval  segmentUSpan = Interval( element->getSourceU(), element->getTargetU() );
           if (uspan.isEmpty()) {
             uspan = segmentUSpan;
             continue;
