@@ -1075,7 +1075,7 @@ namespace Anabatic {
 
     AutoSegment::create( rp1ContactTarget, subContact1     , Flags::Horizontal );
     AutoSegment::create( subContact1     , subContact2     , Flags::Vertical   );
-    AutoSegment::create( subContact1     , rp2ContactSource, Flags::Horizontal );
+    AutoSegment::create( subContact2     , rp2ContactSource, Flags::Horizontal );
   }
 
 
@@ -1109,7 +1109,7 @@ namespace Anabatic {
 
     AutoSegment::create( rp1ContactTarget, subContact1     , Flags::Vertical   );
     AutoSegment::create( subContact1     , subContact2     , Flags::Horizontal );
-    AutoSegment::create( subContact1     , rp2ContactSource, Flags::Vertical   );
+    AutoSegment::create( subContact2     , rp2ContactSource, Flags::Vertical   );
   }
 
 
