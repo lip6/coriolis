@@ -1,0 +1,245 @@
+\hypertarget{classHurricane_1_1Occurrence}{}\doxysection{Hurricane\+::Occurrence Class Reference}
+\label{classHurricane_1_1Occurrence}\index{Hurricane::Occurrence@{Hurricane::Occurrence}}
+
+
+\mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} description ({\bfseries{API}})  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHurricane_1_1Occurrence_aa4162a36dc984d71caf962e55b991ed0}{Occurrence}} (const \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$entity=NULL)
+\item 
+\mbox{\hyperlink{classHurricane_1_1Occurrence_afedb5d75781a9a4f0a19d37f0e8c88a8}{Occurrence}} (const \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$entity, const \mbox{\hyperlink{classHurricane_1_1Path}{Path}} \&path)
+\item 
+\mbox{\hyperlink{classHurricane_1_1Occurrence_affec5f25b9c2efa2bcde02e9c4833626}{Occurrence}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence)
+\item 
+\mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& \mbox{\hyperlink{classHurricane_1_1Occurrence_a389472d0d5b121a4e091511c8003cb47}{operator=}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence)
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Occurrence_accae7f6611cb5985478d58fc793dc3e0}{operator==}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence) const
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Occurrence_a39edad19edeef964e5340381360c0add}{operator!=}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence) const
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Occurrence_a2f1668ccce22799c99eb3a02e522c204}{operator$<$}} (const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&occurrence) const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Occurrence_ac121005d5d3bc0837f66c0de4265b0c4}{get\+Entity}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Path}{Path}} \mbox{\hyperlink{classHurricane_1_1Occurrence_adeab556806a83e8cf3ad6ecc08f3a83e}{get\+Path}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Occurrence_affced95f35617150b5811c3784b20d93}{get\+Owner\+Cell}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Occurrence_a5caeab69e23907909b3deb60ff26df15}{get\+Master\+Cell}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Occurrence_ab2b36b219037a2310f6527a35a9a266f}{get\+Property}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name) const
+\item 
+\mbox{\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}} \mbox{\hyperlink{classHurricane_1_1Occurrence_acbf59d6c01804e01f66d076c149abb49}{get\+Properties}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Box}{Box}} \mbox{\hyperlink{classHurricane_1_1Occurrence_a6c808dba6637c716075e0887c5f25518}{get\+Bounding\+Box}} () const
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Occurrence_ade38e5da7eb5d8701cd3a8f252cdf62f}{is\+Valid}} () const
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Occurrence_a0c1c6cfdf47f33166d108e2311d74e48}{has\+Property}} () const
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Occurrence_aaea0bdc4f5bb4012eb52f3abe20525be}{put}} (\mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$property)
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Occurrence_a774404aa5eb01371f64cf5fda3f3ffbf}{remove}} (\mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$property)
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Occurrence_a8d86755bf50cbc7fd2849b039a372b0a}{remove\+Property}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name)
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Occurrence_ae9b269d39f3f68645d6d396d7ab5d8b7}{clear\+Properties}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} description ({\bfseries{API}}) 
+
+\hypertarget{classHurricane_1_1Occurrence_secOccurrenceIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Occurrence_secOccurrenceIntro}
+Occurrences are objects providing the capability to designate any entity of the hierarchical assembly as if this one was virtually unfolded.
+
+For that purpose they handle, on one side the referenced entity and on the other side the hierarchical instanciation path which refers to the cell containing this entity.
+
+Those occurrences are handy, volatile and very light objects. Two different occurrences may designate the same entity of the virtually unfolded data structure, simplifying the creation and deletion of those objects.
+
+Anyway it is possible to attach properties to each occurrence.
+
+Of course, those properties are securely stored in order to access them unambiguously.
+
+Therefore, if a property is placed on an occurrence, we have access to it from a different occurrence provided it designates the same entity of the virtually unfolded data structure.\hypertarget{classHurricane_1_1Occurrence_secOccurrenceTerminology}{}\doxysubsection{Terminology}\label{classHurricane_1_1Occurrence_secOccurrenceTerminology}
+An occurrence is said invalid if it refers no entity.
+
+When it is valid, an occurrence has \+: an {\bfseries{Owner\+Cell}} which is either the cell owning the path if this one is non void, else the cell owning the entity itself. and a {\bfseries{Master\+Cell}} which is always the cell owning the entity.\hypertarget{classHurricane_1_1Occurrence_secOccurrenceRemarks}{}\doxysubsection{Remarks}\label{classHurricane_1_1Occurrence_secOccurrenceRemarks}
+All constructors, the destructor and the different operators are very efficient. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_aa4162a36dc984d71caf962e55b991ed0}\label{classHurricane_1_1Occurrence_aa4162a36dc984d71caf962e55b991ed0}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!Occurrence@{Occurrence}}
+\index{Occurrence@{Occurrence}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{Occurrence()}{Occurrence()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Hurricane\+::\+Occurrence\+::\+Occurrence (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$}]{entity = {\ttfamily NULL} }\end{DoxyParamCaption})}
+
+Builds an occurrence refering to an entity through a void path, in some way it is equivalent to the entity itself.
+
+\begin{DoxyRemark}{Remarks}
+If the entity is null the occurrence is invalid. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_afedb5d75781a9a4f0a19d37f0e8c88a8}\label{classHurricane_1_1Occurrence_afedb5d75781a9a4f0a19d37f0e8c88a8}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!Occurrence@{Occurrence}}
+\index{Occurrence@{Occurrence}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{Occurrence()}{Occurrence()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Hurricane\+::\+Occurrence\+::\+Occurrence (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$}]{entity,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Path}{Path}} \&}]{path }\end{DoxyParamCaption})}
+
+Builds an occurrence refering to an entity through a path (possibly void).
+
+\begin{DoxyParagraph}{Caution\+: If the entity is null or if the path is uncompatible with the }
+entity, an exception is thrown.
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The entity and the path are compatible if the path is void or if the master cell of the path is the cell owning the entity. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_affec5f25b9c2efa2bcde02e9c4833626}\label{classHurricane_1_1Occurrence_affec5f25b9c2efa2bcde02e9c4833626}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!Occurrence@{Occurrence}}
+\index{Occurrence@{Occurrence}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{Occurrence()}{Occurrence()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Hurricane\+::\+Occurrence\+::\+Occurrence (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{Occurrence }\end{DoxyParamCaption})}
+
+Copy constructor. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_a389472d0d5b121a4e091511c8003cb47}\label{classHurricane_1_1Occurrence_a389472d0d5b121a4e091511c8003cb47}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!operator=@{operator=}}
+\index{operator=@{operator=}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \& Hurricane\+::\+Occurrence\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{occurrence }\end{DoxyParamCaption})}
+
+Assignment operator. \mbox{\Hypertarget{classHurricane_1_1Occurrence_accae7f6611cb5985478d58fc793dc3e0}\label{classHurricane_1_1Occurrence_accae7f6611cb5985478d58fc793dc3e0}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!operator==@{operator==}}
+\index{operator==@{operator==}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Occurrence\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{occurrence }\end{DoxyParamCaption}) const}
+
+Two occurrences are equal if both are valid and refer to the same entity and have indentical instanciation pathes. \mbox{\Hypertarget{classHurricane_1_1Occurrence_a39edad19edeef964e5340381360c0add}\label{classHurricane_1_1Occurrence_a39edad19edeef964e5340381360c0add}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Occurrence\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{occurrence }\end{DoxyParamCaption}) const}
+
+Two occurrences are different if a least one is either invalid or both don\textquotesingle{}t refer to the same entity or have differing instanciation pathes. \mbox{\Hypertarget{classHurricane_1_1Occurrence_a2f1668ccce22799c99eb3a02e522c204}\label{classHurricane_1_1Occurrence_a2f1668ccce22799c99eb3a02e522c204}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Occurrence\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Occurrence}{Occurrence}} \&}]{occurrence }\end{DoxyParamCaption}) const}
+
+This comparator has no particular signification. It is just defined to be abble to use a STL set of occurrences which need a comparator. \mbox{\Hypertarget{classHurricane_1_1Occurrence_ac121005d5d3bc0837f66c0de4265b0c4}\label{classHurricane_1_1Occurrence_ac121005d5d3bc0837f66c0de4265b0c4}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getEntity@{getEntity}}
+\index{getEntity@{getEntity}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getEntity()}{getEntity()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} $\ast$ Hurricane\+::\+Occurrence\+::get\+Entity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the referenced entity or NULL if the occurrence is invalid. \mbox{\Hypertarget{classHurricane_1_1Occurrence_adeab556806a83e8cf3ad6ecc08f3a83e}\label{classHurricane_1_1Occurrence_adeab556806a83e8cf3ad6ecc08f3a83e}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getPath@{getPath}}
+\index{getPath@{getPath}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getPath()}{getPath()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1Path}{Path}} \& Hurricane\+::\+Occurrence\+::get\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the hierarchical instanciation path of the occurrence (possibly void, but always void when the occurrence id invalid). \mbox{\Hypertarget{classHurricane_1_1Occurrence_affced95f35617150b5811c3784b20d93}\label{classHurricane_1_1Occurrence_affced95f35617150b5811c3784b20d93}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getOwnerCell@{getOwnerCell}}
+\index{getOwnerCell@{getOwnerCell}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getOwnerCell()}{getOwnerCell()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Occurrence\+::get\+Owner\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} the owner cell of the occurrence or NULL if the occurrence is invalid. 
+
+Referenced by Hurricane\+::\+Hyper\+Net\+::get\+Cell().
+
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_a5caeab69e23907909b3deb60ff26df15}\label{classHurricane_1_1Occurrence_a5caeab69e23907909b3deb60ff26df15}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getMasterCell@{getMasterCell}}
+\index{getMasterCell@{getMasterCell}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getMasterCell()}{getMasterCell()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$ Hurricane\+::\+Occurrence\+::get\+Master\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} the cell owning the referenced entity or NULL if the occurrence is invalid. \mbox{\Hypertarget{classHurricane_1_1Occurrence_ab2b36b219037a2310f6527a35a9a266f}\label{classHurricane_1_1Occurrence_ab2b36b219037a2310f6527a35a9a266f}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getProperty@{getProperty}}
+\index{getProperty@{getProperty}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getProperty()}{getProperty()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$ Hurricane\+::\+Occurrence\+::get\+Property (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} the property named {\ttfamily $<$name$>$} if it exists or NULL if not (or if the occurrence is invalid). \mbox{\Hypertarget{classHurricane_1_1Occurrence_acbf59d6c01804e01f66d076c149abb49}\label{classHurricane_1_1Occurrence_acbf59d6c01804e01f66d076c149abb49}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getProperties@{getProperties}}
+\index{getProperties@{getProperties}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getProperties()}{getProperties()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}} Hurricane\+::\+Occurrence\+::get\+Properties (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} the collection of properties attached to the occurrence (always empty if the occurrence is invalid). \mbox{\Hypertarget{classHurricane_1_1Occurrence_a6c808dba6637c716075e0887c5f25518}\label{classHurricane_1_1Occurrence_a6c808dba6637c716075e0887c5f25518}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!getBoundingBox@{getBoundingBox}}
+\index{getBoundingBox@{getBoundingBox}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{getBoundingBox()}{getBoundingBox()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Box}{Box}} Hurricane\+::\+Occurrence\+::get\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} the bounding box of the occurrence (within the coordinate sysem of the owner cell) if it is valid or else the empty box. \mbox{\Hypertarget{classHurricane_1_1Occurrence_ade38e5da7eb5d8701cd3a8f252cdf62f}\label{classHurricane_1_1Occurrence_ade38e5da7eb5d8701cd3a8f252cdf62f}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!isValid@{isValid}}
+\index{isValid@{isValid}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{isValid()}{isValid()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Occurrence\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if the occurrence is valid, else {\bfseries{false}} (the occurrence refers no entity). \mbox{\Hypertarget{classHurricane_1_1Occurrence_a0c1c6cfdf47f33166d108e2311d74e48}\label{classHurricane_1_1Occurrence_a0c1c6cfdf47f33166d108e2311d74e48}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!hasProperty@{hasProperty}}
+\index{hasProperty@{hasProperty}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{hasProperty()}{hasProperty()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Occurrence\+::has\+Property (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if the occurrence owns some property else {\bfseries{false}}. \mbox{\Hypertarget{classHurricane_1_1Occurrence_aaea0bdc4f5bb4012eb52f3abe20525be}\label{classHurricane_1_1Occurrence_aaea0bdc4f5bb4012eb52f3abe20525be}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!put@{put}}
+\index{put@{put}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{put()}{put()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Occurrence\+::put (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$}]{property }\end{DoxyParamCaption})}
+
+Adds the property {\ttfamily $<$property$>$} to the occurrence property set. The property being named, if another property already exists in the set it will be, in a first step, detached from this set.
+
+\begin{DoxyRemark}{Remarks}
+Does nothing if the occurrence already owns this property object.
+\end{DoxyRemark}
+\begin{DoxyParagraph}{Caution\+: If the occurrence is invalid or the property null, an }
+exception is thrown. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_a774404aa5eb01371f64cf5fda3f3ffbf}\label{classHurricane_1_1Occurrence_a774404aa5eb01371f64cf5fda3f3ffbf}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!remove@{remove}}
+\index{remove@{remove}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Occurrence\+::remove (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Property}{Property}} $\ast$}]{property }\end{DoxyParamCaption})}
+
+removes the property {\ttfamily $<$property$>$} from the occurrence property set.
+
+\begin{DoxyRemark}{Remarks}
+Does nothing if the occurrence doesn\textquotesingle{}t own this property object.
+\end{DoxyRemark}
+\begin{DoxyParagraph}{Caution\+: If the occurrence is invalid or the property null, an }
+exception is thrown. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_a8d86755bf50cbc7fd2849b039a372b0a}\label{classHurricane_1_1Occurrence_a8d86755bf50cbc7fd2849b039a372b0a}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!removeProperty@{removeProperty}}
+\index{removeProperty@{removeProperty}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{removeProperty()}{removeProperty()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Occurrence\+::remove\+Property (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})}
+
+removes the property of name {\ttfamily $<$name$>$} if it exists.
+
+\begin{DoxyParagraph}{Caution\+: If the occurrence is invalid an exception is thrown. }
+
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Occurrence_ae9b269d39f3f68645d6d396d7ab5d8b7}\label{classHurricane_1_1Occurrence_ae9b269d39f3f68645d6d396d7ab5d8b7}} 
+\index{Hurricane::Occurrence@{Hurricane::Occurrence}!clearProperties@{clearProperties}}
+\index{clearProperties@{clearProperties}!Hurricane::Occurrence@{Hurricane::Occurrence}}
+\doxysubsubsection{\texorpdfstring{clearProperties()}{clearProperties()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Occurrence\+::clear\+Properties (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+removes all properties attached to the occurrence. As a consequence, the occurrence is deleted.
+
+\begin{DoxyParagraph}{Caution\+: If the occurrence is invalid an exception is thrown. }
+
+\end{DoxyParagraph}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Occurrence.\+h\item 
+Occurrence.\+dox\end{DoxyCompactItemize}

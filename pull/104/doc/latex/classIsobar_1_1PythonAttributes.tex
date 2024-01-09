@@ -1,0 +1,114 @@
+\hypertarget{classIsobar_1_1PythonAttributes}{}\doxysection{Isobar\+::Python\+Attributes Class Reference}
+\label{classIsobar_1_1PythonAttributes}\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+
+
+A Property to store Python objects ({\bfseries{API}}).  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}} $\ast$ \mbox{\hyperlink{classIsobar_1_1PythonAttributes_abc2a7357c26409151f6badeba79cdb91}{get}} (const \mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$)
+\item 
+static int32\+\_\+t \mbox{\hyperlink{classIsobar_1_1PythonAttributes_a703279c730fff76257f056065b7f8abd}{delattr}} (\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$, std\+::string)
+\item 
+static void \mbox{\hyperlink{classIsobar_1_1PythonAttributes_a4b2191b1e2f18375cbde4c9c1f80cc15}{enable}} (\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$)
+\item 
+static void \mbox{\hyperlink{classIsobar_1_1PythonAttributes_a889d59d4e4b0133387128637f2a33e82}{disable}} (\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$)
+\item 
+static void \mbox{\hyperlink{classIsobar_1_1PythonAttributes_a5bb9421104ee90ecda93c488dbd34e2e}{disable\+All}} ()
+\item 
+static void \mbox{\hyperlink{classIsobar_1_1PythonAttributes_aaae3df93d04779f5933d9b1be3872ae2}{disable\+All}} (std\+::string)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A Property to store Python objects ({\bfseries{API}}). 
+
+\hypertarget{classIsobar_1_1PythonAttributes_sPythonPropertiesIntro}{}\doxysubsection{Introduction}\label{classIsobar_1_1PythonAttributes_sPythonPropertiesIntro}
+The problem to solve here is {\itshape how to decorate a DBo in Python code}. In the C++ realm, \mbox{\hyperlink{namespaceHurricane}{Hurricane}} provides the Property mechanism. But a Property is a template that needs to be defined at compile time, whether a Python object is only known at run time.
+
+So, instead of trying to create one property per Python attribute, we create one \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}} property, which has one \mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}} attribute (a basic derived class of Py\+Object with only a dictionnary). All the Python attributes of the DBo are then stored as attributes of \mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}}.
+
+Finally, to make the Python syntax straigthforward, we modify the Py\+Type\+Entity.\+tp\+\_\+setatto and Py\+Type\+Entity.\+tp\+\_\+getattro so that when trying to access an attribute, we get redirected towards the \mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}} (which is another Py\+Object). So we can write the following code\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }MyAttribute ( object ):}
+\DoxyCodeLine{}
+\DoxyCodeLine{    count = 0}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{def }\_\_init\_\_ ( self ):}
+\DoxyCodeLine{        self.value = MyAttribute.count }
+\DoxyCodeLine{        print( \textcolor{stringliteral}{'\{\} has been created'}.format(self) )}
+\DoxyCodeLine{        MyAttribute.count += 1}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{def }\_\_del\_\_ ( self ):}
+\DoxyCodeLine{        print( \textcolor{stringliteral}{'\{\} has been deleted'}.format(self) )}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{def }\_\_str\_\_ ( self ):}
+\DoxyCodeLine{        \textcolor{keywordflow}{return} \textcolor{stringliteral}{'<MyAttribute \{\}>'}.format(self.value)}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{def }demoAttributes ( cell ):}
+\DoxyCodeLine{    PythonAttributes.enable( cell )}
+\DoxyCodeLine{    cell.myAttribute0 = MyAttribute()}
+\DoxyCodeLine{    cell.myAttribute1 = MyAttribute()}
+\DoxyCodeLine{    print( \textcolor{stringliteral}{'cell.myAttribute0 ='}, cell.myAttribute0 )}
+\DoxyCodeLine{    del cell.myAttribute0}
+\DoxyCodeLine{    PythonAttributes.disableAll()}
+
+\end{DoxyCode}
+
+
+Some interresting references concerning the Python/C API\+: 
+\begin{DoxyItemize}
+\item \href{https://stackoverflow.com/questions/64599762/how-does-one-use-both-tp-getattro-tp-setattro-and-tp-getset-in-a-custom-pyt}{\texttt{ Stackoverflow, how to implement setattro and getattro}} 
+\item \href{https://stackoverflow.com/questions/5061251/create-a-python-type-from-c-that-implements-a-dict}{\texttt{ Stackoverflow, how to implement a dict}} 
+\end{DoxyItemize}
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classIsobar_1_1PythonAttributes_abc2a7357c26409151f6badeba79cdb91}\label{classIsobar_1_1PythonAttributes_abc2a7357c26409151f6badeba79cdb91}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!get@{get}}
+\index{get@{get}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}} $\ast$ Isobar\+::\+Python\+Attributes\+::get (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Retrieve the Python attributes holder of the DBo. If there is none, return NULL.
+
+\textbackslash{}\+Remark This is the Python property holder (\mbox{\hyperlink{structIsobar_1_1PyAttributesHolder}{Py\+Attributes\+Holder}}), not the property itself which is returned. \mbox{\Hypertarget{classIsobar_1_1PythonAttributes_a703279c730fff76257f056065b7f8abd}\label{classIsobar_1_1PythonAttributes_a703279c730fff76257f056065b7f8abd}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!delattr@{delattr}}
+\index{delattr@{delattr}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{delattr()}{delattr()}}
+{\footnotesize\ttfamily int32\+\_\+t Isobar\+::\+Python\+Attributes\+::delattr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$}]{dbo,  }\item[{std\+::string}]{attr\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Remove the attribute named {\bfseries{attr\+Name}} from {\bfseries{dbo}}. \mbox{\Hypertarget{classIsobar_1_1PythonAttributes_a4b2191b1e2f18375cbde4c9c1f80cc15}\label{classIsobar_1_1PythonAttributes_a4b2191b1e2f18375cbde4c9c1f80cc15}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!enable@{enable}}
+\index{enable@{enable}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{enable()}{enable()}}
+{\footnotesize\ttfamily void Isobar\+::\+Python\+Attributes\+::enable (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$}]{dbo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Create the \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}} on {\bfseries{dbo}}. This operation is mandatory before one can add attributes on a DBo. \mbox{\Hypertarget{classIsobar_1_1PythonAttributes_a889d59d4e4b0133387128637f2a33e82}\label{classIsobar_1_1PythonAttributes_a889d59d4e4b0133387128637f2a33e82}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!disable@{disable}}
+\index{disable@{disable}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{disable()}{disable()}}
+{\footnotesize\ttfamily void Isobar\+::\+Python\+Attributes\+::disable (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DBo}{DBo}} $\ast$}]{dbo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Remove the \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}} from {\bfseries{dbo}}. The refcount of all the Python attributes will be decremented. So if they are only referenced in the \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}}, that means they will be deleted. \mbox{\Hypertarget{classIsobar_1_1PythonAttributes_a5bb9421104ee90ecda93c488dbd34e2e}\label{classIsobar_1_1PythonAttributes_a5bb9421104ee90ecda93c488dbd34e2e}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!disableAll@{disableAll}}
+\index{disableAll@{disableAll}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{disableAll()}{disableAll()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Isobar\+::\+Python\+Attributes\+::disable\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Remove the \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}} from all the DBo. \mbox{\Hypertarget{classIsobar_1_1PythonAttributes_aaae3df93d04779f5933d9b1be3872ae2}\label{classIsobar_1_1PythonAttributes_aaae3df93d04779f5933d9b1be3872ae2}} 
+\index{Isobar::PythonAttributes@{Isobar::PythonAttributes}!disableAll@{disableAll}}
+\index{disableAll@{disableAll}!Isobar::PythonAttributes@{Isobar::PythonAttributes}}
+\doxysubsubsection{\texorpdfstring{disableAll()}{disableAll()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Isobar\+::\+Python\+Attributes\+::disable\+All (\begin{DoxyParamCaption}\item[{std\+::string}]{attr\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Remove the attribute named {\bfseries{attr\+Name}} on all the DBo, if, after deletion, no attributes remains the \mbox{\hyperlink{classIsobar_1_1PyHolderProperty}{Py\+Holder\+Property}} is removed. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Python\+Attributes.\+h\item 
+Python\+Attributes.\+dox\end{DoxyCompactItemize}
