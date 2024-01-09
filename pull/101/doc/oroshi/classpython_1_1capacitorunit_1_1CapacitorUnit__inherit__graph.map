@@ -1,6 +1,0 @@
-<map id="CapacitorUnit" name="CapacitorUnit">
-<area shape="rect" id="node1" title="Draws a capacitor of type Poly&#45;Poly or Metal&#45;Metal in 350 nm AMS CMOS technology." alt="" coords="35,5,146,32"/>
-<area shape="rect" id="node2" href="$classpython_1_1capacitormatrix_1_1CapacitorStack.html" title="Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors." alt="" coords="31,80,151,107"/>
-<area shape="rect" id="node3" href="$classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks.html" title="Route two matched capacitors, C1 and C2, drawn in a capacitor matrix." alt="" coords="9,155,172,181"/>
-<area shape="rect" id="node4" href="$classpython_1_1capacitorrouted_1_1RoutMatchedCapacitor.html" title="Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix." alt="" coords="5,229,176,256"/>
-</map>
