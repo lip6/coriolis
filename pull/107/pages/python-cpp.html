@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Printable version of this Document PythonCpp.pdf Contents Printable version of this Document 1. Introduction 2. Basic File Structure and CMake configuration 3. Case 1 - DBo Derived, Standalone 4....">
+        <meta name="keywords" content="">
+        <link rel="icon" href="../favicon.ico">
+
+        <title>Hurricane Python/C++ API Tutorial - Coriolis VLSI CAD Tools</title>
+
+        <!-- Stylesheets -->
+        <link href="../theme/css/bootstrap.css" rel="stylesheet">
+        <link href="../theme/css/fonts.css"     rel="stylesheet">
+        <link href="../theme/css/nest.css"      rel="stylesheet">
+        <link href="../theme/css/pygment.css"   rel="stylesheet">
+        <link href="../theme/css/coriolis.css"  rel="stylesheet">
+        <!-- /Stylesheets -->
+
+        <script src="../theme/js/jquery.min.js"></script>
+        <script src="../theme/js/bootstrap.min.js"></script>
+
+        <!-- RSS Feeds -->
+        <!-- /RSS Feeds -->
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+    </head>
+
+    <body>
+      <!-- Header -->
+    <div class="header-container" style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/common/layout-motif-faded-4.png'); background-position: center; ">
+
+
+      <!--
+      <div class="container">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools</a>
+            </div>
+            <ul class="nav navbar-nav">
+                   <li><a href="../pages/github.html">Git</a></li>
+                   <li><a href="../pages/documentation.html">Documentation</a></li>
+              <li class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="caret"></span>Topics
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                  <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div> <!-- navbar container -->
+      -->
+
+      <!-- Static navbar -->
+      <div class="container">
+        <div class="header-nav">
+          <div class="header-logo">
+            <a class="pull-left" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools</a>
+          </div>
+          <div class="nav pull-right">
+                <a href="../pages/github.html">Git</a>
+                <a href="../pages/documentation.html">Documentation</a>
+          </div>
+          <div class="nav pull-right">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="caret"></span>Topics
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Static navbar -->
+
+        <!-- Header -->
+    <div class="container header-wrapper">
+        <div class="row">
+              <div class="col-lg-12">
+                  <div class="header-content">
+                      <a href="https://www.lip6.fr/"><img class="mr20" height="60px" src="../images/common/LogoLIP6Blanc.png" alt="LIP6"></a>
+                      <a href="https://www.sorbonne-universite.fr/"><img class="mr20" height="60px" src="../images/common/logo-SU-blanc-700px.png" alt="Sorbonne Universite"></a>
+                      <a href="https://www.cnrs.fr/"><img class="mr20" height="60px" src="../images/common/LOGO-cnrs-white-large.png" alt="CNRS"></a>
+                      <h1 class="header-title text-uppercase">Hurricane Python/C++ API Tutorial</h1>
+                      <div class="header-underline"></div>
+                  </div>
+              </div>
+        </div>
+    </div>
+        <!-- /Header -->
+
+        </div>
+        <!-- /Header -->
+
+
+        <!-- Content -->
+    <div class="container content">
+        <!-- -*- mode: rst; explicit-buffer-name: "PythonCpp_HTML.rst<pelican>" -*- -->
+<!-- -*- Mode: rst; explicit-buffer-name: "definition.rst<documentation/etc>" -*- -->
+<!-- HTML/LaTeX backends mixed macros. -->
+<!-- Acronyms & names. -->
+<!-- URLs -->
+<!-- Standard CAO/VLSI Concepts. -->
+<!-- Alliance & MBK Concepts -->
+<!-- Hurricane Concepts. -->
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#toc-entry-1">Printable version of this Document</a></h2>
+<p><a class="reference external" href="../pdfs/PythonCpp.pdf">PythonCpp.pdf</a></p>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#printable-version-of-this-document" id="toc-entry-1">Printable version of this Document</a></li>
+<li><a class="reference internal" href="#introduction" id="toc-entry-2">1. Introduction</a></li>
+<li><a class="reference internal" href="#basic-file-structure-and-cmake-configuration" id="toc-entry-3">2. Basic File Structure and CMake configuration</a></li>
+<li><a class="reference internal" href="#case-1-dbo-derived-standalone" id="toc-entry-4">3. Case 1 - DBo Derived, Standalone</a></li>
+<li><a class="reference internal" href="#case-2-hierarchy-of-dbo-derived-classes" id="toc-entry-5">4. Case 2 - Hierarchy of DBo Derived Classes</a></li>
+<li><a class="reference internal" href="#case-3-non-dbo-standalone-classe" id="toc-entry-6">5. Case 3 - Non-DBo Standalone Classe</a></li>
+<li><a class="reference internal" href="#encapsulating-dbu" id="toc-entry-7">6. Encapsulating DbU</a></li>
+<li><a class="reference internal" href="#no-c-hurricane-name-encapsulation" id="toc-entry-8">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</div>
+<!-- -*- Mode: rst -*- -->
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#toc-entry-2">1. Introduction</a></h2>
+<ul class="simple">
+<li>This document is written for people already familiar with the
+<a class="reference external" href="https://docs.python.org/2/c-api/index.html">Python/C API Reference Manual</a>.</li>
+<li>The macros provided by the Hurricane Python/C API are written using
+the standard Python C/API. That is, you may not use them and write
+directly your functions with the original API or any mix between.
+You only have to respect some naming convention.</li>
+<li>Coriolis is build against Python 2.7.</li>
+</ul>
+<div class="section" id="first-a-disclaimer">
+<h3>1.1 First, A Disclaimer</h3>
+<p>The Hurricane Python/C++ API has been written about ten years ago, at a time
+my mastering of template programming was less than complete. This is why this
+interface is build with old fashioned C macro instead of C++ template.</p>
+<p>It is my hope that at some point in the future I will have time to completly
+rewrite it, borrowing the interface from <tt class="docutils literal"><span class="pre">boost::python</span></tt>.</p>
+</div>
+<div class="section" id="about-technical-choices">
+<h3>1.2 About Technical Choices</h3>
+<p>Some would say, why not use <em>off the shelf</em> wrappers like  <tt class="docutils literal">swig</tt>
+or <tt class="docutils literal"><span class="pre">boost::python</span></tt>, here are some clues.</p>
+<ol class="arabic">
+<li><p class="first"><strong>Partial exposure of the C++ class tree.</strong> We expose at Python level
+C++ base classes, only if they provides common methods that we want
+to see. Otherwise, we just show them as base classes under Python.
+For instance <tt class="docutils literal">Library</tt> is derived from <tt class="docutils literal">DBo</tt>, but we won't see
+it under Python.</p>
+</li>
+<li><p class="first"><strong>Bi-directional communication.</strong> When a Python object is deleted, the
+wrapper obviously has a pointer toward the underlying C++ object and
+is able to delete it. But, the reverse case can occurs, meaning that
+you have a C++ object wrapped in Python and the database delete the
+underlying object. The wrapped Python object <em>must</em> be informed that
+it no longer refer a valid C++ one. Moreover, as we do not control
+when Python objects gets deleteds (that is, when their reference count
+reaches zero), we can have valid Python object with a dangling
+C++ pointer. So our Python objects can be warned by the C++ objects
+that they are no longer valid and any other operation than the
+deletion should result in a severe non-blocking error.</p>
+<p>To be precise, this apply to persistent object in the C++ database,
+like <tt class="docutils literal">Cell</tt>, <tt class="docutils literal">Net</tt>, <tt class="docutils literal">Instance</tt> or <tt class="docutils literal">Component</tt>. Short lived
+objects like <tt class="docutils literal">Box</tt> or <tt class="docutils literal">Point</tt> retains the classic Python behavior.</p>
+<p>Another aspect is that, for all derived <tt class="docutils literal">DBo</tt> objects, one and only
+one Python object is associated. For one given <tt class="docutils literal">Instance</tt> object we
+will always return the <em>same</em> <tt class="docutils literal">PyInstance</tt> object, thanks to the
+bi-directional link. Obviously, the <em>reference count</em> of the
+<tt class="docutils literal">PyInstance</tt> is managed accordingly. This mechanism is implemented
+by the <tt class="docutils literal">PyInstance_Link()</tt> function.</p>
+</li>
+<li><p class="first"><strong>Linking accross modules.</strong> As far as I understand, the wrappers
+are for monolithic libraries. That is, you wrap the entire library
+in one go. But Hurricane has a modular design, the core database
+then various tools. We do not, and cannot, have one gigantic wrapper
+that would encompass all the libraries in one go. We do one Python
+module for one C++ library.</p>
+<p>This brings another issue, at Python level this time. The Python
+modules for the libraries have to share some functions. Python
+provides a mechanism to pass C function pointers accross modules,
+but I did found it cumbersome. Instead, all our modules are split
+in two:</p>
+<ul class="simple">
+<li>The first part contains the classic Python module code.</li>
+<li>The second part is to be put in a separate dynamic library that
+will hold the shared functions. The Python module is dynamically linked
+against that library like any other. And any other Python module
+requiring the functions will link against the associated shared
+library.</li>
+</ul>
+<p>Each module file will be compiled <em>twice</em>, once to build the Python
+module (<tt class="docutils literal">__PYTHON_MODULE</tt> is defined) and once to build the supporting
+shared library (<tt class="docutils literal">__PYTHON_MODULE__</tt> <strong>not</strong> defined). This tricky
+double compilation is taken care of though the <tt class="docutils literal">add_python_module</tt>
+<tt class="docutils literal">cmake</tt> macro.</p>
+<p>For the core Hurricane library we will have:</p>
+<ul class="simple">
+<li><tt class="docutils literal">Hurricane.so</tt> the Python module (use with: <tt class="docutils literal">import Hurricane</tt>).</li>
+<li><tt class="docutils literal">libisobar.so.1.0</tt> the supporting shared library.</li>
+</ul>
+<p>The <tt class="docutils literal">PyLibrary.cpp</tt> file will have the following structure:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyLibrary.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="w">  </span><span class="c1">// +=================================================================+</span>
+<span class="w">  </span><span class="c1">// |               &quot;PyLibrary&quot; Python Module Code Part               |</span>
+<span class="w">  </span><span class="c1">// +=================================================================+</span>
+<span class="w">  </span><span class="c1">//</span>
+<span class="w">  </span><span class="c1">// The classic part of a Python module. Goes into Hurricane.so.</span>
+
+
+<span class="cp">#else  </span><span class="c1">// End of Python Module Code Part.</span>
+
+<span class="w">  </span><span class="c1">// x=================================================================x</span>
+<span class="w">  </span><span class="c1">// |              &quot;PyLibrary&quot; Shared Library Code Part               |</span>
+<span class="w">  </span><span class="c1">// x=================================================================x</span>
+<span class="w">  </span><span class="c1">//</span>
+<span class="w">  </span><span class="c1">// Functions here will be part of the associated shared library and</span>
+<span class="w">  </span><span class="c1">// made available to all other Python modules. Goes into libisobar.so.1.0</span>
+
+
+<span class="cp"># endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+</pre></div>
+<p>This way, we do not rely upon a pointer transmission through Python
+modules, but directly uses linker capabilities.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="botched-design">
+<h3>1.3 Botched Design</h3>
+<p>The mechanism to compute the signature of a call to a Python function,
+the <tt class="docutils literal">__cs</tt> object, is much too complex and, in fact, not needed.
+At some point I may root it out, but it is used in so many places...</p>
+<p>What I should have used the <tt class="docutils literal">&quot;O!&quot;</tt> capablity of <tt class="docutils literal">PyArg_ParseTuple()</tt>,
+like in the code below:</p>
+<p></p>
+<div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyContact_create</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Contact</span><span class="o">*</span><span class="w"> </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">  </span><span class="n">HTRY</span>
+<span class="w">    </span><span class="n">PyNet</span><span class="o">*</span><span class="w">       </span><span class="n">pyNet</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">PyLayer</span><span class="o">*</span><span class="w">     </span><span class="n">pyLayer</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">PyComponent</span><span class="o">*</span><span class="w"> </span><span class="n">pyComponent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">DbU</span><span class="o">::</span><span class="n">Unit</span><span class="w">    </span><span class="n">x</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">DbU</span><span class="o">::</span><span class="n">Unit</span><span class="w">    </span><span class="n">y</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">DbU</span><span class="o">::</span><span class="n">Unit</span><span class="w">    </span><span class="n">width</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">DbU</span><span class="o">::</span><span class="n">Unit</span><span class="w">    </span><span class="n">height</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;O!O!ll|ll:Contact.create&quot;</span>
+<span class="w">                        </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeNet</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pyNet</span>
+<span class="w">                        </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeLayer</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pyLayer</span>
+<span class="w">                        </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Contact</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="w"> </span><span class="n">PYNET_O</span><span class="p">(</span><span class="n">pyNet</span><span class="p">),</span><span class="w"> </span><span class="n">PYLAYER_O</span><span class="p">(</span><span class="n">pyLayer</span><span class="p">)</span>
+<span class="w">                               </span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">PyErr_Clear</span><span class="p">();</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;O!O!ll|ll:Contact.create&quot;</span>
+<span class="w">                          </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeComponent</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pyComponent</span>
+<span class="w">                          </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeLayer</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pyLayer</span>
+<span class="w">                          </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">height</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Contact</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="w"> </span><span class="n">PYCOMPONENT_O</span><span class="p">(</span><span class="n">pyComponent</span><span class="p">),</span><span class="w"> </span><span class="n">PYLAYER_O</span><span class="p">(</span><span class="n">pyLayer</span><span class="p">)</span>
+<span class="w">                                 </span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                       </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Contact constructor.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="n">HCATCH</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">PyContact_Link</span><span class="p">(</span><span class="w"> </span><span class="n">contact</span><span class="w"> </span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="basic-file-structure-and-cmake-configuration">
+<h2><a class="toc-backref" href="#toc-entry-3">2. Basic File Structure and CMake configuration</a></h2>
+<p>As a first example we will consider the <tt class="docutils literal"><span class="pre">Hurrican::Library</span></tt>
+class. To export a class into Python, we must create three files:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal">PyLibrary.h</tt>, defines the <tt class="docutils literal">PyLibrary</tt> C-Struct and the functions
+needed outside the module istself (mostly for <tt class="docutils literal">PyHurricane.cpp</tt>).</li>
+<li><tt class="docutils literal">PyLibrary.cpp</tt>, contains the complete wrapping of the class and
+the Python type definition (<tt class="docutils literal">PyTypeLibrary</tt>).</li>
+<li><tt class="docutils literal">PyHurricane.cpp</tt>, the definition of the Python module into which
+the classes are registered. The module act as a <tt class="docutils literal">namespace</tt> in
+Python so it is good practice to give it the same name as it's
+associated C++ namespace.</li>
+</ol>
+<p></p>
+<p>To build a Python module in <span class="cb">cmake</span>, use the following macro:</p>
+<div class="highlight"><pre><span></span><span class="w">              </span><span class="nb">set</span><span class="p">(</span><span class="w"> </span><span class="s">pyCpps</span><span class="w">      </span><span class="s">PyLibrary.cpp</span>
+<span class="w">                               </span><span class="s">PyHurricane.cpp</span><span class="w"> </span><span class="p">)</span>
+<span class="w">              </span><span class="nb">set</span><span class="p">(</span><span class="w"> </span><span class="s">pyIncludes</span><span class="w">  </span><span class="s">hurricane/isobar/PyLibrary.h</span>
+
+<span class="s">add_python_module(</span><span class="w"> </span><span class="s2">&quot;${pyCpps}&quot;</span>
+<span class="w">                   </span><span class="s2">&quot;${pyIncludes}&quot;</span>
+<span class="w">                   </span><span class="s2">&quot;isobar;1.0;1&quot;</span><span class="w">     </span><span class="c"># Name &amp; version of the supporting</span>
+<span class="w">                                      </span><span class="c"># shared library.</span>
+<span class="w">                   </span><span class="s">Hurricane</span><span class="w">          </span><span class="c"># Name of the Python module will give:</span>
+<span class="w">                                      </span><span class="c">#   Hurricane.so</span>
+<span class="w">                   </span><span class="s2">&quot;${depLibs}&quot;</span><span class="w">       </span><span class="c"># List of dependency libraries.</span>
+<span class="w">                   </span><span class="s">include/coriolis2/hurricane/isobar</span>
+<span class="w">                                      </span><span class="c"># Where to install the include files.</span>
+<span class="w">                 </span><span class="p">)</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+<div class="section" id="case-1-dbo-derived-standalone">
+<h2><a class="toc-backref" href="#toc-entry-4">3. Case 1 - DBo Derived, Standalone</a></h2>
+<p>As example, we take <tt class="docutils literal">Library</tt>. This a <tt class="docutils literal">DBo</tt> derived class, but we
+choose not to export the parent classes. From Python, it will appear
+as a base class.</p>
+<div class="section" id="class-associated-header-file-1">
+<span id="class-associated-header-file"></span><span id="target-1"></span><h3>3.1 Class Associated Header File</h3>
+<p>Here is the typical content of a header file (for <tt class="docutils literal">PyLibrary</tt>):</p>
+<div class="highlight"><pre><span></span><span class="cp">#ifndef  PY_LIBRARY_H</span>
+<span class="cp">#define  PY_LIBRARY_H</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyHurricane.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/Library.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PyObject_HEAD</span>
+<span class="w">        </span><span class="n">Library</span><span class="o">*</span><span class="w"> </span><span class="n">_object</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">PyLibrary</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyTypeObject</span><span class="w">  </span><span class="n">PyTypeLibrary</span><span class="p">;</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyMethodDef</span><span class="w">   </span><span class="n">PyLibrary_Methods</span><span class="p">[];</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyObject</span><span class="o">*</span><span class="w">     </span><span class="nf">PyLibrary_Link</span><span class="w">       </span><span class="p">(</span><span class="w"> </span><span class="n">Hurricane</span><span class="o">::</span><span class="n">Library</span><span class="o">*</span><span class="w"> </span><span class="n">lib</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="kt">void</span><span class="w">          </span><span class="nf">PyLibrary_LinkPyType</span><span class="w"> </span><span class="p">();</span>
+
+
+<span class="cp">#define IsPyLibrary(v) ( (v)-&gt;ob_type == &amp;PyTypeLibrary )</span>
+<span class="cp">#define PYLIBRARY(v)   ( (PyLibrary*)(v) )</span>
+<span class="cp">#define PYLIBRARY_O(v) ( PYLIBRARY(v)-&gt;_object )</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif  </span><span class="c1">// PY_LIBRARY_H</span>
+</pre></div>
+<p>The code is organized as follow:</p>
+<ol class="arabic">
+<li><p class="first">It must have, <em>as the first include</em> <tt class="docutils literal">PyHurricane.h</tt>, which provides
+the complete bunch of macros needed to build the module. Then the include
+of the C++ class we want to wrap (<tt class="docutils literal">Library.h</tt>).</p>
+</li>
+<li><p class="first">As Python is written in C, all the wrapper code has to be but inside
+an <tt class="docutils literal">extern &quot;C&quot;</tt> namespace.</p>
+</li>
+<li><p class="first">Definition of the wrapped <span class="cb">struct</span>, <tt class="docutils literal">PyLibrary</tt>. It is standard Python here.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For our set of macros to work, the name of the pointer to the
+C++ class must always be <strong>_object</strong>, and the various functions and
+macros defined here must take the name of the class (either in
+lowercase, camel case or capitals).</p>
+</div>
+</li>
+<li><p class="first">Declaration of the Python type <tt class="docutils literal">PyTypeLibrary</tt> (standard).</p>
+</li>
+<li><p class="first">Declaration of the Python type table of methods <tt class="docutils literal">PyLibrary_Methods</tt> (standard).</p>
+</li>
+</ol>
+<ol class="arabic simple" id="target-2" start="6">
+<li>Declaration of <tt class="docutils literal">PyLibrary_Link()</tt>, helper to convert a C++ <tt class="docutils literal">Lybrary</tt> into
+a <tt class="docutils literal">PyLibrary</tt> (put in the support shared library).</li>
+<li>Declaration of <tt class="docutils literal">PyLibrary_LinkPyType()</tt>, this function setup the class-level
+function of the new Python type (here, <tt class="docutils literal">PyTypeLibrary</tt>).</li>
+<li>And, lastly, three macros to:<ul>
+<li><tt class="docutils literal">IsPylibrary()</tt>, know if a Python object is a <tt class="docutils literal">PyLibrary</tt></li>
+<li><tt class="docutils literal">PYLIBRARY()</tt>, force cast (C style) of a <tt class="docutils literal">PyObject</tt> into a <tt class="docutils literal">PyLibrary</tt>.</li>
+<li><tt class="docutils literal">PYLIBRARY_O()</tt>, extract the C++ object (<tt class="docutils literal">Library*</tt>) from the Python
+object (<tt class="docutils literal">PyLibrary</tt>).</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="class-associated-file-1">
+<span id="class-associated-file"></span><h3>3.2 Class Associated File</h3>
+<div class="section" id="head-of-the-file">
+<h4>3.2.1 Head of the file</h4>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyLibrary.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyDataBase.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyCell.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Library,lib,function)</span>
+</pre></div>
+<p>As for the header, all the code must be put inside a <tt class="docutils literal">extern &quot;C&quot;</tt> namespace.</p>
+<p>A convenience macro <tt class="docutils literal">METHOD_HEAD()</tt> must be defined, by refining
+<tt class="docutils literal">GENERIC_METHOD_HEAD()</tt>. This macro will be used in the method wrappers
+below to cast the <tt class="docutils literal">_object</tt> field of the Python object into the
+appropriate C++ class, this is done using a C-style cast.
+The parameters of that macro are:</p>
+<ol class="arabic simple">
+<li>The C++ encapsulated class (<tt class="docutils literal">Library</tt>).</li>
+<li>The name of the <em>variable</em> that will be used to store a pointer
+to the C++ working object.</li>
+<li>The name of the C++ method which is to be wrapped.</li>
+</ol>
+</div>
+<div class="section" id="the-python-module-part">
+<h4>3.2.2 The Python Module Part</h4>
+<p>First, we have to build all the wrappers to the C++ methods of
+the class. For common predicates, accessors, and mutators macros
+are supplied.</p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::getCell()</span></tt> method:</p>
+<div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyLibrary_getCell</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyLibrary</span><span class="o">*</span><span class="w"> </span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Cell</span><span class="o">*</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">HTRY</span>
+<span class="w">    </span><span class="n">METHOD_HEAD</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Library.getCell()&quot;</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="s">&quot;s:Library.getCell&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lib</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">(</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Library::getCell.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="n">HCATCH</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">PyCell_Link</span><span class="p">(</span><span class="n">cell</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>Key points about this method wrapper:</p>
+<ol class="arabic simple">
+<li>The <tt class="docutils literal">HTRY</tt> / <tt class="docutils literal">HCATCH</tt> macros provides an insulation from the C++
+exceptions. If one is emitted, it will be catched and transformed in
+a Python one. This way, the Python program will be cleanly interrupted
+and the usual stack trace displayed.</li>
+<li>The returned value of this method is of type <tt class="docutils literal">Cell*</tt>, we have to
+transform it into a Python one. This is done with <tt class="docutils literal">PyCell_Link()</tt>.
+This macro is supplied by the <tt class="docutils literal">PyCell.h</tt> header and this is why
+it must be included.</li>
+</ol>
+<p></p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::create()</span></tt> method:</p>
+<div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyLibrary_create</span><span class="p">(</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">arg0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">arg1</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Library</span><span class="o">*</span><span class="w"> </span><span class="n">library</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">HTRY</span>
+<span class="w">    </span><span class="n">__cs</span><span class="p">.</span><span class="n">init</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Library.create&quot;</span><span class="w"> </span><span class="p">);</span><span class="w">                          </span><span class="c1">// Step (1).</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;O&amp;O&amp;:Library.create&quot;</span>
+<span class="w">                            </span><span class="p">,</span><span class="w"> </span><span class="n">Converter</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">arg0</span>
+<span class="w">                            </span><span class="p">,</span><span class="w"> </span><span class="n">Converter</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">arg1</span><span class="w"> </span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">         </span><span class="c1">// Step (2).</span>
+<span class="w">      </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Library constructor.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;:db:string&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">              </span><span class="c1">// Step (3.a)</span>
+<span class="w">      </span><span class="n">DataBase</span><span class="o">*</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PYDATABASE_O</span><span class="p">(</span><span class="n">arg0</span><span class="p">);</span>
+<span class="w">      </span><span class="n">library</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Library</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">PyString_AsString</span><span class="p">(</span><span class="n">arg1</span><span class="p">))</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;:library:string&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Step (3.b)</span>
+<span class="w">      </span><span class="n">Library</span><span class="o">*</span><span class="w"> </span><span class="n">masterLibrary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PYLIBRARY_O</span><span class="p">(</span><span class="n">arg0</span><span class="p">);</span>
+<span class="w">      </span><span class="n">library</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Library</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="w"> </span><span class="n">masterLibrary</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">PyString_AsString</span><span class="p">(</span><span class="n">arg1</span><span class="p">))</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Library constructor.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="n">HCATCH</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">PyLibrary_Link</span><span class="p">(</span><span class="w"> </span><span class="n">library</span><span class="w"> </span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+<p>Key point about this constructor:</p>
+<ol class="arabic simple">
+<li>We want the Python interface to mimic as closely as possible the
+C++ API. As such, Python object will be created using a static
+<tt class="docutils literal">.create()</tt> method. So we do not use the usual Python allocation
+mechanism.</li>
+<li>As it is a <em>static</em> method, there is no first argument.</li>
+<li>Python do not allow function overload like C++. To emulate that
+behavior we use the <tt class="docutils literal">__cs</tt> object (which is a global variable).<ol class="arabic">
+<li>Init/reset the <tt class="docutils literal">__cs</tt> object: see <em>step (1)</em>.</li>
+<li>Call <tt class="docutils literal">PyArg_ParseTuple()</tt>, read every mandatory or optional
+argument as a Python object (<tt class="docutils literal">&quot;O&amp;&quot;</tt>) and use <tt class="docutils literal">Converter</tt>
+on each one. <tt class="docutils literal">Converter</tt> will determine the real type of
+the Python object given as argument by looking at the
+encapsulated C++ class. It then update the <tt class="docutils literal">__cs</tt> object.
+Done in <em>step (2)</em></li>
+<li>After the call to <tt class="docutils literal">PyArg_ParseTuple()</tt>, the function
+<tt class="docutils literal">__cs.getObjectIds()</tt> will return the <em>signature</em> of
+the various arguments. In our case, the valid signatures
+will be <tt class="docutils literal">&quot;:db:string&quot;</tt> (<em>step (3.a)*a) and ``&quot;:library:string&quot;``
+(*step (3.b)</em>).</li>
+<li>Call the C++ method after extracting the C++ objects from
+the Python arguments. Note the use of the <tt class="docutils literal">PYLIBRARY_O()</tt>
+and <tt class="docutils literal">PYDATABSE_O()</tt> macros to perform the conversion.</li>
+</ol>
+</li>
+<li>Return the result, encapsulated through a call to <tt class="docutils literal">PyLibrary_Link()</tt>.</li>
+</ol>
+<p></p>
+<p>Wrapping of the <tt class="docutils literal"><span class="pre">Library::destroy()</span></tt> method:</p>
+<div class="highlight"><pre><span></span><span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyLibrary_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">PyLibrary</span><span class="p">)</span>
+</pre></div>
+<p>For C++ classes <strong>that are derived</strong> from <tt class="docutils literal">DBo</tt>, the destroy method
+wrapper must be defined using the macro <tt class="docutils literal">DBoDestroyAttribute()</tt>.
+This macro implements the bi-directional communication mechanism
+using <tt class="docutils literal"><span class="pre">Hurricane::Property</span></tt>. It <strong>must not</strong> be used for
+non <tt class="docutils literal">DBo</tt> derived classes.</p>
+<p>Defining the method table of the PyLibrary type:</p>
+<div class="highlight"><pre><span></span><span class="n">PyMethodDef</span><span class="w"> </span><span class="n">PyLibrary_Methods</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;create&quot;</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_create</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">METH_VARARGS</span><span class="o">|</span><span class="n">METH_STATIC</span>
+<span class="w">                  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Creates a new library.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getCell&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_getCell</span><span class="p">,</span><span class="w"> </span><span class="n">METH_VARARGS</span>
+<span class="w">                  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Get the cell of name &lt;name&gt;&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;destroy&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyLibrary_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Destroy associated hurricane object The python object remains.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">}</span><span class="w">           </span><span class="cm">/* sentinel */</span>
+<span class="w">  </span><span class="p">};</span>
+</pre></div>
+<p>This is standard Python/C API. The name of the <tt class="docutils literal">PyMethodDef</tt> table  must be
+named from the class: <tt class="docutils literal">PyLibrary_Methods</tt>.</p>
+</div>
+<div class="section" id="python-type-linking">
+<h4>3.2.3 Python Type Linking</h4>
+<p>Defining the <tt class="docutils literal">PyTypeLibrary</tt> class methods and the type linking function.</p>
+<p>Those are the functions for the Python object itself to work, not the
+wrapped method from the C++ class.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">At this point we <strong>do not</strong> define the <tt class="docutils literal">PyTypeLibrary</tt> itself.
+Only it's functions and a function to set them up <em>once</em> the
+type will be defined.</p>
+</div>
+<div class="highlight"><pre><span></span><span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+<span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+</pre></div>
+<p>The macro <tt class="docutils literal">DBoDeleteMethod()</tt> define the function to delete a
+<tt class="docutils literal">PyLibrary</tt> <em>Python</em> object. Again, do not mistake it for the deletion
+of the C++ class (implemented by <tt class="docutils literal">DBoDestroyAttribute()</tt>).
+Here again, <tt class="docutils literal">DBoDeleteMethod()</tt> is specially tailored for
+<tt class="docutils literal">DBo</tt> derived classes.</p>
+<p id="pylibrary-linkpytype">To define <tt class="docutils literal">PyLibrary_LinkPyType()</tt>, use the <tt class="docutils literal">PyTypeObjectLinkPyType()</tt>
+macro. This macro is specific for <tt class="docutils literal">DBo</tt> derived classes that are seen as
+base classes under Python (i.e. we don't bother exposing the base
+class under Python). <tt class="docutils literal">PyLibrary_LinkPyType()</tt> setup the class functions
+in the <tt class="docutils literal">PyTypeLibrary</tt> type object, it <strong>must</strong> be called in the
+Python module this class is part of (in this case: <tt class="docutils literal">PyHurricane.cpp</tt>).
+This particular flavor of the macro <em>will define</em> and setup the
+following class functions:</p>
+<ul class="simple">
+<li><tt class="docutils literal">PyTypeLibrary.tp_compare</tt> (defined by the macro).</li>
+<li><tt class="docutils literal">PyTypeLibrary.tp_repr</tt> (defined by the macro).</li>
+<li><tt class="docutils literal">PyTypeLibrary.tp_str</tt> (defined by the macro).</li>
+<li><tt class="docutils literal">PyTypeLibrary.tp_hash</tt> (defined by the macro).</li>
+<li><tt class="docutils literal">PyTypeLibrary.tp_methods</tt> sets to the previously defined <tt class="docutils literal">PyLibrary_Methods</tt> table.</li>
+<li><tt class="docutils literal">PyTypeLibrary.tp_dealloc</tt> is set to a function that <em>must</em> be named <tt class="docutils literal">PyLibrary_DeAlloc</tt>,
+this is what <tt class="docutils literal">DBoDeleteMethod</tt> does. It is <em>not</em> done by <tt class="docutils literal">PyTypeObjectLinkPyType</tt>.</li>
+</ul>
+<p>Defining the <tt class="docutils literal">PyTypeLibrary</tt> type:</p>
+</div>
+<div class="section" id="the-shared-library-part">
+<h4>3.2.4 The Shared Library Part</h4>
+<p>This part will be put in a separate supporting shared library, allowing
+other Python module to link against it (and make use of its symbols).</p>
+<div class="highlight"><pre><span></span><span class="n">DBoLinkCreateMethod</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+<span class="n">PyTypeObjectDefinitions</span><span class="p">(</span><span class="n">Library</span><span class="p">)</span>
+</pre></div>
+<p>To define <tt class="docutils literal">PyTypeLibrary</tt>, use the <tt class="docutils literal">PyTypeObjectDefinitions()</tt> macro.
+This macro is specific for classes that, as exposed by Python,
+are neither <em>derived</em> classes nor <em>base</em> classes for others.
+That is, they are standalone from the inheritance point of view.</p>
+<p>The <tt class="docutils literal">DBoLinkCreateMethod()</tt> macro will define the <tt class="docutils literal">PyLibrary_Link()</tt>
+function which is responsible for encapsulating a C++ <tt class="docutils literal">Library</tt> object
+into a Python <tt class="docutils literal">PyLibrary</tt> one.</p>
+</div>
+</div>
+<div class="section" id="python-module-c-namespace">
+<h3>3.3 Python Module (C++ namespace)</h3>
+<p>We use the Python module to replicate the C++ <em>namespace</em>. Thus, for the
+<tt class="docutils literal">Hurricane</tt> namespace we create a Python <tt class="docutils literal">Hurricane</tt> module which is
+defined in the <tt class="docutils literal">PyHurricane.cpp</tt> file, then we add into that module
+dictionary all the Python types encapsulating the C++ classes of that
+namespace.</p>
+<div class="highlight"><pre><span></span><span class="n">DL_EXPORT</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="n">initHurricane</span><span class="w"> </span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">PyLibrary_LinkPyType</span><span class="p">();</span><span class="w">  </span><span class="c1">// step 1.</span>
+
+<span class="w">  </span><span class="n">PYTYPE_READY</span><span class="p">(</span><span class="w"> </span><span class="n">Library</span><span class="w"> </span><span class="p">)</span><span class="w">  </span><span class="c1">// step 2.</span>
+
+<span class="w">  </span><span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;library&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;Library&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// step 3.</span>
+
+<span class="w">  </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Py_InitModule</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Hurricane&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PyHurricane_Methods</span><span class="w"> </span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">module</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Py_INCREF</span><span class="p">(</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span><span class="w"> </span><span class="p">);</span><span class="w">                                        </span><span class="c1">// step 4.</span>
+<span class="w">  </span><span class="n">PyModule_AddObject</span><span class="p">(</span><span class="w"> </span><span class="k">module</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Library&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeLibrary</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// step 4.</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <tt class="docutils literal">initHurricane()</tt> initialisation function shown above has
+been scrubbed of everything not relevant to the <tt class="docutils literal">PyLibrary</tt> class.
+The integration of the <tt class="docutils literal">PyLibrary</tt> class into the module needs
+four steps:</p>
+<ol class="arabic">
+<li><p class="first">A call to <a class="reference internal" href="#pylibrary-linkpytype">PyLibrary_LinkPyType()</a> to hook the Python type functions
+in the Python type object.</p>
+</li>
+<li><p class="first">A call to the <tt class="docutils literal">PYTYPE_READY()</tt> macro (standard Python).</p>
+</li>
+<li><p class="first">Registering the type into the <tt class="docutils literal">__cs</tt> object, with <tt class="docutils literal">addType()</tt>.
+The arguments are self explanatory, save for the last which is a
+boolean to tell if this is a <em>derived</em> class or not.</p>
+</li>
+<li><p class="first">Adding the type object (<tt class="docutils literal">PyTypeLibrary</tt>) into the dictionnary of
+the module itself. This allow to mimic closely the C++ syntax:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Hurricane</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">Hurricane</span><span class="o">.</span><span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">db</span><span class="p">,</span> <span class="s1">&#39;root&#39;</span> <span class="p">)</span>
+</pre></div>
+</li>
+</ol>
+<!-- -*- Mode: rst -*- -->
+<p></p>
+</div>
+</div>
+<div class="section" id="case-2-hierarchy-of-dbo-derived-classes">
+<h2><a class="toc-backref" href="#toc-entry-5">4. Case 2 - Hierarchy of DBo Derived Classes</a></h2>
+<p>Now we want to export the following C++ class hierarchy into Python:</p>
+<pre class="literal-block">
+PyEntity &lt;-- PyComponent &lt;-+- PyContact
+                           +- PySegment &lt;-+- PyHorizontal
+                                          +- PyVertical
+</pre>
+<div class="section" id="base-class-header">
+<h3>4.1 Base Class Header</h3>
+<p><strong>Remark:</strong> this is only a partial description of the tree for the sake of
+clarity.</p>
+<p>One important fact to remember is that <tt class="docutils literal">PyEntity</tt> and <tt class="docutils literal">PyComponent</tt>
+being related to C++ abstract classes, no objects of those types will be
+created, only <tt class="docutils literal">PyContact</tt>, <tt class="docutils literal">PyHorizontal</tt> or <tt class="docutils literal">PyVertical</tt> will.</p>
+<p>The consequence is that there is no <tt class="docutils literal">PyEntity_Link()</tt> like in <cite>3.1</cite>
+but instead two functions:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal">PyEntity_NEW()</tt> which create the relevant <tt class="docutils literal">PyEntity</tt> <em>derived</em>
+object from the <tt class="docutils literal">Entity</tt> one. For example, if the <tt class="docutils literal">Entity*</tt> given
+as argument is in fact a <tt class="docutils literal">Horizontal*</tt>, then the function will
+return a <tt class="docutils literal">PyHorizontal*</tt>.</li>
+<li><tt class="docutils literal">EntityCast()</tt> do the reverse of <tt class="docutils literal">PyEntity_NEW()</tt> that is, from
+a <tt class="docutils literal">PyEntity</tt>, return the C++ <em>derived</em> object. Again, if the
+<tt class="docutils literal">PyEntity*</tt> is a <tt class="docutils literal">PyHorizontal*</tt>, the function will cast it as
+a <tt class="docutils literal">Horizontal*</tt> <em>then</em> return it as an <tt class="docutils literal">Entity*</tt>.</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="c1">#ifndef ISOBAR_PY_ENTITY_H</span>
+<span class="c1">#define ISOBAR_PY_ENTITY_H</span>
+
+<span class="c1">#include &quot;hurricane/isobar/PyHurricane.h&quot;</span>
+<span class="c1">#include &quot;hurricane/Entity.h&quot;</span>
+
+<span class="n">namespace</span>  <span class="n">Isobar</span> <span class="p">{</span>
+  <span class="n">extern</span> <span class="s2">&quot;C&quot;</span> <span class="p">{</span>
+
+    <span class="n">typedef</span> <span class="n">struct</span> <span class="p">{</span>
+        <span class="n">PyObject_HEAD</span>
+        <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span> <span class="n">_object</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">PyEntity</span><span class="p">;</span>
+
+    <span class="n">extern</span>  <span class="n">PyObject</span><span class="o">*</span>     <span class="n">PyEntity_NEW</span>        <span class="p">(</span> <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span> <span class="n">entity</span> <span class="p">);</span>
+    <span class="n">extern</span>  <span class="n">void</span>          <span class="n">PyEntity_LinkPyType</span> <span class="p">();</span>
+    <span class="n">extern</span>  <span class="n">PyTypeObject</span>  <span class="n">PyTypeEntity</span><span class="p">;</span>
+    <span class="n">extern</span>  <span class="n">PyMethodDef</span>   <span class="n">PyEntity_Methods</span><span class="p">[];</span>
+
+
+<span class="c1">#define IsPyEntity(v)    ( (v)-&gt;ob_type == &amp;PyTypeEntity )</span>
+<span class="c1">#define PYENTITY(v)      ( (PyEntity*)(v) )</span>
+<span class="c1">#define PYENTITY_O(v)    ( PYENTITY(v)-&gt;_object )</span>
+
+  <span class="p">}</span>  <span class="o">//</span> <span class="n">extern</span> <span class="s2">&quot;C&quot;</span><span class="o">.</span>
+
+  <span class="n">Hurricane</span><span class="p">::</span><span class="n">Entity</span><span class="o">*</span>  <span class="n">EntityCast</span> <span class="p">(</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">derivedObject</span> <span class="p">);</span>
+
+<span class="p">}</span>  <span class="o">//</span> <span class="n">Isobar</span> <span class="n">namespace</span><span class="o">.</span>
+
+<span class="c1">#endif  // ISOBAR_PY_ENTITY_H</span>
+</pre></div>
+<p></p>
+</div>
+<div class="section" id="base-class-file">
+<h3>4.2 Base Class File</h3>
+<p>Changes from <cite>3.2 Class Associated File</cite> are:</p>
+<ol class="arabic simple">
+<li>No call to <tt class="docutils literal">DBoLinkCreateMethod()</tt> because there must be no <tt class="docutils literal">PyEntity_Link()</tt>,
+but the definitions of <tt class="docutils literal">PyEntity_NEW()</tt> and <tt class="docutils literal">EntityCast</tt>.</li>
+<li>For defining the <tt class="docutils literal">PyTypeEntity</tt> Python type, we call a different
+macro: <tt class="docutils literal">PyTypeRootObjectDefinitions</tt>, dedicated to base classes.</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyCell.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyHorizontal.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyVertical.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyContact.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Entity,entity,function)</span>
+
+<span class="w">    </span><span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyEntity_destroy</span><span class="w"> </span><span class="p">,</span><span class="n">PyEntity</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">PyEntity_getCell</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyEntity</span><span class="w"> </span><span class="o">*</span><span class="n">self</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">Cell</span><span class="o">*</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="n">HTRY</span>
+<span class="w">        </span><span class="n">METHOD_HEAD</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Entity.getCell()&quot;</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="n">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entity</span><span class="o">-&gt;</span><span class="n">getCell</span><span class="p">();</span>
+<span class="w">      </span><span class="n">HCATCH</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">PyCell_Link</span><span class="p">(</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PyMethodDef</span><span class="w"> </span><span class="n">PyEntity_Methods</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getCell&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyEntity_getCell</span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Returns the entity cell.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;destroy&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyEntity_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Destroy associated hurricane object, the python object remains.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">}</span><span class="w">  </span><span class="cm">/* sentinel */</span>
+<span class="w">      </span><span class="p">};</span>
+
+
+<span class="w">    </span><span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// End of Python Module Code Part.</span>
+
+<span class="w">    </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">PyEntity_NEW</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">Entity</span><span class="o">*</span><span class="w"> </span><span class="n">entity</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">entity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PyErr_SetString</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">HurricaneError</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Invalid Entity (bad occurrence)&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+
+<span class="w">      </span><span class="n">Horizontal</span><span class="o">*</span><span class="w"> </span><span class="n">horizontal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Horizontal</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">horizontal</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PyHorizontal_Link</span><span class="p">(</span><span class="w"> </span><span class="n">horizontal</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">Vertical</span><span class="o">*</span><span class="w"> </span><span class="n">vertical</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Vertical</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">vertical</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PyVertical_Link</span><span class="p">(</span><span class="w"> </span><span class="n">vertical</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">Contact</span><span class="o">*</span><span class="w"> </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Contact</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">contact</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PyContact_Link</span><span class="p">(</span><span class="w"> </span><span class="n">contact</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">      </span><span class="n">Py_RETURN_NONE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PyTypeRootObjectDefinitions</span><span class="p">(</span><span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part (1).</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+
+
+<span class="cp">#if !defined(__PYTHON_MODULE__)</span>
+
+<span class="n">Hurricane</span><span class="o">::</span><span class="n">Entity</span><span class="o">*</span><span class="w"> </span><span class="n">EntityCast</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">derivedObject</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">IsPyHorizontal</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PYHORIZONTAL_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">IsPyVertical</span><span class="w">  </span><span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PYVERTICAL_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">IsPyContact</span><span class="w">   </span><span class="p">(</span><span class="n">derivedObject</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">PYCONTACT_O</span><span class="p">(</span><span class="n">derivedObject</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part (2).</span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+</pre></div>
+<p></p>
+</div>
+<div class="section" id="intermediate-class-header">
+<h3>4.3 Intermediate Class Header</h3>
+<p>Changes from <cite>3.1 Class Associated Header File</cite> are:</p>
+<ol class="arabic simple">
+<li>As for <tt class="docutils literal">PyEntity</tt>, and because this is still an abstract class,
+there is no <tt class="docutils literal">PyComponent_Link()</tt> function.</li>
+<li>The definition of the <tt class="docutils literal">PyComponent</tt> <span class="cb">struct</span> is differs. There is
+no <tt class="docutils literal">PyObject_HEAD</tt> (it is a Python <em>derived</em> class). The only
+field is of the base class type <tt class="docutils literal">PyEntity</tt> and for use with
+Coriolis macros, <strong>it must</strong> be named <tt class="docutils literal">_baseObject</tt> (note that
+this is <em>not</em> a pointer but a whole object).</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="cp">#ifndef ISOBAR_PY_COMPONENT_H</span>
+<span class="cp">#define ISOBAR_PY_COMPONENT_H</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyEntity.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/Component.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PyEntity</span><span class="w">  </span><span class="n">_baseObject</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">PyComponent</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyTypeObject</span><span class="w">  </span><span class="n">PyTypeComponent</span><span class="p">;</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyMethodDef</span><span class="w">   </span><span class="n">PyComponent_Methods</span><span class="p">[];</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="kt">void</span><span class="w">          </span><span class="nf">PyComponent_LinkPyType</span><span class="w"> </span><span class="p">();</span>
+
+<span class="cp">#define IsPyComponent(v) ((v)-&gt;ob_type == &amp;PyTypeComponent)</span>
+<span class="cp">#define PYCOMPONENT(v)   ((PyComponent*)(v))</span>
+<span class="cp">#define PYCOMPONENT_O(v) (static_cast&lt;Component*&gt;(PYCOMPONENT(v)-&gt;_baseObject._object))</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+<div class="section" id="intermediate-class-file">
+<h3>4.4 Intermediate Class File</h3>
+<p>Changes from <cite>3.2 Class Associated File</cite> are:</p>
+<ol class="arabic simple">
+<li>Redefinition of the default macros <tt class="docutils literal">ACCESS_OBJECT</tt> and <tt class="docutils literal">ACCESS_CLASS</tt>.<ul>
+<li>The pointer to the C++ encapsulated object (attribute <tt class="docutils literal">_object</tt>) is hold
+by the base class <tt class="docutils literal">PyEntity</tt>. The <tt class="docutils literal">ACCESS_OBJECT</tt> macro which is tasked
+to give access to that attribute is then <tt class="docutils literal">_baseObject._object</tt> as
+<tt class="docutils literal">PyComponent</tt> is a direct derived class of <tt class="docutils literal">PyEntity</tt>.</li>
+<li><tt class="docutils literal">ACCESS_CLASS</tt> is similar to <tt class="docutils literal">ACCESS_OBJECT</tt> for accessing the base
+class, that is a pointer to <tt class="docutils literal">PyEntity</tt>.</li>
+</ul>
+</li>
+</ol>
+<p></p>
+<ol class="arabic simple" start="2">
+<li>For defining the <tt class="docutils literal">PyTypeComponent</tt> Python type, we call a yet different
+macro: <tt class="docutils literal">PyTypeInheritedObjectDefinitions()</tt>, dedicated to derived classes.
+For this this macro we need to give as argument the derived class and the
+base class.</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyComponent.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyNet.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#undef   ACCESS_OBJECT</span>
+<span class="cp">#undef   ACCESS_CLASS</span>
+<span class="cp">#define  ACCESS_OBJECT           _baseObject._object</span>
+<span class="cp">#define  ACCESS_CLASS(_pyObject)  &amp;(_pyObject-&gt;_baseObject)</span>
+<span class="cp">#define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Component,component,function)</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyComponent_getX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">,</span><span class="n">Component</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyComponent_getY</span><span class="p">,</span><span class="n">getY</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">,</span><span class="n">Component</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyComponent_destroy</span><span class="p">,</span><span class="n">PyComponent</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">PyComponent_getNet</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyComponent</span><span class="w"> </span><span class="o">*</span><span class="n">self</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">Net</span><span class="o">*</span><span class="w"> </span><span class="n">net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="n">HTRY</span>
+<span class="w">        </span><span class="n">METHOD_HEAD</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Component.getNet()&quot;</span><span class="w"> </span><span class="p">)</span>
+<span class="w">        </span><span class="n">net</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">component</span><span class="o">-&gt;</span><span class="n">getNet</span><span class="p">(</span><span class="w"> </span><span class="p">);</span>
+<span class="w">      </span><span class="n">HCATCH</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">PyNet_Link</span><span class="p">(</span><span class="w"> </span><span class="n">net</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PyMethodDef</span><span class="w"> </span><span class="n">PyComponent_Methods</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getX&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getX</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the Component X value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getY&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getY</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the Component Y value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getNet&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_getNet</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Returns the net owning the component.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;destroy&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyComponent_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;destroy associated hurricane object, the python object remains.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">}</span><span class="w">    </span><span class="cm">/* sentinel */</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Component</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Component</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// Python Module Code Part.</span>
+
+<span class="w">    </span><span class="n">PyTypeInheritedObjectDefinitions</span><span class="p">(</span><span class="n">Component</span><span class="p">,</span><span class="w"> </span><span class="n">Entity</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+<div class="section" id="terminal-class-header">
+<h3>4.5 Terminal Class Header</h3>
+<p>The contents of this file is almost identical to <a class="reference internal" href="#intermediate-class-header">4.3 Intermediate Class Header</a>,
+save for the presence of a <tt class="docutils literal">PyContact_Link()</tt> function. She is present
+at this level because the class is a concrete one and can be instanciated.</p>
+<div class="highlight"><pre><span></span><span class="cp">#ifndef ISOBAR_PY_CONTACT_H</span>
+<span class="cp">#define ISOBAR_PY_CONTACT_H</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyComponent.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/Contact.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">PyComponent</span><span class="w"> </span><span class="n">_baseObject</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">PyContact</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="n">PyTypeObject</span><span class="w">  </span><span class="n">PyTypeContact</span><span class="p">;</span>
+<span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="n">PyMethodDef</span><span class="w">   </span><span class="n">PyContact_Methods</span><span class="p">[];</span>
+<span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w">     </span><span class="nf">PyContact_Link</span><span class="w">       </span><span class="p">(</span><span class="w"> </span><span class="n">Hurricane</span><span class="o">::</span><span class="n">Contact</span><span class="o">*</span><span class="w"> </span><span class="n">object</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="k">extern</span><span class="w"> </span><span class="kt">void</span><span class="w">          </span><span class="nf">PyContact_LinkPyType</span><span class="w"> </span><span class="p">();</span>
+
+<span class="cp">#define IsPyContact(v)    ( (v)-&gt;ob_type == &amp;PyTypeContact )</span>
+<span class="cp">#define PYCONTACT(v)      ( (PyContact*)(v) )</span>
+<span class="cp">#define PYCONTACT_O(v)    ( PYCONTACT(v)-&gt;_baseObject._baseObject._object )</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif  </span><span class="c1">// ISOBAR_PY_CONTACT_H</span>
+</pre></div>
+</div>
+<div class="section" id="terminal-class-file">
+<h3>4.6 Terminal Class File</h3>
+<p>Changes from <a class="reference internal" href="#intermediate-class-file">4.4 Intermediate Class File</a> are:</p>
+<ol class="arabic simple">
+<li>As previously, we have to redefine the macros <tt class="docutils literal">ACCESS_OBJECT</tt> and <tt class="docutils literal">ACCESS_CLASS</tt>.
+But, as we are one level deeper into the hierarchy, one more level of
+indirection using <tt class="docutils literal">_baseObject</tt> must be used.<ul>
+<li><tt class="docutils literal">ACCESS_OBJECT</tt> becomes <tt class="docutils literal">_baseObject._baseObject._object</tt>.</li>
+<li><tt class="docutils literal">ACCESS_CLASS</tt> becomes <tt class="docutils literal"><span class="pre">&amp;(_pyObject-&gt;_baseObject._baseObject)</span></tt>.</li>
+</ul>
+</li>
+<li>For defining the <tt class="docutils literal">PyTypeContact</tt> Python type, we call again
+<tt class="docutils literal">PyTypeInheritedObjectDefinitions()</tt>. It is the same whether the class is
+terminal or not.</li>
+<li>And, this time, as the Python class is concrete, we call the macro
+<tt class="docutils literal">DBoLinkCreateMethod()</tt> to create the <tt class="docutils literal">PyContact_Link()</tt> function.</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyContact.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#undef  ACCESS_OBJECT</span>
+<span class="cp">#undef  ACCESS_CLASS</span>
+<span class="cp">#define ACCESS_OBJECT           _baseObject._baseObject._object</span>
+<span class="cp">#define ACCESS_CLASS(_pyObject) &amp;(_pyObject-&gt;_baseObject._baseObject)</span>
+<span class="cp">#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Contact,contact,function)</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyContact_getWidth</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">getWidth</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">PyContact</span><span class="p">,</span><span class="n">Contact</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyContact_getHeight</span><span class="p">,</span><span class="w"> </span><span class="n">getHeight</span><span class="p">,</span><span class="w"> </span><span class="n">PyContact</span><span class="p">,</span><span class="n">Contact</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DBoDestroyAttribute</span><span class="p">(</span><span class="n">PyContact_destroy</span><span class="p">,</span><span class="w"> </span><span class="n">PyContact</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">PyContact_create</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">Contact</span><span class="o">*</span><span class="w"> </span><span class="n">contact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="n">HTRY</span>
+<span class="w">        </span><span class="c1">// Usual signature then arguments parsing.</span>
+<span class="w">      </span><span class="n">HCATCH</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">PyContact_Link</span><span class="p">(</span><span class="n">contact</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">PyMethodDef</span><span class="w"> </span><span class="n">PyContact_Methods</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;create&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_create</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="n">METH_VARARGS</span><span class="o">|</span><span class="n">METH_STATIC</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Create a new Contact.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;destroy&quot;</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_destroy</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Destroy associated hurricane object, the python object remains.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getWidth&quot;</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_getWidth</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the contact width.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getHeight&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyContact_getHeight</span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                     </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the contact height.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">}</span><span class="w">  </span><span class="cm">/* sentinel */</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">DBoDeleteMethod</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PyTypeObjectLinkPyType</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// Python Module Code Part.</span>
+
+<span class="w">    </span><span class="n">DBoLinkCreateMethod</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PyTypeInheritedObjectDefinitions</span><span class="p">(</span><span class="n">Contact</span><span class="p">,</span><span class="w"> </span><span class="n">Component</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+<div class="section" id="python-module">
+<h3>4.8 Python Module</h3>
+<div class="highlight"><pre><span></span><span class="n">DL_EXPORT</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="n">initHurricane</span><span class="w"> </span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">PyEntity_LinkPyType</span><span class="p">();</span><span class="w">  </span><span class="c1">// step 1.</span>
+<span class="w">  </span><span class="n">PyComponent_LinkPyType</span><span class="p">();</span>
+<span class="w">  </span><span class="n">PyContact_LinkPyType</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">PYTYPE_READY</span><span class="p">(</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="p">)</span><span class="w">  </span><span class="c1">// step 2.</span>
+<span class="w">  </span><span class="n">PYTYPE_READY_SUB</span><span class="p">(</span><span class="w"> </span><span class="n">Component</span><span class="p">,</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="p">)</span>
+<span class="w">  </span><span class="n">PYTYPE_READY_SUB</span><span class="p">(</span><span class="w"> </span><span class="n">Contact</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">Component</span><span class="w"> </span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;ent&quot;</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeEntity</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;Entity&gt;&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// step 3.</span>
+<span class="w">  </span><span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;comp&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeComponent</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;Component&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ent&quot;</span><span class="w">  </span><span class="p">);</span>
+<span class="w">  </span><span class="n">__cs</span><span class="p">.</span><span class="n">addType</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;contact&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeContact</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;Contact&gt;&quot;</span><span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;comp&quot;</span><span class="w"> </span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="k">module</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Py_InitModule</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Hurricane&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PyHurricane_Methods</span><span class="w"> </span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">module</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;[ERROR]</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;  Failed to initialize Hurricane module.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">Py_INCREF</span><span class="p">(</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypeContact</span><span class="w"> </span><span class="p">);</span><span class="w">                                        </span><span class="c1">// step 4.</span>
+<span class="w">  </span><span class="n">PyModule_AddObject</span><span class="p">(</span><span class="w"> </span><span class="k">module</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Contact&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">PyTypeContact</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="c1">// step 4.</span>
+<span class="p">}</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="case-3-non-dbo-standalone-classe">
+<h2><a class="toc-backref" href="#toc-entry-6">5. Case 3 - Non-DBo Standalone Classe</a></h2>
+<p>Let's have a look at the encapsulation of <tt class="docutils literal"><span class="pre">Hurricane::Point</span></tt>.</p>
+<p>Non-BDo derived classes do not support the bi-directionnal communication.
+So each Python object is associated with one C++ object. The C++ object
+is created and deleted along with the Python one. This behavior implies
+that the C++ object is <em>copy constructible</em> (which should be the case).</p>
+<div class="section" id="class-header">
+<h3>5.1 Class Header</h3>
+<p>Changes from <cite>3.1 Class Associated Header File</cite>:</p>
+<ul class="simple">
+<li>There is no <tt class="docutils literal">PyPoint_Link()</tt> function, as it's related to the
+bi-directional communication mechanism.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>About the _object attribute</strong> of the PyPoint. As the C++ object life span
+(<tt class="docutils literal">Point</tt>) is linked to the Python (<tt class="docutils literal">PyPoint</tt>) one, we may have used a
+value instead of a pointer. It is best to keep a pointer as the macros
+written for <tt class="docutils literal">DBo</tt> derived classes will remain usables.</p>
+</div>
+<div class="highlight"><pre><span></span><span class="cp">#ifndef ISOBAR_PY_POINT_H</span>
+<span class="cp">#define ISOBAR_PY_POINT_H</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyHurricane.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/Point.h&quot;</span>
+
+<span class="k">namespace</span><span class="w">  </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PyObject_HEAD</span>
+<span class="w">        </span><span class="n">Hurricane</span><span class="o">::</span><span class="n">Point</span><span class="o">*</span><span class="w"> </span><span class="n">_object</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="n">PyPoint</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyTypeObject</span><span class="w">  </span><span class="n">PyTypePoint</span><span class="p">;</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="n">PyMethodDef</span><span class="w">   </span><span class="n">PyPoint_Methods</span><span class="p">[];</span>
+<span class="w">    </span><span class="k">extern</span><span class="w">  </span><span class="kt">void</span><span class="w">          </span><span class="nf">PyPoint_LinkPyType</span><span class="p">();</span>
+
+<span class="cp">#define IsPyPoint(v)    ( (v)-&gt;ob_type == &amp;PyTypePoint )</span>
+<span class="cp">#define PYPOINT(v)      ( (PyPoint*)(v) )</span>
+<span class="cp">#define PYPOINT_O(v)    ( PYPOINT(v)-&gt;_object )</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+
+<span class="cp">#endif  </span><span class="c1">// ISOBAR_PY_POINT_H</span>
+</pre></div>
+<p></p>
+</div>
+<div class="section" id="class-file">
+<h3>5.2 Class File</h3>
+<p>Changes from <cite>3.2 Class Associated File</cite>:</p>
+<ul class="simple">
+<li>As there is no <tt class="docutils literal">PyPoint_Link()</tt> function, there is no call to any
+flavor of the <tt class="docutils literal">DBoLinkcreatemethod()</tt> macro (obvious as it's <em>not</em>
+a <tt class="docutils literal">DBo</tt>).</li>
+<li>To use the standard Python constructor, we have to define <tt class="docutils literal">PyPoint_NEW()</tt>
+and <tt class="docutils literal">PyPoint_Init()</tt> functions, I'm not absolutely certain that the later
+needs to be defined (that part is still not clear to me from the Python doc).</li>
+<li>As it's not a <tt class="docutils literal">DBo</tt> there is no <tt class="docutils literal">destroy()</tt> method, so no call to
+<tt class="docutils literal">DirectDestroyMethod()</tt></li>
+<li>Lastly, as this object has a <tt class="docutils literal">PyPoint_NEW()</tt> (field <tt class="docutils literal">tp_new</tt>) and
+a <tt class="docutils literal">PyPoint_Init()</tt> (field <tt class="docutils literal">tp_init</tt>) we have to use the macro
+<tt class="docutils literal">PyTypeObjectLinkPyTypeNewInit()</tt> to define <tt class="docutils literal">PyPoint_LinkPyType()</tt>.</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hurricane/isobar/PyPoint.h&quot;</span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Isobar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">Hurricane</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cp">#define METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Point,point,function)</span>
+
+<span class="cp">#if defined(__PYTHON_MODULE__)</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyPoint_NEW</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="k">module</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">Point</span><span class="o">*</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">      </span><span class="n">HTRY</span>
+<span class="w">        </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">arg0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">        </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">arg1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">__cs</span><span class="p">.</span><span class="n">init</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Point.Point&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="s">&quot;|O&amp;O&amp;:Point.Point&quot;</span>
+<span class="w">                                </span><span class="p">,</span><span class="w"> </span><span class="n">Converter</span><span class="p">,</span><span class="o">&amp;</span><span class="n">arg0</span>
+<span class="w">                                </span><span class="p">,</span><span class="w"> </span><span class="n">Converter</span><span class="p">,</span><span class="o">&amp;</span><span class="n">arg1</span><span class="w"> </span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">PyErr_SetString</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Point constructor.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w">      </span><span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">());</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;:point&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="w"> </span><span class="o">*</span><span class="n">PYPOINT_O</span><span class="p">(</span><span class="n">arg0</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">__cs</span><span class="p">.</span><span class="n">getObjectIds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;:int:int&quot;</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span><span class="w"> </span><span class="n">point</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Point</span><span class="p">(</span><span class="w"> </span><span class="n">PyAny_AsLong</span><span class="p">(</span><span class="n">arg0</span><span class="p">),</span><span class="w"> </span><span class="n">PyAny_AsLong</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="n">PyErr_SetString</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">ConstructorError</span>
+<span class="w">                          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid number of parameters for Point constructor.&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">PyPoint</span><span class="o">*</span><span class="w"> </span><span class="n">pyPoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PyObject_NEW</span><span class="p">(</span><span class="w"> </span><span class="n">PyPoint</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">PyTypePoint</span><span class="w"> </span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pyPoint</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">delete</span><span class="w"> </span><span class="n">point</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="n">pyPoint</span><span class="o">-&gt;</span><span class="n">_object</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">point</span><span class="p">;</span>
+<span class="w">      </span><span class="n">HCATCH</span>
+
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="p">)</span><span class="n">pyPoint</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w">  </span><span class="nf">PyPoint_Init</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyPoint</span><span class="o">*</span><span class="w"> </span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">kwargs</span><span class="w"> </span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_getX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_getY</span><span class="p">,</span><span class="n">getY</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DirectSetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_SetX</span><span class="p">,</span><span class="n">setX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+<span class="w">    </span><span class="n">DirectSetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_SetY</span><span class="p">,</span><span class="n">setY</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">PyMethodDef</span><span class="w"> </span><span class="n">PyPoint_Methods</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getX&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyPoint_getX</span><span class="w">     </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the Point X value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;getY&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyPoint_getY</span><span class="w">     </span><span class="p">,</span><span class="w"> </span><span class="n">METH_NOARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Return the Point Y value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;setX&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyPoint_SetX</span><span class="w">     </span><span class="p">,</span><span class="w"> </span><span class="n">METH_VARARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Modify the Point X value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;setY&quot;</span><span class="w">   </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">PyCFunction</span><span class="p">)</span><span class="n">PyPoint_SetY</span><span class="w">     </span><span class="p">,</span><span class="w"> </span><span class="n">METH_VARARGS</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Modify the Point Y value.&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">}</span><span class="w">  </span><span class="cm">/* sentinel */</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">DirectDeleteMethod</span><span class="p">(</span><span class="n">PyPoint_DeAlloc</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">)</span>
+<span class="w">    </span><span class="n">PyTypeObjectLinkPyTypeNewInit</span><span class="p">(</span><span class="n">Point</span><span class="p">)</span>
+
+<span class="cp">#else  </span><span class="c1">// Python Module Code Part.</span>
+
+<span class="w">    </span><span class="n">PyTypeObjectDefinitions</span><span class="p">(</span><span class="n">Point</span><span class="p">)</span>
+
+<span class="cp">#endif  </span><span class="c1">// Shared Library Code Part.</span>
+
+<span class="w">  </span><span class="p">}</span><span class="w">  </span><span class="c1">// extern &quot;C&quot;.</span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// Isobar namespace.</span>
+</pre></div>
+</div>
+<div class="section" id="class-file-1">
+<h3>5.2 Class File</h3>
+<p>To put it bluntly, there is no difference in the Python module for
+a standalone <tt class="docutils literal">DBo</tt> class and a non-<tt class="docutils literal">DBo</tt> class.</p>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="encapsulating-dbu">
+<h2><a class="toc-backref" href="#toc-entry-7">6. Encapsulating DbU</a></h2>
+<p>While <tt class="docutils literal"><span class="pre">Hurricane::DbU</span></tt> is a class, the <tt class="docutils literal"><span class="pre">Hurricane::DbU::Unit</span></tt> is only
+a <tt class="docutils literal">typedef</tt> over <tt class="docutils literal">uint64_t</tt>. The <tt class="docutils literal">DbU</tt> class only provides a set of
+static methods to manipulate and convert to and from other units.
+At Python level, <tt class="docutils literal"><span class="pre">DbU::Unit</span></tt> will be stored in plain <tt class="docutils literal">long long</tt>.</p>
+<p>When a <tt class="docutils literal"><span class="pre">DbU::Unit</span></tt> argument is expected in a Python functions, just use
+the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; PyAny_AsLong( PyObject* )</tt> function to convert it.</p>
+<p>For example, if we explicit the expension of:</p>
+<div class="highlight"><pre><span></span><span class="n">DirectSetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_SetX</span><span class="p">,</span><span class="n">setX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+</pre></div>
+<p></p>
+<p>We would get:</p>
+<div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyPoint_setX</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyPoint</span><span class="w"> </span><span class="o">*</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Point</span><span class="o">*</span><span class="w"> </span><span class="n">cobject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span><span class="w"> </span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cobject</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ProxyError</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Attempt to call Point.setX() on an unbound Hurricane object&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">HTRY</span>
+<span class="w">    </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">arg0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;O:Point.setX()&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">arg0</span><span class="w"> </span><span class="p">))</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="n">cobject</span><span class="o">-&gt;</span><span class="n">setX</span><span class="p">(</span><span class="w"> </span><span class="n">Isobar</span><span class="o">::</span><span class="n">PyAny_AsLong</span><span class="p">(</span><span class="n">arg0</span><span class="p">)</span><span class="w"> </span><span class="p">);</span>
+<span class="w">  </span><span class="n">HCATCH</span>
+<span class="w">  </span><span class="n">Py_RETURN_NONE</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>For the other way around, use <tt class="docutils literal">PyObject* PyDbU_FromLong( <span class="pre">DbU::Unit</span> )</tt>.</p>
+<div class="highlight"><pre><span></span><span class="n">DirectGetLongAttribute</span><span class="p">(</span><span class="n">PyPoint_GetX</span><span class="p">,</span><span class="n">getX</span><span class="p">,</span><span class="n">PyPoint</span><span class="p">,</span><span class="n">Point</span><span class="p">)</span>
+</pre></div>
+<p>We would get:</p>
+<div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="nf">PyPoint_GetX</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">PyPoint</span><span class="w"> </span><span class="o">*</span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">Point</span><span class="o">*</span><span class="w"> </span><span class="n">cobject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">*&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">self</span><span class="o">-&gt;</span><span class="n">_object</span><span class="w"> </span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cobject</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">PyErr_SetString</span><span class="p">(</span><span class="w"> </span><span class="n">ProxyError</span>
+<span class="w">                   </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Attempt to call Point.getX() on an unbound Hurricane object&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">Isobar</span><span class="o">::</span><span class="n">PyDbU_FromLong</span><span class="p">(</span><span class="n">cobject</span><span class="o">-&gt;</span><span class="n">getX</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+<div class="section" id="no-c-hurricane-name-encapsulation">
+<h2><a class="toc-backref" href="#toc-entry-8">7. No C++ Hurricane::Name encapsulation</a></h2>
+<p>To be written.</p>
+</div>
+
+    </div>
+        <!-- /Content --> 
+
+        <!-- Footer -->
+        <div class="footer gradient-2">
+            <div class="container footer-container ">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Map</div>
+                        <ul class="list-unstyled">
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-2">
+                        <div class="footer-title">Social</div>
+                        <ul class="list-unstyled">
+                            <li><a href="element://vector/webapp/#/room/%23coriolis%3Amatrix.org?via=matrix.or" target="_blank">Matrix</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Links</div>
+                        <ul class="list-unstyled">
+                            <li><a href="https://coriolis.lip6.fr/" target="_blank">Alliance/Coriolis</a></li>
+                            <li><a href="https://largo.lip6.fr/" target="_blank">CIAN Team Website</a></li>
+                        </ul>
+                    </div> 
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
+                        <p class="pull-right text-right">
+                            <small><em>Proudly powered by <a href="http://docs.getpelican.com/" target="_blank">pelican</a></em></small><br/>
+			    <small><em><span class="sc">NEST</span> theme by <a href="https://github.com/molivier" target="_blank">molivier</a></em></small><br/>
+                            <small>Copyright © 2020-2020 Sorbonne Universite</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Footer -->
+    </body>
+</html>
