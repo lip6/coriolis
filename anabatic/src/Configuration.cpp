@@ -227,6 +227,10 @@ namespace Anabatic {
   { return new Configuration(*this); }
 
 
+  bool  Configuration::isSymbolic () const
+  { return _rg->isSymbolic(); }
+
+
   bool  Configuration::isTwoMetals () const
   { return _rg->isTwoMetals(); }
 
@@ -512,8 +516,9 @@ namespace Anabatic {
     DbU::Unit  bestSpan         = 0;
     Component* ongridComponent  = NULL;
     Component* offgridComponent = NULL;
-    DbU::Unit  viaShrink        = _rg->getViaWidth( (size_t)0 ) / 2
-                                + via12->getBottomEnclosure( Layer::EnclosureH );
+    DbU::Unit  viaShrink        = 0;
+    if (not isSymbolic())
+      viaShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
 
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {
