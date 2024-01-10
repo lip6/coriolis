@@ -288,6 +288,8 @@ namespace Katana {
     , _localAssigned(false)
     , _segmentsValid(false)
     , _markersValid (false)
+    , _minInvalid   (routingPlane->getTrackMin())
+    , _maxInvalid   (routingPlane->getTrackMax())
   { }
 
 
@@ -787,6 +789,7 @@ namespace Katana {
     cdebug_log(159,0) << "Insert in [" << 0 << "] " << this << segment << endl;
     _segments.push_back( segment );
     _segmentsValid = false;
+    updateInvalidBounds( segment );
 
     if (segment->isWide() or segment->isNonPref()) {
       cdebug_log(155,0) << "Segment is wide or non-pref, trackSpan:" << segment->getTrackSpan() << endl;
@@ -795,6 +798,7 @@ namespace Katana {
         cdebug_log(159,0) << "Insert in [" << i << "] " << wtrack << segment << endl;
         wtrack->_segments.push_back ( segment );
         wtrack->_segmentsValid = false;
+        wtrack->updateInvalidBounds( segment );
         wtrack = wtrack->getNextTrack();
       }
     }
@@ -1040,6 +1044,28 @@ namespace Katana {
       std::sort( _segments.begin(), _segments.end(), SegmentCompare() );
       _segmentsValid = true;
     }
+    // Net*      blockageNet = Session::getBlockageNet();
+    // uint32_t  state       = 0;
+    // size_t    i           = 0;
+    // getBeginIndex( _minInvalid+1, i, state );
+    // for ( ; (i+1<_segments.size()) and (_segments[i+1]->getSourceU() < _maxInvalid) ; ++i ) {
+    //   TrackFixedSpan* first  = dynamic_cast<TrackFixedSpan*>( _segments[i  ] );
+    //   TrackFixedSpan* second = dynamic_cast<TrackFixedSpan*>( _segments[i+1] );
+    //   if (not first or not second) continue;
+    //   if (   (first->getTargetU() > second->getSourceU())
+    //      and (first->getNet()    != second->getNet()    )) {
+    //     if (first->getTargetU() >= second->getTargetU()) {
+    //     // End of second is fully enclosed in first.
+    //     // Shrink first, set second as blockage.
+    //     } else {
+    //     // End of second sticks out of first.
+    //     // Changes boudaries so they no longer overlap.
+    //     }
+    //   }
+    // }
+
+    _minInvalid = _routingPlane->getTrackMin();
+    _maxInvalid = _routingPlane->getTrackMax();
 
     if (not _markersValid) {
       std::sort( _markers.begin(), _markers.end(), TrackMarker::Compare() );

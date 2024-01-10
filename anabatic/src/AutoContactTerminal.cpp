@@ -464,6 +464,8 @@ namespace Anabatic {
 
     ostringstream message;
     if (not hasBadTopology()) {
+      if (getAnchor()->getLayer() == getLayer()) setFlags  ( CntMetalOnly );
+      else                                       unsetFlags( CntMetalOnly );
       Box anchorBb = getAnchor()->getBoundingBox();
       anchorBb.inflate( Session::getViaWidth (getAnchor()->getLayer())
                       - Session::getWireWidth(getAnchor()->getLayer()) );
