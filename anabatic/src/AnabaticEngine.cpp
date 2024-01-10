@@ -1779,8 +1779,8 @@ namespace Anabatic {
     UpdateSession::open();
     
     for ( auto rp : rps ) {
-      bool offgrid = _configuration->selectRpComponent(rp);
-      if (not offgrid and not _configuration->isM1Offgrid())
+      bool ongrid = _configuration->selectRpComponent(rp);
+      if (not ongrid and not _configuration->isM1Offgrid())
         cerr << Warning( "AnabaticEngine::computeEdgeCapacities(): %s has no components on grid.", getString(rp).c_str() ) << endl;
 
       Point  center = rp->getBoundingBox().getCenter();

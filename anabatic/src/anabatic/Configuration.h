@@ -66,6 +66,7 @@ namespace Anabatic {
       inline  bool               isGLayer             ( const Layer* ) const;
               bool               isGMetal             ( const Layer* ) const;
               bool               isGContact           ( const Layer* ) const;
+              bool               isSymbolic           () const;
               bool               isTwoMetals          () const;
               bool               isHybrid             () const;
               bool               isM1Offgrid          () const;
