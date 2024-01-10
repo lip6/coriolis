@@ -24,6 +24,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Occurrence.h"
 #include "hurricane/Cell.h"
@@ -58,6 +59,7 @@ namespace {
   using Hurricane::RegularLayer;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::Rectilinear;
   using Hurricane::Plug;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
@@ -70,6 +72,29 @@ namespace {
   using Anabatic::AutoContact;
   using Anabatic::AutoSegment;
   using namespace Katana;
+
+
+  class CompareIntervalByVMin {
+    public:
+      inline bool operator () ( const Interval& lhs, const Interval& rhs ) const
+      {
+        if (lhs.getVMin() < rhs.getVMin())
+          return true;
+        else {
+          if (   (lhs.getVMin() == rhs.getVMin())
+             and (lhs.getVMax() >  rhs.getVMax()) )
+            return true;
+        }
+        return false;
+      }
+  };
+
+
+  class CompareTrackByAxis {
+    public:
+      inline bool operator () ( const Track* lhs, const Track* rhs ) const
+      { return lhs->getAxis() < rhs->getAxis(); }
+  };
 
 
   void  protectRoutingPad ( RoutingPad* rp, Flags flags )
@@ -110,114 +135,157 @@ namespace {
       }
     }
 
-    vector<Segment*> segments;
-
-    for ( Segment* segment : masterNet->getSegments() ) {
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment->getLayer());
+    vector< pair<Box,const Layer*> > bbs;
+    for ( Component* component : masterNet->getComponents() ) {
+      const Layer*  layer = component->getLayer();
+      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer( layer );
       if (not plane) continue;
 
-      if (usedComponent == dynamic_cast<Component*>(segment)
-         and not (flags & Flags::ProtectSelf)) continue;
-      if (not NetExternalComponents::isExternal(segment)) continue;
+      Segment* segment = dynamic_cast<Segment*>( component );
+      if (segment) {
+        Box bb = segment->getBoundingBox();
+        transformation.applyOn( bb );
+        bbs.push_back( make_pair( bb, layer ));
+        cdebug_log(145,0) << "@ " << segment << " bb:" << bb << endl;
+        continue;
+      }
 
-      segments.push_back( segment );
+      Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( component );
+      if (rectilinear) {
+        cdebug_log(145,0) << "@ " << rectilinear << endl;
+        vector<Box> rbbs;
+        rectilinear->getAsRectangles( rbbs, (plane->isVertical() ? Rectilinear::HSliced
+                                                                 : Rectilinear::VSliced ));
+        for ( Box& bb : rbbs ) {
+          transformation.applyOn( bb );
+          bbs.push_back( make_pair( bb, layer ));
+          cdebug_log(145,0) << "| bb:" << bb << endl;
+        }
+        continue;
+      }
     }
 
-    for ( size_t i=0 ; i<segments.size() ; ++i ) {
-      RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(segments[i]->getLayer());
+    map<Track*, vector<Interval>, CompareTrackByAxis > intervalsByTracks;
+    for ( auto item : bbs ) {
+      RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer( item.second );
       Flags         direction = plane->getDirection();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
       DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
                                 - wireWidth/2
                                 - DbU::fromLambda(0.1);
       DbU::Unit     cap       = plane->getLayer()->getMinimalSpacing() / 2;
-      DbU::Unit     extension = segments[i]->getLayer()->getExtentionCap();
-      Box           bb        ( segments[i]->getBoundingBox() );
+      DbU::Unit     extension = item.second->getExtentionCap();
+      Box           bb        ( item.first );
 
-      transformation.applyOn ( bb );
-
-      cdebug_log(145,0) << "@ " << segments[i] << " bb:" << bb << endl;
+      cdebug_log(145,0) << "@ bb:"  << bb << endl;
       cdebug_log(145,0) << "delta=" << DbU::getValueString(delta) << endl;
-      cdebug_log(145,0) << "cap=" << DbU::getValueString(cap) << endl;
+      cdebug_log(145,0) << "cap="   << DbU::getValueString(cap) << endl;
 
-      if ( direction == Flags::Horizontal ) {
+      if (direction == Flags::Horizontal) {
         DbU::Unit axisMin = bb.getYMin() - delta;
         DbU::Unit axisMax = bb.getYMax() + delta;
 
-        Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
+        Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           cdebug_log(145,0) << "> track " << track << endl;
-          // Horizontal* segment = Horizontal::create ( net
-          //                                          , segments[i]->getLayer()
-          //                                          , track->getAxis()
-          //                                          , wireWidth
-          //                                          , bb.getXMin()+extension
-          //                                          , bb.getXMax()-extension
-          //                                          );
-          // TrackFixedSegment::create ( track, segment );
-          // cdebug_log(145,0) << "| " << segment << endl;
-          Interval termSpan = Interval( bb.getXMin(), bb.getXMax() ).inflate( cap );
-          Interval freeSpan = track->getFreeInterval( bb.getXCenter() );
-          cdebug_log(145,0) << "| termSpan " << termSpan << endl;
-          cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
-          bool overlap  = false;
-          bool conflict = false;
-          if (not freeSpan.contains(termSpan)) {
-            overlap = true;
-            size_t ovBegin = 0;
-            size_t ovEnd   = 0;
-            track->getOverlapBounds( termSpan, ovBegin, ovEnd );
-            for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
-              TrackElement*   overlaped = track->getSegment( ovBegin );
-              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
-              if (fixedSpan) {
-                if (not fixedSpan->isBlockage())
-                  fixedSpan->setNet( nullptr );
-              } else
-                conflict = true;
-            }
-          }
-          if (not conflict) {
-            TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
-            cdebug_log(145,0) << "| " << element << endl;
-          }
+          intervalsByTracks[ track ].push_back( Interval( bb.getXMin(), bb.getXMax() ));
         }
       } else {
         DbU::Unit axisMin = bb.getXMin() - delta;
         DbU::Unit axisMax = bb.getXMax() + delta;
 
-        Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
+        Track* track = plane->getTrackByPosition( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
-          // Vertical* segment = Vertical::create ( net
-          //                                      , segments[i]->getLayer()
-          //                                      , track->getAxis()
-          //                                      , wireWidth
-          //                                      , bb.getYMin()+extension
-          //                                      , bb.getYMax()-extension
-          //                                      );
-          // TrackFixedSegment::create ( track, segment );
-          // cdebug_log(145,0) << "| " << segment << endl;
-          Interval termSpan = Interval( bb.getYMin(), bb.getYMax() );
-          Interval freeSpan = track->getFreeInterval( bb.getYCenter() );
-          bool     overlap  = false;
-          bool     conflict = false;
-          if (not freeSpan.contains(termSpan)) {
-            TrackElement* overlaped = track->getSegment( bb.getXCenter() );
-            if (overlaped) {
-              overlap = true;
-              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
-              if (fixedSpan) {
-                if (not fixedSpan->isBlockage())
-                  fixedSpan->setNet( nullptr );
-              } else
-                conflict = true;
-            }
+          cdebug_log(145,0) << "> track " << track << endl;
+          intervalsByTracks[ track ].push_back( Interval( bb.getYMin(), bb.getYMax() ) );
+        }
+      }
+    }
+
+    for ( auto item : intervalsByTracks ) {
+      Track*&           track     = const_cast<Track*&>( item.first );
+      vector<Interval>& intervals = item.second;
+      DbU::Unit         cap       = track->getLayer()->getMinimalSpacing() / 2;
+      DbU::Unit         halfWidth = track->getLayer()->getMinimalSize   () / 2;
+      cdebug_log(145,0) << "> track " << track << endl;
+
+      sort( intervals.begin(), intervals.end(), CompareIntervalByVMin() );
+      Interval fullSpan = intervals[0];
+      cdebug_log(145,0) << "| fullSpan " << fullSpan << endl;
+      for ( size_t i=1 ; i < intervals.size() ; ) {
+        if (fullSpan.contains(intervals[i])) {
+          cdebug_log(145,0) << "| contained " << intervals[i] << endl;
+          intervals.erase( intervals.begin() + i );
+          continue;
+        }
+        if (fullSpan.intersect(intervals[i])) {
+          cdebug_log(145,0) << "| intersect " << intervals[i] << endl;
+          fullSpan.merge( intervals[i].getVMax() );
+          cdebug_log(145,0) << "| fullSpan " << fullSpan << endl;
+          if (  (intervals[i  ].getSize() < 2*cap)
+             or (intervals[i-1].getSize() < 2*cap)) {
+            cdebug_log(145,0) << "| too narrow, merge " << endl;
+            intervals[i-1].merge( fullSpan.getVMax() );
+            intervals.erase( intervals.begin() + i );
+            continue;
           }
-          if (not conflict) {
-            TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
-            cdebug_log(145,0) << "| " << element << endl;
+          cdebug_log(145,0) << "| separate" << endl;
+          intervals[i-1] = Interval( intervals[i-1].getVMin()      , intervals[i].getVMin() - cap );
+          intervals[i  ] = Interval( intervals[i  ].getVMin() + cap, intervals[i].getVMax() );
+          ++i;
+          continue;
+        }
+        if (fullSpan.getVMax() > intervals[i-1].getVMax()) {
+          cdebug_log(145,0) << "| expand last" << endl;
+          intervals[i-1].merge( fullSpan.getVMax());
+        }
+        
+        fullSpan = intervals[i];
+        ++i;
+      }
+
+      cdebug_log(145,0) << "Cleaned up on " << track << endl;
+      for ( size_t i=0 ; i<intervals.size() ; ++i ) {
+        cdebug_log(145,0) << "| " << intervals[i] << endl;
+      }
+      cdebug_log(145,0) << "end" << endl;
+
+      for ( size_t i=0 ; i<intervals.size() ; ++i ) {
+        Interval termSpan = Interval( intervals[i] ).inflate( cap );
+        Interval freeSpan = track->getFreeInterval( intervals[i].getCenter() );
+        cdebug_log(145,0) << "| termSpan " << termSpan << endl;
+        cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
+        bool overlap  = false;
+        bool conflict = false;
+        if (freeSpan.isEmpty() or not freeSpan.contains(termSpan)) {
+          overlap = true;
+          size_t ovBegin = 0;
+          size_t ovEnd   = 0;
+          track->getOverlapBounds( termSpan, ovBegin, ovEnd );
+          for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
+            TrackElement*   overlaped = track->getSegment( ovBegin );
+            TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
+            if (fixedSpan) {
+              if (not fixedSpan->isBlockage())
+                fixedSpan->setNet( nullptr );
+            } else
+              conflict = true;
           }
         }
+        cdebug_log(145,0) << "| overlap =" << overlap << endl;
+        cdebug_log(145,0) << "| conflict=" << conflict << endl;
+        if (not conflict) {
+          Box bb;
+          if (track->isHorizontal())
+            bb = Box( intervals[i].getVMin(), track->getAxis()-halfWidth
+                    , intervals[i].getVMax(), track->getAxis()+halfWidth );
+          else
+            bb = Box( track->getAxis()-halfWidth, intervals[i].getVMin()
+                    , track->getAxis()+halfWidth, intervals[i].getVMax() );
+          TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+          cdebug_log(145,0) << "| " << element << endl;
+        }
+
       }
     }
     Session::revalidate();
@@ -246,7 +314,7 @@ namespace Katana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
-      DebugSession::open( net, 145, 150 );
+    //DebugSession::open( net, 145, 150 );
       cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
 
       NetData* data = getNetData( net );
@@ -259,7 +327,7 @@ namespace Katana {
       for ( size_t i=0 ; i<rps.size() ; ++i )
         protectRoutingPad( rps[i], flags );
 
-      DebugSession::close();
+    //DebugSession::close();
     }
 
     Session::close();

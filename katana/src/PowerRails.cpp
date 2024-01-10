@@ -1108,7 +1108,7 @@ namespace {
         if (not _powerRailsPlanes.getActivePlane()->getLayer()->isBlockage()) {
           _goMatchCount++;
           vector<Box> boxes;
-          rectilinear->getAsRectangles( boxes, Rectilinear::HSliced );
+          rectilinear->getAsRectangles( boxes, Rectilinear::VSliced );
           for ( Box bb : boxes ) {
             transformation.applyOn( bb );
             cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
