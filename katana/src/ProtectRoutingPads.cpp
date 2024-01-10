@@ -107,6 +107,7 @@ namespace {
     Net*            net            = rp->getNet();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
+    Box             ab             = rp->getCell()->getAbutmentBox();
 
     if (dynamic_cast<Plug*>(usedComponent)) {
       cerr << Error( "Katana::protectRoutingPad(): A RoutingPad of \"%s\" is still on it's Plug.\n"
@@ -175,11 +176,12 @@ namespace {
                                 - DbU::fromLambda(0.1);
       DbU::Unit     cap       = plane->getLayer()->getMinimalSpacing() / 2;
       DbU::Unit     extension = item.second->getExtentionCap();
-      Box           bb        ( item.first );
+      Box           bb        = item.first.getIntersection( ab );
 
       cdebug_log(145,0) << "@ bb:"  << bb << endl;
       cdebug_log(145,0) << "delta=" << DbU::getValueString(delta) << endl;
       cdebug_log(145,0) << "cap="   << DbU::getValueString(cap) << endl;
+      if (bb.isEmpty()) continue;
 
       if (direction == Flags::Horizontal) {
         DbU::Unit axisMin = bb.getYMin() - delta;
@@ -252,7 +254,7 @@ namespace {
 
       for ( size_t i=0 ; i<intervals.size() ; ++i ) {
         Interval termSpan = Interval( intervals[i] ).inflate( cap );
-        Interval freeSpan = track->getFreeInterval( intervals[i].getCenter() );
+        Interval freeSpan = track->getFreeInterval( intervals[i].getCenter(), net );
         cdebug_log(145,0) << "| termSpan " << termSpan << endl;
         cdebug_log(145,0) << "| freeSpan " << freeSpan << endl;
         bool overlap  = false;
@@ -262,14 +264,16 @@ namespace {
           size_t ovBegin = 0;
           size_t ovEnd   = 0;
           track->getOverlapBounds( termSpan, ovBegin, ovEnd );
-          for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
-            TrackElement*   overlaped = track->getSegment( ovBegin );
-            TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
-            if (fixedSpan) {
-              if (not fixedSpan->isBlockage())
-                fixedSpan->setNet( nullptr );
-            } else
-              conflict = true;
+          if (ovBegin != Track::npos) {
+            for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
+              TrackElement*   overlaped = track->getSegment( ovBegin );
+              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
+              if (fixedSpan) {
+                if (not fixedSpan->isBlockage())
+                  fixedSpan->setNet( nullptr );
+              } else
+                conflict = true;
+            }
           }
         }
         cdebug_log(145,0) << "| overlap =" << overlap << endl;
@@ -314,7 +318,7 @@ namespace Katana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
-    //DebugSession::open( net, 145, 150 );
+      DebugSession::open( net, 145, 150 );
       cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
 
       NetData* data = getNetData( net );
@@ -327,7 +331,7 @@ namespace Katana {
       for ( size_t i=0 ; i<rps.size() ; ++i )
         protectRoutingPad( rps[i], flags );
 
-    //DebugSession::close();
+      DebugSession::close();
     }
 
     Session::close();
