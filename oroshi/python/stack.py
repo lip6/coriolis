@@ -602,7 +602,7 @@ class Stack ( object ):
     else:
       self.tImplantLayer = rules.getRealLayer( 'pImplant' )
       self.bImplantLayer = rules.getRealLayer( 'nImplant' )
-      self.wellLayer     = rules.getRealLayer( 'pWell' )
+      self.wellLayer     = rules.getRealLayer( 'nWell' )
 
     return
 
