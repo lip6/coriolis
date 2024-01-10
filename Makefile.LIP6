@@ -63,15 +63,19 @@ $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm: $(HOME)/.local/bin/pdm
 	@$(localpath) pdm install --no-self -d --plugins
 
 
+wipe:
+	@$(localpath) pdm run meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
+
+
 setup:
-	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix -Donly-docs=false
 
 
 configure:
 	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
 
 
-install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup
+install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup configure
 	@$(localpath) pdm run meson install -C $(BUILDDIR)
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
@@ -84,7 +88,6 @@ install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup
 
 install_docs: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
 	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) \
-	                                                  -Donly-docs=true   \
 	                                                  -Ddocs=true
 	@$(localpath) pdm run meson install -C $(BUILDDIR)
 
@@ -96,10 +99,10 @@ install_alliance:
 	 sed -i 's,dirs="\\$$newdirs documentation",dirs="$$newdirs",' ./autostuff; \
 	 ./autostuff clean; \
 	 ./autostuff; \
- 	 mkdir -p $(BUILDDIR); \
+	 mkdir -p $(BUILDDIR); \
 	 cd $(BUILDDIR); \
 	 $(ALLIANCE_SRC)/configure --prefix=$(PREFIX) --enable-alc-shared; \
- 	 make -j1 install
+	 make -j1 install
 
 
 clean_build: check_dir
