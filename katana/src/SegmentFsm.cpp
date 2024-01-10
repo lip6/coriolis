@@ -628,6 +628,7 @@ namespace Katana {
                    , getString(_constraint).c_str()
                    ) << endl;
       }
+      cdebug_log(155,0) << "-> No candidate track found." << endl;
       _state = EmptyTrackList;
     }
 

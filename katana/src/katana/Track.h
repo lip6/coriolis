@@ -111,6 +111,7 @@ namespace Katana {
               void               invalidate          ();
               void               insert              ( TrackElement* );
               void               insert              ( TrackMarker* );
+      inline  void               updateInvalidBounds ( TrackElement* );
               void               setSegment          ( TrackElement*, size_t );
               size_t             doRemoval           ();
               void               doReorder           ();
@@ -130,6 +131,8 @@ namespace Katana {
       bool                        _localAssigned;
       bool                        _segmentsValid;
       bool                        _markersValid;
+      DbU::Unit                   _minInvalid;
+      DbU::Unit                   _maxInvalid;
 
     protected:
     // Constructors & Destructors.
@@ -219,6 +222,13 @@ namespace Katana {
     return state;
   }
 
+
+  inline  void  Track::updateInvalidBounds ( TrackElement* element )
+  {
+    _minInvalid = std::min( _minInvalid, element->getSourceU() );
+    _maxInvalid = std::max( _maxInvalid, element->getTargetU() );
+  }
+  
 
   inline bool Track::Compare::operator() ( const Track* lhs, const Track* rhs ) const
   {
