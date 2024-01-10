@@ -1,6 +1,0 @@
-<map id="Hurricane::Rubber" name="Hurricane::Rubber">
-<area shape="rect" id="node1" title="Rubber description (API)" alt="" coords="5,229,144,256"/>
-<area shape="rect" id="node2" href="$classHurricane_1_1Go.html" title="Go description (API)" alt="" coords="19,155,130,181"/>
-<area shape="rect" id="node3" href="$classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API)." alt="" coords="9,80,140,107"/>
-<area shape="rect" id="node4" href="$classHurricane_1_1DBo.html" title="DataBase object root class (API)." alt="" coords="15,5,135,32"/>
-</map>
