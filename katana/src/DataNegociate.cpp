@@ -160,17 +160,19 @@ namespace Katana {
         Interval     trackFree ( false );
 
         if (source->canDrag()) {
+          DbU::Unit slack = (source->isMetalOnly()) ? pitch : 0;
           if (direction & Flags::Horizontal)
-            trackFree.intersection( source->getCBYMin(), source->getCBYMax() );
+            trackFree.intersection( source->getCBYMin()-slack, source->getCBYMax()+slack );
           else
-            trackFree.intersection( source->getCBXMin(), source->getCBXMax() );
+            trackFree.intersection( source->getCBXMin()-slack, source->getCBXMax()+slack );
           cdebug_log(159,0) << "trackFree (source drag): " << trackFree << endl;
         }
         if (target->canDrag()) {
+          DbU::Unit slack = (target->isMetalOnly()) ? pitch : 0;
           if (direction & Flags::Horizontal)
-            trackFree.intersection( target->getCBYMin(), target->getCBYMax() );
+            trackFree.intersection( target->getCBYMin()-slack, target->getCBYMax()+slack );
           else
-            trackFree.intersection( target->getCBXMin(), target->getCBXMax() );
+            trackFree.intersection( target->getCBXMin()-slack, target->getCBXMax()+slack );
           cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
         }
 
