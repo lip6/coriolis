@@ -56,6 +56,8 @@ class Macro ( object ):
             abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
         if transf.getOrientation() == Transformation.Orientation.MX:
             abShift = Transformation( ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
+        if transf.getOrientation() == Transformation.Orientation.MY:
+            abShift = Transformation( -ab.getXMin(), ab.getYMin(), Transformation.Orientation.ID )
         print( 'transf={}'.format(transf) )
         print( 'abShift={}'.format(abShift) )
         abShift.applyOn( transf )
