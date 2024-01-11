@@ -1,0 +1,5 @@
+<map id="Hurricane::Filter&lt; Type &gt;" name="Hurricane::Filter&lt; Type &gt;">
+<area shape="rect" id="node1" title="Filter description (API)" alt="" coords="118,5,255,47"/>
+<area shape="rect" id="node2" href="$classHurricane_1_1GenericFilter.html" title="Generic Filter auto&#45;pointer." alt="" coords="5,95,181,136"/>
+<area shape="rect" id="node3" href="$classHurricane_1_1NotFilter.html" title="Filter negation." alt="" coords="205,95,355,136"/>
+</map>
