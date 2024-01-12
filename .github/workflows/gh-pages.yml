@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main # deploy main. If your branch is `master`, you'll have to replace that throughout this file.
-  pull_request: # This will publish a site preview on every pull request, and also run the build command to test if the site is broken.
+  pull_request_target: # This will publish a site preview on every pull request, and also run the build command to test if the site is broken.
 
 jobs:
   deploy:
