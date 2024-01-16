@@ -1929,6 +1929,73 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::getHGCellsUnder ( vector<GCell*>& gcells
+                               , GCell*          gcell
+                               , GCell*          end
+                               , DbU::Unit       yprobe
+                               )
+  {
+    vector<GCell*>().swap( gcells );
+
+    cdebug_log(144,0) << "yprobe: " << DbU::getValueString(yprobe) << endl;
+
+    bool success = true;
+    if (gcell->getXMin() > end->getXMin()) std::swap( gcell, end );
+    if (yprobe == gcell->getConstraintYMax()) yprobe--;
+
+    gcells.push_back( gcell );
+    while ( gcell != end ) {
+      gcell = gcell->getEast( yprobe );
+      if (not gcell) {
+        success = false;
+        cerr << Error( "GCell::getHGCellsUnder() : NULL GCell under\n"
+                       "        begin:%s\n"
+                       "        end:  %s"
+                     , getString(gcell).c_str()
+                     , getString(end  ).c_str()
+                     ) << endl;
+        break;
+      }
+      gcells.push_back( gcell );
+    }
+    return success;
+  }
+
+
+  bool  GCell::getVGCellsUnder ( vector<GCell*>& gcells
+                               , GCell*          gcell
+                               , GCell*          end
+                               , DbU::Unit       xprobe
+                               )
+  {
+    vector<GCell*>().swap( gcells );
+
+    cdebug_log(144,0) << "xprobe: " << DbU::getValueString(xprobe) << endl;
+
+    bool success = true;
+    if (gcell->getYMin() > end->getYMin()) std::swap( gcell, end );
+    if (xprobe == gcell->getConstraintXMax()) xprobe--;
+
+    gcells.push_back( gcell );
+    while ( gcell != end ) {
+      gcell = gcell->getNorth( xprobe );
+
+      if (not gcell) {
+        success = false;
+        cerr << Error( "GCell::getVGCellsUnder() : NULL GCell under\n"
+                       "        begin:%s\n"
+                       "        end:  %s"
+                     , getString(gcell).c_str()
+                     , getString(end  ).c_str()
+                     ) << endl;
+        break;
+      }
+      gcells.push_back( gcell );
+    }
+    return success;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::GCellDensitySet".
 

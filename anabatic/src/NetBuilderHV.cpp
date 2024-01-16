@@ -1965,11 +1965,33 @@ namespace Anabatic {
       Segment* baseSegment = static_cast<Segment*>( getFromHook()->getComponent() );
       if ( (getSourceFlags() | getFlags()) & ToUpperRouting) {
         cdebug_log(145,0) << "Moving up global" << endl;
+        vector<GCell*> gcells;
         size_t gdepth = Session::getGHorizontalDepth();
-        if (dynamic_cast<Vertical*>(baseSegment))
+        if (dynamic_cast<Vertical*>(baseSegment)) {
           gdepth = Session::getGVerticalDepth();
-        baseSegment->setLayer( Session::getBuildRoutingLayer( gdepth+2 ));
-        baseSegment->setWidth( Session::getWireWidth( gdepth+2 ));
+          GCell::getVGCellsUnder( gcells
+                                , getSourceContact()->getGCell()
+                                , targetContact->getGCell()
+                                , baseSegment->getX() );
+        } else {
+          GCell::getHGCellsUnder( gcells
+                                , getSourceContact()->getGCell()
+                                , targetContact->getGCell()
+                                , baseSegment->getY() );
+        }
+        bool canMoveUp = true;
+        for ( GCell* gcell : gcells ) {
+          if (not gcell->hasFreeTrack(gdepth+2,2.0)) {
+            canMoveUp = false;
+            break;
+          }
+        }
+        if (canMoveUp) {
+          baseSegment->setLayer( Session::getBuildRoutingLayer( gdepth+2 ));
+          baseSegment->setWidth( Session::getWireWidth( gdepth+2 ));
+        } else {
+          cdebug_log(145,0) << "-> Cancel move up, not enough up free track" << endl;
+        }
       }
 
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
