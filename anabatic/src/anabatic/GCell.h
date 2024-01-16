@@ -137,6 +137,14 @@ namespace Anabatic {
       static        Box                   getBorder            ( const GCell*, const GCell* );
       static inline DbU::Unit             getMatrixHSide       ();
       static inline DbU::Unit             getMatrixVSide       ();
+      static        bool                  getHGCellsUnder      ( vector<GCell*>& gcells
+                                                               , GCell*          gcell
+                                                               , GCell*          end
+                                                               , DbU::Unit       yprobe );
+      static        bool                  getVGCellsUnder      ( vector<GCell*>& gcells
+                                                               , GCell*          gcell
+                                                               , GCell*          end
+                                                               , DbU::Unit       xprobe );
     public:                                                    
       static        GCell*                create               ( AnabaticEngine* );
     public:                                                    
