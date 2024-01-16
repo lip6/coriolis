@@ -63,15 +63,17 @@ namespace Anabatic {
       virtual                   ~Configuration        ();
       virtual Configuration*     clone                () const;
     // Methods.
-      inline  bool               isGLayer             ( const Layer* ) const;
-              bool               isGMetal             ( const Layer* ) const;
-              bool               isGContact           ( const Layer* ) const;
               bool               isSymbolic           () const;
               bool               isTwoMetals          () const;
               bool               isHybrid             () const;
               bool               isM1Offgrid          () const;
               bool               isHV                 () const;
               bool               isVH                 () const;
+      inline  bool               isGLayer             ( const Layer* ) const;
+              bool               isGMetal             ( const Layer* ) const;
+              bool               isGContact           ( const Layer* ) const;
+              bool               isUsable             ( size_t depth ) const;
+              size_t             getFirstRoutingLayer () const;
       inline  std::string        getNetBuilderStyle   () const;
       inline  StyleFlags         getRoutingStyle      () const;
               const Layer*       getGContactLayer     () const;
