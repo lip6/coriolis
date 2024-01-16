@@ -124,7 +124,7 @@ class Macro ( object ):
           that are half free and half occluded by the block itself may
           cause (stupid) deadlock to appear.
         """
-        trace( 550, '\tMacro.__init__() {}\n'.format(macroCell) )
+        trace( 550, '+,', '\tMacro.__init__() {}\n'.format(macroCell) )
         self.cell = macroCell
         Macro.LUT[ self.cell ] = self
 
@@ -224,6 +224,7 @@ class Macro ( object ):
                             
         with UpdateSession():
             for component in westPins:
+                trace( 550, '\twestPin {}\n'.format( component ))
                 NetExternalComponents.setInternal( component )
                 pitch     = self.rg.getPitch( component.getLayer() )
                 ppitch    = self.getPPitch( component.getLayer() )
@@ -317,6 +318,7 @@ class Macro ( object ):
                                                   )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
+                trace( 550, '\teastPin {}\n'.format( component ))
                 layer = component.getLayer()
                 if layer.getMask() != gaugeMetal2.getLayer().getMask():
                     useBigVia = True
@@ -363,13 +365,23 @@ class Macro ( object ):
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in southPins:
+                trace( 550, '\tsouthPin {}\n'.format( component ))
                 NetExternalComponents.setInternal( component )
-                pitch     = self.rg.getPitch( component.getLayer() )
+                innerRg = self.rg.getLayerGauge( component.getLayer() )
+                outerRg = innerRg
+                vDepth  = innerRg.getDepth()
+                if innerRg.isHorizontal(): 
+                   #if vDepth+1 < self.rg.getAllowedDepth(): vDepth += 1
+                   #else:                                    vDepth -= 1
+                    outerRg = self.rg.getLayerGauge( vDepth + 1 )
+                if outerRg.getLayer().getMask() != innerRg.getLayer().getMask():
+                    useBigVia = True
+                pitch     = self.rg.getPitch( outerRg.getLayer() )
                 ppitch    = self.getPPitch( component.getLayer() )
-                wwidth    = self.getWireWidth( component.getLayer() )
+                wwidth    = self.getWireWidth( outerRg.getLayer() )
                 bb        = component.getBoundingBox()
                 xAxis     = bb.getXCenter()
-                xOngrid   = self.getNearestTrackAxis( component.getLayer(), xAxis )
+                xOngrid   = self.getNearestTrackAxis( outerRg.getLayer(), xAxis )
                 yMax      = bb.getYMin()
                 yMin      = yMax - vMargin*ppitch
                 width     = bb.getWidth()
@@ -382,22 +394,33 @@ class Macro ( object ):
                     else:
                         ppXAxis   += width//2
                         ppXOngrid -= wwidth//2
-                horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
-                                              , bb.getYMin()
-                                              , width
-                                              , ppXAxis
-                                              , ppXOngrid
-                                              )
+                if useBigVia:
+                    bvia = BigVia( component.getNet()
+                                 , innerRg.getDepth()
+                                 , xOngrid
+                                 , bb.getYMin() + wwidth
+                                 , wwidth
+                                 , 3*wwidth
+                                 , flags=BigVia.AllowAllExpand )
+                    bvia.mergeDepth( outerRg.getDepth() )
+                    bvia.doLayout()
+                else:
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , bb.getYMin()
+                                                  , width
+                                                  , ppXAxis
+                                                  , ppXOngrid
+                                                  )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , outerRg.getLayer()
                                           , xOngrid
                                           , wwidth
                                           , yMin
                                           , yMax
                                           )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , outerRg.getLayer()
                                           , xOngrid
                                           , wwidth
                                           , yMin
@@ -405,6 +428,7 @@ class Macro ( object ):
                                           )
                 NetExternalComponents.setExternal( vertical )
             for component in northPins:
+                trace( 550, '\tnorthPin {}\n'.format( component ))
                 layer = component.getLayer()
                 if layer.getMask() != gaugeMetal3.getLayer().getMask():
                     useBigVia = True
@@ -462,3 +486,4 @@ class Macro ( object ):
                                           )
                 NetExternalComponents.setExternal( vertical )
         self.cell.setAbutmentBox( self.outerAb )
+        trace( 550, '-' )
