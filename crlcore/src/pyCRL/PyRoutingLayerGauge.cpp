@@ -269,6 +269,8 @@ extern "C" {
   DirectGetUIntAttribute  (PyRoutingLayerGauge_getType         ,getType         ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetDoubleAttribute(PyRoutingLayerGauge_getDensity      ,getDensity      ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetBoolAttribute  (PyRoutingLayerGauge_isUsable        ,isUsable        ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetBoolAttribute  (PyRoutingLayerGauge_isHorizontal    ,isHorizontal    ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetBoolAttribute  (PyRoutingLayerGauge_isVertical      ,isVertical      ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getOffset       ,getOffset       ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getPitch        ,getPitch        ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfPitch    ,getHalfPitch    ,PyRoutingLayerGauge,RoutingLayerGauge)
@@ -290,6 +292,10 @@ extern "C" {
                                 , "Create a new RoutingLayerGauge." }
     , { "isUsable"              , (PyCFunction)PyRoutingLayerGauge_isUsable        , METH_NOARGS
                                 , "Tells if the layer is usable for standard routing." }
+    , { "isHorizontal"          , (PyCFunction)PyRoutingLayerGauge_isHorizontal    , METH_NOARGS
+                                , "Tells if the layer prefered routing direction is horizontal." }
+    , { "isVertical"            , (PyCFunction)PyRoutingLayerGauge_isVertical      , METH_NOARGS
+                                , "Tells if the layer prefered routing direction is vertical." }
     , { "getLayer"              , (PyCFunction)PyRoutingLayerGauge_getLayer        , METH_NOARGS
                                 , "Returns the associated routing layer." }
     , { "getBlockageLayer"      , (PyCFunction)PyRoutingLayerGauge_getBlockageLayer, METH_NOARGS
