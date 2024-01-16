@@ -117,25 +117,26 @@ namespace Anabatic {
   const BaseFlags  Flags::Superior            = (1L << 22);
   const BaseFlags  Flags::DoglegOnLeft        = (1L << 23);
   const BaseFlags  Flags::DoglegOnRight       = (1L << 24);
-  const BaseFlags  Flags::WithNeighbors       = (1L << 25);
-  const BaseFlags  Flags::NoCheckLayer        = (1L << 26);
-  const BaseFlags  Flags::NoCheckGCell        = (1L << 27);
-  const BaseFlags  Flags::HalfSlacken         = (1L << 28);
-  const BaseFlags  Flags::NoGCellShrink       = (1L << 29);
-  const BaseFlags  Flags::CParanoid           = (1L << 30);
-  const BaseFlags  Flags::CheckLowDensity     = (1L << 31);
-  const BaseFlags  Flags::CheckLowUpDensity   = (1L << 32);
-  const BaseFlags  Flags::NoUpdate            = (1L << 33);
-  const BaseFlags  Flags::NorthPath           = (1L << 34);
-  const BaseFlags  Flags::UseNonPref          = (1L << 35);
-  const BaseFlags  Flags::Force               = (1L << 36);
-  const BaseFlags  Flags::LayerCapOnly        = (1L << 37);
-  const BaseFlags  Flags::NoMinLength         = (1L << 38);
-  const BaseFlags  Flags::NoSegExt            = (1L << 39);
-  const BaseFlags  Flags::NullLength          = (1L << 40);
-  const BaseFlags  Flags::OnVSmall            = (1L << 41);
-  const BaseFlags  Flags::Unbreakable         = (1L << 42);
-  const BaseFlags  Flags::ForOffgrid          = (1L << 43);
+  const BaseFlags  Flags::DoglegDown          = (1L << 25);
+  const BaseFlags  Flags::WithNeighbors       = (1L << 26);
+  const BaseFlags  Flags::NoCheckLayer        = (1L << 27);
+  const BaseFlags  Flags::NoCheckGCell        = (1L << 28);
+  const BaseFlags  Flags::HalfSlacken         = (1L << 29);
+  const BaseFlags  Flags::NoGCellShrink       = (1L << 30);
+  const BaseFlags  Flags::CParanoid           = (1L << 31);
+  const BaseFlags  Flags::CheckLowDensity     = (1L << 32);
+  const BaseFlags  Flags::CheckLowUpDensity   = (1L << 33);
+  const BaseFlags  Flags::NoUpdate            = (1L << 34);
+  const BaseFlags  Flags::NorthPath           = (1L << 35);
+  const BaseFlags  Flags::UseNonPref          = (1L << 36);
+  const BaseFlags  Flags::Force               = (1L << 37);
+  const BaseFlags  Flags::LayerCapOnly        = (1L << 38);
+  const BaseFlags  Flags::NoMinLength         = (1L << 39);
+  const BaseFlags  Flags::NoSegExt            = (1L << 40);
+  const BaseFlags  Flags::NullLength          = (1L << 41);
+  const BaseFlags  Flags::OnVSmall            = (1L << 42);
+  const BaseFlags  Flags::Unbreakable         = (1L << 43);
+  const BaseFlags  Flags::ForOffgrid          = (1L << 44);
 
 
   Flags::~Flags ()

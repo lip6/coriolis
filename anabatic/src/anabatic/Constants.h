@@ -95,6 +95,7 @@ namespace Anabatic {
       static const BaseFlags  Superior            ;
       static const BaseFlags  DoglegOnLeft        ;
       static const BaseFlags  DoglegOnRight       ;
+      static const BaseFlags  DoglegDown          ;
       static const BaseFlags  WithNeighbors       ;
       static const BaseFlags  NoCheckLayer        ;
       static const BaseFlags  NoCheckGCell        ;
