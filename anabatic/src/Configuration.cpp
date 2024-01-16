@@ -249,6 +249,14 @@ namespace Anabatic {
 
   bool  Configuration::isVH () const
   { return _rg->isVH(); }
+  
+
+  bool  Configuration::isUsable ( size_t depth ) const
+  { return _rg->isUsable( depth ); }
+
+
+  size_t  Configuration::getFirstRoutingLayer () const
+  { return _rg->getFirstRoutingLayer(); }
 
 
   bool  Configuration::isGMetal ( const Layer* layer ) const
