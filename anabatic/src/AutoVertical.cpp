@@ -317,7 +317,7 @@ namespace Anabatic {
 
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
-        _makeDogleg( source->getGCell(), Flags::NoFlags );
+        _makeDogleg( source->getGCell(), Flags::DoglegDown );
         sourceSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
@@ -348,7 +348,7 @@ namespace Anabatic {
 
     // Ugly: GCell's track number is hardwired.
       if ((slack < lowSlack) or (nativeSlack - slack < 3)) {
-        _makeDogleg( target->getGCell(), Flags::NoFlags );
+        _makeDogleg( target->getGCell(), Flags::DoglegDown );
         targetSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
@@ -750,7 +750,10 @@ namespace Anabatic {
     } else if (Session::getRoutingGauge()->isVH()) {
       upLayer = (depth < 2);
     } else {
-      upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+      if ((depth > 0) and (flags & Flags::DoglegDown))
+        upLayer = not (Session::getConfiguration()->isUsable( depth-1 ));
+      else
+        upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     }
 
     size_t  doglegDepth  = depth + ((upLayer)?1:-1);

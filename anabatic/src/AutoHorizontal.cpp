@@ -386,13 +386,13 @@ namespace Anabatic {
       int       nativeSlack        = nativeConstraints.getSize() / getPitch();
 
       cdebug_log(149,0) << "Source constraint: " << constraints
-                  << " slack:"        << slack
-                  << " native slack:" << nativeSlack << endl;
+                        << " slack:"        << slack
+                        << " native slack:" << nativeSlack << endl;
       cdebug_log(149,0) << "Perpand constraints on target: " << perpandConstraints << endl; 
     // Ugly: GCell's track number is hardwired.
       if (isNonPrefSource or (nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
         cdebug_log(149,0) << "Slackening from Source: " << source << endl;
-        _makeDogleg( source->getGCell(), Flags::NoFlags );
+        _makeDogleg( source->getGCell(), Flags::DoglegDown );
         sourceSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
@@ -430,7 +430,7 @@ namespace Anabatic {
                   << " native slack:" << nativeSlack << endl;
       if (isNonPrefTarget or (nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
         cdebug_log(149,0) << "Slackening from Target: " << target << endl;
-        parallel->_makeDogleg( target->getGCell(), Flags::NoFlags );
+        parallel->_makeDogleg( target->getGCell(), Flags::DoglegDown );
         targetSlackened = true;
       } else if (slack < 10) {
         halfSlackened = true;
@@ -889,7 +889,10 @@ namespace Anabatic {
     } else if (Session::getRoutingGauge()->isVH()) {
       upLayer = (depth < 2);
     } else {
-      upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+      if ((depth > 0) and (flags & Flags::DoglegDown))
+        upLayer = not (Session::getConfiguration()->isUsable( depth-1 ));
+      else
+        upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     }
 
     size_t  doglegDepth  = depth + ((upLayer)?1:-1);
