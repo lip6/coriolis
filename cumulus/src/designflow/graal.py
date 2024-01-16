@@ -34,7 +34,7 @@ class Graal ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
         shellEnv[ 'MBK_IN_PH' ] = self.layoutFile.suffix[1:]
