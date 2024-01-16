@@ -702,7 +702,7 @@ class Block ( object ):
         with UpdateSession():
             instance   = self.rgetCoreInstance( ipath )
             macro      = Macro.wrap( instance.getMasterCell()
-                                   , self.conf.routingGauge.getName(), 3, 2 )
+                                   , self.conf.routingGauge.getName(), 3, 3 )
             instanceAb = instance.getMasterCell().getAbutmentBox()
             coreTransf = self.conf.icore.getTransformation()
             if self.conf.isCoreBlock:
