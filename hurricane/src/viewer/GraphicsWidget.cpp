@@ -137,14 +137,21 @@ namespace Hurricane {
 
   void  GraphicsWidget::readQtSettings ( size_t viewerId )
   {
+    const vector<DisplayStyle*>& styles = Graphics::getStyles ();
     QSettings settings;
     QString   checkKey = QString( "CellViewer/%1/controller/graphics/displayStyle" ).arg( viewerId );
     if (not settings.contains(checkKey)) return;
     settings.beginGroup( QString("CellViewer/%1/controller/graphics").arg(viewerId) );
     int styleId = settings.value( "displayStyle" ).toInt();
     if (styleId >= 0) {
-      _cellWidget->setStyle( (size_t)styleId );
-      _stylesGroup->button( styleId )->setChecked( true );
+      if ((size_t)styleId < styles.size()) {
+        _cellWidget->setStyle( (size_t)styleId );
+        _stylesGroup->button( styleId )->setChecked( true );
+      } else {
+        cerr << Warning( "GraphicsWidget::readQtSettings(): Unable to restore style id=%d (only %d styles)."
+                       , styleId, styles.size()
+                       ) << endl;
+      }
     }
     settings.endGroup();
   }
