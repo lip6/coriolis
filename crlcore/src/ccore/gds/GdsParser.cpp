@@ -659,7 +659,7 @@ namespace {
                    bool    read                 ( Library* );
                    bool    readFormatType       ();
                    bool    readStructure        ();
-             const Layer*  readLayerAndDatatype ();
+             const Layer*  readLayerAndDatatype ( bool& isBoundary );
                    bool    readBoundary         ();
                    bool    readPath             ();
                    bool    readSref             ();
@@ -977,8 +977,11 @@ namespace {
   }
 
 
-  const Layer* GdsStream::readLayerAndDatatype ()
+  const Layer* GdsStream::readLayerAndDatatype ( bool& isBoundary )
   {
+    cdebug_log(101,1) << "GdsStream::readLayerAndDatatype()" << endl;
+    
+    isBoundary = false;
     uint16_t  gdsLayer    = 0;
     uint16_t  gdsDatatype = 0;
 
@@ -990,6 +993,7 @@ namespace {
                    , GdsRecord::toStrType(_record.getType()).c_str()
                    ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return NULL;;
     }
 
@@ -1001,6 +1005,7 @@ namespace {
                    , GdsRecord::toStrType(_record.getType()).c_str()
                    ) << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return NULL;;
     }
 
@@ -1013,7 +1018,9 @@ namespace {
                      ) << endl;
       }
     }
+    isBoundary = (not layer and (gdsLayer == 0) and useLayer0AsBoundary());
 
+    cdebug_tabw(101,-1);
     return layer;
   }
 
@@ -1022,7 +1029,7 @@ namespace {
   {
     const Layer* layer = NULL;
     
-    cdebug_log(101,0) << "GdsStream::readText()" << endl;
+    cdebug_log(101,1) << "GdsStream::readText()" << endl;
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
     if (_record.isLAYER  ()) {
@@ -1033,11 +1040,16 @@ namespace {
                      ) << endl;
       }
       _stream >> _record;
-    } else { _validSyntax = false; return _validSyntax; }
+    } else {
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
+    }
 
     readTextbody( layer );
 
   //cdebug(101,0) << "GdsStream::readText() - return:" << _validSyntax << endl;
+    cdebug_tabw(101,-1);
     return _validSyntax;
   }
 
@@ -1061,7 +1073,7 @@ namespace {
     if (_record.isWIDTH       ()) { _stream >> _record; }
 
     if (_record.isSTRANS()) {
-      _stream >> _record;
+      cdebug_log(101,0) << "Calling readStrans()" << endl;
       readStrans();
       if (not _validSyntax) {
         cdebug_tabw(101,-1);
@@ -1070,6 +1082,7 @@ namespace {
     }
 
     if (_record.isXY()) {
+      cdebug_log(101,0) << "Current record is XY" << endl;
       vector<int32_t> coordinates = _record.getInt32s();
       if (coordinates.size() != 2) {
         _validSyntax = false;
@@ -1092,10 +1105,12 @@ namespace {
         cerr << Error( "GdsStream::readTextbody(): Discarted text is \"%s\"."
                      , _text.c_str()
                      ) << endl;
+        cdebug_tabw(101,-1);
         return _validSyntax;
       }
-    }
-    else {
+      cdebug_log(101,0) << "STRING record found and layer is valid." << endl;
+    } else {
+      cdebug_log(101,0) << "No STRING record found." << endl;
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
@@ -1150,7 +1165,8 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    const Layer* layer = readLayerAndDatatype();
+    bool isBoundary = false;
+    const Layer* layer = readLayerAndDatatype( isBoundary );
     if (not _validSyntax) {
       cdebug_tabw(101,-1);
       return _validSyntax;
@@ -1187,8 +1203,10 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    const Layer* layer = readLayerAndDatatype();
-    if (not layer) {
+    bool isBoundary = false;
+    const Layer* layer = readLayerAndDatatype( isBoundary );
+    if (not layer and not isBoundary) {
+      cdebug_log(101,0) << "NULL layer and not a boundary, missing layer?" << endl;
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
@@ -1211,7 +1229,7 @@ namespace {
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToPath( pathtype, layer, width, bgnextn, endextn );
+      if (_cell) xyToPath( pathtype, layer, width, bgnextn, endextn );
     } else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
@@ -1597,7 +1615,7 @@ namespace {
                             , DbU::Unit    endextn )
   {
     cdebug_log(101,0) << "GdsStream::xyToPath(): pathtype=" << pathtype
-                      << " layer=" << layer->getName()
+                      << " layer=" << ((layer) ? layer->getName() : "N/A")
                       << " width=" << DbU::getValueString(width)
                       << " bgnextn=" << DbU::getValueString(bgnextn)
                       << " endextn=" << DbU::getValueString(endextn) << endl;
@@ -1622,6 +1640,7 @@ namespace {
       _validSyntax = false;
       return;
     }
+    if (not layer) return;
 
     Net* net = fusedNet();
 
