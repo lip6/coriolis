@@ -1893,7 +1893,6 @@ namespace {
 
   void  GdsStream::makeInstances ()
   {
-    DebugSession::open( 101, 110 );
     cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
@@ -1915,7 +1914,6 @@ namespace {
       }
     }
     cdebug_tabw(101,-1);
-    DebugSession::close();
   }
 
 
