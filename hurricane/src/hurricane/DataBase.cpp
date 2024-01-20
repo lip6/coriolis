@@ -21,6 +21,7 @@
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/SharedPath.h"
 #include "hurricane/UpdateSession.h"
@@ -269,17 +270,31 @@ Cell* DataBase::getCell(string name)
   vector<Library*>  libStack;
   libStack.push_back( getRootLibrary() );
 
+//DebugSession::open( 18, 19);
+  cdebug_log(18,0) << "DataBase::getCell() name=\"" << name << "\"" << endl;
   while ( not libStack.empty() ) {
     Library* library = libStack.back();
     libStack.pop_back();
 
+    cdebug_log(18,1) << "> Looking into " << library << endl;
+    for ( Cell* cell : library->getCells() ) {
+      cdebug_log(18,0) << "| " << cell << endl;
+    }
     Cell* cell = library->getCell( name );
-    if (cell) return cell;
+    if (cell) {
+      cdebug_log(18,-1) << "Found " << cell << endl;
+      DebugSession::close();
+      return cell;
+    }
 
-    for ( Library* child : library->getLibraries() )
+    for ( Library* child : library->getLibraries() ) {
+      cdebug_log(18,0) << "+ Child " << library << endl;
       libStack.push_back( child );
+    }
+    cdebug_tabw(18,-1);
   }
 
+//DebugSession::close();
   return NULL;
 }
 
