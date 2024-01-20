@@ -210,6 +210,7 @@ namespace {
                    void              readEndextn    ();
                    void              readPathtype   ();
                    void              readStrname    ();
+                   void              readColrow     ();
                    void              readXy         ();
       static       string            toStrType      ( uint16_t );
                    GdsRecord&        operator=      ( const GdsRecord& );
@@ -317,8 +318,7 @@ namespace {
 
 
   void  GdsRecord::clear ()
-  {
-    _stream      = NULL;
+  { _stream      = NULL;
     _length      = 0;
     _count       = 0;
     _type        = 0;
@@ -359,7 +359,7 @@ namespace {
       case XY:           readXy();           break;
       case ENDEL:        readDummy( false ); break;
       case SNAME:        readStrname();      break;
-      case COLROW:       readDummy( false ); break;
+      case COLROW:       readColrow();       break;
       case TEXTNODE:     readDummy( false ); break;
       case NODE:         readDummy( false ); break;
       case TEXTTYPE:     readDummy( false ); break;
@@ -564,6 +564,13 @@ namespace {
   { _int16s.push_back( _readInt<uint16_t>() ); }
 
 
+  void  GdsRecord::readColrow ()
+  {
+    _int16s.push_back( _readInt<uint16_t>() );
+    _int16s.push_back( _readInt<uint16_t>() );
+  }
+
+
   void  GdsRecord::readXy ()
   { while ( _count < _length ) _int32s.push_back( _readInt<int32_t>() ); }
 
@@ -698,6 +705,7 @@ namespace {
     private:
       static map<uint32_t,const Layer*>  _gdsLayerTable;
              vector<DelayedInstance>     _delayedInstances;
+             vector<Cell*>               _cells;
              uint32_t                    _flags;
              string                      _gdsPath;
              ifstream                    _stream;
@@ -764,6 +772,7 @@ namespace {
 
   GdsStream::GdsStream ( string gdsPath, uint32_t flags )
     : _delayedInstances()
+    , _cells           ()
     , _flags           (flags)
     , _gdsPath         (gdsPath)
     , _stream          ()
@@ -828,7 +837,8 @@ namespace {
                         , cellName.c_str()
                         , getString(_library).c_str()
                         ) << endl;
-    return Cell::create( workLibrary, cellName );
+    _cells.push_back( Cell::create( workLibrary, cellName ));
+    return _cells.back();
   }
 
 
@@ -900,6 +910,12 @@ namespace {
       makeExternals();
     }
 
+    for ( Cell* cell : _cells ) {
+      if (not useLayer0AsBoundary() or cell->getAbutmentBox().isEmpty()) {
+        cell->setAbutmentBox( cell->getBoundingBox() );
+      }
+    }
+
     _library = NULL;
     cdebug_log(101,-1) << "    GdsStream::read(Library*) - return:" << _validSyntax << endl;
     return _validSyntax;
@@ -965,11 +981,6 @@ namespace {
 
     if (_validSyntax) _stream >> _record;
 
-    if (not useLayer0AsBoundary() or _cell->getAbutmentBox().isEmpty()) {
-      UpdateSession::close();
-      _cell->setAbutmentBox( _cell->getBoundingBox() );
-      UpdateSession::open();
-    }
     _cell = NULL;
     cdebug_log(101,-1) << "    GdsStream::readStructure() - return:" << _validSyntax << endl;
 
@@ -1272,7 +1283,7 @@ namespace {
     }
 
     if (_record.isXY()) {
-      vector<int32_t> coordinates = _record.getInt32s();
+      const vector<int32_t>& coordinates = _record.getInt32s();
       if (coordinates.size() != 2) {
         _validSyntax = false;
         cdebug_tabw(101,-1);
@@ -1327,39 +1338,155 @@ namespace {
 
   bool  GdsStream::readAref ()
   {
-    cdebug_log(101,0) << "GdsStream::readAref()" << endl;
+    cdebug_log(101,1) << "GdsStream::readAref() " << _cell << endl;
+    resetStrans();
     
-    const Layer* layer = NULL;
+    string         masterName;
+    uint16_t       columns = 0;
+    uint16_t       rows    = 0;
+    DbU::Unit      dx      = 0;
+    DbU::Unit      dy      = 0;
+    vector<Point>  arrayArea;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isSNAME()) {
+      masterName = _record.getName();
+      cdebug_log(101,0) << "SNAME " << masterName << endl;
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (_record.isSTRANS()) {
-      _stream >> _record;
       readStrans();
-      if (not _validSyntax) return _validSyntax;
+      if (not _validSyntax) {
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
     }
 
     if (_record.isCOLROW()) {
+      const vector<int16_t>& colrow = _record.getInt16s();
+      if (colrow.size() != 2) {
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+      columns = colrow[ 0 ];
+      rows    = colrow[ 1 ];
+      cdebug_log(101,0) << "ROWCOL rows=" << rows << " columns=" << columns << endl;
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
+      if (_cell) {
+        DbU::Unit       oneGrid = DbU::fromGrid( 1 );
+        vector<size_t>  offgrids;
+        const vector<int32_t> coordinates = _record.getInt32s();
+        for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
+          arrayArea.push_back( Point( coordinates[i  ]*_scale
+                                    , coordinates[i+1]*_scale ) );
+          if ( (arrayArea.back().getX() % oneGrid) or (arrayArea.back().getX() % oneGrid) ) {
+            offgrids.push_back( i );
+          }
+        }
+
+        if (not offgrids.empty()) {
+          size_t offgrid = 0;
+          ostringstream m;
+          for ( size_t i=0 ; i<arrayArea.size() ; ++i ) {
+            if (i) m << "\n";
+            m << "        | " << arrayArea[i];
+            if ((offgrid < offgrids.size()) and (i == offgrid)) {
+              m << " offgrid";
+              ++offgrid;
+            }
+          }
+          cerr << Error( "GdsStream::readAref(): Offgrid XY points (foundry grid: %s).\n"
+                         "%s"
+                       , DbU::getValueString(oneGrid).c_str()
+                       , m.str().c_str() ) << endl;
+        } 
+      }
+      dx = (arrayArea[1].getX() - arrayArea[0].getX()) / columns;
+      dy = (arrayArea[2].getY() - arrayArea[0].getY()) / rows;
+      if (not dx and (columns > 1))
+          cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
+                       , columns ) << endl;
+      if (not dy and (rows > 1))
+          cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
+                       , rows ) << endl;
+      cdebug_log(101,0) << "arrayArea:" << endl;
+      cdebug_log(101,0) << "[0] " << arrayArea[0] << endl;
+      cdebug_log(101,0) << "[1] " << arrayArea[1] << endl;
+      cdebug_log(101,0) << "[2] " << arrayArea[2] << endl;
+      cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
+      cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
       _stream >> _record;
     } else {
-      _validSyntax = false; return _validSyntax;
+      _validSyntax = false;
+      cdebug_tabw(101,-1);
+      return _validSyntax;
     }
 
-    cdebug_log(101,0) << "GdsStream::readAref() - return:" << _validSyntax << endl;
+    if (_cell) {
+      Transformation::Orientation orient = Transformation::Orientation::ID;
+      if (_angle ==  90.0) {
+        orient = Transformation::Orientation::R1;
+        std::swap( dx, dy );
+        dx = -dx;
+      } else if (_angle == 180.0) {
+        orient = Transformation::Orientation::R2;
+        dy = -dy;
+      } else if (_angle == 270.0) {
+        orient = Transformation::Orientation::R3;
+        std::swap( dx, dy );
+        dy = -dy;
+      } else if (_angle !=   0.0) {
+        cerr << Warning( "GdsStream::readAref(): Unsupported angle %d.2 for AREF (Instance) of \"%s\""
+                       , _angle, masterName.c_str() ) << endl;
+      }
+
+      if (_xReflection) {
+        dy = -dy;
+        switch ( orient ) {
+          case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
+          case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
+          case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
+          case Transformation::Orientation::R3: orient = Transformation::Orientation::XR; break;
+          default:
+            cerr << Warning( "GdsStream::readAref(): Unsupported MX+Orientation (%s) combination for AREF (Instance) of \"%s\""
+                           , getString(orient).c_str(), masterName.c_str() ) << endl;
+        }
+      }
+      Transformation arrayTransf ( 0, 0, orient );
+      for ( uint32_t column=0 ; column < (uint32_t)columns ; ++column ) {
+        for ( uint32_t row=0 ; row < (uint32_t)rows ; ++row ) {
+          DbU::Unit xpos = arrayArea[0].getX() + column*dx;
+          DbU::Unit ypos = arrayArea[0].getY() + row   *dy;
+          Transformation itemTransf = Transformation( xpos, ypos, orient );
+        //arrayTransf.applyOn( itemTransf );
+          
+          cdebug_log(101,0) << "column=" << column
+                            << " row="   << row
+                            << " x=" << DbU::getValueString(xpos)
+                            << " y=" << DbU::getValueString(ypos)
+                            << " orient=" << orient
+                            << " transf=" << itemTransf << endl;
+          _delayedInstances.push_back( DelayedInstance( _cell, masterName, itemTransf ));
+        }
+      }
+    }
+
+    cdebug_log(101,-1) << "GdsStream::readAref() - return:" << _validSyntax << endl;
     return _validSyntax;
   }
 
@@ -1766,6 +1893,7 @@ namespace {
 
   void  GdsStream::makeInstances ()
   {
+    DebugSession::open( 101, 110 );
     cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
@@ -1787,6 +1915,7 @@ namespace {
       }
     }
     cdebug_tabw(101,-1);
+    DebugSession::close();
   }
 
 
