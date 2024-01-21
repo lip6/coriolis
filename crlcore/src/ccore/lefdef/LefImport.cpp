@@ -201,7 +201,6 @@ namespace {
                    Net*                  _net;
                    string                _busBits;
                    double                _unitsMicrons;
-                   DbU::Unit             _oneGrid;
                    map< string, vector<Component*> >  _pinComponents;
       static       map<string,Layer*>    _layerLut;
                    vector<string>        _unmatchedLayers;
@@ -257,10 +256,10 @@ namespace {
   inline DbU::Unit  LefParser::fromUnitsMicrons ( double d ) const
   {
     DbU::Unit u = DbU::fromPhysical(d,DbU::Micro);
-    if (u % _oneGrid) {
+    if (u % DbU::oneGrid) {
       cerr << Error( "LefParser::fromUnitsMicrons(): Offgrid value %s (DbU=%d), grid %s (DbU=%d)."
                    , DbU::getValueString(u).c_str(), u
-                   , DbU::getValueString(_oneGrid).c_str(), _oneGrid )
+                   , DbU::getValueString(DbU::oneGrid).c_str(), DbU::oneGrid )
            << endl;
     }
     return u;
@@ -339,7 +338,6 @@ namespace {
     , _net             (nullptr)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
-    , _oneGrid         (DbU::fromGrid(1.0))
     , _unmatchedLayers ()
     , _errors          ()
     , _nthMetal        (0)
@@ -638,10 +636,10 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    const Layer* layer         = NULL;
-    const Layer* blockageLayer = NULL;
-          Cell*  cell          = parser->getCell();
-          Net*   blockageNet   = cell->getNet( "blockage" );
+    const Layer*     layer         = NULL;
+    const Layer*     blockageLayer = NULL;
+          Cell*      cell          = parser->getCell();
+          Net*       blockageNet   = cell->getNet( "blockage" );
 
     if (not blockageNet) {
       blockageNet = Net::create( cell, "blockage" );
@@ -671,19 +669,53 @@ namespace {
         double        h         = r->yh - r->yl;
         Segment*      segment   = NULL;
         if (w >= h) {
-          segment = Horizontal::create( blockageNet, blockageLayer
-                                      , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                      , parser->fromUnitsMicrons( h  )
-                                      , parser->fromUnitsMicrons( r->xl )
-                                      , parser->fromUnitsMicrons( r->xh )
-                                      );
+          DbU::Unit yl = parser->fromUnitsMicrons( r->yl );
+          DbU::Unit yh = parser->fromUnitsMicrons( r->yh );
+          if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , yh - DbU::oneGrid
+                                        , DbU::twoGrid
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , (yh - DbU::oneGrid + yl) / 2
+                                        ,  yh - DbU::oneGrid - yl
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+          } else {
+            segment = Horizontal::create( blockageNet, blockageLayer
+                                        , (yh + yl) / 2
+                                        ,  yh - yl 
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
+                                        );
+          }
         } else {
-          segment = Vertical::create( blockageNet, blockageLayer
-                                    , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                    , parser->fromUnitsMicrons( w  )
-                                    , parser->fromUnitsMicrons( r->yl )
-                                    , parser->fromUnitsMicrons( r->yh )
-                                    );
+          DbU::Unit xl = parser->fromUnitsMicrons( r->xl );
+          DbU::Unit xh = parser->fromUnitsMicrons( r->xh );
+          if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , xh - DbU::oneGrid
+                                      , DbU::twoGrid
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , (xh - DbU::oneGrid + xl) / 2
+                                      ,  xh - DbU::oneGrid - xl
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+          } else {
+            segment = Vertical::create( blockageNet, blockageLayer
+                                      , (xh + xl) / 2
+                                      ,  xh - xl
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
+          }
         }
         cdebug_log(100,0) << "| " << segment << endl;
       }
@@ -785,7 +817,7 @@ namespace {
 
   //cerr << "       @ _pinCbk: " << pin->name() << endl;
 
-    bool created = false;
+    bool  created = false;
     parser->earlyGetCell( created );
 
     Net*      net     = nullptr;
@@ -850,16 +882,24 @@ namespace {
           float         formFactor = (float)w / (float)h;
           
           if ( (formFactor > 0.5) and not parser->isVH() ) {
+            DbU::Unit yl = parser->fromUnitsMicrons( r->yl );
+            DbU::Unit yh = parser->fromUnitsMicrons( r->yh );
+            if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid))
+              yh -= DbU::oneGrid;
             segment = Horizontal::create( net, layer
-                                        , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                        , h
+                                        , (yh + yl) / 2
+                                        ,  yh - yl
                                         , parser->fromUnitsMicrons( r->xl )
                                         , parser->fromUnitsMicrons( r->xh )
                                         );
           } else {
+            DbU::Unit xl = parser->fromUnitsMicrons( r->xl );
+            DbU::Unit xh = parser->fromUnitsMicrons( r->xh );
+            if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid))
+              xh -= DbU::oneGrid;
             segment = Vertical::create( net, layer
-                                      , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                      , w
+                                      , (xh + xl) / 2
+                                      ,  xh - xl
                                       , parser->fromUnitsMicrons( r->yl )
                                       , parser->fromUnitsMicrons( r->yh )
                                       );
