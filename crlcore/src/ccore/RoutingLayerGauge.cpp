@@ -157,6 +157,42 @@ namespace CRL {
                                                      , viaWidth
                                                      , obsDw );
 
+    if (offset % DbU::oneGrid)
+      cerr << Error( "RoutingLayerGauge::create(): For %s,\n"
+                     "        offset %s is not on foundry grid %s."
+                   , getString( gauge ).c_str()
+                   , DbU::getValueString( offset ).c_str()
+                   , DbU::getValueString( DbU::oneGrid ).c_str()
+                   ) << endl;
+    if (pitch % DbU::oneGrid)
+      cerr << Error( "RoutingLayerGauge::create(): For %s,\n"
+                     "        pitch %s is not on foundry grid %s."
+                   , getString( gauge ).c_str()
+                   , DbU::getValueString( pitch ).c_str()
+                   , DbU::getValueString( DbU::oneGrid ).c_str()
+                   ) << endl;
+    if (wireWidth % DbU::twoGrid)
+      cerr << Error( "RoutingLayerGauge::create(): For %s,\n"
+                     "        wireWidth %s is not an even multiple of foundry grid %s."
+                   , getString( gauge ).c_str()
+                   , DbU::getValueString( wireWidth ).c_str()
+                   , DbU::getValueString( DbU::oneGrid ).c_str()
+                   ) << endl;
+    if (pwireWidth % DbU::twoGrid)
+      cerr << Error( "RoutingLayerGauge::create(): For %s,\n"
+                     "        pwireWidth %s is not an even multiple of foundry grid %s."
+                   , getString( gauge ).c_str()
+                   , DbU::getValueString( pwireWidth ).c_str()
+                   , DbU::getValueString( DbU::oneGrid ).c_str()
+                   ) << endl;
+    if (viaWidth % DbU::twoGrid)
+      cerr << Error( "RoutingLayerGauge::create(): For %s,\n"
+                     "        viaWidth %s is not an even multiple of foundry grid %s."
+                   , getString( gauge ).c_str()
+                   , DbU::getValueString( viaWidth ).c_str()
+                   , DbU::getValueString( DbU::oneGrid ).c_str()
+                   ) << endl;
+
     return gauge;
   }
 
