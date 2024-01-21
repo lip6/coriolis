@@ -56,6 +56,8 @@ namespace Hurricane {
   DbU::Unit           DbU::_polygonStep          = DbU::fromGrid  ( 1.0);
   const DbU::Unit     DbU::Min                   = std::numeric_limits<DbU::Unit>::min();
   const DbU::Unit     DbU::Max                   = std::numeric_limits<DbU::Unit>::max();
+  DbU::Unit           DbU::oneGrid               = DbU::fromGrid( 1.0 );
+  DbU::Unit           DbU::twoGrid               = DbU::fromGrid( 2.0 );
 
 
 // -------------------------------------------------------------------
@@ -101,6 +103,8 @@ namespace Hurricane {
     _gridMax     = toGrid    ( Max );
     _lambdaMax   = toLambda  ( Max );
     _physicalMax = toPhysical( Max, Unity );
+    oneGrid      = fromGrid  ( 1.0 );
+    twoGrid      = fromGrid  ( 2.0 );
   }
 
 

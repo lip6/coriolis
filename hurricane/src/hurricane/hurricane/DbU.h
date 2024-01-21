@@ -140,6 +140,8 @@ namespace Hurricane {
     // Static Attributes: constants.
       static const Unit          Min;
       static const Unit          Max;
+      static       Unit          oneGrid;
+      static       Unit          twoGrid;
     private:
     // Internal: Static Attributes.
       static const unsigned int  _maximalPrecision;
