@@ -271,7 +271,7 @@ class HTree ( object ):
 
         if qt.bl or qt.tl:
             trace( 550, '\tLeft branch\n' )
-            leafContact       = blContact if brContact else tlContact
+            leafContact       = blContact if blContact else tlContact
             leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0]
                                                             , bufferConf.output
                                                             , ckNet
