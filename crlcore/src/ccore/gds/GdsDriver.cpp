@@ -103,49 +103,63 @@ namespace {
 
   bool  isOnGrid ( Component* component, const Box& bb )
   {
-    bool      error   = false;
-    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
-    if (bb.getXMin() % oneGrid) {
+    bool error = false;
+    if (bb.getXMin() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        X-Min %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getXMin()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getXMax() % oneGrid) {
+    if (bb.getXMax() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        X-Max %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getXMax()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getYMin() % oneGrid) {
+    if (bb.getYMin() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        Y-Min %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getYMin()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
-    if (bb.getYMax() % oneGrid) {
+    if (bb.getYMax() % DbU::oneGrid) {
       error = true;
       cerr << Error( "isOnGrid(): On %s of %s,\n"
                      "        Y-Max %s is not on grid (%s)"
                    , getString(component).c_str()
                    , getString(component->getCell()).c_str()
                    , DbU::getValueString(bb.getYMax()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
+                   , DbU::getValueString(DbU::oneGrid).c_str()
                    ) << endl;
     }
     return error;
+  }
+
+
+  Box& putOnGrid ( Box& bb )
+  {
+    DbU::Unit xMinShrink = bb.getXMin() % DbU::oneGrid;
+    DbU::Unit yMinShrink = bb.getYMin() % DbU::oneGrid;
+    DbU::Unit xMaxShrink = bb.getXMax() % DbU::oneGrid;
+    DbU::Unit yMaxShrink = bb.getYMax() % DbU::oneGrid;
+
+    if (xMinShrink) xMinShrink -= DbU::oneGrid;
+    if (yMinShrink) yMinShrink -= DbU::oneGrid;
+
+    bb.inflate( xMinShrink, yMinShrink, -xMaxShrink, -yMaxShrink );
+    return bb;
   }
 
 
@@ -832,12 +846,12 @@ namespace {
                 Box bb = component->getBoundingBox(layer);
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
+                isOnGrid( component, bb );
                 (*this) << BOUNDARY;
                 (*this) << LAYER(layer->getGds2Layer());
                 (*this) << DATATYPE(layer->getGds2Datatype());
                 (*this) << bb;
                 (*this) << ENDEL;
-                isOnGrid( component, bb );
 
                 const BasicLayer* exportLayer = layer;
                 if (NetExternalComponents::isExternal(component)) {
