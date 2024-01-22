@@ -31,6 +31,31 @@ __all__ = [ 'Builder' ]
 importConstants( globals() )
 
 
+def onGridBb ( bb ):
+    oneGrid = DbU.fromGrid( 1.0 )
+    twoGrid = DbU.fromGrid( 2.0 )
+    xcenter = bb.getXCenter()
+    ycenter = bb.getYCenter()
+    width   = bb.getWidth()
+    height  = bb.getHeight()
+    xAdjust = xcenter % oneGrid
+    if xAdjust:
+        xcenter -=     xAdjust
+        width   -= 2 * xAdjust
+    wAdjust = width % twoGrid
+    if wAdjust:
+        width -= wAdjust
+    yAdjust = ycenter % oneGrid
+    if yAdjust:
+        ycenter -=     yAdjust
+        height  -= 2 * yAdjust
+    hAdjust = height % twoGrid
+    if hAdjust:
+        height -= hAdjust
+    return Box( xcenter - width//2, ycenter - height//2
+              , xcenter + width//2, ycenter + height//2 )
+
+
 # --------------------------------------------------------------------
 # Class  :  "corona.IntervalSet"
 
@@ -130,7 +155,7 @@ class HorizontalRail ( Rail ):
         at least one top level power contact (which is usually very large) or
         two, if possible.
         """
-        trace( 550, ',+', '\tHorizontalRail.computeBigViaBbs() metal={} {} stipe={}\n' \
+        trace( 550, ',+', '\tHorizontalRail.computeBigViaBbs() metal={} {} stripe={}\n' \
                           .format( plane.metal.getName(), self, stripe ))
         viaLayer     = plane.conf.routingGauge.getContactLayer( stripe.getLayerDepth()-1 )
         cutLayer     = viaLayer.getCut()
@@ -139,8 +164,10 @@ class HorizontalRail ( Rail ):
         enclosure    = viaLayer.getTopEnclosure( Layer.EnclosureH )
         oneCutWidth  = cutSide + 2*enclosure
         twoCutWidth  = oneCutWidth + cutSpacing + cutSide
-        viaWidth = plane.conf.vDeepRG.getPitch()*5
-        stripeBb = stripe.getBoundingBox()
+        viaWidth     = plane.conf.vDeepRG.getPitch()*5
+        stripeBb     = stripe.getBoundingBox()
+        oneGrid      = DbU.fromGrid( 1.0 )
+        twoGrid      = DbU.fromGrid( 2.0 )
         for chunk in self.intervals.chunks:
             if chunk.getVMax() <= stripeBb.getXMin(): continue
             if chunk.getVMin() >= stripeBb.getXMax(): break
@@ -150,7 +177,7 @@ class HorizontalRail ( Rail ):
                          , self.axis - self.width//2
                          , chunk.getVMax()
                          , self.axis + self.width//2 )
-            overlap = stripeBb.getIntersection( chunkBb )
+            overlap = onGridBb( stripeBb.getIntersection( chunkBb ))
             if overlap.isEmpty(): continue
             if overlap.getWidth() > 2*viaWidth:
                 trace( 550, '\t| Large overlap={}\n'.format(overlap) )
@@ -372,6 +399,8 @@ class Stripe ( object ):
                 del bigViaBbs[i+1]
                 continue
             i += 1
+        oneGrid = DbU.fromGrid( 1.0 )
+        twoGrid = DbU.fromGrid( 2.0 )
         for viaBb in bigViaBbs:
             via = BigVia( self.getNet()
                         , plane.getLayerDepth(self.getLayer())
@@ -455,6 +484,7 @@ class GoCb ( object ):
                 layer = layer.getBasicLayer()
             bb = go.getBoundingBox( layer )
             query.getPath().getTransformation().applyOn( bb )
+            bb = onGridBb( bb )
             trace( 550, '\tGoCb.__call__(): path={} go={}\n'.format(query.getPath(),go) )
             self.builder.activePlane.addRail( rootNet, bb )
         else:
