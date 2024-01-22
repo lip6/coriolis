@@ -316,7 +316,7 @@ class QuadTree ( object ):
                     continue
                 trace( 540, '\t| Overlap {}\n'.format(occurrence.getEntity()) )
                 if raiseError:
-                    raise Error%essage( 1, [ 'QuadTree.create(): Unable to create QuadTree under area {}' \
+                    raise ErrorMessage( 1, [ 'QuadTree.create(): Unable to create QuadTree under area {}' \
                                              .format(area)
                                            , 'Area center is under fixed block {}' .format()
                                            ] )
