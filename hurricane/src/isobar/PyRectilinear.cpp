@@ -45,18 +45,18 @@ namespace  Isobar {
   }
 
 
-  PyObject* VectorToList ( const std::vector<Box>& v )
+  static PyObject* VectorToList ( const std::vector<Point>& v )
   {
     PyObject* pyList = PyList_New( v.size() );
 
     for ( size_t i=0 ; i<v.size() ; ++i ) {
-      PyBox* pyBox = PyObject_NEW( PyBox, &PyTypeBox );
-      if (not pyBox) { return NULL; }
+      PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
+      if (not pyPoint) { return NULL; }
     
       HTRY
-        pyBox->_object = new Box ( v[i] );
+        pyPoint->_object = new Point ( v[i] );
       HCATCH    
-      PyList_SetItem( pyList, i, (PyObject*)pyBox );
+      PyList_SetItem( pyList, i, (PyObject*)pyPoint );
     }
 
     return pyList;
@@ -155,6 +155,19 @@ extern "C" {
       if (not ListToVector<Point>(arg0,&PyTypePoint,points)) return NULL;
       
       rectilinear->setPoints( points );
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+  static PyObject *PyRectilinear_getPoints ( PyRectilinear *self )
+  {
+    cdebug_log(20,0) << "Rectilinear.getPoints()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Rectilinear.getPoints()" )
+  
+      return VectorToList(rectilinear->getPoints());
     HCATCH
 
     Py_RETURN_NONE;
@@ -269,6 +282,7 @@ extern "C" {
     , { "getY"           , (PyCFunction)PyRectilinear_getY           , METH_NOARGS , "Return the Rectilinear Y value." }
     , { "getBoundingBox" , (PyCFunction)PyRectilinear_getBoundingBox , METH_NOARGS , "Return the Rectilinear Bounding Box." }
     , { "setPoints"      , (PyCFunction)PyRectilinear_setPoints      , METH_VARARGS, "Sets the Rectilinear Bounding Box." }
+    , { "getPoints"      , (PyCFunction)PyRectilinear_getPoints,       METH_NOARGS , "Gets the Rectilinear points." }
     , { "translate"      , (PyCFunction)PyRectilinear_translate      , METH_VARARGS, "Translates the Rectilinear of dx and dy." }
     , { "getAsRectangles", (PyCFunction)PyRectilinear_getAsRectangles, METH_VARARGS, "Return the rectangle vertical coverage." }
     , { "getAsBiggestRectangles"
