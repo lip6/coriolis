@@ -51,6 +51,7 @@ class Macro ( object ):
     @staticmethod
     def place ( topCell, instance, transf, status ):
         macro   = Macro.lookup( instance.getMasterCell() )
+        instance.setMasterCell(macro.wrapper)
         ab      = instance.getMasterCell().getAbutmentBox()
         if transf.getOrientation() == Transformation.Orientation.ID:
             abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
@@ -125,10 +126,15 @@ class Macro ( object ):
           cause (stupid) deadlock to appear.
         """
         trace( 550, '+,', '\tMacro.__init__() {}\n'.format(macroCell) )
+        af = AllianceFramework.get()
         self.cell = macroCell
+        self.wrapper = af.createCell(f"{self.cell.getName()}_wrapper_")
+        inst = Instance.create(self.wrapper, f"inst", self.cell)
+        inst.setTransformation( Transformation() )
+        inst.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.wrapper.setTerminalNetlist( True )
         Macro.LUT[ self.cell ] = self
 
-        af = AllianceFramework.get()
         ab = self.cell.getAbutmentBox()
         self.rg = af.getRoutingGauge( gaugeName )
         gaugeMetal2      = self.rg.getLayerGauge( 1 )
@@ -150,6 +156,37 @@ class Macro ( object ):
         yMinAdjust = 0
         xMaxAdjust = 0
         yMaxAdjust = 0
+        for inst_net in self.cell.getNets():
+            wrapper_net = None
+            for component in inst_net.getComponents():
+                if not (component.getLayer().isBlockage() or NetExternalComponents.isExternal(component)):
+                    continue
+                if wrapper_net is None:
+                    wrapper_net = Net.create(self.wrapper, inst_net.getName())
+                    wrapper_net.setType(inst_net.getType())
+                    wrapper_net.setDirection(inst_net.getDirection())
+                    if inst_net.isExternal():
+                        wrapper_net.setExternal(True)
+                        wrapper_net.setGlobal(inst_net.isGlobal())
+                        # Connect a logical plug through the wrapper
+                        plug = inst.getPlug(inst_net)
+                        plug.setNet(wrapper_net)
+                if isinstance(component, Horizontal):
+                    inst_comp = Horizontal.create(wrapper_net, component.getLayer(),
+                        component.getY(), component.getWidth(), component.getSourceX(), component.getTargetX())
+                elif isinstance(component, Vertical):
+                    inst_comp = Vertical.create(wrapper_net, component.getLayer(),
+                        component.getX(), component.getWidth(), component.getSourceY(), component.getTargetY())
+                elif isinstance(component, Pad):
+                    inst_comp = Pad.create(wrapper_net, component.getLayer(), component.getBoundingBox())
+                elif isinstance(component, Rectilinear):
+                    inst_comp = Rectilinear.create(wrapper_net, component.getLayer(), component.getPoints())
+                else:
+                    assert False, f"unable to copy net component {component}"
+                if inst_net.isExternal():
+                    NetExternalComponents.setExternal(inst_comp)
+        self.wrapper.setRouted(True)
+
         if self.cell.getName().lower() == 'spblock_512w64b8w':
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
             useJumper  = True
@@ -157,7 +194,7 @@ class Macro ( object ):
             pitch      = gaugeMetal2.getPitch()
             if xMinAdjust % pitch:
                 xMinAdjust += pitch - (xMinAdjust % pitch)
-            for net in self.cell.getNets():
+            for net in self.wrapper.getNets():
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
                         bb = Box( component.getBoundingBox() )
@@ -199,7 +236,7 @@ class Macro ( object ):
         eastPins  = []
         northPins = []
         southPins = []
-        for net in self.cell.getNets():
+        for net in self.wrapper.getNets():
             if not net.isExternal() or net.isSupply() or net.isClock():
                 continue
             for component in net.getComponents():
@@ -286,7 +323,7 @@ class Macro ( object ):
                                                   , xMin
                                                   , xMin + ppitch + ppitch//2
                                                   )
-                    blockageNet = self.cell.getNet( '*'  )
+                    blockageNet = self.wrapper.getNet( '*'  )
                     for gauge in [ gaugeMetal3, gaugeMetal3, gaugeMetal4, gaugeMetal5 ]:
                         bb =      bvia1.getPlate( gauge.getLayer() ).getBoundingBox()
                         bb.merge( bvia2.getPlate( gauge.getLayer() ).getBoundingBox() )
@@ -485,5 +522,5 @@ class Macro ( object ):
                                           , yMax
                                           )
                 NetExternalComponents.setExternal( vertical )
-        self.cell.setAbutmentBox( self.outerAb )
+        self.wrapper.setAbutmentBox( self.outerAb )
         trace( 550, '-' )
