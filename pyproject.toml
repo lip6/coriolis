@@ -72,7 +72,7 @@ getter = "_build_utils.version"
 
 [tool.pdm.dev-dependencies]
 doc = [
-    "pelican",
+    "pelican == 4.9.1",
     "pelican-pdf",
     "docutils >= 0.20",
     "markupsafe >= 2.0.0"
