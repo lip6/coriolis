@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Comment on PR
         uses: hasura/comment-progress@v2.3.0
-        if: github.ref != 'refs/heads/main'
+        if: github.ref_name != 'main'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
@@ -29,7 +29,7 @@ jobs:
         # run: echo "DOMAIN=${{ github.actor }}.github.io" >> $GITHUB_ENV
 
       - name: Checkout website repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true # fetch the theme
           # you need to set this as an environment env if your repo or any submodules (e.g the theme) is private:
@@ -39,7 +39,7 @@ jobs:
         run: echo "BASE_URL=https://${{ env.DOMAIN }}/${{ github.event.repository.name }}/" >> $GITHUB_ENV
 
       - name: Setup PDM
-        uses: pdm-project/setup-pdm@v3
+        uses: pdm-project/setup-pdm@v4
 
       - name: Build website
         run: |
@@ -49,26 +49,26 @@ jobs:
           pdm run meson install -C builddir
 
       - name: Deploy if this is the `main` branch
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@80daa1d
+        if: github.ref_name == 'main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: /home/runner/work/install/share/doc/html
           cname: ${{ env.DOMAIN }} # TODO you need to set this if you're using a custom domain. Otherwise you can remove it.
 
       - name: Set base URL for preview if PR
-        if: github.ref != 'refs/heads/main'
+        if: github.ref_name != 'main'
         run: echo "BASE_URL=https://${{ env.DOMAIN }}/${{ github.event.repository.name }}/${{ env.PR_PATH}}/" >> $GITHUB_ENV
 
       - name: Build PR preview website
-        if: github.ref != 'refs/heads/main'
+        if: github.ref_name != 'main'
         run: |
           pdm run meson setup -D docs=true -D docs-siteurl=$BASE_URL builddir
           pdm run meson install -C builddir
 
       - name: Deploy to PR preview
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref != 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@80daa1d
+        if: github.ref_name != 'main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: /home/runner/work/install/share/doc/html
@@ -76,7 +76,7 @@ jobs:
 
       - name: Update comment
         uses: hasura/comment-progress@v2.2.0
-        if: github.ref != 'refs/heads/main'
+        if: github.ref_name != 'main'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
