@@ -13,7 +13,7 @@ jobs:
     env:
       PR_PATH: pull/${{github.event.number}}
     steps:
-      - name: Comment on PR
+      - name: Start comment on PR
         uses: hasura/comment-progress@v2.3.0
         if: github.ref_name != 'main'
         with:
