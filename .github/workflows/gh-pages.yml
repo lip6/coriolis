@@ -28,6 +28,9 @@ jobs:
         # If you're using the default github pages url, use this instead:
         # run: echo "DOMAIN=${{ github.actor }}.github.io" >> $GITHUB_ENV
 
+      - name: Debug stuff
+        run: echo "${{github.ref_name}}"
+
       - name: Checkout website repo
         uses: actions/checkout@v4
         with:
