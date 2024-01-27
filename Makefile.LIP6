@@ -113,7 +113,6 @@ clean_build: check_dir
 
 clean_pdm:
 	@echo "Removing all pip, pdm & venv installed files."
-	 rm -rf ${HOME}/.local
 	 rm -rf ${CORIOLIS_SRC}/.venv
 	 rm -f  ${CORIOLIS_SRC}/.pdm_python
 	 rm -rf ${CORIOLIS_SRC}/.pdm_plugins
