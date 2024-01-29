@@ -362,7 +362,7 @@ namespace {
       case COLROW:       readColrow();       break;
       case TEXTNODE:     readDummy( false ); break;
       case NODE:         readDummy( false ); break;
-      case TEXTTYPE:     readDummy( false ); break;
+      case TEXTTYPE:     readDatatype();     break;
       case PRESENTATION: readDummy( false ); break;
       case SPACING:      readDummy( false ); break;
       case STRING:       readString();       break;
@@ -674,7 +674,7 @@ namespace {
                    bool    readNode             ();
                    bool    readBox              ();
                    bool    readText             ();
-                   bool    readTextbody         ( const Layer* );
+                   bool    readTextbody         ( uint16_t gdsLayer );
                    bool    readStrans           ();
                    bool    readProperty         ();
                    void    xyToAbutmentBox      ();
@@ -1038,18 +1038,13 @@ namespace {
 
   bool  GdsStream::readText ()
   {
-    const Layer* layer = NULL;
+    uint16_t gdsLayer = 0;
     
     cdebug_log(101,1) << "GdsStream::readText()" << endl;
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
-      if (not layer) {
-        cerr << Error( "GdsStream::readText(): No BasicLayer id:%d in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
+      gdsLayer = (uint16_t)_record.getInt16s()[0];
       _stream >> _record;
     } else {
       _validSyntax = false;
@@ -1057,7 +1052,7 @@ namespace {
       return _validSyntax;
     }
 
-    readTextbody( layer );
+    readTextbody( gdsLayer );
 
   //cdebug(101,0) << "GdsStream::readText() - return:" << _validSyntax << endl;
     cdebug_tabw(101,-1);
@@ -1065,14 +1060,25 @@ namespace {
   }
 
 
-  bool  GdsStream::readTextbody ( const Layer* layer )
+  bool  GdsStream::readTextbody ( uint16_t gdsLayer )
   {
+    const Layer* layer = NULL;
     cdebug_log(101,1) << "GdsStream::readTextbody()" << endl;
 
     DbU::Unit xpos = 0;
     DbU::Unit ypos = 0;
 
-    if (_record.isTEXTTYPE()) { _stream >> _record; }
+    if (_record.isTEXTTYPE()) {
+      uint16_t texttype = (uint16_t)_record.getInt16s()[0];
+      layer = gdsToLayer( gdsLayer, texttype );
+      if (not layer) {
+        cerr << Error( "GdsStream::readText(): No BasicLayer %d:%d in GDS conversion table (skipped)."
+                     , gdsLayer
+                     , texttype
+                     ) << endl;
+      }
+       _stream >> _record;
+    }
     else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
@@ -1416,20 +1422,10 @@ namespace {
                        , m.str().c_str() ) << endl;
         } 
       }
-      dx = (arrayArea[1].getX() - arrayArea[0].getX()) / columns;
-      dy = (arrayArea[2].getY() - arrayArea[0].getY()) / rows;
-      if (not dx and (columns > 1))
-          cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
-                       , columns ) << endl;
-      if (not dy and (rows > 1))
-          cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
-                       , rows ) << endl;
       cdebug_log(101,0) << "arrayArea:" << endl;
       cdebug_log(101,0) << "[0] " << arrayArea[0] << endl;
       cdebug_log(101,0) << "[1] " << arrayArea[1] << endl;
       cdebug_log(101,0) << "[2] " << arrayArea[2] << endl;
-      cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
-      cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
       _stream >> _record;
     } else {
       _validSyntax = false;
@@ -1441,22 +1437,16 @@ namespace {
       Transformation::Orientation orient = Transformation::Orientation::ID;
       if (_angle ==  90.0) {
         orient = Transformation::Orientation::R1;
-        std::swap( dx, dy );
-        dx = -dx;
       } else if (_angle == 180.0) {
         orient = Transformation::Orientation::R2;
-        dy = -dy;
       } else if (_angle == 270.0) {
         orient = Transformation::Orientation::R3;
-        std::swap( dx, dy );
-        dy = -dy;
       } else if (_angle !=   0.0) {
         cerr << Warning( "GdsStream::readAref(): Unsupported angle %d.2 for AREF (Instance) of \"%s\""
                        , _angle, masterName.c_str() ) << endl;
       }
 
       if (_xReflection) {
-        dy = -dy;
         switch ( orient ) {
           case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
           case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
@@ -1468,6 +1458,18 @@ namespace {
         }
       }
       Transformation arrayTransf ( 0, 0, orient );
+      for( auto &pt: arrayArea)
+        pt = arrayTransf.getPoint(pt);
+      dx = (arrayArea[1].getX() - arrayArea[0].getX()) / columns;
+      dy = (arrayArea[2].getY() - arrayArea[0].getY()) / rows;
+      cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
+      cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
+      if (not dx and (columns > 1))
+          cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
+                       , columns ) << endl;
+      if (not dy and (rows > 1))
+          cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
+                       , rows ) << endl;
       for ( uint32_t column=0 ; column < (uint32_t)columns ; ++column ) {
         for ( uint32_t row=0 ; row < (uint32_t)rows ; ++row ) {
           DbU::Unit xpos = arrayArea[0].getX() + column*dx;
