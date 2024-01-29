@@ -128,7 +128,7 @@ class Macro ( object ):
         trace( 550, '+,', '\tMacro.__init__() {}\n'.format(macroCell) )
         af = AllianceFramework.get()
         self.cell = macroCell
-        self.wrapper = af.createCell(f"{self.cell.getName()}_wrapper_")
+        self.wrapper = af.createCell(f"{self.cell.getName()}_wrapper")
         inst = Instance.create(self.wrapper, f"inst", self.cell)
         inst.setTransformation( Transformation() )
         inst.setPlacementStatus( Instance.PlacementStatus.FIXED )
