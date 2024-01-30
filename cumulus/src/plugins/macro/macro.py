@@ -228,6 +228,26 @@ class Macro ( object ):
                                        , bb.getWidth()
                                        , bb.getYMin()
                                        , bb.getYMax() )
+        if self.cell.getName().lower().startswith('gf180mcu_fd_ip_sram'):
+            print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
+            # Extend pins 2um downwards so that they don't conflict with power supply when we add the via
+            for net in self.wrapper.getNets():
+                if net.isSupply():
+                    continue
+                for component in net.getComponents():
+                    if not NetExternalComponents.isExternal(component):
+                        continue
+                    bb = component.getBoundingBox()
+                    if not ab.isConstrainedBy(bb) or ab.getYMin() != bb.getYMin() or component.getLayer() != gaugeMetal2.getLayer():
+                        continue
+                    NetExternalComponents.setInternal(component)
+                    extension = Vertical.create( net
+                                       , gaugeMetal2.getLayer()
+                                       , bb.getXCenter()
+                                       , bb.getWidth()
+                                       , u(-2)
+                                       , bb.getYMin())
+                    NetExternalComponents.setExternal(extension)
         if self.cell.getName().lower() in [ 'pll', 'gds_pll', 'cmpt_pll' ]:
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
         self.innerAb = ab
