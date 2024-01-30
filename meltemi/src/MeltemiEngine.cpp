@@ -55,7 +55,7 @@ namespace Meltemi {
   void MeltemiEngine::_coloquinteCallback(coloquinte::PlacementStep step)
   {
     // Run the callback to read back the results in the circuit
-    if (step != coloquinte::PlacementStep::UpperBound) {
+    if (step != coloquinte::PlacementStep::PenaltyUpdate) {
       _coloquinteCallbackCore(step, _needsGraphicUpdate(step));
       return;
     }
