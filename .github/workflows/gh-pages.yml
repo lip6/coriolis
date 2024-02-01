@@ -43,6 +43,7 @@ jobs:
 
       - name: Build website
         run: |
+          sudo apt update
           sudo apt install -y graphviz doxygen doxygen-latex python3-docutils qtbase5-dev libqt5svg5-dev
           pdm sync -d --no-self
           pdm run meson setup --prefix=/home/runner/work/install -D docs=true -D only-docs=true -D docs-siteurl=$BASE_URL builddir
