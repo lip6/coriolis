@@ -29,7 +29,7 @@ jobs:
         # run: echo "DOMAIN=${{ github.actor }}.github.io" >> $GITHUB_ENV
 
       - name: Checkout website repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true # fetch the theme
           # you need to set this as an environment env if your repo or any submodules (e.g the theme) is private:
@@ -39,7 +39,7 @@ jobs:
         run: echo "BASE_URL=https://${{ env.DOMAIN }}/${{ github.event.repository.name }}/" >> $GITHUB_ENV
 
       - name: Setup PDM
-        uses: pdm-project/setup-pdm@v3
+        uses: pdm-project/setup-pdm@c050bdcb2405837648035b6678c75609d53a749f
 
       - name: Build website
         run: |
