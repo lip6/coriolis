@@ -50,12 +50,10 @@ jobs:
           pdm run meson install -C builddir
 
       - name: Deploy if this is the `main` branch
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         if: github.ref == 'refs/heads/main'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: /home/runner/work/install/share/doc/html
-          cname: ${{ env.DOMAIN }} # TODO you need to set this if you're using a custom domain. Otherwise you can remove it.
+          folder: /home/runner/work/install/share/doc/html
 
       - name: Set base URL for preview if PR
         if: github.ref != 'refs/heads/main'
@@ -68,12 +66,12 @@ jobs:
           pdm run meson install -C builddir
 
       - name: Deploy to PR preview
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         if: github.ref != 'refs/heads/main'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: /home/runner/work/install/share/doc/html
-          destination_dir: ${{ env.PR_PATH }} # TODO you need to set this if you're using a custom domain. Otherwise you can remove it.
+          folder: /home/runner/work/install/share/doc/html
+          target-folder: ${{ env.PR_PATH }} # TODO you need to set this if you're using a custom domain. Otherwise you can remove it.
+          force: true
 
       - name: Update comment
         uses: hasura/comment-progress@v2.2.0
