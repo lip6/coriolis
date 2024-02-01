@@ -1,0 +1,59 @@
+\hypertarget{classHurricane_1_1ViaLayer}{}\doxysection{Hurricane\+::Via\+Layer Class Reference}
+\label{classHurricane_1_1ViaLayer}\index{Hurricane::ViaLayer@{Hurricane::ViaLayer}}
+
+
+\mbox{\hyperlink{classHurricane_1_1ViaLayer}{Via\+Layer}} description ({\bfseries{API}})  
+
+
+
+
+Inheritance diagram for Hurricane\+::Via\+Layer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=193pt]{classHurricane_1_1ViaLayer__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classHurricane_1_1ViaLayer}{Via\+Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1ViaLayer_af2a6aa6c3a92fb1427b21662eeed7abd}{create}} (\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$technology, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$bottom\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$cut\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$top\+Layer)
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1ViaLayer}{Via\+Layer}} description ({\bfseries{API}}) 
+
+For a more complete description of the Layers objects, please refer to \mbox{\hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}}.
+
+\mbox{\hyperlink{classHurricane_1_1ViaLayer}{Via\+Layer}} is a symbolic layer that contains three layers, a bottom metal, a cut and a top metal.
+
+The accessors functions\+: 
+\begin{DoxyItemize}
+\item Via\+Layer\+::get\+Top() 
+\item Via\+Layer\+::get\+Bottom() 
+\item Via\+Layer\+::get\+Opposite() 
+\end{DoxyItemize}Works on the top/bottom layers. They do not rely on the \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}}, but on what has been passed as argument to the \mbox{\hyperlink{classHurricane_1_1ViaLayer_af2a6aa6c3a92fb1427b21662eeed7abd}{Via\+Layer\+::create()}} constructor.
+
+Only enclosure have meaning on this class. Extension cap and extention width are not used. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1ViaLayer_af2a6aa6c3a92fb1427b21662eeed7abd}\label{classHurricane_1_1ViaLayer_af2a6aa6c3a92fb1427b21662eeed7abd}} 
+\index{Hurricane::ViaLayer@{Hurricane::ViaLayer}!create@{create}}
+\index{create@{create}!Hurricane::ViaLayer@{Hurricane::ViaLayer}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1ViaLayer}{Via\+Layer}} $\ast$ Hurricane\+::\+Via\+Layer\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$}]{technology,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{bottom\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{cut\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{top\+Layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a new VIA layer named {\ttfamily $<$name$>$}, made of the two metals and a cut.
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if the technology is null, if the name is }
+empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
+\end{DoxyParagraph}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Via\+Layer.\+h\item 
+Via\+Layer.\+dox\end{DoxyCompactItemize}

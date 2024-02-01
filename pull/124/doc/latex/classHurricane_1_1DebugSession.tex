@@ -1,0 +1,154 @@
+\hypertarget{classHurricane_1_1DebugSession}{}\doxysection{Hurricane\+::Debug\+Session Class Reference}
+\label{classHurricane_1_1DebugSession}\index{Hurricane::DebugSession@{Hurricane::DebugSession}}
+
+
+Enable/\+Disable trace information ({\ttfamily API}).  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{classHurricane_1_1DebugSession_a0b008c0eb9a0337416465caf7431a81e}{is\+Traced}} (const void $\ast$symbol)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1DebugSession_aa7ee4a8517bc4a99c37f0a9ae26b9620}{add\+To\+Trace}} (const void $\ast$symbol)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1DebugSession_ab7f9fbef88775e509ae7b127e524b100}{add\+To\+Trace}} (const \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1DebugSession_ac12865b68d1acfd85cd48d4d44d9c4fc}{open}} (int min\+Level, int max\+Level)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1DebugSession_a655f87fd8c8e20f287dea2a6d8fca556}{open}} (const void $\ast$symbol, int min\+Level, int max\+Level)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1DebugSession_ac880eca99eeec60c669c0696f495ac42}{close}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Enable/\+Disable trace information ({\ttfamily API}). 
+
+\mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} provide a way to control what and when text send through the cdebug stream is printed. cdebug display selectively the trace/debug messages between a {\ttfamily min\+Level} and a {\ttfamily max\+Level} \+: \[ minLevel \leq level < maxLevel \]
+
+\mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} manage a stack of {\ttfamily }(min,max) pairs so multiple session can be opened. On opening a new session the {\ttfamily }(min,max) pair is pushed on the top of the stack and define the active range of trace levels. On closing, the pair is removed from the top and the previous range became active again. Do not forget to match any opening with a closing.
+
+In addition to the levels, a \mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} also can be triggered by a {\itshape symbol} (i.\+e. a {\ttfamily }(void$\ast$) pointer). The \mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} has contains a user managed table of symbols. When, in opening a session, you give a symbol, the session will actually changes the trace levels only if the symbol is in the internal table. Otherwise a session is still opened {\itshape but} it will keep the current trace levels. So, in any case the session must be closed.\hypertarget{classHurricane_1_1DebugSession_secTraceLevels}{}\doxysubsection{Trace Levels}\label{classHurricane_1_1DebugSession_secTraceLevels}
+To avoid mixing messages between different parts of the software, the following allotments have been done\+:
+
+\begin{center} 
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\caption{Trace/\+Debug level allotments (provisional)}\label{_}\\
+\hline
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{C++}} / Coriolis }}\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{C++}} / Coriolis }}\\\cline{1-3}
+\endhead
+\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Tool/\+Library}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Minimum}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Maximum}} }\\\cline{1-3}
+\mbox{\hyperlink{namespaceHurricane}{Hurricane}} &{\ttfamily 0} &{\ttfamily 19} \\\cline{1-3}
+CRL Core &{\ttfamily 100} &{\ttfamily 110} \\\cline{1-3}
+Anabatic &{\ttfamily 110} &{\ttfamily 120} \\\cline{1-3}
+Etesian &{\ttfamily 120} &{\ttfamily 130} \\\cline{1-3}
+Knik &{\ttfamily 130} &{\ttfamily 140} \\\cline{1-3}
+Katabatic &{\ttfamily 140} &{\ttfamily 150} \\\cline{1-3}
+Kite &{\ttfamily 150} &{\ttfamily 160} \\\cline{1-3}
+Solstice &{\ttfamily 160} &{\ttfamily 170} \\\cline{1-3}
+Equinox &{\ttfamily 170} &{\ttfamily 180} \\\cline{1-3}
+Unicorn &{\ttfamily 180} &{\ttfamily 190} \\\cline{1-3}
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{C++}} / Analog }}\\\cline{1-3}
+\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Tool/\+Library}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Minimum}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Maximum}} }\\\cline{1-3}
+Analog &{\ttfamily 500} &{\ttfamily 510} \\\cline{1-3}
+oroshi &{\ttfamily 510} &{\ttfamily 520} \\\cline{1-3}
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Python}} Wrappers / Coriolis }}\\\cline{1-3}
+\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Tool/\+Library}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Minimum}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Maximum}} }\\\cline{1-3}
+Isobar &{\ttfamily 20} &{\ttfamily 30} \\\cline{1-3}
+CRL Core/\+Python &{\ttfamily 30} &{\ttfamily 32} \\\cline{1-3}
+Anabatic/\+Python &{\ttfamily 32} &{\ttfamily 34} \\\cline{1-3}
+Etesian/\+Python &{\ttfamily 34} &{\ttfamily 36} \\\cline{1-3}
+Knik/\+Python &{\ttfamily 36} &{\ttfamily 38} \\\cline{1-3}
+Katabatic/\+Python &{\ttfamily 38} &{\ttfamily 40} \\\cline{1-3}
+Kite/\+Python &{\ttfamily 40} &{\ttfamily 42} \\\cline{1-3}
+Solstice/\+Python &{\ttfamily 42} &{\ttfamily 44} \\\cline{1-3}
+Equinox/\+Python &{\ttfamily 44} &{\ttfamily 46} \\\cline{1-3}
+Unicorn/\+Python &{\ttfamily 46} &{\ttfamily 48} \\\cline{1-3}
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Python}} Wrappers / Analog }}\\\cline{1-3}
+\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Tool/\+Library}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Minimum}} }&\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Maximum}} }\\\cline{1-3}
+Analog &{\ttfamily 48} &{\ttfamily 50} \\\cline{1-3}
+oroshi/ÿthon &{\ttfamily 50} &{\ttfamily 51} \\\cline{1-3}
+\multicolumn{3}{|l|}{\cellcolor{\tableheadbgcolor}\textbf{ {\bfseries{Special}} levels }}\\\cline{1-3}
+Determinim check &{\ttfamily 9000} &{\ttfamily 9001} \\\cline{1-3}
+JSON parsers/drivers&{\ttfamily 19} &{\ttfamily 20} \\\cline{1-3}
+\end{longtabu}
+\end{center}  
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1DebugSession_a0b008c0eb9a0337416465caf7431a81e}\label{classHurricane_1_1DebugSession_a0b008c0eb9a0337416465caf7431a81e}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!isTraced@{isTraced}}
+\index{isTraced@{isTraced}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{isTraced()}{isTraced()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Debug\+Session\+::is\+Traced (\begin{DoxyParamCaption}\item[{const void $\ast$}]{symbol }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\textbackslash{}\+Returns {\bfseries{true}} if the {\ttfamily symbol} is in the \mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} symbol table. \mbox{\Hypertarget{classHurricane_1_1DebugSession_aa7ee4a8517bc4a99c37f0a9ae26b9620}\label{classHurricane_1_1DebugSession_aa7ee4a8517bc4a99c37f0a9ae26b9620}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!addToTrace@{addToTrace}}
+\index{addToTrace@{addToTrace}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{addToTrace()}{addToTrace()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Debug\+Session\+::add\+To\+Trace (\begin{DoxyParamCaption}\item[{const void $\ast$}]{symbol }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Adds the {\ttfamily symbol} to the table of traced symbols. \mbox{\Hypertarget{classHurricane_1_1DebugSession_ab7f9fbef88775e509ae7b127e524b100}\label{classHurricane_1_1DebugSession_ab7f9fbef88775e509ae7b127e524b100}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!addToTrace@{addToTrace}}
+\index{addToTrace@{addToTrace}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{addToTrace()}{addToTrace()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Debug\+Session\+::add\+To\+Trace (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Adds the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} {\ttfamily name} from {\ttfamily \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}} to the table of traced symbols. \mbox{\Hypertarget{classHurricane_1_1DebugSession_ac12865b68d1acfd85cd48d4d44d9c4fc}\label{classHurricane_1_1DebugSession_ac12865b68d1acfd85cd48d4d44d9c4fc}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!open@{open}}
+\index{open@{open}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{open()}{open()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Debug\+Session\+::open (\begin{DoxyParamCaption}\item[{int}]{min\+Level,  }\item[{int}]{max\+Level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em min\+Level} & minimum debug/tracelevel ($>$=). \\
+\hline
+{\em max\+Level} & maximum debug/tracelevel ($<$).\\
+\hline
+\end{DoxyParams}
+Change the current debug level to (min\+Level,max\+Level). The previous range is stacked and will be restored when this session will be closed. 
+
+References tstream\+::get\+Max\+Level(), tstream\+::get\+Min\+Level(), tstream\+::set\+Max\+Level(), and tstream\+::set\+Min\+Level().
+
+\mbox{\Hypertarget{classHurricane_1_1DebugSession_a655f87fd8c8e20f287dea2a6d8fca556}\label{classHurricane_1_1DebugSession_a655f87fd8c8e20f287dea2a6d8fca556}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!open@{open}}
+\index{open@{open}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{open()}{open()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Debug\+Session\+::open (\begin{DoxyParamCaption}\item[{const void $\ast$}]{symbol,  }\item[{int}]{min\+Level,  }\item[{int}]{max\+Level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em symbol} & symbol to match. \\
+\hline
+{\em min\+Level} & minimum debug/tracelevel ($>$=). \\
+\hline
+{\em max\+Level} & maximum debug/tracelevel ($<$).\\
+\hline
+\end{DoxyParams}
+Change the current debug level to (min\+Level,max\+Level) only if {\ttfamily symbol} is traced. If the {\ttfamily symbol} is traced, then the new levels pair is stacked, otherwise the current level are stacked (we duplicate the top of the stack). This session, successful or not, must be closed as any other. 
+
+References tstream\+::get\+Max\+Level(), tstream\+::get\+Min\+Level(), tstream\+::set\+Max\+Level(), and tstream\+::set\+Min\+Level().
+
+\mbox{\Hypertarget{classHurricane_1_1DebugSession_ac880eca99eeec60c669c0696f495ac42}\label{classHurricane_1_1DebugSession_ac880eca99eeec60c669c0696f495ac42}} 
+\index{Hurricane::DebugSession@{Hurricane::DebugSession}!close@{close}}
+\index{close@{close}!Hurricane::DebugSession@{Hurricane::DebugSession}}
+\doxysubsubsection{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Debug\+Session\+::close (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Close a \mbox{\hyperlink{classHurricane_1_1DebugSession}{Debug\+Session}} and restore the previous trace levels. 
+
+References tstream\+::set\+Max\+Level(), and tstream\+::set\+Min\+Level().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Debug\+Session.\+h\item 
+Debug\+Session.\+dox\end{DoxyCompactItemize}

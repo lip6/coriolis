@@ -1,0 +1,193 @@
+\hypertarget{classHurricane_1_1Graphics}{}\doxysection{Hurricane\+::Graphics Class Reference}
+\label{classHurricane_1_1Graphics}\index{Hurricane::Graphics@{Hurricane::Graphics}}
+
+
+Manage basic graphical configuration ({\bfseries{API}})  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Graphics_a4f8d6eaeef8d9ae781be929e95545f0c}{get\+Graphics}} ()
+\item 
+static bool \mbox{\hyperlink{classHurricane_1_1Graphics_a02964067103bdd4c27bbf4af91a47cf8}{is\+Enabled}} ()
+\item 
+static const QFont \mbox{\hyperlink{classHurricane_1_1Graphics_a30322de9fd4a042d8773465c622a1650}{get\+Fixed\+Font}} (int weight=QFont\+::\+Normal, bool italic=false, bool underline=false, int scale=0)
+\item 
+static const \textbf{ Name} \& \mbox{\hyperlink{classHurricane_1_1Graphics_a1262f31f53c2c36440e1e05fd2da17fc}{get\+Group}} (const \textbf{ Name} \&key)
+\item 
+static QColor \mbox{\hyperlink{classHurricane_1_1Graphics_abaa552c464f1a664dc77cc0c0118c35c}{get\+Color}} (const \textbf{ Name} \&key, const Display\+Style\+::\+HSVr \&darkening=Display\+Style\+::\+HSVr())
+\item 
+static QPen \mbox{\hyperlink{classHurricane_1_1Graphics_a0197c915f8d76c3798cf19ea2d878834}{get\+Pen}} (const \textbf{ Name} \&key, const Display\+Style\+::\+HSVr \&darkening=Display\+Style\+::\+HSVr())
+\item 
+static QBrush \mbox{\hyperlink{classHurricane_1_1Graphics_ad67a43df460d5c5d5179a81d2a72c9a9}{get\+Brush}} (const \textbf{ Name} \&key, const Display\+Style\+::\+HSVr \&darkening=Display\+Style\+::\+HSVr())
+\item 
+static const string \& \mbox{\hyperlink{classHurricane_1_1Graphics_a08111e942b095327fa6031dca7c96e8e}{get\+Pattern}} (const \textbf{ Name} \&key)
+\item 
+static float \mbox{\hyperlink{classHurricane_1_1Graphics_a2291edddc743edc44fdea26437f3095f}{get\+Threshold}} (const \textbf{ Name} \&key)
+\item 
+static const Display\+Style\+::\+HSVr \& \mbox{\hyperlink{classHurricane_1_1Graphics_af34b6fe518ecb3f2959731f055ee27ff}{get\+Darkening}} ()
+\item 
+static const Color\+Scale \& \mbox{\hyperlink{classHurricane_1_1Graphics_a8735a458885beb3b74ad5fb77db82797}{get\+Color\+Scale}} (Color\+Scale\+::\+Scale\+Type)
+\item 
+static QColor \mbox{\hyperlink{classHurricane_1_1Graphics_ab4c69a277249850a397a4c5fce31f965}{darken}} (const QColor \&)
+\item 
+static const Text\+Translator \& \mbox{\hyperlink{classHurricane_1_1Graphics_a2f5e702ff1ea293edc5a89aaae1facf2}{get\+Html\+Translator}} ()
+\item 
+static string \mbox{\hyperlink{classHurricane_1_1Graphics_a51b3772138b33a85204abbee08898987}{to\+Html}} (const string \&)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1Graphics_ac64dd095224b3f9dfbbdcfc242b11a77}{add\+Style}} (\mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$display\+Style)
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1Graphics_acb9975e354d7c802fa3064ceb800db90}{set\+Style}} (const \textbf{ Name} \&key)
+\item 
+static \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Graphics_a2506213ff4c28b22d356e7bfbb242ed6}{get\+Style}} (const \textbf{ Name} \&key)
+\item 
+static \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Graphics_aef89b1aa2be83b61ae0838a219d2b696}{get\+Style}} ()
+\item 
+static void \mbox{\hyperlink{classHurricane_1_1Graphics_a08e5240382c4bc97fd84b6fa0e7d8b8e}{enable}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Manage basic graphical configuration ({\bfseries{API}}) 
+
+The \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} class is a singleton which provides a simplificated access to graphical resources from Qt and manages graphics styles used to draw all the objects from the \mbox{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}}. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Graphics_a4f8d6eaeef8d9ae781be929e95545f0c}\label{classHurricane_1_1Graphics_a4f8d6eaeef8d9ae781be929e95545f0c}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getGraphics@{getGraphics}}
+\index{getGraphics@{getGraphics}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getGraphics()}{getGraphics()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} $\ast$ Hurricane\+::\+Graphics\+::get\+Graphics (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} singleton. \mbox{\Hypertarget{classHurricane_1_1Graphics_a02964067103bdd4c27bbf4af91a47cf8}\label{classHurricane_1_1Graphics_a02964067103bdd4c27bbf4af91a47cf8}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!isEnabled@{isEnabled}}
+\index{isEnabled@{isEnabled}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{isEnabled()}{isEnabled()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Graphics\+::is\+Enabled (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if Qt has been activated. \mbox{\Hypertarget{classHurricane_1_1Graphics_a30322de9fd4a042d8773465c622a1650}\label{classHurricane_1_1Graphics_a30322de9fd4a042d8773465c622a1650}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getFixedFont@{getFixedFont}}
+\index{getFixedFont@{getFixedFont}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getFixedFont()}{getFixedFont()}}
+{\footnotesize\ttfamily const QFont Hurricane\+::\+Graphics\+::get\+Fixed\+Font (\begin{DoxyParamCaption}\item[{int}]{weight = {\ttfamily QFont\+:\+:Normal},  }\item[{bool}]{italic = {\ttfamily false},  }\item[{bool}]{underline = {\ttfamily false},  }\item[{int}]{scale = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em weight} & the font\textquotesingle{}s weight (see Qt\+::\+Weight). \\
+\hline
+{\em italic} & select the italic variant of the font. \\
+\hline
+{\em underline} & the font will be underlined. \\
+\hline
+{\em scale} & added to the font\textquotesingle{}s default point size. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A QFont, the size of the font is guessed from the system\textquotesingle{}s default. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHurricane_1_1Graphics_a1262f31f53c2c36440e1e05fd2da17fc}\label{classHurricane_1_1Graphics_a1262f31f53c2c36440e1e05fd2da17fc}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getGroup@{getGroup}}
+\index{getGroup@{getGroup}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getGroup()}{getGroup()}}
+{\footnotesize\ttfamily const \textbf{ Name} \& Hurricane\+::\+Graphics\+::get\+Group (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The group owning the Drawing\+Style of which key is {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1Graphics_abaa552c464f1a664dc77cc0c0118c35c}\label{classHurricane_1_1Graphics_abaa552c464f1a664dc77cc0c0118c35c}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getColor@{getColor}}
+\index{getColor@{getColor}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getColor()}{getColor()}}
+{\footnotesize\ttfamily const QColor \& Hurricane\+::\+Graphics\+::get\+Color (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const Display\+Style\+::\+HSVr \&}]{darkening = {\ttfamily DisplayStyle\+:\+:HSVr()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The QColor associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1Graphics_a0197c915f8d76c3798cf19ea2d878834}\label{classHurricane_1_1Graphics_a0197c915f8d76c3798cf19ea2d878834}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getPen@{getPen}}
+\index{getPen@{getPen}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getPen()}{getPen()}}
+{\footnotesize\ttfamily const QPen \& Hurricane\+::\+Graphics\+::get\+Pen (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const Display\+Style\+::\+HSVr \&}]{darkening = {\ttfamily DisplayStyle\+:\+:HSVr()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The QPen associated to the Drawing\+Style {\itshape key} darkened by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1Graphics_ad67a43df460d5c5d5179a81d2a72c9a9}\label{classHurricane_1_1Graphics_ad67a43df460d5c5d5179a81d2a72c9a9}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getBrush@{getBrush}}
+\index{getBrush@{getBrush}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getBrush()}{getBrush()}}
+{\footnotesize\ttfamily const QBrush \& Hurricane\+::\+Graphics\+::get\+Brush (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key,  }\item[{const Display\+Style\+::\+HSVr \&}]{darkening = {\ttfamily DisplayStyle\+:\+:HSVr()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The QBrush associated to the Drawing\+Style {\itshape key} by a factor {\itshape darkening}. \mbox{\Hypertarget{classHurricane_1_1Graphics_a08111e942b095327fa6031dca7c96e8e}\label{classHurricane_1_1Graphics_a08111e942b095327fa6031dca7c96e8e}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getPattern@{getPattern}}
+\index{getPattern@{getPattern}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getPattern()}{getPattern()}}
+{\footnotesize\ttfamily const string \& Hurricane\+::\+Graphics\+::get\+Pattern (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The pattern associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1Graphics_a2291edddc743edc44fdea26437f3095f}\label{classHurricane_1_1Graphics_a2291edddc743edc44fdea26437f3095f}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getThreshold@{getThreshold}}
+\index{getThreshold@{getThreshold}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getThreshold()}{getThreshold()}}
+{\footnotesize\ttfamily const float Hurricane\+::\+Graphics\+::get\+Threshold (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The display threshold associated to the Drawing\+Style {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1Graphics_af34b6fe518ecb3f2959731f055ee27ff}\label{classHurricane_1_1Graphics_af34b6fe518ecb3f2959731f055ee27ff}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getDarkening@{getDarkening}}
+\index{getDarkening@{getDarkening}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getDarkening()}{getDarkening()}}
+{\footnotesize\ttfamily const Display\+Style\+::\+HSVr \& Hurricane\+::\+Graphics\+::get\+Darkening (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The darkening factor applied to non-\/selected objects. \mbox{\Hypertarget{classHurricane_1_1Graphics_a8735a458885beb3b74ad5fb77db82797}\label{classHurricane_1_1Graphics_a8735a458885beb3b74ad5fb77db82797}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getColorScale@{getColorScale}}
+\index{getColorScale@{getColorScale}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getColorScale()}{getColorScale()}}
+{\footnotesize\ttfamily const Color\+Scale \& Hurricane\+::\+Graphics\+::get\+Color\+Scale (\begin{DoxyParamCaption}\item[{Color\+Scale\+::\+Scale\+Type}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The darkening factor applied to non-\/selected objects. \mbox{\Hypertarget{classHurricane_1_1Graphics_ab4c69a277249850a397a4c5fce31f965}\label{classHurricane_1_1Graphics_ab4c69a277249850a397a4c5fce31f965}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!darken@{darken}}
+\index{darken@{darken}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{darken()}{darken()}}
+{\footnotesize\ttfamily const QColor Hurricane\+::\+Graphics\+::darken (\begin{DoxyParamCaption}\item[{const QColor \&}]{color }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The QColor with the darkening factor applied. \mbox{\Hypertarget{classHurricane_1_1Graphics_a2f5e702ff1ea293edc5a89aaae1facf2}\label{classHurricane_1_1Graphics_a2f5e702ff1ea293edc5a89aaae1facf2}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getHtmlTranslator@{getHtmlTranslator}}
+\index{getHtmlTranslator@{getHtmlTranslator}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getHtmlTranslator()}{getHtmlTranslator()}}
+{\footnotesize\ttfamily const Text\+Translator \& Hurricane\+::\+Graphics\+::get\+Html\+Translator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The translator applied to generate html text. \begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classHurricane_1_1Graphics_a51b3772138b33a85204abbee08898987}{to\+Html()}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classHurricane_1_1Graphics_a51b3772138b33a85204abbee08898987}\label{classHurricane_1_1Graphics_a51b3772138b33a85204abbee08898987}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!toHtml@{toHtml}}
+\index{toHtml@{toHtml}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{toHtml()}{toHtml()}}
+{\footnotesize\ttfamily const string Hurricane\+::\+Graphics\+::to\+Html (\begin{DoxyParamCaption}\item[{const string \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} A string suitable for HTML enabled devices, such as most of the Qt widgets. Special characters like {\ttfamily \textquotesingle{}\&\textquotesingle{}} are replaced by their HTML counterpart ({\ttfamily \&amp};) \mbox{\Hypertarget{classHurricane_1_1Graphics_ac64dd095224b3f9dfbbdcfc242b11a77}\label{classHurricane_1_1Graphics_ac64dd095224b3f9dfbbdcfc242b11a77}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!addStyle@{addStyle}}
+\index{addStyle@{addStyle}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{addStyle()}{addStyle()}}
+{\footnotesize\ttfamily const void Hurricane\+::\+Graphics\+::add\+Style (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$}]{display\+Style }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Adds a new \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} to the \mbox{\hyperlink{classHurricane_1_1Graphics}{Graphics}} environment. The \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} contains it\textquotesingle{}s name by which it can be accessed later. If any previous \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} of the same name was existing it is silently replaced. \mbox{\Hypertarget{classHurricane_1_1Graphics_acb9975e354d7c802fa3064ceb800db90}\label{classHurricane_1_1Graphics_acb9975e354d7c802fa3064ceb800db90}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!setStyle@{setStyle}}
+\index{setStyle@{setStyle}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{setStyle()}{setStyle()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Graphics\+::set\+Style (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Make the \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} whose name is {\itshape key} the currently used one. \mbox{\Hypertarget{classHurricane_1_1Graphics_a2506213ff4c28b22d356e7bfbb242ed6}\label{classHurricane_1_1Graphics_a2506213ff4c28b22d356e7bfbb242ed6}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getStyle@{getStyle}}
+\index{getStyle@{getStyle}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getStyle()}{getStyle()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$ Hurricane\+::\+Graphics\+::get\+Style (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} whose name is {\itshape key}. \mbox{\Hypertarget{classHurricane_1_1Graphics_aef89b1aa2be83b61ae0838a219d2b696}\label{classHurricane_1_1Graphics_aef89b1aa2be83b61ae0838a219d2b696}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!getStyle@{getStyle}}
+\index{getStyle@{getStyle}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{getStyle()}{getStyle()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} $\ast$ Hurricane\+::\+Graphics\+::get\+Style (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} The \mbox{\hyperlink{classHurricane_1_1DisplayStyle}{Display\+Style}} which is currently in use. \mbox{\Hypertarget{classHurricane_1_1Graphics_a08e5240382c4bc97fd84b6fa0e7d8b8e}\label{classHurricane_1_1Graphics_a08e5240382c4bc97fd84b6fa0e7d8b8e}} 
+\index{Hurricane::Graphics@{Hurricane::Graphics}!enable@{enable}}
+\index{enable@{enable}!Hurricane::Graphics@{Hurricane::Graphics}}
+\doxysubsubsection{\texorpdfstring{enable()}{enable()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Graphics\+::enable (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Effectively calls Qt, allocated Pens \& Brushes and so on. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Graphics.\+h\item 
+Graphics.\+dox\end{DoxyCompactItemize}
