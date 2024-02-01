@@ -524,6 +524,9 @@ namespace Katana {
 
     float   edgeHInc         = getConfiguration()->getEdgeHInc();
     size_t  globalIterations = getConfiguration()->getGlobalIterations();;
+    if (flags & Flags::PlacementCallback) {
+      globalIterations = std::min(globalIterations, (size_t) 2);
+    }
 
     openSession();
     Dijkstra*           dijkstra = new Dijkstra ( this );
