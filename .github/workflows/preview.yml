@@ -1,0 +1,40 @@
+# .github/workflows/preview.yml
+name: Deploy PR previews
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true # fetch the theme
+
+      - name: Install website build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y graphviz doxygen doxygen-latex python3-docutils qtbase5-dev libqt5svg5-dev
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@c050bdcb2405837648035b6678c75609d53a749f
+
+      - name: Build website
+        run: |
+          pdm sync -d --no-self
+          pdm run meson setup --prefix=/home/runner/work/install -D docs=true -D only-docs=true -D docs-siteurl=$BASE_URL builddir
+          pdm run meson install -C builddir
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: /home/runner/work/install/share/doc/html
