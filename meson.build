@@ -31,35 +31,59 @@ if get_option('check-database')
   add_project_arguments('-DCHECK_DATABASE')
 endif
 
-build=true
-if get_option('only-docs')
-  build = false
-endif
-
 py = import('python').find_installation(pure:false)
 py_deps = dependency('python3', required: true)
 
 py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHON_MODULE__=1')
-
 qt = import('qt5', disabler: true)
-qt_deps = dependency('qt5',
-  modules: ['Core', 'Gui', 'Widgets', 'PrintSupport', 'Svg'],
-  required: build,
-  disabler: true,
-)
 
-cmake =import('cmake')
-
-boost = dependency('boost', modules: ['program_options'], required: build, disabler: true)
-libxml2 = dependency('libxml-2.0', required: build, disabler: true)
-flex = find_program('flex', required: build, disabler: true)
-bison = find_program('bison', required: build, disabler: true)
-thread_dep = dependency('threads', required: build, disabler: true)
-sed = find_program('sed', required: build, disabler: true)
-
+sed = find_program('sed',  disabler: true)
 docdir = join_paths(get_option('datadir'), 'doc')
 htmldir = join_paths(docdir,  'html')
 docsiteurl = get_option('docs-siteurl')
+
+if not get_option('only-docs')
+  qt_deps = dependency('qt5',
+    modules: ['Core', 'Gui', 'Widgets', 'PrintSupport', 'Svg'],
+    disabler: true,
+  )
+
+  boost = dependency('boost', modules: ['program_options'],  disabler: true)
+  libxml2 = dependency('libxml-2.0',  disabler: true)
+  flex = find_program('flex',  disabler: true)
+  bison = find_program('bison',  disabler: true)
+  thread_dep = dependency('threads',  disabler: true)
+  if build_machine.system() == 'darwin'
+    add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
+
+    add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
+    add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
+
+    qt5qwt6 = dependency('Qt5Qwt6',  disabler: true)
+    qwt_framework = qt5qwt6.get_pkgconfig_variable('libdir') / 'qwt.framework/Versions/6/Headers/'
+    qwt = declare_dependency(include_directories: include_directories(qwt_framework), dependencies: qt5qwt6)
+
+  else
+    qwt = dependency('qwt', required: false)
+    if not qwt.found()
+      qwt = dependency('Qt5Qwt6',  disabler: true)
+    endif
+  endif
+
+  coloquinte_sub = subproject('coloquinte')
+  Coloquinte = coloquinte_sub.get_variable('coloquinte_dep')
+else
+  qt_deps = disabler()
+  boost = disabler()
+  libxml2 = disabler()
+  flex = disabler()
+  bison = disabler()
+  thread_dep = disabler()
+  qwt = disabler()
+  Coloquinte = disabler()
+
+endif
+
 
 if get_option('docs')
   doxygen = find_program('doxygen', required: true)
@@ -75,31 +99,6 @@ else
   pdflatex = disabler()
 endif
 
-
-if build_machine.system() == 'darwin'
-  add_project_arguments('-mmacosx-version-min=13.0', language: ['c','cpp'])
-
-  add_project_link_arguments('-Wl,-rpath,@loader_path/', language: ['c','cpp'])
-  add_project_link_arguments('-Wl,-rpath,@loader_path/../lib/python' + py.language_version() + '/site-packages/coriolis', language: ['c','cpp'])
-
-  qt5qwt6 = dependency('Qt5Qwt6', required: build, disabler: true)
-  qwt_framework = qt5qwt6.get_pkgconfig_variable('libdir') / 'qwt.framework/Versions/6/Headers/'
-  qwt = declare_dependency(include_directories: include_directories(qwt_framework), dependencies: qt5qwt6)
-
-else
-  qwt = dependency('qwt', required: false)
-  if not qwt.found()
-    qwt = dependency('Qt5Qwt6', required: build, disabler: true)
-  endif
-endif
-
-#not ideal, hopefully coloquinte can switch to useing more modern targets, or to using meson!
-if build
-  coloquinte_sub = subproject('coloquinte')
-  Coloquinte = coloquinte_sub.get_variable('coloquinte_dep')
-else
-  Coloquinte = disabler()
-endif
 
 subdir('hurricane')
 subdir('lefdef')
