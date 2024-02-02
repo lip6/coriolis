@@ -74,8 +74,8 @@ namespace Meltemi {
     _coloquinteCallbackCore(step, true);
 
     // Disable error messages when running Katana
-    unsigned mask = mstream::getActiveMask();
-    mstream::disable((unsigned)-1);
+    //unsigned mask = mstream::getActiveMask();
+    //mstream::disable((unsigned)-1);
 
     // Run the KatanaEngine global routing
     _katana = Katana::KatanaEngine::get(getCell());
@@ -107,7 +107,7 @@ namespace Meltemi {
     _katana = NULL;
 
     // Reenable error messages
-    mstream::enable(mask);
+    //mstream::enable(mask);
   }
 
   std::vector<std::pair<coloquinte::Rectangle, float>> MeltemiEngine::computeCongestionMap()
