@@ -1352,7 +1352,8 @@ namespace {
     uint16_t       rows    = 0;
     DbU::Unit      dx      = 0;
     DbU::Unit      dy      = 0;
-    vector<Point>  arrayArea;
+    Point                       origin;
+    Transformation::Orientation orient = Transformation::Orientation::ID;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
@@ -1372,6 +1373,27 @@ namespace {
       if (not _validSyntax) {
         cdebug_tabw(101,-1);
         return _validSyntax;
+      }
+      if (_angle ==  90.0) {
+        orient = Transformation::Orientation::R1;
+      } else if (_angle == 180.0) {
+        orient = Transformation::Orientation::R2;
+      } else if (_angle == 270.0) {
+        orient = Transformation::Orientation::R3;
+      } else if (_angle !=   0.0) {
+        cerr << Warning( "GdsStream::readAref(): Unsupported angle %d.2 for AREF (Instance) of \"%s\""
+                       , _angle, masterName.c_str() ) << endl;
+      }
+      if (_xReflection) {
+        switch ( orient ) {
+          case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
+          case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
+          case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
+          case Transformation::Orientation::R3: orient = Transformation::Orientation::XR; break;
+          default:
+            cerr << Warning( "GdsStream::readAref(): Unsupported MX+Orientation (%s) combination for AREF (Instance) of \"%s\""
+                           , getString(orient).c_str(), masterName.c_str() ) << endl;
+        }
       }
     }
 
@@ -1395,37 +1417,34 @@ namespace {
     if (_record.isXY()) {
       if (_cell) {
         DbU::Unit       oneGrid = DbU::fromGrid( 1 );
-        vector<size_t>  offgrids;
         const vector<int32_t> coordinates = _record.getInt32s();
-        for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
-          arrayArea.push_back( Point( coordinates[i  ]*_scale
-                                    , coordinates[i+1]*_scale ) );
-          if ( (arrayArea.back().getX() % oneGrid) or (arrayArea.back().getX() % oneGrid) ) {
-            offgrids.push_back( i );
-          }
+        origin.setX(coordinates[0] * _scale);
+        origin.setY(coordinates[1] * _scale);
+        if ( (origin.getX() % oneGrid) or (origin.getY() % oneGrid) ) {
+          cerr << Error( "GdsStream::readAref(): Offgrid (%s, %s) origin point (foundry grid: %s).\n"
+                       , DbU::getValueString(origin.getX()).c_str()
+                       , DbU::getValueString(origin.getY()).c_str()
+                       , DbU::getValueString(oneGrid).c_str() ) << endl;
         }
-
-        if (not offgrids.empty()) {
-          size_t offgrid = 0;
-          ostringstream m;
-          for ( size_t i=0 ; i<arrayArea.size() ; ++i ) {
-            if (i) m << "\n";
-            m << "        | " << arrayArea[i];
-            if ((offgrid < offgrids.size()) and (i == offgrid)) {
-              m << " offgrid";
-              ++offgrid;
-            }
-          }
-          cerr << Error( "GdsStream::readAref(): Offgrid XY points (foundry grid: %s).\n"
-                         "%s"
-                       , DbU::getValueString(oneGrid).c_str()
-                       , m.str().c_str() ) << endl;
-        } 
+        else {
+          cdebug_log(101,0) << "arrayOrigin: " << origin << endl;
+        }
+        Transformation arrayTransf ( 0, 0, orient );
+        dx = arrayTransf.getX(
+                        Point(coordinates[2] * _scale - origin.getX(),
+                              coordinates[3] * _scale - origin.getY())) / columns;
+        dy = arrayTransf.getY(
+                        Point(coordinates[4] * _scale - origin.getX(),
+                              coordinates[5] * _scale - origin.getY())) / rows;
+        cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
+        cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
+        if (not dx and (columns > 1))
+            cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
+                        , columns ) << endl;
+        if (not dy and (rows > 1))
+            cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
+                        , rows ) << endl;
       }
-      cdebug_log(101,0) << "arrayArea:" << endl;
-      cdebug_log(101,0) << "[0] " << arrayArea[0] << endl;
-      cdebug_log(101,0) << "[1] " << arrayArea[1] << endl;
-      cdebug_log(101,0) << "[2] " << arrayArea[2] << endl;
       _stream >> _record;
     } else {
       _validSyntax = false;
@@ -1434,48 +1453,11 @@ namespace {
     }
 
     if (_cell) {
-      Transformation::Orientation orient = Transformation::Orientation::ID;
-      if (_angle ==  90.0) {
-        orient = Transformation::Orientation::R1;
-      } else if (_angle == 180.0) {
-        orient = Transformation::Orientation::R2;
-      } else if (_angle == 270.0) {
-        orient = Transformation::Orientation::R3;
-      } else if (_angle !=   0.0) {
-        cerr << Warning( "GdsStream::readAref(): Unsupported angle %d.2 for AREF (Instance) of \"%s\""
-                       , _angle, masterName.c_str() ) << endl;
-      }
-
-      if (_xReflection) {
-        switch ( orient ) {
-          case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
-          case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
-          case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
-          case Transformation::Orientation::R3: orient = Transformation::Orientation::XR; break;
-          default:
-            cerr << Warning( "GdsStream::readAref(): Unsupported MX+Orientation (%s) combination for AREF (Instance) of \"%s\""
-                           , getString(orient).c_str(), masterName.c_str() ) << endl;
-        }
-      }
-      Transformation arrayTransf ( 0, 0, orient );
-      for( auto &pt: arrayArea)
-        pt = arrayTransf.getPoint(pt);
-      dx = (arrayArea[1].getX() - arrayArea[0].getX()) / columns;
-      dy = (arrayArea[2].getY() - arrayArea[0].getY()) / rows;
-      cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
-      cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
-      if (not dx and (columns > 1))
-          cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
-                       , columns ) << endl;
-      if (not dy and (rows > 1))
-          cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
-                       , rows ) << endl;
       for ( uint32_t column=0 ; column < (uint32_t)columns ; ++column ) {
         for ( uint32_t row=0 ; row < (uint32_t)rows ; ++row ) {
-          DbU::Unit xpos = arrayArea[0].getX() + column*dx;
-          DbU::Unit ypos = arrayArea[0].getY() + row   *dy;
+          DbU::Unit xpos = origin.getX() + column*dx;
+          DbU::Unit ypos = origin.getY() + row   *dy;
           Transformation itemTransf = Transformation( xpos, ypos, orient );
-        //arrayTransf.applyOn( itemTransf );
           
           cdebug_log(101,0) << "column=" << column
                             << " row="   << row
