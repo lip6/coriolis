@@ -1387,10 +1387,10 @@ namespace {
       if (_xReflection) {
         switch ( orient ) {
           case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
-          case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
+          case Transformation::Orientation::R1: orient = Transformation::Orientation::XR; break;
           case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
-          case Transformation::Orientation::R3: orient = Transformation::Orientation::XR; break;
-          default:
+          case Transformation::Orientation::R3: orient = Transformation::Orientation::YR; break;
+          default:  
             cerr << Warning( "GdsStream::readAref(): Unsupported MX+Orientation (%s) combination for AREF (Instance) of \"%s\""
                            , getString(orient).c_str(), masterName.c_str() ) << endl;
         }
@@ -1418,6 +1418,11 @@ namespace {
       if (_cell) {
         DbU::Unit       oneGrid = DbU::fromGrid( 1 );
         const vector<int32_t> coordinates = _record.getInt32s();
+        if (coordinates.size() != 6) {
+          _validSyntax = false;
+          cdebug_tabw(101,-1);
+          return _validSyntax;
+        }
         origin.setX(coordinates[0] * _scale);
         origin.setY(coordinates[1] * _scale);
         if ( (origin.getX() % oneGrid) or (origin.getY() % oneGrid) ) {
@@ -1430,12 +1435,10 @@ namespace {
           cdebug_log(101,0) << "arrayOrigin: " << origin << endl;
         }
         Transformation arrayTransf ( 0, 0, orient );
-        dx = arrayTransf.getX(
-                        Point(coordinates[2] * _scale - origin.getX(),
-                              coordinates[3] * _scale - origin.getY())) / columns;
-        dy = arrayTransf.getY(
-                        Point(coordinates[4] * _scale - origin.getX(),
-                              coordinates[5] * _scale - origin.getY())) / rows;
+        dx = arrayTransf.getX(coordinates[2] * _scale - origin.getX(),
+                              coordinates[3] * _scale - origin.getY()) / columns;
+        dy = arrayTransf.getY(coordinates[4] * _scale - origin.getX(),
+                              coordinates[5] * _scale - origin.getY()) / rows;
         cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
         cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
         if (not dx and (columns > 1))
