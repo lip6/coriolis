@@ -1350,8 +1350,7 @@ namespace {
     string         masterName;
     uint16_t       columns = 0;
     uint16_t       rows    = 0;
-    DbU::Unit      dx      = 0;
-    DbU::Unit      dy      = 0;
+    Point          vx, vy;
     Point                       origin;
     Transformation::Orientation orient = Transformation::Orientation::ID;
 
@@ -1434,17 +1433,20 @@ namespace {
         else {
           cdebug_log(101,0) << "arrayOrigin: " << origin << endl;
         }
-        Transformation arrayTransf ( 0, 0, orient );
-        dx = arrayTransf.getX(coordinates[2] * _scale - origin.getX(),
-                              coordinates[3] * _scale - origin.getY()) / columns;
-        dy = arrayTransf.getY(coordinates[4] * _scale - origin.getX(),
-                              coordinates[5] * _scale - origin.getY()) / rows;
-        cdebug_log(101,0) << "dx=" << DbU::getValueString(dx) << endl;
-        cdebug_log(101,0) << "dy=" << DbU::getValueString(dy) << endl;
-        if (not dx and (columns > 1))
+        vx.setX((coordinates[2] * _scale - origin.getX()) / columns);
+        vx.setY((coordinates[3] * _scale - origin.getY()) / columns);
+        vy.setX((coordinates[4] * _scale - origin.getX()) / rows);
+        vy.setY((coordinates[5] * _scale - origin.getY()) / rows);
+        cdebug_log(101,0) << "vx=("
+                          << DbU::getValueString(vx.getX())
+                          << DbU::getValueString(vx.getY()) << ")" << endl;
+        cdebug_log(101,0) << "vy=("
+                          << DbU::getValueString(vy.getX())
+                          << DbU::getValueString(vy.getY()) << ")" << endl;
+        if (not vx.getX() and not vx.getY() and (columns > 1))
             cerr << Error( "GdsStream::readAref(): Null dx, but more than one column (%d)."
                         , columns ) << endl;
-        if (not dy and (rows > 1))
+        if (not vy.getX() and not vy.getY() and (rows > 1))
             cerr << Error( "GdsStream::readAref(): Null dy, but more than one row (%d)."
                         , rows ) << endl;
       }
@@ -1458,8 +1460,8 @@ namespace {
     if (_cell) {
       for ( uint32_t column=0 ; column < (uint32_t)columns ; ++column ) {
         for ( uint32_t row=0 ; row < (uint32_t)rows ; ++row ) {
-          DbU::Unit xpos = origin.getX() + column*dx;
-          DbU::Unit ypos = origin.getY() + row   *dy;
+          DbU::Unit xpos = origin.getX() + column*vx.getX() + row*vy.getX();
+          DbU::Unit ypos = origin.getY() + column*vx.getY() + row*vy.getY();
           Transformation itemTransf = Transformation( xpos, ypos, orient );
           
           cdebug_log(101,0) << "column=" << column
