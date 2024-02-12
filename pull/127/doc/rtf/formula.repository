@@ -1,0 +1,20 @@
+\_form#0=26x10:$NFs$
+\_form#1=101x14:$ 3 + (NFs-1) \times 2$
+\_form#2=10x10:$C$
+\_form#3=50x14:$ C_{a}, C_{p}, A $
+\_form#4=10x10:$ P $
+\_form#5=91x14:\[ C = C_{a}A + C_{p}P \]
+\_form#6=14x13:$ C_{a} $
+\_form#7=14x14:$ C_{p} $
+\_form#8=96x14:$ femto Farad (fF) $
+\_form#9=14x13:$ C_1 $
+\_form#10=14x13:$ C_2 $
+\_form#11=31x10:$ R*C $
+\_form#12=38x11:$ 2C+2 $
+\_form#13=30x11:$ C+1 $
+\_form#14=136x14:$ [ [1,2], [1,2] ] or [ [2,1], [2,1] ] $
+\_form#15=19x13:$ C_{00} $
+\_form#16=19x13:$ C_{01} $
+\_form#17=13x6:$ m$
+\_form#18=20x9:$ \mu m$
+\_form#19=16x14:$ C_{ij} $
