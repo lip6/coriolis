@@ -134,6 +134,7 @@ class Macro ( object ):
         inst.setPlacementStatus( Instance.PlacementStatus.FIXED )
         self.wrapper.setTerminalNetlist( True )
         Macro.LUT[ self.cell ] = self
+        trace( 550, '\tWrapper {}\n'.format( self.wrapper ))
 
         ab = self.cell.getAbutmentBox()
         self.rg = af.getRoutingGauge( gaugeName )
@@ -228,7 +229,7 @@ class Macro ( object ):
                                        , bb.getWidth()
                                        , bb.getYMin()
                                        , bb.getYMax() )
-        if self.cell.getName().lower().startswith('gf180mcu_fd_ip_sram'):
+        if self.cell.getName().lower().startswith('gf180mcu_fd_ip_sram_xxxx'):
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
             # Extend pins 2um downwards so that they don't conflict with power supply when we add the via
             for net in self.wrapper.getNets():
@@ -259,16 +260,66 @@ class Macro ( object ):
         for net in self.wrapper.getNets():
             if not net.isExternal() or net.isSupply() or net.isClock():
                 continue
+            eastCandidates  = []
+            westCandidates  = []
+            northCandidates = []
+            southCandidates = []
             for component in net.getComponents():
                 if not NetExternalComponents.isExternal(component):
                     continue
                 bb = component.getBoundingBox()
                 if not ab.isConstrainedBy(bb):
                     continue
-                if   ab.getXMax() == bb.getXMax():  eastPins.append( component )
-                elif ab.getXMin() == bb.getXMin():  westPins.append( component )
-                elif ab.getYMax() == bb.getYMax(): northPins.append( component )
-                elif ab.getYMin() == bb.getYMin(): southPins.append( component )
+                if   ab.getXMax() == bb.getXMax():  eastCandidates.append( component )
+                elif ab.getXMin() == bb.getXMin():  westCandidates.append( component )
+                elif ab.getYMax() == bb.getYMax(): northCandidates.append( component )
+                elif ab.getYMin() == bb.getYMin(): southCandidates.append( component )
+            if   len( eastCandidates) + len( westCandidates) \
+               + len(northCandidates) + len(southCandidates) == 0:
+                print( ErrorMessage( 1, [ 'Macro.__init__(): No suitable external terminal for "{}" in macro "{}".' \
+                                          .format( net.getName(), self.cell.getName() ) ] ))
+                continue
+            found = False
+            if len(eastCandidates):
+                best       = eastCandidates[ 0 ]
+                bestHeight = best.getBoundingBox().getHeight()
+                for candidate in eastCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getHeight() > bestHeight:
+                        best       = candidate
+                        bestHeight = bb.getHeight()
+                eastPins.append( best )
+                found = True
+            if not found and len(westCandidates):
+                best       = westCandidates[ 0 ]
+                bestHeight = best.getBoundingBox().getHeight()
+                for candidate in westCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getHeight() > bestHeight:
+                        best       = candidate
+                        bestHeight = bb.getHeight()
+                westPins.append( best )
+                found = True
+            if not found and len(northCandidates):
+                best      = northCandidates[ 0 ]
+                bestWidth = best.getBoundingBox().getWidth()
+                for candidate in northCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getWidth() > bestWidth:
+                        best      = candidate
+                        bestWidth = bb.getHeight()
+                northPins.append( best )
+                found = True
+            if not found and len(southCandidates):
+                best      = southCandidates[ 0 ]
+                bestWidth = best.getBoundingBox().getWidth()
+                for candidate in southCandidates[1:]:
+                    bb = candidate.getBoundingBox()
+                    if bb.getWidth() > bestWidth:
+                        best      = candidate
+                        bestWidth = bb.getHeight()
+                southPins.append( best )
+                found = True
         if ab.getWidth () % sliceHeight: xMaxAdjust = sliceHeight - (ab.getWidth ()+xMinAdjust) % sliceHeight
         if ab.getHeight() % sliceHeight: yMaxAdjust = sliceHeight - (ab.getHeight()+yMinAdjust) % sliceHeight
         self.innerAb.inflate( xMinAdjust, 0, xMaxAdjust, yMaxAdjust )
@@ -437,6 +488,8 @@ class Macro ( object ):
                 ppitch    = self.getPPitch( component.getLayer() )
                 wwidth    = self.getWireWidth( outerRg.getLayer() )
                 bb        = component.getBoundingBox()
+                if useBigVia:
+                    bb.inflate( 0, 4*wwidth, 0, 0 )
                 xAxis     = bb.getXCenter()
                 xOngrid   = self.getNearestTrackAxis( outerRg.getLayer(), xAxis )
                 yMax      = bb.getYMin()
@@ -461,6 +514,14 @@ class Macro ( object ):
                                  , flags=BigVia.AllowAllExpand )
                     bvia.mergeDepth( outerRg.getDepth() )
                     bvia.doLayout()
+                    bottomPlate = bvia.getPlate( component.getLayer() )
+                    Vertical.create( component.getNet()
+                                   , component.getLayer()
+                                   , bb.getXCenter()
+                                   , bb.getWidth()
+                                   , bottomPlate.getBoundingBox().getYMin()
+                                   , bb.getYMax()
+                                   )
                 else:
                     horizontal = Horizontal.create( component.getNet()
                                                   , component.getLayer()
