@@ -1,0 +1,136 @@
+\hypertarget{classHurricane_1_1Plug}{}\doxysection{Hurricane\+::Plug Class Reference}
+\label{classHurricane_1_1Plug}\index{Hurricane::Plug@{Hurricane::Plug}}
+
+
+\mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} description ({\bfseries{API}})  
+
+
+
+
+Inheritance diagram for Hurricane\+::Plug\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classHurricane_1_1Plug__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \mbox{\hyperlink{classHurricane_1_1Component}{Component}} \mbox{\hyperlink{classHurricane_1_1Plug_a71bee60105cbd9fdc5f0f2e5b793eeca}{Inherit}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Plug_a6ed1a11f86fbb80afacc9cc31b18a706}{get\+Instance}} () const
+\item 
+\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Plug_a57860e49d2674dcef6ea27d79c9d2ad8}{get\+Master\+Net}} () const
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Plug_a177400e23157885a76c924bf53000957}{is\+Connected}} () const
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Plug_af5a0448a5cb0c4956f2f1b28f9c87530}{set\+Net}} (\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$net)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{Indent}\textbf{ Plug Collection}\par
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{namespaceHurricane_ad6b0bd4bdff4c52e6163b9f54e3e5c92}{Plug\+Filter}} \mbox{\hyperlink{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}{get\+Is\+Connected\+Filter}} ()
+\item 
+static \mbox{\hyperlink{namespaceHurricane_ad6b0bd4bdff4c52e6163b9f54e3e5c92}{Plug\+Filter}} \mbox{\hyperlink{classHurricane_1_1Plug_af27b873ed2420329a63ea67dcc243f07}{get\+Is\+Unconnected\+Filter}} ()
+\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Plug}{Plug}} description ({\bfseries{API}}) 
+
+\hypertarget{classHurricane_1_1Plug_secPlugIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Plug_secPlugIntro}
+A plug can be assimilated to a \char`\"{}logical port instance\char`\"{} \+: it designates both the concerned instance and the net of the model cell instanciated to which it is connected. This net, which must be an external net, will be named {\bfseries{\char`\"{}master                net\char`\"{}}} because it is a net of the instance master cell (notice that this net can be asimilated to a \char`\"{}logical port\char`\"{}).
+
+A plug is unique, that is, for a given instance there is one and only one plug refering to a given master net.
+
+\begin{DoxyParagraph}{Caution\+: When created, an instance creates all plugs corresponding to }
+the external nets of its master cell. So, some plugs may exist without being connected. Plugs are the only components which have this characteristic.
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Plugs being completely managed by the system, you can\textquotesingle{}t define sub-\/types of plugs.
+\end{DoxyRemark}
+\hypertarget{classHurricane_1_1Plug_secPlugConstructors}{}\doxysubsection{Constructors \& Destructors}\label{classHurricane_1_1Plug_secPlugConstructors}
+Plugs being completely managed by the system, there is no constructor nor destructor provided.\hypertarget{classHurricane_1_1Plug_secPlugPredefinedFilters}{}\doxysubsection{Predefined filters}\label{classHurricane_1_1Plug_secPlugPredefinedFilters}
+{\bfseries{\mbox{\hyperlink{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}{Hurricane\+::\+Plug\+::get\+Is\+Connected\+Filter}}}} {\bfseries{\mbox{\hyperlink{classHurricane_1_1Plug_af27b873ed2420329a63ea67dcc243f07}{Hurricane\+::\+Plug\+::get\+Is\+Unconnected\+Filter}}}} 
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Plug_a71bee60105cbd9fdc5f0f2e5b793eeca}\label{classHurricane_1_1Plug_a71bee60105cbd9fdc5f0f2e5b793eeca}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{Inherit}{Inherit}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Plug_a71bee60105cbd9fdc5f0f2e5b793eeca}{Hurricane\+::\+Plug\+::\+Inherit}}}
+
+Useful for calling upon methods of the base class without knowing it. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Plug_a6ed1a11f86fbb80afacc9cc31b18a706}\label{classHurricane_1_1Plug_a6ed1a11f86fbb80afacc9cc31b18a706}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{getInstance()}{getInstance()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$ Hurricane\+::\+Plug\+::get\+Instance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the instance to which belongs the plug. \mbox{\Hypertarget{classHurricane_1_1Plug_a57860e49d2674dcef6ea27d79c9d2ad8}\label{classHurricane_1_1Plug_a57860e49d2674dcef6ea27d79c9d2ad8}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!getMasterNet@{getMasterNet}}
+\index{getMasterNet@{getMasterNet}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{getMasterNet()}{getMasterNet()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ Hurricane\+::\+Plug\+::get\+Master\+Net (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the external net referenced by the plug in the master cell of its instance.
+
+\begin{DoxyRemark}{Remarks}
+Don\textquotesingle{}t mistake with \mbox{\hyperlink{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}{get\+Net()}} which returns the net owning the plug (or NULL if is unconnected). 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}\label{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!getIsConnectedFilter@{getIsConnectedFilter}}
+\index{getIsConnectedFilter@{getIsConnectedFilter}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{getIsConnectedFilter()}{getIsConnectedFilter()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ad6b0bd4bdff4c52e6163b9f54e3e5c92}{Plug\+Filter}} Hurricane\+::\+Plug\+::get\+Is\+Connected\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} a filter for selecting only connected plugs. \mbox{\Hypertarget{classHurricane_1_1Plug_af27b873ed2420329a63ea67dcc243f07}\label{classHurricane_1_1Plug_af27b873ed2420329a63ea67dcc243f07}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!getIsUnconnectedFilter@{getIsUnconnectedFilter}}
+\index{getIsUnconnectedFilter@{getIsUnconnectedFilter}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{getIsUnconnectedFilter()}{getIsUnconnectedFilter()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ad6b0bd4bdff4c52e6163b9f54e3e5c92}{Plug\+Filter}} Hurricane\+::\+Plug\+::get\+Is\+Unconnected\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries{Returns\+:}} a filter for selecting only unconnected plugs. \mbox{\Hypertarget{classHurricane_1_1Plug_a177400e23157885a76c924bf53000957}\label{classHurricane_1_1Plug_a177400e23157885a76c924bf53000957}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!isConnected@{isConnected}}
+\index{isConnected@{isConnected}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{isConnected()}{isConnected()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Plug\+::is\+Connected (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} {\bfseries{true}} if the plug is connected, else {\bfseries{false}}.
+
+\begin{DoxyRemark}{Remarks}
+A plug is connected if the call upon {\bfseries{\mbox{\hyperlink{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}{get\+Net()}}}} doesn\textquotesingle{}t return NULL. 
+\end{DoxyRemark}
+
+
+References Hurricane\+::\+Component\+::get\+Net().
+
+\mbox{\Hypertarget{classHurricane_1_1Plug_af5a0448a5cb0c4956f2f1b28f9c87530}\label{classHurricane_1_1Plug_af5a0448a5cb0c4956f2f1b28f9c87530}} 
+\index{Hurricane::Plug@{Hurricane::Plug}!setNet@{setNet}}
+\index{setNet@{setNet}!Hurricane::Plug@{Hurricane::Plug}}
+\doxysubsubsection{\texorpdfstring{setNet()}{setNet()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Plug\+::set\+Net (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$}]{net }\end{DoxyParamCaption})}
+
+This method allows to connect or change the net of a plug.
+
+\begin{DoxyParagraph}{Caution\+: An exception is thrown if the net owner cell differs from the }
+plug owner cell, or if there are components (contact, segments, ...) currently anchored on the plug.
+\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The properties attached to this plug and its occurences are left unchanged. 
+\end{DoxyRemark}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Plug.\+h\item 
+Plug.\+dox\end{DoxyCompactItemize}
