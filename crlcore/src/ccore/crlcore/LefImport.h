@@ -20,6 +20,7 @@
 #include <hurricane/DbU.h>
 namespace Hurricane {
   class Library;
+  class Layer;
 }
 
 
@@ -40,6 +41,9 @@ namespace CRL {
       static void                setMergeLibrary        ( Hurricane::Library* );
       static void                setGdsForeignDirectory ( std::string path );
       static void                setPinFilter           ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
+      static Hurricane::Layer*   getLayer               ( std::string name);
+      static void                addLayer               ( std::string name, Hurricane::Layer* layer );
+      static void                clearLayer             ( std::string name );
   };
 
 

@@ -129,6 +129,7 @@ namespace {
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
+      static       void               clearLayer               ( string );
       static       void               reset                    ();
       static       Library*           parse                    ( string file );
                                       LefParser                ( string file, string libraryName );
@@ -305,7 +306,6 @@ namespace {
     return NULL;
   }
 
-
   void  LefParser::addLayer ( string layerName, Layer* layer )
   {
     if (getLayer(layerName)) {
@@ -316,6 +316,11 @@ namespace {
     _layerLut[ layerName ] = layer;
   }
 
+  void LefParser::clearLayer ( string layerName )
+  {
+    auto item = _layerLut.find( layerName );
+    if (item != _layerLut.end()) _layerLut.erase(item);
+  }
 
   bool  LefParser::isUnmatchedLayer ( string layerName )
   {
@@ -815,7 +820,7 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-  //cerr << "       @ _pinCbk: " << pin->name() << endl;
+    //cerr << "       @ _pinCbk: " << pin->name() << endl;
 
     bool  created = false;
     parser->earlyGetCell( created );
@@ -1384,5 +1389,26 @@ namespace CRL {
 #endif
   }
 
+  Layer* LefImport::getLayer ( string name )
+  {
+#if defined(HAVE_LEFDEF)
+    return LefParser::getLayer( name );
+#else
+    return 0;
+#endif
+  }
 
+  void  LefImport::addLayer ( string name, Layer* layer )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::addLayer( name, layer );
+#endif
+  }
+
+  void  LefImport::clearLayer ( string name )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::clearLayer( name );
+#endif
+  }
 }  // CRL namespace.
