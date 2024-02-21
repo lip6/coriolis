@@ -395,7 +395,7 @@ class Side ( object ):
             self.u = self.corona.padCornerHeight
         padLength = 0
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
-        padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
+        padSpacing = (self.sideLength - 2*self.u - padLength) // (len(self.pads) + 1)
         if self.conf.padsHavePosition:
             self.pads.sort( key=itemgetter(0) )
             position = self.u

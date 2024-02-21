@@ -533,7 +533,7 @@ namespace Etesian {
     DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
     if (modulo) {
       cerr << Warning( "Area::merge(): Misaligned instance %s\n"
-                       "           y=%s (%d) x=%d (%d) area.getXMin()=%s sliceStep=%s (%d)"
+                       "           y=%s (%d) x=%s (%d) area.getXMin()=%s sliceStep=%s (%d)"
                      , occurrence.getCompactString().c_str()
                      , DbU::getValueString(flatAb.getYMin()).c_str(), flatAb.getYMin()
                      , DbU::getValueString(flatAb.getXMin()).c_str(), flatAb.getXMin()
