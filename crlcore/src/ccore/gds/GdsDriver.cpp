@@ -877,11 +877,19 @@ namespace {
                     name.erase( 511 );
                   }
                 // PRESENTATION: 0b000101 means font:00, vpres:01 (center), hpres:01 (center)
+                  auto textLayer = exportLayer;
+                  for (BasicLayer* layer : tech->getBasicLayers()) {
+                    if(  (layer->getMaterial().getCode() == BasicLayer::Material::info)
+                      && (layer->getGds2Layer() == exportLayer->getGds2Layer()) ) {
+                      textLayer = layer;
+                      break;
+                    }
+                  }
                   cdebug_log(101,0) << "TEXT" << endl;
                   (*this) << TEXT;
-                  (*this) << LAYER(exportLayer->getGds2Layer());
+                  (*this) << LAYER(textLayer->getGds2Layer());
                   cdebug_log(101,0) << "TEXTTYPE" << endl;
-                  (*this) << TEXTTYPE( 0 );
+                  (*this) << TEXTTYPE(textLayer->getGds2Datatype());
                   cdebug_log(101,0) << "TEXTYPE end record" << endl;
                   (*this) << PRESENTATION( 5 );
                   (*this) << putOnGrid( bb.getCenter() );
