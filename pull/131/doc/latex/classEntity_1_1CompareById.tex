@@ -1,0 +1,36 @@
+\hypertarget{classEntity_1_1CompareById}{}\doxysection{Compare\+By\+Id Class Reference}
+\label{classEntity_1_1CompareById}\index{CompareById@{CompareById}}
+
+
+Entity comparison criterion for STL container.  
+
+
+
+
+\doxysubsection{Detailed Description}
+Entity comparison criterion for STL container. 
+
+This class is a functor to be used in STL containers of {\ttfamily Entity$\ast$} whenever determinism is required (as an alternative to the object\textquotesingle{}s pointer). If a {\ttfamily NULL} pointer is passed as argument, it\textquotesingle{}s {\ttfamily id} is computed as zero, it is a failsafe and should be avoided.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{typedef}  std::map<Net*,SomeValue,Entity::CompareById>  NetMap;}
+\DoxyCodeLine{}
+\DoxyCodeLine{NetMap  netMap;}
+\DoxyCodeLine{forEach( Net*, inet, cell-\/>getNets() ) \{}
+\DoxyCodeLine{  netMap.insert( std::make\_pair(*inet,computeSomeValue(*inet)) );}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{for} ( NetMap::iterator imap=netMap.begin() ; imap!=netMap.end() ; ++imap ) \{}
+\DoxyCodeLine{  \textcolor{comment}{// Show the Net ordering}}
+\DoxyCodeLine{  cout << (*imap).first-\/>getId() << \textcolor{stringliteral}{"{}:"{}} << (*imap).first << endl;}
+\DoxyCodeLine{  \textcolor{comment}{// Do something}}
+\DoxyCodeLine{  \textcolor{comment}{// ...}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Entity.\+dox\end{DoxyCompactItemize}

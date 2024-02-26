@@ -1,0 +1,789 @@
+.TH "CapacitorUnit" 3 "Mon Feb 26 2024" "Version 0.0.0a1" "Oroshi - Analog Devices Layout" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CapacitorUnit \- Draws a capacitor of type Poly-Poly or Metal-Metal in 350 nm AMS CMOS technology\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBCapacitorStack\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "def \fB__init__\fP (self, device, capacitorType, abutmentBoxPosition, capacitance=0, capDim={})"
+.br
+.RI "This is the class constructor\&. "
+.ti -1c
+.RI "def \fB__setCapacitorPerUnit__\fP (self, capacitorType)"
+.br
+.RI "Sets the area and perimeter capacitances as specified in 350 nm AMS technology and according to \fCcapacitorType\fP (MIM or PIP)\&. "
+.ti -1c
+.RI "def \fB__computeCapDim__\fP (self, capacitance, capacitorType)"
+.br
+.RI "Computes width and length of the capacitor\&. "
+.ti -1c
+.RI "def \fB__isCapacitorUnitOK__\fP (self, capDim)"
+.br
+.RI "Checks if the computed capacitor dimensions exceed or are less than maximum and minimum limits, respectively, as specified in technology rules\&. "
+.ti -1c
+.RI "def \fBsetRules\fP (self)"
+.br
+.RI "Selects technological rules according to the capacitor type\&. "
+.ti -1c
+.RI "def \fBgetCapacitorType\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetMaximumCapWidth\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetMinimumCapWidth\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetLayers\fP (self)"
+.br
+.RI "Loads the technology file then extracts the adequate layers according to the capacitor type (MIM or PIP)\&. "
+.ti -1c
+.RI "def \fBcreate\fP (self, t, b, bbMode=False, vEnclosure_botPlate_abtBox=None, hEnclosure_botPlate_abtBox=None)"
+.br
+.RI "When bonding box mode is activated, the function draws all layout physical layers of the capacitor after checking its dimensions\&. "
+.ti -1c
+.RI "def \fBdrawCapacitor\fP (self, layerDict, t, b)"
+.br
+.RI "Draws all layout physicial layers of the capacitor\&. "
+.ti -1c
+.RI "def \fBcomputeBottomPlateCuts\fP (self)"
+.br
+.RI "Computes needed parameters to draw bottom plate cuts in its exact position, including : "
+.ti -1c
+.RI "def \fBcomputeTopPlateCuts\fP (self)"
+.br
+.RI "Computes needed parameters to draw top plate cuts in its exact position, including : "
+.ti -1c
+.RI "def \fBdrawAbutmentBox\fP (self)"
+.br
+.RI "Draws the abutment box of the capacitor in position \fC<\fP(abutmentBoxXMin, abutmentBoxYMin)>\&. "
+.ti -1c
+.RI "def \fBdrawOnePlate\fP (self, layer, net, boxDimensions)"
+.br
+.RI "Draws the top or bottom plate through inflation of the Box under it\&. "
+.ti -1c
+.RI "def \fBdrawBottomPlateCut\fP (self, layer, b)"
+.br
+.RI "Draws the required cuts to connect the bottom plate\&. "
+.ti -1c
+.RI "def \fBdrawTopPlateCut\fP (self, layer, t)"
+.br
+.RI "Draws the top plate's cuts after computing the maximal number of cuts that can be placed and its exact enclosure in the top plate\&. "
+.ti -1c
+.RI "def \fBdrawRoutingLayers\fP (self, bottomPlateLayer, topPlateLayer, t, b)"
+.br
+.RI "Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers\&. "
+.ti -1c
+.RI "def \fBcutMaxNumber\fP (self, width_layer, width_cut, spacing_cut, enclosure_cut)"
+.br
+.RI "Computes the maximal number of cuts to be placed on a layer of width \fCwidth_layer\fP considering specifications such as the spacing between the cuts, its width and its enclosure in the layer\&. "
+.ti -1c
+.RI "def \fBcutLine\fP (self, net, layer, firstCutXCenter, firstCutYCenter, width_cut, height_cut, spacing_cut, cutNumber, direction)"
+.br
+.RI "Creates a horizontal or vertical line of contacts according to the specified direction\&. "
+.ti -1c
+.RI "def \fBcutMatrix\fP (self, net, layer, firstCutXCenter, firstCutYCenter, width_cut, height_cut, spacing_cut, cutColumnNumber, cutRowNumber)"
+.br
+.RI "Creates a matrix of cuts by vertically stacking horizontal lines of identical cuts\&. "
+.ti -1c
+.RI "def \fBgetBottomPlateYMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateLeftCutXMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateLeftCutYMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateLeftCutYMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateRightCutXMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateRightCutYMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateRightCutYMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateLeftRLayerXMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBottomPlateRightCutYCenter\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateLeftRLayerXMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateRLayerYMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateRLayerYMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateRLayerWidth\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateRightRLayerXCenter\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetBotPlateLeftRLayerXCenter\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerYMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerYMax\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerWidth\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerXCenter\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerXMin\fP (self)"
+.br
+.ti -1c
+.RI "def \fBgetTopPlateRLayerXMax\fP (self)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Draws a capacitor of type Poly-Poly or Metal-Metal in 350 nm AMS CMOS technology\&. 
+
+PIP and MIM capacitors are the result of surface superposition between poly1 and poly2 or metal2 and metalcap layers, respectively\&. Given the capacitor value, layout dimensions are computed, then, capacitor layers are drawn\&. Capacitor value, $C$, is given in the expression below, where $ C_{a}, C_{p}, A $ and $ P $ are, area capacitance, perimeter capacitance, area and permiter of the capacitor, respectively : \[ C = C_{a}A + C_{p}P \] The drawn layout shape is square\&. Thus, metcap or poly2 length and width are equal and are computed using the capacitor expression\&. Furthermore, given $ C_{a} $, $ C_{p} $ and enclosure technological rules, dimensions and positions of the abutment box as well as the bottom plate are computed\&. Layouts with dimensions that exceed technological limits cannot be drawn\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "def __init__ ( self,  device,  capacitorType,  abutmentBoxPosition,  capacitance = \fC0\fP,  capDim = \fC{}\fP)"
+
+.PP
+This is the class constructor\&. Few of the class attributes final values are computed in this level\&. Most of attributes are only initialized to zero or empty values\&. Then, it is computed in dedicated class method\&. Input parameters are : 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdevice\fP \fBHurricane\fP AMS device into which layout is drawn\&. 
+.br
+\fIcapacitance\fP Capacitor value, expressed in $ femto Farad (fF) $\&. 
+.br
+\fIabutmentBoxPosition\fP A list containing abscissa and ordinate of the bottom left corner of the abutment box\&.
+.RE
+.PP
+Class attributes are described in the list below\&. Most of class attributes refer to layout dimensions\&. Dictionaries are used to group attributes related to the same layout varibale\&. Layout dimensions and variables are described in Figure 1\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdevice\fP \fBHurricane\fP AMS device into which layout is drawn\&. 
+.br
+\fIcapacitance\fP Capacitor value, expressed in $ femto Farad (fF) $\&. 
+.br
+\fIcapacitorType\fP Can be 'MIMCap' or 'PIPCap' as capacitor type\&. 
+.br
+\fIabutmentBoxDict\fP A dictionary containing abscissa and ordinate of the bottom left corner of the abutment box, (XMin) and (YMin), respectively\&. 
+.br
+\fIabutmentBox\fP Abutment box drawn square\&. It is an object of type \fCBox\fP\&. 
+.br
+\fIbottomPlateBox\fP Bottom plate drawn square\&. It is an object of type \fCBox\fP\&. 
+.br
+\fItopPlateBox\fP Top plate drawn square\&. It is an object of type \fCBox\fP\&. 
+.br
+\fIcut2MatrixDict\fP A dictionary containing center position of the left bottom, which is cut the first to be drawn in the matrix of cuts\&. Initially, the dictionary is empty\&. It is only updated when \fCself\&.capacitorType\fP is equal to \fC'MIMCap'\fP\&.
+.br
+\fIcutLeftLineDict\fP A dictionary containing abcissa and ordinate of the bottom cut in the left line of cuts to be drawn on bottom plate's layer\&. 
+.br
+\fIcutRightLineDict\fP A dictionary containing abcissa and ordinate of the bottom cut in the right line of cuts to be drawn on bottom plate's layer\&. 
+.br
+\fItopCutLineDict\fP A dictionary containing abcissa and ordinate of the bottom cut in the right line of cuts to be drawn on top plate's layer\&. Initially, the dictionary is empty\&. It is only updated when \fCself\&.capacitorType\fP is equal to \fC'PIPCap'\fP\&.
+.br
+\fItopPlateRLayerDict\fP A dictionary containing position information of the top plate's routing layer\&. The dictionary includes ordinates of the layer's top and bottom extremities, \fC'XMin'\fP and \fC'YMin'\fP, respectively, the abcissa of it's center, \fC'XCenter'\fP and its width, \fC'width'\fP\&.
+.br
+\fIbottomPlateRLayerDict\fP A dictionary containing 
+.br
+\fIenclosure_botPlate_topPlate\fP Top plate's layer encolusre in bottom plate's layer\&. 
+.br
+\fIminheight_topPlatecut\fP Minimum height of cuts for top plate connection to other metal layer\&. 
+.br
+\fItopCutLineNumber\fP Maximum possible number cuts to be drawn for top plate's connection\&. 
+.br
+\fIbottomCutLineNumber\fP Maximum possible number cuts to be drawn for top plate's connection\&.
+.RE
+.PP
+\fBRemark:\fP
+.RS 4
+Abutment box must be defined as an attribute because the position of dummy capacitor in \fCNonUnitCapacitor\fP class must be precisely defined\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.__computeCapacitance__(), CapacitorUnit\&.__computeCapDim__(), CapacitorUnit\&.__initCapDim__(), CapacitorStack\&.abutmentBox, CapacitorUnit\&.abutmentBox, VerticalRoutingTracks\&.abutmentBox, CapacitorUnit\&.abutmentBoxDict, CapacitorUnit\&.bottomCutLineNumber, CapacitorUnit\&.bottomPlateBox, CapacitorUnit\&.bottomPlateBoxDict, CapacitorUnit\&.bottomPlateRLayerDict, CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorUnit\&.capDim, CapacitorUnit\&.cut2MatrixDict, CapacitorUnit\&.cutLeftLineDict, CapacitorUnit\&.cutRightLineDict, CapacitorStack\&.device, CapacitorUnit\&.device, VerticalRoutingTracks\&.device, Stack\&.device, CapacitorUnit\&.enclosure_botPlate_abtBox, CapacitorUnit\&.enclosure_botPlate_topPlate, CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.topCutLineDict, CapacitorUnit\&.topCutLineNumber, CapacitorUnit\&.topPlateBox, CapacitorUnit\&.topPlateBoxDict, and CapacitorUnit\&.topPlateRLayerDict\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "def __setCapacitorPerUnit__ ( self,  capacitorType)"
+
+.PP
+Sets the area and perimeter capacitances as specified in 350 nm AMS technology and according to \fCcapacitorType\fP (MIM or PIP)\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a list containing the area and perimeter capacitances\&. 
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorUnit\&.__computeCapDim__()\&.
+.SS "def __computeCapDim__ ( self,  capacitance,  capacitorType)"
+
+.PP
+Computes width and length of the capacitor\&. Given \fCcapacitance\fP value as well as the permiter and area capacitances, a quadratic equation is solved where the unknown parameter is the width (also equivalent to the length)\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a dictionary containing width and length\&. 
+.RE
+.PP
+\fBRemark:\fP
+.RS 4
+The capacitor is square\&. Thus, length and width are equal\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.__setCapacitorPerUnit__()\&.
+.PP
+Referenced by CapacitorStack\&.__init__(), CapacitorUnit\&.__init__(), and CapacitorStack\&.setRules()\&.
+.SS "def __isCapacitorUnitOK__ ( self,  capDim)"
+
+.PP
+Checks if the computed capacitor dimensions exceed or are less than maximum and minimum limits, respectively, as specified in technology rules\&. 
+.PP
+\fBReturns\fP
+.RS 4
+\fCTrue\fP if all rules are respected\&. 
+.RE
+.PP
+\fBRemark:\fP
+.RS 4
+Maximum poly2 layer dimensions for PIP capacitor are not specified in technology rules\&. Thus, only minimum limit condition is checked\&. 
+.RE
+.PP
+
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorUnit\&.getMaximumCapWidth(), and CapacitorUnit\&.getMinimumCapWidth()\&.
+.PP
+Referenced by CapacitorUnit\&.create(), and CapacitorStack\&.setRules()\&.
+.SS "def setRules ( self)"
+
+.PP
+Selects technological rules according to the capacitor type\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a dictionary with rules labels as keys and rules as values\&. Example of technology rules are :
+.IP "\(bu" 2
+minimum spacing between cuts or metals,
+.IP "\(bu" 2
+minimum width of a plate, a cut or a routing metal\&.
+.IP "\(bu" 2
+etc\&. Every rule takes two possible value according to the capacitor type (MIM or PIP)\&. Therefore, dictionary keys are generic and its values are specific to the capacitor type\&. 
+.PP
+.RE
+.PP
+\fBRemark:\fP
+.RS 4
+An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+
+.PP
+Reimplemented in \fBVerticalRoutingTracks\fP, \fBRoutMatchedCapacitor\fP, and \fBCapacitorStack\fP\&.
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorUnit\&.hpitch, CapacitorUnit\&.isVH, Stack\&.isVH, CapacitorUnit\&.METAL2Pitch, CapacitorUnit\&.metal2Width, CapacitorUnit\&.METAL3Pitch, CapacitorUnit\&.metal3Width, CapacitorUnit\&.minEnclo_botPlate_botPlateCut, CapacitorUnit\&.minEnclo_botPlateRMetal_botPlateCut, CapacitorUnit\&.minEnclo_routingTrackMetal_cut, CapacitorUnit\&.minEnclo_topPlate_topPlateCut, CapacitorUnit\&.minEnclo_topPlateRMetal_topPlateCut, CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.minSpacing_botPlate, CapacitorUnit\&.minSpacing_botPlateCut_topPlate, CapacitorUnit\&.minSpacingOnBotPlate_cut, CapacitorUnit\&.minSpacingOnTopPlate_cut, CapacitorUnit\&.minWidth_botPlatecut, CapacitorUnit\&.minWidth_botRMetal, CapacitorUnit\&.minWidth_routingTrackcut, CapacitorUnit\&.minWidth_topPlate, CapacitorUnit\&.minWidth_topPlatecut, CapacitorUnit\&.minWidth_topRMetal, and CapacitorUnit\&.vpitch\&.
+.PP
+Referenced by CapacitorStack\&.create(), CapacitorUnit\&.create(), RoutMatchedCapacitor\&.route(), and VerticalRoutingTracks\&.setRules()\&.
+.SS "def getCapacitorType ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+capacitor type \fC'MIMCap'\fP or \fC'PIPCap'\fP\&. 
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+\fC\fBgetCapacitorType()\fP\fP is especially useful when an instance of \fC\fBCapacitorUnit\fP\fP class is called in another classes instances to identify the capacitor's type\&. 
+.RE
+.PP
+
+.SS "def getMaximumCapWidth ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+maximum size of capacitor's top plate\&. \fC\fBgetMaximumCapWidth()\fP\fP is called to check if capacitor dimensions are within acceptable technological limits\&. An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+1\&. This function is especially usefull in drawing the layout of a unity capacitor, where it is important to garantee that the capacitor size does not exeed the maximum possible value\&. It is also useful when drawing a matrix of capacitors to make sure that also the unity capacitor respects the maximal values specified\&. 
+.PP
+2\&. The maximum value of the poly2 size in PIP capacitor is not specified\&. Thus, it is not considered in \fC\fBgetMaximumCapWidth()\fP\fP 
+.RE
+.PP
+
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, and VerticalRoutingTracks\&.capacitorType\&.
+.PP
+Referenced by CapacitorUnit\&.__isCapacitorUnitOK__()\&.
+.SS "def getMinimumCapWidth ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+The minimum size of the capacitor's top plate\&. An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+This function is especially usefull in drawing the layout of a matrix of capacitors where it is important to ensure that the unity capacitor respects the minimal values specified\&. 
+.PP
+An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, and VerticalRoutingTracks\&.capacitorType\&.
+.PP
+Referenced by CapacitorUnit\&.__isCapacitorUnitOK__()\&.
+.SS "def getLayers ( self)"
+
+.PP
+Loads the technology file then extracts the adequate layers according to the capacitor type (MIM or PIP)\&. 
+.PP
+\fBReturns\fP
+.RS 4
+a dictionary containing the layer labels as attributes and its values\&. 
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+An exception is raised if the entered capacitor type is unknown\&. 
+.RE
+.PP
+
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, and VerticalRoutingTracks\&.capacitorType\&.
+.PP
+Referenced by CapacitorUnit\&.create()\&.
+.SS "def create ( self,  t,  b,  bbMode = \fCFalse\fP,  vEnclosure_botPlate_abtBox = \fCNone\fP,  hEnclosure_botPlate_abtBox = \fCNone\fP)"
+
+.PP
+When bonding box mode is activated, the function draws all layout physical layers of the capacitor after checking its dimensions\&. All functions are excecuted in a new Update Session\&. In the contrary, only an exact estimation of layout dimensions is given\&. An error is raised when dimensions reach technological limits for MIM and PIP capacitors or when \fCbbMode\fP parameters is other than \fCTrue\fP or \fCFalse\fP\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI(\fP t , b ) nets of top and bottom plates, respectively 
+.br
+\fIbbMode\fP activates bonding box dimensions computing when set to \fCTrue\fP 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.__isCapacitorUnitOK__(), CapacitorUnit\&.abutmentBoxDict, CapacitorUnit\&.capDim, Stack\&.computeDimensions(), RoutMatchedCapacitor\&.computeDimensions(), CapacitorUnit\&.computeDimensions(), CapacitorUnit\&.drawAbutmentBox(), CapacitorStack\&.drawAbutmentBox(), CapacitorUnit\&.drawCapacitor(), Technology\&.getLayers(), CapacitorUnit\&.getLayers(), CapacitorStack\&.setRules(), RoutMatchedCapacitor\&.setRules(), CapacitorUnit\&.setRules(), and VerticalRoutingTracks\&.setRules()\&.
+.SS "def drawCapacitor ( self,  layerDict,  t,  b)"
+
+.PP
+Draws all layout physicial layers of the capacitor\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIlayerDict\fP a dictionary containing a description of the required physical layers according to capacitor type 
+.br
+\fI(\fP t , b ) nets of top and bottom plates, respectively 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.bottomPlateBox, CapacitorUnit\&.bottomPlateBoxDict, CapacitorUnit\&.drawBottomPlateCut(), CapacitorUnit\&.drawOnePlate(), CapacitorUnit\&.drawRoutingLayers(), CapacitorUnit\&.drawTopPlateCut(), CapacitorUnit\&.topPlateBox, and CapacitorUnit\&.topPlateBoxDict\&.
+.PP
+Referenced by CapacitorUnit\&.create()\&.
+.SS "def computeBottomPlateCuts ( self)"
+
+.PP
+Computes needed parameters to draw bottom plate cuts in its exact position, including : 
+.IP "\(bu" 2
+maximum number of cuts to draw on both sides of bottom plate,
+.IP "\(bu" 2
+adjusted enclosure of
+.IP "\(bu" 2
+abcissas of the two bottom cuts on left and right sides of bottom plate,
+.IP "\(bu" 2
+ordinate of the same two cuts\&.
+.PP
+.PP
+Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using \fCcutLine\fP function\&. 
+.PP
+References CapacitorUnit\&.bottomCutLineNumber, CapacitorUnit\&.bottomPlateBoxDict, CapacitorUnit\&.cutLeftLineDict, CapacitorUnit\&.cutMaxNumber(), CapacitorUnit\&.cutRightLineDict, CapacitorUnit\&.minEnclo_botPlate_botPlateCut, CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.minSpacing_botPlateCut_topPlate, CapacitorUnit\&.minSpacingOnBotPlate_cut, CapacitorUnit\&.minWidth_topPlatecut, and CapacitorUnit\&.topPlateBoxDict\&.
+.PP
+Referenced by CapacitorUnit\&.drawAbutmentBox()\&.
+.SS "def computeTopPlateCuts ( self)"
+
+.PP
+Computes needed parameters to draw top plate cuts in its exact position, including : 
+.IP "\(bu" 2
+maximum number of cuts to draw on both sides of top plate,
+.IP "\(bu" 2
+adjusted enclosure of
+.IP "\(bu" 2
+abcissas of the two top cuts on left and right sides of top plate,
+.IP "\(bu" 2
+ordinate of the same two cuts\&.
+.PP
+.PP
+Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using \fCcutLine\fP function\&. 
+.PP
+References CapacitorUnit\&.abutmentBoxDict, CapacitorUnit\&.bottomPlateBoxDict, CapacitorUnit\&.bottomPlateRLayerDict, CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorUnit\&.cut2MatrixDict, CapacitorUnit\&.cutLeftLineDict, CapacitorUnit\&.cutMaxNumber(), CapacitorUnit\&.cutRightLineDict, CapacitorUnit\&.enclosure_botPlate_topPlate, CapacitorUnit\&.hEnclosure_botPlate_abtBox, CapacitorUnit\&.minEnclo_botPlate_botPlateCut, CapacitorUnit\&.minEnclo_botPlateRMetal_botPlateCut, CapacitorUnit\&.minEnclo_routingTrackMetal_cut, CapacitorUnit\&.minEnclo_topPlate_topPlateCut, CapacitorUnit\&.minEnclo_topPlateRMetal_topPlateCut, CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.minSpacing_botPlate, CapacitorUnit\&.minSpacing_botPlateCut_topPlate, CapacitorUnit\&.minSpacingOnTopPlate_cut, CapacitorUnit\&.minWidth_botPlatecut, CapacitorUnit\&.minWidth_botRMetal, CapacitorUnit\&.minWidth_routingTrackcut, CapacitorUnit\&.minWidth_topPlatecut, CapacitorUnit\&.setBottomPlateAbtBoxEnclosure(), CapacitorUnit\&.topCutLineDict, CapacitorUnit\&.topCutLineNumber, CapacitorUnit\&.topPlateBoxDict, CapacitorUnit\&.topPlateRLayerDict, and CapacitorUnit\&.vEnclosure_botPlate_abtBox\&.
+.PP
+Referenced by CapacitorUnit\&.drawAbutmentBox()\&.
+.SS "def drawAbutmentBox ( self)"
+
+.PP
+Draws the abutment box of the capacitor in position \fC<\fP(abutmentBoxXMin, abutmentBoxYMin)>\&. First, the minimum enclosure of the top plate inside the bottom plate is computed\&. Second, using this parameters as well as the capacitor dimensions, the width and height of the abutment box are computed\&. The box is finally drawn\&. 
+.PP
+References CapacitorStack\&.abutmentBox, CapacitorUnit\&.abutmentBox, VerticalRoutingTracks\&.abutmentBox, CapacitorUnit\&.abutmentBoxDict, CapacitorUnit\&.bottomPlateBoxDict, CapacitorStack\&.computeAbutmentBoxDimensions(), CapacitorUnit\&.computeAbutmentBoxDimensions(), CapacitorUnit\&.computeBottomPlateCuts(), CapacitorUnit\&.computeOnePlateBoxDimensions(), CapacitorUnit\&.computeRoutingLayersDimensions(), CapacitorUnit\&.computeTopPlateCuts(), CapacitorUnit\&.enclosure_botPlate_topPlate, CapacitorUnit\&.hEnclosure_botPlate_abtBox, CapacitorUnit\&.topPlateBoxDict, and CapacitorUnit\&.vEnclosure_botPlate_abtBox\&.
+.PP
+Referenced by CapacitorStack\&.create(), and CapacitorUnit\&.create()\&.
+.SS "def drawOnePlate ( self,  layer,  net,  boxDimensions)"
+
+.PP
+Draws the top or bottom plate through inflation of the Box under it\&. These boxes are the abutment box in the case of the bottom plate and the bottom plate's box in the case of the top plate\&. This function also creates a a net for the drawn plate and sets it as external\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The drawn box\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorUnit\&.drawCapacitor()\&.
+.SS "def drawBottomPlateCut ( self,  layer,  b)"
+
+.PP
+Draws the required cuts to connect the bottom plate\&. First, the maximal possible number of cuts that can be drawn is computed\&. Second, using the computed number, the enclosure of this cuts in the bottom plate's layer is adjusted while the minimal enclosure is respected\&. Third, the relative positions of the cuts on both sides of the plate are computed\&. Finally, two vertical lines of cuts are drawns\&. 
+.PP
+\fBRemark:\fP
+.RS 4
+The relative positions describe the cordinates of the first bottom cut in every line of cuts\&. Then, knowing the spacing and width specifications of these cuts the rest of the line is easilly constructed\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.bottomCutLineNumber, CapacitorUnit\&.cutLeftLineDict, CapacitorUnit\&.cutLine(), CapacitorUnit\&.cutRightLineDict, CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.minSpacingOnBotPlate_cut, and CapacitorUnit\&.minWidth_botPlatecut\&.
+.PP
+Referenced by CapacitorUnit\&.drawCapacitor()\&.
+.SS "def drawTopPlateCut ( self,  layer,  t)"
+
+.PP
+Draws the top plate's cuts after computing the maximal number of cuts that can be placed and its exact enclosure in the top plate\&. 
+.PP
+References CapacitorStack\&.capacitorType, RoutMatchedCapacitor\&.capacitorType, CapacitorUnit\&.capacitorType, VerticalRoutingTracks\&.capacitorType, CapacitorUnit\&.cut2MatrixDict, CapacitorUnit\&.cutLine(), CapacitorUnit\&.cutMatrix(), CapacitorUnit\&.minheight_topPlatecut, CapacitorUnit\&.minSpacingOnTopPlate_cut, CapacitorUnit\&.minWidth_topPlatecut, CapacitorUnit\&.topCutLineDict, and CapacitorUnit\&.topCutLineNumber\&.
+.PP
+Referenced by CapacitorUnit\&.drawCapacitor()\&.
+.SS "def drawRoutingLayers ( self,  bottomPlateLayer,  topPlateLayer,  t,  b)"
+
+.PP
+Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers\&. Also computes positions if rlayers that are crucial for routing\&. 
+.PP
+References CapacitorUnit\&.bottomPlateRLayerDict, CapacitorUnit\&.cutLeftLineDict, CapacitorUnit\&.cutRightLineDict, and CapacitorUnit\&.topPlateRLayerDict\&.
+.PP
+Referenced by CapacitorUnit\&.drawCapacitor()\&.
+.SS "def cutMaxNumber ( self,  width_layer,  width_cut,  spacing_cut,  enclosure_cut)"
+
+.PP
+Computes the maximal number of cuts to be placed on a layer of width \fCwidth_layer\fP considering specifications such as the spacing between the cuts, its width and its enclosure in the layer\&. 
+.PP
+Referenced by CapacitorUnit\&.computeBottomPlateCuts(), and CapacitorUnit\&.computeTopPlateCuts()\&.
+.SS "def cutLine ( self,  net,  layer,  firstCutXCenter,  firstCutYCenter,  width_cut,  height_cut,  spacing_cut,  cutNumber,  direction)"
+
+.PP
+Creates a horizontal or vertical line of contacts according to the specified direction\&. 
+.PP
+Referenced by CapacitorUnit\&.cutMatrix(), CapacitorUnit\&.drawBottomPlateCut(), and CapacitorUnit\&.drawTopPlateCut()\&.
+.SS "def cutMatrix ( self,  net,  layer,  firstCutXCenter,  firstCutYCenter,  width_cut,  height_cut,  spacing_cut,  cutColumnNumber,  cutRowNumber)"
+
+.PP
+Creates a matrix of cuts by vertically stacking horizontal lines of identical cuts\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fInet\fP net to which the cuts belong 
+.br
+\fIlayer\fP cuts physical layer 
+.br
+\fIfirstCutXCenter\fP center's abcissa of the bottom left cut ( that is the first cut to be drawn in the matrix ) 
+.br
+\fIfirstCutYCenter\fP center's abcissa of the bottom left cut 
+.br
+\fI(width_cut,height_cut,spacing_cut)\fP cuts dimenions 
+.br
+\fI(cutColumnNumber,cutRowNumber)\fP matrix dimensions
+.RE
+.PP
+\fBRemarks\fP
+.RS 4
+The matrix can have any dimensions zero or negative one\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.cutLine()\&.
+.PP
+Referenced by CapacitorUnit\&.drawTopPlateCut()\&.
+.SS "def getBottomPlateYMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the bottom plate's highest end-point ( that is equivalent to \fCdySource\fP of the bottom plate's box ) \&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.bottomPlateBoxDict\&.
+.SS "def getBottomPlateLeftCutXMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the abcissa of the bottom plate's left line of cuts\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawBottomPlatesRLayers(), and RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack()\&.
+.SS "def getBottomPlateLeftCutYMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the first ( or bottom) cut in the left line of cuts on the bottom plate\&. 
+.RE
+.PP
+
+.SS "def getBottomPlateLeftCutYMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the highest cut of the bottom plate's left line of cuts\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.bottomCutLineNumber, CapacitorUnit\&.minSpacingOnBotPlate_cut, and CapacitorUnit\&.minWidth_botPlatecut\&.
+.SS "def getBottomPlateRightCutXMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the absissa of the bottom plate's right line of cuts\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawBottomPlatesRLayers(), and RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack()\&.
+.SS "def getBottomPlateRightCutYMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the first ( or bottom) cut in the right line of cuts on the bottom plate\&. 
+.RE
+.PP
+
+.PP
+Referenced by RoutMatchedCapacitor\&.computeHRLayerYCenter(), and CapacitorUnit\&.getBottomPlateRightCutYCenter()\&.
+.SS "def getBottomPlateRightCutYMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the highest ( or top) cut in the right line of cuts on the bottom plate\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.bottomCutLineNumber, CapacitorUnit\&.minSpacingOnBotPlate_cut, and CapacitorUnit\&.minWidth_botPlatecut\&.
+.PP
+Referenced by RoutMatchedCapacitor\&.computeHRLayerYCenter(), and CapacitorUnit\&.getBottomPlateRightCutYCenter()\&.
+.SS "def getBotPlateLeftRLayerXMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the center's ordinate of the bottom plate's left cut (the cut that is the first one in the line)\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawBottomPlatesRLayers()\&.
+.SS "def getBottomPlateRightCutYCenter ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of the bottom plate's right cuts on the horitontal axis (also applicable to left cuts)\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.getBottomPlateRightCutYMax(), and CapacitorUnit\&.getBottomPlateRightCutYMin()\&.
+.SS "def getBotPlateLeftRLayerXMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of the bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.SS "def getBotPlateRLayerYMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.PP
+Referenced by RoutMatchedCapacitor\&.route()\&.
+.SS "def getBotPlateRLayerYMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawBottomPlatesRLayers()\&.
+.SS "def getBotPlateRLayerWidth ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawBottomPlatesRLayers(), RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack(), and RoutMatchedCapacitor\&.route()\&.
+.SS "def getBotPlateRightRLayerXCenter ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.PP
+Referenced by RoutMatchedCapacitor\&.route()\&.
+.SS "def getBotPlateLeftRLayerXCenter ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the position of bottom plate's left cuts on the horitontal axis\&. 
+.RE
+.PP
+
+.PP
+Referenced by RoutMatchedCapacitor\&.route()\&.
+.SS "def getTopPlateRLayerYMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the bottom end points of the top plate routing layer\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawTopPlatesRLayers(), and RoutMatchedCapacitor\&.route()\&.
+.SS "def getTopPlateRLayerYMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the ordinate of the higher end points of the top plate routing layer\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawTopPlatesRLayers()\&.
+.SS "def getTopPlateRLayerWidth ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the width of top plate's routing layer\&. 
+.RE
+.PP
+
+.PP
+Referenced by RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack(), CapacitorStack\&.drawTopPlatesRLayers(), and RoutMatchedCapacitor\&.route()\&.
+.SS "def getTopPlateRLayerXCenter ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the center's abcissa of the bottom plate routing layer\&. 
+.RE
+.PP
+
+.PP
+Referenced by CapacitorStack\&.drawTopPlatesRLayers()\&.
+.SS "def getTopPlateRLayerXMin ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the origin (bottom-left end point) abcissa of the top plate routing layers\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.topPlateRLayerDict\&.
+.PP
+Referenced by RoutMatchedCapacitor\&.__computeConnections__(), and RoutMatchedCapacitor\&.drawCuts_vRoutingTrack_hRoutingTrack()\&.
+.SS "def getTopPlateRLayerXMax ( self)"
+
+.PP
+\fBReturns\fP
+.RS 4
+the abscissa of the bottom-right end-point of the top plate routing layer\&. 
+.RE
+.PP
+
+.PP
+References CapacitorUnit\&.topPlateRLayerDict\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Oroshi - Analog Devices Layout from the source code\&.

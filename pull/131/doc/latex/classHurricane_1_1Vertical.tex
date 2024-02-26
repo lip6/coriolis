@@ -1,0 +1,122 @@
+\hypertarget{classHurricane_1_1Vertical}{}\doxysection{Hurricane\+::Vertical Class Reference}
+\label{classHurricane_1_1Vertical}\index{Hurricane::Vertical@{Hurricane::Vertical}}
+
+
+\mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} description ({\bfseries{API}})  
+
+
+
+
+Inheritance diagram for Hurricane\+::Vertical\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{classHurricane_1_1Vertical__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \mbox{\hyperlink{classHurricane_1_1Segment}{Segment}} \mbox{\hyperlink{classHurricane_1_1Vertical_a0132a4151899b356b157562c792294fd}{Inherit}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \& \mbox{\hyperlink{classHurricane_1_1Vertical_a798671c28c5e9848a92a6d1a9765e3ce}{get\+Dy\+Source}} () const
+\item 
+const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \& \mbox{\hyperlink{classHurricane_1_1Vertical_af9ae34d224436db7c4c30f18fbd8f9a3}{get\+Dy\+Target}} () const
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Vertical_aaea60cb8247f4ea837f90a4532901143}{setX}} (const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&x)
+\item 
+void \mbox{\hyperlink{classHurricane_1_1Vertical_a15f2854bf1d5928aff717d47015a8668}{translate}} (const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dx)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Vertical_a1ff223aa8f0b9ffe3aefc5e3ade6d34a}{create}} (\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$net, const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$layer, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&x, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&width=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dy\+Source=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dy\+Target=0)
+\item 
+static \mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Vertical_aabfa1b7d21d851f6f4c278bf2d7a2ff2}{create}} (\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$source, \mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$target, const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$layer, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&x, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&width=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dy\+Source=0, const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&dy\+Target=0)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} description ({\bfseries{API}}) 
+
+\hypertarget{classHurricane_1_1Vertical_secVerticalIntro}{}\doxysubsection{Introduction}\label{classHurricane_1_1Vertical_secVerticalIntro}
+A vertical has, in addition to inherited attributes, a specific one \+: its abscissa. The vertical extend of the segment is defined by the \char`\"{}source\char`\"{} and \char`\"{}target\char`\"{} components on which it is anchored.
+
+This abscissa allows, among other things, to anchor a vertical segment extremity on a component (i.\+e. a contact) with a small horizontal offset without the need to materialize it, because it is implicitely equal to the difference between the vertical abscissa and the component abscissa. It allows also, and it not the least interesting feature, to anchor an extremity of a vertical directly on a horizontal segment (and conversely) without the need to create an intermediate contact (unless they are on different layers!). The abscissa of the implicit contact point is the one of the vertical and the ordinate the one of the horizontal). 
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_a0132a4151899b356b157562c792294fd}\label{classHurricane_1_1Vertical_a0132a4151899b356b157562c792294fd}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{Inherit}{Inherit}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Vertical_a0132a4151899b356b157562c792294fd}{Hurricane\+::\+Vertical\+::\+Inherit}}}
+
+Useful for calling upon methods of the base class without knowing it. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_a1ff223aa8f0b9ffe3aefc5e3ade6d34a}\label{classHurricane_1_1Vertical_a1ff223aa8f0b9ffe3aefc5e3ade6d34a}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!create@{create}}
+\index{create@{create}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} $\ast$ Hurricane\+::\+Vertical\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$}]{net,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$}]{layer,  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{x,  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{width = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dy\+Source = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dy\+Target = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns an absolute vertical segment with layer {\ttfamily $<$layer$>$}, located at abscissa {\ttfamily $<$x$>$} and of width {\ttfamily $<$width$>$}. The differents extremities ordinates are given by {\ttfamily $<$dy\+Source$>$} and {\ttfamily $<$dy\+Target$>$}.
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if any of the net or layer pointers is }
+null. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_aabfa1b7d21d851f6f4c278bf2d7a2ff2}\label{classHurricane_1_1Vertical_aabfa1b7d21d851f6f4c278bf2d7a2ff2}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!create@{create}}
+\index{create@{create}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Vertical}{Vertical}} $\ast$ Hurricane\+::\+Vertical\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$}]{source,  }\item[{\mbox{\hyperlink{classHurricane_1_1Component}{Component}} $\ast$}]{target,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$}]{layer,  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{x,  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{width = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dy\+Source = {\ttfamily 0},  }\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dy\+Target = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a vertical segment whose origin lies (through an offset equal to {\ttfamily $<$dy\+Source$>$}) on {\ttfamily $<$source$>$}, whose extremity lies (through an offset equal to {\ttfamily $<$dy\+Target$>$}) on {\ttfamily $<$target$>$}, with layer {\ttfamily $<$layer$>$}, located at abscissa {\ttfamily $<$x$>$} and of width {\ttfamily $<$width$>$}.
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if any of the source, target or layer }
+pointers is null or if the two component don\textquotesingle{}t belong to the same net. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_a798671c28c5e9848a92a6d1a9765e3ce}\label{classHurricane_1_1Vertical_a798671c28c5e9848a92a6d1a9765e3ce}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!getDySource@{getDySource}}
+\index{getDySource@{getDySource}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{getDySource()}{getDySource()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \& Hurricane\+::\+Vertical\+::get\+Dy\+Source (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the relative source ordinate of the segment (may be absolute if the source extremity isn\textquotesingle{}t anchored).
+
+\begin{DoxyRemark}{Remarks}
+If you want to get the absolute one use the member function get\+Source\+X() defined at the \mbox{\hyperlink{classHurricane_1_1Segment}{Segment}} level. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_af9ae34d224436db7c4c30f18fbd8f9a3}\label{classHurricane_1_1Vertical_af9ae34d224436db7c4c30f18fbd8f9a3}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!getDyTarget@{getDyTarget}}
+\index{getDyTarget@{getDyTarget}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{getDyTarget()}{getDyTarget()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \& Hurricane\+::\+Vertical\+::get\+Dy\+Target (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries{Returns\+:}} the relative target ordinate of the segment (may be absolute if the target extremity isn\textquotesingle{}t anchored).
+
+\begin{DoxyRemark}{Remarks}
+If you want to get the absolute one use the member function get\+Target\+X() defined at the \mbox{\hyperlink{classHurricane_1_1Segment}{Segment}} level. 
+\end{DoxyRemark}
+\mbox{\Hypertarget{classHurricane_1_1Vertical_aaea60cb8247f4ea837f90a4532901143}\label{classHurricane_1_1Vertical_aaea60cb8247f4ea837f90a4532901143}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!setX@{setX}}
+\index{setX@{setX}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{setX()}{setX()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Vertical\+::setX (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{x }\end{DoxyParamCaption})}
+
+sets the abscissa of the segment. \mbox{\Hypertarget{classHurricane_1_1Vertical_a15f2854bf1d5928aff717d47015a8668}\label{classHurricane_1_1Vertical_a15f2854bf1d5928aff717d47015a8668}} 
+\index{Hurricane::Vertical@{Hurricane::Vertical}!translate@{translate}}
+\index{translate@{translate}!Hurricane::Vertical@{Hurricane::Vertical}}
+\doxysubsubsection{\texorpdfstring{translate()}{translate()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Vertical\+::translate (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \&}]{dx }\end{DoxyParamCaption})}
+
+translate horizontaly the vertical segment of the quantity {\ttfamily $<$dx$>$}. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Vertical.\+h\item 
+Vertical.\+dox\end{DoxyCompactItemize}
