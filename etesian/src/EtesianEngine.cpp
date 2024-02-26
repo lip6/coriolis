@@ -146,8 +146,8 @@ namespace {
                                    , DbU::Unit     vpitch
                                    )
   {
-    DbU::Unit tx = position.x * vpitch;
-    DbU::Unit ty = position.y * hpitch;
+    DbU::Unit tx = position.x * hpitch;
+    DbU::Unit ty = position.y * vpitch;
 
     Box       cellBox    = model->getAbutmentBox();
     Transformation::Orientation orient = Transformation::Orientation::ID;
@@ -694,7 +694,7 @@ namespace Etesian {
     clearColoquinte();
     AllianceFramework* af          = AllianceFramework::get();
     DbU::Unit          hpitch      = getSliceStep();
-    DbU::Unit          vpitch      = getSliceStep();
+    DbU::Unit          vpitch      = getSliceHeight(); //getSliceStep();
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
@@ -1216,7 +1216,7 @@ namespace Etesian {
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       DbU::Unit hpitch          = getSliceStep();
-      DbU::Unit vpitch          = getSliceStep();
+      DbU::Unit vpitch          = getSliceHeight(); //getSliceStep();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();
