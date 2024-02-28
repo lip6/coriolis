@@ -18,7 +18,7 @@ To install python doit.
    dummy@lepka:~> pip install doit==0.33.0
    	
 
-To install yosys on |Debian| 12 or |Ubuntu| 22 or  compatible distributions
+To install yosys on Debian 12 or Ubuntu 22 or  compatible distributions
 
 Prerequisites of yosys, 
 
@@ -29,7 +29,7 @@ Prerequisites of yosys,
    dummy@lepka:~> sudo apt-get install yosys
 	
 	
-To install yosys on |RHEL| 9  or compatible distributions
+To install yosys on RHEL 9  or compatible distributions
 
 .. code-block:: sh
 
@@ -53,13 +53,9 @@ you can perform all the steps using the follwoing commands, such as,  for sythes
   dummy@lepka:sky130_c4m> ../../../bin/crlenv.py doit yosys
 
 
-Help
-----
 ``doit list``	-- shows all possible commands 
 
 
-
----------
 Run these commands to generate the physical layout of the given netlist. 
 
 1. ``doit yosys``  	-- This command performs logical systhesis.  It takes Arlet6502.v as an input and generate Arlet6502.blif  
@@ -78,5 +74,5 @@ Run these commands to generate the physical layout of the given netlist.
 
 
 Clean
-------
+-----
 ``doit clean_flow``	-- remove all generated files.  

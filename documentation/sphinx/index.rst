@@ -16,6 +16,7 @@ Welcome to Coriolis's documentation!
 .. pages/users-guide/LicenseCredits.rst
    pages/users-guide/Configuration.rst
    pages/users-guide/Installation.rst
+   pages/users-guide/Execution.rst
    pages/users-guide/DesignFlow.rst
    pages/users-guide/ViewerTools.rst
    pages/users-guide/Releases.rst
