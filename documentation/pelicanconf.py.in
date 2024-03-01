@@ -68,6 +68,7 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'HTML_defs.rst'
                , 'Pelican_defs.rst'
                , 'Installation.rst'
+               , 'Execution.rst'
                , 'LicenseCredits.rst'
                , 'Releases.rst'
                , 'ScriptsPlugins.rst'

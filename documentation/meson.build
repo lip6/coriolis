@@ -47,6 +47,7 @@ rstcontent = files(
   'content/pages/users-guide/Configuration.rst',
   'content/pages/users-guide/DesignFlow.rst',
   'content/pages/users-guide/Installation.rst',
+  'content/pages/users-guide/Execution.rst',
   'content/pages/users-guide/LicenseCredits.rst',
   'content/pages/users-guide/Releases.rst',
   'content/pages/users-guide/ScriptsPlugins.rst',

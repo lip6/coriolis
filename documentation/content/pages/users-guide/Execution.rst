@@ -2,14 +2,14 @@
 
 Executing a Benchmark
 =====================
-Alliance-check-toolkit comprises of several benchmarks and examples. To execute a circuit with coriolis, first, you have to clone alliance-check-toolkit. 
+|Alliance-check-toolkit| comprises of several benchmarks and examples. To execute a circuit with |Coriolis|, first, you have to clone it. 
 
 .. code-block:: sh
    
    dummy@lepka:src> cd ~/coriolis-2.x/src
    dummy@lepka:src> git clone https://github.com/lip6/alliance-check-toolkit 
 
-Before, executing a circuit, install doit and yosys. 
+pydoit and yosys are required to execute a circuit. 
 
 To install python doit.
 
@@ -18,7 +18,7 @@ To install python doit.
    dummy@lepka:~> pip install doit==0.33.0
    	
 
-To install yosys on Debian 12 or Ubuntu 22 or  compatible distributions
+To install yosys on |Debian| 12 or |Ubuntu| 22 or compatible distributions
 
 Prerequisites of yosys, 
 
@@ -29,7 +29,7 @@ Prerequisites of yosys,
    dummy@lepka:~> sudo apt-get install yosys
 	
 	
-To install yosys on RHEL 9  or compatible distributions
+To install yosys on |RHEL| 9  or compatible distributions
 
 .. code-block:: sh
 
@@ -46,17 +46,14 @@ After installting doit and yosys, navigate to exacte directory of benchmark, as 
    dummy@lepka:~> coriolis-2.x/src/alliance-check-toolkit/benchs/arlet6502/sky130_c4m  
    dummy@lepka:sky130_c4m> ../../../bin/crlenv.py doit list
 
-you can perform all the steps using the follwoing commands, such as,  for sythesis,
+You can use the following commands to perform different tasks and also generate the physical layout of the given circuit,  such as,  for sythesis,
 
 .. code-block:: sh	
 
   dummy@lepka:sky130_c4m> ../../../bin/crlenv.py doit yosys
-
-
-``doit list``	-- shows all possible commands 
-
-
-Run these commands to generate the physical layout of the given netlist. 
+  
+List of tasks: 
+--------------
 
 1. ``doit yosys``  	-- This command performs logical systhesis.  It takes Arlet6502.v as an input and generate Arlet6502.blif  
 
@@ -72,7 +69,8 @@ Run these commands to generate the physical layout of the given netlist.
 
 7.  ``doit lvx``	-- Gate Netlist Comparator, it compares chip layout against extracted netlist.   
 
+8. ``doit list``	-- display all possible commands 
 
-Clean
------
-``doit clean_flow``	-- remove all generated files.  
+9. ``doit clean_flow``	-- remove all generated files.  
+
+|newpage|
