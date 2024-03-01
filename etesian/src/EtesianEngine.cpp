@@ -481,10 +481,11 @@ namespace Etesian {
       _placeArea = topAb.getIntersection( placeArea );
     }
 
+    DbU::Unit sliceStep = getSliceStep();
     DbU::Unit sliceHeight = getSliceHeight();
-    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceHeight )
+    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceStep )
                     , DbU::toCeil ( placeArea.getYMin(), sliceHeight )
-                    , DbU::toFloor( placeArea.getXMax(), sliceHeight )
+                    , DbU::toFloor( placeArea.getXMax(), sliceStep )
                     , DbU::toFloor( placeArea.getYMax(), sliceHeight )
                     );
     size_t bottomSlice = (_placeArea.getYMin() - topAb.getYMin()) / sliceHeight;
@@ -1228,9 +1229,16 @@ namespace Etesian {
       if (iid == _instsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
-        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          auto ab = instance->getAbutmentBox();
+          if ( ab.getXMin() % hpitch ) {
+            cerr << Error( "Instance <%s> fixed placed out of the hpitch.", instanceName.c_str() ) << endl;
+          }
+          if ( ab.getYMin() % vpitch ) {
+            cerr << Error( "Instance <%s> fixed placed out of the vpitch.", instanceName.c_str() ) << endl;
+          }
           continue;
-
+        }
       //uint32_t       outputSide = getOutputSide( instance->getMasterCell() );
         auto place = (*placement)[(*iid).second];
         Transformation cellTrans  = toTransformation( place.position
@@ -1245,6 +1253,15 @@ namespace Etesian {
       // of all the intermediary instances.
         instance->setTransformation( cellTrans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        {
+          auto ab = instance->getAbutmentBox();
+          if ( ab.getXMin() % hpitch ) {
+            cerr << Error( "Instance <%s> placed out of the hpitch.", instanceName.c_str() ) << endl;
+          }
+          if ( ab.getYMin() % vpitch ) {
+            cerr << Error( "Instance <%s> placed out of the vpitch.", instanceName.c_str() ) << endl;
+          }
+        }
       }
     }
 
