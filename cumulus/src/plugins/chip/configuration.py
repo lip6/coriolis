@@ -211,8 +211,8 @@ class ChipConf ( BlockConf ):
             trace( 550, '\tCORE ab:{}\n'.format(self.coreAb) )
             coreX = (self.coronaAb.getWidth () - self.coreAb.getWidth ()) // 2
             trace( 550, '\tCore X, {} '.format(DbU.getValueString(coreX)) )
-            coreX = coreX - (coreX % self.sliceHeight)
-            trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.sliceHeight)
+            coreX = coreX - (coreX % self.sliceStep)
+            trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.sliceStep)
                                                       , DbU.getValueString(coreX)) )
             coreY = (self.coronaAb.getHeight() - self.coreAb.getHeight()) // 2
             coreY = coreY - (coreY % self.sliceHeight)
