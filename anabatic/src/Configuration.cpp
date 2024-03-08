@@ -525,8 +525,11 @@ namespace Anabatic {
     Component* ongridComponent  = NULL;
     Component* offgridComponent = NULL;
     DbU::Unit  viaShrink        = 0;
-    if (not isSymbolic())
+    if (not isSymbolic()) {
       viaShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
+      cdebug_log(112,0) << "viaWidth/2: " << DbU::getValueString(_rg->getViaWidth( (size_t)0 )/2) << endl;
+      cdebug_log(112,0) << "via12.BH:   " << DbU::getValueString(via12->getBottomEnclosure( Layer::EnclosureH )) << endl;
+    }
 
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {

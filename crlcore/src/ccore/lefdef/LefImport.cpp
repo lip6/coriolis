@@ -967,8 +967,9 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-      DebugSession::open( 100, 110 );
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -987,12 +988,9 @@ namespace {
         if (segment) {
           bool isWide = (segment->getWidth() >= getMinTerminalWidth());
 
-          // cerr << "       > " << segment << endl;
-          // if (not isVH()) cerr << "X NOT isVH()" << endl;
-          // else            cerr << "X isVH()" << endl;
-        
+          cdebug_log(100,0) << "> " << segment << endl;
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
-          // cerr << "isVH()" << endl;
+            cdebug_log(100,0) << "isVH()" << endl;
             Vertical* v = dynamic_cast<Vertical*>( segment );
             if (v) {
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
@@ -1005,10 +1003,10 @@ namespace {
                 DbU::Unit neighbor = nearestX
                   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
 
-              //cerr << "       | X:" << DbU::getValueString(v->getX())
-              //     <<  " nearestX:" << DbU::getValueString(nearestX)
-              //     <<  " neighbor:" << DbU::getValueString(neighbor)
-              //     << endl;
+                cdebug_log(100,0) <<       "| X:" << DbU::getValueString(v->getX())
+                                  << " nearestX:" << DbU::getValueString(nearestX)
+                                  << " neighbor:" << DbU::getValueString(neighbor)
+                                  << endl;
 
                 if (  (v->getX() - v->getHalfWidth() > neighbor)
                    or (v->getX() + v->getHalfWidth() < neighbor) ) {
@@ -1020,13 +1018,15 @@ namespace {
                                                      , v->getDyTarget()
                                                      )
                                    );
-                  cerr << "       | " << ongrids[ongrids.size()-1] << endl;
                 } else {
-                // Unpitched and not wide enough to be under a metal2 track, ignore.
+                  ongrids.push_back( v );
                 }
+                cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
 
                 continue;
               }
+            } else {
+              cdebug_log(100,0) << "Not a vertical, ignored." << endl;
             }
           }
       
@@ -1156,8 +1156,9 @@ namespace {
     }
 
     cdebug_tabw(100,-1);
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-      DebugSession::close();
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //  DebugSession::close();
   }
 
 

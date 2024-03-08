@@ -540,8 +540,8 @@ class WestSide ( VerticalSide ):
     def corner1 ( self, i ): return self.corners[NorthWest][i]
 
     def addBlockages ( self ):
-        sideXMin = self.getOuterRail(0).axis - self.vRailWidth
-        sideXMax = self.getInnerRail(0).axis + self.vRailWidth
+        sideXMin = self.getOuterRail(0).axis - self.vRailWidth // 2
+        sideXMax = self.getInnerRail(0).axis + self.vRailWidth // 2
         VerticalSide.addBlockages( self, sideXMin, sideXMax )
 
 
@@ -564,8 +564,8 @@ class EastSide ( VerticalSide ):
     def corner1 ( self, i ): return self.corners[NorthEast][i]
 
     def addBlockages ( self ):
-        sideXMin = self.getInnerRail(0).axis - self.vRailWidth
-        sideXMax = self.getOuterRail(0).axis + self.vRailWidth
+        sideXMin = self.getInnerRail(0).axis - self.vRailWidth // 2
+        sideXMax = self.getOuterRail(0).axis + self.vRailWidth // 2
         VerticalSide.addBlockages( self, sideXMin, sideXMax )
 
 
@@ -694,10 +694,15 @@ class Builder ( object ):
             self.eastSide .doLayout()
             self.westSide.addBlockages()
             self.eastSide.addBlockages()
-            blBox.inflate( self.hRailWidth, self.vRailWidth )
-            brBox.inflate( self.hRailWidth, self.vRailWidth )
-            tlBox.inflate( self.hRailWidth, self.vRailWidth )
-            trBox.inflate( self.hRailWidth, self.vRailWidth )
+            trace( 550, '\tCorner blockage blBox {}\n'.format(blBox) )
+            hHalfRailWidth = self.hRailWidth // 2
+            vHalfRailWidth = self.vRailWidth // 2
+            trace( 550, '\t  hRailWidth {}\n'.format(DbU.getValueString(hHalfRailWidth) ))
+            trace( 550, '\t  vRailWidth {}\n'.format(DbU.getValueString(vHalfRailWidth) ))
+            blBox.inflate( hHalfRailWidth, vHalfRailWidth )
+            brBox.inflate( hHalfRailWidth, vHalfRailWidth )
+            tlBox.inflate( hHalfRailWidth, vHalfRailWidth )
+            trBox.inflate( hHalfRailWidth, vHalfRailWidth )
             for depth in range( 1, self.conf.topLayerDepth + 1 ):
                 blockageLayer = self.routingGauge.getRoutingLayer(depth).getBlockageLayer()
                 Pad.create( self.blockageNet, blockageLayer, blBox )
