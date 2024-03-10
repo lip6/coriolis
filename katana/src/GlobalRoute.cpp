@@ -516,11 +516,11 @@ namespace Katana {
     }
 
     startMeasures();
-    cmess1 << "  o  Running global routing." << endl;
 
     openSession();
 
     annotateGlobalGraph();
+    cmess1 << "  o  Running global routing." << endl;
 
     float   edgeHInc         = getConfiguration()->getEdgeHInc();
     size_t  globalIterations = getConfiguration()->getGlobalIterations();;
