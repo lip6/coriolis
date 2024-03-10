@@ -17,6 +17,11 @@
 #pragma  once
 #include <set>
 #include <iomanip>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/identity.hpp>
+#include "hurricane/Error.h"
 #include "hurricane/Observer.h"
 namespace Hurricane {
   class Net;
@@ -29,6 +34,7 @@ namespace Anabatic {
 
   using std::set;
   using std::multiset;
+  using Hurricane::Error;
   using Hurricane::Observer;
   using Hurricane::Net;
   using Hurricane::RoutingPad;
@@ -188,6 +194,7 @@ namespace Anabatic {
                      , iVertical     = (1<<8)
                      , iSet          = (1<<9)
                      , Driver        = (1<<10)
+                     , Queued        = (1<<11)
                      };
     public:
       static         DbU::Unit       unreached;
@@ -259,6 +266,7 @@ namespace Anabatic {
               inline bool            isAxisTarget      () const;
               inline bool            isiHorizontal     () const;
               inline bool            isiVertical       () const;
+              inline bool            isQueued          () const;
               inline void            setFlags          ( uint32_t );
               inline void            unsetFlags        ( uint32_t );
                      bool            isH               () const;
@@ -336,6 +344,7 @@ namespace Anabatic {
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
   inline bool            Vertex::isDriver       () const { return _flags & Driver; }
   inline bool            Vertex::isAnalog       () const { return _gcell->isAnalog(); }
+  inline bool            Vertex::isQueued       () const { return _flags & Queued; }
   inline Box             Vertex::getBoundingBox () const { return _gcell->getBoundingBox(); }
   inline Edges           Vertex::getEdges       ( Flags sides ) const { return _gcell->getEdges(sides); }
   inline Contact*        Vertex::hasGContact    ( Net* net ) const { return _gcell->hasGContact(net); }
@@ -418,6 +427,97 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::PriorityQueue2".
+
+  class PriorityQueue2 {
+    public:
+      inline                PriorityQueue2 ();
+      inline               ~PriorityQueue2 ();
+      inline        bool    empty          () const;
+      inline        size_t  size           () const;
+      inline        void    push           ( Vertex* );
+      inline        void    erase          ( Vertex* );
+      inline        Vertex* top            ();
+      inline        void    pop            ();
+      inline        void    clear          ();
+      inline        void    dump           () const;
+      inline        void    setAttractor   ( const Point& );
+      inline  const Point&  getAttractor   () const;
+      inline        bool    hasAttractor   () const;
+    private:
+      class CompareByDistance {
+        public:
+                 inline      CompareByDistance ();
+                        bool operator()        ( const Vertex* lhs, const Vertex* rhs ) const;
+          static inline void setQueue          ( PriorityQueue2* );
+        private:
+          static PriorityQueue2* _pqueue;
+      };
+    private:
+      struct  IndexByDistance { };
+      struct  IndexByPointer  { };
+      typedef boost::multi_index_container<
+                Vertex*,
+                boost::multi_index::indexed_by<
+                  boost::multi_index::ordered_non_unique<
+                    boost::multi_index::tag<IndexByDistance>,
+                    boost::multi_index::identity<Vertex*>,
+                    CompareByDistance
+                  >,
+                  boost::multi_index::hashed_unique<
+                    boost::multi_index::tag<IndexByPointer>,
+                    boost::multi_index::identity<Vertex*>
+                  >
+                >
+              > DualQueue;
+    private:
+      bool       _hasAttractor;
+      Point      _attractor;
+      DualQueue  _queue;
+  };
+
+
+  inline      PriorityQueue2::CompareByDistance::CompareByDistance () { }
+
+  inline void PriorityQueue2::CompareByDistance::setQueue ( PriorityQueue2* pqueue ) { _pqueue = pqueue; }
+
+
+  inline               PriorityQueue2::PriorityQueue2  () : _hasAttractor(false), _attractor(), _queue() { PriorityQueue2::CompareByDistance::setQueue(this); }
+  inline               PriorityQueue2::~PriorityQueue2 () { }
+  inline       bool    PriorityQueue2::empty          () const { return _queue.empty(); }
+  inline       size_t  PriorityQueue2::size           () const { return _queue.size(); }
+  inline       void    PriorityQueue2::push           ( Vertex* v ) { _queue.insert(v); v->setFlags(Vertex::Queued); }
+  inline       Vertex* PriorityQueue2::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
+  inline       void    PriorityQueue2::clear          () { _queue.clear(); _hasAttractor=false; }
+  inline       void    PriorityQueue2::setAttractor   ( const Point& p ) { _attractor=p;  _hasAttractor=true; }
+  inline       bool    PriorityQueue2::hasAttractor   () const { return _hasAttractor; }
+  inline const Point&  PriorityQueue2::getAttractor   () const { return _attractor; }
+
+  inline void  PriorityQueue2::pop ()
+  {
+    cdebug_log(112,0) << "Pop: (size:" << _queue.size() << ") " << *_queue.begin() << std::endl;
+    (*_queue.begin())->unsetFlags( Vertex::Queued );
+    _queue.erase(_queue.begin());
+  }
+
+  inline void  PriorityQueue2::erase ( Vertex* v )
+  {
+    _queue.get<IndexByPointer>().erase( v );
+  }
+
+  inline void  PriorityQueue2::dump () const
+  {
+    if (cdebug.enabled(112)) {
+      cdebug_log(112,1) << "PriorityQueue2::dump() size:" << size() << std::endl;
+      size_t order = 0;
+      for ( Vertex* v : _queue )
+        cdebug_log(112,0) << "[" << tsetw(3) << order++ << "] " << v << std::endl;
+      cdebug_tabw(112,-1);
+    }
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::PriorityQueue".
 
   class PriorityQueue {
@@ -460,7 +560,7 @@ namespace Anabatic {
   inline               PriorityQueue::~PriorityQueue () { }
   inline       bool    PriorityQueue::empty          () const { return _queue.empty(); }
   inline       size_t  PriorityQueue::size           () const { return _queue.size(); }
-  inline       void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
+  inline       void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); v->setFlags(Vertex::Queued); }
   inline       Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
   inline       void    PriorityQueue::clear          () { _queue.clear(); _hasAttractor=false; }
   inline       void    PriorityQueue::setAttractor   ( const Point& p ) { _attractor=p;  _hasAttractor=true; }
@@ -470,14 +570,34 @@ namespace Anabatic {
   inline void  PriorityQueue::pop ()
   {
     cdebug_log(112,0) << "Pop: (size:" << _queue.size() << ") " << *_queue.begin() << std::endl;
+    (*_queue.begin())->unsetFlags( Vertex::Queued );
     _queue.erase(_queue.begin());
   }
 
   inline void  PriorityQueue::erase ( Vertex* v )
   {
-    for ( auto ivertex = _queue.begin() ; ivertex != _queue.end() ; ++ivertex ) {
-      if (*ivertex == v) { _queue.erase( ivertex ); break; }
+    // auto ivertex = _queue.upper_bound( v );
+    // while ( true ) {
+    //   if (*ivertex == v) {
+    //     _queue.erase( ivertex );
+    //     return;
+    //   }
+    //   if (ivertex == _queue.begin()) break;
+    //   --ivertex;
+    // }
+    // for ( ; ivertex != _queue.end() ; ++ivertex ) {
+    //   if (*ivertex == v) { _queue.erase( ivertex ); break; }
+    // }
+    if (not v->isQueued())
+      return;
+    // for ( auto ivertex=_queue.begin(); ivertex != _queue.end() ; ++ivertex ) {
+    //   if (*ivertex == v) { _queue.erase( ivertex ); return; }
+    // }
+    for ( auto ivertex=_queue.begin(); ivertex != _queue.end() ; ++ivertex ) {
+      if (*ivertex == v) { _queue.erase( ivertex ); return; }
     }
+    std::cerr << Error( "PriorityQueue::erase(): Unable to remove %s."
+                      , v->_getString().c_str() ) << std::endl;
   }
 
   inline void  PriorityQueue::dump () const
