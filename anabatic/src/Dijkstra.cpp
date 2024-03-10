@@ -1356,6 +1356,31 @@ namespace Anabatic {
 // Class  :  "Anabatic::PrioriryQueue::CompareByDistance".
 
   
+  PriorityQueue2* PriorityQueue2::CompareByDistance::_pqueue = NULL;
+
+
+  bool PriorityQueue2::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs ) const
+  {
+    if (lhs->getDistance() == rhs->getDistance()) {
+      if (_pqueue and _pqueue->hasAttractor()) {
+        DbU::Unit lhsDistance = _pqueue->getAttractor().manhattanDistance( lhs->getCenter() );
+        DbU::Unit rhsDistance = _pqueue->getAttractor().manhattanDistance( rhs->getCenter() );
+
+        cdebug_log(112,0) << "CompareByDistance: lhs:" << DbU::getValueString(lhsDistance)
+                          << " rhs:" << DbU::getValueString(rhsDistance) << endl;
+
+        if (lhsDistance != rhsDistance) return lhsDistance < rhsDistance;
+      }
+      return lhs->getBranchId() > rhs->getBranchId();
+    }
+    return lhs->getDistance() < rhs->getDistance();
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::PrioriryQueue::CompareByDistance".
+
+  
   PriorityQueue* PriorityQueue::CompareByDistance::_pqueue = NULL;
 
 
@@ -1669,7 +1694,7 @@ namespace Anabatic {
                    , getString(_net->getName()).c_str()
                    ) << endl;
     }
-    if (driverCount > 1) {
+    if ((driverCount > 1) and not (net->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr))) {
       cerr << Error( "Diskstra::load(): Net \"%s\" have multiple drivers (%u).\n"
                    , getString(_net->getName()).c_str(), driverCount
                    ) << endl;
@@ -2006,7 +2031,7 @@ namespace Anabatic {
               vneighbor->setStamp   ( _stamp );
               vneighbor->setDegree  ( 1 );
               vneighbor->setRpCount ( 0 );
-              vneighbor->unsetFlags(Vertex::AxisTarget);
+              vneighbor->unsetFlags(Vertex::AxisTarget|Vertex::Queued);
               vneighbor->resetIntervals();
               push = true;
             } else {
