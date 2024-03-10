@@ -441,6 +441,7 @@ namespace Anabatic {
 
   inline void  AnabaticEngine::_remove ( GCell* gcell )
   {
+    if (_inDestroy()) return;
     for ( auto igcell = _gcells.begin() ; igcell != _gcells.end() ; ++igcell )
       if (*igcell == gcell) {
         if (_inDestroy()) (*igcell) = NULL;

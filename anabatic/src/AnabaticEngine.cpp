@@ -515,10 +515,13 @@ namespace Anabatic {
 
       _flags |= Flags::DestroyGCell;
 
+      cmess1 << "  o  Deleting edges..." << endl;
       for ( GCell* gcell : _gcells ) gcell->_destroyEdges();
+      cmess1 << "  o  Deleting GCells..." << endl;
       for ( GCell* gcell : _gcells ) gcell->destroy();
       _gcells.clear();
       _ovEdges.clear();
+      cmess1 << "  o  Done." << endl;
     }
 
     exportExternalNets();
