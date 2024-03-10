@@ -817,6 +817,7 @@ namespace {
     //if (not lg->isUsable()) continue;
       const BasicLayer* blockageLayer = dynamic_cast<const BasicLayer*>( lg->getBlockageLayer() );
       if (not blockageLayer) continue;
+      if (lg->getType() == Constant::PinOnly) continue;
 
       _planes.insert( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );
     }
@@ -1248,6 +1249,8 @@ namespace Katana {
 
     Session::close();
   //DebugSession::close();
+
+    printCompletion();
   }
 
 

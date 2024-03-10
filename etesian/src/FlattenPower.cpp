@@ -979,6 +979,8 @@ namespace Etesian {
 
     UpdateSession::close();
   //DebugSession::close();
+
+    printMeasures();
   }
 
 
