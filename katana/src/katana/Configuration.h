@@ -71,6 +71,7 @@ namespace Katana {
       inline        Anabatic::Configuration*   base                    ();
       inline  const Anabatic::Configuration*   base                    () const;
       inline        PostEventCb_t&             getPostEventCb          ();
+      inline        std::string                getBloat                () const;
       inline        uint64_t                   getEventsLimit          () const;
       inline        uint32_t                   getRipupCost            () const;
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
@@ -105,6 +106,7 @@ namespace Katana {
     private:
     // Attributes.
              PostEventCb_t  _postEventCb;
+             std::string    _bloat;
              uint32_t       _searchHalo;
              uint32_t       _longWireUpThreshold1;
              double         _longWireUpReserve1;
@@ -133,6 +135,7 @@ namespace Katana {
   inline const Anabatic::Configuration*      Configuration::base                    () const { return dynamic_cast<const Anabatic::Configuration*>(this); }
   inline       Anabatic::Configuration*      Configuration::base                    () { return dynamic_cast<Anabatic::Configuration*>(this); }
   inline       Configuration::PostEventCb_t& Configuration::getPostEventCb          () { return _postEventCb; }
+  inline       std::string                   Configuration::getBloat                () const { return _bloat; }
   inline       uint64_t                      Configuration::getEventsLimit          () const { return _eventsLimit; }
   inline       uint32_t                      Configuration::getSearchHalo           () const { return _searchHalo; }
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
