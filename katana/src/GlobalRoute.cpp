@@ -700,7 +700,7 @@ namespace Katana {
       addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
       addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
-      if (not Session::isChannelStyle())
+      if (not Session::isChannelStyle() and (getConfiguration()->getBloat() != "disabled"))
         _buildBloatProfile();
 
       if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );

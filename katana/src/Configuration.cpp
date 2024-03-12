@@ -40,6 +40,7 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
+    , _bloat               (Cfg::getParamString("etesian.bloat"               ,"disabled")->asString() )
     , _searchHalo          (Cfg::getParamInt   ("katana.searchHalo"           ,      1)->asInt())
     , _longWireUpThreshold1(Cfg::getParamInt   ("katana.longWireUpThreshold1" ,     60)->asInt())
     , _longWireUpReserve1  (Cfg::getParamDouble("katana.longWireUpReserve1"   ,    1.0)->asDouble())
@@ -92,6 +93,7 @@ namespace Katana {
   Configuration::Configuration ( const Configuration& other )
     : Anabatic::Configuration(*other.base())
     , _postEventCb         (other._postEventCb)
+    , _bloat               (other._bloat)
     , _searchHalo          (other._searchHalo)
     , _longWireUpThreshold1(other._longWireUpThreshold1)
     , _longWireUpReserve1  (other._longWireUpReserve1)
@@ -227,6 +229,7 @@ namespace Katana {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
+      record->add ( getSlot("_bloat"                ,_bloat                ) );
       record->add ( getSlot("_searchHalo"           ,_searchHalo           ) );
       record->add ( getSlot("_longWireUpThreshold1" ,_longWireUpThreshold1 ) );
       record->add ( getSlot("_longWireUpReserved1"  ,_longWireUpReserve1   ) );
