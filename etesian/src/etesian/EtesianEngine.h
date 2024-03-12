@@ -61,10 +61,12 @@ namespace Etesian {
 
   class EtesianEngine : public CRL::ToolEngine {
     public:
-      static  const uint32_t  NeedsDiode = (1<<0);
-      static  const uint32_t  FinalStage = (1<<1);
-      static  const uint32_t  RightSide  = (1<<2);
-      static  const uint32_t  LeftSide   = (1<<3);
+      static  const uint32_t  NoFlags     = 0;
+      static  const uint32_t  NeedsDiode  = (1<<0);
+      static  const uint32_t  FinalStage  = (1<<1);
+      static  const uint32_t  RightSide   = (1<<2);
+      static  const uint32_t  LeftSide    = (1<<3);
+      static  const uint32_t  CheckOngrid = (1<<4);
     public:
       typedef ToolEngine  Super;
       typedef std::tuple<Net*,int32_t,uint32_t>                NetInfos;
@@ -85,7 +87,8 @@ namespace Etesian {
       inline  DbU::Unit               getHorizontalPitch        () const;
       inline  DbU::Unit               getVerticalPitch          () const;
       inline  DbU::Unit               getSliceHeight            () const;
-      inline  DbU::Unit               getSliceStep              () const;
+      inline  DbU::Unit               getSliceHStep             () const;
+      inline  DbU::Unit               getSliceVStep             () const;
       inline  DbU::Unit               getFixedAbHeight          () const;
       inline  DbU::Unit               getFixedAbWidth           () const;
       inline  Effort                  getPlaceEffort            () const;
@@ -119,7 +122,6 @@ namespace Etesian {
               void                    resetPlacement            ();
               void                    clearColoquinte           ();
               void                    loadLeafCellLayouts       ();
-      inline  DbU::Unit               toDbU                     ( int64_t ) const;
       inline  Occurrence              toCell                    ( Occurrence ) const;
       inline  Point                   toCell                    ( const Point& ) const;
       inline  Box                     toCell                    ( const Box& ) const;
@@ -193,7 +195,7 @@ namespace Etesian {
     private:
       inline  uint32_t       _getNewDiodeId   ();
               Instance*      _createDiode     ( Cell* );
-              void           _updatePlacement ( const coloquinte::PlacementSolution* );
+              void           _updatePlacement ( const coloquinte::PlacementSolution*, uint32_t flags );
               void           _checkNotAFeed   ( Occurrence occurrence ) const;
   };
 
@@ -206,7 +208,8 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getHorizontalPitch        () const { return getGauge()->getHorizontalPitch(); }
   inline  DbU::Unit              EtesianEngine::getVerticalPitch          () const { return getGauge()->getVerticalPitch(); }
   inline  DbU::Unit              EtesianEngine::getSliceHeight            () const { return _sliceHeight; }
-  inline  DbU::Unit              EtesianEngine::getSliceStep              () const { return getCellGauge()->getSliceStep(); }
+  inline  DbU::Unit              EtesianEngine::getSliceHStep             () const { return getCellGauge()->getSliceStep(); }
+  inline  DbU::Unit              EtesianEngine::getSliceVStep             () const { return getCellGauge()->getPitch(); }
   inline  DbU::Unit              EtesianEngine::getFixedAbHeight          () const { return _fixedAbHeight; }
   inline  DbU::Unit              EtesianEngine::getFixedAbWidth           () const { return _fixedAbWidth; }
   inline  Effort                 EtesianEngine::getPlaceEffort            () const { return getConfiguration()->getPlaceEffort(); }
@@ -230,7 +233,6 @@ namespace Etesian {
   inline  void                   EtesianEngine::setSpaceMargin            ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
   inline  void                   EtesianEngine::setDensityVariation       ( double margin ) { getConfiguration()->setDensityVariation(margin); }
   inline  void                   EtesianEngine::setAspectRatio            ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
-  inline  DbU::Unit              EtesianEngine::toDbU                     ( int64_t v ) const { return v*getSliceStep(); }
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }
   inline  const Box&             EtesianEngine::getPlaceArea              () const { return _placeArea; }
   inline  Area*                  EtesianEngine::getArea                   () const { return _area; }

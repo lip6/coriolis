@@ -254,9 +254,9 @@ namespace Etesian {
     }
 
     DbU::Unit xtie   = xmin;
-    DbU::Unit modulo = (xmin - getXMin()) % getEtesian()->getSliceStep();
+    DbU::Unit modulo = (xmin - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) {
-      xtie += getEtesian()->getSliceStep() - modulo;
+      xtie += getEtesian()->getSliceHStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
       //      << " ybottom=" << DbU::getValueString(ybottom)
       //      << " xmin=" <<  DbU::getValueString(xmin)
@@ -264,7 +264,7 @@ namespace Etesian {
       //      << " getXMin()=" <<  DbU::getValueString(getXMin())
       //      << endl;
     }
-    modulo = (xmax - getXMin()) % getEtesian()->getSliceStep();
+    modulo = (xmax - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) xmax -= modulo;
 
     DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
@@ -273,7 +273,7 @@ namespace Etesian {
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
         feed = NULL;
-        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
+        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceHStep());
         for ( ; pitch > 0 ; --pitch ) {
           feed = getEtesian()->getFeedCells().getFeed( pitch );
           if (feed == NULL) continue;
@@ -530,16 +530,16 @@ namespace Etesian {
       return;
     }
 
-    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
+    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) {
       cerr << Warning( "Area::merge(): Misaligned instance %s\n"
-                       "           y=%s (%d) x=%s (%d) area.getXMin()=%s sliceStep=%s (%d)"
+                       "           y=%s (%d) x=%s (%d) area.getXMin()=%s sliceHStep=%s (%d)"
                      , occurrence.getCompactString().c_str()
                      , DbU::getValueString(flatAb.getYMin()).c_str(), flatAb.getYMin()
                      , DbU::getValueString(flatAb.getXMin()).c_str(), flatAb.getXMin()
                      , DbU::getValueString(getXMin()).c_str()
-                     , DbU::getValueString(getEtesian()->getSliceStep()).c_str()
-                     , getEtesian()->getSliceStep()
+                     , DbU::getValueString(getEtesian()->getSliceHStep()).c_str()
+                     , getEtesian()->getSliceHStep()
                      ) << endl;
     }
 
@@ -626,7 +626,7 @@ namespace Etesian {
   size_t  SubSlice::getUsedVTracks ( const Tile& tile, set<DbU::Unit>& vtracks )
   {
     RoutingGauge* rg     = _slice->getArea()->getEtesian()->getGauge();
-    DbU::Unit     vpitch = _slice->getArea()->getEtesian()->getSliceStep();
+    DbU::Unit     vpitch = _slice->getArea()->getEtesian()->getSliceHStep();
     Cell* cell = tile.getMasterCell();
     for ( Net* net : cell->getNets() ) {
       if (not net->isExternal()) {
@@ -730,7 +730,7 @@ namespace Etesian {
           cdebug_log(121,0) << "| V-Track @" << DbU::getValueString(x) << endl;
         if (not usedVTracks.count(xTrack)) break;
 
-        DbU::Unit vpitch     = _slice->getArea()->getEtesian()->getSliceStep();
+        DbU::Unit vpitch     = _slice->getArea()->getEtesian()->getSliceHStep();
         DbU::Unit maxDxLeft  = 0;
         DbU::Unit maxDxRight = 0;
         if (iTile != beginTile) {
