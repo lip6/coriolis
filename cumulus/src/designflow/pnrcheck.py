@@ -26,6 +26,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
         routedName = vhdlDesignName
         if flags & UseClockTree:
             routedName = vhdlDesignName + '_cts'
+        routedName = routedName + '_r'
 
     if not (flags & NoSynthesis):
         ruleYosys  = Yosys   .mkRule( 'yosys', vlogDesignName+'.v' )
@@ -33,14 +34,12 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
                                              , [ruleYosys]
                                              , flags=0 )
         rtlDepends = [ ruleB2V ]
-        pnrTargets = [ routedName+'_r.ap'
-                     , routedName+'_r.vst'
-                     , routedName+'_r.spi' ]
+        pnrTargets = [ routedName+'.ap'
+                     , routedName+'.vst'
+                     , routedName+'.spi' ]
     else:
         rtlDepends = [ vhdlDesignName+'.vst' ]
-        pnrTargets = [ routedName+'_r.ap'
-                     , routedName+'_r.vst'
-                     , routedName+'_r.spi'
+        pnrTargets = [ routedName+'.ap'
                      , routedName+'.vst'
                      , routedName+'.spi' ]
     rtlDepends += extraRtlDepends
