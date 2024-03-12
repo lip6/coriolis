@@ -481,11 +481,11 @@ namespace Etesian {
       _placeArea = topAb.getIntersection( placeArea );
     }
 
-    DbU::Unit sliceStep = getSliceStep();
+    DbU::Unit sliceStep   = getSliceHStep();
     DbU::Unit sliceHeight = getSliceHeight();
-    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceStep )
+    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceStep   )
                     , DbU::toCeil ( placeArea.getYMin(), sliceHeight )
-                    , DbU::toFloor( placeArea.getXMax(), sliceStep )
+                    , DbU::toFloor( placeArea.getXMax(), sliceStep   )
                     , DbU::toFloor( placeArea.getYMax(), sliceHeight )
                     );
     size_t bottomSlice = (_placeArea.getYMin() - topAb.getYMin()) / sliceHeight;
@@ -575,8 +575,8 @@ namespace Etesian {
     }
 
     DbU::Unit abWidth = columns*getSliceHeight();
-    DbU::Unit adjust  = abWidth % getSliceStep();
-    if (adjust) abWidth += getSliceStep() - adjust;
+    DbU::Unit adjust  = abWidth % getSliceHStep();
+    if (adjust) abWidth += getSliceHStep() - adjust;
 
     getCell()->setAbutmentBox( Box( 0
                                   , 0
@@ -694,8 +694,8 @@ namespace Etesian {
   {
     clearColoquinte();
     AllianceFramework* af          = AllianceFramework::get();
-    DbU::Unit          hpitch      = getSliceStep();
-    DbU::Unit          vpitch      = getSliceHeight(); //getSliceStep();
+    DbU::Unit          hpitch      = getSliceHStep();
+    DbU::Unit          vpitch      = getSliceVStep();
     DbU::Unit          sliceHeight = getSliceHeight();
     bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
@@ -708,14 +708,21 @@ namespace Etesian {
     stdCellSizes.setIndent( "       ", 1 );
 
     cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
-    cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
-    cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
-    cmess1 << ::Dots::asString("     - Slice height"    , DbU::getValueString(sliceHeight)) << endl;
+    cmess1 << ::Dots::asString("     - H-pitch"     , DbU::getValueString(hpitch)) << endl;
+    cmess1 << ::Dots::asString("     - V-pitch"     , DbU::getValueString(vpitch)) << endl;
+    cmess1 << ::Dots::asString("     - Slice height", DbU::getValueString(sliceHeight)) << endl;
     if (isFlexLib)
       cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
+
+    if (sliceHeight % vpitch) {
+      throw Error( "EtesianEngine::toColoquinte(): Slice height (%s) must be a multiple of vpitch (%s)."
+                 , DbU::getValueString(sliceHeight).c_str()
+                 , DbU::getValueString(vpitch) );
+    }
+    
     DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
     DbU::Unit usedLength     = 0;
     DbU::Unit registerLength = 0;
@@ -752,10 +759,10 @@ namespace Etesian {
       }
     }
     _surface = new coloquinte::Rectangle( (int)(topAb.getXMin() / hpitch)
-                            , (int)(topAb.getXMax() / hpitch)
-                            , (int)(topAb.getYMin() / vpitch)
-                            , (int)(topAb.getYMax() / vpitch)
-                            );
+                                        , (int)(topAb.getXMax() / hpitch)
+                                        , (int)(topAb.getYMin() / vpitch)
+                                        , (int)(topAb.getYMax() / vpitch)
+                                        );
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
@@ -1090,31 +1097,30 @@ namespace Etesian {
     }
   }
 
-  void EtesianEngine::_coloquinteCallback(coloquinte::PlacementStep step) {
 
-    // Graphical update
+  void EtesianEngine::_coloquinteCallback ( coloquinte::PlacementStep step )
+  {
+  // Graphical update
     GraphicUpdate conf = getUpdateConf();
-    bool updatePlacement = conf == GraphicUpdate::UpdateAll;
-    if  (conf == GraphicUpdate::LowerBound &&
-         step == coloquinte::PlacementStep::LowerBound) {
+    bool updatePlacement = (conf == GraphicUpdate::UpdateAll);
+    if ((conf == GraphicUpdate::LowerBound) and (step == coloquinte::PlacementStep::LowerBound)) {
       updatePlacement = true;
     }
-    _coloquinteCallbackCore(step, updatePlacement);
+    _coloquinteCallbackCore( step, updatePlacement );
   }
 
-  void EtesianEngine::_coloquinteCallbackCore(coloquinte::PlacementStep step, bool updatePlacement) {
+
+  void EtesianEngine::_coloquinteCallbackCore ( coloquinte::PlacementStep step, bool updatePlacement )
+  {
     auto placement = _circuit->solution();
-    if (step == coloquinte::PlacementStep::LowerBound) {
+    if (step == coloquinte::PlacementStep::LowerBound)
       *_placementLB = placement;
-    }
-    else {
+    else
       *_placementUB = placement;
-    }
 
-    if (updatePlacement) {
-      _updatePlacement(&placement);
-    }
+    if (updatePlacement) _updatePlacement( &placement, NoFlags );
   }
+
 
   void  EtesianEngine::globalPlace ()
   {
@@ -1127,12 +1133,14 @@ namespace Etesian {
 
   void  EtesianEngine::detailedPlace ()
   {
-    coloquinte::ColoquinteParameters params(getPlaceEffort());
-    coloquinte::PlacementCallback callback =std::bind(&EtesianEngine::_coloquinteCallback, this, std::placeholders::_1);
-    _circuit->placeDetailed(params, callback);
+    coloquinte::ColoquinteParameters params   ( getPlaceEffort() );
+    coloquinte::PlacementCallback    callback = std::bind( &EtesianEngine::_coloquinteCallback
+                                                         , this
+                                                         , std::placeholders::_1 );
+    _circuit->placeDetailed( params, callback );
     *_placementUB = _circuit->solution();
     *_placementLB = *_placementUB; // In case we run other passes
-    _updatePlacement(_placementUB);
+    _updatePlacement( _placementUB, CheckOngrid );
   }
 
 
@@ -1203,7 +1211,7 @@ namespace Etesian {
     UpdateSession::close();
   }
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement )
+  void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement, uint32_t flags )
   {
     UpdateSession::open();
 
@@ -1216,8 +1224,9 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      DbU::Unit hpitch          = getSliceStep();
-      DbU::Unit vpitch          = getSliceHeight(); //getSliceStep();
+      DbU::Unit hpitch          = getSliceHStep();
+      DbU::Unit vpitch          = getSliceVStep();
+      DbU::Unit sliceHeight     = getSliceHeight();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();
@@ -1234,8 +1243,8 @@ namespace Etesian {
           if ( ab.getXMin() % hpitch ) {
             cerr << Error( "Instance <%s> fixed placed out of the hpitch.", instanceName.c_str() ) << endl;
           }
-          if ( ab.getYMin() % vpitch ) {
-            cerr << Error( "Instance <%s> fixed placed out of the vpitch.", instanceName.c_str() ) << endl;
+          if ( ab.getYMin() % sliceHeight ) {
+            cerr << Error( "Instance <%s> fixed placed out of the slice height.", instanceName.c_str() ) << endl;
           }
           continue;
         }
@@ -1253,13 +1262,13 @@ namespace Etesian {
       // of all the intermediary instances.
         instance->setTransformation( cellTrans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
-        {
+        if (flags & CheckOngrid) {
           auto ab = instance->getAbutmentBox();
           if ( ab.getXMin() % hpitch ) {
             cerr << Error( "Instance <%s> placed out of the hpitch.", instanceName.c_str() ) << endl;
           }
-          if ( ab.getYMin() % vpitch ) {
-            cerr << Error( "Instance <%s> placed out of the vpitch.", instanceName.c_str() ) << endl;
+          if ( ab.getYMin() % sliceHeight ) {
+            cerr << Error( "Instance <%s> placed out of the slice height.", instanceName.c_str() ) << endl;
           }
         }
       }

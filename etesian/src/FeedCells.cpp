@@ -36,7 +36,7 @@ namespace Etesian {
   {
     if (cell == NULL) return;
 
-    DbU::Unit pitch = _etesian->getSliceStep();
+    DbU::Unit pitch = _etesian->getSliceHStep();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
       cerr << Warning( "FeedCells::useTie(): \"%s\" has not a width (%s) multiple of pitch (%s)."
@@ -55,7 +55,7 @@ namespace Etesian {
   {
     if ( cell == NULL ) return;
 
-    DbU::Unit pitch = _etesian->getSliceStep();
+    DbU::Unit pitch = _etesian->getSliceHStep();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
       cerr << Warning( "FeedCells::useFeed(): \"%s\" has not a width (%s) multiple of pitch (%s)."
