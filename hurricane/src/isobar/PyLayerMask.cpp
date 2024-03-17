@@ -199,7 +199,8 @@ extern "C" {
   PyObject* PyLayerMask_##FUNC_NAME ( PyLayerMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
     Layer::Mask result;                                                       \
-    result = pyMask0->_object OP PyAny_AsLong(pyInt);                         \
+    result = pyMask0->_object;                                                \
+    result.OP( PyAny_AsLong(pyInt) );                                         \
     return PyLayerMask_Link(result);                                          \
   }
 
@@ -212,8 +213,8 @@ extern "C" {
   { return not pyMask->_object; }
 
 
-  binaryFunctionMaskInt   (lshift,<<)
-  binaryFunctionMaskInt   (rshift,>>)
+  binaryFunctionMaskInt   (lshift,lshift)
+  binaryFunctionMaskInt   (rshift,rshift)
   binaryFunctionMaskMask  (and   ,bitand)
   binaryFunctionMaskMask  (xor   ,^)
   binaryFunctionMaskMask  (or    ,bitor)

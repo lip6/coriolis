@@ -46,7 +46,7 @@ class Cell_Slices : public Collection<Slice*> {
         private: SliceLocator _sliceLocator;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Layer::Mask& mask = ~0);
+        public: Locator(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -72,7 +72,7 @@ class Cell_Slices : public Collection<Slice*> {
 // ************
 
     public: Cell_Slices();
-    public: Cell_Slices(const Cell* cell, const Layer::Mask& mask = ~0);
+    public: Cell_Slices(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
     public: Cell_Slices(const Cell_Slices& slices);
 
 // Operators
@@ -119,7 +119,7 @@ class Cell_Components : public Collection<Component*> {
         private: Component* _component;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Layer::Mask& mask = ~0);
+        public: Locator(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -145,7 +145,7 @@ class Cell_Components : public Collection<Component*> {
 // ************
 
     public: Cell_Components();
-    public: Cell_Components(const Cell* cell, const Layer::Mask& mask = ~0);
+    public: Cell_Components(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
     public: Cell_Components(const Cell_Components& components);
 
 // Operators
@@ -193,7 +193,7 @@ class Cell_ComponentsUnder : public Collection<Component*> {
         private: Component* _component;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Box& area, const Layer::Mask& mask = ~0);
+        public: Locator(const Cell* cell, const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -220,7 +220,7 @@ class Cell_ComponentsUnder : public Collection<Component*> {
 // ************
 
     public: Cell_ComponentsUnder();
-    public: Cell_ComponentsUnder(const Cell* cell, const Box& area, const Layer::Mask& mask = ~0);
+    public: Cell_ComponentsUnder(const Cell* cell, const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF);
     public: Cell_ComponentsUnder(const Cell_ComponentsUnder& components);
 
 // Operators
@@ -1327,7 +1327,7 @@ class Cell_ComponentOccurrences : public Collection<Occurrence> {
         private: OccurrenceLocator _occurrenceLocator;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Layer::Mask& mask = ~0);
+        public: Locator(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -1353,7 +1353,7 @@ class Cell_ComponentOccurrences : public Collection<Occurrence> {
 // ************
 
     public: Cell_ComponentOccurrences();
-    public: Cell_ComponentOccurrences(const Cell* cell, const Layer::Mask& mask = ~0);
+    public: Cell_ComponentOccurrences(const Cell* cell, const Layer::Mask& mask = Layer::Mask::FFFF);
     public: Cell_ComponentOccurrences(const Cell_ComponentOccurrences& occurrences);
 
 // Operators
@@ -1402,7 +1402,7 @@ class Cell_ComponentOccurrencesUnder : public Collection<Occurrence> {
         private: OccurrenceLocator _occurrenceLocator;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Box& area, const Layer::Mask& mask = ~0);
+        public: Locator(const Cell* cell, const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -1429,7 +1429,7 @@ class Cell_ComponentOccurrencesUnder : public Collection<Occurrence> {
 // ************
 
     public: Cell_ComponentOccurrencesUnder();
-    public: Cell_ComponentOccurrencesUnder(const Cell* cell, const Box& area, const Layer::Mask& mask = ~0);
+    public: Cell_ComponentOccurrencesUnder(const Cell* cell, const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF);
     public: Cell_ComponentOccurrencesUnder(const Cell_ComponentOccurrencesUnder& occurrences);
 
 // Operators

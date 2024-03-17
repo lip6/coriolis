@@ -50,6 +50,7 @@ namespace Hurricane {
   class Layer : public DBo {
     public:
       typedef  DBo  Super;
+      typedef  Hurricane::Mask<boost::multiprecision::uint128_t> Mask;
     public:
       static   const uint32_t   NoFlags        =  0;
       static   const uint32_t   EnclosureH     = (1 << 0);
@@ -59,8 +60,6 @@ namespace Hurricane {
       static   const uint32_t   ExtensionWidth = (1 << 4);
 
     public:
-    // Types.
-      typedef Hurricane::Mask<unsigned long long> Mask;
     // Accessors.
       inline  Technology*       getTechnology                () const;
       inline  const Name&       getName                      () const;

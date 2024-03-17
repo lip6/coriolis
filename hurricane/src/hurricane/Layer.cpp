@@ -43,6 +43,7 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class :  "Hurricane::Layer".
 
+
   Layer::Layer ( Technology* technology
                , const Name& name
                , const DbU::Unit& minimalSize

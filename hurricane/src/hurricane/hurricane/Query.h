@@ -312,7 +312,7 @@ namespace Hurricane {
 
   class Query {
     public:
-      typedef Hurricane::Mask<int> Mask;
+      typedef Hurricane::Mask<uint64_t> Mask;
     public:
     // Types.
       enum  QueryFilter { DoMasterCells   =  1

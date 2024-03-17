@@ -300,8 +300,6 @@ extern "C" {
       int    blue        = 255;
       bool   goMatched   = (argGoMatched == NULL) or (PyObject_IsTrue(argGoMatched));
 
-    //cerr << "Adding DrawingStyle" << argGroupKey << " "<< argKey << " " << argPattern << endl;
-
       parseRgbColor( argColor, red, green, blue );
       ds->addDrawingStyle( Name(argGroupKey)
                          , Name(argKey)
