@@ -1134,7 +1134,9 @@ namespace {
     }
 
     if (not _text.empty()) {
-      if (static_cast<const BasicLayer*>(layer)->getMaterial() != BasicLayer::Material::other) {
+      const BasicLayer* basicLayer = static_cast<const BasicLayer*>( layer );
+      if (   (basicLayer->getMaterial() != BasicLayer::Material::other)
+         and (basicLayer->getMaterial() != BasicLayer::Material::info ) ) {
         Net* net = _cell->getNet( _text );
         if (not net) {
           net = Net::create( _cell, _text );
