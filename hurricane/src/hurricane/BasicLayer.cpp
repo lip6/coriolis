@@ -225,23 +225,27 @@ namespace Hurricane {
 
   void BasicLayer::_postCreate ()
   {
-    Mask basicLayersMask = 0;
-    forEach ( BasicLayer*, basicLayer, getTechnology()->getBasicLayers() ) {
-      basicLayersMask |= (*basicLayer)->getMask();
+    Layer::Mask basicLayersMask = Layer::Mask( 0 );
+    for ( BasicLayer* basicLayer : getTechnology()->getBasicLayers() ) {
+      basicLayersMask |= basicLayer->getMask();
     }
 
-    Mask mask = 1;
-    while (mask && (mask & basicLayersMask)) mask = mask.lshift(1);
+    Layer::Mask mask = Layer::Mask( 1 );
+    while (mask && (mask & basicLayersMask))
+      mask = mask.lshift(1);
 
-    if (!mask)
-      throw Error("Can't create " + _TName("BasicLayer") + " : mask capacity overflow");
+    if (not mask)
+      throw Error( "BasicLayer::_postCreate(): Mask capacity overflow For \"%s\"."
+                 , getString(getName()).c_str()
+                 );
 
     _setMask(mask);
     if ( _material == Material::metal ) getTechnology()->_getMetalMask().set(getMask());
     if ( _material == Material::cut   ) getTechnology()->_getCutMask  ().set(getMask());
 
     if (_gds2Layer) {
-      Mask extractMask = (1 << _gds2Layer);
+      Layer::Mask extractMask = Layer::Mask( 1 );
+      extractMask << _gds2Layer;
 
       if (!extractMask)
         throw Error("Can't create " + _TName("BasicLayer") + " : extract mask capacity overflow");

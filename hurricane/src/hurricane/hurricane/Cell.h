@@ -446,7 +446,7 @@ class Cell : public Entity {
     public: Pin* getPin(const Name& name) const {return _pinMap.getElement(name);};
     public: Pins getPins() const {return _pinMap.getElements();};
     public: Slice* getSlice(const Layer* layer) const {return _sliceMap->getElement(layer);};
-    public: Slices getSlices(const Layer::Mask& mask = ~0) const;
+  public: Slices getSlices(const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: const ExtensionSliceMap& getExtensionSliceMap() const { return _extensionSlices; };
     public: ExtensionSlice* getExtensionSlice(const Name& name) const;
     public: ExtensionSlices getExtensionSlices(ExtensionSlice::Mask mask=~0) const;
@@ -455,8 +455,7 @@ class Cell : public Entity {
     public: Markers getMarkers() const {return _markerSet.getElements();};
     public: Markers getMarkersUnder(const Box& area) const;
     public: References getReferences() const;
-    public: Components getComponents(const Layer::Mask& mask = ~0) const;
-    public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+  public: Components getComponents(const Layer::Mask& mask = Layer::Mask::FFFF ) const; public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: Occurrences getOccurrences(unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
     public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max(), DbU::Unit threshold=0) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
@@ -464,8 +463,8 @@ class Cell : public Entity {
     public: Occurrences getTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
     public: Occurrences getTerminalNetlistInstanceOccurrencesUnder(const Box& area) const;
     public: Occurrences getNonTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
-    public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
-    public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
+    public: Occurrences getComponentOccurrences(const Layer::Mask& mask = Layer::Mask::FFFF) const;
+    public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = Layer::Mask::FFFF) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;
     public: ExtensionSlice::Mask getExtensionSliceMask ( const Name& name ) const;
     public: Gos getExtensionGos ( const Name& name ) const;

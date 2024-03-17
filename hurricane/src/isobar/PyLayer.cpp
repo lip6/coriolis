@@ -116,9 +116,9 @@ extern "C" {
 # define  accessorMaskFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)  \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )     \
   {                                                                      \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;       \
                                                                          \
-    Layer::Mask  mask = 0;                                               \
+    Layer::Mask  mask = Layer::Mask( 0 );                                \
                                                                          \
     HTRY                                                                 \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")   \

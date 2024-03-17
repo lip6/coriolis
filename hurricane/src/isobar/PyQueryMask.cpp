@@ -113,7 +113,7 @@ extern "C" {
     if ( pyMask ) {
       unsigned long long  value = 0;
       if (PyArg_ParseTuple(args,"K:QueryMask.new", &value)) {
-        pyMask->_object = Query::Mask(value);
+        pyMask->_object = Query::Mask((uint64_t)value);
       } else {
         PyErr_SetString ( ConstructorError, "Invalid/bad number of parameters for QueryMask()." );
         return NULL;
@@ -180,7 +180,7 @@ extern "C" {
 #define  binaryInFunctionMaskInt(FUNC_NAME,OP) \
   PyObject* PyQueryMask_##FUNC_NAME ( PyQueryMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
-    pyMask0->_object OP= PyAny_AsLong(pyInt);                                 \
+    pyMask0->_object.OP( (uint64_t)PyAny_AsLong(pyInt) );                     \
     Py_INCREF(pyMask0);                                                       \
     return (PyObject*)pyMask0;                                                \
   }
@@ -199,7 +199,8 @@ extern "C" {
   PyObject* PyQueryMask_##FUNC_NAME ( PyQueryMask* pyMask0, PyObject* pyInt ) \
   {                                                                           \
     Query::Mask result;                                                       \
-    result = pyMask0->_object OP PyAny_AsLong(pyInt);                         \
+    result = pyMask0->_object;                                                \
+    result.OP( (int)PyAny_AsLong(pyInt) );                                    \
     return PyQueryMask_Link(result);                                          \
   }
 
@@ -212,8 +213,8 @@ extern "C" {
   { return not pyMask->_object; }
 
 
-  binaryFunctionMaskInt   (lshift,<<)
-  binaryFunctionMaskInt   (rshift,>>)
+  binaryFunctionMaskInt   (lshift,lshift)
+  binaryFunctionMaskInt   (rshift,rshift)
   binaryFunctionMaskMask  (and   ,bitand)
   binaryFunctionMaskMask  (xor   ,^)
   binaryFunctionMaskMask  (or    ,bitor)

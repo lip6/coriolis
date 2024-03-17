@@ -29,11 +29,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_MASK_H
-#define  HURRICANE_MASK_H
-
+#pragma  once
 #include <iomanip>
 #include <sstream>
+#include "boost/multiprecision/cpp_int.hpp"
+#include "boost/math/tools/precision.hpp"
 #include "hurricane/Commons.h"
 
 
@@ -43,34 +43,41 @@ namespace Hurricane {
   template<typename IntType>
   class Mask {
     public:
+      static        Mask     FFFF;
     // Methods.
-             inline         Mask             ( IntType mask=0 );
-             inline bool    zero             () const;
-             inline Mask&   set              ( const Mask mask );
-             inline Mask&   unset            ( const Mask mask );
-             inline bool    isSet            ( const Mask mask ) const;
-             inline bool    contains         ( const Mask mask ) const;
-             inline bool    intersect        ( const Mask mask ) const;
-             inline Mask    nthbit           ( unsigned int ) const;
-             inline Mask    operator compl   () const;
-             inline Mask    operator bitand  ( const Mask mask ) const;
-             inline Mask    operator bitor   ( const Mask mask ) const;
-             inline Mask    operator xor     ( const Mask mask ) const;
-             inline Mask    lshift           ( unsigned int ) const;
-             inline Mask    rshift           ( unsigned int ) const;
-             inline Mask&   operator +=      ( unsigned int );
-             inline Mask&   operator |=      ( const Mask mask );
-             inline Mask&   operator &=      ( const Mask mask );
-             inline bool    operator ==      ( const Mask mask ) const;
-             inline bool    operator !=      ( const Mask mask ) const;
-             inline bool    operator <       ( const Mask mask ) const;
-             inline bool    operator >       ( const Mask mask ) const;
-             inline         operator IntType () const;
-      static inline Mask    fromString       ( std::string );
-    // Hurricane Managment.
-             inline string  _getTypeName     () const;
-             inline string  _getString       () const;
-             inline Record* _getRecord       () const;
+             inline          Mask             ();
+             inline explicit Mask             ( int mask );
+             inline          Mask             ( IntType mask );
+             inline bool     zero             () const;
+             inline Mask&    set              ( const Mask mask );
+             inline Mask&    unset            ( const Mask mask );
+             inline bool     isSet            ( const Mask mask ) const;
+             inline bool     contains         ( const Mask mask ) const;
+             inline bool     intersect        ( const Mask mask ) const;
+             inline Mask     nthbit           ( unsigned int ) const;
+             inline Mask     operator compl   () const;
+             inline Mask     operator bitand  ( const Mask mask ) const;
+             inline Mask     operator bitor   ( const Mask mask ) const;
+             inline Mask     operator xor     ( const Mask mask ) const;
+             inline Mask     lshift           ( unsigned int ) const;
+             inline Mask     rshift           ( unsigned int ) const;
+             inline Mask&    operator +=      ( unsigned int );
+             inline Mask&    operator |=      ( const Mask mask );
+             inline Mask&    operator &=      ( const Mask mask );
+             inline bool     operator not     () const;
+             inline bool     operator and     ( const Mask mask ) const;
+             inline bool     operator or      ( const Mask mask ) const;
+             inline bool     operator ==      ( const Mask mask ) const;
+             inline bool     operator !=      ( const Mask mask ) const;
+             inline bool     operator <       ( const Mask mask ) const;
+             inline bool     operator >       ( const Mask mask ) const;
+             inline          operator IntType () const;
+             inline          operator bool    () const;
+      static inline Mask     fromString       ( std::string );
+    // Hurricane Managment.  
+             inline string   _getTypeName     () const;
+             inline string   _getString       () const;
+             inline Record*  _getRecord       () const;
     protected:
     // Internal: Attributes.
       static size_t  _width;
@@ -78,13 +85,31 @@ namespace Hurricane {
   };
 
 
+  template<typename IntType>
+  Mask<IntType>  Mask<IntType>::FFFF = boost::math::tools::max_value<IntType>();
+
+
+  template<typename IntType>
+  size_t  Mask<IntType>::_width = std::numeric_limits<IntType>::digits / 4;
+
+
 // Inline Functions.
+  template<typename IntType>
+  inline Mask<IntType>::Mask () : _mask(0) { }
+
+  template<typename IntType>
+  inline Mask<IntType>::Mask ( int mask ) : _mask(mask) { }
+
   template<typename IntType>
   inline Mask<IntType>::Mask ( IntType mask ) : _mask(mask) { }
 
   template<typename IntType>
   inline bool  Mask<IntType>::zero () const
   { return _mask == 0; }
+
+  template<typename IntType>
+  inline  Mask<IntType>::operator bool () const
+  { return _mask != 0; }
 
   template<typename IntType>
   inline Mask<IntType>& Mask<IntType>::set ( const Mask<IntType> mask )
@@ -96,7 +121,7 @@ namespace Hurricane {
 
   template<typename IntType>
   inline bool  Mask<IntType>::isSet ( const Mask<IntType> mask ) const
-  { return _mask & mask._mask; }
+  { return (_mask & mask._mask) != 0; }
 
   template<typename IntType>
   inline bool  Mask<IntType>::contains ( const Mask<IntType> mask ) const
@@ -104,7 +129,7 @@ namespace Hurricane {
 
   template<typename IntType>
   inline bool  Mask<IntType>::intersect ( const Mask<IntType> mask ) const
-  { return _mask & mask._mask; }
+  { return (_mask & mask._mask) != 0; }
 
   template<typename IntType>
   inline Mask<IntType>  Mask<IntType>::nthbit ( unsigned int nth ) const
@@ -155,6 +180,18 @@ namespace Hurricane {
   { _mask &= mask._mask; return *this; } 
 
   template<typename IntType>
+  inline bool  Mask<IntType>::operator not () const
+  { return (_mask == 0); } 
+
+  template<typename IntType>
+  inline bool  Mask<IntType>::operator and ( const Mask<IntType> mask ) const
+  { return (_mask != 0) and (mask._mask != 0); } 
+
+  template<typename IntType>
+  inline bool  Mask<IntType>::operator or ( const Mask<IntType> mask ) const
+  { return (_mask != 0) or (mask._mask != 0); } 
+
+  template<typename IntType>
   inline bool  Mask<IntType>::operator == ( const Mask<IntType> mask ) const
   { return _mask == mask._mask; } 
 
@@ -191,10 +228,6 @@ namespace Hurricane {
     record->add(getSlot("Mask", &_mask));
     return record;
   }
-
-
-  template<typename IntType>
-  size_t  Mask<IntType>::_width = sizeof(IntType)<<1;
 
 
   template<typename IntType>
@@ -250,5 +283,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-# endif  // HURRICANE_MASK_H
