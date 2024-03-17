@@ -51,6 +51,7 @@ namespace  CRL {
   using Isobar::PyLayer_Link;
   using Isobar::PyTypeLayer;
   using Isobar::PyLayer;
+  using Isobar::IsPyDerivedLayer;
 
 
 extern "C" {
@@ -164,19 +165,20 @@ extern "C" {
     return (PyObject*)PyLayer_Link(layer);
   }
 
+
   static PyObject* PyLefImport_addLayer ( PyObject*, PyObject* args )
   {
     cdebug_log(30,0) << "PyLefImport_addLayer()" << endl;
     HTRY
-      char* name = NULL;
+      char*     name    = NULL;
       PyObject* pyLayer = NULL;
       if (PyArg_ParseTuple( args, "sO:LefImport.addLayer", &name, &pyLayer )) {
-        Layer* layer = PYLAYER_O(pyLayer);
-        if (layer == NULL) {
+        if (not IsPyDerivedLayer(pyLayer)) {
           PyErr_SetString( ConstructorError
                         , "PyLefImport.addLayer(): Second parameter is not of Layer type" );
           return NULL;
         }
+        Layer* layer = PYLAYER_O(pyLayer);
         LefImport::addLayer( name, layer );
       } else {
         PyErr_SetString ( ConstructorError, "LefImport.addLayer(): Bad type or bad number of parameters." );
@@ -185,6 +187,7 @@ extern "C" {
     HCATCH
     Py_RETURN_NONE;
   }
+
 
   static PyObject* PyLefImport_clearLayer ( PyObject*, PyObject* args )
   {
