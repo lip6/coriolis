@@ -30,6 +30,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
@@ -656,8 +657,9 @@ namespace {
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
       if (geoms->itemType(igeom) == lefiGeomLayerE) {
-        layer         = parser->getLayer( geoms->getLayer(igeom) );
-        blockageLayer = layer->getBlockageLayer();
+        layer = parser->getLayer( geoms->getLayer(igeom) );
+        if (layer)
+          blockageLayer = layer->getBlockageLayer();
       }
       if (not blockageLayer) {
         cerr << Error( "DefImport::_obstructionCbk(): No blockage layer associated to \"%s\".\n"
@@ -881,32 +883,36 @@ namespace {
         }
         if (geoms->itemType(igeom) == lefiGeomRectE) {
           lefiGeomRect* r          = geoms->getRect(igeom);
-          DbU::Unit     w          = parser->fromUnitsMicrons(r->xh - r->xl);
-          DbU::Unit     h          = parser->fromUnitsMicrons(r->yh - r->yl);
+          DbU::Unit     xl         = parser->fromUnitsMicrons( r->xl );
+          DbU::Unit     xh         = parser->fromUnitsMicrons( r->xh );
+          DbU::Unit     yl         = parser->fromUnitsMicrons( r->yl );
+          DbU::Unit     yh         = parser->fromUnitsMicrons( r->yh );
+          DbU::Unit     w          = xh - xl;
+          DbU::Unit     h          = yh - yl;
           Segment*      segment    = NULL;
           float         formFactor = (float)w / (float)h;
           
           if ( (formFactor > 0.5) and not parser->isVH() ) {
-            DbU::Unit yl = parser->fromUnitsMicrons( r->yl );
-            DbU::Unit yh = parser->fromUnitsMicrons( r->yh );
-            if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid))
+            if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
+            }
             segment = Horizontal::create( net, layer
                                         , (yh + yl) / 2
                                         ,  yh - yl
-                                        , parser->fromUnitsMicrons( r->xl )
-                                        , parser->fromUnitsMicrons( r->xh )
+                                        ,  xl
+                                        ,  xh
                                         );
           } else {
-            DbU::Unit xl = parser->fromUnitsMicrons( r->xl );
-            DbU::Unit xh = parser->fromUnitsMicrons( r->xh );
-            if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid))
+            if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
               xh -= DbU::oneGrid;
+            }
             segment = Vertical::create( net, layer
                                       , (xh + xl) / 2
                                       ,  xh - xl
-                                      , parser->fromUnitsMicrons( r->yl )
-                                      , parser->fromUnitsMicrons( r->yh )
+                                      ,  yl
+                                      ,  yh
                                       );
           }
           if (segment) parser->addPinComponent( pin->name(), segment );
@@ -969,6 +975,8 @@ namespace {
 
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
+  //if (_cell->getName() == "AND2_X1_GF6T_1P5")
   //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
@@ -999,32 +1007,34 @@ namespace {
                                                                 , Constant::Nearest );
 
               if (nearestX == v->getX()) {
+                ongrids.push_back( v );
               } else {
-                DbU::Unit neighbor = nearestX
-                  + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+                DbU::Unit neighbor = nearestX;
+                // DbU::Unit neighbor = nearestX
+                //   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
 
                 cdebug_log(100,0) <<       "| X:" << DbU::getValueString(v->getX())
                                   << " nearestX:" << DbU::getValueString(nearestX)
                                   << " neighbor:" << DbU::getValueString(neighbor)
                                   << endl;
-
-                if (  (v->getX() - v->getHalfWidth() > neighbor)
-                   or (v->getX() + v->getHalfWidth() < neighbor) ) {
-                  ongrids.push_back( Vertical::create( v->getNet()
-                                                     , v->getLayer()
-                                                     , nearestX
-                                                     , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
-                                                     , v->getDySource()
-                                                     , v->getDyTarget()
-                                                     )
-                                   );
-                } else {
-                  ongrids.push_back( v );
-                }
-                cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
-
-                continue;
+                DbU::Unit  metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
+                Interval   segSpan     ( v->getX() - v->getHalfWidth(), v->getX() + v->getHalfWidth() );
+                Interval   ongridSpan  ( neighbor - metal1Width, neighbor + metal1Width );
+                cdebug_log(100,0) <<       "| M1 width:" << DbU::getValueString(metal1Width) << endl;
+                cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
+                if (not segSpan.contains(ongridSpan))
+                  continue;
+                ongrids.push_back( Vertical::create( v->getNet()
+                                                   , v->getLayer()
+                                                   , nearestX
+                                                   , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
+                                                   , v->getDySource()
+                                                   , v->getDyTarget()
+                                                   )
+                                 );
               }
+              cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
+              continue;
             } else {
               cdebug_log(100,0) << "Not a vertical, ignored." << endl;
             }
@@ -1158,6 +1168,8 @@ namespace {
     cdebug_tabw(100,-1);
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
+  //if (_cell->getName() == "AND2_X1_GF6T_1P5")
   //  DebugSession::close();
   }
 
