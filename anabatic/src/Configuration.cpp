@@ -676,8 +676,8 @@ namespace Anabatic {
     DbU::Unit height = abs( target.getY() - source.getY() );
 
     uint64_t flags = 0;
-    flags |= (width  < 3*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
-    flags |= (height < 3*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
+    flags |= (width  < 2*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
+    flags |= (height < 2*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
   //flags |= ((width == 0) && (height == 0)) ? RoutingPad::Punctual : 0;
     if ((flags & RoutingPad::HSmall) and (flags & RoutingPad::VSmall))
       flags |= RoutingPad::Punctual;
