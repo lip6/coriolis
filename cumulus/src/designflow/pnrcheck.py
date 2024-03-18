@@ -21,7 +21,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
 
     vhdlDesignName = vlogDesignName.lower()
     if flags & IsChip:
-        routedName = 'chip'
+        routedName = 'chip_r'
     else:
         routedName = vhdlDesignName
         if flags & UseClockTree:
