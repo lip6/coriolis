@@ -891,8 +891,9 @@ namespace {
           DbU::Unit     h          = yh - yl;
           Segment*      segment    = NULL;
           float         formFactor = (float)w / (float)h;
+          const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
-          if ( (formFactor > 0.5) and not parser->isVH() ) {
+          if ( (formFactor > 0.5) and not (parser->isVH() and (h > gauge->getWireWidth()))) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
               Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
@@ -976,7 +977,7 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
-  //if (_cell->getName() == "AND2_X1_GF6T_1P5")
+  //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
@@ -1020,7 +1021,7 @@ namespace {
                 DbU::Unit  metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
                 Interval   segSpan     ( v->getX() - v->getHalfWidth(), v->getX() + v->getHalfWidth() );
                 Interval   ongridSpan  ( neighbor - metal1Width, neighbor + metal1Width );
-                cdebug_log(100,0) <<       "| M1 width:" << DbU::getValueString(metal1Width) << endl;
+                cdebug_log(100,0) <<       "| M1 half width:" << DbU::getValueString(metal1Width) << endl;
                 cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
                 if (not segSpan.contains(ongridSpan))
                   continue;
@@ -1169,7 +1170,7 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
-  //if (_cell->getName() == "AND2_X1_GF6T_1P5")
+  //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //  DebugSession::close();
   }
 
