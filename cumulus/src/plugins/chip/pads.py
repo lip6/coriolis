@@ -890,11 +890,16 @@ class Corona ( object ):
         trace( 550, ',+', '\tCorona.Builder._supplyToPads()\n' )
         supplyLayerDepth = self.conf.routingGauge.getPowerSupplyGauge().getDepth()
         supplyLayer      = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
-        chipLayer        = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
         coronaAb         = self.conf.icorona.getAbutmentBox()
         chipAxis         = coronaAxis + self.conf.icorona.getTransformation().getTx()
+        iopinRingLayer   = None
+        if self.conf.iopinRingLayer:
+            iopinRingLayer = DataBase.getDB().getTechnology().getLayer( self.conf.iopinRingLayer )
+        if not iopinRingLayer:
+            iopinRingLayer = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
         rails = []
-        trace( 550, '\tchipLayer={}\n'.format(chipLayer) )
+        trace( 550, '\tself.conf.chipLayer={}\n'.format(self.conf.iopinRingLayer) )
+        trace( 550, '\tiopinRingLayer={}\n'.format(iopinRingLayer) )
         for rail in self.padRails:
             rails.append( [ rail[0], rail[1], rail[2], rail[3] ] )
         if self.conf.padCoreSide == 'North':
@@ -904,7 +909,7 @@ class Corona ( object ):
             layer    = rail[1]
             railAxis = rail[2]
             width    = rail[3]
-            if net != chipNet or chipLayer.getMask() != layer.getMask():
+            if net != chipNet or iopinRingLayer.getMask() != layer.getMask():
                 continue
             if side == North:
                 trace( 550, '\tNorth side supply\n' )
