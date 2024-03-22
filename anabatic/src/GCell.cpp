@@ -311,7 +311,7 @@ namespace Anabatic {
   {
     if (not _matrixHSide) {
       _matrixVSide = Session::getSliceHeight();
-      _matrixHSide = Session::getSliceHeight();
+      _matrixHSide = (float)Session::getSliceHeight() * anabatic->getConfiguration()->getGCellAspectRatio();
 
       if (_matrixHSide % Session::getSliceStep())
         _matrixHSide += Session::getSliceStep() - _matrixHSide % Session::getSliceStep();

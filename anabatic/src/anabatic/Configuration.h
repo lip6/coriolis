@@ -121,8 +121,9 @@ namespace Anabatic {
               DbU::Unit          getPWireWidth        ( const Layer* ) const;
               DbU::Unit          getExtensionCap      ( const Layer* ) const;
               Flags              getDirection         ( const Layer* ) const;
-              float              getSaturateRatio     () const;
-              size_t             getSaturateRp        () const;
+      inline  float              getGCellAspectRatio  () const;
+      inline  float              getSaturateRatio     () const;
+      inline  size_t             getSaturateRp        () const;
       inline  std::string        getDiodeName         () const;
       inline  DbU::Unit          getAntennaGateMaxWL  () const;
       inline  DbU::Unit          getAntennaDiodeMaxWL () const;
@@ -163,6 +164,7 @@ namespace Anabatic {
       CellGauge*              _cg;
       RoutingGauge*           _rg;
       std::vector<DbU::Unit>  _extensionCaps;
+      float                   _gcellAspectRatio;
       float                   _saturateRatio;
       size_t                  _saturateRp;
       DbU::Unit               _globalThreshold;
@@ -206,11 +208,17 @@ namespace Anabatic {
   inline  const Layer* Configuration::getDContactLayer     () const { return getContactLayer( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
+  inline float         Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
+  inline float         Configuration::getSaturateRatio     () const { return _saturateRatio; }
+  inline size_t        Configuration::getSaturateRp        () const { return _saturateRp; }
   inline  std::string  Configuration::getDiodeName         () const { return _diodeName; }
   inline  DbU::Unit    Configuration::getAntennaGateMaxWL  () const { return _antennaGateMaxWL; }
   inline  DbU::Unit    Configuration::getAntennaDiodeMaxWL () const { return _antennaDiodeMaxWL; }
+  inline DbU::Unit     Configuration::getGlobalThreshold   () const { return _globalThreshold; }
   inline  void         Configuration::setRoutingStyle      ( StyleFlags flags ) { _routingStyle  =  flags; }
   inline  void         Configuration::resetRoutingStyle    ( StyleFlags flags ) { _routingStyle &= ~flags; }
+
+
 
 
 } // Anabatic namespace.
