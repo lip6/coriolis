@@ -85,8 +85,9 @@ namespace Anabatic {
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    ()
-    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio",80.0)->asDouble())
-    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"   ,8   )->asInt())
+    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio", 1.0)->asDouble())
+    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio"   ,80.0)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      ,8   )->asInt())
     , _globalThreshold  (0)
     , _allowedDepth     (0)
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
@@ -196,6 +197,7 @@ namespace Anabatic {
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    (other._extensionCaps)
+    , _gcellAspectRatio (other._gcellAspectRatio)
     , _saturateRatio    (other._saturateRatio)
     , _globalThreshold  (other._globalThreshold)
     , _allowedDepth     (other._allowedDepth)
@@ -341,18 +343,6 @@ namespace Anabatic {
 
   Flags  Configuration::getDirection ( const Layer* layer ) const
   { return getDirection( getLayerDepth(layer) ); }
-
-
-  float  Configuration::getSaturateRatio () const
-  { return _saturateRatio; }
-
-
-  size_t  Configuration::getSaturateRp () const
-  { return _saturateRp; }
-
-
-  DbU::Unit  Configuration::getGlobalThreshold () const
-  { return _globalThreshold; }
 
 
   DbU::Unit  Configuration::getPitch ( size_t depth, Flags flags ) const
