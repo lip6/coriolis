@@ -893,7 +893,7 @@ namespace {
           float         formFactor = (float)w / (float)h;
           const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
-          if ( (formFactor > 0.5) and not (parser->isVH() and (h > gauge->getWireWidth()))) {
+          if ( (formFactor > 0.5) and not (parser->isVH() and (h > parser->getMinTerminalWidth()))) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
               Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
@@ -971,6 +971,7 @@ namespace {
   void  LefParser::_pinStdPostProcess ()
   {
     const Layer*              metal1      = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
+    const RoutingLayerGauge*  gaugeMetal1 = _routingGauge->getLayerGauge( (size_t)0 );
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
@@ -995,13 +996,16 @@ namespace {
 
         Segment* segment = dynamic_cast<Segment*>( component );
         if (segment) {
-          bool isWide = (segment->getWidth() >= getMinTerminalWidth());
+          bool isWide = (segment->getWidth () >= getMinTerminalWidth())
+                    and (segment->getLength() >= getMinTerminalWidth());
 
           cdebug_log(100,0) << "> " << segment << endl;
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
             cdebug_log(100,0) << "isVH()" << endl;
             Vertical* v = dynamic_cast<Vertical*>( segment );
             if (v) {
+              if (v->getLength() < gaugeMetal1->getWireWidth())
+                continue;
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
                                                                 , v->getX()
@@ -1025,14 +1029,15 @@ namespace {
                 cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
                 if (not segSpan.contains(ongridSpan))
                   continue;
-                ongrids.push_back( Vertical::create( v->getNet()
-                                                   , v->getLayer()
-                                                   , nearestX
-                                                   , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
-                                                   , v->getDySource()
-                                                   , v->getDyTarget()
-                                                   )
-                                 );
+                ongrids.push_back( v );
+                // ongrids.push_back( Vertical::create( v->getNet()
+                //                                    , v->getLayer()
+                //                                    , nearestX
+                //                                    , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
+                //                                    , v->getDySource()
+                //                                    , v->getDyTarget()
+                //                                    )
+                //                  );
               }
               cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
               continue;
