@@ -505,7 +505,7 @@ namespace Katana {
     TrackElement*     segment1     = NULL;
     TrackElement*     segment2     = NULL;
     Track*            track        = _segment->getTrack();
-    Anabatic::GCell* dogLegGCell  = gcells[ifirstDogleg];
+    Anabatic::GCell*  dogLegGCell  = gcells[ifirstDogleg];
     TrackElement*     dogleg       = NULL;
     DbU::Unit         doglegAxis;
     bool              doglegReuse1 = false;
@@ -659,6 +659,58 @@ namespace Katana {
 
     cdebug_tabw(159,-1);
     return success;
+  }
+
+
+  bool  Manipulator::relaxVH ( uint32_t flags )
+  {
+    cerr << "Manipulator::relaxHV() of: " << _segment << endl; 
+    cdebug_log(159,0) << "Manipulator::relaxHV() of: " << _segment << endl; 
+
+    if (_segment->isFixed()) return false;
+    if (not _data) return false;
+    if (_segment->isTerminal()) return false;
+    if (not _segment->isGlobal()) return false;
+    if (_segment->getLayer() != Session::getRoutingGauge()->getRoutingLayer(1)) return false;
+
+    cdebug_tabw(159,1);
+    vector<GCell*> gcells;
+    _segment->getGCells( gcells );
+
+    if (gcells.size() < 2) {
+      cerr << Bug( "relax() Cannot break %s,\n      only in %s."
+                 , getString(_segment).c_str()
+                 , getString(gcells[0]).c_str()
+                 ) << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    GCell* candidate = gcells[1];
+    for ( size_t i = 2; i+1 < gcells.size() ; ++i ) {
+      if (gcells[i]->getWDensity(1) < candidate->getWDensity(1))
+        candidate = gcells[i];
+    }
+    if (candidate->getWDensity(1) < 0.5) {
+      TrackElement* dogleg   = nullptr;
+      TrackElement* parallel = nullptr;
+      cdebug_log(159,0) << "Making dogleg in " << candidate << endl;
+      cerr << "Making dogleg in " << candidate << endl;
+      if (not _segment->canDogleg(candidate)) {
+        cdebug_log(159,0) << "Cannot create dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+      if (not _segment->makeDogleg( candidate, dogleg, parallel )) {
+        cdebug_log(159,0) << "makeDogleg() call failed (BUG)." << endl;
+        cerr << "makeDogleg() call failed (BUG)." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
+    
+    cdebug_tabw(159,-1);
+    return true;
   }
 
 

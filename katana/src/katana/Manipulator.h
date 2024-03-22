@@ -79,6 +79,7 @@ namespace Katana {
              bool                 makeDogleg              ( DbU::Unit );
              bool                 makeDogleg              ( Interval, Flags=Flags::NoFlags );
              bool                 relax                   ( Interval, uint32_t flags=AllowExpand );
+             bool                 relaxVH                 ( uint32_t flags=AllowExpand );
              bool                 insertInTrack           ( size_t icost );
              bool                 shrinkToTrack           ( size_t    icost
                                                           , uint32_t  flags=0

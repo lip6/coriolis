@@ -1068,6 +1068,11 @@ namespace Katana {
       }
     }
 
+    if (not success and Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
+      cdebug_log(159,0) << "Fallback for VH topologies, try break in low density area." << endl;
+      success = Manipulator(segment,*this).relaxVH( Manipulator::NoExpand|Manipulator::NoDoglegReuse );
+    }
+
     if ( not success and segment->isGlobal() and (_costs.size() <= 1) ) {
       cdebug_log(159,0) << "Overconstrained perpandiculars, rip them up. On track:" << endl;
       cdebug_log(159,0) << "  " << track << endl;
