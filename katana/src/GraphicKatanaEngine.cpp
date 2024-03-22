@@ -106,6 +106,7 @@ namespace Katana {
       painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
       painter.drawRect( pixelBb );
 
+#if DISABLED_ID_DRAWING
       if ( (pixelBb.width() > 2*halfWidth) and (pixelBb.height() > 2*halfHeight) ) {
         QString text  = QString("%1").arg(gcell->getId());
         QFont   font  = Graphics::getFixedFont( QFont::Normal, false, false, fontScale );
@@ -123,6 +124,7 @@ namespace Katana {
                          );
         painter.restore  ();
       }
+#endif
     }
   }
 
