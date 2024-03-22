@@ -1264,6 +1264,19 @@ namespace Anabatic {
   }
 
 
+  float  GCell::getWDensity ( size_t depth, Flags flags  ) const
+  {
+    if (isInvalidated() and not(flags & Flags::NoUpdate))
+      const_cast<GCell*>( this )->updateDensity();
+    if (not (flags & Flags::AllAbove))
+      return _densities[ depth ];
+    float minDensity = 0.0;
+    for ( ; depth < _depth ; depth += 2 )
+      minDensity = std::min( minDensity, _densities[ depth ] );
+    return minDensity;
+  }
+
+
   float  GCell::getAverageHVDensity () const
   {
   // Average density of all layers mixeds together.
@@ -1680,7 +1693,7 @@ namespace Anabatic {
   }
 
 
-  bool  GCell::hasFreeTrack ( size_t depth, float reserve ) const
+  bool  GCell::hasFreeTrack ( size_t depth, float reserve, Flags flags ) const
   {
     if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
 
@@ -1691,8 +1704,14 @@ namespace Anabatic {
                     //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
                       << " " << _feedthroughs[depth] << " vs. " << capacity
                       << " " << this << endl;
-    
-    return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
+
+    if (not (flags & Flags::AllAbove))
+       return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
+    for ( ; depth < _depth ; depth += 2 ) {
+      if (_feedthroughs[depth] + 0.99 + reserve <= capacity)
+        return true;
+    }
+    return false;
   }
 
 

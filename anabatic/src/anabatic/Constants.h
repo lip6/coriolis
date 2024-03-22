@@ -115,6 +115,7 @@ namespace Anabatic {
       static const BaseFlags  OnVSmall            ;
       static const BaseFlags  Unbreakable         ;
       static const BaseFlags  ForOffgrid          ;
+      static const BaseFlags  AllAbove            ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

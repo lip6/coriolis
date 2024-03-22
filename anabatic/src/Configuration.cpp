@@ -85,9 +85,9 @@ namespace Anabatic {
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    ()
-    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio", 1.0)->asDouble())
-    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio"   ,80.0)->asDouble())
-    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      ,8   )->asInt())
+    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",100.0)->asDouble())
+    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio"   , 80.0)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      , 8   )->asInt())
     , _globalThreshold  (0)
     , _allowedDepth     (0)
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
@@ -718,6 +718,9 @@ namespace Anabatic {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
+    record->add( getSlot( "_gcellAspectRatio", _gcellAspectRatio ) );
+    record->add( getSlot( "_saturateRatio"   , _saturateRatio    ) );
+    record->add( getSlot( "_saturateRp"      , _saturateRp       ) );
     record->add( getSlot( "_gdepthh"         , _gdepthh          ) );
     record->add( getSlot( "_gdepthv"         , _gdepthv          ) );
     record->add( getSlot( "_rg"              , _rg               ) );

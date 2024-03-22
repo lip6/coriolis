@@ -232,7 +232,7 @@ namespace Anabatic {
       inline        DbU::Unit             getWidth             () const;
       inline        DbU::Unit             getHeight            () const;
     // Detailed routing functions.                             
-                    bool                  hasFreeTrack         ( size_t depth, float reserve ) const;
+                    bool                  hasFreeTrack         ( size_t depth, float reserve, Flags=Flags::NoFlags ) const;
       inline        size_t                getDepth             () const;
                     size_t                getNetCount          () const;
       inline        int                   getRpCount           () const;
@@ -244,7 +244,7 @@ namespace Anabatic {
                     float                 getAverageHVDensity  () const;
                     float                 getMaxHVDensity      () const;
       inline        float                 getCDensity          ( Flags flags=Flags::NoFlags ) const;
-      inline        float                 getWDensity          ( size_t depth, Flags flags=Flags::NoFlags  ) const;
+                    float                 getWDensity          ( size_t depth, Flags flags=Flags::NoFlags  ) const;
       inline        DbU::Unit             getBlockage          ( size_t depth ) const;
       inline        float                 getFragmentation     ( size_t depth ) const;
       inline        float                 getFeedthroughs      ( size_t depth ) const;
@@ -473,9 +473,6 @@ namespace Anabatic {
 
   inline  float  GCell::getCDensity ( Flags flags ) const
   { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _cDensity; }
-
-  inline  float  GCell::getWDensity ( size_t depth, Flags flags  ) const
-  { if (isInvalidated() and not(flags & Flags::NoUpdate)) const_cast<GCell*>(this)->updateDensity(); return _densities[depth]; }
 
   inline  float  GCell::getFragmentation ( size_t depth ) const
   { if (isInvalidated()) const_cast<GCell*>(this)->updateDensity(); return _fragmentations[depth]; }
