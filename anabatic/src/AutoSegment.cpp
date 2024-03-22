@@ -2187,7 +2187,7 @@ namespace Anabatic {
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
       if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.5) ) nLowDensity   = false;
       if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) nLowUpDensity = false;
-      if (not gcells[i]->hasFreeTrack(depth,reserve)) {
+      if (not gcells[i]->hasFreeTrack(depth,reserve,Flags::AllAbove)) {
         cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
         return false;
       }
@@ -2225,8 +2225,9 @@ namespace Anabatic {
         segment->getGCells( gcells );
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.6) ) nLowDensity   = false;
-          if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) {
+          if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.6) )
+            nLowDensity = false;
+          if ( nLowUpDensity and (gcells[i]->getWDensity(depth,Flags::AllAbove) > 0.2) ) {
             cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
                               << "d:" << gcells[i]->getWDensity(depth) << endl;
             nLowUpDensity = false;
