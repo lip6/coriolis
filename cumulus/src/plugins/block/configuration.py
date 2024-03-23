@@ -122,7 +122,11 @@ class GaugeConf ( object ):
     @property
     def routingBb     ( self ): return self._routingBb
 
+    def isSymbolic    ( self ): return self._routingGauge.isSymbolic()
+
     def isTwoMetals   ( self ): return self._routingGauge.isTwoMetals()
+
+    def isHV          ( self ): return self._routingGauge.isHV()
 
     def getRoutingLayer ( self, depth ):
         return self._routingGauge.getRoutingLayer( depth )
@@ -326,8 +330,11 @@ class GaugeConf ( object ):
         #if flags & GaugeConf.OffsetTop1:    dy -= hpitch
         #contact1.setDy( dy )
 
-        rg        = self.routingGauge.getLayerGauge( startDepth )
-        rpContact = Contact.create( rp, rg.getLayer(), 0, 0 )
+        rg       = self.routingGauge.getLayerGauge( startDepth )
+        viaWidth = 0
+        if not self.isSymbolic():
+            viaWidth = rg.getViaWidth()
+        rpContact = Contact.create( rp, rg.getLayer(), 0, 0, viaWidth, viaWidth )
 
         if startDepth == 0:
             if flags & GaugeConf.OffsetFromSlice:
@@ -348,20 +355,40 @@ class GaugeConf ( object ):
                 ytrack = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
                 trace( 550, '\tyoffset (from contact):{}\n'.format(yoffset) )
                 trace( 550, '\tPut on Y-track:{}\n'.format(DbU.getValueString(ytrack)) )
-            contact1  = Contact.create( rp.getNet()
-                                      , self._routingGauge.getContactLayer( 0 )
-                                      , rpContact.getX()
-                                      , ytrack
-                                      , rg.getViaWidth()
-                                      , rg.getViaWidth()
-                                      )
-            segment = Vertical.create( rpContact
-                                     , contact1
-                                     , rpContact.getLayer()
-                                     , rpContact.getX()
-                                     , rg.getWireWidth()
-                                     )
-            #dy       = ytrack - contact1.getY()
+            if not self.isHV() and not self.isTwoMetals():
+                rpContact.setLayer( self._routingGauge.getContactLayer( 0 ) )
+                trace( 550, '\t  rpCcontact:{}\n'.format( rpContact ))
+                contact1  = Contact.create( rp.getNet()
+                                          , self._routingGauge.getContactLayer( 1 )
+                                          , rpContact.getX()
+                                          , ytrack
+                                          , rg.getViaWidth()
+                                          , rg.getViaWidth()
+                                          )
+                trace( 550, '\t  contact1:{}\n'.format( contact1 ))
+                segment = Vertical.create( rpContact
+                                         , contact1
+                                         , self._routingGauge.getRoutingLayer( 1 )
+                                         , rpContact.getX()
+                                         , self._routingGauge.getLayerGauge( 1 ).getWireWidth()
+                                         )
+                trace( 550, '\t  segment:{}\n'.format( segment ))
+                startDepth += 1
+            else:
+                contact1  = Contact.create( rp.getNet()
+                                          , self._routingGauge.getContactLayer( 0 )
+                                          , rpContact.getX()
+                                          , ytrack
+                                          , rg.getViaWidth()
+                                          , rg.getViaWidth()
+                                          )
+                segment = Vertical.create( rpContact
+                                         , contact1
+                                         , rpContact.getLayer()
+                                         , rpContact.getX()
+                                         , rg.getWireWidth()
+                                         )
+                #dy       = ytrack - contact1.getY()
             #trace( 550, '\tPut on Y-tracks:{}\n'.format(DbU.getValueString(ytrack)) )
             #contact1.setDy( dy )
         else:
