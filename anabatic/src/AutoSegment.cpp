@@ -2079,7 +2079,7 @@ namespace Anabatic {
     vector<GCell*> gcells;
     getGCells( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if (not gcells[i]->hasFreeTrack(depth+2,reserve)) return false;
+      if (not gcells[i]->hasFreeTrack(depth+2,reserve,flags)) return false;
     }
 
     if ( not (flags&Flags::IgnoreContacts) ) {
@@ -2094,13 +2094,13 @@ namespace Anabatic {
     }
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
-        isegment->getGCells( gcells );
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
+        segment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if (not gcells[i]->hasFreeTrack(depth+2,reserve)) return false;
+          if (not gcells[i]->hasFreeTrack(depth+2,reserve,flags)) return false;
         }
-        if (isegment->getAutoSource()->getMinDepth() < depth) return false;
-        if (isegment->getAutoTarget()->getMinDepth() < depth) return false;
+        if (segment->getAutoSource()->getMinDepth() < depth) return false;
+        if (segment->getAutoTarget()->getMinDepth() < depth) return false;
       }
     } else {
       cdebug_log(149,0) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;

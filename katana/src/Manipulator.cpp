@@ -1244,7 +1244,7 @@ namespace Katana {
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
 
-    Flags kflags = Flags::WithNeighbors;
+    Flags kflags = Flags::WithNeighbors|Flags::AllAbove;
     kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AllowLocal     : Flags::NoFlags;
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
