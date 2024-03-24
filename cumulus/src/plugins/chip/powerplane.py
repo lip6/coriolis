@@ -179,7 +179,7 @@ class HorizontalRail ( Rail ):
                          , self.axis + self.width//2 )
             overlap = onGridBb( stripeBb.getIntersection( chunkBb ))
             if overlap.isEmpty(): continue
-            if overlap.getWidth() > 2*viaWidth:
+            if overlap.getWidth() > 4*viaWidth:
                 trace( 550, '\t| Large overlap={}\n'.format(overlap) )
                 leftBigViaBbs.append( Box( overlap.getXMin()
                                          , overlap.getYMin()
