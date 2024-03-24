@@ -342,7 +342,7 @@ namespace Etesian {
 
       _bloatCells.select( getConfiguration()->getBloat() );
 
-      string bufferName = getConfiguration()->getSpareBufferName();;
+      string bufferName = getConfiguration()->getHFNSBufferName();;
       Cell*  buffer = DataBase::getDB()->getCell( bufferName );
       if (buffer) {
         _bufferCells.useBuffer( buffer, 8, 20 );

@@ -68,6 +68,7 @@ namespace Etesian {
       inline string           getFeedNames              () const;
       inline string           getDiodeName              () const;
       inline string           getSpareBufferName        () const;
+      inline string           getHFNSBufferName         () const;
       inline string           getBloat                  () const;
       inline DbU::Unit        getLatchUpDistance        () const;
       inline DbU::Unit        getAntennaGateMaxWL       () const;
@@ -93,6 +94,7 @@ namespace Etesian {
       string         _feedNames;
       string         _diodeName;
       string         _spareBufferName;
+      string         _hfnsBufferName;
       string         _bloat;
       DbU::Unit      _latchUpDistance;
       DbU::Unit      _antennaGateMaxWL;
@@ -115,6 +117,7 @@ namespace Etesian {
   inline string        Configuration::getFeedNames              () const { return _feedNames; }
   inline string        Configuration::getDiodeName              () const { return _diodeName; }
   inline string        Configuration::getSpareBufferName        () const { return _spareBufferName; }
+  inline string        Configuration::getHFNSBufferName         () const { return _hfnsBufferName; }
   inline string        Configuration::getBloat                  () const { return _bloat; }
   inline DbU::Unit     Configuration::getLatchUpDistance        () const { return _latchUpDistance; }
   inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
