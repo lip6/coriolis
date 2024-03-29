@@ -204,18 +204,20 @@ namespace Etesian {
   }
   
 
-  void  Slice::insertTies ( DbU::Unit latchUpMax )
+  void  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
   {
     cdebug_log(121,1) << "Slice::insertTies() @" << DbU::getValueString(_ybottom) << endl;
-    for ( SubSlice& subSlice : _subSlices ) subSlice.insertTies( latchUpMax );
+    for ( SubSlice& subSlice : _subSlices ) subSlice.insertTies( latchUpMax, islice%2 );
     cdebug_tabw(121,-1);
   }
 
 
   void  Slice::addFeeds ( size_t islice )
   {
+    cdebug_log(121,1) << "Slice::addFeeds() [" << islice << "]" << endl;
     if (_tiles.empty()) {
       fillHole( _tiles.end(), getXMin(), getXMax(), getYBottom(), islice%2 );
+      cdebug_tabw(121,-1);
       return;
     }
 
@@ -238,6 +240,7 @@ namespace Etesian {
     if ((*itile).getXMax() < getXMax()) {
       fillHole( _tiles.end(), (*itile).getXMax(), getXMax(), getYBottom(), (islice+getSpinSlice0())%2 );
     }
+    cdebug_tabw(121,-1);
   }
 
 
@@ -247,14 +250,21 @@ namespace Etesian {
                         , DbU::Unit ybottom
                         , size_t yspin )
   {
+    cdebug_log(121,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
+                      << "hole=[" << DbU::getValueString(xmin)
+                      << " "      << DbU::getValueString(xmin)
+                      << "]" << endl;
+    cdebug_log(121,0) << "before=" << (*before).getInstance() << endl;
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed == NULL) {
       cerr << Error("Slice::fillHole(): No feed has been registered, ignoring.") << endl;
+      cdebug_tabw(121,-1);
       return;
     }
 
-    DbU::Unit xtie   = xmin;
-    DbU::Unit modulo = (xmin - getXMin()) % getEtesian()->getSliceHStep();
+    bool      addEndTie = false;
+    DbU::Unit xtie      = xmin;
+    DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) {
       xtie += getEtesian()->getSliceHStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
@@ -267,9 +277,41 @@ namespace Etesian {
     modulo = (xmax - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) xmax -= modulo;
 
-    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
+    Cell*     tie       = getEtesian()->getFeedCells().getTie();
+    DbU::Unit feedWidth = 0;
+    if (tie) {
+      feedWidth = tie->getAbutmentBox().getWidth();
+      if (xtie+feedWidth <= xmax) {
+        cdebug_log(147,0) << "feedWidth (tie) = " << DbU::getValueString(feedWidth) << endl;
+        Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+        Instance* instance   = Instance::create
+          ( getEtesian()->getBlockCell()
+          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+          , tie
+          , getTransformation( tie->getAbutmentBox()
+                             , blockPoint.getX()
+                             , blockPoint.getY()
+                             , (yspin) ? Transformation::Orientation::MY
+                             : Transformation::Orientation::ID
+                             )
+          , Instance::PlacementStatus::PLACED
+          );
+        _tiles.insert( before
+                     , Tile( xtie
+                           , tie->getAbutmentBox().getWidth()
+                           , getEtesian()->toCell( Occurrence(instance) )));
+        cdebug_log(147,0) << "  Tie " << instance << " @" << instance->getTransformation() << endl;
+        xtie += feedWidth;
+      }
+      if (xtie + feedWidth < xmax) {
+        xmax -= feedWidth;
+        addEndTie = true;
+      }
+    }
+
+    feedWidth = feed->getAbutmentBox().getWidth();
     while ( true ) {
-      if (xtie           >= xmax) return;
+      if (xtie >= xmax) break;
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
         feed = NULL;
@@ -301,58 +343,32 @@ namespace Etesian {
                    , Tile( xtie
                          , feed->getAbutmentBox().getWidth()
                          , getEtesian()->toCell( Occurrence(instance) )));
+      cdebug_log(147,0) << "  " << instance << " @" << instance->getTransformation() << endl;
       xtie += feedWidth;
     }
 
-    Cell* tie = getEtesian()->getFeedCells().getTie();
-    feedWidth = 0;
-    if (tie) {
-      DbU::Unit feedWidth = tie->getAbutmentBox().getWidth();
-      if (xtie+feedWidth < xmax) {
-        Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
-        Instance* instance   = Instance::create
-          ( getEtesian()->getBlockCell()
-          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-          , tie
-          , getTransformation( tie->getAbutmentBox()
-                             , blockPoint.getX()
-                             , blockPoint.getY()
-                             , (yspin) ? Transformation::Orientation::MY
-                             : Transformation::Orientation::ID
-                             )
-          , Instance::PlacementStatus::PLACED
-          );
-        _tiles.insert( before
-                     , Tile( xtie
-                           , tie->getAbutmentBox().getWidth()
-                           , getEtesian()->toCell( Occurrence(instance) )));
-        xtie += feedWidth;
-      }
-
-      if (xtie+feedWidth < xmax) {
-        Point     blockPoint = getEtesian()->toBlock( Point(xmax-feedWidth,_ybottom) );
-        Instance* instance   = Instance::create
-          ( getEtesian()->getBlockCell()
-          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-          , tie
-          , getTransformation( tie->getAbutmentBox()
-                             , blockPoint.getX()
-                             , blockPoint.getY()
-                             , (yspin) ? Transformation::Orientation::MY
-                             : Transformation::Orientation::ID
-                             )
-          , Instance::PlacementStatus::PLACED
-          );
-        _tiles.insert( before
-                     , Tile( xmax-feedWidth
-                           , tie->getAbutmentBox().getWidth()
-                           , getEtesian()->toCell( Occurrence(instance) )));
-        xmax -= feedWidth;
-        before--;
-      }
-    } else {
-      cerr << Error("Slice::fillHole(): No tie has been registered, not inserting.") << endl;
+    if (addEndTie) {
+      Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+      Instance* instance   = Instance::create
+        ( getEtesian()->getBlockCell()
+        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+        , tie
+        , getTransformation( tie->getAbutmentBox()
+                           , blockPoint.getX()
+                           , blockPoint.getY()
+                           , (yspin) ? Transformation::Orientation::MY
+                           : Transformation::Orientation::ID
+                           )
+        , Instance::PlacementStatus::PLACED
+        );
+      _tiles.insert( before
+                   , Tile( xtie
+                         , tie->getAbutmentBox().getWidth()
+                         , getEtesian()->toCell( Occurrence(instance) )));
+      cdebug_log(147,0) << "  Tie " << instance << " @" << instance->getTransformation() << endl;
     }
+
+    cdebug_tabw(121,-1);
   }
 
   
@@ -592,7 +608,9 @@ namespace Etesian {
 
   void  Area::insertTies ( DbU::Unit latchUpMax )
   {
-    for ( Slice* slice : _slices ) slice->insertTies( latchUpMax );
+    for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
+      _slices[islice]->insertTies( latchUpMax, islice );
+    }
     validate( latchUpMax );
   }
 
@@ -681,7 +699,7 @@ namespace Etesian {
   DbU::Unit  SubSlice::getAverageChunk ( size_t& count ) const
   {
     count = 0;
-    Cell* feed = _slice->getEtesian()->getFeedCells().getBiggestFeed();
+    Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
       cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
       return -1;
@@ -775,7 +793,7 @@ namespace Etesian {
   }
   
 
-  void  SubSlice::insertTies ( DbU::Unit latchUpMax )
+  void  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
   {
     size_t    count        = 0;
     DbU::Unit averageChunk = getAverageChunk( count );
@@ -787,16 +805,17 @@ namespace Etesian {
                    ) << endl;
     }
     
-    Cell* feed = _slice->getEtesian()->getFeedCells().getBiggestFeed();
+    Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
       cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
       return;
     }
-    DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
+    DbU::Unit  feedWidth = feed->getAbutmentBox().getWidth();
 
     cdebug_log(121,1) << "SubSlice::insterTies(): LatchUpMax:" << DbU::getValueString( latchUpMax ) << endl;
     cdebug_log(121,1) << "Direct subSlice walkthrough." << endl;
 
+    vector<DbU::Unit>  tiePositions;
     DbU::Unit xMin      = getXMin();
     DbU::Unit xMax      = getXMax();
     auto      beginTile = _beginTile;
@@ -1017,15 +1036,13 @@ namespace Etesian {
     _area->showSubSlices();
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
-#if DISABLED_TIE_INSERTION
     if (getConfiguration()->getLatchUpDistance()) {
-      Cell*     feed       = getFeedCells().getBiggestFeed();
-      DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - feed->getAbutmentBox().getWidth();
-      if (feed != NULL)
-        tieSpacing -= feed->getAbutmentBox().getWidth();
-      _area->insertTies( tieSpacing );
+      Cell* tie = getFeedCells().getTie();
+      if (tie) {
+        DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
+        _area->insertTies( tieSpacing );
+      }
     }
-#endif
     _area->addFeeds();
 
     UpdateSession::close();
