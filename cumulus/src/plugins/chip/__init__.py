@@ -85,7 +85,7 @@ class CoreWire ( object ):
         self.viaPitch      = DbU.fromLambda( 4.0 )
         self.gapWidth      = 0
         self._computeCoreLayers()
-        if self.conf.routingGauge.getName() == 'FlexLib':
+        if self.conf.routingGauge.getName() in ('FlexLib', 'StdCellLib'):
             self.addJumper = True
 
     @property
@@ -211,6 +211,7 @@ class CoreWire ( object ):
                #   #xPadMin -= self.bbSegment.getHeight()//2
                #    xPadMin -= 3*vPitch
             if self.addJumper:
+                trace( 550, '\tJumper enabled (antenna effect)\n' )
                 rg        = self.conf.routingGauge
                 gaugeM5   = rg.getLayerGauge( 4 )
                 wwidthM5  = gaugeM5.getWireWidth()
