@@ -389,6 +389,10 @@ namespace Etesian {
       cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
       return NULL;
     }
+    if (feed == tie) {
+      cerr << Error("Slice::createDiodeUnder(): Cannot discriminate between tie and feed, ignoring.") << endl;
+      return NULL;
+    }
 
     cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
     cdebug_log(147,0) << "  rp=" << rp << endl;
@@ -404,8 +408,8 @@ namespace Etesian {
       if ((*iTile).getXMin() <  diodeArea.getXMin()) continue;
       if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
-      if (   ((*iTile).getMasterCell() != feed)
-         and ((*iTile).getMasterCell() != tie )) continue;
+      if (  ((*iTile).getMasterCell() != feed)
+         or ((*iTile).getMasterCell() == tie )) continue;
       if (blockInst) {
         if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
           cdebug_log(147,0) << "> Reject, not in block instance" << endl;
