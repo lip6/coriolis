@@ -32,6 +32,23 @@ namespace Etesian {
   using Hurricane::DbU;
 
 
+  bool  FeedCells::isFeedOrTie ( Cell* cell ) const
+  {
+    if (isFeed(cell)) return true;
+    return (cell == _tieCell);
+  }
+
+
+  bool  FeedCells::isFeed ( Cell* cell ) const
+  {
+    if (not cell) return false;
+    for ( auto item : _feedCells ) {
+      if (item.second == cell) return true;
+    }
+    return false;
+  }
+
+
   void  FeedCells::useTie ( Cell* cell )
   {
     if (cell == NULL) return;

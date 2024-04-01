@@ -250,15 +250,15 @@ namespace Etesian {
                         , DbU::Unit ybottom
                         , size_t yspin )
   {
-    cdebug_log(121,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
+    cdebug_log(147,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
                       << "hole=[" << DbU::getValueString(xmin)
-                      << " "      << DbU::getValueString(xmin)
+                      << " "      << DbU::getValueString(xmax)
                       << "]" << endl;
-    cdebug_log(121,0) << "before=" << (*before).getInstance() << endl;
+    cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed == NULL) {
       cerr << Error("Slice::fillHole(): No feed has been registered, ignoring.") << endl;
-      cdebug_tabw(121,-1);
+      cdebug_tabw(147,-1);
       return;
     }
 
@@ -368,30 +368,31 @@ namespace Etesian {
       cdebug_log(147,0) << "  Tie " << instance << " @" << instance->getTransformation() << endl;
     }
 
-    cdebug_tabw(121,-1);
+    cdebug_tabw(147,-1);
   }
 
   
-  Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint )
+  Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint, size_t yspin )
   {
     Cell* diode = getEtesian()->getDiodeCell();
-    if (diode == NULL) {
+    if (not diode) {
       cerr << Error("Slice::createDiodeUnder(): No diode cell has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
+    DbU::Unit  diodeWidth  = diode->getAbutmentBox().getWidth();
     Cell* feed  = getEtesian()->getFeedCells().getBiggestFeed();
-    if (feed == NULL) {
+    if (not feed) {
       cerr << Error("Slice::createDiodeUnder(): No feed has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
     Cell* tie = getEtesian()->getFeedCells().getTie();
     if (not feed and not tie) {
       cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
-    if (feed == tie) {
+    if (getEtesian()->getFeedCells().isFeed(tie)) {
       cerr << Error("Slice::createDiodeUnder(): Cannot discriminate between tie and feed, ignoring.") << endl;
-      return NULL;
+      return nullptr;
     }
 
     cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
@@ -404,12 +405,12 @@ namespace Etesian {
     auto      iCandidate     = _tiles.begin();
     DbU::Unit dCandidate     = 0;
     for ( auto iTile=_tiles.begin() ; iTile != _tiles.end() ; ++iTile ) {
-      if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
-      if ((*iTile).getXMin() <  diodeArea.getXMin()) continue;
-      if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
+      if ((*iTile).getXMax()  <= diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin()  <  diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin()  >= diodeArea.getXMax()) break;
+      if ((*iTile).getWidth() <  diodeWidth) continue;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
-      if (  ((*iTile).getMasterCell() != feed)
-         or ((*iTile).getMasterCell() == tie )) continue;
+      if (not getEtesian()->getFeedCells().isFeed((*iTile).getMasterCell())) continue;
       if (blockInst) {
         if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
           cdebug_log(147,0) << "> Reject, not in block instance" << endl;
@@ -425,14 +426,17 @@ namespace Etesian {
       }
     }
     
-    if (not foundCandidate) return NULL;
+    if (not foundCandidate) {
+      cdebug_log(147,0) << "No candidate found" << endl;
+      return NULL;
+    }
 
     auto before = iCandidate;
     before++;
 
     DbU::Unit  xmin        = (*iCandidate).getXMin(); 
     DbU::Unit  width       = (*iCandidate).getWidth(); 
-    DbU::Unit  fillerWidth = width - diode->getAbutmentBox().getWidth();
+    DbU::Unit  fillerWidth = width - diodeWidth;
     diodeInst = (*iCandidate).getInstance();
     Transformation refTransf = diodeInst->getTransformation();
     _tiles.erase( iCandidate );
@@ -457,23 +461,9 @@ namespace Etesian {
     _tiles.insert( before, Tile(xmin,width,Occurrence(diodeInst,instancePath)) );
     cdebug_log(147,0) << "  " << diodeInst << " @" << transf << endl;
 
-    if (fillerWidth > 0) {
-      Cell* filler = getEtesian()->getFeedCells().getFeedByWidth( fillerWidth );
-      if (not filler) {
-        cerr << Error("Slice::createDiodeUnder(): No gap filler of width %s."
-                     , DbU::getValueString(fillerWidth).c_str() ) << endl;
-        return diodeInst;
-      }
-      transf = refTransf;
-      Transformation( fillerWidth, 0 ).applyOn( transf );
-      Instance* fillerInst = Instance::create( getEtesian()->getBlockCell()
-                                             , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-                                             , filler
-                                             , transf
-                                             , Instance::PlacementStatus::FIXED );
-      _tiles.insert( before, Tile(xmin+width,fillerWidth,Occurrence(fillerInst,instancePath)) );
-      cdebug_log(147,0) << "  " << fillerInst << " @" << transf << endl;
-    }
+    cdebug_log(147,0) << "fillerWidth=" << DbU::getValueString(fillerWidth) << endl;
+    if (fillerWidth > 0)
+      fillHole( before, xmin+diodeWidth, xmin+width, _ybottom, yspin );
 
     return diodeInst;
   }
@@ -952,7 +942,7 @@ namespace Etesian {
     if (not blockDiodeArea.intersect(_placeArea)) return NULL;
 
     size_t islice = (y - _placeArea.getYMin()) / _sliceHeight;
-    return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint );
+    return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint, islice%2 );
   }
 
 

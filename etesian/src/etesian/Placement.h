@@ -261,7 +261,7 @@ namespace Etesian {
              void             showSubSlices    ();
              void             trackAvoid       ( DbU::Unit xTrack );
              void             insertTies       ( DbU::Unit latchUpMax, size_t yspin );
-             Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
+             Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint, size_t yspin );
       inline std::string      _getString       () const;
              Record*          _getRecord       () const;
     private:
