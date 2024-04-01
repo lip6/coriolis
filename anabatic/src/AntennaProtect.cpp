@@ -346,11 +346,6 @@ namespace {
     if (diode) {
       cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
-      GCell*   gcell   = _anabatic->getGCellUnder( diode->getAbutmentBox().getCenter() );
-      Contact* contact = gcell->hasGContact( getTopNet() );
-      if (not contact)
-        contact = gcell->breakGoThrough( getTopNet() );
-      cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
     }
     
     cdebug_tabw(147,-1);
@@ -487,6 +482,7 @@ namespace {
       Plug* diodePlug = diode->getPlug( diodeOutput );
       diodePlug->setNet( diodeNet );
       RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
+      _getAnabatic()->getConfiguration()->selectRpComponent( diodeRp );
       cdebug_log(147,0) << "    " << getRefRp() << endl;
 
       GCell* gcell = _anabatic->getGCellUnder( diodeRp->getPosition() );
