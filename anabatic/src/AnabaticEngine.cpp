@@ -839,7 +839,6 @@ namespace Anabatic {
     }
 
     Contact* breakContact = breakGCell->getGContact( segment->getNet() );
-
     if (i == gcells->size()) {
       cerr << Error( "AnabaticEngine::breakAt(): %s is *not* over %s."
                    , getString(segment).c_str()
@@ -879,6 +878,7 @@ namespace Anabatic {
       netData->setNoMoveUp( splitted );
     for ( ; i<gcells->size()-1 ; ++i ) gcells->edgeAt(i)->replace( segment, splitted );
 
+    cdebug_log(147,0) << "AnabaticEngine::breakAt(): " << breakContact << endl;
     return breakContact;
   }
 

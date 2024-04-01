@@ -965,8 +965,8 @@ namespace Anabatic {
     }
 
     if (clusters.size() > 1) {
-      NetData* netData        = getNetData( net );
-      size_t   rpClustersSize = clusters.size();
+      NetData*   netData        = getNetData( net );
+      size_t     rpClustersSize = clusters.size();
 
       if (netData) {
         for ( auto item : clusterSegments ) {
@@ -1047,6 +1047,19 @@ namespace Anabatic {
 
       total += clusters.size();
       cdebug_log(147,1) << "Net \"" << net->getName() << " has " << clusters.size() << " diode clusters." << endl;
+      DbU::Unit  clustersWL = 0;
+      for ( DiodeCluster* cluster : clusters ) {
+        cdebug_log(147,0) << "| Cluster WL=" << DbU::getValueString(cluster->getWL())
+                          << " needsDiode=" << cluster->needsDiode() << endl;
+        clustersWL += cluster->getWL();
+      }
+      if (clustersWL < antennaGateMaxWL) {
+        cdebug_log(147,0) << "Sum WL " << DbU::getValueString(clustersWL) << " below gate threshold "
+                          << DbU::getValueString(antennaGateMaxWL) << ", no need of a diode." << endl;
+        cdebug_tabw(147,-2);
+        return;
+      }
+      
       size_t i = clusters.size()-1;
       while ( true ) {
         cdebug_log(147,1) << "Cluster [" << i << "] needsDiode=" << clusters[i]->needsDiode()

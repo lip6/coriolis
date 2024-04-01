@@ -508,6 +508,8 @@ namespace Anabatic {
 
   Contact* GCell::breakGoThrough ( Net* net )
   {
+    cdebug_log(147,0) << "GCell::breakGoThrough(): In " << this << endl;
+    cdebug_log(147,0) << "  For " << net << this << endl;
     Contact* gcontact = hasGContact( net );
     if (gcontact) return gcontact;
 
