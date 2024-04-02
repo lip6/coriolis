@@ -276,11 +276,23 @@ namespace {
   }
 
   
-  void DiodeCluster::merge ( RoutingPad* rp )
+  void  DiodeCluster::merge ( RoutingPad* rp )
   {
     Plug* rpPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() ); 
     if (rpPlug) {
-      DiodeCluster::merge( _getAnabatic()->getGCellUnder( rp->getPosition() ), 0 );
+      GCell* rpGCell = nullptr;
+      for ( Hook* hook : rp->getBodyHook()->getHooks() ) {
+        Contact* gcontact = dynamic_cast<Contact*>( hook->getComponent() );
+        if (gcontact) {
+          rpGCell = _getAnabatic()->getGCellUnder( gcontact->getPosition() );
+          break;
+        }
+      }
+      if (not rpGCell) {
+        cdebug_log(147,0) << "| Unable to locate GCell under, using fallback " << rp << endl;
+        rpGCell = _getAnabatic()->getGCellUnder( rp->getPosition() );
+      }
+      DiodeCluster::merge( rpGCell, 0 );
       if (rpPlug->getMasterNet()->getDirection() & Net::Direction::DirIn) {
         cdebug_log(147,0) << "| Sink " << rp << endl;
         _getRoutingPads().insert( make_tuple(rp,IsSink) );
