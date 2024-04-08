@@ -245,7 +245,7 @@ class CoreWire ( object ):
                               , self.bbSegment.getCenter().getY()
                               , wwidthM5
                               , 2*wwidthM5
-                              , flags=BigVia.AllowAllExpand )
+                              , flags=BigVia.FitToVias )
                 bvia1.mergeDepth( gaugeM5.getDepth() )
                 trace( 550, '\tbvia1: %s\n' % str(bvia1) )
                 bvia1.doLayout()
@@ -255,7 +255,7 @@ class CoreWire ( object ):
                               , self.bbSegment.getCenter().getY()
                               , wwidthM5
                               , 2*wwidthM5
-                              , flags=BigVia.AllowAllExpand )
+                              , flags=BigVia.FitToVias )
                 bvia2.mergeDepth( gaugeM5.getDepth() )
                 bvia2.doLayout()
                 trace( 550, '\tbvia2: %s\n' % str(bvia2) )

@@ -408,7 +408,7 @@ class Stripe ( object ):
                         , viaBb.getYCenter()
                         , viaBb.getWidth()
                         , viaBb.getHeight()
-                        , BigVia.AllowTopMetalExpand|BigVia.AllowVerticalExpand
+                        , BigVia.FitToVias
                         )
             via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
             via.doLayout()

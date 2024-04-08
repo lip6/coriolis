@@ -931,7 +931,7 @@ class Corona ( object ):
                             , self.conf.chipAb.getYMax() - railAxis
                             , stripeWidth
                             , width
-                            , BigVia.AllowAllExpand
+                            , BigVia.FitToVias
                             )
                 trace( 550, '\tpower depth: {}\n'.format( self.conf.routingGauge.getPowerSupplyGauge().getDepth() ))
                 via.mergeDepth( self.conf.routingGauge.getPowerSupplyGauge().getDepth()-1 )
@@ -969,7 +969,7 @@ class Corona ( object ):
                             , self.conf.chipAb.getYMin() + railAxis
                             , stripeWidth
                             , width
-                            , BigVia.AllowAllExpand
+                            , BigVia.FitToVias
                             )
                 via.mergeDepth( supplyLayerDepth-1 )
                 via.doLayout()
