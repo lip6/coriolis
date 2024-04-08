@@ -893,7 +893,7 @@ namespace {
           float         formFactor = (float)w / (float)h;
           const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
-          if ( (formFactor > 0.5) and not (parser->isVH() and (h > parser->getMinTerminalWidth()))) {
+          if ( (formFactor > 0.5) and not parser->isVH() and (h > parser->getMinTerminalWidth())) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
               Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
@@ -976,9 +976,9 @@ namespace {
           Box                 ab          = _cell->getAbutmentBox();
 
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
@@ -1173,10 +1173,10 @@ namespace {
 
     cdebug_tabw(100,-1);
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
-  //  DebugSession::close();
+  //if (_cell->getName() == "AND3_X12_GF6T_1P5")
+  //   DebugSession::close();
   }
 
 
