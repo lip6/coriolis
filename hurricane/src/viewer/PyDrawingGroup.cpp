@@ -64,9 +64,19 @@ extern "C" {
 
   static void  parseRgbColor ( const char* color, int& red, int& green, int& blue )
   {
-    char colon1, colon2;
+    if (color[0] == '#') {
+      istringstream is ( color );
+      char sharp;
+      uint32_t hexa;
+      is >> sharp >> hex >> hexa;
+      red   = (hexa >> 16) & 0xFF;
+      green = (hexa >>  8) & 0xFF;
+      blue  =  hexa        & 0xFF;
+      return;
+    }
 
     istringstream is ( color );
+    char colon1, colon2;
     is >> red >> colon1 >> green >> colon2 >> blue;
   }
 
@@ -128,7 +138,7 @@ extern "C" {
       int    blue        = 255;
       bool   goMatched   = (string(argGoMatched) == "true");
 
-    //cerr << "Adding DrawingStyle" << argGroupKey << " "<< argKey << " " << argPattern << endl;
+    //cerr << "Adding DrawingStyle" << argKey << " " << argPattern << endl;
 
       parseRgbColor( argColor, red, green, blue );
       dg->addDrawingStyle( Name(argKey)
