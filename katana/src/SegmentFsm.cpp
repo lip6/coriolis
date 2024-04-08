@@ -1037,6 +1037,7 @@ namespace Katana {
         }
       }
       cdebug_log(159,0) << "| other: " << other << endl;
+      cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
 
       if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
         if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
@@ -1052,7 +1053,8 @@ namespace Katana {
         }
         
         cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
-        
+        cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
+
         if (Manipulator(segment,*this).relax(overlap0,relaxFlags)) {
           success = true;
           break;

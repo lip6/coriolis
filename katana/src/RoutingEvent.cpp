@@ -521,11 +521,6 @@ namespace Katana {
           fsm.ripupPerpandiculars();
         } else {
           if (fsm.canRipup(Manipulator::NotOnLastRipup)) {
-            if (cdebug.enabled(9000)) {
-              for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
-                cdebug_log(9000,0) << "Deter| | Candidate Track: " << fsm.getCost(itrack) << endl;
-              }
-            }
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
               cdebug_log(159,0) << "Trying Track: " << itrack << endl;
               if (fsm.getCost(itrack)->isInfinite()) break;
