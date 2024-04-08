@@ -1385,6 +1385,7 @@ namespace Katana {
     record->add ( getSlot           ( "_routingPlane",  _routingPlane ) );
     record->add ( getSlot           ( "_index"       , &_index        ) );
     record->add ( DbU::getValueSlot ( "_axis"        , &_axis         ) );
+    record->add ( getSlot           ( "_markers"     , &_markers      ) );
     record->add ( getSlot           ( "_segments"    , &_segments     ) );
                                      
     return record;
