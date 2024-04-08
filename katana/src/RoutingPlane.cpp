@@ -188,8 +188,8 @@ namespace Katana {
   {
     return "<" + _getTypeName() + " @"
                + getString(_depth) + " "
-               + getString(getLayer()) + " [ "
-               + ((getDirection() == Flags::Horizontal) ? " horizontal [" : " vertical [")
+               + getString(getLayer())
+               + ((getDirection() == Flags::Horizontal) ? " H [" : " V [")
                + getString(_tracks.size()) + "/"
                + getString(_tracks.capacity())
                + "]>";
