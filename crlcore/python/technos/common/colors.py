@@ -48,6 +48,8 @@ stdColors = \
     , 'Purple'        : '160,32,240'
     , 'SteelBlue'     : '#4682B4'
     , 'Olive'         : '#808000'
+    , 'Sienna3'       : '#cd6839'
+    , 'BurlyWood3'    : '#cdaa7d'
     }
 
 
