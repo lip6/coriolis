@@ -65,6 +65,7 @@ namespace Katana {
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
     _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
+    _ripupLimits[NonPrefRipupLimit]    = Cfg::getParamInt("katana.nonPrefRipupLimit"    , 7)->asInt();
 
     if (Cfg::getParamBool("katana.useGlobalEstimate"    ,false)->asBool()) _flags |= UseGlobalEstimate;
     if (Cfg::getParamBool("katana.useStaticBloatProfile",true )->asBool()) _flags |= UseStaticBloatProfile;
@@ -117,6 +118,7 @@ namespace Katana {
     _ripupLimits[LocalRipupLimit]      = other._ripupLimits[LocalRipupLimit];
     _ripupLimits[GlobalRipupLimit]     = other._ripupLimits[GlobalRipupLimit];
     _ripupLimits[LongGlobalRipupLimit] = other._ripupLimits[LongGlobalRipupLimit];
+    _ripupLimits[NonPrefRipupLimit]    = other._ripupLimits[NonPrefRipupLimit];
   }
 
 
