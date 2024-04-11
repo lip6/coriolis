@@ -77,6 +77,7 @@ namespace {
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
         set<AutoSegment*>  offgridSegments;
+        set<AutoSegment*>  nonprefSegments;
 
         for ( AutoSegment* segment : sourceContact->getAutoSegments() ) {
           cdebug_log(146,0) << "Examining: " << segment << endl;
@@ -86,6 +87,10 @@ namespace {
             if (allowOffgrid and (segment->getLayer() == rp->getLayer()) and segment->isNonPref()) {
               cdebug_log(146,0) << "On offgrid stack " << segment << endl;
               offgridSegments.insert( segment );
+              continue;
+            }
+            if (segment->isNonPref()) {
+              nonprefSegments.insert( segment );
               continue;
             }
             if (segment->isHorizontal()) {
@@ -124,6 +129,21 @@ namespace {
             }
           }
         } 
+
+        // Propagate constraint on non-pref segments (directly on the RP).
+        cdebug_log(146,0) << "Propagate constraint on non-pref segments" << endl;
+        for ( AutoSegment* segment : nonprefSegments ) {
+          RoutingLayerGauge* segRlg            = Session::getLayerGauge( segment->getLayer() );
+          AutoContact*       targetContact     = segment->getOppositeAnchor( sourceContact );
+          Box                nonPrefConstraint = constraintBox;
+          if (not segRlg or not targetContact) continue;
+          if (segment->isVertical()) {
+            nonPrefConstraint.inflate( 0, segRlg->getPitch(), 0, segRlg->getPitch() );
+          } else {
+            nonPrefConstraint.inflate( segRlg->getPitch(), 0, segRlg->getPitch(), 0 );
+          }
+          targetContact->setConstraintBox( nonPrefConstraint );
+        }
 
         // Propagate constraint through vertically aligned segments.
         cdebug_log(146,0) << "Propagate constraint on vertical segments" << endl;
