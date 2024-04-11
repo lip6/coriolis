@@ -582,9 +582,11 @@ namespace Anabatic {
                         <<         DbU::getValueString(maxPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        if (not ongridComponent or (bestSpan < maxPos-minPos)) {
+        DbU::Unit span = (maxPos - minPos) / gauge->getPitch();
+        if (not ongridComponent or (bestSpan < span)) {
+          cdebug_log(112,0) << "Best span=" << (maxPos-minPos) << " " << component << endl;
           ongridComponent = component;
-          bestSpan        = maxPos - minPos;
+          bestSpan        = span;
           if (gauge->isVertical())
             ongridCenter = Point( trackPos, bb.getCenter().getY() );
           else
@@ -668,9 +670,7 @@ namespace Anabatic {
     uint64_t flags = 0;
     flags |= (width  < 3*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
     flags |= (height < 3*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
-  //flags |= ((width == 0) && (height == 0)) ? RoutingPad::Punctual : 0;
-    if ((flags & RoutingPad::HSmall) and (flags & RoutingPad::VSmall))
-      flags |= RoutingPad::Punctual;
+    flags |= ((width < getPitch(rpDepth)) and (height < getPitch(rpDepth))) ? RoutingPad::Punctual : 0;
 
     rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
     rp->setFlags  ( flags );
