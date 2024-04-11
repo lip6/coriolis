@@ -220,11 +220,23 @@ namespace Anabatic {
     if (rpDepth % 2 == 0) { // RP should be horizontal (M1, M3).
       if (not (flags & (HAccess|HAccessEW))) {
         cdebug_log(145,0) << "case not(HAccess|HAccessEW)" << endl;
-        AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
-        AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
-        AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  )->setFlags( offgridFlag );
-        AutoSegment::create( subContact1,     subContact2, Flags::Horizontal);
-        rpContactSource = subContact2;
+        if (flags & HSmall) {
+          cdebug_log(145,0) << "sub-case HSmall" << endl;
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
+          AutoSegment::create( subContact1,     subContact2, Flags::Vertical);
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( subContact2, subContact1, Flags::Horizontal );
+          rpContactSource = subContact1;
+        } else {
+          cdebug_log(145,0) << "wide horizontal" << endl;
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+          AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  )->setFlags( offgridFlag );
+          AutoSegment::create( subContact1,     subContact2, Flags::Horizontal);
+          rpContactSource = subContact2;
+        }
       } else {
         if (flags & VSmall) {
           cdebug_log(145,0) << "case VSmall" << endl;
