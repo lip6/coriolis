@@ -365,6 +365,7 @@ namespace Katana {
   {
     if (segment->isBlockage()) return 0;
 
+    if (segment->isNonPref    ()) return getConfiguration()->getRipupLimit( Configuration::NonPrefRipupLimit );
     if (segment->isStrap      ()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
     if (segment->isUnbreakable()) return getConfiguration()->getRipupLimit( Configuration::StrapRipupLimit );
     if (segment->isShortNet   ()) return getConfiguration()->getRipupLimit( Configuration::ShortNetRipupLimit );
