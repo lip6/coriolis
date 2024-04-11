@@ -97,6 +97,27 @@ namespace {
   };
 
 
+  void  protectRoutingPadVH ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::protectRoutingPadVH() " << rp << endl;
+    if (not rp->isPunctual()) {
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    Box           bb    = rp->getBoundingBox();
+    Track*        track = plane->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
+
+  //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
+    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), bb, track );
+    cdebug_log(145,0) << "| " << element << endl;
+    
+    cdebug_tabw(145,-1);
+    return;
+  }
+
+
   void  protectRoutingPad ( RoutingPad* rp, Flags flags )
   {
     cdebug_log(145,1) << "::protectRoutingPad() " << rp << endl;
@@ -118,12 +139,6 @@ namespace {
       cdebug_tabw(145,-1);
       return;
     }
-    RoutingLayerGauge* rlg = Session::getLayerGauge( rp->getLayer() );
-    if (not (  (rlg->getType() == Constant::Default  )
-            or (rlg->getType() == Constant::LocalOnly))) {
-      cdebug_tabw(145,-1);
-      return;
-    }
 
     cdebug_log(145,0) << "masterCell: " << masterNet->getCell() << endl;
     cdebug_log(145,0) << "masterNet:  " << masterNet << endl;
@@ -134,6 +149,21 @@ namespace {
         cdebug_tabw(145,-1);
         return;
       }
+    }
+
+    RoutingLayerGauge* rlg     = Session::getLayerGauge( rp->getLayer() );
+    size_t             rpDepth = rlg->getDepth();
+    if (rlg->getType() == Constant::PinOnly) {
+      if (Session::getRoutingGauge()->isVH() and (rpDepth == 0)) {
+        protectRoutingPadVH( rp );
+      }
+      cdebug_tabw(145,-1);
+      return;
+    }
+    if (not (  (rlg->getType() == Constant::Default  )
+            or (rlg->getType() == Constant::LocalOnly))) {
+      cdebug_tabw(145,-1);
+      return;
     }
 
     vector< pair<Box,const Layer*> > bbs;
