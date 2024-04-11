@@ -18,6 +18,7 @@
 #include <sstream>
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Net.h"
 #include "hurricane/Name.h"
@@ -38,6 +39,7 @@ namespace Katana {
   using std::ostringstream;
   using std::setprecision;
   using Hurricane::Bug;
+  using Hurricane::DebugSession;
   using CRL::RoutingGauge;
 
 
@@ -54,45 +56,70 @@ namespace Katana {
   }
 
 
-  TrackMarker::TrackMarker ( RoutingPad* pad, size_t depth )
-    : _routingPad    (pad)
+  TrackMarker::TrackMarker ( RoutingPad* rp, size_t depth )
+    : _routingPad    (rp)
     , _sourcePosition(0)
     , _targetPosition(0)
     , _track         (NULL)
     , _weight        (0)
     , _refcount      (0)
   {
-    Point         sourcePoint  = pad->getSourcePosition();
-    Point         targetPoint  = pad->getTargetPosition();
-    RoutingGauge* rg           = Session::getRoutingGauge();
-    RoutingPlane* rp           = Session::getKatanaEngine()->getRoutingPlaneByIndex(depth);
-    DbU::Unit     pitch        = DbU::toLambda(Session::getPitch(depth));
-    Flags         rpDirection  = rg->getLayerDirection(depth);
+    DebugSession::open( rp->getNet(), 159, 160 );
+
+    RoutingGauge* rg             = Session::getRoutingGauge();
+    RoutingPlane* plane          = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
+    DbU::Unit     pitch          = Session::getPitch( depth );
+    Flags         planeDirection = rg->getLayerDirection( depth );
     Interval      trackSpan;
 
-    if ( rpDirection == Constant::Horizontal ) {
-      _sourcePosition = sourcePoint.getX();
-      _targetPosition = targetPoint.getX();
-      trackSpan       = Interval ( sourcePoint.getY(), targetPoint.getY() );
+    if (rg->isSymbolic()) {
+      Point sourcePoint = rp->getSourcePosition();
+      Point targetPoint = rp->getTargetPosition();
+      if ( planeDirection == Constant::Horizontal ) {
+        _sourcePosition = sourcePoint.getX();
+        _targetPosition = targetPoint.getX();
+        trackSpan       = Interval ( sourcePoint.getY(), targetPoint.getY() );
+      } else {
+        _sourcePosition = sourcePoint.getY();
+        _targetPosition = targetPoint.getY();
+        trackSpan       = Interval ( sourcePoint.getX(), targetPoint.getX() );
+      }
     } else {
-      _sourcePosition = sourcePoint.getY();
-      _targetPosition = targetPoint.getY();
-      trackSpan       = Interval ( sourcePoint.getX(), targetPoint.getX() );
+      Box bb = rp->getBoundingBox();
+      cdebug_log(159,0) << "bb=" << bb << endl;
+      if (planeDirection == Constant::Horizontal) {
+        _sourcePosition = bb.getXMin();
+        _targetPosition = bb.getXMax();
+        trackSpan = Interval( bb.getYMin(), bb.getYMax() );
+      } else {
+        _sourcePosition = bb.getYMin();
+        _targetPosition = bb.getYMax();
+        trackSpan = Interval( bb.getXMin(), bb.getXMax() );
+      }
+    }
+    
+    if (planeDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(rp->getLayer()))) {
+      if (not rg->isSymbolic())
+        _weight = (uint32_t)( 100.0 / (1.0 + (trackSpan.getSize()/pitch)) );
+    } else {
+      _weight = (uint32_t)( (1.0 + trackSpan.getSize()/pitch) * 20.0 );
     }
 
-    if ( rpDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
-      _weight = (uint32_t)(( pitch / (pitch+trackSpan.getSize()) ) * 100.0) ;
-    } else {
-      _weight = (uint32_t)( (pitch + trackSpan.getSize()) * 20.0 );
-    }
+    cdebug_log(159,1) << "TrackMarker::TrackMarker() depth=" << depth << " " << rp << endl;
+    cdebug_log(159,0) << "trackSpan=" << trackSpan << endl;
 
-    Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );
+    Track* track = plane->getTrackByPosition ( trackSpan.getVMin() );
+    cdebug_log(159,0) << "Nearest: " << track << endl;
     while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
+      cdebug_log(159,0) << "| weight=" << _weight << " " << track << endl;
       Session::addInsertEvent ( this, track );
       track = track->getNextTrack();
       _refcount++;
     }
-   }
+
+    cdebug_tabw(159,-1);
+    DebugSession::close();
+  }
 
 
   Net* TrackMarker::getNet () const
@@ -110,7 +137,7 @@ namespace Katana {
       << " "   << getNet()->getName()
       << " ["  << DbU::getValueString(_sourcePosition)
       << ":"   << DbU::getValueString(_targetPosition)
-      << " "   << setprecision(3) << ((double)_weight)/100.0
+      << "] "   << setprecision(3) << ((double)_weight)/100.0
       << ">";
     return s.str();
   }
