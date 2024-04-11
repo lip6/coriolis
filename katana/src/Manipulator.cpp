@@ -844,6 +844,32 @@ namespace Katana {
       cdebug_log(159,0) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
     //if ( (_segment->isUnbreakable() or _segment->isStrap()) and segment2->isGlobal() ) continue;
       if ( (_segment->isStrap()) and segment2->isGlobal() ) continue;
+#ifdef NEW_NONPREF_FEATURE
+      if (segment2->isNonPref()) {
+        cdebug_log(159,0) << "- Non-pref (perpandicular) move aside " << segment2 << endl;
+        if (shrinkRight xor shrinkLeft) {
+          if (shrinkRight) {
+            if ( not (success=Manipulator(segment2,_fsm)
+                     .ripup( SegmentAction::OtherRipupPerpandAndPushAside
+                           , toFree.getVMin() - getPPitch()/2
+                           )) )
+              continue;
+          }
+          if (shrinkLeft) {
+            cdebug_log(159,0) << "Move PP to right: "
+                              << DbU::getValueString(toFree.getVMax()) << " + "
+                              << DbU::getValueString(getPPitch()/2)
+                              << endl;
+            if ( not (success=Manipulator(segment2,_fsm)
+                     .ripup( SegmentAction::OtherRipupPerpandAndPushAside
+                           , toFree.getVMax() + getPPitch()/2
+                           )) )
+              continue;
+          }
+        }
+      }
+#endif
+      
       if ( not (success = Manipulator(segment2,_fsm).ripup(SegmentAction::OtherRipup)) )
         continue;
 
@@ -1390,7 +1416,21 @@ namespace Katana {
 
     if (_segment->isFixed()) return false;
     if (not _event->canMinimize()) return false;
-    if (_segment->isNonPref()) return true;
+    if (_segment->isNonPref()) {
+      cdebug_log(159,0) << "| Non-pref case." << endl; 
+      AutoContact* term = _segment->base()->getAutoSource();
+      AutoContact* turn = _segment->base()->getAutoTarget();
+      if (not term) {
+        std::swap( term, turn );
+        if (not term) return true;
+      }
+      DbU::Unit axisHint = (_segment->isHorizontal()) ? term->getX() : term->getY();
+      for ( TrackElement* perpandicular : _segment->getPerpandiculars() )
+        _fsm.addAction( perpandicular, SegmentAction::SelfRipupPerpandWithAxisHint, axisHint );
+      _event->setMinimized();
+      cdebug_log(159,0) << "| Minimized." << endl; 
+      return true;
+    }
 
     DbU::Unit  minSpan = DbU::Max;
     DbU::Unit  maxSpan = DbU::Min;
