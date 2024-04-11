@@ -30,7 +30,7 @@
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/Measures.h"
 #include "crlcore/Histogram.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "katana/DataNegociate.h"
 #include "katana/TrackElement.h"
 #include "katana/TrackMarker.h"
@@ -275,6 +275,7 @@ namespace Katana {
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
+  using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
   using Anabatic::AutoSegmentLut;
   using Anabatic::perpandicularTo;
@@ -432,6 +433,38 @@ namespace Katana {
       if (trackSegment->isNonPref()) {
         _segments.push_back( trackSegment );
         cdebug_log(159,0) << "Non-preferred direction, do not attempt to set on track." << endl;
+        AutoContact* autoTerm = dynamic_cast<AutoContactTerminal*>( Session::lookup(autoSegment->getSource()) );
+        if (not autoTerm) {
+          cdebug_log(159,0) << "Source is not a terminal: " << autoSegment->getSource() << endl;
+          autoTerm = dynamic_cast<AutoContactTerminal*>( Session::lookup(autoSegment->getTarget()) );
+        }
+        if (not autoTerm) {
+          cdebug_log(159,0) << "Target is not a terminal:" << autoSegment->getTarget() << endl;
+          cdebug_tabw(159,-1);
+          DebugSession::close();
+          return trackSegment;
+        }
+        Interval uconstraints;
+        if (autoSegment->isVertical()) {
+          refTrack     = plane->getTrackByPosition( autoTerm->getPosition().getY() );
+          uconstraints = autoTerm->getUConstraints( Flags::Vertical );
+          if (uconstraints.contains(refTrack->getAxis())) {
+            cdebug_log(159,0) << "Aligning S/T terminal on " << refTrack << endl;
+            autoTerm->setPosition( Point( autoTerm->getPosition().getX(), refTrack->getAxis() ));
+          } else {
+            cdebug_log(159,0) << "S/T is offgrid, not aligning " << refTrack << endl;
+          }
+        } else {
+          refTrack     = plane->getTrackByPosition( autoTerm->getPosition().getX() );
+          uconstraints = autoTerm->getUConstraints( Flags::Horizontal );
+          if (uconstraints.contains(refTrack->getAxis())) {
+            cdebug_log(159,0) << "Aligning S/T terminal on " << refTrack << endl;
+            autoTerm->setPosition( Point( refTrack->getAxis(), autoTerm->getPosition().getY() ));
+          } else {
+            cdebug_log(159,0) << "S/T is offgrid, not aligning " << refTrack << endl;
+          }
+        }
+        
         cdebug_tabw(159,-1);
         DebugSession::close();
         return trackSegment;
