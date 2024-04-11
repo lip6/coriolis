@@ -854,6 +854,15 @@ namespace Anabatic {
     cdebug_log(149,0) << "AutoHorizontal::_makeDogleg(GCell*) in " << doglegGCell << endl;
     cdebug_tabw(149,1);
 
+    if (isNonPref()) {
+      cdebug_tabw(149,-1);
+      DebugSession::close();
+      throw Error( "AutoHorizontal::_makeDogleg(): Dogleg on an non-preferred segment is forbidden.\n"
+                   "        On %s"
+                 , getString( this ).c_str()
+                 );
+    }
+
   //Session::doglegReset();
 
     AutoContact*  autoTarget = getAutoTarget();
@@ -922,8 +931,8 @@ namespace Anabatic {
     Session::dogleg( segment2 );
 
     if (autoSource->isTerminal() and autoTarget->isTerminal()) {
-      dlContact1->setFlags  ( CntWeakTerminal );
-      dlContact2->setFlags  ( CntWeakTerminal );
+      dlContact1->setFlags( CntWeakTerminal );
+      dlContact2->setFlags( CntWeakTerminal );
 
       if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
       if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
