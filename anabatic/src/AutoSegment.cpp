@@ -673,6 +673,8 @@ namespace Anabatic {
 
   void  AutoSegment::invalidate ( AutoContact* contact )
   {
+    cdebug_log(149,0) << "AutoSegment::invalidate() " << this << endl;
+    cdebug_log(149,0) << " -> " << contact << endl;
     if (Session::doDestroyTool()) return;
     if (contact == getAutoSource()) setFlags( SegInvalidatedSource );
     if (contact == getAutoTarget()) setFlags( SegInvalidatedTarget );
@@ -1023,6 +1025,7 @@ namespace Anabatic {
 
   void  AutoSegment::sourceDetach ()
   {
+    cdebug_log(149,0) << "AutoSegment::sourceDetach() " << this << endl;
     AutoContact* source = getAutoSource();
     if (source) {
       if (source->isTurn()) {
@@ -1040,6 +1043,7 @@ namespace Anabatic {
 
   void  AutoSegment::targetDetach ()
   {
+    cdebug_log(149,0) << "AutoSegment::targetDetach() " << this << endl;
     AutoContact* target = getAutoTarget();
     if (target) {
       if (target->isTurn()) {
@@ -1290,6 +1294,72 @@ namespace Anabatic {
         setOptimalMax( optimal );
         processeds.insert( this );
 
+        cdebug_tabw(145,-1);
+        return;
+      }
+    }
+
+    if (isLocal() and (  (source->isTerminal() and target->isTurn())
+                      or (target->isTerminal() and source->isTurn())) ) {
+      cdebug_log(145,0) << "Terminal with local turns special case." << endl;
+      AutoContact* fromContact   = (source->isTerminal()) ? target : source;
+      AutoSegment* perpandicular = fromContact->getPerpandicular( this );
+      while ( perpandicular and not perpandicular->isGlobal()) {
+        fromContact = perpandicular->getOppositeAnchor( fromContact );
+        if (not fromContact->isTurn()) break;
+        perpandicular = fromContact->getPerpandicular( perpandicular );
+      }
+      if (perpandicular and perpandicular->isGlobal() and (perpandicular->getDirection() != getDirection())) {
+        cdebug_log(145,0) << "Reached global perpandicular " << perpandicular << endl;
+        sideStack.addGCell( getGCell() );
+        DbU::Unit      terminalMin;
+        DbU::Unit      terminalMax;
+        AttractorsMap  attractors;
+  
+        AutoContact* anchor = getAutoSource();
+        if (anchor->isTerminal()) {
+          Box constraintBox = anchor->getConstraintBox();
+          if ( isHorizontal() ) {
+            terminalMin = constraintBox.getYMin();
+            terminalMax = constraintBox.getYMax();
+          } else {
+            terminalMin = constraintBox.getXMin();
+            terminalMax = constraintBox.getXMax();
+          }
+          
+          attractors.addAttractor( terminalMin );
+          if (terminalMin != terminalMax)
+            attractors.addAttractor( terminalMax );
+        }
+  
+        anchor = getAutoTarget();
+        if (anchor->isTerminal()) {
+          Box constraintBox = anchor->getConstraintBox();
+          if (isHorizontal()) {
+            terminalMin = constraintBox.getYMin();
+            terminalMax = constraintBox.getYMax();
+          } else {
+            terminalMin = constraintBox.getXMin();
+            terminalMax = constraintBox.getXMax();
+          }
+          
+          attractors.addAttractor( terminalMin );
+          if (terminalMin != terminalMax)
+            attractors.addAttractor( terminalMax );
+        }
+        const Interval& side = sideStack.getSideAt( getAxis() );
+        if (perpandicular->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
+        if (perpandicular->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
+        optimalMin = attractors.getLowerMedian();
+        optimalMax = attractors.getUpperMedian();
+        setInBound( constraintMin, constraintMax, optimalMin );
+        setInBound( constraintMin, constraintMax, optimalMax );
+        setOptimalMin( optimalMin );
+        setOptimalMax( optimalMax );
+        processeds.insert( this );
+
+        cdebug_log(145,0) << "optimalMin: " << DbU::getValueString(optimalMin) << endl;
+        cdebug_log(145,0) << "optimalMax: " << DbU::getValueString(optimalMax) << endl;
         cdebug_tabw(145,-1);
         return;
       }
@@ -2684,8 +2754,6 @@ namespace Anabatic {
 
   Flags  AutoSegment::makeDogleg ( GCell* doglegGCell, Flags flags )
   {
-    cdebug_log(9000,0) << "Deter| AutoSegment::makeDogleg(GCell*) " << doglegGCell << endl;
-    cdebug_log(9000,0) << "Deter| in " << this << endl;
     cdebug_tabw(149,1);
 
     Flags  rflags = Flags::NoFlags;
