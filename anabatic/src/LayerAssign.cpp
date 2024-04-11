@@ -997,54 +997,56 @@ namespace Anabatic {
   
       Session::setAnabaticFlags( Flags::WarnOnGCellOverload );
     }
-
-    cdebug_log(149,0) << "Desaturate by GCell terminal saturation" << endl;
-    set<GCellRps*,GCellRps::Compare> gcellRpss;
     
-    for ( GCell* gcell : getGCells() ) {
-      set<RoutingPad*,Entity::CompareById> rps;
-      
-      const vector<AutoContact*> contacts = gcell->getContacts();
-      for ( AutoContact* contact : contacts ) {
-        AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( contact );
-        if (terminal) {
-          rps.insert( terminal->getRoutingPad() );
+    if (Session::getConfiguration()->isHV()) {
+      cdebug_log(149,0) << "Desaturate by GCell terminal saturation" << endl;
+      set<GCellRps*,GCellRps::Compare> gcellRpss;
+
+      for ( GCell* gcell : getGCells() ) {
+        set<RoutingPad*,Entity::CompareById> rps;
+        
+        const vector<AutoContact*> contacts = gcell->getContacts();
+        for ( AutoContact* contact : contacts ) {
+          AutoContactTerminal* terminal = dynamic_cast<AutoContactTerminal*>( contact );
+          if (terminal) {
+            rps.insert( terminal->getRoutingPad() );
+          }
         }
-      }
-      if (rps.size() > getConfiguration()->getSaturateRp()) {
-        GCellRps* gcellRps = new GCellRps ( gcell, this );
-        gcellRpss.insert( gcellRps );
-
-        for ( RoutingPad* rp : rps ) gcellRps->add( rp );
-      }
-    } 
-
-    for ( GCellRps* gcellRps : gcellRpss ) {
-      gcellRps->consolidate();
+        if (rps.size() > getConfiguration()->getSaturateRp()) {
+          GCellRps* gcellRps = new GCellRps ( gcell, this );
+          gcellRpss.insert( gcellRps );
       
-      const vector<RpsInRow*>& rpsInRows = gcellRps->getRpsInRows();
-      cdebug_log(149,0) << gcellRps->getGCell() << " has " << rpsInRows.size() << " terminals." << endl;
-
-      size_t count = 0;
-      for ( RpsInRow* rpsInRow : rpsInRows ) {
-        cdebug_log(149,0) << "North:" << rpsInRow->getNorth() << " South:"
-             << rpsInRow->getSouth() << " net:"
-             << rpsInRow->getRps()[0]->getNet()->getName() << endl;
-        cdebug_log(149,0) << "H-Span:" << rpsInRow->getRpsHSpan() << " V-Span:" << rpsInRow->getRpsVSpan() << endl;
-        for ( RoutingPad* arp : rpsInRow->getRps() ) {
-          cdebug_log(149,0) << "| " << arp << endl;
+          for ( RoutingPad* rp : rps ) gcellRps->add( rp );
         }
-        if (++count < 2) rpsInRow->slacken();
-      }
+      } 
 
-      for ( AutoSegment* segment : gcellRps->getGCell()->getHSegments() ) {
-        if (segment->canPivotUp()) {
-          cdebug_log(149,0) << "Move up horizontal: " << segment << endl;
-          segment->moveUp( Flags::Propagate );
-        }
-      }
+      for ( GCellRps* gcellRps : gcellRpss ) {
+        gcellRps->consolidate();
+        
+        const vector<RpsInRow*>& rpsInRows = gcellRps->getRpsInRows();
+        cdebug_log(149,0) << gcellRps->getGCell() << " has " << rpsInRows.size() << " terminals." << endl;
       
-      delete gcellRps;
+        size_t count = 0;
+        for ( RpsInRow* rpsInRow : rpsInRows ) {
+          cdebug_log(149,0) << "North:" << rpsInRow->getNorth() << " South:"
+               << rpsInRow->getSouth() << " net:"
+               << rpsInRow->getRps()[0]->getNet()->getName() << endl;
+          cdebug_log(149,0) << "H-Span:" << rpsInRow->getRpsHSpan() << " V-Span:" << rpsInRow->getRpsVSpan() << endl;
+          for ( RoutingPad* arp : rpsInRow->getRps() ) {
+            cdebug_log(149,0) << "| " << arp << endl;
+          }
+          if (++count < 2) rpsInRow->slacken();
+        }
+      
+        for ( AutoSegment* segment : gcellRps->getGCell()->getHSegments() ) {
+          if (segment->canPivotUp()) {
+            cdebug_log(149,0) << "Move up horizontal: " << segment << endl;
+            segment->moveUp( Flags::Propagate );
+          }
+        }
+        
+        delete gcellRps;
+      }
     }
   
     checkGCellDensities();
@@ -1058,8 +1060,8 @@ namespace Anabatic {
     // cmess2 << "     - Ratio : "
     //        << ((float)global/(float)total)*100.0 << "%." << endl;
 
-  //DebugSession::close();
     cdebug_tabw(149,-1);
+  //DebugSession::close();
   }
 
 
