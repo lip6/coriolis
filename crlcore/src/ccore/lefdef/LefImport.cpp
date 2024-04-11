@@ -351,7 +351,7 @@ namespace {
     , _nthRouting      (0)
     , _routingGauge    (nullptr)
     , _cellGauge       (nullptr)
-    , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
+    , _minTerminalWidth(Cfg::getParamInt("lefImport.minTerminalWidth",0)->asInt())
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -822,7 +822,12 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    //cerr << "       @ _pinCbk: " << pin->name() << endl;
+  //if (parser->getCell()->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (parser->getCell()->getName() == "MXI2_X1_GF6T_1P5")
+  //if (parser->getCell()->getName() == "NAND2B_X2_GF6T_1P5")
+    if (parser->getCell()->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::open( 100, 110 );
+    cdebug_log(100,1) << "@ _pinCbk()" << endl;
 
     bool  created = false;
     parser->earlyGetCell( created );
@@ -893,7 +898,11 @@ namespace {
           float         formFactor = (float)w / (float)h;
           const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
-          if ( (formFactor > 0.5) and not parser->isVH() and (h > parser->getMinTerminalWidth())) {
+          cdebug_log(100,0) << "formFactor=" << formFactor
+                            << " h=" << DbU::getValueString(h)
+                            << " (> " << DbU::getValueString(parser->getMinTerminalWidth()) << ")"
+                            << endl;
+          if (formFactor > 1.0) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
               Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
@@ -916,6 +925,7 @@ namespace {
                                       ,  yh
                                       );
           }
+          cdebug_log(100,0) << "| " << segment << endl;
           if (segment) parser->addPinComponent( pin->name(), segment );
         //cerr << "       | " << segment << endl;
           continue;
@@ -964,6 +974,12 @@ namespace {
       }
     }
 
+    cdebug_tabw(100,-1);
+  //if (parser->getCell()->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (parser->getCell()->getName() == "MXI2_X1_GF6T_1P5")
+  //if (parser->getCell()->getName() == "NAND2B_X2_GF6T_1P5")
+    if (parser->getCell()->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::close();
     return 0;
   }
 
@@ -979,7 +995,10 @@ namespace {
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
-  //  DebugSession::open( 100, 110 );
+  //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
+    if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -1001,10 +1020,11 @@ namespace {
 
           cdebug_log(100,0) << "> " << segment << endl;
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
-            cdebug_log(100,0) << "isVH()" << endl;
-            Vertical* v = dynamic_cast<Vertical*>( segment );
+            cdebug_log(100,0) << "isVH()=true" << endl;
+            DbU::Unit metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
+            Vertical* v           = dynamic_cast<Vertical*>( segment );
             if (v) {
-              if (v->getLength() < gaugeMetal1->getWireWidth())
+              if (v->getLength() < getMinTerminalWidth())
                 continue;
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
@@ -1022,7 +1042,6 @@ namespace {
                                   << " nearestX:" << DbU::getValueString(nearestX)
                                   << " neighbor:" << DbU::getValueString(neighbor)
                                   << endl;
-                DbU::Unit  metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
                 Interval   segSpan     ( v->getX() - v->getHalfWidth(), v->getX() + v->getHalfWidth() );
                 Interval   ongridSpan  ( neighbor - metal1Width, neighbor + metal1Width );
                 cdebug_log(100,0) <<       "| M1 half width:" << DbU::getValueString(metal1Width) << endl;
@@ -1042,7 +1061,23 @@ namespace {
               cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
               continue;
             } else {
-              cdebug_log(100,0) << "Not a vertical, ignored." << endl;
+              Horizontal* h = dynamic_cast<Horizontal*>( segment );
+              if (not h) continue;
+              if (h->getWidth() < getMinTerminalWidth())
+                continue;
+
+              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
+                                                                , ab.getXMax()
+                                                                , (h->getSourceX() + h->getTargetX()) / 2
+                                                                , Constant::Nearest );
+              Interval   segSpan     ( h->getSourceX(), h->getTargetX() );
+              Interval   ongridSpan  ( nearestX - metal1Width, nearestX + metal1Width );
+              cdebug_log(100,0) <<       "| M1 half width:" << DbU::getValueString(metal1Width) << endl;
+              cdebug_log(100,0) <<       "| " << segSpan << " include? " << ongridSpan << endl;
+              if (not segSpan.contains(ongridSpan))
+                continue;
+              ongrids.push_back( h );
+              cdebug_log(100,0) << "+ " << ongrids[ongrids.size()-1] << endl;
             }
           }
       
@@ -1176,7 +1211,10 @@ namespace {
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
-  //   DebugSession::close();
+  //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
+  //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
+    if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+      DebugSession::close();
   }
 
 
