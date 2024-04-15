@@ -1273,7 +1273,7 @@ namespace Anabatic {
     if (not (flags & Flags::AllAbove))
       return _densities[ depth ];
     float minDensity = 0.0;
-    for ( ; depth < _depth ; depth += 2 )
+    for ( ; depth <= Session::getAllowedDepth() ; depth += 2 )
       minDensity = std::min( minDensity, _densities[ depth ] );
     return minDensity;
   }
@@ -1283,9 +1283,9 @@ namespace Anabatic {
   {
   // Average density of all layers mixeds together.
     float density = 0.0;
-    for ( size_t i=0 ; i<_depth ; i++ )
+    for ( size_t i=0 ; i<=Session::getAllowedDepth() ; i++ )
       density += _densities[i];
-    return density / ((float)(_depth-_pinDepth));
+    return density / ((float)(Session::getAllowedDepth()-_pinDepth));
   }
 
 
@@ -1297,7 +1297,7 @@ namespace Anabatic {
     float  hdensity = 0.0;
     float  vdensity = 0.0;
 
-    for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+    for ( size_t i=_pinDepth ; i<= Session::getAllowedDepth() ; i++ ) {
       if (isHorizontalPlane(i)) { hdensity += _densities[i]; ++hplanes; }
       else                      { vdensity += _densities[i]; ++vplanes; }
     }
@@ -1323,7 +1323,7 @@ namespace Anabatic {
       size_t hplanes  = 0;
       float  hdensity = 0.0;
 
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
         if (isHorizontalPlane(i)) { hdensity += _densities[i]; ++hplanes; }
       }
       if (hplanes) hdensity /= hplanes;
@@ -1333,7 +1333,7 @@ namespace Anabatic {
       size_t vplanes  = 0;
       float  vdensity = 0.0;
 
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
         if (isVerticalPlane(i)) { vdensity += _densities[i]; ++vplanes; }
       }
 
@@ -1341,15 +1341,15 @@ namespace Anabatic {
 
       density = vdensity;
     } else if (getAnabatic()->getDensityMode() == MaxDensity) {
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
         if (_densities[i] > density) density = _densities[i];
       }
     } else if (getAnabatic()->getDensityMode() == MaxHDensity) {
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
         if (isHorizontalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     } else if (getAnabatic()->getDensityMode() == MaxVDensity) {
-      for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
+      for ( size_t i=_pinDepth ; i<=Session::getAllowedDepth() ; i++ ) {
         if (isVerticalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     }
@@ -1362,11 +1362,11 @@ namespace Anabatic {
   {
     if (isInvalidated()) updateDensity();
 
-    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+    for ( size_t depth=0 ; depth<=Session::getAllowedDepth() ; ++depth ) {
       RoutingLayerGauge* rlg = Session::getLayerGauge( depth );
       if (not rlg->isUsable()) continue;
       if (_densities[depth] >= 0.9) {
-        if (depth+2 < _depth) {
+        if (depth+2 <= Session::getAllowedDepth()) {
           Edge* edge = (rlg->getDirection() == Constant::Vertical) ? getNorthEdge()
                                                                    : getEastEdge();
           if (edge) {
@@ -1380,7 +1380,7 @@ namespace Anabatic {
 
   void  GCell::addBlockage ( size_t depth, DbU::Unit length )
   {
-    if (depth >= _depth) return;
+    if (depth >= Session::getAllowedDepth()) return;
 
     _blockages[depth] += length;
     _flags |= Flags::Invalidated;
@@ -1483,7 +1483,7 @@ namespace Anabatic {
     sort( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
 
-    float                 ccapacity    = getHCapacity() * getVCapacity() * (_depth-_pinDepth); 
+    float                 ccapacity    = getHCapacity() * getVCapacity() * (Session::getAllowedDepth()-_pinDepth); 
     DbU::Unit             width        = getXMax() - getXMin();
     DbU::Unit             height       = getYMax() - getYMin();
     DbU::Unit             hpenalty     = 0 /*_box.getWidth () / 3*/;
@@ -1709,7 +1709,8 @@ namespace Anabatic {
 
     if (not (flags & Flags::AllAbove))
        return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
-    for ( ; depth < _depth ; depth += 2 ) {
+  //for ( ; depth < _depth ; depth += 2 ) {
+    for ( ; depth <= Session::getAllowedDepth() ; depth += 2 ) {
       if (_feedthroughs[depth] + 0.99 + reserve <= capacity)
         return true;
     }
@@ -1763,7 +1764,7 @@ namespace Anabatic {
                               , Flags         flags
                               )
   {
-    cdebug_log(9000,0) << "Deter| GCell::stepDesaturate() [" << getId() << "] depth:" << depth << endl;
+    cdebug_log(149,0) << "GCell::stepDesaturate() [" << getId() << "] depth:" << depth << endl;
 
     updateDensity();
     moved = NULL;
@@ -1788,7 +1789,7 @@ namespace Anabatic {
       if (segmentDepth > depth) break;
 
       globalNets.insert( (*isegment)->getNet() );
-      cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
+      cdebug_log(149,0) << "Move up " << (*isegment) << endl;
 
       moved = (*isegment);
 
@@ -1842,8 +1843,7 @@ namespace Anabatic {
 
   bool  GCell::stepNetDesaturate ( size_t depth, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
-    cdebug_log(149,0) << "GCell::stepNetDesaturate() depth:" << depth << endl;
-    cdebug_log(9000,0) << "Deter| " << this << endl;
+    cdebug_log(149,1) << "GCell::stepNetDesaturate() depth:" << depth << " " << this << endl;
 
     updateDensity();
 
@@ -1867,10 +1867,14 @@ namespace Anabatic {
 
       cdebug_log(149,0) << "Move up " << (*isegment) << endl;
 
-      if (getAnabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds))
+      if (getAnabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds)) {
+        cdebug_tabw(149,-1);
         return true;
+      }
     }
 
+    cdebug_log(149,0) << "Failed stepNetDesaturate()" << endl;
+    cdebug_tabw(149,-1);
     return false;
   }
   
