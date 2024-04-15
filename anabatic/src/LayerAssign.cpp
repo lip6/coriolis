@@ -19,6 +19,7 @@
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Net.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
@@ -369,8 +370,12 @@ namespace Anabatic {
         GCell*      gcell  = const_cast<GCell*>( topKey->getGCell() );
         queue.pop();
 
+        // if (gcell->getId() == 3534128)
+        //   DebugSession::open( 145, 150 );
+
+        cdebug_log(149,0) << "Before, queue.size()=" << queue.size() << endl;
         if (topKey->isActive()) {
-          cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
+          cdebug_log(149,0) << "_desaturate: finish=" << finished << " [" << depth << "]:"
                             << gcell->getDensity(depth) << " " << gcell << endl;
           
           if (not gcell->isSaturated(depth)) {
@@ -386,16 +391,21 @@ namespace Anabatic {
             optimized = gcell->stepNetDesaturate( depth, globalNets, invalidateds );
             gcell->setSatProcessed( depth );
             if (optimized) {
-              for ( GCell* gcell : invalidateds ) {
-                if (not gcell->isSatProcessed(depth))
-                  queue.push( gcell->cloneKey(depth) );
+              for ( GCell* invalidGCell : invalidateds ) {
+              //if ((invalidGCell != gcell) or (gcell->isSaturated(depth)))
+                if (not invalidGCell->isSatProcessed(depth))
+                  queue.push( invalidGCell->cloneKey(depth) );
               }
               invalidateds.clear();
             }
           }
         }
+        cdebug_log(149,0) << "After, queue.size()=" << queue.size() << endl;
 
         delete topKey;
+
+        // if (gcell->getId() == 3534128)
+        //   DebugSession::close();
       }
     }
     
@@ -673,8 +683,6 @@ namespace Anabatic {
     Net* net = seed->getNet();
     DebugSession::open( net, 145, 150 );
 
-    cdebug_log(9000,0) << "Deter| Move left: " << seed << endl;
-
     seed->moveULeft();
     globalNets.insert( net );
 
@@ -709,8 +717,6 @@ namespace Anabatic {
   {
     Net* net = seed->getNet();
     DebugSession::open( net, 145, 150 );
-
-    cdebug_log(9000,0) << "Deter| Move right: " << seed << endl;
 
     seed->moveURight();
     globalNets.insert( net );
@@ -751,7 +757,9 @@ namespace Anabatic {
     DebugSession::open( net, 145, 150 );
     cdebug_log(149,0) << "moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
-    if (not seed->canMoveUp( 1.0, Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer) ) {
+    Flags flags = Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer;
+    if (seedDepth > 2) flags |= Flags::IgnoreContacts;
+    if (not seed->canMoveUp( 2.0, flags) ) {
       cdebug_log(149,0) << "Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;
@@ -769,6 +777,8 @@ namespace Anabatic {
       AutoContact* from    = stack.back().first;
       AutoSegment* segment = stack.back().second;
       stack.pop_back();
+      cdebug_log(149,0) << "> Looking at " << segment << endl;
+      cdebug_log(149,0) << "    from " << from << endl;
 
       if (segment->isLocal()) {
         if (not segment->isStrongTerminal()) {
@@ -784,12 +794,10 @@ namespace Anabatic {
       }
 
     // Do something here.
-      if (not segment->canMoveUp( 1.0
-                                , Flags::Propagate
-                                | Flags::AllowTerminal
-                                | Flags::NoCheckLayer
-                                | Flags::CheckLowDensity
-                                ) ) continue;
+      if (not segment->canMoveUp( 2.0, flags|Flags::CheckLowDensity )) {
+        cdebug_log(149,0) << "| Reject global " << segment << endl;
+        continue;
+      }
 
       cdebug_log(149,0) << "| Push global " << segment << endl;
       globals.push_back( segment );
@@ -839,7 +847,7 @@ namespace Anabatic {
       }
     }
 
-    cdebug_tabw(149,0) << "moveUpNetTrunk() for " << net << " done" << endl;
+    cdebug_tabw(149,0) << "Successful moveUpNetTrunk() for " << net << " done" << endl;
     cdebug_tabw(149,-1);
     DebugSession::close();
 
@@ -901,8 +909,6 @@ namespace Anabatic {
 
   void  AnabaticEngine::balanceGlobalDensity ()
   {
-    cdebug_log(9000,0) << "Deter| Balance Global Density" << endl;
-
   //_balanceGlobalDensity( 1 ); // metal2
   //_balanceGlobalDensity( 2 ); // metal3
 
@@ -984,7 +990,7 @@ namespace Anabatic {
          and (getConfiguration()->getAllowedDepth() > 2) ) {
         for ( size_t depth=1 ; depth <= getConfiguration()->getAllowedDepth()-2; ++depth ) {
           _desaturate( depth, globalNets, total, global );
-          if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
+          if ( (depth > 1) and (depth%2 == 0) ) Session::revalidate();
         }
         
         globalNets.clear ();
@@ -1059,6 +1065,8 @@ namespace Anabatic {
     // cmess2 << "     - Global segments : " << global << endl;
     // cmess2 << "     - Ratio : "
     //        << ((float)global/(float)total)*100.0 << "%." << endl;
+
+    Breakpoint::stop( 100, "After layer assignment." );
 
     cdebug_tabw(149,-1);
   //DebugSession::close();
