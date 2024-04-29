@@ -1806,6 +1806,23 @@ namespace Anabatic {
 
     for ( GCell* gcell : getGCells() ) {
       if (not gcell->isMatrix()) continue;
+      int   maxReserved      = maxHCap;
+      Flags connectDirection = Flags::EastSide;
+      if (getConfiguration()->isVH()) {
+        maxReserved      = maxVCap;
+        connectDirection = Flags::NorthSide;
+      }
+
+      for ( Edge* edge : gcell->getEdges(connectDirection) ) {
+        GCell* opposite    = edge->getOpposite( gcell );
+        int    reserved    = std::max( gcell->getRpCount(), opposite->getRpCount() );
+        edge->reserveCapacity( std::min( maxReserved, reserved ) );
+      }
+    }
+
+#if DISABLED_EDGE_CAPACITY
+    for ( GCell* gcell : getGCells() ) {
+      if (not gcell->isMatrix()) continue;
 
       for ( Edge* edge : gcell->getEdges(Flags::EastSide|Flags::NorthSide) ) {
         GCell* opposite    = edge->getOpposite( gcell );
@@ -1837,6 +1854,7 @@ namespace Anabatic {
         neighbor = neighbor->getEast();
       }
     }
+#endif
 
     UpdateSession::close();
 

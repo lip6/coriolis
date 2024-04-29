@@ -1362,6 +1362,7 @@ namespace Anabatic {
   {
     if (isInvalidated()) updateDensity();
 
+#if DISABLED_EDGE_CAPACITY
     for ( size_t depth=0 ; depth<=Session::getAllowedDepth() ; ++depth ) {
       RoutingLayerGauge* rlg = Session::getLayerGauge( depth );
       if (not rlg->isUsable()) continue;
@@ -1375,6 +1376,7 @@ namespace Anabatic {
         }
       }
     }
+#endif
   }
 
 
@@ -1648,6 +1650,16 @@ namespace Anabatic {
 
     checkDensity();
 
+    // if (getId() == 267173) {
+    //   cerr << "updateDensity " << this << endl;
+    //   for ( size_t i=1 ; i<_depth ; i+=2 ) {
+    //     cerr << "| [" << i << "] "
+    //          << Session::getRoutingGauge()->getRoutingLayer(i)->getName()
+    //          << " " << _feedthroughs[i] << " vs. " << getCapacity(i)
+    //          << endl;
+    //   }
+    // }
+
     return isSaturated() ? 1 : 0 ;
   }
 
@@ -1706,6 +1718,12 @@ namespace Anabatic {
                     //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
                       << " " << _feedthroughs[depth] << " vs. " << capacity
                       << " " << this << endl;
+    // if (getId() == 267173)
+    //   cerr << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
+    //        << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
+    //   //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
+    //        << " " << _feedthroughs[depth] << " vs. " << capacity
+    //        << " " << this << endl;
 
     if (not (flags & Flags::AllAbove))
        return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
@@ -1915,18 +1933,21 @@ namespace Anabatic {
   Record* GCell::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot("_flags"      , &_flags     ) );
-    record->add( getSlot("_westEdges"  , &_westEdges ) );
-    record->add( getSlot("_eastEdges"  , &_eastEdges ) );
-    record->add( getSlot("_southEdges" , &_southEdges) );
-    record->add( getSlot("_northEdges" , &_northEdges) );
+    record->add( getSlot( "_flags"        , &_flags        ) );
+    record->add( getSlot( "_westEdges"    , &_westEdges    ) );
+    record->add( getSlot( "_eastEdges"    , &_eastEdges    ) );
+    record->add( getSlot( "_southEdges"   , &_southEdges   ) );
+    record->add( getSlot( "_northEdges"   , &_northEdges   ) );
     record->add( DbU::getValueSlot("_xmin", &_xmin) );
     record->add( DbU::getValueSlot("_ymin", &_ymin) );
-    record->add( getSlot ( "_gcontacts", &_gcontacts ) );
-    record->add( getSlot ( "_vsegments", &_vsegments ) );
-    record->add( getSlot ( "_hsegments", &_hsegments ) );
-    record->add( getSlot ( "_contacts" , &_contacts  ) );
-    record->add( getSlot ( "_depth"    , &_depth     ) );
+    record->add( getSlot( "_gcontacts"    , &_gcontacts    ) );
+    record->add( getSlot( "_vsegments"    , &_vsegments    ) );
+    record->add( getSlot( "_hsegments"    , &_hsegments    ) );
+    record->add( getSlot( "_contacts"     , &_contacts     ) );
+    record->add( getSlot( "_depth"        , &_depth        ) );
+    record->add( getSlot( "_pinDepth"     , &_pinDepth     ) );
+    record->add( getSlot( "_satProcessed" , &_satProcessed ) );
+    record->add( getSlot( "_rpCount"      , &_rpCount      ) );
 
     RoutingGauge* rg = getAnabatic()->getConfiguration()->getRoutingGauge();
 
@@ -1937,6 +1958,7 @@ namespace Anabatic {
       record->add( DbU::getValueSlot( s.str(), &_blockages[depth] ) );
     }
 
+    record->add( getSlot ( "_cDensity", &_cDensity  ) );
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
       ostringstream s;
       const Layer* layer = rg->getRoutingLayer(depth);
@@ -1949,6 +1971,20 @@ namespace Anabatic {
       const Layer* layer = rg->getRoutingLayer(depth);
       s << "_feedthroughs[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
       record->add( getSlot ( s.str(),  &_feedthroughs[depth] ) );
+    }
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_fragmentations[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_fragmentations[depth] ) );
+    }
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_globalsCount[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_globalsCount[depth] ) );
     }
     return record;
   }
