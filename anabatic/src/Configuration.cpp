@@ -658,19 +658,21 @@ namespace Anabatic {
     Point  source;
     Point  target;
 
-    size_t rpDepth = getLayerDepth( rp->getLayer() );
+    size_t    rpDepth        = getLayerDepth( rp->getLayer() );
+    DbU::Unit punctualLength = getLayerGauge( rpDepth )->getWireWidth();
     if (rpDepth == 0) ++rpDepth;
     else return;
+    punctualLength += getPitch( rpDepth );
 
     getPositions( rp, source, target );
 
-    DbU::Unit width  = abs( target.getX() - source.getX() );
-    DbU::Unit height = abs( target.getY() - source.getY() );
+    DbU::Unit width          = abs( target.getX() - source.getX() );
+    DbU::Unit height         = abs( target.getY() - source.getY() );
 
     uint64_t flags = 0;
-    flags |= (width  < 3*getPitch(rpDepth))  ? RoutingPad::HSmall   : 0;
-    flags |= (height < 3*getPitch(rpDepth))  ? RoutingPad::VSmall   : 0;
-    flags |= ((width < getPitch(rpDepth)) and (height < getPitch(rpDepth))) ? RoutingPad::Punctual : 0;
+    flags |= (width  < 3*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
+    flags |= (height < 3*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
+    flags |= ((width < punctualLength) and (height < punctualLength)) ? RoutingPad::Punctual : 0;
 
     rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
     rp->setFlags  ( flags );

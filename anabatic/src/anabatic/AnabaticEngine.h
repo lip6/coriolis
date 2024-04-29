@@ -235,6 +235,7 @@ namespace Anabatic {
                     Interval          getUSide                ( Flags direction ) const;
                     int               getCapacity             ( Interval, Flags ) const;
                     size_t            getNetsFromEdge         ( const Edge*, NetSet& );
+      inline  const EdgeCapacityLut&  getEdgeCapacities       () const;
       virtual       void              openSession             ();
       inline        void              setState                ( EngineState state );
       inline        void              setDensityMode          ( uint64_t );
@@ -400,6 +401,7 @@ namespace Anabatic {
   inline       uint64_t          AnabaticEngine::getDensityMode           () const { return _densityMode; }
   inline       void              AnabaticEngine::setDensityMode           ( uint64_t mode ) { _densityMode=mode; }
   inline       void              AnabaticEngine::setBlockageNet           ( Net* net ) { _blockageNet = net; }
+  inline const EdgeCapacityLut&  AnabaticEngine::getEdgeCapacities        () const { return _edgeCapacitiesLut; }
   inline const AutoContactLut&   AnabaticEngine::_getAutoContactLut       () const { return _autoContactLut; }
   inline const AutoSegmentLut&   AnabaticEngine::_getAutoSegmentLut       () const { return _autoSegmentLut; }
   inline const Flags&            AnabaticEngine::flags                    () const { return _flags; }
