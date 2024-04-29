@@ -373,8 +373,11 @@ namespace Katana {
 
   TrackElement* Track::getSegment ( DbU::Unit position ) const
   {
-    uint32_t  state;
-    size_t    begin;
+    cdebug_log(155,0) << "Track::getSegment() "
+                      << DbU::getValueString(position) << endl;
+
+    uint32_t  state = 0;
+    size_t    begin = npos;
 
     getBeginIndex( position, begin, state );
 
@@ -439,11 +442,14 @@ namespace Katana {
 
   void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
-    cdebug_log(155,0) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
+    cdebug_log(155,1) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
                       << " begin=" << begin << endl;
+    cdebug_log(155,0) << "  npos=" << npos << endl;
+    
     if (_segments.empty()) {
       state = EmptyTrack;
       begin = 0;
+      cdebug_tabw(155,-1);
       return;
     }
 
@@ -453,6 +459,7 @@ namespace Katana {
                      , getString(this).c_str() ) << endl;
       state = BeforeFirstElement;
       begin = 0;
+      cdebug_tabw(155,-1);
       return;
     }
 
@@ -462,6 +469,7 @@ namespace Katana {
                      , getString(this).c_str() ) << endl;
       state = AfterLastElement;
       begin = _segments.size()-1;
+      cdebug_tabw(155,-1);
       return;
     }
 
@@ -511,12 +519,13 @@ namespace Katana {
         else
           state = OutsideElement;
     }
+    cdebug_tabw(155,-1);
   }
   
 
   void  Track::getOverlapBounds ( Interval interval, size_t& begin, size_t& end ) const
   {
-    uint32_t iState;
+    uint32_t iState = 0;
 
     if (  _segments.empty()
        or (interval.getVMax() <= _min)
@@ -539,8 +548,8 @@ namespace Katana {
 
   TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-          size_t    begin        = Track::npos;
-          size_t    end          = Track::npos;
+          size_t    begin        = npos;
+          size_t    end          = npos;
     const Interval& interval     = cost.getInterval();
           Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
@@ -692,9 +701,13 @@ namespace Katana {
 
   Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const
   {
+    cdebug_log(155,0) << "Track::getFreeInterval() "
+                      << DbU::getValueString(position)
+                      << " for " << net << endl;
+    
     uint32_t  state = 0;
-    size_t    begin = 0;
-    size_t    end   = 0;
+    size_t    begin = npos;
+    size_t    end   = npos;
 
     if (_segments.empty()) return Interval(_min,_max);
 

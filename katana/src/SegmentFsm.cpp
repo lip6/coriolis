@@ -950,10 +950,10 @@ namespace Katana {
     for ( ; track and track->getAxis() <= constraints.getVMax() ; track = track->getNextTrack() ) {
       candidates.push_back( Cs1Candidate(track,segment->getPPitch()) );
 
-      size_t        begin;
-      size_t        end;
-      TrackElement* other;
-      Net*          otherNet      = NULL;
+      size_t        begin         = Track::npos;
+      size_t        end           = Track::npos;
+      TrackElement* other         = nullptr;
+      Net*          otherNet      = nullptr;
       Interval      otherOverlap;
       bool          otherIsGlobal = false;
 
