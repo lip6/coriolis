@@ -482,6 +482,12 @@ namespace Etesian {
     startMeasures();
 
     BufferDatas* bufferDatas = getBufferCells().getBiggestBuffer();
+    if (not bufferDatas) {
+      stopMeasures();
+      cerr << Error( "EtesianEngine::doHFNS(): Unable to find a suitable buffer, disabled." ) << endl;
+      return 0;
+    }
+    
     vector< tuple<Net*,uint32_t> > netDatas;
     for ( Net* net : getCell()->getNets() ) {
       if (isExcluded(getString(net->getName()))) continue;
