@@ -78,6 +78,7 @@ namespace Anabatic {
     //inline        void              incCapacity          ( int );
       inline        void              forceCapacity        ( int );
       inline        void              reserveCapacity      ( int );
+      inline        int               decreaseCapacity     ( int delta, size_t depth );
       inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
                     void              incRealOccupancy2    ( int );
@@ -146,7 +147,6 @@ namespace Anabatic {
   inline       GCell*            Edge::getTarget            () const { return _target; }
   inline       DbU::Unit         Edge::getAxis              () const { return _axis; }
   inline const vector<Segment*>& Edge::getSegments          () const { return _segments; }
-  inline       void              Edge::forceCapacity        ( int capacity ) { if (_capacities) _capacities->forceCapacity(capacity); }
 //inline       void              Edge::incCapacity          ( int delta ) { _capacity  = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
 //inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setRealOccupancy     ( int c     ) { _realOccupancy = ((int) c > 0) ? c : 0; }
@@ -157,9 +157,37 @@ namespace Anabatic {
   inline       Flags&            Edge::setFlags             ( Flags mask ) { _flags |= mask; return _flags; }
   inline       void              Edge::reserveCapacity      ( int delta ) { _reservedCapacity = ((int)_reservedCapacity+delta > 0) ? _reservedCapacity+delta : 0; }
 
+  inline void  Edge::forceCapacity ( int capacity )
+  { if (_capacities) _capacities->forceCapacity( capacity ); }
+
+  inline int  Edge::decreaseCapacity ( int delta, size_t depth )
+  {
+    if (not _capacities) return 0;
+    if (_capacities->getCapacity(depth) == 0) return delta;
+    // if (getId() == 236678) {
+    //   std::cerr << "decreaseCapacity() id:" << getId()
+    //             << " capacity=" << _capacities->getCapacity()
+    //             << " " << (void*)_capacities << std::endl;
+    // }
+    if (not _capacities->isUnique()) {
+      EdgeCapacity* sharedCapacities = _capacities;
+      _capacities = new EdgeCapacity ( *_capacities );
+      _capacities->incref();
+      sharedCapacities->decref();
+    }
+    int remains = _capacities->decreaseCapacity( delta, depth );
+    cdebug_log(159,0) << "decreaseCapacity() " << this << std::endl;
+    return remains;
+  }
+
   inline unsigned int  Edge::getCapacity () const
   {
     if (not _capacities) return 0;
+    // if (getId() == 236678) {
+    //   std::cerr << "getCapacity() id:" << getId()
+    //             << " capacity=" << _capacities->getCapacity()
+    //             << " " << (void*)_capacities << std::endl;
+    // }
     return (_capacities->getCapacity() > (int)_reservedCapacity) ? _capacities->getCapacity()-_reservedCapacity : 0;
   }
  

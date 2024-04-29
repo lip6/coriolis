@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_EDGE_CAPACITY_H
-#define  ANABATIC_EDGE_CAPACITY_H
-
+#pragma  once
 #include <string>
 #include <set>
 #include "hurricane/Interval.h"
@@ -40,18 +38,26 @@ namespace Anabatic {
           inline bool  operator() ( const EdgeCapacity*, const EdgeCapacity* ) const; 
       };
     public:
-                                          EdgeCapacity  ( AnabaticEngine*, Flags, Interval, size_t depth );
-             inline       size_t          incref        ();
-             inline       size_t          decref        ();
-             inline       size_t          getref        () const;
-             inline       AnabaticEngine* getAnabatic   () const;
-             inline const Interval&       getSpan       () const;
-             inline       int             getCapacity   () const;
-             inline       int             getCapacity   ( size_t depth ) const;
-                          void            forceCapacity ( unsigned int );
-                          std::string     _getString    () const;
-                          Record*         _getRecord    () const;
+      static inline       size_t          getAllocateds    ();
+    public:
+                                          EdgeCapacity     ( AnabaticEngine*, Flags, Interval, size_t depth );
+                                          EdgeCapacity     ( const EdgeCapacity& );
+                                         ~EdgeCapacity     ();
+             inline       bool            isUnique         () const;
+             inline       size_t          size             ();
+             inline       size_t          incref           ();
+             inline       size_t          decref           ();
+             inline       size_t          getref           () const;
+             inline       AnabaticEngine* getAnabatic      () const;
+             inline const Interval&       getSpan          () const;
+             inline       int             getCapacity      () const;
+             inline       int             getCapacity      ( size_t depth ) const;
+                          void            forceCapacity    ( unsigned int );
+                          int             decreaseCapacity ( int delta, size_t depth );
+                          std::string     _getString       () const;
+                          Record*         _getRecord       () const;
     private:                              
+      static size_t     _allocateds;
     private:
       AnabaticEngine*   _anabatic;
       size_t            _refCount;
@@ -62,12 +68,15 @@ namespace Anabatic {
   };
 
 
-  inline       size_t          EdgeCapacity::incref      () { return ++_refCount; }
-  inline       size_t          EdgeCapacity::decref      () { if (_refCount < 2) { delete this; return 0; } return --_refCount; }
-  inline       size_t          EdgeCapacity::getref      () const { return _refCount; }
-  inline       AnabaticEngine* EdgeCapacity::getAnabatic () const { return _anabatic; }
-  inline const Interval&       EdgeCapacity::getSpan     () const { return _span; }
-  inline       int             EdgeCapacity::getCapacity ( size_t depth ) const { return (depth<_depth) ? _capacities[depth] : 0; }
+  inline       size_t          EdgeCapacity::getAllocateds () { return _allocateds; }
+  inline       bool            EdgeCapacity::isUnique      () const { return (_flags & Flags::UniqueCapacity); }
+  inline       size_t          EdgeCapacity::size          () { return _capacities.size(); }
+  inline       size_t          EdgeCapacity::incref        () { return ++_refCount; }
+  inline       size_t          EdgeCapacity::decref        () { if (_refCount < 2) { delete this; return 0; } return --_refCount; }
+  inline       size_t          EdgeCapacity::getref        () const { return _refCount; }
+  inline       AnabaticEngine* EdgeCapacity::getAnabatic   () const { return _anabatic; }
+  inline const Interval&       EdgeCapacity::getSpan       () const { return _span; }
+  inline       int             EdgeCapacity::getCapacity   ( size_t depth ) const { return (depth<_depth) ? _capacities[depth] : 0; }
 
   inline int  EdgeCapacity::getCapacity () const
   {
@@ -95,5 +104,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::EdgeCapacity);
-
-#endif  // ANABATIC_EDGE_CAPACITY_H
