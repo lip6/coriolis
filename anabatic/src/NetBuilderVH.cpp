@@ -220,7 +220,7 @@ namespace Anabatic {
     if (rpDepth % 2 == 0) { // RP should be horizontal (M1, M3).
       if (not (flags & (HAccess|HAccessEW))) {
         cdebug_log(145,0) << "case not(HAccess|HAccessEW)" << endl;
-        if (flags & HSmall) {
+        if (false /*flags & HSmall*/) {
           cdebug_log(145,0) << "sub-case HSmall" << endl;
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
