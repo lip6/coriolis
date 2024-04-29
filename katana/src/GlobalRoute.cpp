@@ -51,6 +51,7 @@ namespace {
   using Anabatic::Edge;
   using Anabatic::GCell;
   using Anabatic::Vertex;
+  using Anabatic::EdgeCapacity;
   using Anabatic::AnabaticEngine;
   using Etesian::BloatExtension;
   using namespace Katana;
@@ -58,7 +59,7 @@ namespace {
 
   class DigitalDistance {
     public:
-      inline            DigitalDistance ( float h, float k, float hScaling );
+      inline            DigitalDistance ( float h, float k, float gcellAspectRatio, float hScaling );
       inline void       setNet          ( Net* );
              DbU::Unit  operator()      ( const Vertex* source ,const Vertex* target,const Edge* edge ) const;
     private:
@@ -66,13 +67,23 @@ namespace {
     //     "KNIK, routeur global pour la plateforme Coriolis", p. 52.
       float  _h;
       float  _k;
+      float  _gcellAspectRatio;
       float  _hScaling;
       Net*   _net;
   };
 
 
-  inline       DigitalDistance::DigitalDistance ( float h, float k, float hScaling ) : _h(h), _k(k), _hScaling(hScaling), _net(NULL) { }
-  inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
+  inline       DigitalDistance::DigitalDistance ( float h
+                                                , float k
+                                                , float gcellAspectRatio
+                                                , float hScaling )
+    : _h(h)
+    , _k(k)
+    , _gcellAspectRatio(gcellAspectRatio)
+    , _hScaling(hScaling)
+    , _net(NULL)
+  { }
+  inline void  DigitalDistance::setNet ( Net* net ) { _net = net; }
 
 
   DbU::Unit  DigitalDistance::operator() ( const Vertex* source, const Vertex* target, const Edge* edge ) const
@@ -129,15 +140,21 @@ namespace {
        or (source->getGCell()->isStdCellRow() and target->getGCell()->isChannelRow()) )
       edgeDistance *= 10.0;
 
-    float hvScaling = (edge->isHorizontal()) ? _hScaling : 1.0 ;
+    float hvScaling = 1.0;
+    if (edge->isHorizontal()) {
+      hvScaling = _hScaling;
+      viaCost  /= _gcellAspectRatio;
+    }
+    
     float distance
       = (float)source->getDistance()
-      + (congestionCost + viaCost + historicCost) * edgeDistance * hvScaling;
+      + (congestionCost + historicCost + viaCost) * edgeDistance * hvScaling;
 
     cdebug_log(112,0) << "distance:"
                       << DbU::getValueString(source->getDistance()) << " + ("
                       << congestionCost << " + "
-                      << viaCost << " + "
+                      << viaCost << "/"
+                      << _gcellAspectRatio << " + "
                     //<< edge->getHistoricCost() << ") * "
                       << historicCost << ") * "
                       << DbU::getValueString(edgeDistance) << " * "
@@ -400,7 +417,10 @@ namespace Katana {
     } else {
       cmess1 << "  o  Reusing existing grid." << endl;
     }
-    cmess1 << ::Dots::asInt("     - GCells"               ,getGCells().size()) << endl;
+    cmess1 << ::Dots::asInt("     - GCells",getGCells().size()) << endl;
+    ostringstream result;
+    result << EdgeCapacity::getAllocateds() << " (" << getEdgeCapacities().size() << "u)";
+    cmess1 << ::Dots::asString("     - Edge capacities",result.str()) << endl;
 
     stopMeasures();
     printMeasures( "Anabatic Grid" );
@@ -530,6 +550,7 @@ namespace Katana {
     DigitalDistance*    distance =
       dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                             , getConfiguration()->getEdgeCostK()
+                                            , getConfiguration()->getGCellAspectRatio()
                                             , getConfiguration()->getEdgeHScaling() ));
     const vector<Edge*>& ovEdges = getOvEdges();
 
