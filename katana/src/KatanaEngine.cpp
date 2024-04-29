@@ -159,6 +159,7 @@ namespace Katana {
   using CRL::Measures;
   using CRL::MeasuresSet;
   using Anabatic::Edge;
+  using Anabatic::EdgeCapacity;
   using Anabatic::EngineState;
   using Anabatic::GCellsUnder;
   using Anabatic::AutoContact;
@@ -450,6 +451,7 @@ namespace Katana {
   void  KatanaEngine::annotateGlobalGraph ()
   {
     cmess1 << "  o  Back annotate global routing graph." << endl;
+  //DebugSession::open( 159, 160 );
 
     for ( size_t depth=0 ; depth<_routingPlanes.size() ; ++depth ) {
       RoutingPlane* rp = _routingPlanes[depth];
@@ -495,6 +497,7 @@ namespace Katana {
             }
           }
 
+          cdebug_log(159,0) << "  Processing whole segment set, span " << uspan << endl;
           if (track->getDirection() == Flags::Vertical) {
             source = Point( axis, uspan.getVMin() );
             target = Point( axis, uspan.getVMax() );
@@ -505,9 +508,12 @@ namespace Katana {
 
           GCellsUnder gcells = getGCellsUnder( source, target );
           if (not gcells->empty()) {
+            cdebug_log(159,0) << "  -> Under " << gcells->size() << " 0:" << gcells->gcellAt(0) << endl;
+            cdebug_log(159,0) << "  -> source=" << source << " target=" << target << endl;
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
               Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
-              edge->reserveCapacity( elementCapacity );
+              edge->decreaseCapacity( elementCapacity, depth );
+            //edge->reserveCapacity( elementCapacity );
             }
           }
 
@@ -527,7 +533,8 @@ namespace Katana {
           if (not gcells->empty()) {
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
               Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
-              edge->reserveCapacity( elementCapacity );
+              edge->decreaseCapacity( elementCapacity, depth );
+            //edge->reserveCapacity( elementCapacity );
             }
           }
         }
@@ -577,6 +584,12 @@ namespace Katana {
         gcell->postGlobalAnnotate();
       }
     }
+
+    ostringstream result;
+    result << EdgeCapacity::getAllocateds() << " (" << getEdgeCapacities().size() << "u)";
+    cmess1 << ::Dots::asString("     - Edge capacities",result.str()) << endl;
+
+  //DebugSession::close();
   }
 
 
