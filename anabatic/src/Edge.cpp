@@ -472,7 +472,8 @@ namespace Anabatic {
     if      (getSource()->isStdCellRow() and getTarget()->isStdCellRow()) flags |= Flags::NullCapacity;
     else if (getSource()->isChannelRow() and getTarget()->isChannelRow()) flags |= Flags::InfiniteCapacity;
 
-    _capacities = getAnabatic()->_createCapacity( _flags, side );
+    if (not _capacities)
+      _capacities = getAnabatic()->_createCapacity( _flags, side );
 
     _flags.reset( Flags::Invalidated );
     cdebug_log(110,0) << "Edge::materialize() " << this << endl;
@@ -543,6 +544,7 @@ namespace Anabatic {
     s.insert( s.size()-1, "] "  +DbU::getValueString(_axis) );
     s.insert( s.size()-1, " "   +getString(_realOccupancy) );
     s.insert( s.size()-1, "/"   +getString(getCapacity()) );
+    s.insert( s.size()-1, "-"   +getString(getReservedCapacity()) );
     s.insert( s.size()-1, " h:" +getString(_historicCost) );
     s.insert( s.size()-1, " "   +getString(_flags) );
     return s;

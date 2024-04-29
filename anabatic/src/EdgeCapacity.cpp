@@ -23,6 +23,9 @@ namespace Anabatic {
 
   using std::ostringstream;
 
+  
+  size_t  EdgeCapacity::_allocateds = 0;
+
 
   EdgeCapacity::EdgeCapacity ( AnabaticEngine* anabatic, Flags direction, Interval span, size_t depth )
     : _anabatic  (anabatic)
@@ -32,6 +35,7 @@ namespace Anabatic {
     , _span      (span)
     , _capacities()
   {
+    _allocateds++;
     int defcap = (_flags & Flags::InfiniteCapacity) ? 100 : 0;
 
     _capacities.reserve( _depth );
@@ -64,6 +68,29 @@ namespace Anabatic {
       //cdebug_log(110,0) << "Vertical edge capacity:" << _capacities[depth] << endl;
       }
     }
+    // std::cerr << "EdgeCapacity() "
+    //           << " capacity=" << getCapacity()
+    //           << " " << (void*)this << std::endl;
+  }
+
+
+  EdgeCapacity::EdgeCapacity ( const EdgeCapacity& other )
+    : _anabatic  (other._anabatic)
+    , _refCount  (0)
+    , _flags     (other._flags | Flags::UniqueCapacity)
+    , _depth     (other._depth)
+    , _span      (other._span)
+    , _capacities()
+  {
+    _allocateds++;
+    _capacities.reserve( _depth );
+    for ( size_t i=0 ; i<_depth ; ++i ) _capacities.push_back( other._capacities[i] );
+  }
+
+  
+  EdgeCapacity::~EdgeCapacity ()
+  {
+    _allocateds--;
   }
 
 
@@ -82,6 +109,19 @@ namespace Anabatic {
         forced = true;
       }
     }
+  }
+
+
+  int  EdgeCapacity::decreaseCapacity ( int delta, size_t depth )
+  {
+    if (depth >= _capacities.size()) return 0;
+    if (delta > _capacities[depth]) {
+      int remains = delta - _capacities[depth];
+      _capacities[depth] = 0;
+      return remains;
+    }
+    _capacities[depth] -= delta;
+    return 0;
   }
 
 

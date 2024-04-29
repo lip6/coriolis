@@ -48,6 +48,7 @@ namespace Anabatic {
     // Flags for Edge objects states only.                      
       static const BaseFlags  NullCapacity        ; // = (1 <<  5);
       static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);
+      static const BaseFlags  UniqueCapacity      ; // = (1 <<  7);
     // Flags for Anabatic objects states only.                      
       static const BaseFlags  DemoMode            ; // = (1 <<  5);
       static const BaseFlags  WarnOnGCellOverload ; // = (1 <<  6);
