@@ -829,7 +829,7 @@ class Block ( object ):
         in their parent cell.
         """
         editor = self.conf.editor
-        print( '  o  Builing block "{}".'.format(self.conf.cell.getName()) )
+        print( '  o  Building block "{}".'.format(self.conf.cell.getName()) )
         for blockInstance in self.blockInstances:
             blockInstance.block.conf.editor = editor
             if not blockInstance.block.conf.isBuilt:

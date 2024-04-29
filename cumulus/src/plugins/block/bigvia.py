@@ -239,14 +239,17 @@ class BigVia ( object ):
         cutArea    = self.plates[ depth ].getBoundingBox()
         hEnclosure = enclosure + cutSide//2
         vEnclosure = hEnclosure
-        if hEnclosure*2 < cutArea.getWidth():
+        trace( 550, '\t| cut area: {} {} x {}\n'.format(cutArea
+                                                       ,DbU.getValueString(cutArea.getWidth ())
+                                                       ,DbU.getValueString(cutArea.getHeight())) )
+        if hEnclosure*2 > cutArea.getWidth():
             raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
                                      .format( cutLayer.getName(), self )
                                    , 'Width is too small to fit a single VIA cut.' 
                                    ] )
         if self.flags & BigVia.AllowHorizontalExpand:
             hEnclosure = cutArea.getWidth()//2
-        if vEnclosure*2 < cutArea.getHeight():
+        if vEnclosure*2 > cutArea.getHeight():
             raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
                                      .format( cutLayer.getName(), self )
                                    , 'Height is too small to fit a single VIA cut.' 
