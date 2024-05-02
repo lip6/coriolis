@@ -27,6 +27,7 @@ pyCRL_files = files([
   'PyDefImport.cpp',
   'PyLefExport.cpp',
   'PyDefExport.cpp',
+  'PyMeasures.cpp',
 ])
 
 py.extension_module(
