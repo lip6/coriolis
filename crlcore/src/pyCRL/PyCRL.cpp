@@ -35,6 +35,7 @@
 // #include "crlcore/PyIspd05.h"
 #include "crlcore/PySpice.h"
 #include "crlcore/PyBlif.h"
+#include "crlcore/PyMeasures.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
 #include "crlcore/PyLefExport.h"
@@ -130,6 +131,7 @@ extern "C" {
     // PyIspd05_LinkPyType ();
     PySpice_LinkPyType ();
     PyBlif_LinkPyType ();
+    PyMeasures_LinkPyType ();
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
@@ -155,6 +157,7 @@ extern "C" {
     // PYTYPE_READY_NEW ( Ispd05 );
     PYTYPE_READY_NEW ( Spice );
     PYTYPE_READY_NEW ( Blif );
+    PYTYPE_READY_NEW ( Measures );
     PYTYPE_READY_NEW ( Gds );
     PYTYPE_READY_NEW ( LefImport );
     PYTYPE_READY_NEW ( DefImport );
@@ -207,6 +210,8 @@ extern "C" {
     PyModule_AddObject ( module, "Spice", (PyObject*)&PyTypeSpice );
     Py_INCREF ( &PyTypeBlif );
     PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
+    Py_INCREF ( &PyTypeMeasures );
+    PyModule_AddObject ( module, "Measures", (PyObject*)&PyTypeMeasures );
     Py_INCREF ( &PyTypeGds );
     PyModule_AddObject ( module, "Gds", (PyObject*)&PyTypeGds );
     Py_INCREF ( &PyTypeLefImport );

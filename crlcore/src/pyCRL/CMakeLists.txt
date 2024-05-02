@@ -62,6 +62,7 @@
                                     PyDefImport.cpp
                                     PyLefExport.cpp
                                     PyDefExport.cpp
+				    PyMeasures.cpp
                       )	    
                    set( pyIncludes  crlcore/PySystem.h
                                     crlcore/PyBanner.h
@@ -86,6 +87,7 @@
                                     crlcore/PyDefImport.h
                                     crlcore/PyLefExport.h
                                     crlcore/PyDefExport.h
+				    crlcore/PyMeasures.h
                       )	         
 	      target_link_libraries ( crlcore ${LINK_LIBS} )
 
