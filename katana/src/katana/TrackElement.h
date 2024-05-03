@@ -182,6 +182,7 @@ namespace Katana {
       virtual size_t                  getGCells              ( std::vector<GCell*>& ) const;
       virtual TrackElement*           getParent              () const;
       virtual uint32_t                getDoglegLevel         () const;
+      virtual uint32_t                getBreakLevel          () const;
       virtual TrackElement*           getSourceDogleg        ();
       virtual TrackElement*           getTargetDogleg        ();
       virtual TrackElement*           getSymmetric           ();

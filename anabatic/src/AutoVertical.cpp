@@ -861,6 +861,9 @@ namespace Anabatic {
       }
     }
 
+    if (flags & Flags::IncBreakLevel) incBreakLevel();
+    segment2->setBreakLevel( getBreakLevel() );
+
     return (upLayer) ? Flags::AboveLayer : Flags::BelowLayer;
   }
 

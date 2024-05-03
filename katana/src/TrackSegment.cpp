@@ -71,7 +71,6 @@ namespace Katana {
     , _ppitch       (0)
     , _data         (NULL)
     , _priority     (0.0)
-    , _dogLegLevel  (0)
     , _flags        (NoFlags)
   {
     cdebug_log(155,0) << "CTOR TrackSegment " << /*(void*)this    <<*/ ":" << this    << endl;
@@ -212,7 +211,7 @@ namespace Katana {
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
   float          TrackSegment::getPriority          () const { return _priority; }
-  uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
+  uint32_t       TrackSegment::getBreakLevel        () const { return _base->getBreakLevel(); }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
   TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
@@ -356,17 +355,6 @@ namespace Katana {
     }
 
     return bounds.size();
-  }
-
-
-  void  TrackSegment::setDoglegLevel ( uint32_t level )
-  {
-    if (level > 15) {
-      cerr << Bug("%s has reached maximum dog leg count (15)."
-                 ,_getString().c_str()) << endl;
-      level = 15;
-    }
-    _dogLegLevel = level;
   }
 
 
@@ -648,9 +636,9 @@ namespace Katana {
 
   bool  TrackSegment::canSlacken () const
   {
-    cdebug_log(159,0) << "TrackSegment::canSlacken() doglegLevel:" << getDoglegLevel() << endl;
+    cdebug_log(159,0) << "TrackSegment::canSlacken() breakLevel:" << getBreakLevel() << endl;
     if (isNonPref()) return false;
-    return (not isSlackened() and (getDoglegLevel() <= 3)) ? _base->canSlacken(Flags::Propagate) : false;
+    return (not isSlackened() and (getBreakLevel() < 2)) ? _base->canSlacken(Flags::Propagate) : false;
   }
 
 
@@ -798,9 +786,23 @@ namespace Katana {
       return false;
     }
 
-    if (getDoglegLevel() > 3) {
-      cdebug_log(159,0) << "Failed: maximum dogleg level reached (4)." << endl;
-      return false;
+    if (getDepth() < 3) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M2-M3) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+      }
+    }
+
+    if (isGlobal() and (getDepth() > 2)) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < 4*Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M4+) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+        return false;
+      }
     }
 
     return true;
@@ -848,10 +850,24 @@ namespace Katana {
       }
     }
 
-    if (getDoglegLevel() > 3) {
-      cdebug_log(159,0) << "Failed: maximum dogleg level reached (4)." << endl;
-      cdebug_tabw(159,-1);
-      return false;
+    if (getDepth() < 3) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M2-M3) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+      }
+    }
+
+    if (isGlobal() and (getDepth() > 2)) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < 4*Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M4+) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
     }
 
     vector<Anabatic::GCell*> gcells;
@@ -947,9 +963,23 @@ namespace Katana {
       return false;
     }
 
-    if (getDoglegLevel() > 3) {
-      cdebug_log(159,0) << "Failed: maximum dogleg level reached (4)." << endl;
-      return false;
+    if (getDepth() < 3) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M2-M3) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+      }
+    }
+
+    if (isGlobal() and (getDepth() > 2)) {
+      if (getBreakLevel() and (getLength() / getBreakLevel() < 4*Session::getSliceHeight())) {
+        cdebug_log(159,0) << "Failed: minimum frag. length reached (M4+) "
+                          << DbU::getValueString( getLength() )
+                          << "/" << getBreakLevel()
+                          << endl;
+        return false;
+      }
     }
 
     return _base->canDogleg(interval);
@@ -989,7 +1019,7 @@ namespace Katana {
     cdebug_log(159,0) << "TrackSegment::makeDogleg(GCell*)" << endl;
     cdebug_log(159,0) << "Break in: " << dogLegGCell << endl;
 
-    base()->makeDogleg( dogLegGCell );
+    base()->makeDogleg( dogLegGCell, Flags::IncBreakLevel );
     _postDoglegs( perpandicular, parallel );
 
     return perpandicular;
@@ -1002,7 +1032,7 @@ namespace Katana {
     parallel      = NULL;
 
     cdebug_log(159,0) << "TrackSegment::makeDogleg(Interval)" << endl;
-    flags |= base()->makeDogleg( interval );
+    flags |= base()->makeDogleg( interval, Flags::IncBreakLevel );
     _postDoglegs( perpandicular, parallel );
 
     if (flags & Flags::ShortDogleg) {
@@ -1018,7 +1048,6 @@ namespace Katana {
   {
     cdebug_log(159,1) << "TrackSegment::_postDoglegs()" << endl;
 
-    uint32_t                    doglegLevel = 0;
     const vector<AutoSegment*>& doglegs = Session::getDoglegs();
     vector<TrackElement*>       segments;
 
@@ -1034,20 +1063,16 @@ namespace Katana {
         segments[i+0]->getDataNegociate()->resetRipupCount();
       //segments[i+0]->getDataNegociate()->resetStateCount();
         segments[i+0]->getDataNegociate()->setState( DataNegociate::RipupPerpandiculars );
-        doglegLevel = segments[i+0]->getDoglegLevel();
-        segments[i+0]->setDoglegLevel( doglegLevel + (segments[i]->isLocal()?1:0) );
 
         cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
         segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
-        segments[i+1]->setDoglegLevel( doglegLevel + 1 );
 
         cdebug_log(159,0) << "Looking up new parallel: " << doglegs[i+2] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
         segments[i+2]->setFlags( TElemSourceDogleg );
         segments[i+2]->getDataNegociate()->resetStateCount();
         segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
-        segments[i+2]->setDoglegLevel( doglegLevel + (segments[i]->isLocal()?1:0) );
 
         segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
 
@@ -1132,8 +1157,7 @@ namespace Katana {
     string s1 = _base->_getString();
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
-              +  " "   + DbU::getValueString(_targetU-_sourceU)
-              +  " "   + getString(_dogLegLevel) + " "
+              +  " "   + DbU::getValueString(_targetU-_sourceU) + " "
               + ((isNonPref()      ) ? "P" : "-")
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")

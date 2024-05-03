@@ -262,6 +262,7 @@ namespace Anabatic {
                      size_t              getPerpandicularsBound     ( set<AutoSegment*>& );
       inline         AutoSegment*        getParent                  () const;
       inline         unsigned int        getRpDistance              () const;
+      inline         unsigned int        getBreakLevel              () const;
       inline         unsigned int        getDepth                   () const;
       inline         DbU::Unit           getPitch                   () const;
                      DbU::Unit           getPPitch                  () const;
@@ -302,6 +303,8 @@ namespace Anabatic {
       inline         void                setFlags                   ( uint64_t );
                      void                setFlagsOnAligneds         ( uint64_t );
       inline         void                setRpDistance              ( unsigned int );
+      inline         void                setBreakLevel              ( unsigned int );
+      inline         void                incBreakLevel              ();
       inline         void                incReduceds                ();
       inline         void                decReduceds                ();
              virtual void                setDuSource                ( DbU::Unit du ) = 0;
@@ -393,11 +396,12 @@ namespace Anabatic {
       const  unsigned long                 _id;
              GCell*                        _gcell;
              uint64_t                      _flags;
-             unsigned int                  _depth        : 8;
              unsigned int                  _optimalMin   :16;
              unsigned int                  _optimalMax   :16;
-             unsigned int                  _reduceds     : 2;
+             unsigned int                  _depth        : 4;
+             unsigned int                  _reduceds     : 4;
              unsigned int                  _rpDistance   : 4;
+             unsigned int                  _breakLevel   : 4;
              DbU::Unit                     _sourcePosition;
              DbU::Unit                     _targetPosition;
              Interval                      _userConstraints;
@@ -518,6 +522,7 @@ namespace Anabatic {
   inline  AutoSegment*    AutoSegment::getCanonical           ( Interval& i ) { return getCanonical(i.getVMin(),i.getVMax()); }
   inline  unsigned int    AutoSegment::getDepth               () const { return _depth; }
   inline  unsigned int    AutoSegment::getRpDistance          () const { return _rpDistance; }
+  inline  unsigned int    AutoSegment::getBreakLevel          () const { return _breakLevel; }
   inline  DbU::Unit       AutoSegment::getPitch               () const { return Session::getPitch(getDepth(),Flags::NoFlags); }
   inline  DbU::Unit       AutoSegment::getAxis                () const { return isHorizontal()?base()->getY():base()->getX(); }
   inline  DbU::Unit       AutoSegment::getOrigin              () const { return isHorizontal()?_gcell->getYMin():_gcell->getXMin(); }
@@ -579,6 +584,8 @@ namespace Anabatic {
   inline  uint64_t        AutoSegment::getFlags               () const { return _flags; }
   inline  uint64_t        AutoSegment::_getFlags              () const { return _flags; }
   inline  void            AutoSegment::setRpDistance          ( unsigned int distance ) { _rpDistance=distance; }
+  inline  void            AutoSegment::setBreakLevel          ( unsigned int level ) { _breakLevel=level; }
+  inline  void            AutoSegment::incBreakLevel          () { if (_breakLevel<15) ++_breakLevel; }
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
