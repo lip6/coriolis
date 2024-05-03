@@ -107,7 +107,7 @@ namespace Katana {
       virtual DbU::Unit             getExtensionCap        ( Flags ) const;
       virtual unsigned long         getFreedomDegree       () const;
       virtual float                 getPriority            () const;
-      virtual uint32_t              getDoglegLevel         () const;
+      virtual uint32_t              getBreakLevel          () const;
       virtual TrackElement*         getNext                () const;
       virtual TrackElement*         getPrevious            () const;
       virtual TrackElement*         getParent              () const;
@@ -132,7 +132,6 @@ namespace Katana {
       virtual void                  computePriority        ();
       virtual void                  computeAlignedPriority ();
       virtual void                  updateFreedomDegree    ();
-      virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
     //virtual void                  detach                 ();
@@ -166,7 +165,6 @@ namespace Katana {
              DbU::Unit      _ppitch;
              DataNegociate* _data;
              float          _priority;
-             unsigned int   _dogLegLevel:4;
              uint32_t       _flags; 
 
     protected:

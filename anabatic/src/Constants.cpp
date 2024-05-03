@@ -139,6 +139,7 @@ namespace Anabatic {
   const BaseFlags  Flags::Unbreakable         = (1L << 43);
   const BaseFlags  Flags::ForOffgrid          = (1L << 44);
   const BaseFlags  Flags::AllAbove            = (1L << 45);
+  const BaseFlags  Flags::IncBreakLevel       = (1L << 46);
 
 
   Flags::~Flags ()

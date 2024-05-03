@@ -513,11 +513,12 @@ namespace Anabatic {
     : _id               (segment->getId())
     , _gcell            (NULL)
     , _flags            (SegCreated)
-    , _depth            (Session::getLayerDepth(segment->getLayer()))
     , _optimalMin       (0)
     , _optimalMax       (0)
+    , _depth            (Session::getLayerDepth(segment->getLayer()))
     , _reduceds         (0)
     , _rpDistance       (15)
+    , _breakLevel       (0)
     , _sourcePosition   (0)
     , _targetPosition   (0)
     , _userConstraints  (false)
@@ -2862,8 +2863,10 @@ namespace Anabatic {
   string  AutoSegment::_getString () const
   {
     string sdistance = " rpD:" + getString(_rpDistance);
+    string sblevel   = " bl:"  + getString(_breakLevel);
     string s         = base()->_getString();
     s.insert ( s.size()-1, sdistance );
+    s.insert ( s.size()-1, sblevel );
     s.insert ( s.size()-1, _getStringFlags() );
     return s;
   }
@@ -2876,6 +2879,8 @@ namespace Anabatic {
     record->add ( getSlot ( "_gcell"         ,  _gcell           ) );
     record->add ( getSlot ( "_id"            , &_id              ) );
     record->add ( getSlot ( "_flags"         , &_flags           ) );
+    record->add ( getSlot ( "_rpDistance"    ,  _rpDistance      ) );
+    record->add ( getSlot ( "_breakLevel"    ,  _breakLevel      ) );
     record->add ( getSlot ( "_userContraints", &_userConstraints ) );
     record->add ( getSlot ( "_sourcePosition", &_sourcePosition  ) );
     record->add ( getSlot ( "_targetPosition", &_targetPosition  ) );

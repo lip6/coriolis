@@ -175,6 +175,7 @@ namespace Katana {
   DbU::Unit      TrackElement::getExtensionCap      ( Flags ) const { return 0; }
   float          TrackElement::getMaxUnderDensity   ( Flags ) const { return 0.0; };
   uint32_t       TrackElement::getDoglegLevel       () const { return 0; }
+  uint32_t       TrackElement::getBreakLevel        () const { return 0; }
   TrackElement*  TrackElement::getParent            () const { return NULL; }
   Interval       TrackElement::getSourceConstraints () const { return Interval(); }
   Interval       TrackElement::getTargetConstraints () const { return Interval(); }
