@@ -1167,7 +1167,7 @@ namespace Anabatic {
 
     Session::close();
   //DebugSession::close();
-    Breakpoint::stop( 99, "After diodes insertions." );
+    Breakpoint::stop( 100, "After diodes insertions." );
   }
 
 
