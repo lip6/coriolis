@@ -1711,28 +1711,24 @@ namespace Anabatic {
   {
     if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
 
-    float capacity = getCapacity(depth);
+    float capacity     = 0.0;
+    float feedthroughs = 0.0;
+    if (flags & Flags::AllAbove) {
+      for ( size_t i=depth; i <= Session::getAllowedDepth() ; i += 2 ) {
+        capacity     += getCapacity( i );
+        feedthroughs += _feedthroughs[i] + 0.99 + reserve;
+      }
+    } else {
+      capacity     += getCapacity( depth );
+      feedthroughs += _feedthroughs[depth] + 0.99 + reserve;
+    }
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
                       << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-                    //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
-                      << " " << _feedthroughs[depth] << " vs. " << capacity
+                      << " " << feedthroughs << " vs. " << capacity
                       << " " << this << endl;
-    // if (getId() == 267173)
-    //   cerr << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
-    //        << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-    //   //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
-    //        << " " << _feedthroughs[depth] << " vs. " << capacity
-    //        << " " << this << endl;
 
-    if (not (flags & Flags::AllAbove))
-       return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
-  //for ( ; depth < _depth ; depth += 2 ) {
-    for ( ; depth <= Session::getAllowedDepth() ; depth += 2 ) {
-      if (_feedthroughs[depth] + 0.99 + reserve <= capacity)
-        return true;
-    }
-    return false;
+    return (feedthroughs < capacity);
   }
 
 
