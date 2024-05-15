@@ -1488,18 +1488,14 @@ namespace Anabatic {
     float                 ccapacity    = getHCapacity() * getVCapacity() * (Session::getAllowedDepth()-_pinDepth); 
     DbU::Unit             width        = getXMax() - getXMin();
     DbU::Unit             height       = getYMax() - getYMin();
-    DbU::Unit             hpenalty     = 0 /*_box.getWidth () / 3*/;
-    DbU::Unit             vpenalty     = 0 /*_box.getHeight() / 3*/;
-    DbU::Unit             uLengths1    [ _depth ];
-    DbU::Unit             uLengths2    [ _depth ];
+    DbU::Unit             uLengths     [ _depth ];
     float                 localCounts  [ _depth ];
     vector<UsedFragments> ufragments   ( _depth );
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
       ufragments[i].setPitch ( Session::getPitch(i) );
       _feedthroughs[i] = 0.0;
-      uLengths1    [i] = 0;
-      uLengths2    [i] = 0;
+      uLengths     [i] = 0;
       localCounts  [i] = 0.0;
       _globalsCount[i] = 0.0;
 
@@ -1510,14 +1506,8 @@ namespace Anabatic {
 
   // Compute wirelength associated to contacts (in DbU::Unit converted to float).
     AutoSegment::DepthLengthSet  processeds;
-    for ( AutoContact* contact : _contacts ) {
-      for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
-      contact->getLengths( uLengths1, processeds );
-      for ( size_t i=0 ; i<_depth ; i++ ) {
-        if (isHorizontalPlane(i)) uLengths2[i] += uLengths1[i]+hpenalty;
-        else                      uLengths2[i] += uLengths1[i]+vpenalty;
-      }
-    }
+    for ( AutoContact* contact : _contacts )
+      contact->getLengths( uLengths, processeds );
 
   // Add the "pass through" horizontal segments.
     if (not _hsegments.empty()) {
@@ -1529,7 +1519,7 @@ namespace Anabatic {
         ufragments[depth].incGlobals();
 
         if ( layer != _hsegments[i]->getLayer() ) {
-          uLengths2[depth] += count * width;
+          uLengths[depth] += count * width;
 
           count = 0;
           layer = _hsegments[i]->getLayer();
@@ -1539,7 +1529,7 @@ namespace Anabatic {
         _feedthroughs[depth] += 1.0;
       }
       if ( count ) {
-        uLengths2[depth] += count * width;
+        uLengths[depth] += count * width;
       }
     }
 
@@ -1553,7 +1543,7 @@ namespace Anabatic {
         ufragments[depth].incGlobals();
 
         if (layer != _vsegments[i]->getLayer()) {
-          uLengths2[depth] += count * height;
+          uLengths[depth] += count * height;
 
           count = 0;
           layer = _vsegments[i]->getLayer();
@@ -1563,7 +1553,7 @@ namespace Anabatic {
         _feedthroughs[depth] += 1.0;
       }
       if (count) {
-        uLengths2[depth] += count * height;
+        uLengths[depth] += count * height;
       }
     }
 
@@ -1573,7 +1563,7 @@ namespace Anabatic {
     } else {
       int contiguousNonSaturated = 0;
       for ( size_t i=0 ; i<_depth ; i++ ) {
-        uLengths2[i] += _blockages[i];
+        uLengths[i] += _blockages[i];
         if (Session::getLayerGauge(i)->getType() & Constant::LocalOnly)
           continue;
         if (Session::getLayerGauge(i)->getType() & Constant::PinOnly)
@@ -1621,7 +1611,7 @@ namespace Anabatic {
       
       if (Session::getDirection(i) & Flags::Horizontal) {
         if (width and capacity) {
-          _densities     [i]  = ((float)uLengths2[i]) / (float)( capacity * width );
+          _densities     [i]  = ((float)uLengths[i]) / (float)( capacity * width );
           _feedthroughs  [i] += (float)(_blockages[i] / width);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
         } else {
@@ -1631,7 +1621,7 @@ namespace Anabatic {
         }
       } else {
         if (height and capacity) {
-          _densities     [i]  = ((float)uLengths2[i]) / (float)( capacity * height );
+          _densities     [i]  = ((float)uLengths[i]) / (float)( capacity * height );
           _feedthroughs  [i] += (float)(_blockages[i] / height);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
         } else {
