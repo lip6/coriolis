@@ -299,7 +299,7 @@ namespace Anabatic {
 
   void  AutoContact::invalidate ( Flags flags )
   {
-    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
+    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache|CntInvalidatedTopology );
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
       cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
@@ -678,13 +678,15 @@ namespace Anabatic {
     }
   //s.insert( 1, "id: " );
   //s.insert( 4, getString(_id) );
-    s.insert( s.size()-1, (isFixed           ())?" F":" -" );
-    s.insert( s.size()-1, (isTerminal        ())? "T": "-" );
-    s.insert( s.size()-1, (canDrag           ())? "D": "-" );
-    s.insert( s.size()-1, (isHTee            ())? "h": "-" );
-    s.insert( s.size()-1, (isVTee            ())? "v": "-" );
-    s.insert( s.size()-1, (isInvalidated     ())? "i": "-" );
-    s.insert( s.size()-1, (isInvalidatedCache())? "c": "-" );
+    s.insert( s.size()-1, (isFixed              ())?" F":" -" );
+    s.insert( s.size()-1, (isTerminal           ())? "T": "-" );
+    s.insert( s.size()-1, (canDrag              ())? "D": "-" );
+    s.insert( s.size()-1, (isHTee               ())? "h": "-" );
+    s.insert( s.size()-1, (isVTee               ())? "v": "-" );
+    s.insert( s.size()-1, (isInvalidated        ())? "i": "-" );
+    s.insert( s.size()-1, (isInvalidatedWidth   ())? "w": "-" );
+    s.insert( s.size()-1, (isInvalidatedCache   ())? "c": "-" );
+    s.insert( s.size()-1, (isInvalidatedTopology())? "t": "-" );
 
   //s.insert( s.size()-1, getString(getConstraintBox()));
     return s;

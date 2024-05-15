@@ -2025,6 +2025,14 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "_changeDepth() - " << this << endl;
 
+    if (isNonPref()) {
+      if (depth != getDepth()+1)
+        throw Error ( "AutoSegment::_changeDepth(): Non-Pref segment can only be moved up one layer\n"
+                      "        on %s"
+                    , getString(this).c_str() );
+      unsetFlags( SegNonPref );
+    }
+
     invalidate( Flags::Topology|Flags::NoCheckLayer );
     setFlags( SegInvalidatedLayer|SegInvalidatedSource|SegInvalidatedTarget );
 
@@ -2343,8 +2351,17 @@ namespace Anabatic {
   bool  AutoSegment::moveUp ( Flags flags )
   {
   //if ( not canMoveUp(0.0,flags) ) return false;
-    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags&Flags::Propagate );
+    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags );
 
+    return true;
+  }
+
+
+  bool  AutoSegment::moveUpToPref ( Flags flags )
+  {
+    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
+    if (not isNonPref() or (depth >= Session::getAllowedDepth())) return false;
+    changeDepth( depth + 1, flags|Flags::Propagate );
     return true;
   }
 

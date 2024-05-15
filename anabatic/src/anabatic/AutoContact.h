@@ -61,19 +61,20 @@ namespace Anabatic {
                        , CntHTee                  = (1 <<  3)
                        , CntVTee                  = (1 <<  4)
                        , CntInvalidated           = (1 <<  6)
-                       , CntInvalidatedCache      = (1 <<  7)
-                       , CntInvalidatedWidth      = (1 <<  8)
-                       , CntInCreationStage       = (1 <<  9)
-                       , CntBadTopology           = (1 << 10)
-                       , CntIgnoreAnchor          = (1 << 11)
-                       , CntWeakTerminal          = (1 << 12)
-                       , CntUserNativeConstraints = (1 << 13)
-                       , CntOnVertical            = (1 << 14)
-                       , CntOnHorizontal          = (1 << 15)
-                       , CntDrag                  = (1 << 16)
-                       , CntHDogleg               = (1 << 17)
-                       , CntVDogleg               = (1 << 18)
-                       , CntMetalOnly             = (1 << 19)
+                       , CntInvalidatedWidth      = (1 <<  7)
+                       , CntInvalidatedCache      = (1 <<  8)
+                       , CntInvalidatedTopology   = (1 <<  9)
+                       , CntInCreationStage       = (1 << 10)
+                       , CntBadTopology           = (1 << 11)
+                       , CntIgnoreAnchor          = (1 << 12)
+                       , CntWeakTerminal          = (1 << 13)
+                       , CntUserNativeConstraints = (1 << 14)
+                       , CntOnVertical            = (1 << 15)
+                       , CntOnHorizontal          = (1 << 16)
+                       , CntDrag                  = (1 << 17)
+                       , CntHDogleg               = (1 << 18)
+                       , CntVDogleg               = (1 << 19)
+                       , CntMetalOnly             = (1 << 20)
                        };
 
   class AutoContact {
@@ -113,6 +114,7 @@ namespace Anabatic {
     // Predicates.
       inline  bool             isInCreationStage          () const;
       inline  bool             isInvalidated              () const;
+      inline  bool             isInvalidatedTopology      () const;
       inline  bool             isInvalidatedCache         () const;
       inline  bool             isInvalidatedWidth         () const;
       inline  bool             isTerminal                 () const;
@@ -259,6 +261,7 @@ namespace Anabatic {
 // AutoContact Inline Functions.                                        
   inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
   inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
+  inline bool          AutoContact::isInvalidatedTopology   () const { return _flags&CntInvalidatedTopology; }
   inline bool          AutoContact::isInvalidatedCache      () const { return _flags&CntInvalidatedCache; }
   inline bool          AutoContact::isInvalidatedWidth      () const { return _flags&CntInvalidatedWidth; }
   inline bool          AutoContact::isTurn                  () const { return _flags&CntTurn; }
