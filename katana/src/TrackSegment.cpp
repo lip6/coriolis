@@ -953,8 +953,8 @@ namespace Katana {
       return false;
     }
 
-    if (not isLocal()) {
-      cdebug_log(159,0) << "Failed: is not local" << endl;
+    if (isLocal()) {
+      cdebug_log(159,0) << "Failed: is local" << endl;
       return false;
     }
 

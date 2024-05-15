@@ -29,7 +29,7 @@
 #include "hurricane/Layer.h"
 #include "anabatic/AutoContact.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackSegment.h"
+#include "katana/TrackSegmentNonPref.h"
 #include "katana/Track.h"
 #include "katana/Tracks.h"
 #include "katana/RoutingPlane.h"
@@ -427,7 +427,7 @@ namespace Katana {
   //DebugSession::open( _segment->getNet(), 155, 160 );
     DebugSession::open( _segment->getNet(), 149, 160 );
 
-    cdebug_log(9000,0) << "Deter| Event "
+    cdebug_log(159,0) << "Event "
                      <<         getProcesseds()
                      << ","  << getEventLevel()
                      << ","  << tsetw(6) << getPriority()
@@ -450,20 +450,19 @@ namespace Katana {
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
     } else {
-      if (_segment->hasSymmetric()) {
-      }
-
       setProcessed();
       setTimeStamp( _processeds );
 
-      switch ( Session::getStage() ) {
-        case StageNegociate: _processNegociate( queue, history ); break;
-        case StagePack:      _processPack     ( queue, history ); break;
-        case StageRepair:    _processRepair   ( queue, history ); break;
-        case StageRealign:   _processRealign  ( queue, history ); break;
-        default:
-          cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
-          break;
+      if (not (_segment->isNonPref() and _rescheduleAsPref())) {
+        switch ( Session::getStage() ) {
+          case StageNegociate: _processNegociate( queue, history ); break;
+          case StagePack:      _processPack     ( queue, history ); break;
+          case StageRepair:    _processRepair   ( queue, history ); break;
+          case StageRealign:   _processRealign  ( queue, history ); break;
+          default:
+            cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
+            break;
+        }
       }
     }
     cdebug_tabw(159,-1);
@@ -555,6 +554,16 @@ namespace Katana {
     cdebug_tabw(159,-1);
   }
 
+
+  bool  RoutingEvent::_rescheduleAsPref ()
+  {
+    if (_segment->getDirection() xor Session::getDirection(_segment->getLayer()))
+      return false;
+    TrackSegmentNonPref* nonPref = dynamic_cast<TrackSegmentNonPref*>( _segment );
+    if (nonPref) nonPref->promoteToPref();
+    return true;
+  }
+  
 
   void  RoutingEvent::_processPack ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {

@@ -45,6 +45,8 @@ namespace Katana {
       friend class TrackSegment;
     public:
       typedef  TrackSegment  Super;
+    public:
+              void                 promoteToPref       ();
     protected:
                                    TrackSegmentNonPref ( AutoSegment* ) ;
       virtual                     ~TrackSegmentNonPref ();
