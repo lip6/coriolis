@@ -75,7 +75,11 @@ class PnR ( FlowTask ):
         if self.script:
             if self.topName:
                 kw[ 'loadCell' ] = self.topName
-            self.script( **kw )
+            rv = self.script( **kw )
+            if rv is not True:
+                e = ErrorMessage( 1, 'PnR.doTask(): The script "{}()" of rule "{}" failed.' \
+                                     .format( self.script.__name__, self.basename ))
+                return TaskFailed( e )
         if not PnR.textMode:
            # Run in graphic mode.
             ha = Viewer.HApplication.create( [] )
