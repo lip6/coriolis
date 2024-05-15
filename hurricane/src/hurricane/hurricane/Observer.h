@@ -159,7 +159,7 @@ namespace Hurricane {
   template<typename OwnerT>
   inline OwnerT* StaticObservable<slotsNb>::getObserver ( size_t slot ) const
   {
-    if ( (slot >= _observers.size()) or not _observers[slot]) return NULL;
+    if ( (slot >= _observers.size()) or not _observers[slot]) return nullptr;
     return static_cast< Observer<OwnerT>* >(_observers[slot])->getOwner();
   }
 

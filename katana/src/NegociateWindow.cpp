@@ -696,11 +696,14 @@ namespace Katana {
         cmess2.flush();
       }
 
-    //if (RoutingEvent::getProcesseds() == 14473)
-    //  Breakpoint::stop( 0, "Before processing RoutingEvent 14473." );
-
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
+
+      // if (RoutingEvent::getProcesseds() == 838591) {
+      //   UpdateSession::close();
+      //   Breakpoint::stop( 0, "After processing RoutingEvent 838595." );
+      //   UpdateSession::open();
+      // }
 
     //if (event->getSegment()->getNet()->getId() == 239546) {
     //  UpdateSession::close();

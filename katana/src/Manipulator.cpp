@@ -664,8 +664,7 @@ namespace Katana {
 
   bool  Manipulator::relaxVH ( uint32_t flags )
   {
-    cerr << "Manipulator::relaxHV() of: " << _segment << endl; 
-    cdebug_log(159,0) << "Manipulator::relaxHV() of: " << _segment << endl; 
+    cdebug_log(159,0) << "Manipulator::relaxVH() of: " << _segment << endl; 
 
     if (_segment->isFixed()) return false;
     if (not _data) return false;
@@ -687,7 +686,11 @@ namespace Katana {
     }
 
     GCell* candidate = gcells[1];
+    cdebug_log(159,0) << "[1] WDensity[1]=" << gcells[1]->getWDensity(1)
+                      << " " << gcells[1] << endl;
     for ( size_t i = 2; i+1 < gcells.size() ; ++i ) {
+      cdebug_log(159,0) << "[" << i << "] WDensity[1]=" << gcells[i]->getWDensity(1)
+                        << " " << gcells[i] << endl;
       if (gcells[i]->getWDensity(1) < candidate->getWDensity(1))
         candidate = gcells[i];
     }
@@ -695,7 +698,6 @@ namespace Katana {
       TrackElement* dogleg   = nullptr;
       TrackElement* parallel = nullptr;
       cdebug_log(159,0) << "Making dogleg in " << candidate << endl;
-      cerr << "Making dogleg in " << candidate << endl;
       if (not _segment->canDogleg(candidate)) {
         cdebug_log(159,0) << "Cannot create dogleg." << endl;
         cdebug_tabw(159,-1);
@@ -707,7 +709,8 @@ namespace Katana {
         cdebug_tabw(159,-1);
         return false;
       }
-    }
+    } else
+      return false;
     
     cdebug_tabw(159,-1);
     return true;
@@ -1279,6 +1282,7 @@ namespace Katana {
   //float reserve = 0.5;
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
     if (_segment->getLength() > getLongWireUpThreshold1()*getPitch()) reserve = getLongWireUpReserve1();
+    if (Session::getConfiguration()->isVH() and (_segment->getDepth() < 3)) reserve = 1.5;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {

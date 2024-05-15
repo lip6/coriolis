@@ -155,7 +155,7 @@ namespace Katana {
 
 
   TrackElement* Session::lookup ( Segment* segment )
-  { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup(segment); }
+  { return Session::get("Session::lookup(Segment*)")->_getKatanaEngine()->_lookup( segment ); }
 
 
   TrackElement* Session::lookup ( AutoSegment* segment )

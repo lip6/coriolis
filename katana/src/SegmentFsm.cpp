@@ -45,7 +45,7 @@ namespace {
       inline Track*     getTrack           () const;
       inline size_t     getBegin           () const;
       inline size_t     getEnd             () const;
-      inline size_t     getLength          () const;
+      inline size_t     getSize            () const;
       inline Interval   getConflict        ( size_t );
       inline Interval   getLongestConflict () const;
       inline DbU::Unit  getBreakPos        () const;
@@ -82,7 +82,7 @@ namespace {
   inline Track*     Cs1Candidate::getTrack           () const { return _track; }
   inline size_t     Cs1Candidate::getBegin           () const { return _begin; }
   inline size_t     Cs1Candidate::getEnd             () const { return _end; }
-  inline size_t     Cs1Candidate::getLength          () const { return _conflicts.size(); }
+  inline size_t     Cs1Candidate::getSize            () const { return _conflicts.size(); }
   inline Interval   Cs1Candidate::getLongestConflict () const { return _longestConflict; }
   inline DbU::Unit  Cs1Candidate::getBreakPos        () const { return _breakPos; }
   inline void       Cs1Candidate::setBegin           ( size_t i ) { _begin=i; }
@@ -696,6 +696,14 @@ namespace Katana {
   {
     cdebug_log(159,1) << "SegmentFsm::doActions() - " << _actions.size() << endl;
 
+    for ( AutoSegment* base : Session::getInvalidateds() ) {
+      if (not base->isInvalidatedLayer()) continue;
+      TrackElement* segment = Session::lookup( base );
+      if (not segment) continue;
+      if (hasAction(segment)) continue;
+      addAction( segment, SegmentAction::SelfRipup );
+    }
+
     bool ripupOthersParallel = false;
     bool ripedByLocal        = getEvent()->getSegment()->isLocal();
 
@@ -1014,7 +1022,7 @@ namespace Katana {
     sort( candidates.begin(), candidates.end() );
 
     for ( size_t icandidate=0 ; icandidate<candidates.size() ; ++icandidate ) {
-      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getLength()
+      cdebug_log(159,0) << "Trying l:" << candidates[icandidate].getSize()
                   << " " << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();

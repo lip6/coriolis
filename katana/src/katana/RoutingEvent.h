@@ -153,6 +153,7 @@ namespace Katana {
       inline  void                         incInsertState        ();
       inline  void                         resetInsertState      ();
       inline  void                         setEventLevel         ( uint32_t );
+              bool                         _rescheduleAsPref     ();
               void                         _processNegociate     ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processPack          ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processRepair        ( RoutingEventQueue&, RoutingEventHistory& );
