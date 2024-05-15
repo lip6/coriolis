@@ -17,6 +17,7 @@ class Cougar ( FlowTask ):
     Core       = 0x0008
     GroundCap  = 0x0010
     WireRC     = 0x0020
+    NoErrors   = 0x0040
 
     @staticmethod
     def mkRule ( rule, targets, depends=[], flags=0 ):
@@ -34,6 +35,7 @@ class Cougar ( FlowTask ):
         if flags & Cougar.Core:       self.command.append( '-c' )
         if flags & Cougar.GroundCap:  self.command.append( '-ac' )
         if flags & Cougar.WireRC:     self.command.append( '-ar' )
+        if flags & Cougar.NoErrors:   self.command.append( '-w' )
         self.command   += [ self.inputFile.stem, self.outputFile.stem ]
         self.addClean( self.targets )
 
