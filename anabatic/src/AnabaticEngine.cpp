@@ -150,6 +150,60 @@ namespace {
     return lhs.segment()->getId() < rhs.segment()->getId(); // Smallest Id first.
   }
 
+
+// -------------------------------------------------------------------
+// Class  :  "::ReducedChain".
+
+  class ReducedChain {
+    public:
+              ReducedChain ( AutoSegment* );
+      void    propagate    ();
+      size_t  reduce       ();
+    private:
+                    ReducedChain ( const ReducedChain& ) = delete;
+      ReducedChain& operator=    ( const ReducedChain& ) = delete;
+    private:
+      list<AutoSegment*>  _reduceds;
+  };
+
+
+  ReducedChain::ReducedChain ( AutoSegment* seed )
+    : _reduceds()
+  { _reduceds.push_back( seed ); }
+
+
+  void  ReducedChain::propagate ()
+  {
+    AutoContact* contact = _reduceds.front()->getAutoSource();
+    while ( contact and contact->isTurn() ) {
+      AutoSegment* perpandicular = contact->getPerpandicular( _reduceds.front() );
+      if (not perpandicular->canReduce(Flags::NullLength)) break;
+      contact = perpandicular->getOppositeAnchor( contact );
+      _reduceds.push_front( perpandicular );
+      perpandicular->setReducedDone();
+    }
+
+    contact = _reduceds.back()->getAutoTarget();
+    while ( contact and contact->isTurn() ) {
+      AutoSegment* perpandicular = contact->getPerpandicular( _reduceds.back() );
+      if (not perpandicular->canReduce(Flags::NullLength)) break;
+      contact = perpandicular->getOppositeAnchor( contact );
+      _reduceds.push_back( perpandicular );
+      perpandicular->setReducedDone();
+    }
+  }
+
+
+  size_t  ReducedChain::reduce ()
+  {
+    size_t count = 0;
+    for ( AutoSegment* segment : _reduceds ) {
+      if (segment->reduceDoglegLayer()) ++count;
+    }
+    return count;
+  }
+  
+
 }  // Anonymous namespace.
 
 
@@ -465,31 +519,20 @@ namespace Anabatic {
     if (_state == EngineDriving) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
-      vector<NonReducedItem> reduceds;
       size_t fixedSegments    = 0;
       size_t sameLayerDoglegs = 0;
       size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
+        if (isegment.second->isReducedDone()) continue;
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->canReduce( Flags::NullLength )) {
-        //cerr << "push_back() " << (void*)isegment.second << ":" << isegment.second << endl;
-          reduceds.push_back( NonReducedItem( isegment.second
-                                            , isegment.second->getNonReduceds( Flags::NoFlags ) ));
+          ReducedChain  chain ( isegment.second );
+          chain.propagate();
+          sameLayerDoglegs += chain.reduce();
         } else {
           if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
         }
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
-      }
-      sort( reduceds.begin(), reduceds.end() );
-      // cerr << "Reduced segment queue:" << endl;
-      // for ( size_t i=0 ; i<reduceds.size() ; ++i ) {
-      //   cerr << "| " << setw(3) << i
-      //        << " " << reduceds[i].nonReduceds()
-      //        << " " << reduceds[i].segment() << endl;
-      // }
-      for ( auto& item : reduceds ) {
-        item.segment()->reduce( Flags::NoFlags );
-        if (item.segment()->reduceDoglegLayer()) ++sameLayerDoglegs;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
@@ -1424,18 +1467,12 @@ namespace Anabatic {
     cdebug_log(149,0) << "Anabatic::updateNetTopology( " << net << " )" << endl;
     cdebug_tabw(145,1);
 
-    vector<AutoContact*>  contacts;
-    for ( Component* component : net->getComponents() ) {
-      Contact* contact = dynamic_cast<Contact*>( component );
-      if (contact) {
-        AutoContact* autoContact = Session::lookup( contact );
-        if (autoContact and autoContact->isInvalidatedCache()) 
-          contacts.push_back( autoContact );
+    for ( AutoContact* contact : Session::getInvalidatedContacts() ) {
+      cdebug_log(145,0) << "Invalidated " << contact << endl;
+      if (contact->isInvalidatedTopology() and (contact->getNet() == net)) {
+        contact->updateTopology();
       }
     }
-
-    for ( size_t i=0 ; i<contacts.size() ; ++i )
-      contacts[i]->updateTopology();
 
     cdebug_tabw(145,-1);
     DebugSession::close();
@@ -1806,17 +1843,24 @@ namespace Anabatic {
 
     for ( GCell* gcell : getGCells() ) {
       if (not gcell->isMatrix()) continue;
-      int   maxReserved      = maxHCap;
-      Flags connectDirection = Flags::EastSide;
+      int   maxPrefReserved    = maxHCap;
+      int   maxNonprefReserved = maxVCap;
+      Flags prefDirection      = Flags::EastSide;
+      Flags nonprefDirection   = Flags::NorthSide;
       if (getConfiguration()->isVH()) {
-        maxReserved      = maxVCap;
-        connectDirection = Flags::NorthSide;
+        std::swap( maxPrefReserved, maxNonprefReserved );
+        std::swap( prefDirection  , nonprefDirection );
       }
 
-      for ( Edge* edge : gcell->getEdges(connectDirection) ) {
+      for ( Edge* edge : gcell->getEdges(prefDirection) ) {
         GCell* opposite    = edge->getOpposite( gcell );
         int    reserved    = std::max( gcell->getRpCount(), opposite->getRpCount() );
-        edge->reserveCapacity( std::min( maxReserved, reserved ) );
+        edge->reserveCapacity( std::min( maxPrefReserved, reserved ) );
+      }
+      for ( Edge* edge : gcell->getEdges(nonprefDirection) ) {
+        GCell* opposite    = edge->getOpposite( gcell );
+        int    reserved    = std::max( gcell->getRpCount(), opposite->getRpCount() );
+        edge->reserveCapacity( std::min( maxNonprefReserved, reserved ) );
       }
     }
 

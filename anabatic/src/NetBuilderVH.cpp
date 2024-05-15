@@ -523,8 +523,8 @@ namespace Anabatic {
       AutoContact* tee   = doRp_Access( getGCell(), getRoutingPads()[0], HAccessEW|VSmall );
       AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
       AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() );
-      AutoSegment::create( turn1, tee, Flags::Horizontal );
-      AutoSegment::create( turn2, tee, Flags::Horizontal );
+      AutoSegment::create( turn1, tee, Flags::Horizontal/*|Flags::UseNonPref*/ );
+      AutoSegment::create( turn2, tee, Flags::Horizontal/*|Flags::UseNonPref*/ );
       setSouthWestContact( turn1 );
       setNorthEastContact( turn2 );
     } else {

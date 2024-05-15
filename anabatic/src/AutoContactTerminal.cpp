@@ -591,6 +591,7 @@ namespace Anabatic {
     }
     _segment->invalidate( this );
 
+    unsetFlags( CntInvalidatedTopology );
     cdebug_tabw(145,-1);
     DebugSession::close();
   }

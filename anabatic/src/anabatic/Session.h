@@ -141,6 +141,7 @@ namespace Anabatic {
       static  inline void                              getPositions          ( RoutingPad*, Point&, Point& );
       static  inline size_t                            getSegmentStackSize   ();
       static  inline size_t                            getContactStackSize   ();
+      static  inline const vector<AutoContact*>&       getInvalidatedContacts(); 
       static  inline const vector<AutoSegment*>&       getInvalidateds       (); 
       static  inline const vector<AutoSegment*>&       getRevalidateds       (); 
       static  inline const set<AutoSegment*>&          getDestroyeds         (); 
@@ -225,6 +226,7 @@ namespace Anabatic {
   inline size_t                            Session::revalidate           () { return get("revalidate()")->_revalidate(); }
   inline size_t                            Session::getSegmentStackSize  () { return get("getSegmentStackSize()")->_segmentInvalidateds.size(); }
   inline size_t                            Session::getContactStackSize  () { return get("getContactStackSize()")->_autoContacts.size(); }
+  inline const vector<AutoContact*>&       Session::getInvalidatedContacts () { return get("getInvalidatedContacts()")->_autoContacts; }
   inline const vector<AutoSegment*>&       Session::getInvalidateds      () { return get("getInvalidateds()")->_segmentInvalidateds; }
   inline const vector<AutoSegment*>&       Session::getRevalidateds      () { return get("getRevalidateds()")->_segmentRevalidateds; }
   inline const set<AutoSegment*>&          Session::getDestroyeds        () { return get("getDestroyeds()")->_destroyedSegments; }

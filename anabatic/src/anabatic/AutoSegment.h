@@ -111,12 +111,19 @@ namespace Anabatic {
       static const uint64_t  SegNoMoveUp          = (1L<<39);
       static const uint64_t  SegOnVSmall          = (1L<<40);
       static const uint64_t  SegForOffgrid        = (1L<<41);
+      static const uint64_t  SegIsReducedDone     = (1L<<42);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
       static const uint64_t  SegSpinTop           = SegSourceTop    |SegTargetTop;
       static const uint64_t  SegSpinBottom        = SegSourceBottom |SegTargetBottom;
       static const uint64_t  SegDepthSpin         = SegSpinTop      |SegSpinBottom;
+    // Observer flags (separate values).
+      static const unsigned int  Create           = (1 <<  0);
+      static const unsigned int  Destroy          = (1 <<  1);
+      static const unsigned int  Invalidate       = (1 <<  2);
+      static const unsigned int  Revalidate       = (1 <<  3);
+      static const unsigned int  RevalidatePPitch = (1 <<  4);
 
     public:
       class Observable : public StaticObservable<1> {
@@ -129,13 +136,6 @@ namespace Anabatic {
                              Observable ( const StaticObservable& );
                  Observable& operator=  ( const StaticObservable& );
       };
-    public:
-      enum ObserverFlag { Create           = (1 <<  0)
-                        , Destroy          = (1 <<  1)
-                        , Invalidate       = (1 <<  2)
-                        , Revalidate       = (1 <<  3)
-                        , RevalidatePPitch = (1 <<  4)
-                        };
     public:
       typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
     public:
@@ -220,6 +220,7 @@ namespace Anabatic {
       inline         bool                isSpinBottom               () const;
       inline         bool                isSpinTopOrBottom          () const;
       inline         bool                isReduced                  () const;
+      inline         bool                isReducedDone              () const;
       inline         bool                isStrap                    () const;
       inline         bool                isDogleg                   () const;
       inline         bool                isUnbound                  () const;
@@ -307,6 +308,7 @@ namespace Anabatic {
       inline         void                incBreakLevel              ();
       inline         void                incReduceds                ();
       inline         void                decReduceds                ();
+      inline         void                setReducedDone             ();
              virtual void                setDuSource                ( DbU::Unit du ) = 0;
              virtual void                setDuTarget                ( DbU::Unit du ) = 0;
                      void                computeTerminal            ();
@@ -342,6 +344,7 @@ namespace Anabatic {
                      void                changeDepth                ( unsigned int depth, Flags flags );
                      bool                moveUp                     ( Flags flags=Flags::NoFlags );
                      bool                moveDown                   ( Flags flags=Flags::NoFlags );
+                     bool                moveUpToPref               ( Flags flags=Flags::NoFlags );
                      bool                reduceDoglegLayer          ();
                      bool                bloatStackedStrap          ();
                      bool                reduce                     ( Flags flags=Flags::WithPerpands );
@@ -567,6 +570,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isSpinBottom           () const { return ((_flags & SegSpinBottom) == SegSpinBottom); }
   inline  bool            AutoSegment::isSpinTopOrBottom      () const { return isSpinTop() or isSpinBottom(); }
   inline  bool            AutoSegment::isReduced              () const { return _flags & SegIsReduced; }
+  inline  bool            AutoSegment::isReducedDone          () const { return _flags & SegIsReducedDone; }
   inline  bool            AutoSegment::isSlackened            () const { return _flags & SegSlackened; }
   inline  bool            AutoSegment::isCanonical            () const { return _flags & SegCanonical; }
   inline  bool            AutoSegment::isUnsetAxis            () const { return not (_flags & SegAxisSet); }
@@ -588,6 +592,7 @@ namespace Anabatic {
   inline  void            AutoSegment::incBreakLevel          () { if (_breakLevel<15) ++_breakLevel; }
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
+  inline  void            AutoSegment::setReducedDone         () { _flags |= SegIsReducedDone; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
   inline  void            AutoSegment::setWidth               ( DbU::Unit width ) { base()->setWidth(width); }
   inline  void            AutoSegment::setOptimalMin          ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }

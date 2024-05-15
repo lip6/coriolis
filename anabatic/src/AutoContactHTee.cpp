@@ -340,6 +340,7 @@ namespace Anabatic {
       _vertical1  ->invalidate( this );
     }
 
+    unsetFlags( CntInvalidatedTopology );
     cdebug_tabw(145,-1);
     DebugSession::close();
   }

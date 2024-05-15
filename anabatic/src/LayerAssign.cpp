@@ -834,11 +834,22 @@ namespace Anabatic {
       unsigned int depth = Session::getRoutingGauge()->getLayerDepth(locals[i]->getLayer());
       if (depth > seedDepth+1) continue;
 
-      if (locals[i]->canPivotUp(2.0,Flags::Propagate|Flags::NoCheckLayer)) {
-        locals[i]->changeDepth( depth+2, Flags::WithNeighbors );
+      bool moved = false;
+      if (locals[i]->isNonPref()) {
+        locals[i]->changeDepth( depth+1, Flags::Propagate|Flags::WithNeighbors );
+        moved = true;
 
-        cdebug_log(149,0) << "Trunk move up L:" << locals[i] << endl;
+        cdebug_log(149,0) << "Trunk non-pref move up L:" << locals[i] << endl;
+      } else {
+        if (locals[i]->canPivotUp(2.0,Flags::Propagate|Flags::NoCheckLayer)) {
+          locals[i]->changeDepth( depth+2, Flags::WithNeighbors );
+          moved = true;
 
+          cdebug_log(149,0) << "Trunk move up L:" << locals[i] << endl;
+        }
+      }
+
+      if (moved) {
         vector<GCell*> gcells;
         locals[i]->getGCells( gcells );
         for ( size_t j=0 ; j<gcells.size() ; j++ ) {
