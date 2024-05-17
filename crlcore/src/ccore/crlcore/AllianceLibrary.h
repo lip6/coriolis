@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ALLIANCE_LIBRARY_H
-#define  CRL_ALLIANCE_LIBRARY_H
-
+#pragma  once
 #include <string>
 #include <vector>
 #include "hurricane/Name.h"
@@ -52,6 +50,7 @@ namespace CRL {
       inline Library*         getLibrary      () const;
              void             saveCells       () const;
              void             saveCATAL       () const;
+      inline void             setPath         ( std::string );
              void             toJson          ( JsonWriter* ) const;
       inline std::string      _getTypeName    () const;
              std::string      _getString      () const;
@@ -71,6 +70,7 @@ namespace CRL {
   inline const Name&  AllianceLibrary::getPath      () const { return _path; }
   inline Library*     AllianceLibrary::getLibrary   () const { return _library; }
   inline std::string  AllianceLibrary::_getTypeName () const { return _TName("AllianceLibrary"); }
+  inline void         AllianceLibrary::setPath      ( std::string path ) { _path=path; }
 
 
 // -------------------------------------------------------------------
@@ -90,5 +90,3 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::AllianceLibrary);
-
-#endif  // CRL_ALLIANCE_LIBRARY_H
