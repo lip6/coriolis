@@ -17,6 +17,8 @@ class ShellEnv ( object ):
 
     * ``ALLIANCE_TOP``, usually identical to ``CORIOLIS_TOP``.
     * ``RDS_TECHNO_NAME``.
+    * ``GRAAL_TECHNO_NAME``.
+    * ``DREAL_TECHNO_NAME``.
     * ``CHECK_TOOLKIT``, where the ``alliance-check-toolkit`` is installed.
 
     Mutable environment variables, could be changed in each instance.
@@ -34,9 +36,11 @@ class ShellEnv ( object ):
     * ``RDS_OUT``.
     """
 
-    ALLIANCE_TOP    = None
-    RDS_TECHNO_NAME = None
-    CHECK_TOOLKIT   = None
+    CHECK_TOOLKIT     = None
+    ALLIANCE_TOP      = None
+    RDS_TECHNO_NAME   = None
+    GRAAL_TECHNO_NAME = None
+    DREAL_TECHNO_NAME = None
 
     def __init__ ( self ):
         self.shellEnv = {}
@@ -87,6 +91,10 @@ class ShellEnv ( object ):
             os.environ[ variable ] = value
         if ShellEnv.RDS_TECHNO_NAME is not None:
             os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
+        if ShellEnv.GRAAL_TECHNO_NAME is not None:
+            os.environ[ 'GRAAL_TECHNO_NAME' ] = ShellEnv.GRAAL_TECHNO_NAME
+        if ShellEnv.DREAL_TECHNO_NAME is not None:
+            os.environ[ 'DREAL_TECHNO_NAME' ] = ShellEnv.DREAL_TECHNO_NAME
         if ShellEnv.CHECK_TOOLKIT is not None:
             os.environ[ 'CHECK_TOOLKIT' ] = ShellEnv.CHECK_TOOLKIT
             
