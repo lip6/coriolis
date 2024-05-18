@@ -24,7 +24,9 @@ class Dreal ( FlowTask ):
         super().__init__( rule, [], depends )
         self.flags         = flags
         self.layoutFile    = self.file_depend(0)
-        self.command       = [ 'dreal', '-l', self.layoutFile.stem ]
+        self.command       = [ 'dreal' ]
+        if self.layoutFile:
+            self.command += [ '-l', self.layoutFile.stem ]
         if flags & Dreal.Debug:   self.command.append( '-debug' )
         if flags & Dreal.Xor:     self.command.append( '-xor' )
         if flags & Dreal.Install: self.command.append( '-install' )
@@ -34,10 +36,11 @@ class Dreal ( FlowTask ):
         return '<{}>'.format( ' '.join(self.command) )
 
     def doTask ( self ):
-        from helpers.io import ErrorMessage
+        from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
-        shellEnv[ 'RDS_IN' ] = self.layoutFile.suffix[1:]
+        if self.layoutFile:
+            shellEnv[ 'RDS_IN' ] = self.layoutFile.suffix[1:]
         shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
