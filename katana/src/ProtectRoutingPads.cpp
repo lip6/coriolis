@@ -105,12 +105,18 @@ namespace {
       return;
     }
 
-    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    Box           bb    = rp->getBoundingBox();
-    Track*        track = plane->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
+    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    Box           bb          = rp->getBoundingBox();
+    Track*        track       = plane->getTrackByPosition( bb.getXCenter(), Constant::Nearest );
+    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
+    Box           metal2bb    = Box( bb.getXMin()
+                                   , bb.getYCenter() - halfViaSide
+                                   , bb.getXMax()
+                                   , bb.getYCenter() + halfViaSide
+                                   );
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
-    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), bb, track );
+    TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), metal2bb, track );
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);
