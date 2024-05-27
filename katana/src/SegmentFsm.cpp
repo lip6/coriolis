@@ -562,6 +562,7 @@ namespace Katana {
       cdebug_log(155,0) << "  -> baseTrack:" << baseTrack << endl;
 
       for ( Track* ptrack : Tracks_Range::get(perpPlane,_constraint) ) {
+        cdebug_log(155,0) << "Align on (top) preferred: " << ptrack << endl;
         _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,ptrack->getAxis(),0) );
       
         cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getRefCandidateAxis())
