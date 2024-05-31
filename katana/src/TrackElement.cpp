@@ -156,6 +156,7 @@ namespace Katana {
   bool           TrackElement::isNonPrefOnVSmall    () const { return false; }
   bool           TrackElement::isShortNet           () const { return false; }
 // Predicates.
+  bool           TrackElement::isFixedSpan          () const { return false; }
   bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }
   bool           TrackElement::canPivotUp           ( float, Flags ) const { return false; };

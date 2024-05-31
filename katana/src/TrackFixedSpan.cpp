@@ -145,6 +145,7 @@ namespace Katana {
   bool           TrackFixedSpan::isVertical       () const { return getTrack()->isVertical(); }
   bool           TrackFixedSpan::isFixed          () const { return true; }
   bool           TrackFixedSpan::isPriorityLocked () const { return false; }
+  bool           TrackFixedSpan::isFixedSpan      () const { return true; }
   Net*           TrackFixedSpan::getNet           () const { return _net; }
   Flags          TrackFixedSpan::getDirection     () const { return getTrack()->getDirection(); }
   DbU::Unit      TrackFixedSpan::getWidth         () const { return _boundingBox.getWidth(); }
