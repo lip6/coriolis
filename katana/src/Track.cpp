@@ -1111,9 +1111,11 @@ namespace Katana {
     GapSet   gapsetCurr ( this );
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
       cdebug_log(159,0) << "[" << i << "] " << _segments[i] << endl;
-      if (_segments[i]->isNonPref()) continue;
+      if (_segments[i]->isNonPref  ()) continue;
+      if (_segments[i]->isFixedSpan()) continue;
       netChange = false;
       gapsetCurr.merge( i );
+      if (_segments[i+1]->isFixedSpan()) continue;
       if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
          /*or  _segments[i]->getLayer()->isBlockage()*/ ) {
         netChange = true;
@@ -1175,7 +1177,10 @@ namespace Katana {
                 
                 cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
 	            if (first == NULL) {
-		          cerr << Bug("Track::repair(): Base of first element is NULL, *unable* to correct gap.") << endl;
+		          cerr << Bug("Track::repair(): Base of first element is NULL, *unable* to correct gap.\n"
+                              "      On %s."
+                             , getString(element).c_str()
+                             ) << endl;
                 } else if (not first->isNonPref()) {
                   for ( AutoSegment* segment : first->getAligneds() ) {
                     if (segment->getSourcePosition() < first->getSourcePosition())
