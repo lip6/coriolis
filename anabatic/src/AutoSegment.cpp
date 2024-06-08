@@ -452,9 +452,9 @@ namespace Anabatic {
   void  AutoSegment::setShortNetMode ( bool state ) { _shortNetMode = state; }
 
 
-  void  AutoSegment::_initialize ()
+  void  AutoSegment::initialize ()
   {
-  //cerr << "AutoSegment::_initialize()" << endl;
+    // cerr << "AutoSegment::initialize()" << endl;
 
     _initialized = true;
     DbU::Unit twoGrid = DbU::fromGrid( 2 );
@@ -526,7 +526,7 @@ namespace Anabatic {
     , _parent           (NULL)
     , _observers        ()
   {
-    if (not _initialized) _initialize();
+    if (not _initialized) initialize();
     
     _allocateds++;
 
@@ -2146,7 +2146,7 @@ namespace Anabatic {
   bool  AutoSegment::canPivotUp ( float reserve, Flags flags ) const
   {
     cdebug_log(149,0) << "AutoSegment::canPivotUp() - " << flags
-                << " (reserve:" << reserve << ")" << endl;
+                      << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange()    or isFixed() or isUnbreakable() or isNoMoveUp() ) return false;
     if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
@@ -2161,7 +2161,7 @@ namespace Anabatic {
       if (not gcells[i]->hasFreeTrack(depth+2,reserve,flags)) return false;
     }
 
-    if ( not (flags&Flags::IgnoreContacts) ) {
+    if (not (flags&Flags::IgnoreContacts)) {
       cdebug_log(149,0) << getAutoSource() << endl;
       cdebug_log(149,0) << getAutoTarget() << endl;
       cdebug_log(149,0) << "min depths, Segment:" << depth
@@ -2178,8 +2178,10 @@ namespace Anabatic {
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
           if (not gcells[i]->hasFreeTrack(depth+2,reserve,flags)) return false;
         }
-        if (segment->getAutoSource()->getMinDepth() < depth) return false;
-        if (segment->getAutoTarget()->getMinDepth() < depth) return false;
+        if (not (flags&Flags::IgnoreContacts)) {
+          if (segment->getAutoSource()->getMinDepth() < depth) return false;
+          if (segment->getAutoTarget()->getMinDepth() < depth) return false;
+        }
       }
     } else {
       cdebug_log(149,0) << "AutoSegment::canPivotUp() - true [no propagate]" << endl;
@@ -2351,7 +2353,8 @@ namespace Anabatic {
   bool  AutoSegment::moveUp ( Flags flags )
   {
   //if ( not canMoveUp(0.0,flags) ) return false;
-    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + 2, flags );
+    changeDepth( Session::getRoutingGauge()->getLayerDepth(getLayer()) + (isNonPref() ? 1 : 2)
+               , flags );
 
     return true;
   }
