@@ -139,6 +139,7 @@ namespace Anabatic {
     public:
       typedef  std::function< void(AutoSegment*) >  RevalidateCb_t;
     public:
+             static  void                initialize                 ();
              static  void                setAnalogMode              ( bool );
              static  bool                getAnalogMode              ();
              static  void                setShortNetMode            ( bool );
@@ -419,7 +420,6 @@ namespace Anabatic {
              static  void                _preCreate      ( AutoContact* source, AutoContact* target );
              virtual void                _postCreate     ();
              virtual void                _preDestroy     ();
-             static  void                _initialize     ();
     private:                                      
                                          AutoSegment     ( const AutoSegment& );
                      AutoSegment&        operator=       ( const AutoSegment& );

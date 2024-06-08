@@ -457,10 +457,11 @@ namespace Anabatic {
                      ) << endl;
     }
 
-    UpdateSession::open();
+    openSession();
+    AutoSegment::initialize();
     GCell::create( this );
-    UpdateSession::close();
     checkPlacement();
+    Session::close();
   }
 
 
