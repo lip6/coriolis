@@ -177,6 +177,57 @@ def setupSky130_nsx2 ( checkToolkit=None ):
             break
 
 
+def setupSky130_lsx ( checkToolkit=None ):
+    Where( checkToolkit )
+    ShellEnv().export()
+
+    pdkDir          = Where.checkToolkit / 'dks' / 'sky130_lsx' / 'libs.tech'
+    coriolisTechDir = pdkDir / 'coriolis'
+    if not pdkDir.is_dir():
+        print( '[ERROR] technos.setupSky130_lsx(): PDK directory do *not* exists:' )
+        print( '        "{}"'.format(techDir.as_posix()) )
+    sys.path.append( coriolisTechDir.as_posix() )
+
+    cellsTop  = Where.checkToolkit / 'cells'
+    liberty   = cellsTop / 'lsxlib' / 'lsxlib.lib'
+    kdrcRules = pdkDir / 'klayout' / 'drc_sky130.lydrc'
+
+    from ..          import Cfg 
+    from ..          import Viewer
+    from ..          import CRL 
+    from ..helpers   import overlay, l, u, n
+    from .yosys      import Yosys
+    from .klayout    import DRC
+    from sky130_lsx import techno, lsxlib
+    techno.setup( coriolisTechDir )
+    lsxlib.setup( cellsTop )
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore              = False
+        cfg.misc.info                   = False
+        cfg.misc.paranoid               = False
+        cfg.misc.bug                    = False
+        cfg.misc.logMode                = True
+        cfg.misc.verboseLevel1          = True
+        cfg.misc.verboseLevel2          = True
+        cfg.misc.minTraceLevel          = 1900
+        cfg.misc.maxTraceLevel          = 3000
+        cfg.katana.eventsLimit          = 1000000
+        cfg.katana.termSatReservedLocal = 6 
+        cfg.katana.termSatThreshold     = 9 
+        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+
+    Yosys.setLiberty( liberty )
+    DRC.setDrcRules( kdrcRules )
+    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
+
+    path = None
+    for pathVar in [ 'PATH', 'path' ]:
+        if pathVar in os.environ:
+            path = os.environ[ pathVar ]
+            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
+            break
+
 def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
     from   ..        import Cfg 
     from   ..        import Viewer
