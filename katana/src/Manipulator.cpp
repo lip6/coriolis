@@ -1290,8 +1290,10 @@ namespace Katana {
         if (not _segment->canPivotUp(1.0,kflags)) return false;
       } else {
         if (_segment->getLength() < 20*getPitch()) {
+          if (Session::getConfiguration()->isVH()) kflags |=  Flags::IgnoreContacts;
+          else                                     kflags &= ~Flags::IgnoreContacts;
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0,(kflags & ~Flags::IgnoreContacts))) return false;
+          if (not _segment->canPivotUp(1.0,(kflags))) return false;
         }
         if (not _segment->canMoveUp(reserve,kflags)) return false;
       }
