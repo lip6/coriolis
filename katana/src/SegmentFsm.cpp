@@ -1318,17 +1318,27 @@ namespace Katana {
         if (success) break;
       case DataNegociate::Minimize:
         if (nextState == DataNegociate::Minimize) {
-          if (isFullBlocked() and not segment->isTerminal()) {
-            cdebug_log(159,0) << "Is Fully blocked." << endl;
-            if (_costs.size() > 7) {
-              success = manipulator.moveUp( Manipulator::AllowLocalMoveUp );
+          if (not segment->isTerminal()) {
+            if (isFullBlocked()) {
+              cdebug_log(159,0) << "Is Fully blocked." << endl;
+              if (_costs.size() > 7) {
+                success = manipulator.moveUp( Manipulator::AllowLocalMoveUp );
+                if (success) {
+                  cdebug_log(159,0) << "Was able to move up." << endl;
+                  break;
+                }
+              }
+              nextState = DataNegociate::Unimplemented;
+              break;
+            }
+            if (segment->isNonPref() and (data->getRipupCount() > 3)) {
+              cdebug_log(159,0) << "Non pref. "  << data->getRipupCount() << endl;
+              success = manipulator.moveUp( Manipulator::AllowLocalMoveUp|Manipulator::IgnoreContacts );
               if (success) {
                 cdebug_log(159,0) << "Was able to move up." << endl;
                 break;
               }
             }
-            nextState = DataNegociate::Unimplemented;
-            break;
           }
           nextState = DataNegociate::Dogleg;
           success   = manipulator.minimize();
@@ -1420,10 +1430,13 @@ namespace Katana {
           success = manipulator.makeDogleg( segment->getCanonicalInterval().getCenter() );
           if (success) break;
         } else {
-          cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+          nextState = DataNegociate::Slacken;
+          if (Session::getConfiguration()->isVH()
+             and segment->getLength() < 6*Session::getSliceHeight()) {
+            cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+            break;
+          }
         }
-        nextState = DataNegociate::Slacken;
-        break;
       case DataNegociate::Slacken:
         cdebug_log(159,0) << "Global, SegmentFsm: Slacken "
                           << ((manipulator.getEvent())
@@ -1535,19 +1548,19 @@ namespace Katana {
 
     if (not segment1 or not _data1) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
 
-    _event1->resetInsertState();
-    _data1->resetRipupCount();
-    if (_event2) {
-      _event2->resetInsertState();
-      _data2->resetRipupCount();
-    }
-
     if (segment1->isStrap() or segment1->isUnbreakable())
       success = _slackenStrap ( segment1, _data1, flags );
     else if (segment1->isLocal())
       success = _slackenLocal ( segment1, _data1, flags );
     else
       success = _slackenGlobal( segment1, _data1, flags );
+
+    _event1->resetInsertState();
+    _data1->resetRipupCount();
+    if (_event2) {
+      _event2->resetInsertState();
+      _data2->resetRipupCount();
+    }
 
     if (success) {
       actionFlags |= SegmentAction::ResetRipup;

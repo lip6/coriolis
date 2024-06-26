@@ -154,6 +154,7 @@ namespace Katana {
                       << endl;
 
     for ( size_t span=0 ; (span < _trackSpan) and (track != NULL) ; ++span ) {
+      cdebug_log(155,0) << "Crossed: " << track << endl;
       track->addOverlapCost( cost );
     // Todo: have to choose here wether we go *next* or *previous* according
     //       to the symmetry kind.
