@@ -949,12 +949,18 @@ namespace Anabatic {
     for ( Component* slave : contact->getSlaveComponents() ) {
       Horizontal* h = dynamic_cast<Horizontal*>( slave );
       if (h) {
-        if (vCount or (hCount > 1)) return false;
+        if (vCount or (hCount > 1)) {
+          cdebug_tabw(112,-1);
+          return false;
+        }
         horizontals[hCount++] = h;
       } else {
         Vertical* v = dynamic_cast<Vertical*>( slave );
         if (v) {
-          if (hCount or (vCount > 1)) return false;
+          if (hCount or (vCount > 1)) {
+            cdebug_tabw(112,-1);
+            return false;
+          }
           verticals[vCount++] = v;
         } else {
         // Something else depends on this contact.
