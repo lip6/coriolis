@@ -209,6 +209,7 @@ class Yosys ( FlowTask ):
         self.script.append( 'memory' )
         self.script.append( 'dfflibmap -liberty {}'.format( self.liberty.as_posix() ))
         self.script.append( 'abc       -liberty {}'.format( self.liberty.as_posix() ))
+        self.script.append( 'stat')
         self.script.append( 'clean')
         self.script.append( 'write_blif {}'.format( self.targets[0] ))
         self._runScript()
