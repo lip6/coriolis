@@ -179,8 +179,12 @@ namespace Katana {
         if (not source->canDrag() and not target->canDrag())
           perpandicular->base()->getCanonical( trackFree );
 
-        if (Session::getStage() < StagePack)
-          trackFree.inflate( 1*pitch, 1*pitch );
+        if (Session::getStage() < StagePack) {
+          int pitchSlack = 1;
+          if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
+            pitchSlack = 5;
+          trackFree.inflate( pitchSlack*pitch, pitchSlack*pitch );
+        }
         cdebug_log(159,0) << "Non-Pref Track Perpandicular Free: " << trackFree << endl;
 
         //_perpandicularFree.intersection
