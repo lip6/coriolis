@@ -458,6 +458,7 @@ namespace Anabatic {
 
     RoutingGauge* rg         = Session::getRoutingGauge();
     size_t        movedDepth = rg->getLayerDepth(moved->getLayer());
+    if (moved->isNonPref() and (movedDepth > 0)) --movedDepth;
 
     Component* anchor = getAnchor();
     if (anchor) {
