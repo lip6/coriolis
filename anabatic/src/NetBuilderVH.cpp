@@ -230,11 +230,11 @@ namespace Anabatic {
           AutoSegment::create( subContact2, subContact1, Flags::Horizontal );
           rpContactSource = subContact1;
         } else {
-          cdebug_log(145,0) << "wide horizontal" << endl;
+          cdebug_log(145,0) << "large horizontal" << endl;
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoContact* subContact2 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
           AutoSegment::create( rpContactSource, subContact1, Flags::Vertical  )->setFlags( offgridFlag );
-          AutoSegment::create( subContact1,     subContact2, Flags::Horizontal);
+          AutoSegment::create( subContact1,     subContact2, Flags::Horizontal|Flags::UseNonPref);
           rpContactSource = subContact2;
         }
       } else {
@@ -248,6 +248,15 @@ namespace Anabatic {
       
           AutoSegment::create( rpContactSource, subContact1, Flags::Vertical )->setFlags( offgridFlag );
           rpContactSource = subContact1;
+          
+          if (flags & AddHNonPref) {
+            subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+            AutoSegment::create( rpContactSource, subContact1, Flags::Horizontal|Flags::UseNonPref );
+            rpContactSource = subContact1;
+            subContact1 = AutoContactTurn::create( gcell, rp->getNet(), viaLayer1 );
+            AutoSegment::create( rpContactSource, subContact1, Flags::Vertical );
+            rpContactSource = subContact1;
+          }
         }
       }
     } else { // RP should be vertical (M2).
@@ -486,7 +495,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_1M1() [Managed Configuration - Optimized] " << getTopology() << endl;
 
-    uint64_t  flags = NoFlags;
+    uint64_t  flags = AddHNonPref;
     if      (east()) { flags |= HAccess|VSmall; }
     else if (west()) { flags |= HAccess|VSmall; }
 

@@ -109,6 +109,7 @@ namespace Anabatic {
                          , UseNonPref      = (1 << 17)
                          , NoProtect       = (1 << 18)
                          , ToUpperRouting  = (1 << 19)
+                         , AddHNonPref     = (1 << 20)
                          , HBothAccess     = HAccess|HAccessEW
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
