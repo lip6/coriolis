@@ -734,7 +734,7 @@ namespace Katana {
     cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
 
     if (not (state & BeginIsTrackMin) and (begin > 0)) {
-      if (_segments[begin]->getNet() == net)
+      if ((_segments[begin]->getNet() == net) or _segments[begin]->isNonPref())
         getPrevious( begin, net );
 
       if (begin != npos) {
@@ -751,7 +751,7 @@ namespace Katana {
     if (not (state & EndIsTrackMax) ) {
       if (state & EndIsNextSegmentMin) ++end;
  
-      if (_segments[end]->getNet() == net) {
+      if ((_segments[end]->getNet() == net) or _segments[end]->isNonPref()) {
         getNext( end, net );
         if (end != npos) {
           cdebug_log(155,0) << "| same net, end:" << end << " " << _segments[end] << endl;
