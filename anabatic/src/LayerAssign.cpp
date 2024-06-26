@@ -243,15 +243,17 @@ namespace {
             cdebug_log(149,0) << "| " << segment << endl;
 
             if (Session::getConfiguration()->isHV()) {
-              if (segment->isVertical() and not segment->isNonPref()) {
-                if (segment->getDepth() == 1) {
-                  cdebug_log(149,0) << "| Slacken: " << segment << endl;
-                  segment->changeDepth( 2, Flags::NoFlags );
-                  cdebug_log(149,0) << "| After Slacken: " << segment << endl;
+              if (not segment->isNonPref()) {
+                if (segment->isVertical()) {
+                  if (segment->getDepth() == 1) {
+                    cdebug_log(149,0) << "| Slacken: " << segment << endl;
+                    segment->changeDepth( 2, Flags::NoFlags );
+                    cdebug_log(149,0) << "| After Slacken: " << segment << endl;
+                  }
+                } else {
+                  segment->makeDogleg( rpContact->getGCell() );
+                  cdebug_log(149,0) << "| Make dogleg: " << segment << endl;
                 }
-              } else {
-                segment->makeDogleg( rpContact->getGCell() );
-                cdebug_log(149,0) << "| Make dogleg: " << segment << endl;
               }
             } else {
               segment->makeDogleg( rpContact->getGCell() );
