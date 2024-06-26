@@ -883,6 +883,34 @@ namespace Anabatic {
   //}
 
     if (not openSession) Session::close();
+    if (cmess1.enabled()) {
+      const vector<RoutingLayerGauge*>& layerGauges
+        = getAnabatic()->getConfiguration()->getRoutingGauge()->getLayerGauges();
+      const Edge* edge = getEastEdge();
+      if (edge) {
+        cout << "     o  East capacities of south west GCell (Horizontal)." << endl;
+        for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
+          ostringstream os;
+          os << "        - [" << depth << "] "
+             << (layerGauges[depth]->isHorizontal() ? "H " : "V ")
+             << layerGauges[depth]->getLayer()->getName();
+          cout << Dots::asUInt( os.str() ,edge->getCapacity(depth) ) << endl;
+        }
+        cout << Dots::asUInt( "        - Whole GR/H edge" ,edge->getCapacity() ) << endl;
+      }
+      edge = getNorthEdge();
+      if (edge) {
+        cout << "     o  North capacities of south west GCell (Vertical)." << endl;
+        for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
+          ostringstream os;
+          os << "        - [" << depth << "] "
+             << (layerGauges[depth]->isHorizontal() ? "H " : "V ")
+             << layerGauges[depth]->getLayer()->getName();
+          cout << Dots::asUInt( os.str() ,edge->getCapacity(depth) ) << endl;
+        }
+        cout << Dots::asUInt( "        - Whole GR/V edge" ,edge->getCapacity() ) << endl;
+      }
+    }
     return true;
   }
 
