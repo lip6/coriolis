@@ -44,7 +44,7 @@ namespace Anabatic {
                                           EdgeCapacity     ( const EdgeCapacity& );
                                          ~EdgeCapacity     ();
              inline       bool            isUnique         () const;
-             inline       size_t          size             ();
+             inline       size_t          size             () const;
              inline       size_t          incref           ();
              inline       size_t          decref           ();
              inline       size_t          getref           () const;
@@ -70,7 +70,7 @@ namespace Anabatic {
 
   inline       size_t          EdgeCapacity::getAllocateds () { return _allocateds; }
   inline       bool            EdgeCapacity::isUnique      () const { return (_flags & Flags::UniqueCapacity); }
-  inline       size_t          EdgeCapacity::size          () { return _capacities.size(); }
+  inline       size_t          EdgeCapacity::size          () const { return _capacities.size(); }
   inline       size_t          EdgeCapacity::incref        () { return ++_refCount; }
   inline       size_t          EdgeCapacity::decref        () { if (_refCount < 2) { delete this; return 0; } return --_refCount; }
   inline       size_t          EdgeCapacity::getref        () const { return _refCount; }
