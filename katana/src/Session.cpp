@@ -354,6 +354,17 @@ namespace Katana {
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
         cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
+      } else {
+        if (revalidateds[i]->hasBecomeBelowPitch()) {
+          cdebug_log(159,0) << "Session: below pitch:" << revalidateds[i] << endl;
+          revalidateds[i]->resetBecomeBelowPitch();
+          TrackElement* trackSegment = lookup( revalidateds[i] );
+          if (trackSegment) {
+            trackSegment->invalidate();
+            trackSegment->reschedule( 0 );
+            cdebug_log(159,0) << "Has a TrackSegment" << endl;
+          }
+        }
       }
     }
     

@@ -112,6 +112,8 @@ namespace Anabatic {
       static const uint64_t  SegOnVSmall          = (1L<<40);
       static const uint64_t  SegForOffgrid        = (1L<<41);
       static const uint64_t  SegIsReducedDone     = (1L<<42);
+      static const uint64_t  SegIsBelowPitch      = (1L<<43);
+      static const uint64_t  SegBecomeBelowPitch  = (1L<<44);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -234,6 +236,8 @@ namespace Anabatic {
       inline         bool                isUserDefined              () const;
                      bool                isNearMinArea              () const;
                      bool                isReduceCandidate          () const;
+      inline         bool                isBelowPitch               () const;
+      inline         bool                hasBecomeBelowPitch        () const;
                      bool                isUTurn                    () const;
       inline         bool                isAnalog                   () const;
       inline         bool                isWide                     () const;
@@ -304,6 +308,7 @@ namespace Anabatic {
       inline         void                unsetFlags                 ( uint64_t );
       inline         void                setFlags                   ( uint64_t );
                      void                setFlagsOnAligneds         ( uint64_t );
+      inline         void                resetBecomeBelowPitch      ();
       inline         void                setRpDistance              ( unsigned int );
       inline         void                setBreakLevel              ( unsigned int );
       inline         void                incBreakLevel              ();
@@ -582,11 +587,14 @@ namespace Anabatic {
   inline  bool            AutoSegment::isWide                 () const { return _flags & SegWide; }
   inline  bool            AutoSegment::isShortNet             () const { return _flags & SegShortNet; }
   inline  bool            AutoSegment::isNoMoveUp             () const { return _flags & SegNoMoveUp; }
+  inline  bool            AutoSegment::isBelowPitch           () const { return _flags & SegIsBelowPitch; }
+  inline  bool            AutoSegment::hasBecomeBelowPitch    () const { return _flags & SegBecomeBelowPitch; }
   inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }
                                                               
   inline  uint64_t        AutoSegment::getFlags               () const { return _flags; }
   inline  uint64_t        AutoSegment::_getFlags              () const { return _flags; }
+  inline  void            AutoSegment::resetBecomeBelowPitch  () { _flags &= ~SegBecomeBelowPitch; }
   inline  void            AutoSegment::setRpDistance          ( unsigned int distance ) { _rpDistance=distance; }
   inline  void            AutoSegment::setBreakLevel          ( unsigned int level ) { _breakLevel=level; }
   inline  void            AutoSegment::incBreakLevel          () { if (_breakLevel<15) ++_breakLevel; }
