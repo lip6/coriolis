@@ -117,6 +117,7 @@ namespace {
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
     TrackFixedSpan* element = TrackFixedSpan::create( rp->getNet(), metal2bb, track );
+    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);
