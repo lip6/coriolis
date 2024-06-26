@@ -430,8 +430,31 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
-    _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetU() - targetCap;
+    DbU::Unit targetPos1 = getTargetU() + targetCap;
+    DbU::Unit targetPos2 = getSourceU() + sourceCap;
+
+    if (sourcePos2 < sourcePos1) {
+      if (_sourcePosition != sourcePos2) {
+        if (sourcePos2 < _sourcePosition)
+          setFlags( SegBecomeBelowPitch );
+        _sourcePosition = sourcePos2;
+      }
+    } else
+      _sourcePosition = sourcePos1;
+
+    if (targetPos2 > targetPos1) {
+      if (_targetPosition != targetPos2) {
+        if (targetPos2 > _targetPosition)
+          setFlags( SegBecomeBelowPitch );
+        _targetPosition = targetPos2;
+      }
+    } else
+      _targetPosition = targetPos1;
+
     if (isNonPref()) {
       DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
       _sourcePosition -= halfCap;
@@ -456,8 +479,12 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSource()->getY() - getExtensionCap(Flags::Source);
-    DbU::Unit targetPosition = _vertical->getTarget()->getY() + getExtensionCap(Flags::Target);
+    DbU::Unit sourceCap      = getExtensionCap(Flags::Source);
+    DbU::Unit targetCap      = getExtensionCap(Flags::Target);
+    DbU::Unit sourceU        = _vertical->getSource()->getY();
+    DbU::Unit targetU        = _vertical->getTarget()->getY();
+    DbU::Unit sourcePosition = std::min( getSourceU() - sourceCap, getTargetU() - targetCap );
+    DbU::Unit targetPosition = std::max( getTargetU() + targetCap, getSourceU() + sourceCap );
     if (isNonPref()) {
       DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
       sourcePosition -= halfCap;

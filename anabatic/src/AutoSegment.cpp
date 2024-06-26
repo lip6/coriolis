@@ -780,11 +780,14 @@ namespace Anabatic {
       if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      // cdebug_log(150,0) << "getExtensionCap(): (source) flags:" << getFlags()
-      //                   << " VIA cap:" << DbU::getValueString(cap)
-      //                   << " t:" << (getFlags() & SegSourceBottom)
-      //                   << " b:" << (getFlags() & SegSourceTop)
-      //                   << endl;
+      // if (getId() == 473829) {
+      //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+      //                     << " (source) flags:" << getFlags()
+      //                     << " VIA cap:" << DbU::getValueString(cap)
+      //                     << " t:" << (getFlags() & SegSourceBottom)
+      //                     << " b:" << (getFlags() & SegSourceTop)
+      //                     << endl;
+      // }
       if (not (flags & Flags::NoSegExt)) {
         // cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
@@ -797,11 +800,14 @@ namespace Anabatic {
         if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
         else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
         else                                   cap = getViaToSameCap  (depth);
-        // cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
-        //                   << " VIA cap:" << DbU::getValueString(cap)
-        //                   << " t:" << (getFlags() & SegSourceBottom)
-        //                   << " b:" << (getFlags() & SegSourceTop)
-        //                   << endl;
+        // if (getId() == 473829) {
+        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+        //                     << " (target) flags:" << getFlags()
+        //                     << " VIA cap:" << DbU::getValueString(cap)
+        //                     << " t:" << (getFlags() & SegTargetBottom)
+        //                     << " b:" << (getFlags() & SegTargetTop)
+        //                     << endl;
+        // }
         if (not (flags & Flags::NoSegExt)) {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
@@ -2846,25 +2852,28 @@ namespace Anabatic {
   string  AutoSegment::_getStringFlags () const
   {
     string state;
-    state += isFixed           () ?" F":" -";
-    state += isFixedAxis       () ? "X": "-";
-    state += isUnsetAxis       () ? "u": "-";
-    state += isAtMinArea       () ? "a": "-";
-    state += isStrap           () ? "S": "-";
-    state += isUnbreakable     () ? "U": "-";
-    state += isCanonical       () ? "C": "-";
-    state += isGlobal          () ? "G": "-";
-    state += isWeakGlobal      () ? "g": "-";
-    state += isLongLocal       () ? "L": "-";
-    state += isStrongTerminal  () ? "T": "-";
-    state += isDrag            () ? "D": "-";
-    state += isWeakTerminal1   () ? "W": "-";
-    state += isWeakTerminal2   () ? "w": "-";
-    state += isNotAligned      () ? "A": "-";
-    state += isSlackened       () ? "S": "-";
-    state += isReduced         () ? "r": "-";
-    state += isInvalidated     () ? "i": "-";
-    state += isInvalidatedLayer() ? "l": "-";
+    state += isFixed            () ?" F":" -";
+    state += isFixedAxis        () ? "X": "-";
+    state += isUnsetAxis        () ? "u": "-";
+    state += isAtMinArea        () ? "a": "-";
+    state += isStrap            () ? "S": "-";
+    state += isUnbreakable      () ? "U": "-";
+    state += isCanonical        () ? "C": "-";
+    state += isGlobal           () ? "G": "-";
+    state += isWeakGlobal       () ? "g": "-";
+    state += isLongLocal        () ? "L": "-";
+    state += isStrongTerminal   () ? "T": "-";
+    state += isDrag             () ? "D": "-";
+    state += isWeakTerminal1    () ? "W": "-";
+    state += isWeakTerminal2    () ? "w": "-";
+    state += isNotAligned       () ? "A": "-";
+    state += isSlackened        () ? "S": "-";
+    state += isReduced          () ? "r": "-";
+    state += isInvalidated      () ? "i": "-";
+    state += isInvalidatedLayer () ? "l": "-";
+    state += isBelowPitch       () ? "Z": "-";
+    state += hasBecomeBelowPitch() ? "z": "-";
+    state += isNonPref          () ? "P": "-";
 
     if      (_flags & SegSourceTop)    state += 't';
     else if (_flags & SegSourceBottom) state += 'b';
