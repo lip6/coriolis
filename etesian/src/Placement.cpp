@@ -706,7 +706,10 @@ namespace Etesian {
     for ( ; iTile != _endTile ; ++iTile, ++count )
       usedLength += (*iTile).getWidth();
 
-    if (xmax - xmin - usedLength == 0) return 0;
+    cdebug_log(121,0) << "SubSlice::getAverageChunk(): length=" << DbU::getValueString(xmax-xmin)
+                      << " used=" << DbU::getValueString(usedLength) << endl;
+
+    if (xmax - xmin - usedLength == 0) return DbU::Max;
     return (feedWidth * (xmax - xmin)) / (xmax - xmin - usedLength);
   }
 
@@ -797,6 +800,7 @@ namespace Etesian {
                    , getString(DbU::getValueString(getYBottom())).c_str()
                    , getString((*_beginTile).getOccurrence()).c_str()
                    ) << endl;
+      return;
     }
     
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
@@ -806,7 +810,7 @@ namespace Etesian {
     }
     DbU::Unit  feedWidth = feed->getAbutmentBox().getWidth();
 
-    cdebug_log(121,1) << "SubSlice::insterTies(): LatchUpMax:" << DbU::getValueString( latchUpMax ) << endl;
+    cdebug_log(121,1) << "SubSlice::insertTies(): LatchUpMax:" << DbU::getValueString( latchUpMax ) << endl;
     cdebug_log(121,1) << "Direct subSlice walkthrough." << endl;
 
     vector<DbU::Unit>  tiePositions;
