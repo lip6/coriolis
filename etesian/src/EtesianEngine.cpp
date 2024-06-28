@@ -1211,6 +1211,7 @@ namespace Etesian {
     UpdateSession::close();
   }
 
+
   void  EtesianEngine::_updatePlacement ( const coloquinte::PlacementSolution* placement, uint32_t flags )
   {
     UpdateSession::open();
