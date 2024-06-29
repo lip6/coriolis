@@ -401,7 +401,7 @@ namespace Anabatic {
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (sourceSlackened and (doglegs.size() >= 2)) {
         cdebug_log(149,0) << "Slackened from source @" << DbU::getValueString(getSourcePosition()) << endl;
-        doglegs[doglegs.size()-2]->setAxis( getSourcePosition() );
+        doglegs[doglegs.size()-2]->setAxis ( getSourcePosition() );
         success = true;
 
         if (isMetal2Source) {
@@ -448,6 +448,7 @@ namespace Anabatic {
           constraintBox.inflate( getPPitch(), 0, 0, 0 );
         }
         doglegs[doglegs.size()-2]->setAxis( targetPosition );
+        doglegs[doglegs.size()-1]->setFlags( SegSlackened );
         success = true;
 
         if (isMetal2Target) {

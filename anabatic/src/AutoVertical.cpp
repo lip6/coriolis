@@ -356,8 +356,9 @@ namespace Anabatic {
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (targetSlackened and (doglegs.size() >= 2)) {
-        cdebug_log(149,0) << "AutoVertical::_slacken(): Source @" << DbU::getValueString(getTargetPosition()) << endl;
+        cdebug_log(149,0) << "AutoVertical::_slacken(): target @" << DbU::getValueString(getTargetPosition()) << endl;
         doglegs[doglegs.size()-2]->_setAxis( getTargetPosition() );
+        doglegs[doglegs.size()-1]->setFlags( SegSlackened );
         success = true;
       }
     }
