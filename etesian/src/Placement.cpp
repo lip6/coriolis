@@ -371,6 +371,30 @@ namespace Etesian {
     cdebug_tabw(147,-1);
   }
 
+
+  uint64_t  Slice::check ( string& message ) const
+  {
+    if (_tiles.size() < 2) return 0;
+
+    uint64_t  overlaps  = 0;
+    auto      iTile     = _tiles.begin();
+    auto      iTileNext = iTile;
+    ++iTileNext;
+    while ( true ) {
+      if (iTile->getXMax() > iTileNext->getXMin()) {
+        ++overlaps;
+        message += "        Slice::check(): @Y=" + DbU::getValueString(_ybottom) + " overlap between:\n"
+                +  "          @X=" + DbU::getValueString(iTile    ->getXMin()) + " " + getString(iTile    ->getOccurrence()) + "\n"
+                +  "          @X=" + DbU::getValueString(iTileNext->getXMin()) + " " + getString(iTileNext->getOccurrence()) + "\n";
+      } 
+
+      ++iTile;
+      ++iTileNext;
+      if (iTileNext == _tiles.end()) break;
+    }
+    return overlaps;
+  }
+
   
   Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint, size_t yspin )
   {
@@ -523,6 +547,14 @@ namespace Etesian {
       delete _slices[islice];
   }
 
+
+  uint64_t  Area::check ( string& message ) const
+  {
+    uint64_t overlaps = 0;
+    for ( Slice* slice : _slices ) overlaps += slice->check( message );
+    return overlaps;
+  }
+  
 
   bool  Area::validate ( DbU::Unit latchUpMax ) const
   {
@@ -1032,6 +1064,14 @@ namespace Etesian {
 
     _area->buildSubSlices();
     _area->showSubSlices();
+    string   errors;
+    uint64_t overlaps = _area->check( errors );
+    if (overlaps) {
+      throw Error( "EtesianEngine::toHurricane(): Found %d overlaps in placement.\n"
+                   "        The placement area may be too small or too much very wide cells (likely flip-flops).\n%s"
+                 , overlaps, errors.c_str() );
+    }
+
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
     if (getConfiguration()->getLatchUpDistance()) {
