@@ -248,6 +248,7 @@ namespace Etesian {
       inline size_t           getSpinSlice0    () const;
       inline DbU::Unit        getLeftDistance  ( Cell* cell ) const;
       inline DbU::Unit        getRightDistance ( Cell* cell ) const;
+             uint64_t         check            ( string& message ) const;
              bool             validate         ( DbU::Unit latchUpMax ) const;
       inline std::list<Tile>& getTiles         ();
              void             merge            ( const Occurrence&, const Box& );
@@ -294,6 +295,7 @@ namespace Etesian {
       inline const Box&     getPlaceArea     () const;
       inline DbU::Unit      getLeftDistance  ( Cell* cell ) const;
       inline DbU::Unit      getRightDistance ( Cell* cell ) const;
+             uint64_t       check            ( string& message ) const;
              bool           validate         ( DbU::Unit latchUpMax ) const;
              void           merge            ( const Occurrence&, const Box& );
              void           addFeeds         ();
