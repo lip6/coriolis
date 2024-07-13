@@ -108,109 +108,6 @@ namespace Anabatic {
       viaSide   = Session::getViaWidth( rpDepth );
     }
 
-#if THIS_IS_DISABLED
-  // Non-M1 terminal or punctual M1 protections.
-    if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
-      map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
-      if (irp == getRpLookup().end()) {
-        Box rpBb = rp->getBoundingBox();
-        if (rpDepth != 0) {
-          DbU::Unit hborder = 0;
-          DbU::Unit vborder = 0;
-          if (direction.contains(Flags::Horizontal)) {
-            vborder = Session::getWireWidth(rpDepth) / 2;
-            rpBb.inflate( hborder, vborder );
-            if (not rpBb.isEmpty()) {
-              DbU::Unit trackAxis =  Session::getNearestTrackAxis( rp->getLayer()
-                                                                 , sourcePosition.getY()
-                                                                 , Constant::Nearest );
-              if (trackAxis != sourcePosition.getY()) {
-                cerr << Warning( "NetBuilderHV::doRp_AutoContacts(): Adjust Y position to nearest H track of %s\n"
-                                 "           (%s -> %s)"
-                               , getString(rp).c_str()
-                               , DbU::getValueString(sourcePosition.getY()).c_str()
-                               , DbU::getValueString(trackAxis).c_str()
-                               ) << endl;
-                sourcePosition.setY( trackAxis );
-                targetPosition.setY( trackAxis );
-              }
-            } else {
-              cdebug_log(145,0) << "rpBb is too narrow to adjust: " << rp->getBoundingBox() << endl;
-            }
-          } else {
-            hborder = Session::getWireWidth(rpDepth) / 2;
-            rpBb.inflate( hborder, vborder );
-            if (not rpBb.isEmpty()) {
-              DbU::Unit trackAxis =  Session::getNearestTrackAxis( rp->getLayer()
-                                                                 , sourcePosition.getX()
-                                                                 , Constant::Nearest );
-              if (trackAxis != sourcePosition.getX()) {
-                cerr << Warning( "NetBuilderHV::doRp_AutoContacts(): Adjust X position to nearest V track of %s\n"
-                                 "           (%s -> %s)"
-                               , getString(rp).c_str()
-                               , DbU::getValueString(sourcePosition.getX()).c_str()
-                               , DbU::getValueString(trackAxis).c_str()
-                               ) << endl;
-                sourcePosition.setX( trackAxis );
-                targetPosition.setX( trackAxis );
-              }
-            } else {
-              cdebug_log(145,0) << "rpBb is too narrow to adjust: " << rp->getBoundingBox() << endl;
-            }
-          }
-        }
-        
-        AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , sourcePosition
-                                                                , viaSide, viaSide
-                                                                );
-        AutoContact* targetProtect = AutoContactTerminal::create( targetGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , targetPosition
-                                                                , viaSide, viaSide
-                                                                );
-        sourceProtect->setFlags( CntFixed );
-        targetProtect->setFlags( CntFixed );
-
-        if (rpDepth == 0) rpDepth = 1;
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
-        segment->setFlags( AutoSegment::SegFixed );
-
-        getRpLookup().insert( make_pair(rp,segment) );
-      }
-    }
-#endif
-  // Non-M1 terminal or punctual M1 protections.
-    if (isInsideBlockage(gcell,rp)) flags |= NoProtect;
-    if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
-      if (rpDepth == 0) rpDepth = 1;
-      map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
-      if (irp == getRpLookup().end()) {
-        AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , sourcePosition
-                                                                , viaSide, viaSide
-                                                                );
-        AutoContact* targetProtect = AutoContactTerminal::create( targetGCell
-                                                                , rp
-                                                                , rpLayer
-                                                                , targetPosition
-                                                                , viaSide, viaSide
-                                                                );
-        sourceProtect->setFlags( CntFixed );
-        targetProtect->setFlags( CntFixed );
-
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
-        segment->setFlags( AutoSegment::SegFixed );
-
-        getRpLookup().insert( make_pair(rp,segment) );
-      }
-    }
-
     if (sourcePosition != targetPosition) {
       if (flags & DoSourceContact)
         source = AutoContactTerminal::create( gcell
@@ -330,7 +227,9 @@ namespace Anabatic {
         } else
           subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
 
-        AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical, rpDepth+1 );
+        AutoSegment* segment = AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical, rpDepth+1 );
+        if (rp->isPunctual())
+          segment->setFlags( AutoSegment::SegFixed );
       } else {
 #if OFFGRID_M2_DISABLED
         Box                cellAb    = getAnabatic()->getCell()->getAbutmentBox();
@@ -360,7 +259,6 @@ namespace Anabatic {
     }
 
     cdebug_tabw(145,-1);
-
     return rpSourceContact;
   }
 
@@ -1686,7 +1584,7 @@ namespace Anabatic {
     if (west() and not south()) {
       setSouthWestContact( doRp_Access( getGCell(), getRoutingPads()[0], HAccess ) );
     } else if (not west() and south()) {
-      cdebug_log(145,1) << "case: not west and south" << endl;
+      cdebug_log(145,0) << "case: not west and south" << endl;
       setSouthWestContact( doRp_Access( getGCell(), biggestRp, NoFlags ) );
     } else if (west() and south()) {
       AutoContact* rpContact = doRp_Access( getGCell(), biggestRp, NoFlags );
@@ -1697,7 +1595,7 @@ namespace Anabatic {
     if (east() and not north()) {
       setNorthEastContact( doRp_Access( getGCell(), getRoutingPads()[getRoutingPads().size()-1], HAccess ) );
     } else if (not east() and north()) {
-      cdebug_log(145,1) << "case: not east and north" << endl;
+      cdebug_log(145,0) << "case: not east and north" << endl;
       setNorthEastContact( doRp_Access( getGCell(), biggestRp, NoFlags ) );
     } else if (east() and north()) {
       AutoContact* rpContact = doRp_Access( getGCell(), biggestRp, NoFlags );

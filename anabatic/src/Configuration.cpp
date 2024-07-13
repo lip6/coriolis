@@ -471,6 +471,7 @@ namespace Anabatic {
     DebugSession::open( rp->getNet(), 112, 120 );
     cdebug_log(112,1) << "selectRpComponent(): " << rp << endl;
   //rp->setFlags( RoutingPad::SelectedComponent );
+    checkRoutingPadSize( rp );
 
     if (rp->isAtTopLevel()) {
       cdebug_log(112,0) << "> RP is at top level, must not change it." << endl;
@@ -659,17 +660,16 @@ namespace Anabatic {
     Point  target;
 
     size_t    rpDepth        = getLayerDepth( rp->getLayer() );
-    DbU::Unit punctualLength = getLayerGauge( rpDepth )->getWireWidth();
+    DbU::Unit punctualLength = 0;
     if (rpDepth == 0) ++rpDepth;
-    else return;
+    if (not isSymbolic()) punctualLength += getLayerGauge( rpDepth )->getWireWidth();
     punctualLength += getPitch( rpDepth );
 
     getPositions( rp, source, target );
 
-    DbU::Unit width          = abs( target.getX() - source.getX() );
-    DbU::Unit height         = abs( target.getY() - source.getY() );
-
-    uint64_t flags = 0;
+    DbU::Unit width  = abs( target.getX() - source.getX() );
+    DbU::Unit height = abs( target.getY() - source.getY() );
+    uint64_t  flags  = 0;
     flags |= (width  < 3*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
     flags |= (height < 3*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
     flags |= ((width < punctualLength) and (height < punctualLength)) ? RoutingPad::Punctual : 0;

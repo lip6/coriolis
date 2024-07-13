@@ -142,7 +142,6 @@ namespace Katana {
               void                     _runKatanaInit             ();
               void                     _gutKatana                 ();
               void                     _buildBloatProfile         ();
-              void                     _computeCagedConstraints   ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;
       inline  void                     _addShortDogleg            ( TrackElement*, TrackElement* );

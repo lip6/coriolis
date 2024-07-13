@@ -134,6 +134,7 @@ namespace Katana {
       inline  bool                    isLocked               () const;
       inline  bool                    isRouted               () const;
       virtual bool                    isFixedSpan            () const;
+      virtual bool                    isFixedSpanRp          () const;
       inline  bool                    isForwardSetTrack      () const;
       virtual bool                    hasSymmetric           () const;
       inline  bool                    hasSourceDogleg        () const;

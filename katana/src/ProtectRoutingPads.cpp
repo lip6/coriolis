@@ -39,6 +39,7 @@
 #include "katana/TrackSegment.h"
 #include "katana/TrackFixedSegment.h"
 #include "katana/TrackFixedSpan.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Track.h"
 #include "katana/KatanaEngine.h"
 
@@ -95,6 +96,34 @@ namespace {
       inline bool operator () ( const Track* lhs, const Track* rhs ) const
       { return lhs->getAxis() < rhs->getAxis(); }
   };
+
+
+  void  protectRoutingPadHV ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
+    if (not rp->isPunctual()) {
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    Box           bb          = rp->getBoundingBox();
+    Track*        track       = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
+    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
+    Box           metal2bb    = Box( bb.getXMin() - halfViaSide
+                                   , bb.getYCenter()
+                                   , bb.getXMax() + halfViaSide
+                                   , bb.getYCenter()
+                                   );
+
+  //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, track );
+    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
+    cdebug_log(145,0) << "| " << element << endl;
+    
+    cdebug_tabw(145,-1);
+    return;
+  }
 
 
   void  protectRoutingPadVH ( RoutingPad* rp )
@@ -161,9 +190,10 @@ namespace {
     RoutingLayerGauge* rlg     = Session::getLayerGauge( rp->getLayer() );
     size_t             rpDepth = rlg->getDepth();
     if (rlg->getType() == Constant::PinOnly) {
-      if (Session::getRoutingGauge()->isVH() and (rpDepth == 0)) {
-        protectRoutingPadVH( rp );
-      }
+      if (rpDepth == 0) {
+        if (Session::getRoutingGauge()->isVH()) protectRoutingPadVH( rp );
+        else                                    protectRoutingPadHV( rp );
+      } 
       cdebug_tabw(145,-1);
       return;
     }
@@ -207,6 +237,7 @@ namespace {
     for ( auto item : bbs ) {
       RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer( item.second );
       Flags         direction = plane->getDirection();
+      DbU::Unit     ppitch    = plane->getLayerGauge()->getPitch();
       DbU::Unit     wireWidth = plane->getLayerGauge()->getWireWidth();
       DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
                                 - wireWidth/2
@@ -303,8 +334,8 @@ namespace {
           track->getOverlapBounds( termSpan, ovBegin, ovEnd );
           if (ovBegin != Track::npos) {
             for ( ; ovBegin <= ovEnd ; ++ovBegin ) {
-              TrackElement*   overlaped = track->getSegment( ovBegin );
-              TrackFixedSpan* fixedSpan = dynamic_cast<TrackFixedSpan*>( overlaped );
+              TrackElement*       overlaped = track->getSegment( ovBegin );
+              TrackBaseFixedSpan* fixedSpan = dynamic_cast<TrackBaseFixedSpan*>( overlaped );
               if (fixedSpan) {
                 if (not fixedSpan->isBlockage())
                   fixedSpan->setNet( nullptr );
@@ -323,7 +354,11 @@ namespace {
           else
             bb = Box( track->getAxis()-halfWidth, intervals[i].getVMin()
                     , track->getAxis()+halfWidth, intervals[i].getVMax() );
-          TrackFixedSpan* element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
+          TrackBaseFixedSpan* element = nullptr;
+          if (rp->isPunctual() and not overlap)
+            element = TrackFixedSpanRp::create( rp, bb, track );
+          else
+            element = TrackFixedSpan::create( ((overlap) ? nullptr : net), bb, track );
           cdebug_log(145,0) << "| " << element << endl;
         }
 

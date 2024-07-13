@@ -196,8 +196,10 @@ namespace {
 
   size_t  ReducedChain::reduce ()
   {
+    cdebug_log(159,0) << "ReducedChain::reduce()" << endl;
     size_t count = 0;
     for ( AutoSegment* segment : _reduceds ) {
+      cdebug_log(159,0) << "| " << segment << endl;
       if (segment->reduceDoglegLayer()) ++count;
     }
     return count;
@@ -524,9 +526,11 @@ namespace Anabatic {
       size_t sameLayerDoglegs = 0;
       size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
+        DebugSession::open( isegment.second->getNet(), 159, 160 );
         if (isegment.second->isReducedDone()) continue;
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->canReduce( Flags::NullLength )) {
+          if (isegment.second->isFixed()) isegment.second->reduce();
           ReducedChain  chain ( isegment.second );
           chain.propagate();
           sameLayerDoglegs += chain.reduce();
@@ -534,6 +538,7 @@ namespace Anabatic {
           if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
         }
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
+        DebugSession::close();
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;

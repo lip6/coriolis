@@ -270,11 +270,13 @@ namespace Katana {
     s +=          string ( (isFixed()         )?"f":"-" );
     s +=          string ( (isHardOverlap()   )?"h":"-" );
     s +=          string ( (isOverlap()       )?"o":"-" );
-    s +=          string ( (isOverlapGlobal() )?"g":"-" );
+    s +=          string ( (isOverlapGlobal ())?"g":"-" );
     s +=          string ( (isGlobalEnclosed())?"e":"-" );
     s +=          string ( (isAtRipupLimit  ())?"R":"-" );
     s +=          string ( (isAnalog        ())?"a":"-" );
     s +=          string ( (isShortNet      ())?"N":"-" );
+    s +=          string ( (isAtRipupLimit  ())?"R":"-" );
+    s +=          string ( (isBlacklisted   ())?"B":"-" );
     s += " t:"  + getString(_terminals);
     s += "/d:"  + /*DbU::getValueString(_delta)*/       DbU::getValueString(_delta);
     s += "-"    + /*DbU::getValueString(_deltaShared)*/ DbU::getValueString(_deltaShared);

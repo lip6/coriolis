@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2024-2024.
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :       "./TrackFixedSpan.cpp"                     |
+// |  C++ Module  :       "./TrackFixedSpanRp.cpp"                   |
 // +-----------------------------------------------------------------+
 
 
@@ -24,10 +24,11 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/RoutingPad.h"
 #include "anabatic/AutoContact.h"
 #include "crlcore/RoutingGauge.h"
 #include "katana/DataNegociate.h"
-#include "katana/TrackFixedSpan.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/TrackCost.h"
 #include "katana/Track.h"
 #include "katana/RoutingPlane.h"
@@ -54,64 +55,64 @@ namespace Katana {
 
 
 // -------------------------------------------------------------------
-// Class  :  "TrackFixedSpan".
+// Class  :  "TrackFixedSpanRp".
 
 
-  TrackFixedSpan::TrackFixedSpan ( Net* net, const Box& bb )
-    : Super(net,bb)
-    , _net (net)
+  TrackFixedSpanRp::TrackFixedSpanRp ( RoutingPad* rp, const Box& bb )
+    : Super(rp->getNet(),bb)
+    , _routingPad(rp)
   { }
 
 
-  TrackFixedSpan::~TrackFixedSpan ()
+  TrackFixedSpanRp::~TrackFixedSpanRp ()
   { }
 
 
-  void  TrackFixedSpan::_preDestroy ()
+  void  TrackFixedSpanRp::_preDestroy ()
   {
-    cdebug_log(155,0) << "TrackFixedSpan::_preDestroy() - " << (void*)this << endl;
+    cdebug_log(155,0) << "TrackFixedSpanRp::_preDestroy() - " << (void*)this << endl;
     Super::_preDestroy();
   }
 
 
-  TrackFixedSpan* TrackFixedSpan::create ( Net* net, const Box& bb, Track* track )
+  TrackFixedSpanRp* TrackFixedSpanRp::create ( RoutingPad* rp, const Box& bb, Track* track )
   {
-    TrackFixedSpan* trackTerminal = nullptr;
+    TrackFixedSpanRp* trackTerminal = nullptr;
     if (not track) 
-      throw Error( "TrackFixedSpan::create(): NULL track argument." );
+      throw Error( "TrackFixedSpanRp::create(): NULL track argument." );
     
-    cdebug_log(159,0) << "TrackFixedSpan::create() track:" << track << endl;
-    trackTerminal = new TrackFixedSpan ( net, bb );
+    cdebug_log(159,0) << "TrackFixedSpanRp::create() track:" << track << endl;
+    trackTerminal = new TrackFixedSpanRp ( rp, bb );
     trackTerminal->_postCreate( track );
     cdebug_log(159,0) << trackTerminal << endl;
     Session::addInsertEvent( trackTerminal, track, track->getAxis() );
     return trackTerminal;
   }
 
+
+  bool         TrackFixedSpanRp::isFixedSpanRp () const { return true; }
+  RoutingPad*  TrackFixedSpanRp::getRoutingPad () const { return _routingPad; }
+
   
-  void  TrackFixedSpan::setNet ( Net* net )
+  void  TrackFixedSpanRp::setNet ( Net* )
   {
-    if (not net or (net == Session::getBlockageNet())) {
-      _net = Session::getBlockageNet();
-      setFlags( TElemBlockage );
-    } else {
-      _net = net;
-      unsetFlags( TElemBlockage );
-    }
+    throw Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
+                 "        on %s."
+               , getString(this).c_str() );
   }
 
-  Net* TrackFixedSpan::getNet () const
-  { return _net; }
+  Net* TrackFixedSpanRp::getNet () const
+  { return _routingPad->getNet(); }
 
 
-  string  TrackFixedSpan::_getTypeName () const
-  { return "TrackFixedSpan"; }
+  string  TrackFixedSpanRp::_getTypeName () const
+  { return "TrackFixedSpanRp"; }
 
 
-  Record* TrackFixedSpan::_getRecord () const
+  Record* TrackFixedSpanRp::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot( "_net", _net ));
+    record->add( getSlot( "_routingPad", _routingPad ));
     return record;
   }
 
