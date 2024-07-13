@@ -1887,7 +1887,14 @@ namespace Anabatic {
     AutoContact* target = getAutoTarget();
 
     if (isFixed() and (length < getPPitch())) {
-      if (isSpinTopOrBottom() and source->isTurn() and target->isTurn())
+      cdebug_log(159,0) << "isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
+      if (Session::getAnabatic()->getState() >= Anabatic::EngineDriving) {
+        cdebug_log(159,0) << "In EngineDriving mode" << endl;
+        return isSpinTopOrBottom();
+      }
+      if (isSpinTopOrBottom()
+         and source->isTurn()
+         and target->isTurn())
         return true;
       return false;
     }

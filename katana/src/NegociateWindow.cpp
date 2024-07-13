@@ -855,7 +855,6 @@ namespace Katana {
     
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();
-      _katana->_computeCagedConstraints();
       Session::revalidate();
     }
 

@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2024-2024.
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/TrackFixedSpan.h"                     |
+// |  C++ Header  :  "./katana/TrackFixedSpanRp.h"                   |
 // +-----------------------------------------------------------------+
 
 
@@ -32,32 +32,34 @@ namespace Katana {
 
 
 // -------------------------------------------------------------------
-// Class  :  "TrackFixedSpan".
+// Class  :  "TrackFixedSpanRp".
 
-  class TrackFixedSpan : public TrackBaseFixedSpan {
+  class TrackFixedSpanRp : public TrackBaseFixedSpan {
     public:
       typedef TrackBaseFixedSpan  Super;
     public:
-      static  TrackFixedSpan* create       ( Net*, const Box&, Track* );
+      static  TrackFixedSpanRp* create        ( RoutingPad*, const Box&, Track* );
     public:                                
-      virtual Net*            getNet       () const;
-      virtual void            setNet       ( Net* );
-      virtual Record*         _getRecord   () const;
-      virtual string          _getTypeName () const;
+      virtual bool              isFixedSpanRp () const;
+      virtual RoutingPad*       getRoutingPad () const;
+      virtual Net*              getNet        () const;
+      virtual void              setNet        ( Net* );
+      virtual Record*           _getRecord    () const;
+      virtual string            _getTypeName  () const;
     private:
-              Net* _net;
+              RoutingPad* _routingPad;
     protected:
     // Constructors & Destructors.
-                                 TrackFixedSpan ( Net*, const Box& ) ;
-      virtual                   ~TrackFixedSpan ();
-      virtual void               _preDestroy    ();
+                                TrackFixedSpanRp ( RoutingPad*, const Box& ) ;
+      virtual                  ~TrackFixedSpanRp ();
+      virtual void              _preDestroy      ();
     private:
-                                 TrackFixedSpan ( const TrackFixedSpan& ) = delete;
-              TrackFixedSpan& operator=         ( const TrackFixedSpan& ) = delete;
+                                TrackFixedSpanRp ( const TrackFixedSpanRp& ) = delete;
+              TrackFixedSpanRp& operator=        ( const TrackFixedSpanRp& ) = delete;
   };
 
 
 }  // Katana namespace.
 
 
-INSPECTOR_P_SUPPORT(Katana::TrackFixedSpan);
+INSPECTOR_P_SUPPORT(Katana::TrackFixedSpanRp);
