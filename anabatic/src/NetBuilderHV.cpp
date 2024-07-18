@@ -1014,11 +1014,20 @@ namespace Anabatic {
     AutoSegment::create( pinContact, vtee1, Flags::Vertical );
 
     AutoContact* gtee = nullptr;
-    if (east() and west())
-      gtee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
-    else
-      gtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
-    AutoSegment::create( vtee1, gtee, Flags::Vertical );
+    if (getStateG() == 1) {
+      if (north() or south()) {
+        gtee = vtee1;
+      } else {
+        gtee = AutoContactTurn::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+        AutoSegment::create( vtee1, gtee, Flags::Vertical );
+      }
+    } else if (getStateG() == 2) {
+      if (east() and west())
+        gtee = AutoContactHTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+      else
+        gtee = AutoContactVTee::create( getGCell(), getNet(), Session::getBuildContactLayer(1) );
+      AutoSegment::create( vtee1, gtee, Flags::Vertical );
+    }
 
     setBothCornerContacts( gtee );
 

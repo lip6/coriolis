@@ -359,6 +359,7 @@ namespace Anabatic {
                          , Conn_2G_1PinM3     = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
                          , Conn_3G_1PinM3     = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
                          , Conn_1G_1M1_1PinM3 = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 1 )
+                         , Conn_1G_2M1_1PinM3 = CONNEXITY_VALUE( 1, 2, 0, 1, 0 , 1 )
                          , Conn_2G_1M1_1PinM3 = CONNEXITY_VALUE( 2, 1, 0, 1, 0 , 1 )
                          , Conn_2G_2M1_1PinM3 = CONNEXITY_VALUE( 2, 2, 0, 1, 0 , 1 )
                          , Conn_2G_3M1_1PinM3 = CONNEXITY_VALUE( 2, 3, 0, 1, 0 , 1 )
