@@ -963,6 +963,7 @@ namespace CRL {
       }
 
       if (tokenize.state() == Tokenize::Subckt or tokenize.state() == Tokenize::Gate) {
+        if (blifLine[1] == "$print") continue;
         Subckt* subckt = blifModel->addSubckt( blifLine[1] );
         for ( size_t i=2 ; i<blifLine.size() ; ++i ) {
           size_t equal = blifLine[i].find('=');
