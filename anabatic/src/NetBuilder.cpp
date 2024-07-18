@@ -735,6 +735,7 @@ namespace Anabatic {
         case Conn_2G_1M1_1PinM2:
         case Conn_2G_2M1_1PinM2:  _do_2G_xM1_1PinM2(); break;
         case Conn_2G_1M1_1PinM3:
+        case Conn_1G_2M1_1PinM3:
         case Conn_2G_2M1_1PinM3:
         case Conn_2G_3M1_1PinM3:  _do_2G_xM1_1PinM3(); break;
         case Conn_3G_1M1_1PinM3:
