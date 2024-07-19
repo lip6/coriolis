@@ -999,11 +999,13 @@ namespace Anabatic {
       else rpsM1.push_back( rp );
     }
     
+    cdebug_log(145,0) << "Linking M1 terminals together" << endl;
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
+    cdebug_log(145,0) << "Linking M1 terminals together - Done" << endl;
 
     doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
 
@@ -1053,8 +1055,8 @@ namespace Anabatic {
     }
     
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
@@ -1202,8 +1204,8 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "Wiring all M1 together." << endl;
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoContact* leftContact  = doRp_Access( getGCell(), rpsM1[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), rpsM1[i  ], HAccess );
       AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 

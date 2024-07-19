@@ -620,6 +620,7 @@ namespace Anabatic {
     return true;
   }
 
+
   bool  NetBuilderVH::_do_1G_1M1_1PinM3 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_1M1_1PinM3() [Delegated] " << getTopology() << endl;
@@ -679,6 +680,7 @@ namespace Anabatic {
     cdebug_tabw(145,-1);
     return true;
   }
+
 
   bool  NetBuilderVH::_do_2G ()
   {
