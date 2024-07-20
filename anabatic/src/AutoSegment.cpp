@@ -1878,7 +1878,9 @@ namespace Anabatic {
     cdebug_log(159,0) << "  _reduceds:" << _reduceds << endl;
 
     DbU::Unit length = getAnchoredLength();
-    if (isGlobal() and (length > getPPitch())) return false;
+    if (length > getPPitch()) {
+      if (isGlobal() or isFixed()) return false;
+    }
 
     if (isDrag()) return false;
     if (not isSpinTopOrBottom()) return false;
@@ -1886,16 +1888,18 @@ namespace Anabatic {
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
-    if (isFixed() and (length < getPPitch())) {
+    if (isFixed()) {
       cdebug_log(159,0) << "isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
-      if (Session::getAnabatic()->getState() >= Anabatic::EngineDriving) {
-        cdebug_log(159,0) << "In EngineDriving mode" << endl;
-        return isSpinTopOrBottom();
+      if (length < getPPitch()) {
+        if (Session::getAnabatic()->getState() >= Anabatic::EngineDriving) {
+          cdebug_log(159,0) << "In EngineDriving mode" << endl;
+          return isSpinTopOrBottom();
+        }
       }
-      if (isSpinTopOrBottom()
-         and source->isTurn()
-         and target->isTurn())
-        return true;
+      // if (isSpinTopOrBottom()
+      //    and source->isTurn()
+      //    and target->isTurn())
+      //   return true;
       return false;
     }
 

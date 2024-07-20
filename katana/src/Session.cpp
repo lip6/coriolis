@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Point.h"
 #include "hurricane/Error.h"
@@ -87,6 +88,7 @@ namespace Katana {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
+  using Hurricane::DebugSession;
   using Hurricane::Error;
   using Hurricane::Bug;
   using Hurricane::Point;
@@ -262,7 +264,9 @@ namespace Katana {
     for ( const Event& event : _insertEvents ) {
       if (event._segment) {
         if (event._segment->getAxis() != event._axis) event._segment->setAxis( event._axis );
-        if (not event._segment->isReduced())          event._track->insert( event._segment );
+        if (      event._segment->isFixed()
+           or not event._segment->isReduced())
+          event._track->insert( event._segment );
       }
       if (event._marker) event._track->insert( event._marker );
     }
@@ -324,6 +328,7 @@ namespace Katana {
 
   // Looking for reduced/raised segments.
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
       if (revalidateds[i]->mustRaise()) {
         cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
         revalidateds[i]->raise();
@@ -366,6 +371,7 @@ namespace Katana {
           }
         }
       }
+      DebugSession::close();
     }
     
     // for ( TrackElement* trackSegment : _indirectInvalids ) {
