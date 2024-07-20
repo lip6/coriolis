@@ -820,7 +820,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
       
       vertical->setAxis( axis, Flags::Force );
-      vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+      vertical->setFlags( AutoSegment::SegFixedAxis );
     }
 
     if (getConnexity().fields.globals == 2) {
