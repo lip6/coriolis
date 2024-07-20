@@ -364,6 +364,7 @@ namespace Katana {
   //   must be re-inserted *before* any parallel. Must look to solve the redundancy.
 
     DebugSession::open( _segment->getNet(), 156, 160 );
+    cdebug_log(159,0) << "* doAction() on "<< _segment << endl;
 
     if (_type & Lock) {
       cdebug_log(159,1) << "* Lock // " << _segment << endl;
@@ -375,8 +376,7 @@ namespace Katana {
       cdebug_log(159,1) << "* Riping // " << _segment << endl;
     }
 
-    if (_segment->isFixed  ()) { DebugSession::close(); return true; }
-  //if (_segment->isReduced()) { DebugSession::close(); return true; }
+    if (_segment->isFixed()) { DebugSession::close(); return true; }
 
     DataNegociate* data = _segment->getDataNegociate();
     if (data == NULL) {
@@ -686,10 +686,10 @@ namespace Katana {
                               , DbU::Unit     axisHint
                               , uint32_t      toSegmentFsm  )
   {
-    if ( not segment->isFixed() ) {
-      _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
-      cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
-    }
+    if (segment->isFixed()) return;
+    
+    _actions.push_back ( SegmentAction(segment,type,axisHint,toSegmentFsm) );
+    cdebug_log(159,0) << "SegmentFsm::addAction(): " << segment << endl;
   }
 
 

@@ -686,7 +686,7 @@ namespace Katana {
         continue;
       }
 
-      if (segment->isFixed() or segment->isBlockage()) continue;
+      if (segment->isBlockage()) continue;
       if (segment->isReduced()) reduceds.push_back( segment );
 
       totalWireLength += wl;
