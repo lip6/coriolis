@@ -159,6 +159,8 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
+  DirectVoidToolMethod(TramontanaEngine,tramontana,printConfiguration)
+  DirectVoidToolMethod(TramontanaEngine,tramontana,printSummary)
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyTramontanaEngine_destroy,PyTramontanaEngine)
@@ -175,6 +177,10 @@ extern "C" {
                                    , "Associate a Viewer to this TramontanaEngine." }
     , { "extract"                  , (PyCFunction)PyTramontanaEngine_extract                 , METH_NOARGS
                                    , "Perform the layout extraction." }
+    , { "printConfiguration"       , (PyCFunction)PyTramontanaEngine_printConfiguration      , METH_NOARGS
+                                   , "Display the extraction parameters." }
+    , { "printSummary"             , (PyCFunction)PyTramontanaEngine_printSummary            , METH_NOARGS
+                                   , "Report the extraction results." }
     , {NULL, NULL, 0, NULL}        /* sentinel */
     };
 

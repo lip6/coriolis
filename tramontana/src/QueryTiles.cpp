@@ -75,26 +75,30 @@ namespace Tramontana {
     Tile*      rootTile  = nullptr;
     Component* component = dynamic_cast<Component*>( go );
     if (not component) return;
+    if (component->getNet()->isBlockage()) return;
     if (isProcessed(component)) return;
     Occurrence occurrence = Occurrence( go, getPath() );
     for ( const BasicLayer* layer : _sweepLine->getExtracteds() ) {
       if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
       Tile* tile = Tile::create( occurrence
                                , layer
-                               , rootTile
+                               , nullptr
                                , _sweepLine );
       if (not rootTile) rootTile = tile;
+      else rootTile->merge( tile );
     }
 
     BasicLayer* cutLayer = component->getLayer()->getBasicLayers().getFirst();
     if (cutLayer->getMaterial() == BasicLayer::Material::cut) {
       const SweepLine::LayerSet& connexSet = _sweepLine->getCutConnexLayers( cutLayer );
       for ( const BasicLayer* connexLayer : connexSet ) {
-        Tile::create( occurrence
-                    , connexLayer
-                    , rootTile
-                    , _sweepLine
-                    , Tile::ForceLayer );
+        Tile* tile = Tile::create( occurrence
+                                 , connexLayer
+                                 , nullptr
+                                 , _sweepLine
+                                 , Tile::ForceLayer );
+        if (not rootTile) rootTile = tile;
+        else rootTile->merge( tile );
       }
     }
     

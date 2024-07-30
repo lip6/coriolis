@@ -28,6 +28,7 @@ tramontana = shared_library(
   'SweepLine.cpp',
   'TabEquipotentials.cpp',
   'Tile.cpp',
+  'Configuration.cpp',
   'TramontanaEngine.cpp',
   tramontana_mocs,
   tramontana_py,
