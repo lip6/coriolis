@@ -102,9 +102,15 @@ namespace Tramontana {
 
   TramontanaEngine::TramontanaEngine ( Cell* cell, uint32_t depth )
     : Super          (cell, (depth==0))
+    , _configuration (new Configuration())
     , _viewer        (NULL)
     , _depth         (depth)
+    , _flags         (0)
     , _equipotentials()
+    , _openNets      ()
+    , _shortedNets   ()
+    , _powerNets     ()
+    , _groundNets    ()
   { }
 
 
@@ -130,6 +136,11 @@ namespace Tramontana {
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
+    _flags |= DestroyStage;
+
+    ShortCircuit::removeShortingEquis( getCell() );
+    for ( Equipotential* equi : _equipotentials )
+      equi->destroy();
     Super::_preDestroy();
 
     cdebug_tabw(160,-1);
@@ -158,6 +169,7 @@ namespace Tramontana {
       if (not extractor) {
         extractor = TramontanaEngine::create( master, getDepth()+1 );
         extractor->extract();
+        extractor->printSummary();
       }
     }
     _extract();
@@ -205,17 +217,128 @@ namespace Tramontana {
   }
 
 
+  void  TramontanaEngine::printSummary () const
+  {
+    ostringstream shortMessage;
+    ostringstream openMessage;
+
+    for ( Equipotential* equi : _shortedNets ) {
+      const Equipotential::NetMap& netMap = equi->getNets(); 
+      shortMessage << "        - Short circuit between " << netMap.size() << " nets:\n";
+      for ( auto netData : netMap ) {
+        if (netData.first->isFused()) continue;
+        shortMessage << "          | \"" << netData.first->getName() << "\".\n";
+      }
+      shortMessage << "          + Shorted components:\n";
+      for ( const ShortCircuit* shortCircuit : equi->getShortCircuits() ) {
+        if (shortCircuit->isTopLevel()) {
+          shortMessage << "            > T A:" << shortCircuit->getComponentA() << "\n"
+                       << "            | T B:" << shortCircuit->getComponentB() << "\n";
+        } else if (shortCircuit->isAcrossLevels()) {
+          shortMessage << "            > A A:" << shortCircuit->getEquiA() << "\n"
+                       << "            | A B:" << shortCircuit->getComponentB() << "\n";
+        } else if (shortCircuit->isDeepShort()) {
+          shortMessage << "            > D A:" << shortCircuit->getEquiA() << "\n"
+                       << "            | D B:" << shortCircuit->getEquiB() << "\n";
+        }
+        shortMessage <<  "            | Shorting @" << shortCircuit->getShortingBox() << "\n";
+      }
+    }
+
+    const ShortCircuit::ShortingEquis& shortingEquis = ShortCircuit::getShortingEquis( getCell() ); 
+    if (not shortingEquis.empty()) {
+      shortMessage << "        - Trans-hierarchical shorts:\n";
+      for ( auto equiDatas : shortingEquis ) {
+        shortMessage << "          | \"" << equiDatas.first->getName() << "\" in cell \""
+                     << equiDatas.first->getCell()->getName() << "\" causes "
+                     << equiDatas.second << " short circuits.\n";
+      }
+    }
+
+    for ( auto& netEquis : _openNets ) {
+      openMessage << "        - Open on " << netEquis.first << ":\n";
+      for ( Equipotential* equi : netEquis.second ) {
+        openMessage << "          | " << equi << ".\n";
+      }
+    }
+
+    cout << "     o  LVS summary for \"" << getCell()->getName() << "\"." << endl;
+    cout << Dots::asUInt  ("        - Power nets"    , _powerNets  .size()) << endl;
+    cout << Dots::asUInt  ("        - Ground nets"   , _groundNets .size()) << endl;
+    cout << Dots::asUInt  ("        - Short circuits", _shortedNets.size()) << endl;
+    cout << Dots::asUInt  ("        - Open circuits" , _openNets   .size()) << endl;
+    if (_shortedNets.size()) cout << shortMessage.str() << endl;
+    if (_openNets   .size()) cout <<  openMessage.str() << endl;
+  }
+  
+
   void  TramontanaEngine::consolidate ()
   {
   //cerr << "Tramontana::consolidate()" << endl;
     for ( Equipotential* equi : _equipotentials )
       equi->consolidate();
+
+    for ( Net* net : getCell()->getNets() ) {
+      if (net->isSupply() or net->isFused() or net->isBlockage()) continue;
+      if (net->getProperty(EquipotentialRelation::staticGetName())) continue;
+      _openNets.insert( make_pair( net, EquipotentialSet() ));
+    }
+
+    for ( Equipotential* equi : _equipotentials ) {
+      if (equi->isBuried()) continue;
+
+      const Equipotential::NetMap& netMap = equi->getNets(); 
+      if (equi->isSupply()) {
+        if (equi->isPower ()) _powerNets .push_back( equi );
+        if (equi->isGround()) _groundNets.push_back( equi );
+
+        if ( netMap.size() == 0) continue;
+        if ((netMap.size() == 1) and not equi->hasFused()) continue;
+        if ((netMap.size() == 2) and     equi->hasFused()) continue;
+        _shortedNets.insert( equi );
+        continue;
+      }
+
+      if (equi->hasOpens()) {
+        auto iopenNet       = _openNets.end();
+        Net* missingOpenNet = nullptr;
+        for ( auto& netData : netMap ) {
+          if (netData.first->isFused()) continue;
+          iopenNet = _openNets.find( netData.first );
+          if (iopenNet == _openNets.end()) {
+            if (not missingOpenNet) missingOpenNet = netData.first;
+          } else
+            break;
+        }
+        if (iopenNet == _openNets.end()) {
+          if (missingOpenNet)
+            iopenNet = _openNets.insert( make_pair( missingOpenNet, EquipotentialSet() )).first;
+          else {
+            cerr << Error( "Tramontana::consolidate(): Unable to lookup open net for\n"
+                           "        %s."
+                         , getString(equi).c_str() ) << endl;
+            continue;
+          }
+        }
+        iopenNet->second.insert( equi );
+      }
+
+      if (equi->hasShorts()) {
+        _shortedNets.insert( equi );
+      }
+    }
   }
 
 
   void   TramontanaEngine::add ( Equipotential* equi )
   {
     _equipotentials.insert( equi );
+  }
+
+
+  void   TramontanaEngine::remove ( Equipotential* equi )
+  {
+    _equipotentials.erase( equi );
   }
   
 

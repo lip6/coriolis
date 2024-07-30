@@ -89,21 +89,30 @@ namespace Tramontana {
   vector<Tile*>  Tile::_allocateds;
 
 
-  Tile::Tile ( Occurrence occurrence, const BasicLayer* layer, const Box& boundingBox, Tile* parent )
-    : _id           (_idCounter++)
-    , _occurrence   (occurrence) 
-    , _layer        (layer)
-    , _boundingBox  (boundingBox)
-    , _equipotential(nullptr)
-    , _flags        (0)
-    , _parent       (parent)
-    , _rank         (0)
-    , _timeStamp    (0)
+  Tile::Tile (       Occurrence  occurrence
+             ,       Occurrence  deepOccurrence
+             , const BasicLayer* layer
+             , const Box&        boundingBox
+             ,       Tile*       parent )
+    : _id            (_idCounter++)
+    , _occurrence    (occurrence) 
+    , _deepOccurrence(deepOccurrence) 
+    , _layer         (layer)
+    , _boundingBox   (boundingBox)
+    , _equipotential (nullptr)
+    , _flags         (0)
+    , _parent        (parent)
+    , _rank          (0)
+    , _timeStamp     (0)
   {
     cdebug_log(160,0) << "Tile::Tile() " << this << endl;
     _allocateds.push_back( this );
-    if (occurrence.getPath().isEmpty() and not occurrence.getEntity())
-      cerr << "Tile with empty occurrence!!" << endl;
+    if (occurrence.getPath().isEmpty()) {
+      if (not occurrence.getEntity()) {
+        cerr << Error( "Tile::Tile(): Cannot build on an empty Occurrence." ) << endl;
+      }
+      _flags |= TopLevel;
+    }
   }
 
 
@@ -171,7 +180,7 @@ namespace Tramontana {
       rectilinear->getAsRectangles( boxes );
       for ( Box bb : boxes ) {
         occurrence.getPath().getTransformation().applyOn( bb );
-        Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+        Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
         sweepLine->add( tile );
         cdebug_log(160,0) << "| " << tile << endl;
         if (not rootTile) rootTile = tile;
@@ -185,7 +194,7 @@ namespace Tramontana {
     Box bb = component->getBoundingBox( layer );
     occurrence.getPath().getTransformation().applyOn( bb );
 
-    Tile* tile = new Tile ( childEqui, layer, bb, rootTile );
+    Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
     sweepLine->add( tile );
     return tile;
   }
@@ -209,13 +218,10 @@ namespace Tramontana {
     _idCounter = 0;
   }
 
-  // Net* Tile::getNet () const
-  // { return dynamic_cast<Component*>( _occurrence.getEntity() )->getNet(); }
-
 
   Tile* Tile::getRoot ( uint32_t flags )
   {
-    cdebug_log(160,1) << "Tile::getRoot() tid=" << getId() << " " << getOccurrence() << endl;
+    cdebug_log(160,1) << "Tile::getRoot() " << this << endl;
     cdebug_log(160,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
     if (not getParent()) {
       if ((flags & MakeLeafEqui) and not getEquipotential()) {
@@ -237,9 +243,9 @@ namespace Tramontana {
       //   }
       // }
       root = root->getParent();
-      cdebug_log(160,0) << "| parent tid=" << root->getId() << " " << root->getOccurrence() << endl;
+      cdebug_log(160,0) << "| parent " << root << endl;
     }
-    cdebug_log(160,0) << "> root tid=" << root->getId() << " "
+    cdebug_log(160,0) << "> root " << root << " "
                       << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
 
 
@@ -255,22 +261,7 @@ namespace Tramontana {
           cdebug_log(160,0) << "> Up to date current: tid=" << current->getId() << endl;
           break;
         }
-        if (not current->isOccMerged()) {
-          if (current->getEquipotential()) {
-            if (current->getEquipotential() != rootEqui) {
-              cdebug_log(160,0) << "| merge tid=" << current->getId() << " => tid=" << root->getId() << endl;
-              cdebug_log(160,0) << "|       tid=" << current->getEquipotential() << endl;
-              rootEqui->merge( current->getEquipotential() );
-            }
-          } else {
-            cdebug_log(160,0) << "| add " << current->getOccurrence() << endl;
-            rootEqui->add( current->getOccurrence(), _boundingBox );
-          }
-          current->setOccMerged( true );
-          current->syncTime();
-          cdebug_log(160,0) << "| current up to date: time=" << current->_timeStamp
-                            << " " << current->isUpToDate() << endl;
-        }
+        root->_mergeEqui( current );
         current = current->getParent();
       }
     }
@@ -289,6 +280,30 @@ namespace Tramontana {
   }
 
 
+  bool  Tile::_mergeEqui ( Tile* other )
+  {
+    cdebug_log(160,0) << "Tile::_mergeEqui() " << this
+                      << " + " << other << endl;
+
+    if (not getEquipotential()) return false;
+    if (other->isOccMerged()) return false;
+
+    bool shortCircuit = false;
+    if (other->getEquipotential()) {
+      if (getEquipotential() != other->getEquipotential()) {
+        shortCircuit = getEquipotential()->merge( other->getEquipotential() );
+        other->destroyEquipotential();
+      }
+    } else {
+      shortCircuit = getEquipotential()->add( other->getOccurrence(), other->getBoundingBox() );
+    }
+    other->setOccMerged( true );
+    other->syncTime();
+
+    return shortCircuit;
+  }
+
+
   Tile* Tile::merge ( Tile* other )
   {
     cdebug_log(160,1) << "Tile::merge() this->tid:" << getId()
@@ -303,6 +318,16 @@ namespace Tramontana {
 
     if (root1->getRank() < root2->getRank())
       std::swap( root1, root2 );
+
+    ShortCircuit* shortCircuit = nullptr;
+    if (root1->_mergeEqui(root2)) {
+      cdebug_log(160,0) << "Shorted Tiles:" << endl;
+      cdebug_log(160,0) << "  " << getDeepOccurrence() << endl;
+      cdebug_log(160,0) << "  " << other->getDeepOccurrence() << endl;
+      ShortCircuit* shortCircuit = new ShortCircuit( getDeepOccurrence(), other->getDeepOccurrence() );
+      root1->getEquipotential()->add( shortCircuit );
+    }
+
     if (root1->getRank() == root2->getRank())
       root1->incRank();
     root2->setParent( root1 );
@@ -333,6 +358,21 @@ namespace Tramontana {
   }
 
 
+  void  Tile::destroyEquipotential ()
+  {
+    if (not _equipotential) return;
+    if (not _equipotential->isMerged()) {
+      cerr << Error( "Tile::destroyEquipotential(): %s not merged.\n"
+                     "        (on: %s)"
+                   , getString(_equipotential).c_str()
+                   , getString(this).c_str()
+                   ) << endl;
+    }
+    _equipotential->destroy();
+    _equipotential = nullptr;
+  }
+
+
   string  Tile::_getTypeName () const
   { return "Tramontana::Tile"; }
 
@@ -341,7 +381,10 @@ namespace Tramontana {
   {
     ostringstream  os;
     os << "<Tile tid:" << _id
-       << " " << _boundingBox << " " << _layer->getName() << " " << _occurrence << ">";
+       << " " << (getEquipotential() ? "E" : "-")
+       << " " << _boundingBox
+       << " " << _layer->getName()
+       << " " << _occurrence << ">";
     return os.str();
   }
 

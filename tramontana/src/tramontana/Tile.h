@@ -60,46 +60,49 @@ namespace Tramontana {
       static const uint32_t  MakeLeafEqui = (1<<4);
       static const uint32_t  ForceLayer   = (1<<5);
       static const uint32_t  OccMerged    = (1<<6);
+      static const uint32_t  TopLevel     = (1<<7);
     public:
-      static inline const std::vector<Tile*>  getAllTiles      ();
-      static              void                deleteAllTiles   ();
-      static inline       void                timeTick         ();
-      static              Tile*               create           ( Occurrence
-                                                               , const BasicLayer*
-                                                               , Tile* rootTile
-                                                               , SweepLine*
-                                                               , uint32_t flags=NoFlags );
-                          void                destroy          ();
-             inline       bool                isUpToDate       () const;
-             inline       bool                isOccMerged      () const;
-             inline       unsigned int        getId            () const;
-             inline       uint32_t            getRank          () const;
-             inline       Tile*               getParent        () const;
-                          Tile*               getRoot          ( uint32_t flags=Compress );
-           //inline       Component*          getComponent     () const;
-             inline       Occurrence          getOccurrence    () const;
-           //             Net*                getNet           () const;
-             inline       Layer::Mask         getMask          () const;
-             inline const BasicLayer*         getLayer         () const;
-             inline const Box&                getBoundingBox   () const;
-             inline       Equipotential*      getEquipotential () const;
-             inline       DbU::Unit           getLeftEdge      () const;
-             inline       DbU::Unit           getRightEdge     () const;
-             inline       DbU::Unit           getYMin          () const;
-             inline       DbU::Unit           getYMax          () const;
-             inline       uint32_t            getFlags         () const;
-             inline       void                incRank          ();
-             inline       void                syncTime         ();
-             inline       void                setParent        ( Tile* );
-                          Tile*               merge            ( Tile* );
-             inline       void                setOccMerged     ( bool state );
-             inline       void                setEquipotential ( Equipotential* );
-                          Equipotential*      newEquipotential ();
-                          Record*             _getRecord       () const;
-                          std::string         _getString       () const;
-                          std::string         _getTypeName     () const;
+      static inline const std::vector<Tile*>  getAllTiles          ();
+      static              void                deleteAllTiles       ();
+      static inline       void                timeTick             ();
+      static              Tile*               create               ( Occurrence
+                                                                   , const BasicLayer*
+                                                                   , Tile* rootTile
+                                                                   , SweepLine*
+                                                                   , uint32_t flags=NoFlags );
+                          void                destroy              ();
+             inline       bool                isUpToDate           () const;
+             inline       bool                isOccMerged          () const;
+             inline       bool                isTopLevel           () const;
+             inline       unsigned int        getId                () const;
+             inline       uint32_t            getRank              () const;
+             inline       Tile*               getParent            () const;
+                          Tile*               getRoot              ( uint32_t flags=Compress );
+             inline       Occurrence          getOccurrence        () const;
+             inline       Occurrence          getDeepOccurrence    () const;
+             inline       Layer::Mask         getMask              () const;
+             inline const BasicLayer*         getLayer             () const;
+             inline const Box&                getBoundingBox       () const;
+             inline       Equipotential*      getEquipotential     () const;
+             inline       DbU::Unit           getLeftEdge          () const;
+             inline       DbU::Unit           getRightEdge         () const;
+             inline       DbU::Unit           getYMin              () const;
+             inline       DbU::Unit           getYMax              () const;
+             inline       uint32_t            getFlags             () const;
+             inline       void                incRank              ();
+             inline       void                syncTime             ();
+             inline       void                setParent            ( Tile* );
+                          Tile*               merge                ( Tile* );
+                          bool                _mergeEqui           ( Tile* );
+             inline       void                setOccMerged         ( bool state );
+             inline       void                setEquipotential     ( Equipotential* );
+                          Equipotential*      newEquipotential     ();
+                          void                destroyEquipotential ();
+                          Record*             _getRecord           () const;
+                          std::string         _getString           () const;
+                          std::string         _getTypeName         () const;
     private:
-                      Tile      ( Occurrence, const BasicLayer*, const Box&, Tile* parent );
+                      Tile      ( Occurrence occ, Occurrence deepOcc, const BasicLayer*, const Box&, Tile* parent );
                      ~Tile      ();
     private:
                       Tile      ( const Tile& ) = delete;
@@ -110,6 +113,7 @@ namespace Tramontana {
       static       std::vector<Tile*> _allocateds;
                    uint32_t           _id;
                    Occurrence         _occurrence;
+                   Occurrence         _deepOccurrence;
              const BasicLayer*        _layer;
                    Box                _boundingBox;
                    Equipotential*     _equipotential;
@@ -119,28 +123,29 @@ namespace Tramontana {
                    uint32_t           _timeStamp;
   };
 
-  inline const std::vector<Tile*>  Tile::getAllTiles      () { return _allocateds; }
-  inline       void                Tile::timeTick         () { _time++; }
-  inline       bool                Tile::isUpToDate       () const { return _timeStamp >= _time; }
-  inline       bool                Tile::isOccMerged      () const { return _flags & OccMerged; }
-  inline       unsigned int        Tile::getId            () const { return _id; }
-//inline       Component*          Tile::getComponent     () const { return dynamic_cast<Component*>( _occurrence.getEntity() ); }
-  inline       Occurrence          Tile::getOccurrence    () const { return _occurrence; }
-  inline       Layer::Mask         Tile::getMask          () const { return _layer->getMask(); }
-  inline const BasicLayer*         Tile::getLayer         () const { return _layer; }
-  inline const Box&                Tile::getBoundingBox   () const { return _boundingBox; }
-  inline       Equipotential*      Tile::getEquipotential () const { return _equipotential; }
-  inline       DbU::Unit           Tile::getLeftEdge      () const { return _boundingBox.getXMin(); }
-  inline       DbU::Unit           Tile::getRightEdge     () const { return _boundingBox.getXMax(); }
-  inline       DbU::Unit           Tile::getYMin          () const { return _boundingBox.getYMin(); }
-  inline       DbU::Unit           Tile::getYMax          () const { return _boundingBox.getYMax(); }
-  inline       uint32_t            Tile::getFlags         () const { return _flags; }
-  inline       uint32_t            Tile::getRank          () const { return _rank; }
-  inline       Tile*               Tile::getParent        () const { return _parent; }
-  inline       void                Tile::incRank          () { _rank++; }
-  inline       void                Tile::syncTime         () { _timeStamp=_time; }
-  inline       void                Tile::setParent        ( Tile* parent ) { _parent=parent; }
-  inline       void                Tile::setEquipotential ( Equipotential* equi ) { _equipotential=equi; }
+  inline const std::vector<Tile*>  Tile::getAllTiles       () { return _allocateds; }
+  inline       void                Tile::timeTick          () { _time++; }
+  inline       bool                Tile::isUpToDate        () const { return _timeStamp >= _time; }
+  inline       bool                Tile::isOccMerged       () const { return _flags & OccMerged; }
+  inline       bool                Tile::isTopLevel        () const { return _flags & TopLevel; }
+  inline       unsigned int        Tile::getId             () const { return _id; }
+  inline       Occurrence          Tile::getOccurrence     () const { return _occurrence; }
+  inline       Occurrence          Tile::getDeepOccurrence () const { return _deepOccurrence; }
+  inline       Layer::Mask         Tile::getMask           () const { return _layer->getMask(); }
+  inline const BasicLayer*         Tile::getLayer          () const { return _layer; }
+  inline const Box&                Tile::getBoundingBox    () const { return _boundingBox; }
+  inline       Equipotential*      Tile::getEquipotential  () const { return _equipotential; }
+  inline       DbU::Unit           Tile::getLeftEdge       () const { return _boundingBox.getXMin(); }
+  inline       DbU::Unit           Tile::getRightEdge      () const { return _boundingBox.getXMax(); }
+  inline       DbU::Unit           Tile::getYMin           () const { return _boundingBox.getYMin(); }
+  inline       DbU::Unit           Tile::getYMax           () const { return _boundingBox.getYMax(); }
+  inline       uint32_t            Tile::getFlags          () const { return _flags; }
+  inline       uint32_t            Tile::getRank           () const { return _rank; }
+  inline       Tile*               Tile::getParent         () const { return _parent; }
+  inline       void                Tile::incRank           () { _rank++; }
+  inline       void                Tile::syncTime          () { _timeStamp=_time; }
+  inline       void                Tile::setParent         ( Tile* parent ) { _parent=parent; }
+  inline       void                Tile::setEquipotential  ( Equipotential* equi ) { _equipotential=equi; }
 
   inline void  Tile::setOccMerged ( bool state )
   { if (state) _flags |=  OccMerged;
