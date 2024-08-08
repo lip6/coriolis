@@ -69,16 +69,19 @@ namespace Tramontana {
 
 
   EquipotentialsWidget::EquipotentialsWidget ( QWidget* parent )
-    : QWidget       (parent)
-    , _cellWidget   (NULL)
-    , _cell         (NULL)
-    , _baseModel    (new EquipotentialsModel(this))
-    , _sortModel    (new QSortFilterProxyModel(this))
-    , _filterModel  (new EquiFilterProxyModel(this))
-    , _view         (new QTableView(this))
-    , _rowHeight    (20)
-    , _selecteds    ()
-    , _forceReselect(false)
+    : QWidget               (parent)
+    , _cellWidget           (nullptr)
+    , _cell                 (nullptr)
+    , _baseModel            (new EquipotentialsModel(this))
+    , _sortModel            (new QSortFilterProxyModel(this))
+    , _filterModel          (new EquiFilterProxyModel(this))
+    , _view                 (new QTableView(this))
+    , _filterPatternLineEdit(new QLineEdit(this))
+    , _equiDisplay          (new EquipotentialWidget(this))
+    , _rowHeight            (20)
+    , _selecteds            ()
+    , _forceReselect        (false)
+    , _flags                (InternalEmit)
   {
     setAttribute( Qt::WA_DeleteOnClose );
     setAttribute( Qt::WA_QuitOnClose, false );
@@ -107,16 +110,6 @@ namespace Tramontana {
     verticalHeader->setVisible( false );
     verticalHeader->setDefaultSectionSize( _rowHeight );
 
-    // verticalHeader->setStyleSheet( "QHeaderView::section {"
-    //                                  "padding-bottom: 0px;"
-    //                                  "padding-top:    0px;"
-    //                                  "padding-left:   0px;"
-    //                                  "padding-right:  1px;"
-    //                                  "margin:         0px;"
-    //                                "}"
-    //                              );
-
-    _filterPatternLineEdit = new QLineEdit( this );
     QLabel* filterPatternLabel = new QLabel( tr("&Filter pattern:"), this );
     filterPatternLabel->setBuddy( _filterPatternLineEdit );
 
@@ -124,6 +117,7 @@ namespace Tramontana {
     gLayout->addWidget( _view                 , 1, 0, 1, 2 );
     gLayout->addWidget( filterPatternLabel    , 2, 0 );
     gLayout->addWidget( _filterPatternLineEdit, 2, 1 );
+    gLayout->addWidget( _equiDisplay          , 3, 0, 1, 2 );
 
     setLayout( gLayout );
 
@@ -144,6 +138,31 @@ namespace Tramontana {
 
   QModelIndex  EquipotentialsWidget::mapToSource ( QModelIndex viewIndex ) const
   { return _filterModel->mapToSource( _sortModel->mapToSource( viewIndex )); }
+
+
+  void  EquipotentialsWidget::changeSelectionMode ()
+  {
+    if (not _cellWidget) return;
+
+    if (isInternalEmit()) {
+      setInternalReceive();
+      emit selectionModeChanged();
+    } else {
+      if (isExternalEmit()) {
+        blockAllSignals( true );
+        // _showSelection->setChecked( _cellWidget->getState()->showSelection() );
+        blockAllSignals( false );
+      }
+    }
+    setExternalEmit();
+  }
+
+
+  void  EquipotentialsWidget::blockAllSignals ( bool state )
+  {
+    // _showSelection->blockSignals( state );
+    // _baseModel    ->blockSignals( state );
+  }
 
 
   void  EquipotentialsWidget::setShowBuried ( bool state )
@@ -182,8 +201,10 @@ namespace Tramontana {
     QModelIndexList      iList = _view->selectionModel()->selectedRows();
     for ( int i=0 ; i<iList.size() ; i++ ) {
       equi = _baseModel->getEqui( mapToSource(iList[i]).row() );
-      if ( equi )
+      if (equi) {
         _selecteds.insert( equi );
+        if (i == 0) _equiDisplay->setEquipotential( equi );
+      }
     }
 
     if (_forceReselect) {
@@ -236,8 +257,11 @@ namespace Tramontana {
     if (_cellWidget) {
       setCell( _cellWidget->getCell() );
       connect( this, SIGNAL( reframe(const Box&) ), _cellWidget, SLOT( reframe(const Box&) ));
-    } else
+      _equiDisplay->setCellWidget( cw );
+    } else {
       setCell( nullptr );
+      _equiDisplay->setCellWidget( nullptr );
+    }
   }
 
 
@@ -261,6 +285,8 @@ namespace Tramontana {
       header->setResizeMode( i, QHeaderView::Interactive );
 #endif
       _view->resizeColumnToContents( i );
+      _view->sortByColumn( 1, Qt::AscendingOrder );
+      _view->sortByColumn( 0, Qt::DescendingOrder );
     }
     _view->setVisible( true );
   }

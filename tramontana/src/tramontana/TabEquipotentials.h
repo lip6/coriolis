@@ -41,14 +41,15 @@ namespace Tramontana {
     public slots:                                         
       virtual void                  setCell               ( Cell* );
       virtual void                  setCellWidget         ( CellWidget* );
-      virtual void                  setSyncEquipotentials ( bool );
-      virtual void                  setSyncSelection      ( bool );
       virtual void                  setShowBuried         ( bool );
+      virtual void                  setSyncEquipotentials ( bool );
+      virtual void                  setShowSelection      ( bool );
+      virtual void                  selectionModeChanged  ();
 
     protected:
       EquipotentialsWidget* _browser;
       QCheckBox*            _syncEquipotentials;
-      QCheckBox*            _syncSelection;
+      QCheckBox*            _showSelection;
       QCheckBox*            _showBuried;
       bool                  _cwCumulativeSelection;
   };
