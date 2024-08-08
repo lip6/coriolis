@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) Sorbonne Université 2007-2023, All Rights Reserved
+// Copyright (c) Sorbonne Université 2007-2024.
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -28,6 +28,7 @@
 #include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "tramontana/EquipotentialsModel.h"
+#include "tramontana/EquipotentialWidget.h"
 
 
 class QSortFilterProxyModel;
@@ -147,25 +148,38 @@ namespace Tramontana {
 
   class EquipotentialsWidget : public QWidget {
       Q_OBJECT;
-
+    public:
+      static const uint32_t  InternalEmit    = (1 << 0);
+      static const uint32_t  ExternalEmit    = (1 << 1);
+      static const uint32_t  InternalReceive = (1 << 2);
+      static const uint32_t  ClearEmits      = InternalEmit|ExternalEmit|InternalReceive;
     public:
                            EquipotentialsWidget  ( QWidget* parent=nullptr );
       inline  Cell*        getCell               ();
+      inline  bool         isInternalEmit        () const;
+      inline  bool         isExternalEmit        () const;
+      inline  bool         isInternalReceive     () const;
               void         setShowBuried         ( bool );
               void         setCellWidget         ( CellWidget* );
               void         setCell               ( Cell* );
               void         goTo                  ( int );
               void         updateSelecteds       ();
               QModelIndex  mapToSource           ( QModelIndex ) const;
+      inline  void         setInternalEmit       ();
+      inline  void         setExternalEmit       ();
+      inline  void         setInternalReceive    ();
+              void         blockAllSignals       ( bool );
     signals:                              
+              void         selectionModeChanged  ();
               void         equipotentialSelect   ( Occurrences );
               void         equipotentialUnselect ( Occurrences );
               void         reframe               ( const Box& );
+    public slots:                        
+              void         changeSelectionMode   ();
     private slots:                        
               void         textFilterChanged     ();
               void         updateSelecteds       ( const QItemSelection& , const QItemSelection& );
               void         fitToEqui             ();
-
     private:
               CellWidget*             _cellWidget;
               Cell*                   _cell;
@@ -174,13 +188,21 @@ namespace Tramontana {
               EquiFilterProxyModel*   _filterModel;
               QTableView*             _view;
               QLineEdit*              _filterPatternLineEdit;
+              EquipotentialWidget*    _equiDisplay;
               int                     _rowHeight;
               SelectedEquiSet         _selecteds;
               bool                    _forceReselect;
+              uint32_t                _flags;
   };
 
 
-  inline  Cell* EquipotentialsWidget::getCell () { return _cell; }
+  inline  Cell* EquipotentialsWidget::getCell            () { return _cell; }
+  inline  bool  EquipotentialsWidget::isInternalEmit     () const { return _flags & InternalEmit; }
+  inline  bool  EquipotentialsWidget::isExternalEmit     () const { return _flags & ExternalEmit; }
+  inline  bool  EquipotentialsWidget::isInternalReceive  () const { return _flags & InternalReceive; }
+  inline  void  EquipotentialsWidget::setInternalEmit    () { _flags &= ClearEmits; _flags |= InternalEmit; }
+  inline  void  EquipotentialsWidget::setExternalEmit    () { _flags &= ClearEmits; _flags |= ExternalEmit; }
+  inline  void  EquipotentialsWidget::setInternalReceive () { _flags &= ClearEmits; _flags |= InternalReceive; }
 
 
-} // Hurricane namespace.
+} // Tramontana namespace.

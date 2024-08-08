@@ -40,6 +40,7 @@
 #include "crlcore/Utilities.h"
 #include "tramontana/Tile.h"
 #include "tramontana/Equipotential.h"
+#include "tramontana/ShortCircuit.h"
 #include "tramontana/SweepLine.h"
 
 

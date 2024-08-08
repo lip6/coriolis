@@ -2,8 +2,10 @@ tramontana_mocs = qt.compile_moc(
   headers: [
     'tramontana/GraphicTramontanaEngine.h',
     'tramontana/TabEquipotentials.h',
+    'tramontana/EquipotentialWidget.h',
     'tramontana/EquipotentialsModel.h',
     'tramontana/EquipotentialsWidget.h',
+    'tramontana/ShortCircuitWidget.h',
   ],
   dependencies: [Anabatic],
 )
@@ -21,8 +23,11 @@ tramontana = shared_library(
   'EquipotentialComponents.cpp',
   'Equipotential.cpp',
   'EquipotentialRelation.cpp',
+  'EquipotentialWidget.cpp',
   'EquipotentialsModel.cpp',
   'EquipotentialsWidget.cpp',
+  'ShortCircuit.cpp',
+  'ShortCircuitWidget.cpp',
   'GraphicTramontanaEngine.cpp',
   'QueryTiles.cpp',
   'SweepLine.cpp',

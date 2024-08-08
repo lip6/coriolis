@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) Sorbonne Université 2007-2023, All Rights Reserved
+// Copyright (c) Sorbonne Université 2007-2023.
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -20,6 +20,7 @@
 #include <iostream>
 #include <set>
 #include "hurricane/Net.h"
+#include "hurricane/DRCError.h"
 #include "hurricane/Component.h"
 #include "hurricane/Occurrence.h"
 #include "hurricane/Occurrences.h"
@@ -37,12 +38,14 @@ namespace Tramontana {
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
   using Hurricane::Net;
+  using Hurricane::DRCError;
   using Hurricane::NetSet;
   using Hurricane::Cell;
   using Hurricane::Component;
   using Hurricane::OccurrenceSet;
   using Hurricane::Occurrence;
   using Hurricane::Occurrences;
+  class ShortCircuit;
 
 
   class NetCompareByName {
@@ -54,41 +57,6 @@ namespace Tramontana {
   class OccNetCompareByName {
     public:
       bool operator() ( const Occurrence& lhs, const Occurrence& rhs ) const;
-  };
-
-
-// -------------------------------------------------------------------
-// Class  :  "Tramontana::ShortCircuit".
-
-  class ShortCircuit {
-    public:
-      typedef std::map<Equipotential*,uint32_t,DBo::CompareById>    ShortingEquis;
-      typedef std::map<const Cell*,ShortingEquis,DBo::CompareById>  ShortsByCells;
-    public:
-      static inline const ShortingEquis& getShortingEquis    ( const Cell* );
-      static inline const void           removeShortingEquis ( const Cell* );
-    public:
-      inline                ShortCircuit    ( Occurrence, Occurrence );
-      inline bool           isTopLevelA     () const;
-      inline bool           isTopLevelB     () const;
-      inline bool           isTopLevel      () const;
-      inline bool           isAcrossLevels  () const;
-      inline bool           isDeepShort     () const;
-      inline Occurrence     getOccurrenceA  () const;
-      inline Occurrence     getOccurrenceB  () const;
-      inline Component*     getComponentA   () const;
-      inline Component*     getComponentB   () const;
-      inline Occurrence     getEquiA        () const;
-      inline Occurrence     getEquiB        () const;
-      inline Box            getBoundingBoxA () const;
-      inline Box            getBoundingBoxB () const;
-      inline Box            getShortingBox  () const;
-             std::string    _getString      () const;
-    private:
-      static ShortsByCells  _shortsByCells;
-    private:
-      Occurrence _occurrenceA;
-      Occurrence _occurrenceB;
   };
 
 
@@ -218,91 +186,7 @@ namespace Tramontana {
   }
 
 
-// -------------------------------------------------------------------
-// Class  :  "Tramontana::ShortCircuit" (inline functions).
-
-  
-  inline ShortCircuit::ShortCircuit ( Occurrence occA, Occurrence occB )
-    : _occurrenceA(occA)
-    , _occurrenceB(occB)
-  {
-    if (       occB.getPath().isEmpty()
-       and not occA.getPath().isEmpty()) {
-      _occurrenceA = occB;
-      _occurrenceB = occA;
-    }
-
-    Cell* cell = occA.getOwnerCell();
-    if (_shortsByCells.find(cell) == _shortsByCells.end())
-      _shortsByCells.insert( make_pair( cell, ShortingEquis() ) );
-    ShortingEquis& shortingEquis = _shortsByCells.find( cell )->second;
-    
-    if (not isTopLevelA()) {
-      Equipotential* equi = dynamic_cast<Equipotential*>( getEquiA().getEntity() );
-      auto iequi = shortingEquis.find( equi );
-      if (iequi == shortingEquis.end())
-        shortingEquis[ equi ] = 1;
-      else
-        iequi->second++;
-    }
-
-    if (not isTopLevelB()) {
-      Equipotential* equi = dynamic_cast<Equipotential*>( getEquiB().getEntity() );
-      auto iequi = shortingEquis.find( equi );
-      if (iequi == shortingEquis.end())
-        shortingEquis[ equi ] = 1;
-      else
-        iequi->second++;
-    }
-  }
-
-  inline const ShortCircuit::ShortingEquis& ShortCircuit::getShortingEquis ( const Cell* cell )
-  {
-    static ShortingEquis nullShorts;
-    auto ishorts = _shortsByCells.find( cell );
-    if (ishorts != _shortsByCells.end())
-      return ishorts->second;
-    return nullShorts;
-  }
-
-  inline const void  ShortCircuit::removeShortingEquis ( const Cell* cell )
-  {
-    auto ishorts = _shortsByCells.find( cell );
-    if (ishorts != _shortsByCells.end())
-      _shortsByCells.erase( ishorts );
-  }
-
-  inline bool        ShortCircuit::isTopLevelA    () const { return _occurrenceA.getPath().isEmpty(); }
-  inline bool        ShortCircuit::isTopLevelB    () const { return _occurrenceB.getPath().isEmpty(); }
-  inline bool        ShortCircuit::isTopLevel     () const { return isTopLevelA(); }
-  inline bool        ShortCircuit::isAcrossLevels () const { return isTopLevelA() and not isTopLevelB(); }
-  inline bool        ShortCircuit::isDeepShort    () const { return not isTopLevelB(); }
-  inline Occurrence  ShortCircuit::getOccurrenceA () const { return _occurrenceA; }
-  inline Occurrence  ShortCircuit::getOccurrenceB () const { return _occurrenceB; }
-  inline Component*  ShortCircuit::getComponentA  () const { return (dynamic_cast<Component*>( _occurrenceA.getEntity() )); }
-  inline Component*  ShortCircuit::getComponentB  () const { return (dynamic_cast<Component*>( _occurrenceB.getEntity() )); }
-  inline Occurrence  ShortCircuit::getEquiA       () const { return Equipotential::getChildEqui( _occurrenceA ); }
-  inline Occurrence  ShortCircuit::getEquiB       () const { return Equipotential::getChildEqui( _occurrenceB ); }
-  inline Box         ShortCircuit::getShortingBox () const { return getBoundingBoxA().getIntersection( getBoundingBoxB() ); }
-
-  inline Box  ShortCircuit::getBoundingBoxA () const
-  {
-    Box bb = getComponentA()->getBoundingBox();
-    _occurrenceA.getPath().getTransformation().applyOn( bb );
-    return bb;
-  }
-
-  inline Box  ShortCircuit::getBoundingBoxB () const
-  {
-    Box bb = getComponentB()->getBoundingBox();
-    _occurrenceB.getPath().getTransformation().applyOn( bb );
-    return bb;
-  }
-
-
 }  // Tramontana namespace.
 
 
-GETSTRING_POINTER_SUPPORT(Tramontana::ShortCircuit);
-IOSTREAM_POINTER_SUPPORT(Tramontana::ShortCircuit);
 INSPECTOR_P_SUPPORT(Tramontana::Equipotential);

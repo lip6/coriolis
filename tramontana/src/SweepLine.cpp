@@ -167,6 +167,7 @@ namespace Tramontana {
 
   void  SweepLine::run ()
   {
+    UpdateSession::open();
   //DebugSession::open( 160, 169 );
     cdebug_log(160,1) << "SweepLine::run()" << endl;
     loadTiles();
@@ -304,6 +305,7 @@ namespace Tramontana {
   //DebugSession::close();
     mergeEquipotentials();
     deleteTiles();
+    UpdateSession::close();
   }
 
 

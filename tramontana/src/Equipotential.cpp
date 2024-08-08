@@ -108,19 +108,6 @@ namespace Tramontana {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Tramontana::ShortCircuit".
-
-  ShortCircuit::ShortsByCells  ShortCircuit::_shortsByCells;
-
-
-  string  ShortCircuit::_getString () const
-  {
-    string s = "<Short " + getString(_occurrenceA) + "+" + getString(_occurrenceB) + ">";
-    return s;
-  }
-
-
-// -------------------------------------------------------------------
 // Class  :  "Tramontana::Equipotential".
 
 
@@ -412,8 +399,10 @@ namespace Tramontana {
   
   bool  Equipotential::hasOpens () const
   {
+    TramontanaEngine* tramontana = TramontanaEngine::get( _owner );
     for ( const auto& netData : _nets ) {
       if (netData.first->isFused()) continue;
+      if (netData.first->isSupply() and tramontana->doMergeSupplies()) continue;
       if (netData.second.first != netData.second.second)
         return true;
     }

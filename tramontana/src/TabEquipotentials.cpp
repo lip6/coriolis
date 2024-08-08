@@ -40,7 +40,7 @@ namespace Tramontana {
     : ControllerTab         (parent)
     , _browser              (new EquipotentialsWidget())
     , _syncEquipotentials   (new QCheckBox())
-    , _syncSelection        (new QCheckBox())
+    , _showSelection        (new QCheckBox())
     , _showBuried           (new QCheckBox())
     , _cwCumulativeSelection(false)
   {
@@ -55,10 +55,10 @@ namespace Tramontana {
     _syncEquipotentials->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
     connect( _syncEquipotentials, SIGNAL(toggled(bool)), this, SLOT(setSyncEquipotentials(bool)) );
 
-    _syncSelection->setText   ( tr("Sync Selection") );
-    _syncSelection->setChecked( false );
-    _syncSelection->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
-    connect( _syncSelection, SIGNAL(toggled(bool)), this, SLOT(setSyncSelection(bool)) );
+    _showSelection->setText   ( tr("Show Selection") );
+    _showSelection->setChecked( false );
+    _showSelection->setFont   ( Graphics::getFixedFont(QFont::Bold,false,false) );
+    connect( _showSelection, SIGNAL(toggled(bool)), this, SLOT(setShowSelection(bool)) );
 
     _showBuried->setText   ( tr("Show Buried") );
     _showBuried->setChecked( false );
@@ -72,7 +72,7 @@ namespace Tramontana {
     commands->addStretch();
     commands->addWidget ( _showBuried );
     commands->addStretch();
-    commands->addWidget ( _syncSelection );
+    commands->addWidget ( _showSelection );
     commands->addStretch();
     wLayout->addLayout  ( commands );
 
@@ -96,15 +96,14 @@ namespace Tramontana {
   }
 
 
-  void  TabEquipotentials::setSyncSelection ( bool state )
+  void  TabEquipotentials::setShowSelection ( bool state )
   {
-    if (state and getCellWidget() and _syncEquipotentials->isChecked()) {
+    if (not getCellWidget()) return;
+    
+    _showSelection->blockSignals( true );
+    _showSelection->setChecked  ( state );
+    if (state) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if (not _cwCumulativeSelection) {
-        getCellWidget()->openRefreshSession ();
-        getCellWidget()->unselectAll ();
-        getCellWidget()->closeRefreshSession ();
-      }
       getCellWidget()->setShowSelection( true );
       connect( _browser, SIGNAL(equipotentialSelect  (Occurrences)), getCellWidget(), SLOT(select  (Occurrences)) );
       connect( _browser, SIGNAL(equipotentialUnselect(Occurrences)), getCellWidget(), SLOT(unselect(Occurrences)) );
@@ -115,6 +114,13 @@ namespace Tramontana {
       _browser->disconnect( getCellWidget(), SLOT(select  (Occurrences)) );
       _browser->disconnect( getCellWidget(), SLOT(unselect(Occurrences)) );
     }
+    _showSelection->blockSignals( false );
+  }
+
+
+  void  TabEquipotentials::selectionModeChanged ()
+  {
+    setShowSelection( getCellWidget()->showSelection() );
   }
 
 
@@ -137,7 +143,8 @@ namespace Tramontana {
       ControllerTab::setCellWidget( cellWidget );
       _browser->setCellWidget( cellWidget );
       if (getCellWidget()) {
-        connect( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
+        connect( getCellWidget(), SIGNAL(cellChanged(Cell*))    , this, SLOT(setCell(Cell*)) );
+        connect( getCellWidget(), SIGNAL(selectionModeChanged()), this, SLOT(selectionModeChanged()) );
       }
       setSyncEquipotentials( _syncEquipotentials->isChecked() );
     }

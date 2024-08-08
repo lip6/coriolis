@@ -52,29 +52,30 @@ namespace Tramontana {
       typedef  std::map<Net*, EquipotentialSet, DBo::CompareById>  OpenSet;
       typedef  std::set<Equipotential*,DBo::CompareById>           ShortedSet;
     public:
-      static  const Name&              staticGetName              ();
-      static  TramontanaEngine*        create                     ( Cell*, uint32_t depth=0 );
-      static  TramontanaEngine*        get                        ( const Cell* );
-    public:                                                      
-      inline        bool               inDestroyStage             () const;
-      inline        bool               doMergeSupplies            () const;
-      inline        Configuration*     getConfiguration           () const;
-              const Name&              getName                    () const;
-      inline        uint32_t           getDepth                   () const;
-      inline  const EquipotentialSet   getEquipotentials () const;
-      inline        void               setViewer                  ( CellViewer* );
-      inline        CellViewer*        getViewer                  ();
-              void                     extract                    ();
-              void                     _extract                   ();
-              void                     consolidate                ();
-              void                     showEquipotentials         () const;
-              void                     printSummary               () const;
-      inline  void                     printConfiguration         () const;
-              void                     add                        ( Equipotential* );
-              void                     remove                     ( Equipotential* );
-      virtual Record*                  _getRecord                 () const;
-      virtual std::string              _getString                 () const;
-      virtual std::string              _getTypeName               () const;
+      static  const Name&              staticGetName      ();
+      static  TramontanaEngine*        create             ( Cell*, uint32_t depth=0 );
+      static  TramontanaEngine*        get                ( const Cell* );
+    public:                                               
+      inline        bool               inDestroyStage     () const;
+      inline        bool               doMergeSupplies    () const;
+      inline        Configuration*     getConfiguration   () const;
+              const Name&              getName            () const;
+      inline        uint32_t           getDepth           () const;
+      inline  const EquipotentialSet   getEquipotentials  () const;
+      inline  const ShortedSet&        getShortedNets     () const;
+      inline        void               setViewer          ( CellViewer* );
+      inline        CellViewer*        getViewer          ();
+                    void               extract            ();
+                    void               _extract           ();
+                    void               consolidate        ();
+                    void               showEquipotentials () const;
+                    void               printSummary       () const;
+      inline        void               printConfiguration () const;
+                    void               add                ( Equipotential* );
+                    void               remove             ( Equipotential* );
+      virtual       Record*            _getRecord         () const;
+      virtual       std::string        _getString         () const;
+      virtual       std::string        _getTypeName       () const;
     private:                          
     // Attributes.                    
       static  Name                     _toolName;
@@ -106,9 +107,11 @@ namespace Tramontana {
   inline void           TramontanaEngine::setViewer          ( CellViewer* viewer ) { _viewer=viewer; }
   inline CellViewer*    TramontanaEngine::getViewer          () { return _viewer; }
   inline uint32_t       TramontanaEngine::getDepth           () const { return _depth; }
-  inline const std::set<Equipotential*,DBo::CompareById>     
+  inline const std::set<Equipotential*,DBo::CompareById>        
                         TramontanaEngine::getEquipotentials  () const { return _equipotentials; }
-  inline  void          TramontanaEngine::printConfiguration () const { _configuration->print( getCell() ); }
+  inline const TramontanaEngine::ShortedSet&
+                        TramontanaEngine::getShortedNets     () const { return _shortedNets; }
+  inline void           TramontanaEngine::printConfiguration () const { _configuration->print( getCell() ); }
 
 
 }  // Tramontana namespace.

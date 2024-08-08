@@ -41,6 +41,7 @@
 #include "crlcore/Measures.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/AllianceFramework.h"
+#include "tramontana/ShortCircuit.h"
 #include "tramontana/SweepLine.h"
 #include "tramontana/TramontanaEngine.h"
 
@@ -132,6 +133,7 @@ namespace Tramontana {
 
   void  TramontanaEngine::_preDestroy ()
   {
+    UpdateSession::open();
     cdebug_log(160,1) << "TramontanaEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
@@ -144,6 +146,7 @@ namespace Tramontana {
     Super::_preDestroy();
 
     cdebug_tabw(160,-1);
+    UpdateSession::close();
   }
 
 
