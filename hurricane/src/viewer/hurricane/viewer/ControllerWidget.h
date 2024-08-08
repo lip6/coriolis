@@ -151,31 +151,32 @@ namespace Hurricane {
       Q_OBJECT;
 
     public:
-                             TabNetlist         ( QWidget* parent=NULL );
-      inline  NetlistWidget* getNetlistBrowser  ();
-      inline  QCheckBox*     getSyncNetlist     ();
-      inline  QCheckBox*     getSyncSelection   ();
-      virtual void           cellPreModificate  ();
-      virtual void           cellPostModificate ();
-      virtual void           saveQtSettings     ( size_t viewerId ) const;
-      virtual void           readQtSettings     ( size_t viewerId );
-    public slots:           
-      virtual void           setCell            ( Cell* );
-      virtual void           setCellWidget      ( CellWidget* );
-      virtual void           setSyncNetlist     ( bool );
-      virtual void           setSyncSelection   ( bool );
+                             TabNetlist           ( QWidget* parent=NULL );
+      inline  NetlistWidget* getNetlistBrowser    ();
+      inline  QCheckBox*     getSyncNetlist       ();
+      inline  QCheckBox*     getShowSelection     ();
+      virtual void           cellPreModificate    ();
+      virtual void           cellPostModificate   ();
+      virtual void           saveQtSettings       ( size_t viewerId ) const;
+      virtual void           readQtSettings       ( size_t viewerId );
+    public slots:                                 
+      virtual void           setCell              ( Cell* );
+      virtual void           setCellWidget        ( CellWidget* );
+      virtual void           setSyncNetlist       ( bool );
+      virtual void           setShowSelection     ( bool );
+      virtual void           selectionModeChanged ();
 
     protected:
       NetlistWidget* _netlistBrowser;
       QCheckBox*     _syncNetlist;
-      QCheckBox*     _syncSelection;
+      QCheckBox*     _showSelection;
       bool           _cwCumulativeSelection;
   };
 
 
   inline NetlistWidget* TabNetlist::getNetlistBrowser () { return _netlistBrowser; }
   inline QCheckBox*     TabNetlist::getSyncNetlist    () { return _syncNetlist; }
-  inline QCheckBox*     TabNetlist::getSyncSelection  () { return _syncSelection; }
+  inline QCheckBox*     TabNetlist::getShowSelection  () { return _showSelection; }
 
 
 // -------------------------------------------------------------------

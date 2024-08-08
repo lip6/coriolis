@@ -38,7 +38,6 @@ namespace Hurricane {
     , _cellWidget (NULL)
     , _stylesGrid (new QGridLayout())
     , _stylesGroup(new QButtonGroup())
-    , _updateState(ExternalEmit)
   {
     setAttribute   ( Qt::WA_QuitOnClose, false );
     setWindowTitle ( tr("Display Styles") );
@@ -94,24 +93,19 @@ namespace Hurricane {
 
     connect ( _cellWidget, SIGNAL(styleChanged()), this, SLOT(changeStyle()) );
 
-    _updateState = ExternalEmit;
     changeStyle ();
   }
 
 
   void  GraphicsWidget::changeStyle ()
   {
-    if ( _updateState != InternalEmit ) {
     // Should read style here and sets the widget accordingly.
-    }
-    _updateState = ExternalEmit;
   }
 
 
   void  GraphicsWidget::setStyle ( int id )
   {
     if ( _cellWidget ) {
-      _updateState = InternalEmit;
       _cellWidget->setStyle ( (size_t)id );
     }
   }

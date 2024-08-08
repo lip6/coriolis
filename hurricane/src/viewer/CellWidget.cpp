@@ -32,6 +32,7 @@
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
+#include "hurricane/DRCError.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Slice.h"
@@ -809,6 +810,16 @@ namespace Hurricane {
                              };
         _cellWidget->drawScreenPolyline ( losange, 5, 2 );
       }
+    } else {
+      const DRCError* drcError = dynamic_cast<const DRCError*>(marker);
+      if (drcError and _cellWidget->isDrawable("marker") and (getDepth() < 2) ) {
+        _goCount++;
+        Box bb = transformation.getBox ( drcError->getBoundingBox() );
+        rectangle = _cellWidget->dbuToScreenRect ( bb );
+        _cellWidget->drawScreenRect( rectangle );
+        _cellWidget->drawScreenLine( rectangle.topLeft (), rectangle.bottomRight() );
+        _cellWidget->drawScreenLine( rectangle.topRight(), rectangle.bottomLeft () );
+      }
     }
   }
 
@@ -1117,10 +1128,9 @@ namespace Hurricane {
     , _state                (new State(NULL))
     , _isPrinter            (false)
     , _cellChanged          (true)
-    , _selectionHasChanged  (false)
-    , _delaySelectionChanged(0)
-    , _cellModificated      (true)
+    , _fullRedraw           (true)
     , _enableRedrawInterrupt(false)
+    , _delaySelectionChanged(0)
     , _selectors            ()
     , _activeCommand        (NULL)
     , _commands             ()
@@ -1301,7 +1311,6 @@ namespace Hurricane {
   //cerr << "CellWidget::setShowSelection(): " << state << " vs. " << _state->showSelection() << endl;
     if ( state != _state->showSelection() ) {
       _state->setShowSelection ( state );
-      _selectionHasChanged = false;
       refresh ();
       emit selectionModeChanged ();
     }
@@ -1321,7 +1330,7 @@ namespace Hurricane {
   {
     if ( _state->showBoundaries() != state ) {
       _state->setShowBoundaries ( state );
-      _redrawManager.refresh ();
+      refresh ();
 
       emit showBoundariesToggled ( state );
     }
@@ -1330,17 +1339,15 @@ namespace Hurricane {
 
   void  CellWidget::changeQueryFilter ()
   {
-    _redrawManager.refresh ();
+  //cerr << "CellWidget::changeQueryFilter()" << endl;
+    refresh ();
     emit queryFilterChanged ();
   }
 
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-  //cerr << "CellWidget::_redraw() - start "
-  //     << _selectionHasChanged << " filter:"
-  //     << _state->getQueryFilter() << endl;
-
+  //cerr << "    CellWidget::_redraw() - start filter:" << _state->getQueryFilter() << endl;
   //static bool  timedout;
   //static Timer timer;
 
@@ -1357,7 +1364,8 @@ namespace Hurricane {
 
     pushCursor( Qt::BusyCursor );
 
-    if ( not (_selectionHasChanged and _state->showSelection()) or _cellModificated ) {
+    if ( _fullRedraw /*or not (_selectionHasChanged and _state->showSelection())*/ ) {
+    //cerr << "CellWidget::_redraw() - full" << endl;
       _spot.setRestore( false );
     //_drawingPlanes.copyToSelect ( redrawArea );
       _drawingPlanes.select ( PlaneId::Normal );
@@ -1419,14 +1427,13 @@ namespace Hurricane {
 
         _drawingQuery.setStopLevel( _state->getStartLevel() + 1 );
         if ( /*not timeout("redraw [markers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
-          if ( isDrawable("text.reference") ) {
-             _drawingPlanes.setPen  ( Graphics::getPen  ("text.reference",getDarkening()) );
-             _drawingPlanes.setBrush( Graphics::getBrush("text.reference",getDarkening()) );
+          if ( isDrawable("marker") ) {
+             _drawingPlanes.setPen  ( Graphics::getPen  ("marker",getDarkening()) );
+             _drawingPlanes.setBrush( Graphics::getBrush("marker",getDarkening()) );
 
              _drawingQuery.setBasicLayer( NULL );
              _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
                                                                 |Query::DoRubbers
-                                                                |Query::DoMarkers
                                                                 |Query::DoExtensionGos
                                                                 |Query::DoMasterCells) );
              _drawingQuery.doQuery      ();
@@ -1479,7 +1486,7 @@ namespace Hurricane {
       }
 
       _drawingPlanes.end();
-      _cellModificated = false;
+      _fullRedraw = false;
     }
 
     if (isDrawable("text.ruler")) drawRulers( redrawArea );
@@ -1516,6 +1523,7 @@ namespace Hurricane {
 
   void  CellWidget::redrawSelection ( QRect redrawArea )
   {
+  //cerr << "      CellWidget::redrawSelection()" << endl;
     _drawingPlanes.copyToSelect ( redrawArea.x()
                                 , redrawArea.y()
                                 , redrawArea.width()
@@ -1587,6 +1595,21 @@ namespace Hurricane {
         _drawingQuery.drawRubber( rubber, redrawBox, transformation );
       }
 
+      _drawingPlanes.setPen  ( Graphics::getPen  ("marker") );
+      _drawingPlanes.setBrush( Graphics::getBrush("marker") );
+
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence occurrence = selector->getOccurrence();
+        Marker*    marker     = dynamic_cast<Marker*>(occurrence.getEntity());
+
+        if (not marker) continue;
+
+        Transformation  transformation = occurrence.getPath().getTransformation();
+        _drawingQuery.drawMarker( marker, redrawBox, transformation );
+      }
+
       Name extensionName = "";
 
       for ( Selector* selector : _selectors ) {
@@ -1609,7 +1632,6 @@ namespace Hurricane {
     }
 
     _drawingPlanes.end();
-    _selectionHasChanged = false;
   }
 
 
@@ -2160,7 +2182,7 @@ namespace Hurricane {
 
     _screenArea = Box( xmin, ymin, xmax, ymax );
 
-    _redrawManager.refresh();
+    refresh();
   }
 
 
@@ -2321,8 +2343,9 @@ namespace Hurricane {
     _screenArea.translate( - (DbU::Unit)( dx / getScale() ) , 0 );
 
     if (dx >= _drawingPlanes.width()) {
-      _redrawManager.refresh();
+      refresh();
     } else {
+      _fullRedraw = true;
       _drawingPlanes.shiftLeft( dx );
       _redraw( QRect( QPoint(0,0), QSize(dx,_drawingPlanes.height()) ) );
     }
@@ -2336,8 +2359,9 @@ namespace Hurricane {
     _screenArea.translate( (DbU::Unit)( dx / getScale() ) , 0 );
 
     if (dx >= _drawingPlanes.width())
-      _redrawManager.refresh ();
+      refresh ();
     else {
+      _fullRedraw = true;
       _drawingPlanes.shiftRight( dx );
       _redraw( QRect( QPoint(_drawingPlanes.width()-dx,0)
                     , QSize (dx,_drawingPlanes.height()) ) );
@@ -2352,8 +2376,9 @@ namespace Hurricane {
     _screenArea.translate( 0, (DbU::Unit)( dy / getScale() ) );
 
     if (dy >= _drawingPlanes.height())
-      _redrawManager.refresh();
+      refresh();
     else {
+      _fullRedraw = true;
       _drawingPlanes.shiftUp( dy );
       _redraw( QRect( QPoint(0,0), QSize(_drawingPlanes.width(),dy) ) );
     }
@@ -2367,8 +2392,9 @@ namespace Hurricane {
     _screenArea.translate( 0, - (DbU::Unit)( dy / getScale() ) );
 
     if (dy >= _drawingPlanes.height())
-      _redrawManager.refresh();
+      refresh();
     else {
+      _fullRedraw = true;
       _drawingPlanes.shiftDown( dy );
       _redraw( QRect( QPoint (0,_drawingPlanes.height()-dy)
                     , QSize  (_drawingPlanes.width(), dy) ) );
@@ -2444,7 +2470,7 @@ namespace Hurricane {
       _drawingPlanes.resize ( uaSize );
     }
 
-    _redrawManager.refresh ();
+    refresh ();
   }
 
 
@@ -2833,25 +2859,22 @@ namespace Hurricane {
         }
       } else
         selected = false;
+    } else {
+	  Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+      Selector* selector = NULL;
+	  if ( not property )
+        selector = Selector::create ( occurrence );
+	  else {
+        selector = dynamic_cast<Selector*>(property);
+        if (not selector)
+          throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      }
+      
+	  selector->attachTo( this );
     }
-
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
-    Selector* selector = NULL;
-	if ( not property )
-      selector = Selector::create ( occurrence );
-	else {
-      selector = dynamic_cast<Selector*>(property);
-      if (not selector)
-        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
-    }
-
-	selector->attachTo( this );
-
-  //setShowSelection( true );
-    _selectionHasChanged = true;
 
     if ( (--_delaySelectionChanged == 0) and selected ) {
-      if ( _state->showSelection() ) _redrawManager.refresh ();
+      if ( _state->showSelection() ) refresh ( false );
         emit selectionChanged(_selectors);
     }
   }
@@ -2889,7 +2912,6 @@ namespace Hurricane {
       selector->detachFrom( this );
     }
 
-    _selectionHasChanged = true;
     if ( (_delaySelectionChanged == 0) and unselected )
       emit selectionChanged( _selectors );
   }
@@ -2992,8 +3014,7 @@ namespace Hurricane {
       }
     }
 
-    _selectionHasChanged = true;
-    if (_state->showSelection()) _redrawManager.refresh ();
+    if (_state->showSelection()) refresh ( false );
 
     emit selectionToggled( selector );
   }
@@ -3042,8 +3063,7 @@ namespace Hurricane {
     while ( not _selectors.empty() )
       (*_selectors.begin())->detachFrom( this );
 
-    if (not _selectionHasChanged) _selectionHasChanged = true;
-    if (_state->showSelection()) _redrawManager.refresh ();
+    if (_state->showSelection()) refresh ( false );
   }
 
 
@@ -3063,13 +3083,12 @@ namespace Hurricane {
   void  CellWidget::cellPostModificate ()
   {
     openRefreshSession ();
-    _cellModificated = true;
 
     ++_delaySelectionChanged;
     _state->getSelection().revalidate ();
 
     updatePalette ();
-    _redrawManager.refresh ();
+    refresh ();
 
     --_delaySelectionChanged;
 

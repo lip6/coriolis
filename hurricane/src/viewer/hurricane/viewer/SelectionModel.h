@@ -51,6 +51,7 @@ namespace Hurricane {
     public slots:
              void                    unlink          ( Selector* );
              void                    clear           ();
+             void                    clearNotIn      ( const SelectorSet& );
     private:
              CellWidget*        _cellWidget;
              vector<Selector*>  _selection;
