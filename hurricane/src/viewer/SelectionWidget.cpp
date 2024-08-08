@@ -48,7 +48,6 @@ namespace Hurricane {
     , _cumulative           (new QCheckBox())
     , _showSelection        (new QCheckBox())
     , _rowHeight            (20)
-    , _updateState          (ExternalEmit)
   {
     setAttribute ( Qt::WA_DeleteOnClose );
     setAttribute ( Qt::WA_QuitOnClose, false );
@@ -155,34 +154,12 @@ namespace Hurricane {
     _baseModel->setCellWidget( cw );
     if (not _cellWidget) return;
 
-    connect( _cellWidget, SIGNAL(selectionModeChanged()), this, SLOT(changeSelectionMode()) );
-
+    connect( _cellWidget, SIGNAL(selectionModeChanged()), this, SLOT(selectionModeChanged()) );
     connect( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
            , this       , SLOT  (setSelection    (const SelectorSet&)) );
-
     connect( _cellWidget, SIGNAL(selectionToggled(Selector*)), this, SLOT(toggleSelection(Selector*)) );
 
-    _updateState = ExternalEmit;
-    changeSelectionMode ();
-  }
-
-
-  void  SelectionWidget::changeSelectionMode ()
-  {
-    if (not _cellWidget) return;
-
-    if (_updateState == InternalEmit) {
-      _updateState = InternalReceive;
-      emit selectionModeChanged ();
-    } else {
-      if (_updateState == ExternalEmit) {
-        blockAllSignals( true );
-        _showSelection->setChecked( _cellWidget->getState()->showSelection      () );
-        _cumulative   ->setChecked( _cellWidget->getState()->cumulativeSelection() );
-        blockAllSignals( false );
-      }
-    }
-    _updateState = ExternalEmit;
+    selectionModeChanged();
   }
 
 
@@ -196,14 +173,24 @@ namespace Hurricane {
 
   void  SelectionWidget::setShowSelection ( bool state )
   {
-    _updateState = InternalEmit;
-    _cellWidget->setShowSelection ( state );
+    if (not _cellWidget) return;
+
+    blockAllSignals( true );
+    _cellWidget   ->setShowSelection ( state );
+    _showSelection->setChecked( state );
+    _cumulative   ->setChecked( _cellWidget->getState()->cumulativeSelection() );
+    blockAllSignals( false );
+  }
+
+
+  void  SelectionWidget::selectionModeChanged ()
+  {
+    setShowSelection( _cellWidget->showSelection() );
   }
 
 
   void  SelectionWidget::setCumulativeSelection ( bool state )
   {
-    _updateState = InternalEmit;
     _cellWidget->setCumulativeSelection ( state );
   }
 
@@ -220,11 +207,6 @@ namespace Hurricane {
   }
 
 
-  // void  SelectionWidget::dataChanged  ( const QModelIndex&, const QModelIndex& )
-  // {
-  // }
-
-
   void  SelectionWidget::toggleSelection ()
   {
     toggleSelection ( _view->currentIndex() );
@@ -233,27 +215,26 @@ namespace Hurricane {
 
   void  SelectionWidget::toggleSelection ( const QModelIndex& index )
   {
-    if (index.isValid()) {
-      Selector* selector = _baseModel->toggleSelection( _sortModel->mapToSource(index) );
-      if (selector) {
-        _updateState = InternalEmit;
-        _cellWidget->toggleSelection ( selector->getOccurrence() );
-      }
+    if (not index.isValid()) return;
+
+    Selector* selector = _baseModel->toggleSelection( _sortModel->mapToSource(index) );
+    if (selector) {
+      _cellWidget->blockSignals( true );
+      _cellWidget->toggleSelection ( selector->getOccurrence() );
+      _cellWidget->blockSignals( false );
     }
   }
 
 
   void  SelectionWidget::toggleSelection ( Selector* selector )
   {
-    if (_updateState != InternalEmit) {
-      _baseModel->toggleSelection( selector );
-    }
-    _updateState = ExternalEmit;
+    _baseModel->toggleSelection( selector );
   }
 
 
   void  SelectionWidget::setSelection ( const SelectorSet& selection )
   {
+    _cellWidget->openRefreshSession ();
     _baseModel->setSelection ( selection );
      
     string windowTitle = "Selection";
@@ -264,6 +245,7 @@ namespace Hurricane {
 
     _view->selectRow ( 0 );
     _view->resizeColumnToContents ( 0 );
+    _cellWidget->closeRefreshSession ();
   }
 
 
@@ -294,11 +276,20 @@ namespace Hurricane {
 
   void  SelectionWidget::inspect ( const QModelIndex& index  )
   {
-    if (index.isValid()) {
-      Occurrence occurrence = _baseModel->getSelector( _sortModel->mapToSource(index).row() )->getOccurrence();
-      emit inspect ( occurrence );
-    } else
+    if (not index.isValid()) {
       emit inspect ( NULL );
+      return;
+    }
+
+    QModelIndex sourceIndex = _sortModel->mapToSource(index);
+    const Selector* selector = _baseModel->getSelector( _sortModel->mapToSource(index).row() );
+    if (not selector) {
+      emit inspect ( NULL );
+      return;
+    }
+
+    Occurrence occurrence = selector->getOccurrence();
+    emit inspect ( occurrence );
   }
 
 

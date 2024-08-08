@@ -294,7 +294,7 @@ namespace Hurricane {
               void                      updatePalette              ();
               void                      cellPreModificate          ();
               void                      cellPostModificate         ();
-      inline  void                      refresh                    ();
+      inline  void                      refresh                    ( bool fullRedraw=true );
               void                      _redraw                    ( QRect redrawArea );
       inline  void                      redrawSelection            ();
               void                      redrawSelection            ( QRect redrawArea );
@@ -663,10 +663,9 @@ namespace Hurricane {
               shared_ptr<State>          _state;
               bool                       _isPrinter;
               bool                       _cellChanged;
-              bool                       _selectionHasChanged;
-              int                        _delaySelectionChanged;
-              bool                       _cellModificated;
+              bool                       _fullRedraw;
               bool                       _enableRedrawInterrupt;
+              int                        _delaySelectionChanged;
               SelectorSet                _selectors;
               Command*                   _activeCommand;
               vector<Command*>           _commands;
@@ -1239,8 +1238,8 @@ namespace Hurricane {
   { _state->getRulers().clear (); refresh(); }
 
 
-  inline  void  CellWidget::refresh ()
-  { _redrawManager.refresh(); }
+  inline  void  CellWidget::refresh ( bool fullRedraw )
+  { _fullRedraw |= fullRedraw; _redrawManager.refresh(); }
 
 
   inline void  CellWidget::redrawSelection ()
@@ -1424,7 +1423,7 @@ namespace Hurricane {
   inline void  CellWidget::setRubberShape ( RubberShape shape )
   {
     _state->setRubberShape ( shape );
-    _redrawManager.refresh ();
+   refresh ();
     emit queryFilterChanged ();
   }
 

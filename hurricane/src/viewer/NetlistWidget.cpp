@@ -31,14 +31,6 @@
 #include "hurricane/viewer/NetlistWidget.h"
 
 
-namespace {
-
-  using namespace Hurricane;
-
-
-} // End of anonymous namespace.
-
-
 namespace Hurricane {
 
 
@@ -162,8 +154,9 @@ namespace Hurricane {
     }
     isel = _selecteds.begin ();
     while ( isel != _selecteds.end() ) {
-      if ( isel->getAccesses() == 64 )
+      if ( isel->getAccesses() == 64 ) {
         emit netSelected ( Occurrence(isel->getNet()) );
+      }
       ++isel;
     }
 

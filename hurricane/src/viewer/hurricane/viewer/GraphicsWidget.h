@@ -44,7 +44,6 @@ namespace Hurricane {
       CellWidget*   _cellWidget;
       QGridLayout*  _stylesGrid;
       QButtonGroup* _stylesGroup;
-      UpdateState   _updateState;
   };
 
 

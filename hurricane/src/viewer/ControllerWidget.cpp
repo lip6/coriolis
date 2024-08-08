@@ -211,7 +211,7 @@ namespace Hurricane {
     : ControllerTab         (parent)
     , _netlistBrowser       (new NetlistWidget())
     , _syncNetlist          (new QCheckBox())
-    , _syncSelection        (new QCheckBox())
+    , _showSelection        (new QCheckBox())
     , _cwCumulativeSelection(false)
   {
     _netlistBrowser->setObjectName ( "controller.tabNetlist.netlistBrowser" );
@@ -225,17 +225,17 @@ namespace Hurricane {
     _syncNetlist->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
     connect ( _syncNetlist, SIGNAL(toggled(bool)), this, SLOT(setSyncNetlist(bool)) );
 
-    _syncSelection->setText    ( tr("Sync Selection") );
-    _syncSelection->setChecked ( false );
-    _syncSelection->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
-    connect ( _syncSelection, SIGNAL(toggled(bool)), this, SLOT(setSyncSelection(bool)) );
+    _showSelection->setText    ( tr("Show Selection") );
+    _showSelection->setChecked ( false );
+    _showSelection->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
+    connect ( _showSelection, SIGNAL(toggled(bool)), this, SLOT(setShowSelection(bool)) );
 
     QHBoxLayout* commands = new QHBoxLayout ();
     commands->setContentsMargins ( 0, 0, 0, 0 );
     commands->addStretch ();
     commands->addWidget  ( _syncNetlist );
     commands->addStretch ();
-    commands->addWidget  ( _syncSelection );
+    commands->addWidget  ( _showSelection );
     commands->addStretch ();
     wLayout->addLayout   ( commands );
 
@@ -259,25 +259,31 @@ namespace Hurricane {
   }
 
 
-  void  TabNetlist::setSyncSelection ( bool state )
+  void  TabNetlist::setShowSelection ( bool state )
   {
-    if (state and getCellWidget() and _syncNetlist->isChecked()) {
+    if (not getCellWidget()) return;
+
+    _showSelection->blockSignals( true );
+    _showSelection->setChecked  ( state );
+    if (state) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if (not _cwCumulativeSelection) {
-        getCellWidget()->openRefreshSession ();
-        getCellWidget()->unselectAll ();
-        getCellWidget()->closeRefreshSession ();
-      }
       getCellWidget()->setShowSelection( true );
       connect( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
       connect( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
-      _netlistBrowser->updateSelecteds();
+    //_netlistBrowser->updateSelecteds();
     } else {
       getCellWidget()->setShowSelection( false );
       getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
       _netlistBrowser->disconnect( getCellWidget(), SLOT(select  (Occurrence)) );
       _netlistBrowser->disconnect( getCellWidget(), SLOT(unselect(Occurrence)) );
     }
+    _showSelection->blockSignals( false );
+  }
+
+
+  void  TabNetlist::selectionModeChanged ()
+  {
+    setShowSelection( getCellWidget()->showSelection() );
   }
 
 
@@ -293,7 +299,8 @@ namespace Hurricane {
       ControllerTab::setCellWidget ( cellWidget );
       _netlistBrowser->setCellWidget<SimpleNetInformations> ( cellWidget );
       if ( getCellWidget() ) {
-        connect ( getCellWidget(), SIGNAL(cellChanged(Cell*)), this, SLOT(setCell(Cell*)) );
+        connect ( getCellWidget(), SIGNAL(cellChanged(Cell*))    , this, SLOT(setCell(Cell*)) );
+        connect ( getCellWidget(), SIGNAL(selectionModeChanged()), this, SLOT(selectionModeChanged()) );
       }
       setSyncNetlist ( _syncNetlist->isChecked() );
     }

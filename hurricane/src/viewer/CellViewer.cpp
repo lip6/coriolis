@@ -114,7 +114,6 @@ namespace Hurricane {
                                              , _firstShow              (false)
                                              , _toolInterrupt          (false)
                                              , _flags                  (0)
-                                             , _updateState            (ExternalEmit)
                                              , _pyScriptName           ()
   {
     _allViewers.push_back( this );
@@ -168,7 +167,7 @@ namespace Hurricane {
            , _mousePosition , SLOT  (setPosition(const Point&)) );
 
     connect( _cellWidget    , SIGNAL(selectionModeChanged())
-           , this           , SLOT  (changeSelectionMode ()) );
+           , this           , SLOT  (selectionModeChanged()) );
     connect( &_selectCommand, SIGNAL(selectionToggled (Occurrence))
            ,  _cellWidget   , SLOT  (select           (Occurrence)) );
 
@@ -771,27 +770,23 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::changeSelectionMode ()
+  void  CellViewer::selectionModeChanged ()
   {
-    if ( _updateState != InternalEmit ) {
-      _showSelectionAction->blockSignals ( true );
-      _showSelectionAction->setChecked   ( _cellWidget->getState()->cumulativeSelection() );
-      _showSelectionAction->blockSignals ( false );
-    }
-    _updateState = ExternalEmit;
+    setShowSelection( _cellWidget->showSelection() );
   }
 
 
-  void  CellViewer::setShowSelection ( bool )
+  void  CellViewer::setShowSelection ( bool state )
   {
-    _updateState = InternalEmit;
-    _cellWidget->setShowSelection ( not _cellWidget->showSelection() );
+    _showSelectionAction->blockSignals ( true );
+    _showSelectionAction->setChecked   ( state );
+    _cellWidget->setShowSelection      ( state );
+    _showSelectionAction->blockSignals ( false );
   }
 
 
   void  CellViewer::setCumulativeSelection ( bool state )
   {
-    _updateState = InternalEmit;
     _cellWidget->setCumulativeSelection ( state );
   }
 

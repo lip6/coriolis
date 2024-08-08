@@ -144,7 +144,7 @@ namespace Hurricane {
     public slots:                   
               void                  doAction                  ();
               void                  doGoto                    ();
-              void                  changeSelectionMode       ();
+              void                  selectionModeChanged      ();
               void                  setShowSelection          ( bool );
               void                  setCumulativeSelection    ( bool );
               void                  setState                  ( shared_ptr<CellWidget::State>& );
@@ -205,7 +205,6 @@ namespace Hurricane {
              bool                     _firstShow;
              bool                     _toolInterrupt;
              unsigned int             _flags;
-             UpdateState              _updateState;
              QString                  _pyScriptName;
   };
 
