@@ -1456,6 +1456,7 @@ class BlockConf ( GaugeConf ):
         self.ioPinsCounts  = {}
         self.ioPinsArg     = ioPins
         self.ioPadsArg     = ioPads
+        self.doLvx         = False
         self.cfg.etesian.aspectRatio      = None
         self.cfg.etesian.spaceMargin      = None
         self.cfg.etesian.latchUpDistance  = None
@@ -1466,8 +1467,9 @@ class BlockConf ( GaugeConf ):
         self.cfg.spares.htreeRootOffset   = CfgDefault(3)
         self.cfg.spares.htreeOffset       = CfgDefault(5)
         self.chipConf = ChipConf( self )
-        self.etesian  = None
-        self.katana   = None
+        self.etesian    = None
+        self.katana     = None
+        self.tramontana = None
 
     def _postInit ( self ):
         trace( 550, ',+', '\tblock.configuration._postInit()\n' )
