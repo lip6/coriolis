@@ -26,7 +26,7 @@ from   ...CRL             import AllianceFramework, RoutingLayerGauge
 from   ...helpers         import trace, dots, l, u, n
 from   ...helpers.io      import ErrorMessage, WarningMessage, catch
 from   ...helpers.overlay import UpdateSession
-from   ...                import Etesian, Anabatic, Katana
+from   ...                import Etesian, Anabatic, Katana, Tramontana
 from   ..                 import getParameter
 from   ..macro.macro      import Macro
 from   .                  import timing
@@ -870,7 +870,26 @@ class Block ( object ):
             self.addBlockages()
             self.expandIoPins()
         self.conf.isBuilt = True
+        if self.conf.doLvx: self.doLvx()
         return status
+
+    def doLvx ( self ):
+        """
+        Performs and optional gate-level extraction and LVX to independently
+        ensure that the PnR has not gone wrong. raise an exception in case of
+        a failure.
+        """
+        topCell = self.conf.chip if self.conf.isCoreBlock else self.conf.cell
+        self.tramontana = Tramontana.TramontanaEngine.create( topCell )
+        self.tramontana.printConfiguration()
+        self.tramontana.extract()
+        self.tramontana.printSummary()
+        if not self.tramontana.getSuccessState():
+            raise ErrorMessage( 1, 'Extraction+LVX has failed on "{}".'.format( topCell.getName() ))
+        Breakpoint.stop( 100, 'Block.doLvx() Successful Extract+LVS, before Tramontana.destroy().' )
+        self.tramontana.destroy()
+        self.tramontana = None
+
 
     def useBlockInstance ( self, instancePathName , transf ):
         """
