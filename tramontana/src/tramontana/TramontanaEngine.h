@@ -51,6 +51,7 @@ namespace Tramontana {
       typedef  ToolEngine  Super;
       typedef  std::map<Net*, EquipotentialSet, DBo::CompareById>  OpenSet;
       typedef  std::set<Equipotential*,DBo::CompareById>           ShortedSet;
+      typedef  OpenSet::value_type                                 OpenCircuit;
     public:
       static  const Name&              staticGetName      ();
       static  TramontanaEngine*        create             ( Cell*, uint32_t depth=0 );
@@ -63,9 +64,11 @@ namespace Tramontana {
       inline        uint32_t           getDepth           () const;
       inline  const EquipotentialSet   getEquipotentials  () const;
       inline  const ShortedSet&        getShortedNets     () const;
+      inline  const OpenSet&           getOpenNets        () const;
+                    bool               getSuccessState    () const;
       inline        void               setViewer          ( CellViewer* );
       inline        CellViewer*        getViewer          ();
-                    void               extract            ();
+                    void               extract            ( bool isTopLevel=true );
                     void               _extract           ();
                     void               consolidate        ();
                     void               showEquipotentials () const;
@@ -111,6 +114,8 @@ namespace Tramontana {
                         TramontanaEngine::getEquipotentials  () const { return _equipotentials; }
   inline const TramontanaEngine::ShortedSet&
                         TramontanaEngine::getShortedNets     () const { return _shortedNets; }
+  inline  const TramontanaEngine::OpenSet&
+                        TramontanaEngine::getOpenNets        () const { return _openNets; }
   inline void           TramontanaEngine::printConfiguration () const { _configuration->print( getCell() ); }
 
 

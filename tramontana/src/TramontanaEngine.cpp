@@ -62,6 +62,7 @@ namespace Tramontana {
   using std::setprecision;
   using std::vector;
   using std::make_pair;
+  using Hurricane::Tabulation;
   using Hurricane::dbo_ptr;
   using Hurricane::UpdateSession;
   using Hurricane::DebugSession;
@@ -158,11 +159,22 @@ namespace Tramontana {
   { return _toolName; }
 
 
-  void  TramontanaEngine::extract ()
+  bool  TramontanaEngine::getSuccessState () const
+  {
+    bool  success = _openNets.empty() and _shortedNets.empty();
+    if (not doMergeSupplies()) {
+      success = success and (_powerNets.size() < 2) and (_groundNets.size() < 2);
+    }
+    return success;
+  }
+
+
+  void  TramontanaEngine::extract ( bool isTopLevel )
   {
     if (getDepth() == 0) {
-      cmess1 << "  o  Extracting " << getCell() << endl;
-      startMeasures();
+      if (cmess2.enabled())
+        cmess1 << "  o  Extracting " << getCell() << endl;
+      if (isTopLevel) startMeasures();
     }
 
     cdebug_log(160,0) << "EXTRACTING " << getCell() << endl;
@@ -171,13 +183,14 @@ namespace Tramontana {
       TramontanaEngine* extractor = TramontanaEngine::get( master );
       if (not extractor) {
         extractor = TramontanaEngine::create( master, getDepth()+1 );
-        extractor->extract();
+        extractor->extract( false );
         extractor->printSummary();
       }
     }
     _extract();
 
-    if (getDepth() == 0) {
+    if ((getDepth() == 0) and isTopLevel) {
+      printSummary();
       stopMeasures();
       printMeasures();
     }
@@ -186,28 +199,10 @@ namespace Tramontana {
 
   void  TramontanaEngine::_extract ()
   {
-    if (getDepth()) {
-      startMeasures();
-    }
-
     SweepLine sweepLine ( this );
     sweepLine.run();
     consolidate();
   //showEquipotentials();
-
-    if (getDepth()) {
-      stopMeasures();
-
-      ostringstream header;
-      ostringstream result;
-
-      header << "   ";
-      for ( size_t i=0 ; i<getDepth() ; ++i ) header << "  ";
-      header << "- " << getString( getCell()->getName() );
-      result <<         Timer::getStringTime  (getTimer().getCombTime()) 
-             << ", " << Timer::getStringMemory(getTimer().getIncrease());
-      cmess1 << Dots::asString( header.str(), result.str() ) << endl;
-    }
   }
 
 
@@ -222,9 +217,26 @@ namespace Tramontana {
 
   void  TramontanaEngine::printSummary () const
   {
+    if (not cmess2.enabled()) {
+      string reportCell = "  o  Extracting " + getString(getCell());
+      string status     = "nocheck";
+      if (getCell()->isExtractConsistent()) {
+        status = "success";
+        if (not getSuccessState())
+          status = "failed";
+      }
+      cmess1 << Dots::asString( reportCell, status ) << endl;
+      return;
+    }
+
+    if (not getCell()->isExtractConsistent()) {
+      cmess2 << "     o  No LVS summary for \"" << getCell()->getName() << "\" (inconsistent)." << endl;
+      return;
+    }
+
     ostringstream shortMessage;
     ostringstream openMessage;
-
+    
     for ( Equipotential* equi : _shortedNets ) {
       const Equipotential::NetMap& netMap = equi->getNets(); 
       shortMessage << "        - Short circuit between " << netMap.size() << " nets:\n";
@@ -265,13 +277,13 @@ namespace Tramontana {
       }
     }
 
-    cout << "     o  LVS summary for \"" << getCell()->getName() << "\"." << endl;
-    cout << Dots::asUInt  ("        - Power nets"    , _powerNets  .size()) << endl;
-    cout << Dots::asUInt  ("        - Ground nets"   , _groundNets .size()) << endl;
-    cout << Dots::asUInt  ("        - Short circuits", _shortedNets.size()) << endl;
-    cout << Dots::asUInt  ("        - Open circuits" , _openNets   .size()) << endl;
-    if (_shortedNets.size()) cout << shortMessage.str() << endl;
-    if (_openNets   .size()) cout <<  openMessage.str() << endl;
+    cmess2 << "     o  LVS summary for \"" << getCell()->getName() << "\"." << endl;
+    cmess2 << Dots::asUInt  ("        - Power nets"    , _powerNets  .size()) << endl;
+    cmess2 << Dots::asUInt  ("        - Ground nets"   , _groundNets .size()) << endl;
+    cmess2 << Dots::asUInt  ("        - Short circuits", _shortedNets.size()) << endl;
+    cmess2 << Dots::asUInt  ("        - Open circuits" , _openNets   .size()) << endl;
+    if (_shortedNets.size()) cmess2 << shortMessage.str() << endl;
+    if (_openNets   .size()) cmess2 <<  openMessage.str() << endl;
   }
   
 

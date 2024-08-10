@@ -23,11 +23,11 @@
 #include <QKeyEvent>
 #include <QGroupBox>
 #include <QVBoxLayout>
+#include <QSplitter>
 #include <QAction>
 #include <QModelIndex>
 #include "hurricane/Commons.h"
 #include "hurricane/viewer/Graphics.h"
-#include "tramontana/EquipotentialsModel.h"
 #include "tramontana/EquipotentialsWidget.h"
 
 
@@ -75,7 +75,9 @@ namespace Tramontana {
     , _baseModel            (new EquipotentialsModel(this))
     , _sortModel            (new QSortFilterProxyModel(this))
     , _filterModel          (new EquiFilterProxyModel(this))
+    , _openModel            (new OpenCircuitModel(this))
     , _view                 (new QTableView(this))
+    , _openCircuits         (new QTreeView(this))
     , _filterPatternLineEdit(new QLineEdit(this))
     , _equiDisplay          (new EquipotentialWidget(this))
     , _rowHeight            (20)
@@ -101,6 +103,10 @@ namespace Tramontana {
     _view->setSortingEnabled      ( true );
     _view->setModel               ( _sortModel );
 
+    _openCircuits->setSelectionBehavior( QAbstractItemView::SelectRows );
+    _openCircuits->setSelectionMode    ( QAbstractItemView::SingleSelection );
+    _openCircuits->setModel            (  _openModel );
+
     QHeaderView* horizontalHeader = _view->horizontalHeader();
     horizontalHeader->setDefaultAlignment  ( Qt::AlignHCenter );
     horizontalHeader->setMinimumSectionSize( (Graphics::isHighDpi()) ? 150 : 75 );
@@ -113,13 +119,22 @@ namespace Tramontana {
     QLabel* filterPatternLabel = new QLabel( tr("&Filter pattern:"), this );
     filterPatternLabel->setBuddy( _filterPatternLineEdit );
 
-    QGridLayout* gLayout = new QGridLayout();
+    QWidget*     equiTable = new QWidget();
+    QGridLayout* gLayout   = new QGridLayout();
     gLayout->addWidget( _view                 , 1, 0, 1, 2 );
     gLayout->addWidget( filterPatternLabel    , 2, 0 );
     gLayout->addWidget( _filterPatternLineEdit, 2, 1 );
-    gLayout->addWidget( _equiDisplay          , 3, 0, 1, 2 );
+    equiTable->setLayout( gLayout );
 
-    setLayout( gLayout );
+    QSplitter* splitter = new QSplitter ();
+    splitter->setOrientation( Qt::Vertical );
+    splitter->addWidget( equiTable );
+    splitter->addWidget( _equiDisplay );
+    splitter->addWidget( _openCircuits );
+
+    QVBoxLayout* vLayout = new QVBoxLayout();
+    vLayout->addWidget( splitter );
+    setLayout( vLayout );
 
     QAction* fitAction = new QAction( tr("&Fit to Equi"), this );
     fitAction->setShortcut ( QKeySequence(tr("CTRL+F")) );
@@ -130,6 +145,8 @@ namespace Tramontana {
            , this                   , SLOT  (textFilterChanged()) );                       
     connect( _view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&))
            , this                   , SLOT  (updateSelecteds (const QItemSelection&,const QItemSelection&)) );
+    connect( _openCircuits->selectionModel(), SIGNAL(selectionChanged   (const QItemSelection&,const QItemSelection&))
+           , this                           , SLOT  (updateSelectedsOpen(const QItemSelection&,const QItemSelection&)) );
     connect( fitAction, SIGNAL(triggered()), this, SLOT(fitToEqui()) );
 
     resize( 300, 300 );
@@ -271,6 +288,10 @@ namespace Tramontana {
     _view->setVisible( false );
     _view->selectionModel()->clear();
     _baseModel->setCell( cell );
+
+    TramontanaEngine* tramontana = nullptr;
+    if (cell) tramontana = TramontanaEngine::get( cell );
+    _openModel->setTramontana( tramontana );
      
     string windowTitle = "Equis" + getString(cell);
     setWindowTitle( tr(windowTitle.c_str()) );
@@ -289,6 +310,34 @@ namespace Tramontana {
       _view->sortByColumn( 0, Qt::DescendingOrder );
     }
     _view->setVisible( true );
+    _openCircuits->resizeColumnToContents( 0 );
+  }
+
+
+  void  EquipotentialsWidget::updateSelectedsOpen ( const QItemSelection& , const QItemSelection& )
+  {
+    if (not _cellWidget) return;
+
+    _cellWidget->openRefreshSession();
+    _cellWidget->unselectAll();
+    _cellWidget->setShowSelection( true );
+
+    QModelIndexList iList = _openCircuits->selectionModel()->selectedRows();
+    if (not iList.empty()) {
+      for ( int i=0 ; i<iList.size() ; i++ ) {
+        const OpenCircuitAbstractItem* item = reinterpret_cast<OpenCircuitAbstractItem*>( iList[i].internalPointer() );
+        if (item->getType() == OpenCircuitAbstractItem::TypeNet) {
+          const Net* net = item->getOpenCircuit().first;
+          emit netSelect ( Occurrence( net ));
+          emit reframe   ( item->getBoundingBox() );
+        } else if (item->getType() == OpenCircuitAbstractItem::TypeEqui) {
+          emit equipotentialSelect ( item->getEquipotential()->getFlatComponents() );
+          emit reframe ( item->getBoundingBox() );
+        }
+      }
+    }
+
+    _cellWidget->closeRefreshSession();
   }
 
 

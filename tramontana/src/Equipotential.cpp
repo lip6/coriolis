@@ -41,6 +41,7 @@
 #include "tramontana/Equipotential.h"
 #include "tramontana/EquipotentialRelation.h"
 #include "tramontana/EquipotentialComponents.h"
+#include "tramontana/ShortCircuit.h"
 #include "tramontana/TramontanaEngine.h"
 
 

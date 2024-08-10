@@ -798,27 +798,28 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyCell_isTerminal       , isTerminal       ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isTerminalNetlist, isTerminalNetlist,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUnique         , isUnique         ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUniquified     , isUniquified     ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUniquifyMaster , isUniquifyMaster ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isRouted         , isRouted         ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isPad            , isPad            ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isFeed           , isFeed           ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isDiode          , isDiode          ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isPowerFeed      , isPowerFeed      ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_updatePlacedFlag , updatePlacedFlag ,PyCell,Cell)
-//DirectGetLongAttribute(PyCell_getFlags         , getFlags         ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setRouted        , setRouted        ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setPad           , setPad           ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setFeed          , setFeed          ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setDiode         , setDiode         ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setPowerFeed     , setPowerFeed     ,PyCell,Cell)
-  DirectSetLongAttribute(PyCell_setFlags         , setFlags         ,PyCell,Cell)
-  DirectSetLongAttribute(PyCell_resetFlags       , resetFlags       ,PyCell,Cell)
-
-  GetBoundStateAttribute(PyCell_isPyBound        ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminal         , isTerminal         ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminalNetlist  , isTerminalNetlist  ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUnique           , isUnique           ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquified       , isUniquified       ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquifyMaster   , isUniquifyMaster   ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isExtractConsistent, isExtractConsistent,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isRouted           , isRouted           ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isPad              , isPad              ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isFeed             , isFeed             ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isDiode            , isDiode            ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isPowerFeed        , isPowerFeed        ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_updatePlacedFlag   , updatePlacedFlag   ,PyCell,Cell)
+//DirectGetLongAttribute(PyCell_getFlags           , getFlags           ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setRouted          , setRouted          ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setPad             , setPad             ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setFeed            , setFeed            ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setDiode           , setDiode           ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setPowerFeed       , setPowerFeed       ,PyCell,Cell)
+  DirectSetLongAttribute(PyCell_setFlags           , setFlags           ,PyCell,Cell)
+  DirectSetLongAttribute(PyCell_resetFlags         , resetFlags         ,PyCell,Cell)
+                                                   
+  GetBoundStateAttribute(PyCell_isPyBound          ,PyCell,Cell)
 
   // ---------------------------------------------------------------
   // PyCell Attribute Method table.
@@ -909,20 +910,21 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoFlags         ,"Flags_NoFlags");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildRings      ,"Flags_BuildRings");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildClockRings ,"Flags_BuildClockRings");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings,"Flags_BuildSupplyRings");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten  ,"Flags_NoClockFlatten");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::TerminalNetlist ,"Flags_TerminalNetlist");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Pad             ,"Flags_Pad");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Feed            ,"Flags_Feed");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Diode           ,"Flags_Diode");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::PowerFeed       ,"Flags_PowerFeed");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::FlattenedNets   ,"Flags_FlattenedNets");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::AbstractedSupply,"Flags_AbstractedSupply");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Placed          ,"Flags_Placed");
-    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Routed          ,"Flags_Routed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoFlags            ,"Flags_NoFlags");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildRings         ,"Flags_BuildRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildClockRings    ,"Flags_BuildClockRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings   ,"Flags_BuildSupplyRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten     ,"Flags_NoClockFlatten");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::TerminalNetlist    ,"Flags_TerminalNetlist");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Pad                ,"Flags_Pad");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Feed               ,"Flags_Feed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Diode              ,"Flags_Diode");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::PowerFeed          ,"Flags_PowerFeed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::FlattenedNets      ,"Flags_FlattenedNets");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::AbstractedSupply   ,"Flags_AbstractedSupply");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Placed             ,"Flags_Placed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Routed             ,"Flags_Routed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoExtractConsistent,"Flags_NoExtractConsistent");
   }
 
 

@@ -12,7 +12,7 @@
 // |  Second impl. :                    Jean-Paul CHAPUT             |
 // |  E-mail       :            Jean-Paul.Chaput@lip6.fr             |
 // | =============================================================== |
-// |  C++ Header   :  "./tramontana/ShortCircuitModel.h"             |
+// |  C++ Header   :  "./tramontana/OpenCircuitModel.h"              |
 // +-----------------------------------------------------------------+
 
 
@@ -31,35 +31,36 @@
 
 namespace Tramontana {
 
-  class ShortCircuit;
+  class OpenCircuit;
 
 
 // -------------------------------------------------------------------
-// Class  :  "Tramontana::ShortCircuitModel".
+// Class  :  "Tramontana::OpenCircuitModel".
 
-  class ShortCircuitModel : public QAbstractTableModel {
+  class OpenCircuitModel : public QAbstractTableModel {
       Q_OBJECT;
     public:
-                                 ShortCircuitModel ( QObject* parent=NULL );
-                                ~ShortCircuitModel ();
-                   void          setTramontana     ( TramontanaEngine* );
-             const TramontanaEngine::ShortedSet&
-                                 getShortedNets    () const;
-                   int           rowCount          ( const QModelIndex& parent=QModelIndex() ) const;
-                   int           columnCount       ( const QModelIndex& parent=QModelIndex() ) const;
-                   QVariant      data              ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
-                   QVariant      headerData        ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
-      inline       Tramontana*   getTramontana     ();
-             const ShortCircuit* getShortCircuit   ( int row );
+                                 OpenCircuitModel ( QObject* parent=NULL );
+                                ~OpenCircuitModel ();
+                   void          setTramontana    ( TramontanaEngine* );
+             const TramontanaEngine::OpenSet&
+                                 getOpenNets      () const;
+                   int           rowCount         ( const QModelIndex& parent=QModelIndex() ) const;
+                   int           columnCount      ( const QModelIndex& parent=QModelIndex() ) const;
+                   QVariant      data             ( const QModelIndex& index, int role=Qt::DisplayRole ) const;
+                   QVariant      headerData       ( int section, Qt::Orientation orientation, int role=Qt::DisplayRole ) const;
+      inline       Tramontana*   getTramontana    ();
+                   const Tramontana::OpenCircuit
+                                 getOpenCircuit   ( int row );
 
     private:
              TramontanaEngine* _tramontana;
   };
 
 
-  inline Tramontana* ShortCircuitModel::getTramontana () { return _tramontana; }
+  inline Tramontana* OpenCircuitModel::getTramontana () { return _tramontana; }
 
-  inline void  ShortCircuitModel::setTramontana ( Tramontana* tramontana )
+  inline void  OpenCircuitModel::setTramontana ( Tramontana* tramontana )
   {
     if (_tramontana != tramontana) {
       emit layoutAboutToBeChanged ();
