@@ -125,6 +125,62 @@ def setupLCMOS ( checkToolkit=None ):
             break
 
 
+def setupPhenitec600 ( checkToolkit=None ):
+    Where( checkToolkit )
+    ShellEnv().export()
+    cellsTop = Where.checkToolkit / 'cells'
+    if cellsTop is None:
+        cellsTop = Where.cellsTop
+    else:
+        if isinstance(cellsTop,str):
+            cellsTop = Path( cellsTop )
+
+    from ..         import Cfg 
+    from ..         import Viewer
+    from ..         import CRL 
+    from ..helpers  import overlay, l, u, n
+    from .yosys     import Yosys
+    import coriolis.technos.node600.phenitec
+
+    
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.misc.catchCore              = False
+        cfg.misc.info                   = False
+        cfg.misc.paranoid               = False
+        cfg.misc.bug                    = False
+        cfg.misc.logMode                = True
+        cfg.misc.verboseLevel1          = True
+        cfg.misc.verboseLevel2          = True
+        cfg.misc.minTraceLevel          = 1900
+        cfg.misc.maxTraceLevel          = 3000
+        cfg.katana.eventsLimit          = 1000000
+        cfg.katana.termSatReservedLocal = 6 
+        cfg.katana.termSatThreshold     = 9 
+        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
+        af  = CRL.AllianceFramework.get()
+        env = af.getEnvironment()
+        env.setCLOCK( '^ck$|m_clock|^clk' )
+
+        nsxlib  = cellsTop / 'nsxlib'
+        phlib80 = cellsTop / 'phlib80'
+        liberty = nsxlib   / 'nsxlib.lib'
+        env.addSYSTEM_LIBRARY( library=nsxlib .as_posix(), mode=CRL.Environment.Append )
+        env.addSYSTEM_LIBRARY( library=phlib80.as_posix(), mode=CRL.Environment.Append )
+        if not nsxlib.is_dir():
+            print( '[ERROR] technos.setupPhenitec600(): sxlib directory do *not* exists:' )
+            print( '        "{}"'.format(nsxlib.as_posix()) )
+
+    Yosys.setLiberty( liberty )
+    ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
+
+    path = None
+    for pathVar in [ 'PATH', 'path' ]:
+        if pathVar in os.environ:
+            path = os.environ[ pathVar ]
+            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
+            break
+
+
 def setupSky130_nsx2 ( checkToolkit=None ):
     Where( checkToolkit )
     ShellEnv().export()
