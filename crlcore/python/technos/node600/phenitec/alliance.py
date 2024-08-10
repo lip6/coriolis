@@ -53,5 +53,5 @@ env.setBLOCKAGE       ( 'blockage[Nn]et.*' )
 env.setPad            ( '.*_sp$'          )
 
 env.setWORKING_LIBRARY( '.' )
-env.addSYSTEM_LIBRARY ( library=cellsTop+'/nsxlib' , mode=Environment.Append )
-env.addSYSTEM_LIBRARY ( library=cellsTop+'/phlib80', mode=Environment.Append )
+#env.addSYSTEM_LIBRARY ( library=cellsTop+'/nsxlib' , mode=Environment.Append )
+#env.addSYSTEM_LIBRARY ( library=cellsTop+'/phlib80', mode=Environment.Append )

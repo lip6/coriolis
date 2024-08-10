@@ -214,7 +214,7 @@ def createStyles ( scale=1.0 ):
     style.addDrawingStyle( group='Viewer', name='phantom'       , color=toRGB('Seashell4'  ), border=1 )
    #style.addDrawingStyle( group='Viewer', name='boundaries'    , color=toRGB('208,199,192'), border=2, threshold=0 )
     style.addDrawingStyle( group='Viewer', name='boundaries'    , color=toRGB('wheat1')    , border=2, pattern='0000000000000000', threshold=0 )
-    style.addDrawingStyle( group='Viewer', name='marker'        , color=toRGB('80,250,80'  ), border=1 )
+    style.addDrawingStyle( group='Viewer', name='marker'        , color=toRGB('205,16,118'  ), border=8, pattern='0000000000000000' )
     style.addDrawingStyle( group='Viewer', name='selectionDraw' , color=toRGB('White'      ), border=1 )
     style.addDrawingStyle( group='Viewer', name='selectionFill' , color=toRGB('White'      ), border=1 )
     style.addDrawingStyle( group='Viewer', name='grid'          , color=toRGB('White'      ), border=1, threshold=8.0*scale )
