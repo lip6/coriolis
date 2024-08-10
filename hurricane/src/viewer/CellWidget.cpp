@@ -789,11 +789,10 @@ namespace Hurricane {
       rectangle = _cellWidget->dbuToScreenRect ( bb );
     //rectangle.adjust ( 10, 10, 10, 10 );
 
+      QPoint point = _cellWidget->dbuToScreenPoint ( reference->getPoint() );
       if ( reference->getType() == Reference::Position ) {
-        QPoint point = _cellWidget->dbuToScreenPoint ( reference->getPoint() );
-        rectangle.translate ( point.x() - rectangle.x(), point.y() - rectangle.y() );
-
-        flags |= Left;
+      //rectangle.translate ( point.x() - rectangle.x(), point.y() - rectangle.y() );
+      //flags |= Left;
       } else {
         flags |= Center/*|Rounded*/;
       }
@@ -802,11 +801,11 @@ namespace Hurricane {
       _cellWidget->drawDisplayText ( rectangle, refName, flags );
 
       if ( reference->getType() == Reference::Position ) {
-        QPoint losange [5] = { QPoint(rectangle.x()  ,rectangle.y()-6)
-                             , QPoint(rectangle.x()-6,rectangle.y()  )
-                             , QPoint(rectangle.x()  ,rectangle.y()+6)
-                             , QPoint(rectangle.x()+6,rectangle.y()  )
-                             , QPoint(rectangle.x()  ,rectangle.y()-6)
+        QPoint losange [5] = { QPoint(point.x()  ,point.y()-6)
+                             , QPoint(point.x()-6,point.y()  )
+                             , QPoint(point.x()  ,point.y()+6)
+                             , QPoint(point.x()+6,point.y()  )
+                             , QPoint(point.x()  ,point.y()-6)
                              };
         _cellWidget->drawScreenPolyline ( losange, 5, 2 );
       }
