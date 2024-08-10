@@ -29,6 +29,7 @@
 #include "hurricane/viewer/CellWidget.h"
 #include "tramontana/EquipotentialsModel.h"
 #include "tramontana/EquipotentialWidget.h"
+#include "tramontana/OpenCircuitWidget.h"
 
 
 class QSortFilterProxyModel;
@@ -171,6 +172,7 @@ namespace Tramontana {
               void         blockAllSignals       ( bool );
     signals:                              
               void         selectionModeChanged  ();
+              void         netSelect             ( Occurrence );
               void         equipotentialSelect   ( Occurrences );
               void         equipotentialUnselect ( Occurrences );
               void         reframe               ( const Box& );
@@ -179,6 +181,7 @@ namespace Tramontana {
     private slots:                        
               void         textFilterChanged     ();
               void         updateSelecteds       ( const QItemSelection& , const QItemSelection& );
+              void         updateSelectedsOpen   ( const QItemSelection& , const QItemSelection& );
               void         fitToEqui             ();
     private:
               CellWidget*             _cellWidget;
@@ -186,7 +189,9 @@ namespace Tramontana {
               EquipotentialsModel*    _baseModel;
               QSortFilterProxyModel*  _sortModel;
               EquiFilterProxyModel*   _filterModel;
+              OpenCircuitModel*       _openModel;
               QTableView*             _view;
+              QTreeView*              _openCircuits;
               QLineEdit*              _filterPatternLineEdit;
               EquipotentialWidget*    _equiDisplay;
               int                     _rowHeight;

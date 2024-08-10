@@ -146,7 +146,7 @@ extern "C" {
     HTRY
     METHOD_HEAD("TramontanaEngine.extract()")
     if (tramontana->getViewer()) {
-      if (ExceptionWidget::catchAllWrapper( std::bind(&TramontanaEngine::extract,tramontana) )) {
+      if (ExceptionWidget::catchAllWrapper( std::bind(&TramontanaEngine::extract,tramontana,true) )) {
         PyErr_SetString( HurricaneError, "TramontanaEngine::extract() has thrown an exception (C++)." );
         return NULL;
       }
@@ -161,6 +161,7 @@ extern "C" {
   // Standart Accessors (Attributes).
   DirectVoidToolMethod(TramontanaEngine,tramontana,printConfiguration)
   DirectVoidToolMethod(TramontanaEngine,tramontana,printSummary)
+  DirectGetBoolAttribute(PyTramontanaEngine_getSuccessState,getSuccessState,PyTramontanaEngine,TramontanaEngine)
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyTramontanaEngine_destroy,PyTramontanaEngine)
@@ -181,6 +182,8 @@ extern "C" {
                                    , "Display the extraction parameters." }
     , { "printSummary"             , (PyCFunction)PyTramontanaEngine_printSummary            , METH_NOARGS
                                    , "Report the extraction results." }
+    , { "getSuccessState"          , (PyCFunction)PyTramontanaEngine_getSuccessState         , METH_NOARGS
+                                   , "Returns True if the extraction+LVS has been successful." }
     , {NULL, NULL, 0, NULL}        /* sentinel */
     };
 

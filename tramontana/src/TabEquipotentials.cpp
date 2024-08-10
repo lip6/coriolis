@@ -105,12 +105,14 @@ namespace Tramontana {
     if (state) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
       getCellWidget()->setShowSelection( true );
+      connect( _browser, SIGNAL(netSelect            (Occurrence )), getCellWidget(), SLOT(select  (Occurrence )) );
       connect( _browser, SIGNAL(equipotentialSelect  (Occurrences)), getCellWidget(), SLOT(select  (Occurrences)) );
       connect( _browser, SIGNAL(equipotentialUnselect(Occurrences)), getCellWidget(), SLOT(unselect(Occurrences)) );
       _browser->updateSelecteds();
     } else {
       getCellWidget()->setShowSelection( false );
       getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
+      _browser->disconnect( getCellWidget(), SLOT(select  (Occurrence )) );
       _browser->disconnect( getCellWidget(), SLOT(select  (Occurrences)) );
       _browser->disconnect( getCellWidget(), SLOT(unselect(Occurrences)) );
     }

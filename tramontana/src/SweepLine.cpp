@@ -179,21 +179,21 @@ namespace Tramontana {
       Tile*     tile     = element.getTile();
       TileIntv  tileIntv ( tile, tile->getYMin(), tile->getYMax() );
 
-      if (tty::enabled()) {
-        cmess2 << "        <tile:" << tty::bold << right << setw(10) << setfill('0')
-               << processedTiles << tty::reset
-               << " remains:" << right << setw(10) << setfill('0')
-               << (_tiles.size() - processedTiles)
-               << setfill(' ') << tty::reset << ">" << tty::cr;
-        cmess2.flush ();
-      } else {
-        cmess2 << "        <tile:" << right << setw(10) << setfill('0')
-               << processedTiles << tty::reset
-               << " remains:" << right << setw(10) << setfill('0')
-               << (_tiles.size() - processedTiles)
-               << setfill(' ') << "> " << tile << endl;
-        cmess2.flush ();
-      }
+      // if (tty::enabled()) {
+      //   cmess2 << "        <tile:" << tty::bold << right << setw(10) << setfill('0')
+      //          << processedTiles << tty::reset
+      //          << " remains:" << right << setw(10) << setfill('0')
+      //          << (_tiles.size() - processedTiles)
+      //          << setfill(' ') << tty::reset << ">" << tty::cr;
+      //   cmess2.flush ();
+      // } else {
+      //   cmess2 << "        <tile:" << right << setw(10) << setfill('0')
+      //          << processedTiles << tty::reset
+      //          << " remains:" << right << setw(10) << setfill('0')
+      //          << (_tiles.size() - processedTiles)
+      //          << setfill(' ') << "> " << tile << endl;
+      //   cmess2.flush ();
+      // }
 
       // if (tile->getOccurrence().getEntity()->getId() == 3348) {
       //   DebugSession::open( 160, 169 );

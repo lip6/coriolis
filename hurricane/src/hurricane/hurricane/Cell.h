@@ -96,6 +96,7 @@ class Cell : public Entity {
                   , Routed                  = (1 << 28)
                   , SlavedAb                = (1 << 29)
                   , Materialized            = (1 << 30) 
+                  , NoExtractConsistent     = (1 << 31) 
                   };
 
       public:
@@ -494,6 +495,7 @@ class Cell : public Entity {
     public: bool isAbstractedSupply() const {return _flags.isset(Flags::AbstractedSupply);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
+    public: bool isExtractConsistent() const {return not _flags.isset(Flags::NoExtractConsistent);};
     public: bool isNetAlias(const Name& name) const;
 
 // Updators
@@ -510,6 +512,7 @@ class Cell : public Entity {
     public: void setPowerFeed(bool state) {_flags.set(Flags::PowerFeed,state);};
     public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
     public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
+    public: void setNoExtractConsistent(bool state) { _flags.set(Flags::NoExtractConsistent,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, const std::set<std::string>& excludeds, uint64_t flags=Flags::BuildRings);

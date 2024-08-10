@@ -54,10 +54,12 @@ namespace {
 
   using namespace std;
   using Hurricane::Error;
+  using Hurricane::DBo;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::Instance;
   using Hurricane::Segment;
   using Hurricane::Plug;
   using Katana::Session;
@@ -111,6 +113,30 @@ namespace {
     masterState->setSymNet (  slaveNet );
   }
 #endif
+
+
+  void  rsetNoExtractFlag ( Cell* cell, size_t depth=0 )
+  {
+    static set<Cell*,DBo::CompareById> processeds;
+
+    if (not depth) processeds.clear();
+    else {
+      if (processeds.find(cell) != processeds.end()) return;
+      processeds.insert( cell );
+    }
+    cerr << "Look for depth=" << depth << " " << cell << endl;
+
+    if (cell->isRouted() or cell->isTerminalNetlist()) return;
+    if (depth) {
+      cell->setNoExtractConsistent( true );
+      cerr << "FLAG " << cell << " " << cell->isExtractConsistent() << endl;
+    }
+
+    for ( Instance* instance : cell->getInstances() )
+      rsetNoExtractFlag( instance->getMasterCell(), depth+1 );
+
+    if (not depth) processeds.clear();
+  }
 
 
 }  // Anonymous namespace.
@@ -213,6 +239,7 @@ namespace Katana {
 
   // Flute: load POWV9.dat & POST9.dat
     Flute::readLUT( System::getPath( "coriolis_top" ).toString() );
+    rsetNoExtractFlag( getCell() );
   }
 
 
@@ -320,7 +347,6 @@ namespace Katana {
     }
     
     KatanaEngine* katana = new KatanaEngine ( cell );
-
     katana->_postCreate();
 
     return katana;
