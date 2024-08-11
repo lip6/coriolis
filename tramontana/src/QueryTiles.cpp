@@ -90,7 +90,7 @@ namespace Tramontana {
 
     BasicLayer* cutLayer = component->getLayer()->getBasicLayers().getFirst();
     if (cutLayer->getMaterial() == BasicLayer::Material::cut) {
-      const SweepLine::LayerSet& connexSet = _sweepLine->getCutConnexLayers( cutLayer );
+      const TramontanaEngine::LayerSet& connexSet = _sweepLine->getCutConnexLayers( cutLayer );
       for ( const BasicLayer* connexLayer : connexSet ) {
         Tile* tile = Tile::create( occurrence
                                  , connexLayer

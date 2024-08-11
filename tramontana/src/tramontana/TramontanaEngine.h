@@ -49,9 +49,11 @@ namespace Tramontana {
     public:
       const    uint32_t    DestroyStage = (1 << 0);
       typedef  ToolEngine  Super;
-      typedef  std::map<Net*, EquipotentialSet, DBo::CompareById>  OpenSet;
-      typedef  std::set<Equipotential*,DBo::CompareById>           ShortedSet;
-      typedef  OpenSet::value_type                                 OpenCircuit;
+      typedef  std::set<const BasicLayer*,           DBo::CompareById>  LayerSet;
+      typedef  std::map<const BasicLayer*, LayerSet, DBo::CompareById>  ConnexityMap;
+      typedef  std::map<Net*, EquipotentialSet, DBo::CompareById>       OpenSet;
+      typedef  std::set<Equipotential*,DBo::CompareById>                ShortedSet;
+      typedef  OpenSet::value_type                                      OpenCircuit;
     public:
       static  const Name&              staticGetName      ();
       static  TramontanaEngine*        create             ( Cell*, uint32_t depth=0 );
@@ -68,6 +70,12 @@ namespace Tramontana {
                     bool               getSuccessState    () const;
       inline        void               setViewer          ( CellViewer* );
       inline        CellViewer*        getViewer          ();
+      inline  const std::vector<const BasicLayer*>&
+                                       getExtracteds      () const;
+      inline        Layer::Mask        getExtractedMask   () const;
+              const LayerSet&          getCutConnexLayers ( const BasicLayer* ) const;
+                    bool               isExtractable      ( const Layer* ) const;
+                    bool               isExtractable      ( const Net* ) const;
                     void               extract            ( bool isTopLevel=true );
                     void               _extract           ();
                     void               consolidate        ();
@@ -80,18 +88,23 @@ namespace Tramontana {
       virtual       std::string        _getString         () const;
       virtual       std::string        _getTypeName       () const;
     private:                          
+                    void               _buildCutConnexMap ();
+    private:                          
     // Attributes.                    
       static  Name                     _toolName;
     private:                         
-              Configuration*               _configuration;
-              CellViewer*                  _viewer;
-              uint32_t                     _depth;
-              uint32_t                     _flags;
+              Configuration*                  _configuration;
+              std::vector<const BasicLayer*>  _extracteds;
+              Layer::Mask                     _extractedsMask;
+              ConnexityMap                    _connexityMap;
+              CellViewer*                     _viewer;
+              uint32_t                        _depth;
+              uint32_t                        _flags;
               std::set<Equipotential*,DBo::CompareById>  _equipotentials;
-              OpenSet                      _openNets;
-              ShortedSet                   _shortedNets;
-              std::vector<Equipotential*>  _powerNets;
-              std::vector<Equipotential*>  _groundNets;
+              OpenSet                         _openNets;
+              ShortedSet                      _shortedNets;
+              std::vector<Equipotential*>     _powerNets;
+              std::vector<Equipotential*>     _groundNets;
     protected:
     // Constructors & Destructors.
                                 TramontanaEngine ( Cell*, uint32_t depth );
@@ -109,6 +122,9 @@ namespace Tramontana {
   inline Configuration* TramontanaEngine::getConfiguration   () const { return _configuration; }
   inline void           TramontanaEngine::setViewer          ( CellViewer* viewer ) { _viewer=viewer; }
   inline CellViewer*    TramontanaEngine::getViewer          () { return _viewer; }
+  inline  const std::vector<const BasicLayer*>&
+                        TramontanaEngine::getExtracteds      () const { return _extracteds; }
+  inline  Layer::Mask   TramontanaEngine::getExtractedMask   () const { return _extractedsMask; }
   inline uint32_t       TramontanaEngine::getDepth           () const { return _depth; }
   inline const std::set<Equipotential*,DBo::CompareById>        
                         TramontanaEngine::getEquipotentials  () const { return _equipotentials; }

@@ -268,9 +268,11 @@ namespace Tramontana {
         }
         return false;
       }
+      TramontanaEngine* tramontana = TramontanaEngine::get( _owner );
       uint32_t compCount = 0;
       for ( Component* component : comp->getNet()->getComponents() ) {
         if (dynamic_cast<Plug*>(component)) continue;
+        if (not tramontana->isExtractable(component->getLayer())) continue;
         ++compCount;
       }
       _nets.insert( make_pair( comp->getNet(), make_pair(1,compCount) ));

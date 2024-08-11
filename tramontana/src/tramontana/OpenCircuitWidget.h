@@ -113,7 +113,7 @@ namespace Tramontana {
       virtual QVariant                  data               ( int column ) const;
       virtual Box                       getBoundingBox     () const;
       virtual const TramontanaEngine::OpenCircuit&
-                                       getOpenCircuit      () const;
+                                        getOpenCircuit     () const;
       virtual std::string               _getString         () const;
     private:
       const TramontanaEngine::OpenCircuit    _openCircuit;

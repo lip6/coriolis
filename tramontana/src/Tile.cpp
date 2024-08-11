@@ -106,7 +106,7 @@ namespace Tramontana {
     , _rank          (0)
     , _timeStamp     (0)
   {
-    cdebug_log(160,0) << "Tile::Tile() " << this << endl;
+    cdebug_log(165,0) << "Tile::Tile() " << this << endl;
     _allocateds.push_back( this );
     if (occurrence.getPath().isEmpty()) {
       if (not occurrence.getEntity()) {
@@ -173,38 +173,44 @@ namespace Tramontana {
                      ) << endl;
         return nullptr;
       }
-      // if (rectilinear->getId() == 3367) {
-      //   DebugSession::open( 160, 169 );
-      //   cdebug_log(160,0) << "Tiling: " << rectilinear << endl;
-      // }
       vector<Box> boxes;
       rectilinear->getAsRectangles( boxes );
       for ( Box bb : boxes ) {
         occurrence.getPath().getTransformation().applyOn( bb );
+        if (bb.isEmpty()) {
+          throw Error( "Tile::create(): Empty tile box when decomposing Rectilinear.\n"
+                       "        On: %s"
+                     , getString(occurrence).c_str() );
+        }
         Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
         sweepLine->add( tile );
-        cdebug_log(160,0) << "| " << tile << endl;
+        cdebug_log(165,0) << "| " << tile << endl;
         if (not rootTile) rootTile = tile;
       }
-      // if (rectilinear->getId() == 3367) {
-      //   DebugSession::close();
-      // }
       return rootTile;
     }
 
-    Box bb = component->getBoundingBox( layer );
+    Box bb;
+    if (flags & ForceLayer) bb = component->getBoundingBox();
+    else                    bb = component->getBoundingBox( layer );
     occurrence.getPath().getTransformation().applyOn( bb );
 
+    if (bb.isEmpty()) {
+      throw Error( "Tile::create(): Empty tile box when processing Component.\n"
+                 "        On: %s"
+                 , getString(occurrence).c_str() );
+    }
     Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
     sweepLine->add( tile );
+
     return tile;
   }
 
 
   void  Tile::destroy ()
   {
-    cdebug_log(160,1) << "Tile::destroy() " << this << endl;
-    cdebug_tabw(160,-1);
+    cdebug_log(165,1) << "Tile::destroy() " << this << endl;
+    cdebug_tabw(165,-1);
   }
 
 
@@ -222,13 +228,13 @@ namespace Tramontana {
 
   Tile* Tile::getRoot ( uint32_t flags )
   {
-    cdebug_log(160,1) << "Tile::getRoot() " << this << endl;
-    cdebug_log(160,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
+    cdebug_log(165,1) << "Tile::getRoot() " << this << endl;
+    cdebug_log(165,0) << "+ " << (getEquipotential() ? getString(getEquipotential()) : "equi=NULL") << endl;
     if (not getParent()) {
       if ((flags & MakeLeafEqui) and not getEquipotential()) {
         newEquipotential();
       }
-      cdebug_tabw(160,-1);
+    //cdebug_tabw(165,-1);
       return this;
     }
     
@@ -236,7 +242,7 @@ namespace Tramontana {
     while ( root->getParent() ) {
       // if (flags & MergeEqui) {
       //   if (not root->getParent()->getEquipotential() and root->getEquipotential()) {
-      //     cdebug_log(160,0) << "| tile has no equi, immediate merge" << endl;
+      //     cdebug_log(165,0) << "| tile has no equi, immediate merge" << endl;
       //     root->getParent()->setEquipotential( root->getEquipotential() );
       //     root->getEquipotential()->add( root->getParent()->getOccurrence ()
       //                                  , root->getParent()->getBoundingBox() );
@@ -244,9 +250,9 @@ namespace Tramontana {
       //   }
       // }
       root = root->getParent();
-      cdebug_log(160,0) << "| parent " << root << endl;
+      cdebug_log(165,0) << "| parent " << root << endl;
     }
-    cdebug_log(160,0) << "> root " << root << " "
+    cdebug_log(165,0) << "> root " << root << " "
                       << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
 
 
@@ -259,7 +265,7 @@ namespace Tramontana {
       Tile* current = this;
       while ((current != root) and current) {
         if (current->isUpToDate()) {
-          cdebug_log(160,0) << "> Up to date current: tid=" << current->getId() << endl;
+          cdebug_log(165,0) << "> Up to date current: tid=" << current->getId() << endl;
           break;
         }
         root->_mergeEqui( current );
@@ -276,7 +282,7 @@ namespace Tramontana {
       }
     }
 
-    cdebug_tabw(160,-1);
+  //cdebug_tabw(165,-1);
     return root;
   }
 
