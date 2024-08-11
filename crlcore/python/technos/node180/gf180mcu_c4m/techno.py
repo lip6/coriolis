@@ -202,6 +202,21 @@ def _setup_techno():
         gds2Layer=112, gds2DataType=1,
     )
 
+    # ContactLayers
+    # Substrate<>Contact<>Metal1
+    createVia(
+        tech, 'Poly2_Contact_Metal1', 'Poly2', 'Contact', 'Metal1',
+        u(0.22),
+    )
+    createVia(
+        tech, 'Nplus_Contact_Metal1', 'Nplus', 'Contact', 'Metal1',
+        u(0.22),
+    )
+    createVia(
+        tech, 'Pplus_Contact_Metal1', 'Pplus', 'Contact', 'Metal1',
+        u(0.22),
+    )
+
     # ViaLayers
     # Metal1<>Via1<>Metal2
     createVia(
@@ -312,7 +327,7 @@ def _setup_display():
     style.addDrawingStyle( group='Viewer', name='rubber'        , color=toRGB('192,0,192'  ), border=4, threshold=0.02 )
     style.addDrawingStyle( group='Viewer', name='phantom'       , color=toRGB('Seashell4'  ), border=1 )
     style.addDrawingStyle( group='Viewer', name='boundaries'    , color=toRGB('wheat1'     ), border=2, pattern='0000000000000000', threshold=0 )
-    style.addDrawingStyle( group='Viewer', name='marker'        , color=toRGB('80,250,80'  ), border=1 )
+    style.addDrawingStyle( group='Viewer', name='marker'        , color=toRGB('80,250,80'  ), border=2, pattern='0000000000000000' )
     style.addDrawingStyle( group='Viewer', name='selectionDraw' , color=toRGB('White'      ), border=1 )
     style.addDrawingStyle( group='Viewer', name='selectionFill' , color=toRGB('White'      ), border=1 )
     style.addDrawingStyle( group='Viewer', name='grid'          , color=toRGB('White'      ), border=1, threshold=2.0 )
