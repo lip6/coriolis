@@ -159,7 +159,8 @@ namespace Tramontana {
   {
     if (column != 0) return QVariant();
     
-    string  text   = getString(_childs.size()-1) + " open(s) on \"" + getString(_openCircuit.first->getName()) + "\"";
+    string  text   = (_childs.empty() ? "N/A" : getString(_childs.size()-1))
+                   + " open(s) on \"" + getString(_openCircuit.first->getName()) + "\"";
     QString openNb = QString( text.c_str() );
     return QVariant( openNb );
   }

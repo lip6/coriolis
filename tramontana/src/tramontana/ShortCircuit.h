@@ -18,11 +18,13 @@
 
 
 #pragma  once
+#include "hurricane/Warning.h"
 #include "tramontana/Equipotential.h"
 
 
 namespace Tramontana {
 
+  using Hurricane::Warning;
   using Hurricane::Record;
   using Hurricane::Box;
   using Hurricane::DBo;
@@ -47,7 +49,7 @@ namespace Tramontana {
       static inline const ShortingEquis& getShortingEquis    ( const Cell* );
       static inline const void           removeShortingEquis ( const Cell* );
     public:
-      inline                ShortCircuit    ( Occurrence, Occurrence );
+                            ShortCircuit    ( Occurrence, Occurrence );
       inline               ~ShortCircuit    ();
       inline bool           isTopLevelA     () const;
       inline bool           isTopLevelB     () const;
@@ -74,44 +76,6 @@ namespace Tramontana {
       Occurrence _occurrenceB;
       DRCError*  _overlap;
   };
-
-
-  inline ShortCircuit::ShortCircuit ( Occurrence occA, Occurrence occB )
-    : _occurrenceA(occA)
-    , _occurrenceB(occB)
-    , _overlap    (nullptr)
-  {
-    if (       occB.getPath().isEmpty()
-       and not occA.getPath().isEmpty()) {
-      _occurrenceA = occB;
-      _occurrenceB = occA;
-    }
-
-    Cell* cell = occA.getOwnerCell();
-    if (_shortsByCells.find(cell) == _shortsByCells.end())
-      _shortsByCells.insert( make_pair( cell, ShortingEquis() ) );
-    ShortingEquis& shortingEquis = _shortsByCells.find( cell )->second;
-    
-    if (not isTopLevelA()) {
-      Equipotential* equi = dynamic_cast<Equipotential*>( getEquiA().getEntity() );
-      auto iequi = shortingEquis.find( equi );
-      if (iequi == shortingEquis.end())
-        shortingEquis[ equi ] = 1;
-      else
-        iequi->second++;
-    }
-
-    if (not isTopLevelB()) {
-      Equipotential* equi = dynamic_cast<Equipotential*>( getEquiB().getEntity() );
-      auto iequi = shortingEquis.find( equi );
-      if (iequi == shortingEquis.end())
-        shortingEquis[ equi ] = 1;
-      else
-        iequi->second++;
-    }
-
-    _overlap = DRCError::create( _occurrenceA.getOwnerCell(), "Short", getShortingBox() );
-  }
 
   inline ShortCircuit::~ShortCircuit ()
   { _overlap->destroy(); }
@@ -144,7 +108,7 @@ namespace Tramontana {
   inline Component*  ShortCircuit::getComponentB  () const { return (dynamic_cast<Component*>( _occurrenceB.getEntity() )); }
   inline Occurrence  ShortCircuit::getEquiA       () const { return Equipotential::getChildEqui( _occurrenceA ); }
   inline Occurrence  ShortCircuit::getEquiB       () const { return Equipotential::getChildEqui( _occurrenceB ); }
-  inline Box         ShortCircuit::getShortingBox () const { return getBoundingBoxA().getIntersection( getBoundingBoxB() ); }
+  inline Box         ShortCircuit::getShortingBox () const { return _overlap->getBoundingBox(); }
 
   inline Box  ShortCircuit::getBoundingBoxA () const
   {

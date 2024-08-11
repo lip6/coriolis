@@ -87,82 +87,13 @@ namespace Tramontana {
 
   SweepLine::SweepLine ( TramontanaEngine* tramontana  )
     : _tramontana    (tramontana) 
-    , _extracteds    ()
-    , _extractedsMask()
-    , _connexityMap  ()
     , _tiles         ()
     , _intervalTrees ()
-  {
-    for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-    // HARDCODED. Should read the gauge.
-      if (getString(bl->getName()).substr(0,6) == "gmetal") continue;
-      if (  (bl->getMaterial() == BasicLayer::Material::metal)
-         or (bl->getMaterial() == BasicLayer::Material::poly)
-         or (bl->getMaterial() == BasicLayer::Material::cut)) {
-        _extracteds.push_back( bl );
-        _extractedsMask |= bl->getMask();
-      }
-    }
-    _buildCutConnexMap();
-    
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal3" ));
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal2" ));
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" ));
-    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "poly"   ));
-  }
+  { }
 
 
   SweepLine::~SweepLine ()
   { }
-
-
-  void  SweepLine::_buildCutConnexMap ()
-  {
-    for ( const ViaLayer* viaLayer : DataBase::getDB()->getTechnology()->getViaLayers() ) {
-      const BasicLayer* cutLayer = nullptr;
-      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
-        if (layer->getMaterial() == BasicLayer::Material::cut) {
-          cutLayer = layer;
-          break;
-        }
-      }
-      if (not cutLayer) {
-        cerr << Error( "SweepLine::_buildConnexityMap(): ViaLayer \"%s\" does not contains any *cut* (ignored)."
-                     , getString(viaLayer->getName()).c_str()
-                     ) << endl;
-        continue;
-      }
-      auto iCutMap = _connexityMap.find( cutLayer );
-      if (iCutMap == _connexityMap.end()) {
-        _connexityMap.insert( make_pair( cutLayer, LayerSet() ));
-        iCutMap = _connexityMap.find( cutLayer );
-      }
-      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
-        if (   (layer->getMaterial() != BasicLayer::Material::cut)
-           and (_extractedsMask.intersect(layer->getMask())) ) {
-          iCutMap->second.insert( layer );
-        }
-      }
-    }
-    // for ( auto item : _connexityMap ) {
-    //   cerr << "BasicLayers connex to cut: " << item.first << endl;
-    //   for ( const BasicLayer* bl : item.second ) {
-    //     cerr << "| " << bl << endl;
-    //   }
-    // }
-  }
-
-  
-  const SweepLine::LayerSet&  SweepLine::getCutConnexLayers ( const BasicLayer* cutLayer ) const
-  {
-    static LayerSet emptySet;
-    auto iCutMap = _connexityMap.find( cutLayer );
-    if (iCutMap == _connexityMap.end())
-      return emptySet;
-    return iCutMap->second;
-  }
   
 
   void  SweepLine::run ()
@@ -174,6 +105,7 @@ namespace Tramontana {
   //bool debugOn = false;
   //bool written = false;
     size_t processedTiles = 0;
+    DbU::Unit xSweepLine = DbU::Min;
     for ( Element& element : _tiles ) {
       processedTiles++;
       Tile*     tile     = element.getTile();
@@ -195,9 +127,6 @@ namespace Tramontana {
       //   cmess2.flush ();
       // }
 
-      // if (tile->getOccurrence().getEntity()->getId() == 3348) {
-      //   DebugSession::open( 160, 169 );
-      // }
       // if (getString(tile->getNet()->getName()) == "a(13)") {
       //   cerr << tile << endl;
       // }
@@ -209,6 +138,17 @@ namespace Tramontana {
       //   debugOn = false;
       //   DebugSession::close();
       // }
+      // if (_tramontana->getCell()->getId() == 475085) {
+      //   if (element.isLeftEdge()) {
+      //     if (tile->getLeftEdge() != xSweepLine) {
+      //       if (xSweepLine > tile->getLeftEdge())
+      //         cerr << "sweep line going backward !" << endl;
+      //       xSweepLine = tile->getLeftEdge();
+      //       cerr << "Sweepline @" << DbU::getValueString(xSweepLine) << endl;
+      //     }
+      //   }
+      // }
+      
       cdebug_log(160,1) << "X@ + " << DbU::getValueString(element.getX()) << " " << tile << endl;
       auto  intvTree = _intervalTrees.find( element.getMask() );
       if (intvTree == _intervalTrees.end()) {
@@ -313,12 +253,12 @@ namespace Tramontana {
   {
   //cerr << "SweepLine::loadTiles()" << endl;
 
-    for ( const BasicLayer* layer : _extracteds ) {
+    for ( const BasicLayer* layer : getExtracteds() ) {
       _intervalTrees.insert( make_pair( layer->getMask(), TileIntvTree() ));
     }
 
     QueryTiles query ( this );
-    for ( const BasicLayer* layer : _extracteds ) {
+    for ( const BasicLayer* layer : getExtracteds() ) {
       query.setBasicLayer( layer );
       query.doQuery();
     }

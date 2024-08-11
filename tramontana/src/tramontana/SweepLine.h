@@ -45,10 +45,7 @@ namespace Tramontana {
 
   class SweepLine {
     private:
-      typedef  std::map<Layer::Mask, TileIntvTree>            IntervalTrees;
-    public:
-      typedef  std::set<const BasicLayer*,           DBo::CompareById>  LayerSet;
-      typedef  std::map<const BasicLayer*, LayerSet, DBo::CompareById>  ConnexityMap;
+      typedef  std::map<Layer::Mask, TileIntvTree>  IntervalTrees;
     private:
       class Element {
         public:
@@ -72,7 +69,8 @@ namespace Tramontana {
       inline  const std::vector<const BasicLayer*>&
                                 getExtracteds       () const;
       inline  Layer::Mask       getExtractedMask    () const;
-              const LayerSet&   getCutConnexLayers  ( const BasicLayer* ) const;
+      inline  const TramontanaEngine::LayerSet&
+                                getCutConnexLayers  ( const BasicLayer* ) const;
               void              run                 ();
               void              loadTiles           ();
               void              deleteTiles         ();
@@ -84,12 +82,8 @@ namespace Tramontana {
     private:                                        
                                 SweepLine           ( const SweepLine& ) = delete;
               SweepLine&        operator=           ( const SweepLine& ) = delete;
-              void              _buildCutConnexMap  ();
     private:
       TramontanaEngine*               _tramontana;
-      std::vector<const BasicLayer*>  _extracteds;
-      Layer::Mask                     _extractedsMask;
-      ConnexityMap                    _connexityMap;
       std::vector<Element>            _tiles;
       IntervalTrees                   _intervalTrees;
   };
@@ -119,9 +113,12 @@ namespace Tramontana {
 
   
 // SweepLine.  
-  inline  Cell* SweepLine::getCell () { return _tramontana->getCell(); }
-  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds    () const { return _extracteds; }
-  inline  Layer::Mask                           SweepLine::getExtractedMask () const { return _extractedsMask; }
+  inline        Cell*                           SweepLine::getCell            () { return _tramontana->getCell(); }
+  inline        Layer::Mask                     SweepLine::getExtractedMask   () const { return _tramontana->getExtractedMask(); }
+  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds      () const { return _tramontana->getExtracteds(); }
+
+  inline  const TramontanaEngine::LayerSet& SweepLine::getCutConnexLayers ( const BasicLayer* cutLayer ) const
+  { return _tramontana->getCutConnexLayers( cutLayer ); }
 
   inline  void  SweepLine::add ( Tile* tile )
   {

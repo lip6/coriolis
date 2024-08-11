@@ -28,7 +28,11 @@
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/Timer.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Layer.h"
+#include "hurricane/ViaLayer.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Plug.h"
@@ -74,7 +78,10 @@ namespace Tramontana {
   using Hurricane::Breakpoint;
   using Hurricane::Timer;
   using Hurricane::Box;
+  using Hurricane::DataBase;
+  using Hurricane::Technology;
   using Hurricane::Layer;
+  using Hurricane::ViaLayer;
   using Hurricane::Entity;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
@@ -105,6 +112,9 @@ namespace Tramontana {
   TramontanaEngine::TramontanaEngine ( Cell* cell, uint32_t depth )
     : Super          (cell, (depth==0))
     , _configuration (new Configuration())
+    , _extracteds    ()
+    , _extractedsMask()
+    , _connexityMap  ()
     , _viewer        (NULL)
     , _depth         (depth)
     , _flags         (0)
@@ -113,7 +123,26 @@ namespace Tramontana {
     , _shortedNets   ()
     , _powerNets     ()
     , _groundNets    ()
-  { }
+  {
+    for ( const BasicLayer* bl : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
+    // HARDCODED. Should read the gauge.
+      if (getString(bl->getName()).substr(0,6) == "gmetal") continue;
+      if (  (bl->getMaterial() == BasicLayer::Material::metal)
+         or (bl->getMaterial() == BasicLayer::Material::poly)
+         or (bl->getMaterial() == BasicLayer::Material::cut)) {
+        _extracteds.push_back( bl );
+        _extractedsMask |= bl->getMask();
+      }
+    }
+    _buildCutConnexMap();
+    
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal5" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal4" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal3" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal2" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "metal1" ));
+    // _extracteds.push_back( DataBase::getDB()->getTechnology()->getBasicLayer( "poly"   ));
+  }
 
 
   void  TramontanaEngine::_postCreate ()
@@ -166,6 +195,67 @@ namespace Tramontana {
       success = success and (_powerNets.size() < 2) and (_groundNets.size() < 2);
     }
     return success;
+  }
+
+
+  void  TramontanaEngine::_buildCutConnexMap ()
+  {
+    for ( const ViaLayer* viaLayer : DataBase::getDB()->getTechnology()->getViaLayers() ) {
+      const BasicLayer* cutLayer = nullptr;
+      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
+        if (layer->getMaterial() == BasicLayer::Material::cut) {
+          cutLayer = layer;
+          break;
+        }
+      }
+      if (not cutLayer) {
+        cerr << Error( "SweepLine::_buildConnexityMap(): ViaLayer \"%s\" does not contains any *cut* (ignored)."
+                     , getString(viaLayer->getName()).c_str()
+                     ) << endl;
+        continue;
+      }
+      auto iCutMap = _connexityMap.find( cutLayer );
+      if (iCutMap == _connexityMap.end()) {
+        _connexityMap.insert( make_pair( cutLayer, LayerSet() ));
+        iCutMap = _connexityMap.find( cutLayer );
+      }
+      for ( const BasicLayer* layer : viaLayer->getBasicLayers() ) {
+        if (   (layer->getMaterial() != BasicLayer::Material::cut)
+           and (_extractedsMask.intersect(layer->getMask())) ) {
+          iCutMap->second.insert( layer );
+        }
+      }
+    }
+    // cerr << "Connexity" << endl;
+    // for ( auto item : _connexityMap ) {
+    //   cerr << "BasicLayers connex to cut: " << item.first << endl;
+    //   for ( const BasicLayer* bl : item.second ) {
+    //     cerr << "| " << bl << endl;
+    //   }
+    // }
+  }
+
+  
+  const TramontanaEngine::LayerSet& TramontanaEngine::getCutConnexLayers ( const BasicLayer* cutLayer ) const
+  {
+    static LayerSet emptySet;
+    auto iCutMap = _connexityMap.find( cutLayer );
+    if (iCutMap == _connexityMap.end())
+      return emptySet;
+    return iCutMap->second;
+  }
+
+  
+  bool  TramontanaEngine::isExtractable ( const Layer* layer ) const
+  { return (layer and _extractedsMask.contains( layer->getMask() )); }
+
+
+  bool  TramontanaEngine::isExtractable ( const Net* net ) const
+  {
+    for ( Component* component : net->getComponents() ) {
+      if (isExtractable(component->getLayer())) return true;
+    }
+    return false;
   }
 
 
@@ -296,6 +386,7 @@ namespace Tramontana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply() or net->isFused() or net->isBlockage()) continue;
       if (net->getProperty(EquipotentialRelation::staticGetName())) continue;
+      if (not isExtractable(net)) continue;
       _openNets.insert( make_pair( net, EquipotentialSet() ));
     }
 
