@@ -46,15 +46,15 @@ const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classH
 \item 
 \mbox{\hyperlink{classHurricane_1_1Slice}{Slice}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Cell_ac438b5b6b8dbcd868d6bf0deeb469444}{get\+Slice}} (const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$layer) const
 \item 
-\mbox{\hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices}} \mbox{\hyperlink{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}{get\+Slices}} (const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=$\sim$0) const
+\mbox{\hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices}} \mbox{\hyperlink{classHurricane_1_1Cell_a4b290e963f75f9d2b3664e4956d8a4b0}{get\+Slices}} (const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=Layer\+::\+Mask\+::\+FFFF) const
 \item 
 \mbox{\hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers}} \mbox{\hyperlink{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}{get\+Rubbers}} () const
 \item 
 \mbox{\hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers}} \mbox{\hyperlink{classHurricane_1_1Cell_a58c6e24401d15f375547ad95b5c2c27c}{get\+Rubbers\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area) const
 \item 
-\mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} \mbox{\hyperlink{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}{get\+Components}} (const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=$\sim$0) const
+\mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} \mbox{\hyperlink{classHurricane_1_1Cell_a821f6013131130fa2ef7381712674b50}{get\+Components}} (const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=Layer\+::\+Mask\+::\+FFFF) const
 \item 
-\mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} \mbox{\hyperlink{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}{get\+Components\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=$\sim$0) const
+\mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} \mbox{\hyperlink{classHurricane_1_1Cell_a3cc7c49e4304e427a253d06b94cf6534}{get\+Components\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&mask=Layer\+::\+Mask\+::\+FFFF) const
 \item 
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_ab5bbab0a59106855d61deb94805e6115}{get\+Occurrences}} (unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
 \item 
@@ -218,11 +218,11 @@ Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all s
 \doxysubsubsection{\texorpdfstring{getSlice()}{getSlice()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Slice}{Slice}} $\ast$ Hurricane\+::\+Cell\+::get\+Slice (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$}]{layer }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Returns the \mbox{\hyperlink{classHurricane_1_1Slice}{Slice}} associated with the \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} {\itshape layer} if it exists, else {\ttfamily NULL}. \mbox{\Hypertarget{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}\label{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}} 
+Returns the \mbox{\hyperlink{classHurricane_1_1Slice}{Slice}} associated with the \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} {\itshape layer} if it exists, else {\ttfamily NULL}. \mbox{\Hypertarget{classHurricane_1_1Cell_a4b290e963f75f9d2b3664e4956d8a4b0}\label{classHurricane_1_1Cell_a4b290e963f75f9d2b3664e4956d8a4b0}} 
 \index{Hurricane::Cell@{Hurricane::Cell}!getSlices@{getSlices}}
 \index{getSlices@{getSlices}!Hurricane::Cell@{Hurricane::Cell}}
 \doxysubsubsection{\texorpdfstring{getSlices()}{getSlices()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices}} Hurricane\+::\+Cell\+::get\+Slices (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices}} Hurricane\+::\+Cell\+::get\+Slices (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily Layer\+:\+:Mask\+:\+:FFFF} }\end{DoxyParamCaption}) const}
 
 Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of slices of a \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}\label{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}} 
 \index{Hurricane::Cell@{Hurricane::Cell}!getRubbers@{getRubbers}}
@@ -241,17 +241,17 @@ Returns the collection of all Rubbers of the \mbox{\hyperlink{classHurricane_1_1
 \begin{DoxyParagraph}{Caution\+: Only currently materialized rubbers are taken into account}
 in this collection. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}\label{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}} 
+\mbox{\Hypertarget{classHurricane_1_1Cell_a821f6013131130fa2ef7381712674b50}\label{classHurricane_1_1Cell_a821f6013131130fa2ef7381712674b50}} 
 \index{Hurricane::Cell@{Hurricane::Cell}!getComponents@{getComponents}}
 \index{getComponents@{getComponents}!Hurricane::Cell@{Hurricane::Cell}}
 \doxysubsubsection{\texorpdfstring{getComponents()}{getComponents()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Cell\+::get\+Components (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Cell\+::get\+Components (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily Layer\+:\+:Mask\+:\+:FFFF} }\end{DoxyParamCaption}) const}
 
-Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all Components of the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}\label{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}} 
+Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all Components of the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Cell_a3cc7c49e4304e427a253d06b94cf6534}\label{classHurricane_1_1Cell_a3cc7c49e4304e427a253d06b94cf6534}} 
 \index{Hurricane::Cell@{Hurricane::Cell}!getComponentsUnder@{getComponentsUnder}}
 \index{getComponentsUnder@{getComponentsUnder}!Hurricane::Cell@{Hurricane::Cell}}
 \doxysubsubsection{\texorpdfstring{getComponentsUnder()}{getComponentsUnder()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Cell\+::get\+Components\+Under (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components}} Hurricane\+::\+Cell\+::get\+Components\+Under (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask}} \&}]{mask = {\ttfamily Layer\+:\+:Mask\+:\+:FFFF} }\end{DoxyParamCaption}) const}
 
 Returns the collection of all Components of the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} intersecting the given rectangular {\itshape area}.
 
