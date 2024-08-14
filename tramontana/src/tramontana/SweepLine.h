@@ -122,6 +122,7 @@ namespace Tramontana {
 
   inline  void  SweepLine::add ( Tile* tile )
   {
+    tile->incRefCount( 2 );
     _tiles.push_back( Element( tile, Tile::LeftEdge ) );
     _tiles.push_back( Element( tile, Tile::RightEdge ) );
   }
