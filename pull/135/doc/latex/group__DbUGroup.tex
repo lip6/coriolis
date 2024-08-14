@@ -1,0 +1,77 @@
+\hypertarget{group__DbUGroup}{}\doxysection{Db\+U/\+Unit description}
+\label{group__DbUGroup}\index{DbU/Unit description@{DbU/Unit description}}
+
+
+Fixed point numbers management.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHurricane_1_1DbU}{Hurricane\+::\+DbU}}
+\begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} Unit managment ({\bfseries{API}}). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Fixed point numbers management. 
+
+\hypertarget{group__DbUGroup_secDbUIntro}{}\doxysubsection{Introduction}\label{group__DbUGroup_secDbUIntro}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class provides the \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} type for modelling geometric length, that is abscissas, ordinates, widths, offsets and a set of functions to convert \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} to and from external coordinates.
+
+\begin{DoxyRemark}{Remarks}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class contains only static methods, and is not meant to be instanciated. The working type is \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}.
+\end{DoxyRemark}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class manage three king of length \+: 
+\begin{DoxyItemize}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}} \+: the working type. It is currently associated to a long integer and a precision/resolution. This way all numbers are bound to the same precision (unlike floating point numbers) preventing rounding errors. 
+\item {\bfseries{Real}} length \+: length, expressed in steps of founder grid. We have the straight relation ship \+: grid = unit $\ast$ resolution 
+\item {\bfseries{Symbolic}} length \+: length, expressed in lambdas. A lambda is an even multiple of the founder grid step. lambda = grid / lambda\+Per\+Grid 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUPrecision}{}\doxysubsection{Precision}\label{group__DbUGroup_secDbUPrecision}
+It is possible to choose (once for all) the precision with which unit values are stored.
+
+This precision represents the maximal number of decimal digits allowed (it applies globally to all units). Therefore for a precision of 3, the unit will represent a value of 0.\+001 and the founder grid value 23.\+54 will be represented by a unit equal to 23540.
+
+Related functions \+: 
+\begin{DoxyItemize}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a6169efbdd9b3d54a0bd8467c8f957fda}{Db\+U\+::get\+Precision()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a8756c9f0a32af5f601cd150e73b02c03}{Db\+U\+::get\+Maximal\+Precision()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ace9a8644e7e80dcaed2a8a95deeb1622}{Db\+U\+::set\+Precision()}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUResolution}{}\doxysubsection{Resolution}\label{group__DbUGroup_secDbUResolution}
+The resolution is associated to the precision. Indeed it represents the external value associated to the smallest unit, that is the value returned by get\+Grid(\+Unit\+::db(1)).
+
+Related functions \+: {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a120a60b09b344d01c583567a1e489d9e}{Db\+U\+::get\+Resolution()}}}}\hypertarget{group__DbUGroup_secDbUGridsPerLamba}{}\doxysubsection{Grids per Lambda ratio}\label{group__DbUGroup_secDbUGridsPerLamba}
+Set the ratio between grids and lambdas. This must be an even integer. Once sets, musn\textquotesingle{}t be changed.
+
+Related functions \+: 
+\begin{DoxyItemize}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ac93f9ba2a09105227e34bd05bcb1500c}{Db\+U\+::set\+Grids\+Per\+Lambda()}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9a0359adbfafc356326f5c6adf57ff04}{Db\+U\+::get\+Grids\+Per\+Lambda()}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUGrid}{}\doxysubsection{Grid}\label{group__DbUGroup_secDbUGrid}
+Thoses function are closely related to editors. They allow to restrict to positions on a grid. We support three kind of grid, real, symbolic and user defined.
+
+
+\begin{DoxyItemize}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a09e46fcca6aaca94851adfa196e10170}{Db\+U\+::get\+Real\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a8746e486f153aa37ee469c1604eba5c0}{Db\+U\+::get\+On\+Real\+Snap\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a202cc3aa3364c2224647a29dde047fae}{Db\+U\+::set\+Real\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a687a9134729b107c42fb7f69596c4c3b}{Db\+U\+::get\+Symbolic\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_ad1b0c0f3680093cf5a63d901312c925d}{Db\+U\+::get\+On\+Symbolic\+Snap\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9ccd423c8f268ef54770f4663e6c9304}{Db\+U\+::set\+Symbolic\+Snap\+Grid\+Step}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a87323d9038656dceabffc37d45de408a}{Db\+U\+::get\+On\+Custom\+Grid}}}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a9419025221579f4277475c65655be3dc}{Db\+U\+::get\+On\+Physical\+Grid}}}} 
+\end{DoxyItemize}\hypertarget{group__DbUGroup_secDbUTranslators}{}\doxysubsection{Translators}\label{group__DbUGroup_secDbUTranslators}
+Translate a \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} into grid or lambda length \+: 
+\begin{DoxyItemize}
+\item {\bfseries{long \mbox{\hyperlink{classHurricane_1_1DbU_aec07c6e7ae2a2a6f54e2a16b32c8bf26}{Db\+U\+::to\+Db}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_a318d673386c9424e07c12efd598c730d}{Db\+U\+::to\+Grid}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_a4923a9a443871282ad7d331be2a2a5d4}{Db\+U\+::to\+Lambda}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u)}} 
+\item {\bfseries{double \mbox{\hyperlink{classHurricane_1_1DbU_ab901e9d5c12e878728178f113def6c45}{Db\+U\+::to\+Physical}} (\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, Unit\+Power p)}} 
+\end{DoxyItemize}
+
+Translate a lambda length into a \mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \+: 
+\begin{DoxyItemize}
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_aec69d65ec1651c2feea24c5931f4580b}{Db\+U\+::from\+Db}} (long v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a367e1d1b5ac1df076745550cba8a83c1}{Db\+U\+::from\+Grid}} (double v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a4b570755b19ea9ff0f2f258a221bd935}{Db\+U\+::from\+Lambda}} (double v)}} 
+\item {\bfseries{\mbox{\hyperlink{classHurricane_1_1DbU_a4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{classHurricane_1_1DbU_a11d4dbd9134a19bda35cbacde1cb2769}{Db\+U\+::from\+Physical}} (double v, Unit\+Power p)}} 
+\end{DoxyItemize}
