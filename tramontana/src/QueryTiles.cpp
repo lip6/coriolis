@@ -82,10 +82,10 @@ namespace Tramontana {
       if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
       Tile* tile = Tile::create( occurrence
                                , layer
-                               , nullptr
+                               , rootTile
                                , _sweepLine );
       if (not rootTile) rootTile = tile;
-      else rootTile->merge( tile );
+    //else rootTile->merge( tile );
     }
 
     BasicLayer* cutLayer = component->getLayer()->getBasicLayers().getFirst();
@@ -94,11 +94,11 @@ namespace Tramontana {
       for ( const BasicLayer* connexLayer : connexSet ) {
         Tile* tile = Tile::create( occurrence
                                  , connexLayer
-                                 , nullptr
+                                 , rootTile
                                  , _sweepLine
                                  , Tile::ForceLayer );
         if (not rootTile) rootTile = tile;
-        else rootTile->merge( tile );
+      //else rootTile->merge( tile );
       }
     }
     

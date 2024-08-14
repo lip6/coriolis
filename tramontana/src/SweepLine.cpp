@@ -102,10 +102,12 @@ namespace Tramontana {
   //DebugSession::open( 160, 169 );
     cdebug_log(160,1) << "SweepLine::run()" << endl;
     loadTiles();
+    Box      ab        = getCell()->getAbutmentBox();
+    Interval sweepSpan = Interval( ab.getXMin(), ab.getXMax() );
   //bool debugOn = false;
   //bool written = false;
     size_t processedTiles = 0;
-    DbU::Unit xSweepLine = DbU::Min;
+    DbU::Unit xSweepLine = sweepSpan.getVMin();
     for ( Element& element : _tiles ) {
       processedTiles++;
       Tile*     tile     = element.getTile();
@@ -148,6 +150,21 @@ namespace Tramontana {
       //     }
       //   }
       // }
+
+      if (element.isLeftEdge()) {
+        if (tile->getLeftEdge() != xSweepLine) {
+          if (tty::enabled() and (xSweepLine != DbU::Min)) {
+            xSweepLine = tile->getLeftEdge();
+            DbU::Unit progress = ((xSweepLine - sweepSpan.getVMin()) * 100) / sweepSpan.getSize();
+            cmess2 << "        <SweepLine @" << tty::bold
+                   << right << setw(12) << DbU::getValueString(xSweepLine,DbU::Physical) << " | "
+                   << right << setw( 3) << progress << "%"
+                   << tty::reset
+                   << setfill(' ') << tty::reset << ">" << tty::cr;
+            cmess2.flush ();
+          }
+        }
+      }
       
       cdebug_log(160,1) << "X@ + " << DbU::getValueString(element.getX()) << " " << tile << endl;
       auto  intvTree = _intervalTrees.find( element.getMask() );
@@ -238,6 +255,7 @@ namespace Tramontana {
       // if (tile->getOccurrence().getEntity()->getId() == 3348) {
       //   DebugSession::close();
       // }
+      tile->decRefCount();
       cdebug_tabw(160,-1);
     }
   //if (debugOn) DebugSession::close();
@@ -262,7 +280,7 @@ namespace Tramontana {
       query.setBasicLayer( layer );
       query.doQuery();
     }
-    cmess2 << "     - Loaded " << _tiles.size() << " tiles (from "
+    cmess2 << "     - Loaded " << (_tiles.size()/2) << " tiles (from "
            << query.getGoMatchCount() << " gos)." << endl;
 
     // for ( Occurrence occurrence : getCell()->getOccurrencesUnder( getCell()->getBoundingBox() ) ) {
@@ -294,14 +312,19 @@ namespace Tramontana {
 
   void  SweepLine::mergeEquipotentials ()
   {
+    cout.flush();
+    cerr.flush();
   //DebugSession::open( 160, 169 );
     cdebug_log(160,1) << "SweepLine::mergeEquipotentials()" << endl;
-  //cerr << "SweepLine::mergeEquipotentials()" << endl;
     Tile::timeTick();
-    for ( Tile* tile : Tile::getAllTiles() ) {
-      tile->getRoot( Tile::MergeEqui|Tile::MakeLeafEqui );
+    const vector<Tile*>& tiles = Tile::getAllTiles();
+    for ( size_t i=0 ; i<tiles.size() ; ++i ) {
+      if (not tiles[i]) continue;
+      tiles[i]->getRoot( Tile::Compress|Tile::MergeEqui|Tile::MakeLeafEqui );
+      Tile::destroyQueued();
     }
     cdebug_tabw(160,-1);
+  //Tile::showStats();
   //DebugSession::close();
   }
 
