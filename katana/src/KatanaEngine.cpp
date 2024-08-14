@@ -124,13 +124,9 @@ namespace {
       if (processeds.find(cell) != processeds.end()) return;
       processeds.insert( cell );
     }
-    cerr << "Look for depth=" << depth << " " << cell << endl;
 
     if (cell->isRouted() or cell->isTerminalNetlist()) return;
-    if (depth) {
-      cell->setNoExtractConsistent( true );
-      cerr << "FLAG " << cell << " " << cell->isExtractConsistent() << endl;
-    }
+    if (depth) cell->setNoExtractConsistent( true );
 
     for ( Instance* instance : cell->getInstances() )
       rsetNoExtractFlag( instance->getMasterCell(), depth+1 );
