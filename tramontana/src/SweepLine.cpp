@@ -258,6 +258,7 @@ namespace Tramontana {
       tile->decRefCount();
       cdebug_tabw(160,-1);
     }
+    if (tty::enabled()) cmess2 << endl;
   //if (debugOn) DebugSession::close();
     cdebug_tabw(160,-1);
   //DebugSession::close();
