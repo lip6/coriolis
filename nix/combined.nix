@@ -6,8 +6,6 @@
 , coriolis-katabatic, coriolis-kite, coriolis-tutorial
 , coriolis-unicorn, coriolis-oroshi, coriolis-cumulus
 , coriolis-lefdef, coriolis-coloquinte, coriolis-flute
-, coriolis-equinox, coriolis-knik, coriolis-karakaze
-, coriolis-solstice, coriolis-stratus1, coriolis-etesian
 }:
 
 buildEnv {
@@ -19,8 +17,8 @@ buildEnv {
     coriolis-bora coriolis-katabatic coriolis-kite
     coriolis-tutorial coriolis-unicorn coriolis-oroshi
     coriolis-cumulus coriolis-lefdef
-    coriolis-coloquinte coriolis-equinox coriolis-knik
-    coriolis-karakaze coriolis-solstice coriolis-stratus1
+    coriolis-coloquinte coriolis-knik
+    coriolis-karakaze coriolis-stratus1
   ];
 
   inherit meta;
