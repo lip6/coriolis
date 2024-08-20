@@ -12,6 +12,11 @@ AF = CRL.AllianceFramework.get()
 BUF = AF.getCell('buf_x2', CRL.Catalog.State.Views)
 Hurricane.UpdateSession.open()
 
+# Arrange the cells's nets in a dictonary where:
+# - keys are the number of cells drived by nets
+# - values are lists of nets which have the key drived cells
+# parameter: the cell to analyze
+# return: the corresponding dictionary
 def net_by_load(cell):
     #lnets = list(cell.getNets())
     #lnets.sort(key=lambda net: size(net.getPlugs()), reverse=True)
@@ -25,15 +30,27 @@ def net_by_load(cell):
             sorted_dict[size(net.getPlugs())] = [net]
     return sorted_dict
 
+# TODO: move this function to a common place as it is usefull for lots of operations
+# Return the number of elements (size) of a given collection 
 def size(collection):
     total = 0
     for c in collection:
         total += 1
     return total
 
+# TODO: see if this function is not already written
+# Return if a net is a clock or not based on its name
 def isClock(net):
     return net.getName() in ['ck', 'CK', 'clk', 'CLK']
 
+# Amplify a net by:
+# - adding a buffer (tech == 'buf')
+# - or amplifying the previous cell (tech == 'amp')
+# parameters:
+# - net is the net to amplify
+# - cell is the cell in which the net is defined (TODO: try to use MasterCell)
+# - tech is the technic used (buffer or cell amplification)
+# raise ValueError if the technic is not defined
 def amplify_net(net, cell, tech):
     # find the source plug
     for p in net.getPlugs():
@@ -46,15 +63,17 @@ def amplify_net(net, cell, tech):
         p_found.setNet(bufferize(net,cell))
     elif tech == 'amp':
         # Amplify the source cell
-        amplify_source(p_found,cell)
+        amplify_source(p_found)
     else:
         raise ValueError(f'Unknown technic {tech}')
 
-def amplify_source(plug, cell):
+# Amplify the cell of a given plug
+def amplify_source(plug):
     inst = plug.getInstance()
     newModel = find_bigger_cell(inst.getMasterCell())
     inst.setMasterCell(newModel)
 
+# Return the biggest (in term of load) cell equivalent of a given cell
 # TODO: try to access cells by technology file
 # TODO: support the other load for cells
 def find_bigger_cell(model):
@@ -111,7 +130,11 @@ def find_bigger_cell(model):
         #'zero_x0':
     }
     return AF.getCell(equivalence[model.getName()][0], CRL.Catalog.State.Views)
-        
+
+# Add a buffer to a given net to amplify it
+# parameters:
+# - net is the net to amplify
+# - cell is the cell in which the net is defined (TODO: try to use MasterCell)
 def bufferize(net, cell):
     # create the buffer instance
     # TODO: try to get the cell from the net (masterCell ?)
@@ -122,8 +145,12 @@ def bufferize(net, cell):
     buf_i.getPlug(BUF.getNet('i')).setNet(net_b)
     return net_b
 
-# threshold: if net has a load > threshold then bufferize
-# nb_max: bufferize all the nets with nb_max maximal thresholds
+# Amplify a given cell using the corresponding technic
+# Parameters:
+# - cell is the cell to amplify
+# - tech is the technic used (buffer or cell amplification)
+# - threshold: if net has a load > threshold then bufferize
+# - nb_max: bufferize all the nets with nb_max maximal thresholds
 def amplify(cell, tech, threshold=0, nb_max=0):
     lnets = net_by_load(cell)
     max_keys = sorted(lnets.keys(), reverse=True)
