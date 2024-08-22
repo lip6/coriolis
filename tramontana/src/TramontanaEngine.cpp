@@ -290,9 +290,8 @@ namespace Tramontana {
   void  TramontanaEngine::_extract ()
   {
     SweepLine sweepLine ( this );
-    sweepLine.run();
+    sweepLine.run( (getDepth() == 0) );
     consolidate();
-  //showEquipotentials();
   }
 
 

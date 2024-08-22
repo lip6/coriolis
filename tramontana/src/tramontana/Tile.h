@@ -76,6 +76,9 @@ namespace Tramontana {
     public:
       static inline const std::vector<Tile*>&  getAllTiles          ();
       static inline const std::vector<size_t>& getFreedIds          ();
+      static inline       size_t               activeTilesCount     ();
+      static inline       size_t               peakTilesCount       ();
+      static inline       size_t               totalTilesCount      ();
       static              void                 showStats            ();
       static              void                 deleteAllTiles       ();
       static              void                 destroyQueued        ();
@@ -89,6 +92,7 @@ namespace Tramontana {
                           void                 queuedDestroy        ();
                           void                 destroyQueue         ();
              inline       void                 toDeleteQueue        ();
+             inline       bool                 isRoot               () const;
              inline       bool                 isUpToDate           () const;
              inline       bool                 isOccMerged          () const;
              inline       bool                 isTopLevel           () const;
@@ -135,6 +139,8 @@ namespace Tramontana {
       static       std::vector<Tile*>   _allocateds;
       static       std::vector<Tile*>   _destroyQueue;
       static       std::vector<size_t>  _freeds;
+      static       size_t               _peakTiles;
+      static       size_t               _totalTiles;
                    uint32_t             _id;
                    uint32_t             _refCount;
                    Occurrence           _occurrence;
@@ -150,11 +156,15 @@ namespace Tramontana {
 
   inline const std::vector<Tile*>&  Tile::getAllTiles       () { return _allocateds; }
   inline const std::vector<size_t>& Tile::getFreedIds       () { return _freeds; }
+  inline       size_t               Tile::activeTilesCount  () { return _allocateds.size() - _freeds.size(); }
+  inline       size_t               Tile::peakTilesCount    () { return _peakTiles; }
+  inline       size_t               Tile::totalTilesCount   () { return _totalTiles; }
   inline       void                 Tile::timeTick          () { _time++; }
   inline       bool                 Tile::isUpToDate        () const { return _timeStamp >= _time; }
   inline       bool                 Tile::isOccMerged       () const { return _flags & OccMerged; }
   inline       bool                 Tile::isTopLevel        () const { return _flags & TopLevel; }
   inline       bool                 Tile::isFreed           () const { return _flags & Freed; }
+  inline       bool                 Tile::isRoot            () const { return not _parent; }
   inline       uint32_t             Tile::getId             () const { return _id; }
   inline       uint32_t             Tile::getRefCount       () const { return _refCount; }
   inline       Occurrence           Tile::getOccurrence     () const { return _occurrence; }

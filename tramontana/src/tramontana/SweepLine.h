@@ -47,6 +47,9 @@ namespace Tramontana {
     private:
       typedef  std::map<Layer::Mask, TileIntvTree>  IntervalTrees;
     private:
+      const uint32_t IsLeftMostWindow    = (1 << 0);
+      const uint32_t IsRightMostWindow   = (1 << 1);
+    private:
       class Element {
         public:
           inline              Element    ( Tile*, uint32_t flags );
@@ -65,17 +68,19 @@ namespace Tramontana {
     public:
                                 SweepLine           ( TramontanaEngine* );
                                ~SweepLine           ();
+      inline  bool              isLeftMostWindow    () const;
+      inline  bool              isRightMostWindow   () const;
       inline  Cell*             getCell             ();
       inline  const std::vector<const BasicLayer*>&
                                 getExtracteds       () const;
       inline  Layer::Mask       getExtractedMask    () const;
       inline  const TramontanaEngine::LayerSet&
                                 getCutConnexLayers  ( const BasicLayer* ) const;
-              void              run                 ();
-              void              loadTiles           ();
-              void              deleteTiles         ();
+              void              run                 ( bool isTopLevel );
+              bool              loadNextWindow      ();
       inline  void              add                 ( Tile* );
-              void              mergeEquipotentials ();
+              void              mergeEquipotentials ( uint32_t flags=0 );
+              void              printSummary        () const;
               Record*           _getRecord          () const;
               std::string       _getString          () const;
               std::string       _getTypeName        () const;
@@ -86,6 +91,10 @@ namespace Tramontana {
       TramontanaEngine*               _tramontana;
       std::vector<Element>            _tiles;
       IntervalTrees                   _intervalTrees;
+      Box                             _slidingWindow;
+      Tile*                           _lastLeftEdge;
+      uint32_t                        _splitCount;
+      uint32_t                        _flags;
   };
 
 
@@ -113,9 +122,11 @@ namespace Tramontana {
 
   
 // SweepLine.  
-  inline        Cell*                           SweepLine::getCell            () { return _tramontana->getCell(); }
-  inline        Layer::Mask                     SweepLine::getExtractedMask   () const { return _tramontana->getExtractedMask(); }
-  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds      () const { return _tramontana->getExtracteds(); }
+  inline        bool                            SweepLine::isLeftMostWindow    () const { return _flags & IsLeftMostWindow; }
+  inline        bool                            SweepLine::isRightMostWindow   () const { return _flags & IsRightMostWindow; }
+  inline        Cell*                           SweepLine::getCell             () { return _tramontana->getCell(); }
+  inline        Layer::Mask                     SweepLine::getExtractedMask    () const { return _tramontana->getExtractedMask(); }
+  inline  const std::vector<const BasicLayer*>& SweepLine::getExtracteds       () const { return _tramontana->getExtracteds(); }
 
   inline  const TramontanaEngine::LayerSet& SweepLine::getCutConnexLayers ( const BasicLayer* cutLayer ) const
   { return _tramontana->getCutConnexLayers( cutLayer ); }
