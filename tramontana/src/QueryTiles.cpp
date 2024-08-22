@@ -53,6 +53,13 @@ namespace Tramontana {
     return component->getLayer()->getMask().intersect( fullyProcesseds );
   }
 
+  bool  QueryTiles::isLeftMostWindow () const
+  { return _sweepLine->isLeftMostWindow(); }
+
+  
+  bool  QueryTiles::isRightMostWindow () const
+  { return _sweepLine->isRightMostWindow(); }
+
 
   void  QueryTiles::masterCellCallback ()
   { }
@@ -77,6 +84,24 @@ namespace Tramontana {
     if (not component) return;
     if (component->getNet()->isBlockage()) return;
     if (isProcessed(component)) return;
+
+    Box bb = component->getBoundingBox();
+    // if (bb.getXMax() <= getArea().getXMin()) {
+    //   cerr << "Outside, on the left, of area window " << bb << " vs. " << getArea() << endl;
+    //   cerr << "  getPath() " << getPath() << endl;
+    //   cerr << "  go " << go << endl;
+    //   return;
+    // }
+    if (not isLeftMostWindow() and (bb.getXMin() < getArea().getXMin())) {
+      return;
+    }
+    if (not isRightMostWindow() and (bb.getXMin() >= getArea().getXMax())) {
+      cerr << "Outside, on the right, of area window " << bb << " vs. " << getArea() << endl;
+      cerr << "  getPath() " << getPath() << endl;
+      cerr << "  go " << go << endl;
+      return;
+    }
+    
     Occurrence occurrence = Occurrence( go, getPath() );
     for ( const BasicLayer* layer : _sweepLine->getExtracteds() ) {
       if (not component->getLayer()->getMask().intersect(layer->getMask())) continue;
@@ -103,6 +128,18 @@ namespace Tramontana {
     }
     
     _goMatchCount++;
+  }
+
+
+  uint32_t  QueryTiles::doAreaQuery ( SweepLine* sweepLine, const Box& area )
+  {
+    QueryTiles query ( sweepLine );
+    query.setArea( area );
+    for ( const BasicLayer* layer : sweepLine->getExtracteds() ) {
+      query.setBasicLayer( layer );
+      query.doQuery();
+    }
+    return query.getGoMatchCount();
   }
 
 

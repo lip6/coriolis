@@ -48,7 +48,8 @@ namespace Tramontana {
 // Class  :  "Tramontana::Configuration".
 
   Configuration::Configuration ()
-    : _mergeSupplies( Cfg::getParamBool("tramontana.mergeSupplies", false)->asBool() )
+    : _mergeSupplies      ( Cfg::getParamBool("tramontana.mergeSupplies"      , false)->asBool() )
+    , _instancesPerWindows( Cfg::getParamInt ("tramontana.instancesPerWindows", 10000)->asInt () )
   { }
 
 
@@ -88,7 +89,8 @@ namespace Tramontana {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add( getSlot( "_mergeSupplies", _mergeSupplies ) );
+    record->add( getSlot( "_mergeSupplies"      , _mergeSupplies       ) );
+    record->add( getSlot( "_instancesPerWindows", _instancesPerWindows ) );
     return record;
   }
 

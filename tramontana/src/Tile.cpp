@@ -81,6 +81,18 @@ namespace Tramontana {
   using Hurricane::Instance;
 
 
+  bool isTracedOcc ( Occurrence occ )
+  {
+    if (not occ.isValid()) return false;
+    if (not occ.getPath().getHeadInstance()) return false;
+    if (occ.getPath().getHeadInstance()->getId() != 17812) return false;
+    if (   (occ.getEntity()->getId() !=  1385)
+       and (occ.getEntity()->getId() != 73435)) 
+      return false;
+    return true;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::Tile".
 
@@ -89,6 +101,8 @@ namespace Tramontana {
   vector<Tile*>   Tile::_allocateds;
   vector<Tile*>   Tile::_destroyQueue;
   vector<size_t>  Tile::_freeds;
+  size_t          Tile::_peakTiles  = 0;
+  size_t          Tile::_totalTiles = 0;
 
 
   Tile::Tile (       Occurrence  occurrence
@@ -108,6 +122,7 @@ namespace Tramontana {
     , _rank          (0)
     , _timeStamp     (0)
   {
+    _totalTiles++;
     if (not _freeds.empty()) {
       _id = _freeds.back();
       _freeds.pop_back();
@@ -115,6 +130,7 @@ namespace Tramontana {
     } else {
       _id = _allocateds.size();
       _allocateds.push_back( this );
+      _peakTiles++;
     }
     if (_parent) _parent->incRefCount();
 
@@ -269,6 +285,8 @@ namespace Tramontana {
     }
     _allocateds.clear();
     _freeds.clear();
+    _peakTiles  = 0;
+    _totalTiles = 0;
   }
 
 
@@ -425,7 +443,6 @@ namespace Tramontana {
                       << " child tid:" << root2->getId() << endl;
   // Fuse root2 into root1 here!
 
-    destroyQueued();
     cdebug_tabw(160,-1);
     return root1;
   }

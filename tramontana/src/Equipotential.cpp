@@ -239,6 +239,8 @@ namespace Tramontana {
   
   bool  Equipotential::add ( Occurrence occ, const Box& boundingBox )
   {
+    cdebug_log(160,0) << "Equipotential::add(): " << this << endl;
+    cdebug_log(160,0) << "  " << occ << endl;
     if (occ.getPath().isEmpty()) {
       Contact* contact = dynamic_cast<Contact*>( occ.getEntity() );
       if ((_components.find(occ) != _components.end())) {
@@ -254,7 +256,7 @@ namespace Tramontana {
                      ) << endl;
         return false;
       }
-      cdebug_log(160,0) << "Equipotential::add(): " << occ << endl;
+      cdebug_log(160,0) << "  Is top component: " << occ << endl;
       _components.insert( occ );
       NetMap::iterator inet = _nets.find( comp->getNet() );
       if (inet != _nets.end()) {
@@ -300,6 +302,7 @@ namespace Tramontana {
                      ) << endl;
         return false;
       }
+      cdebug_log(160,0) << "  Is child equi: " << occ << endl;
       _childs.insert( occ );
     }
     _boundingBox.merge( boundingBox );
