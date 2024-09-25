@@ -1,7 +1,6 @@
 
 
- venv      = source .venv/bin/activate
- localpath = export PATH=${HOME}/.local/bin:${PATH};
+ venv = source .venv/bin/activate;
 
  REGRESSION_DIR = 
  ifneq ($(findstring nightly,$(shell pwd)),)
@@ -15,12 +14,23 @@
  ifneq ($(shell which nproc 2> /dev/null),)
    SMP_FLAGS = -j$(shell nproc)
  endif
- SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
- CORIOLIS_SRC = ${SRC_DIR}/coriolis
- ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
- BUILDTYPE    = release
- BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
- PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+ ifeq ($(findstring abuild/rpmbuild,$(shell pwd)),)
+   $(info Using LIP6 build directory tree scheme)
+   SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
+   CORIOLIS_SRC = ${SRC_DIR}/coriolis
+   ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+   BUILDTYPE    = release
+   BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
+   PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+ else
+   $(info Using rpmbuild directory tree scheme)
+   SRC_DIR      = ${HOME}/rpmbuild/BUILD
+   CORIOLIS_SRC = ${SRC_DIR}/coriolis-2.5.5
+   ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+   BUILDDIR     = ${CORIOLIS_SRC}/build
+   PREFIX       = /usr
+ endif
+
 
 
 help:
@@ -37,9 +47,11 @@ help:
 	 echo "    ego@home:coriolis> make uninstall";                                        \
 	 echo "============================================================================"; \
 	 echo "SMP_FLAGS    = $(SMP_FLAGS)" ;                                                 \
+	 echo "SRC_DIR      = $(SRC_DIR)" ;                                                   \
 	 echo "CORIOLIS_SRC = $(CORIOLIS_SRC)" ;                                              \
 	 echo "BUILDDIR     = $(BUILDDIR)" ;                                                  \
 	 echo "PREFIX       = $(PREFIX)" ;                                                    \
+	 echo "DESTDIR      = $(DESTDIR)" ;                                                   \
 	 echo "============================================================================";
 
 
@@ -55,28 +67,44 @@ check_dir:
 	 fi
 
 
-$(HOME)/.local/bin/pdm:
-	@pip install pdm
+$(CORIOLIS_SRC)/.venv:
+	python3 -m venv .venv
 
 
-$(CORIOLIS_SRC)/.pdm-plugins/bin/pdm: $(HOME)/.local/bin/pdm
-	@$(localpath) pdm install --no-self -d --plugins
+$(CORIOLIS_SRC)/.venv/bin/pelican: $(CORIOLIS_SRC)/.venv
+	$(venv) pip install pelican
 
 
-wipe:
-	@$(localpath) pdm run meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
+ifeq ($(USE_SYSTEM_PDM),)
+
+$(CORIOLIS_SRC)/.venv/bin/pdm: $(CORIOLIS_SRC)/.venv
+	$(venv) pip install pdm; pdm install --no-self -d --plugins
 
 
-setup:
-	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix -Donly-docs=false
+install_venv: $(CORIOLIS_SRC)/.venv/bin/pdm \
+              $(CORIOLIS_SRC)/.venv/bin/pelican
+
+else
+
+install_venv: $(CORIOLIS_SRC)/.venv/bin/pelican
+
+endif
 
 
-configure:
-	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+wipe: check_dir install_venv
+	$(venv) meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
 
 
-install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup configure
-	@$(localpath) pdm run meson install -C $(BUILDDIR)
+setup: check_dir install_venv
+	$(venv) meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix -Donly-docs=false
+
+
+configure: check_dir install_venv
+	$(venv) meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+
+
+install: setup configure
+	$(venv) meson install -C $(BUILDDIR)
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
@@ -86,10 +114,11 @@ install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup configure
 	 echo "============================================================================";
 
 
-install_docs: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
-	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) \
-	                                                  -Ddocs=true
-	@$(localpath) pdm run meson install -C $(BUILDDIR)
+install_docs: check_dir configure
+	$(venv) echo "PYTHON=`which python`"
+	$(venv) meson configure ${BUILDDIR} --prefix=$(PREFIX) -Ddocs=true
+	$(venv) meson install -C $(BUILDDIR)
+	@echo "Documentation generated and installed."
 
 
 install_alliance:
@@ -120,4 +149,4 @@ clean_pdm:
 
 uninstall: check_dir
 	@echo "Removing the whole build & install tree..."; \
-	@$(localpath) pdm run ninja -C $(BUILDDIR) uninstall
+	@$(venv) ninja -C $(BUILDDIR) uninstall

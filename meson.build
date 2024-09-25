@@ -38,7 +38,7 @@ py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHO
 qt = import('qt5', disabler: true)
 
 sed = find_program('sed',  disabler: true)
-docdir = join_paths(get_option('datadir'), 'doc')
+docdir = join_paths(get_option('datadir'), 'doc', 'coriolis')
 htmldir = join_paths(docdir,  'html')
 docsiteurl = get_option('docs-siteurl')
 
