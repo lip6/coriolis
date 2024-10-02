@@ -2,6 +2,27 @@
     version="2.5.5"
  docGithash="b12c8613c"
      obsDir="../coriolis-obs/home:jpc-lip6/coriolis-eda"
+
+ printHelp () {
+   echo ""
+   echo "  Usage: mkArchives.sh [--sources] [--docs] [--venv] [--commit] [--run]"
+   echo ""
+   echo "  Options:"
+   echo "    [--sources] : Build an archive from the HEAD of the current branch."
+   echo "    [--docs]    : Take a snapshot of the current *installed* documentation."
+   echo "                  Will be used for distributions unable to run doxygen+ghostscript"
+   echo "                  (currently openSUSE LEAP)."
+   echo "    [--venv]    : Take a snapshot of the virtual environment."
+   echo "    [--commit]  : Push the files (commit) on the remote builder repository."
+   echo "                  This will effectively triggers the rebuild of the packages."
+   echo "                  OBS local repository is hardwired to:"
+   echo "                      \"${obsDir}\""
+   echo "    [--run]     : Perform all actions at once."
+   echo ""
+
+ }
+
+ if [ $# -eq 0 ]; then printHelp; fi
  
   doSources="false"
      doDocs="false"
