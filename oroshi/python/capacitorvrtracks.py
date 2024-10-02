@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 import sys                
 from   collections      import OrderedDict
 import numpy
