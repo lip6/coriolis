@@ -25,7 +25,7 @@
  else
    $(info Using rpmbuild directory tree scheme)
    SRC_DIR      = ${HOME}/rpmbuild/BUILD
-   CORIOLIS_SRC = ${SRC_DIR}/coriolis-2.5.5
+   CORIOLIS_SRC = ${SRC_DIR}/coriolis-eda-2.5.5
    ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
    BUILDDIR     = ${CORIOLIS_SRC}/build
    PREFIX       = /usr

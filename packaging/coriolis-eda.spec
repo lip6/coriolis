@@ -1,12 +1,12 @@
 %define _unpackaged_files_terminate_build 1
 %define docGithash  b12c8613c
 
-Name:           coriolis
+Name:           coriolis-eda
 Version:        2.5.5
 Release:        1
 Summary:        Coriolis 2 EDA toolchain
 Group:          Applications/Engineering
-License:        BSD-1-Clause AND LGPL-1.0-only AND GPL-2.0-only AND Apache-1.0
+License:        BSD-1-Clause AND LGPL-2.0-only AND GPL-2.0-only AND Apache-1.0
 URL:            https://coriolis.lip6.fr/
 Packager:       Mazher Iqbal <mazher@lip6.fr>
 Source0:        %{name}-%{version}.tar.gz
