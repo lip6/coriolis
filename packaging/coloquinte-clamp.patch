@@ -1,0 +1,10 @@
+--- coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp.orig	2024-09-29 02:12:24.575122522 +0200
++++ coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp	2024-09-29 02:12:44.007738713 +0200
+@@ -2,6 +2,7 @@
+ #include "place_detailed/tetris_legalizer.hpp"
+ 
+ #include <limits>
++#include <algorithm>
+ 
+ namespace coloquinte {
+ TetrisLegalizer::TetrisLegalizer(
