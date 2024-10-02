@@ -71,6 +71,10 @@ $(CORIOLIS_SRC)/.venv:
 	python3 -m venv .venv
 
 
+$(CORIOLIS_SRC)/.venv/bin/meson: $(CORIOLIS_SRC)/.venv
+	$(venv) pip install meson
+
+
 $(CORIOLIS_SRC)/.venv/bin/pelican: $(CORIOLIS_SRC)/.venv
 	$(venv) pip install pelican
 
@@ -82,11 +86,13 @@ $(CORIOLIS_SRC)/.venv/bin/pdm: $(CORIOLIS_SRC)/.venv
 
 
 install_venv: $(CORIOLIS_SRC)/.venv/bin/pdm \
+              $(CORIOLIS_SRC)/.venv/bin/meson \
               $(CORIOLIS_SRC)/.venv/bin/pelican
 
 else
 
-install_venv: $(CORIOLIS_SRC)/.venv/bin/pelican
+install_venv: $(CORIOLIS_SRC)/.venv/bin/meson \
+              $(CORIOLIS_SRC)/.venv/bin/pelican
 
 endif
 

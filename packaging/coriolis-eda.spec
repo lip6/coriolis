@@ -71,7 +71,12 @@ BuildRequires:  %{python_module devel}
 BuildRequires:  %{python_module setuptools}
 %endif
 
-#ALmaLinux-9
+# ALmaLinux 8
+%if 0%{?rhel} == 8
+BuildRequires:  python3.11-devel
+%endif
+
+# ALmaLinux 9
 %if 0%{?rhel} >= 9 || 0%{?fedora} >= 39
 BuildRequires:  clang
 BuildRequires:  clang-devel
@@ -149,7 +154,9 @@ Warning: This package is only a stub for now.
  cp $RPM_SOURCE_DIR/patchvenv.sh $RPM_SOURCE_DIR/find_files.sh .
  chmod u+x patchvenv.sh find_files.sh .
  patchVEnvArgs="--use-system-packages"
- if [ \( 0%{?fedora} -ge 39 \) -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) ]; then
+ if [   \( 0%{?fedora} -ge 39 \)
+      -o\( 0%{?rhel}   -eq  8 \)
+      -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) ]; then
    patchVEnvArgs="${patchVEnvArgs} --remove-venv-watchfiles"
  fi
  ./patchvenv.sh ${patchVEnvArgs}

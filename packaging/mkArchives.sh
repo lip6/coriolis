@@ -51,7 +51,7 @@
  echo "Running mkArchives.sh"
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
-   ./packaging/git-archive-all.sh -v --prefix coriolis-eda-2.5.5/ --format tar.gz coriolis-${version}.tar.gz
+   ./packaging/git-archive-all.sh -v --prefix coriolis-eda-2.5.5/ --format tar.gz coriolis-eda-${version}.tar.gz
    #git archive --prefix=coriolis-2.5.5/ --format=tar.gz -o coriolis-${version}.tar.gz HEAD
  fi
  
