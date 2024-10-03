@@ -73,6 +73,8 @@ BuildRequires:  %{python_module setuptools}
 
 # ALmaLinux 8
 %if 0%{?rhel} == 8
+%global python3_sitearch /usr/lib64/python3.11/site-packages
+
 BuildRequires:  python3.11-devel
 %endif
 
@@ -154,15 +156,15 @@ Warning: This package is only a stub for now.
  cp $RPM_SOURCE_DIR/patchvenv.sh $RPM_SOURCE_DIR/find_files.sh .
  chmod u+x patchvenv.sh find_files.sh .
  patchVEnvArgs="--use-system-packages"
- if [   \( 0%{?fedora} -ge 39 \)
-      -o\( 0%{?rhel}   -eq  8 \)
+ if [    \( 0%{?fedora} -ge 39 \) \
+      -o \( 0%{?rhel}   -eq  8 \) \
       -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) ]; then
    patchVEnvArgs="${patchVEnvArgs} --remove-venv-watchfiles"
  fi
  ./patchvenv.sh ${patchVEnvArgs}
   
  make PREFIX=%{_prefix} -f Makefile.LIP6 help install
- if [ \( 0%{?sle_version} -eq 150600 \) -a \( 0%{?is_opensuse} -ne 0 \) ]; then
+ if [ \( 0%{?sle_version} -eq 150600 \) -o \( 0%{?rhel} -eq 8 \) ]; then
    %{__mkdir_p} %{buildroot}%{_datadir}/doc
    pushd %{buildroot}%{_datadir}/doc
    tar zxf %{SOURCE10}

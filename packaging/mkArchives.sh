@@ -23,7 +23,8 @@
  }
 
  if [ $# -eq 0 ]; then printHelp; fi
- 
+
+    githash=`git log -1 --pretty=format:%h`
   doSources="false"
      doDocs="false"
      doVEnv="false"
@@ -49,6 +50,7 @@
  fi
 
  echo "Running mkArchives.sh"
+ echo "* Using HEAD githash as release: ${githash}."
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
    ./packaging/git-archive-all.sh -v --prefix coriolis-eda-2.5.5/ --format tar.gz coriolis-eda-${version}.tar.gz
@@ -87,6 +89,7 @@
    fi
  done
  
+ sed -i "s,^Release: *1,Release:        <CI_CNT>.<B_CNT>.${githash}," ${obsDir}/coriolis-eda.spec
  if [ "${doCommit}" = "true" ]; then
    pushd ${obsDir}
    osc commit

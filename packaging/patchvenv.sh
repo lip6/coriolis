@@ -62,6 +62,7 @@
  ls -al /usr/bin/python*
 
  if [ -f .venv/bin/pdm     ]; then touch .venv/bin/pdm;     fi
+ if [ -f .venv/bin/meson   ]; then touch .venv/bin/meson;   fi
  if [ -f .venv/bin/pelican ]; then touch .venv/bin/pelican; fi
 
  exit 0
