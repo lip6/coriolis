@@ -90,6 +90,7 @@
  done
  
  sed -i "s,^Release: *1,Release:        <CI_CNT>.<B_CNT>.${githash}," ${obsDir}/coriolis-eda.spec
+ sed -i "s,^%define docGithash .*,%define docGithash ${docGithash},"  ${obsDir}/coriolis-eda.spec
  if [ "${doCommit}" = "true" ]; then
    pushd ${obsDir}
    osc commit
