@@ -1,5 +1,5 @@
 %define _unpackaged_files_terminate_build 1
-%define docGithash  b12c8613c
+%define docGithash  xx
 
 Name:           coriolis-eda
 Version:        2.5.5
