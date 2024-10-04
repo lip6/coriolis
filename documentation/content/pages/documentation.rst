@@ -105,6 +105,9 @@ Coriolis Documentation
          `Oroshi Reference <../doc/oroshi/index.html>`_ |br|
          Analog devices generators
         
+         `Packaging Notes <{filename}/pages/packaging/Packaging_HTML.rst>`_ |br|
+         Some hints about how to package Coriolis.
+        
          `Technical Log <{filename}/pages/technical-log/TechnicalLog_HTML.rst>`_ |br|
          Technical logs (history of changes & fixes).
 

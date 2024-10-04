@@ -165,6 +165,12 @@
 .. |Makefile|                       replace:: :cb:`Makefile`
 .. |dodo|                           replace:: :cb:`dodo`
 .. |man|                            replace:: :cb:`man`
+.. |pip|                            replace:: :cb:`pip`
+.. |pdm|                            replace:: :cb:`pdm`
+.. |meson|                          replace:: :cb:`meson`
+.. |pelican|                        replace:: :cb:`pelican`
+.. |doxygen|                        replace:: :cb:`doxygen`
+.. |ghostscript|                    replace:: :cb:`ghostscript`
 
 
 .. |BUG|                            replace:: **BUG** |

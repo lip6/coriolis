@@ -30,6 +30,9 @@
    BUILDDIR     = ${CORIOLIS_SRC}/build
    PREFIX       = /usr
  endif
+ PDM_BIN     = $(CORIOLIS_SRC)/.venv/bin/pdm
+ MESON_BIN   = $(CORIOLIS_SRC)/.venv/bin/meson
+ PELICAN_BIN = $(CORIOLIS_SRC)/.venv/bin/pelican
 
 
 
@@ -71,28 +74,25 @@ $(CORIOLIS_SRC)/.venv:
 	python3 -m venv .venv
 
 
-$(CORIOLIS_SRC)/.venv/bin/meson: $(CORIOLIS_SRC)/.venv
-	$(venv) pip install meson
+$(MESON_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(MESON_BIN)" ]; then pip install meson; fi
 
 
-$(CORIOLIS_SRC)/.venv/bin/pelican: $(CORIOLIS_SRC)/.venv
-	$(venv) pip install pelican
+$(PELICAN_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(PELICAN_BIN)" ]; then pip install pelican; fi
 
 
 ifeq ($(USE_SYSTEM_PDM),)
 
-$(CORIOLIS_SRC)/.venv/bin/pdm: $(CORIOLIS_SRC)/.venv
-	$(venv) pip install pdm; pdm install --no-self -d --plugins
+$(PDM_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(PDM_BIN)" ]; then pip install pdm; pdm install --no-self -d --plugins; fi
 
 
-install_venv: $(CORIOLIS_SRC)/.venv/bin/pdm \
-              $(CORIOLIS_SRC)/.venv/bin/meson \
-              $(CORIOLIS_SRC)/.venv/bin/pelican
+install_venv: $(PDM_BIN) $(MESON_BIN) $(PELICAN_BIN)
 
 else
 
-install_venv: $(CORIOLIS_SRC)/.venv/bin/meson \
-              $(CORIOLIS_SRC)/.venv/bin/pelican
+install_venv: $(MESON_BIN) $(PELICAN_BIN)
 
 endif
 

@@ -42,6 +42,8 @@ rstcontent = files(
   'content/pages/stratus/Patterns.rst',
   'content/pages/stratus/Stratus_HTML.rst',
   'content/pages/symbolic-layout.rst',
+  'content/pages/packaging/OBS.rst',
+  'content/pages/packaging/Packaging_HTML.rst',
   'content/pages/technical-log/TechnicalLog_HTML.rst',
   'content/pages/technical-log/December_2023.rst',
   'content/pages/users-guide/Configuration.rst',
