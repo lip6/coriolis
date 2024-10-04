@@ -1,6 +1,6 @@
 
     version="2.5.5"
- docGithash="b12c8613c"
+ docGithash="17783c54f"
      obsDir="../coriolis-obs/home:jpc-lip6/coriolis-eda"
 
  printHelp () {
