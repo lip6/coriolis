@@ -18,6 +18,7 @@ STATIC_PATHS = [ 'pages/users-guide',
                  'pages/check-toolkit',
                  'pages/design-flow',
                  'pages/rds',
+                 'pages/packaging',
                  'pages/technical-log',
                  'images',
                ]
@@ -98,9 +99,11 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'DbU.rst'
                , 'Name.rst'
 
+               , 'OBS.rst'           # For Packaging
+
                , 'December_2023.rst' # For Technical Logs
 
-               , 'Stratus.rst'        # For Stratus.
+               , 'Stratus.rst'       # For Stratus.
                , 'Developper.rst'
                , 'DpGen.rst'
                , 'Language.rst'
