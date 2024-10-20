@@ -789,10 +789,10 @@ namespace Anabatic {
       //                     << endl;
       // }
       if (not (flags & Flags::NoSegExt)) {
-        // cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+        //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          // cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          //cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
         }
       }
     } else {
@@ -1540,6 +1540,87 @@ namespace Anabatic {
     // }
 
     cdebug_tabw(145,-1);
+  }
+
+
+  void  AutoSegment::updatePositions ()
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    DbU::Unit targetPos1 = getTargetU() + targetCap;
+    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "updatePositions() " << this << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
+
+    if (sourcePos2 < sourcePos1) {
+      if (_sourcePosition != sourcePos2) {
+        if (sourcePos2 < _sourcePosition)
+          setFlags( SegBecomeBelowPitch );
+        _sourcePosition = sourcePos2;
+      }
+    } else
+      _sourcePosition = sourcePos1;
+
+    if (targetPos2 > targetPos1) {
+      if (_targetPosition != targetPos2) {
+        if (targetPos2 > _targetPosition)
+          setFlags( SegBecomeBelowPitch );
+        _targetPosition = targetPos2;
+      }
+    } else
+      _targetPosition = targetPos1;
+
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
+      _sourcePosition -= halfCap;
+      _targetPosition += halfCap;
+    }
+    cdebug_log(145,-1) << "updated() " << this << endl;
+    DebugSession::close();
+  }
+
+
+  bool  AutoSegment::checkPositions () const
+  {
+    bool      coherency      = true;
+    DbU::Unit sourceU        = getSourceU();
+    DbU::Unit targetU        = getTargetU();
+    DbU::Unit sourcePosition = std::min( sourceU - getExtensionCap(Flags::Source)
+                                       , targetU - getExtensionCap(Flags::Target|Flags::NoSegExt) );
+    DbU::Unit targetPosition = std::max( targetU + getExtensionCap(Flags::Target)
+                                       , sourceU + getExtensionCap(Flags::Source|Flags::NoSegExt) );
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
+      sourcePosition -= halfCap;
+      targetPosition += halfCap;
+    }
+
+    if ( _sourcePosition != sourcePosition ) {
+      cerr << Error ( "%s\n        Source position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_sourcePosition).c_str()
+                    , DbU::getValueString( sourcePosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    if ( _targetPosition != targetPosition ) {
+      cerr << Error ( "%s\n        Target position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_targetPosition).c_str()
+                    , DbU::getValueString( targetPosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    return coherency;
   }
 
 
@@ -2908,6 +2989,9 @@ namespace Anabatic {
     s.insert ( s.size()-1, sdistance );
     s.insert ( s.size()-1, sblevel );
     s.insert ( s.size()-1, _getStringFlags() );
+    string shadowSpan = " [" + DbU::getValueString(_sourcePosition)
+                      +  ":" + DbU::getValueString(_targetPosition) + "]";
+    s.insert ( s.size()-1, shadowSpan );
     return s;
   }
 

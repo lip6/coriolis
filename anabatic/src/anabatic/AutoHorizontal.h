@@ -53,9 +53,7 @@ namespace Anabatic {
       virtual void            setDuTarget             ( DbU::Unit );
       virtual void            _setAxis                ( DbU::Unit );
       virtual void            updateOrient            ();
-      virtual void            updatePositions         ();
       virtual void            updateNativeConstraints ();
-      virtual bool            checkPositions          () const;
       virtual bool            checkConstraints        () const;
       virtual Flags           _makeDogleg             ( GCell*, Flags flags );
       virtual bool            moveULeft               ();
