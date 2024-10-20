@@ -253,7 +253,7 @@ namespace Anabatic {
                      bool                canPivotUp                 ( float reserve=0.0, Flags flags=Flags::NoFlags ) const;
                      bool                canPivotDown               ( float reserve=0.0, Flags flags=Flags::NoFlags ) const;
                      bool                canSlacken                 ( Flags flags=Flags::NoFlags ) const;
-             virtual bool                checkPositions             () const = 0;
+             virtual bool                checkPositions             () const;
              virtual bool                checkConstraints           () const = 0;
                      bool                checkDepthSpin             () const;
     // Accessors.                                            
@@ -319,7 +319,7 @@ namespace Anabatic {
              virtual void                setDuTarget                ( DbU::Unit du ) = 0;
                      void                computeTerminal            ();
              virtual void                updateOrient               () = 0;
-             virtual void                updatePositions            () = 0;
+             virtual void                updatePositions            ();
              virtual void                updateNativeConstraints    () = 0;
                      void                updateSourceSpin           ();
                      void                updateTargetSpin           ();

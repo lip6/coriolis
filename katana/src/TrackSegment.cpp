@@ -482,11 +482,12 @@ namespace Katana {
 
       _sourceU = perpandicularSpan.getVMin();
       _targetU = perpandicularSpan.getVMax();
+
+      updateTrackSpan();
     }
     else
       _base->getCanonical( _sourceU, _targetU );
 
-    if (isNonPref()) updateTrackSpan();
 
     if (_track) {
       Track* wtrack = getTrack();

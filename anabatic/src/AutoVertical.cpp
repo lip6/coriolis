@@ -15,6 +15,7 @@
 
 
 #include <algorithm>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Warning.h"
 #include "hurricane/ViaLayer.h"
@@ -35,6 +36,8 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::ViaLayer;
+  using Hurricane::ViaLayer;
+  using Hurricane::DebugSession;
 
 
 // -------------------------------------------------------------------
@@ -429,41 +432,6 @@ namespace Anabatic {
   }
 
 
-  void  AutoVertical::updatePositions ()
-  {
-    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
-    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
-    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
-    DbU::Unit sourcePos2 = getTargetU() - targetCap;
-    DbU::Unit targetPos1 = getTargetU() + targetCap;
-    DbU::Unit targetPos2 = getSourceU() + sourceCap;
-
-    if (sourcePos2 < sourcePos1) {
-      if (_sourcePosition != sourcePos2) {
-        if (sourcePos2 < _sourcePosition)
-          setFlags( SegBecomeBelowPitch );
-        _sourcePosition = sourcePos2;
-      }
-    } else
-      _sourcePosition = sourcePos1;
-
-    if (targetPos2 > targetPos1) {
-      if (_targetPosition != targetPos2) {
-        if (targetPos2 > _targetPosition)
-          setFlags( SegBecomeBelowPitch );
-        _targetPosition = targetPos2;
-      }
-    } else
-      _targetPosition = targetPos1;
-
-    if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
-      _sourcePosition -= halfCap;
-      _targetPosition += halfCap;
-    }
-  }
-
-
   void  AutoVertical::updateNativeConstraints ()
   {
     vector<GCell*> gcells;
@@ -474,45 +442,6 @@ namespace Anabatic {
       mergeNativeMin( gcell->getXMin() );
       mergeNativeMax( gcell->getConstraintXMax() );
     }
-  }
-
-
-  bool  AutoVertical::checkPositions () const
-  {
-    bool      coherency      = true;
-    DbU::Unit sourceCap      = getExtensionCap(Flags::Source);
-    DbU::Unit targetCap      = getExtensionCap(Flags::Target);
-    DbU::Unit sourceU        = _vertical->getSource()->getY();
-    DbU::Unit targetU        = _vertical->getTarget()->getY();
-    DbU::Unit sourcePosition = std::min( getSourceU() - sourceCap, getTargetU() - targetCap );
-    DbU::Unit targetPosition = std::max( getTargetU() + targetCap, getSourceU() + sourceCap );
-    if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
-      sourcePosition -= halfCap;
-      targetPosition += halfCap;
-    }
-
-    if ( _sourcePosition != sourcePosition ) {
-      cerr << Error ( "%s\n        Source position incoherency: "
-                      "Shadow: %s, real: %s."
-                    , _getString().c_str() 
-                    , DbU::getValueString(_sourcePosition).c_str()
-                    , DbU::getValueString( sourcePosition).c_str()
-                    ) << endl;
-      coherency = false;
-    }
-
-    if ( _targetPosition != targetPosition ) {
-      cerr << Error ( "%s\n        Target position incoherency: "
-                      "Shadow: %s, real: %s."
-                    , _getString().c_str() 
-                    , DbU::getValueString(_targetPosition).c_str()
-                    , DbU::getValueString( targetPosition).c_str()
-                    ) << endl;
-      coherency = false;
-    }
-
-    return coherency;
   }
 
 

@@ -762,6 +762,12 @@ namespace Katana {
         event->process( _eventQueue, _eventHistory, _eventLoop );
         count++;
         if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+
+        // if (RoutingEvent::getProcesseds() == 55063) {
+        //   UpdateSession::close();
+        //   Breakpoint::stop( 0, "Stoping after event 55063" );
+        //   UpdateSession::open();
+        // }
       }
 
       _negociateRepair();
