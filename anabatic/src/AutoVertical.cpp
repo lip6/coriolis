@@ -672,6 +672,76 @@ namespace Anabatic {
   }
 
 
+  bool  AutoVertical::promoteToPref ( Flags flags )
+  {
+    cdebug_log(149,0) << "AutoVertical::promoteToPref() " << this << endl;
+
+    if (not isNonPref()) return false;
+    size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    if (depth >= Session::getAllowedDepth()) return false;
+
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    AutoContact* terminal   = nullptr;
+
+    unsetFlags( SegNonPref );
+    if (autoSource->isTerminal()) terminal = autoSource;
+    if (autoTarget->isTerminal()) terminal = autoTarget;
+    if (not terminal) {
+      changeDepth( depth + 1, flags|Flags::Propagate );
+      return true;
+    }
+
+    Layer* contactLayer = Session::getRoutingGauge()->getContactLayer( depth );
+    Session::dogleg( this );
+
+    if (terminal == autoTarget) {
+      targetDetach();
+    } else {
+      sourceDetach();
+    }
+
+    invalidate( Flags::Topology );
+    terminal->invalidate( Flags::Topology );
+    AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), _vertical->getNet(), contactLayer );
+    cdebug_log(149,0) << dlContact1 << endl;
+    AutoSegment* segment1 = AutoSegment::create( terminal, dlContact1, Flags::Horizontal );
+    cdebug_log(149,0) << segment1 << endl;
+    segment1->setLayer( depth );
+    segment1->_setAxis( terminal->getY() );
+    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
+    cdebug_log(149,0) << "New " << dlContact1->base() << "." << endl;
+    Session::dogleg( segment1 );
+      
+    if (terminal == autoTarget) {
+      targetAttach( dlContact1 );
+      autoTarget->cacheAttach( segment1 );
+      autoSource->invalidate( Flags::Topology );
+    } else {
+      sourceAttach( dlContact1 );
+      autoSource->cacheAttach( segment1 );
+      autoTarget->invalidate( Flags::Topology );
+    }
+    setLayer( depth+1 );
+    Session::dogleg( nullptr );
+
+    if (isAnalog  ()) segment1->setFlags( SegAnalog );
+    if (isNoMoveUp()) segment1->setFlags( SegNoMoveUp );
+    unsetFlags( AutoSegment::SegDrag );
+    terminal  ->unsetFlags( CntWeakTerminal|CntDrag );
+    dlContact1->setFlags  ( CntWeakTerminal );
+
+    cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+2] new paral: " << nullptr << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+0] original:  " << this << endl;
+
+    dlContact1->updateCache();
+    updateNativeConstraints();
+
+    return true;
+  }
+
+
   Flags  AutoVertical::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     cdebug_log(149,0) << "AutoVertical::_makeDogleg(GCell*)" << endl;

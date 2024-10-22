@@ -181,20 +181,4 @@ namespace Katana {
   }
 
 
-  void  TrackSegmentNonPref::promoteToPref ()
-  {
-    base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
-    bool          created = false;
-    TrackElement* segment = TrackSegment::create( base(), nullptr, created );
-    if (segment->isNonPref())
-      throw Error( "TrackSegmentNonPref::promoteToPref(): Layer/direction incoherency for prefered,\n"
-                   "        From non-pref %s."
-                 , getString(this).c_str() );
-    DataNegociate* data = getDataNegociate();
-    if (data and data->hasRoutingEvent())
-      data->getRoutingEvent()->setDisabled( true );
-    segment->reschedule( 0 );
-  }
-
-
 }  // Katana namespace.

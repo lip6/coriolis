@@ -2458,15 +2458,6 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::moveUpToPref ( Flags flags )
-  {
-    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
-    if (not isNonPref() or (depth >= Session::getAllowedDepth())) return false;
-    changeDepth( depth + 1, flags|Flags::Propagate );
-    return true;
-  }
-
-
   bool  AutoSegment::moveDown ( Flags flags )
   {
   //if ( not canPivotDown(0.0,flags) ) return false;

@@ -138,7 +138,9 @@ namespace Katana {
     bool useNonPref = (segment->getDirection() xor Session::getDirection(segment->getLayer()));
 
     DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
-    TrackElement* trackElement     = Session::lookup( segment->base() );
+  // TO_CHECK.
+  //TrackElement* trackElement     = Session::lookup( segment->base() );
+    TrackElement* trackElement     = Session::lookup( segment );
     if (not trackElement) { 
       if (useNonPref) {
         trackElement = new TrackSegmentNonPref( segment );
@@ -989,14 +991,32 @@ namespace Katana {
   }
 
 
+
+  TrackElement* TrackSegment::promoteToPref ()
+  {
+    TrackElement* perpandicular = nullptr;
+    TrackElement* parallel      = nullptr;
+
+    base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
+    DataNegociate* data = getDataNegociate();
+    if (data and data->hasRoutingEvent())
+      data->getRoutingEvent()->setDisabled( true );
+
+    base()->promoteToPref( Flags::NoFlags );
+    _postDoglegs( perpandicular, parallel );
+
+    return perpandicular;
+  }
+  
+
   TrackElement* TrackSegment::makeDogleg ()
   {
     Anabatic::AutoContact* source = _base->getAutoSource();
     Anabatic::AutoContact* target = _base->getAutoTarget();
     Anabatic::GCell*       gcell  = _base->getAutoSource()->getGCell();
 
-    TrackElement* dogleg   = NULL;
-    TrackElement* parallel = NULL;
+    TrackElement* dogleg   = nullptr;
+    TrackElement* parallel = nullptr;
     makeDogleg( gcell, dogleg, parallel );
 
     if (dogleg) {
@@ -1072,12 +1092,16 @@ namespace Katana {
         segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
 
         cdebug_log(159,0) << "Looking up new parallel: " << doglegs[i+2] << endl;
-        segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
-        segments[i+2]->setFlags( TElemSourceDogleg );
-        segments[i+2]->getDataNegociate()->resetStateCount();
-        segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
+        if (doglegs[i+2]) {
+          segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
+          segments[i+2]->setFlags( TElemSourceDogleg );
+          segments[i+2]->getDataNegociate()->resetStateCount();
+          segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
 
-        segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
+          segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
+        } else {
+          segments.push_back( nullptr );
+        }
 
         perpandicular = segments[i+1];
         parallel      = segments[i+2];
@@ -1089,7 +1113,8 @@ namespace Katana {
     //if ( getGCell() != originalGCell ) swapTrack ( segments[2] );
 
       for ( size_t i=0 ; i<doglegs.size() ; ++i ) {
-        segments[i]->reschedule ( ((i%3==1) ? 0 : 1) );
+        if (not segments[i]) continue;
+        segments[i]->reschedule( ((i%3==1) ? 0 : 1) );
         const char* segPart = "Unknown";
         switch ( i%3 ) {
           case 0: segPart = "original "; break;
