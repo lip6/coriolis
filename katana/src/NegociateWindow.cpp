@@ -421,7 +421,7 @@ namespace Katana {
     Interval span;
     autoSegment = autoSegment->getCanonical( span );
 
-    bool           created;
+    bool           created      = false;
     TrackElement*  trackSegment = TrackSegment::create( autoSegment, insTrack, created );
 
     if (not (flags & Flags::LoadingStage))

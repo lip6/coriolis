@@ -338,6 +338,7 @@ namespace Anabatic {
                      bool                checkNotInvalidated        () const;
       inline         void                setParent                  ( AutoSegment* );
                      void                revalidate                 ();
+             virtual bool                promoteToPref              ( Flags ) = 0;
                      AutoSegment*        makeDogleg                 ( AutoContact* );
                      Flags               makeDogleg                 ( Interval, Flags flags=Flags::NoFlags );
                      Flags               makeDogleg                 ( GCell*  , Flags flags=Flags::NoFlags );
@@ -350,7 +351,6 @@ namespace Anabatic {
                      void                changeDepth                ( unsigned int depth, Flags flags );
                      bool                moveUp                     ( Flags flags=Flags::NoFlags );
                      bool                moveDown                   ( Flags flags=Flags::NoFlags );
-                     bool                moveUpToPref               ( Flags flags=Flags::NoFlags );
                      bool                reduceDoglegLayer          ();
                      bool                bloatStackedStrap          ();
                      bool                reduce                     ( Flags flags=Flags::WithPerpands );

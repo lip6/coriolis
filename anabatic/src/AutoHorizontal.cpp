@@ -849,6 +849,16 @@ namespace Anabatic {
   }
 
 
+  bool  AutoHorizontal::promoteToPref ( Flags flags )
+  {
+    throw Error( "AutoHorizontal::promoteToPref(): Unimplemented yet.\n"
+                 "        On %s"
+               , getString( this ).c_str()
+               );
+    return true;
+  }
+
+
   Flags  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
     DebugSession::open( getNet(), 145, 150 );
