@@ -455,7 +455,7 @@ namespace Hurricane {
         leftMost = current;
       }
       if (    current->getLeft()
-         and (overlap.getVMin() < current->getLeft()->getValue().getChildsVMax()) ) {
+         and (overlap.getVMin() <= current->getLeft()->getValue().getChildsVMax()) ) {
         current  = current->getLeft();
         leftMost = nullptr;
       } else {
