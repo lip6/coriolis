@@ -699,29 +699,39 @@ namespace Katana {
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
 
-      // if (RoutingEvent::getProcesseds() == 49053) {
+      // if (RoutingEvent::getProcesseds() == 32512) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After processing RoutingEvent 49053." );
+      //   Breakpoint::stop( 0, "After processing RoutingEvent 32511." );
       //   UpdateSession::open();
       // }
 
-    //if (event->getSegment()->getNet()->getId() == 239546) {
-    //  UpdateSession::close();
-    //  ostringstream message;
-    //  message << "After processing an event from Net id:239546\n" << event;
-    //  Breakpoint::stop( 0, message.str() );
-    //  UpdateSession::open();
-    //}
+      // if (  (event->getSegment()->getId() == 88365)
+      //    or (event->getSegment()->getId() == 88368)) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing AutoSegment " << event->getSegment()->getId()
+      //           << " (@event:" << (count-1) << ")";
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
 
-    //if (count and not (count % 500)) {
-    //  _pack( count, false );
-    //} 
-
-    //if (RoutingEvent::getProcesseds() == 65092) {
-    //  UpdateSession::close();
-    //  Breakpoint::stop( 0, "Overlap has happened" );
-    //  UpdateSession::open();
-    //}
+      // if (event->getSegment()->getNet()->getId() == 239546) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing an event from Net id:239546\n" << event;
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
+         
+      // if (count and not (count % 500)) {
+      //   _pack( count, false );
+      // } 
+         
+      // if (RoutingEvent::getProcesseds() == 65092) {
+      //   UpdateSession::close();
+      //   Breakpoint::stop( 0, "Overlap has happened" );
+      //   UpdateSession::open();
+      // }
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
     _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );

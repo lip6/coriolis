@@ -124,6 +124,11 @@ namespace Anabatic {
   void  AutoVertical::setDuSource ( DbU::Unit du )
   {
     _vertical->setDySource(du);
+    if (du > 0)
+      cerr << Warning( "AutoVertical::setDuSource(): Positive du=%s (should always be negative)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoVertical::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"
@@ -136,6 +141,11 @@ namespace Anabatic {
   void  AutoVertical::setDuTarget ( DbU::Unit du )
   {
     _vertical->setDyTarget(du);
+    if (du < 0)
+      cerr << Warning( "AutoVertical::setDuTarget(): Negative du=%s (should always be positive)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoVertical::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"
@@ -408,7 +418,7 @@ namespace Anabatic {
 
   void  AutoVertical::updateOrient ()
   {
-    if (_vertical->getTargetY() < _vertical->getSourceY()) {
+    if (_vertical->getTarget()->getY() < _vertical->getSource()->getY()) {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _vertical->invert();
 
@@ -703,7 +713,7 @@ namespace Anabatic {
 
     invalidate( Flags::Topology );
     terminal->invalidate( Flags::Topology );
-    AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), _vertical->getNet(), contactLayer );
+    AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), getNet(), contactLayer );
     cdebug_log(149,0) << dlContact1 << endl;
     AutoSegment* segment1 = AutoSegment::create( terminal, dlContact1, Flags::Horizontal );
     cdebug_log(149,0) << segment1 << endl;
