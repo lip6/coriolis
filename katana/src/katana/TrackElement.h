@@ -213,6 +213,7 @@ namespace Katana {
       virtual void                    addTrackCount          ( int32_t );
       virtual void                    incOverlapCost         ( TrackCost& ) const;
       virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::AutoSegment::SegAxisSet );
+      virtual TrackElement*           promoteToPref          ();
       virtual TrackElement*           makeDogleg             ();
       inline  bool                    makeDogleg             ( Anabatic::GCell* );
       virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );

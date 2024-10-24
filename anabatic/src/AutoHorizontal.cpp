@@ -134,6 +134,11 @@ namespace Anabatic {
   void  AutoHorizontal::setDuSource ( DbU::Unit du )
   {
     _horizontal->setDxSource(du);
+    if (du > 0)
+      cerr << Warning( "AutoHorizontal::setDuSource(): Positive du=%s (should always be negative)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoHorizontal::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"
@@ -146,6 +151,11 @@ namespace Anabatic {
   void  AutoHorizontal::setDuTarget ( DbU::Unit du )
   {
     _horizontal->setDxTarget(du);
+    if (du < 0)
+      cerr << Warning( "AutoHorizontal::setDuTarget(): Negative du=%s (should always be positive)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoHorizontal::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"
@@ -538,16 +548,16 @@ namespace Anabatic {
   }
 
 
-  void  AutoHorizontal::updatePositions ()
-  {
-    _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
-    _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
-    if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) -1;
-      _sourcePosition -= halfCap;
-      _targetPosition += halfCap;
-    }
-  }
+  // void  AutoHorizontal::updatePositions ()
+  // {
+  //   _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
+  //   _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
+  //   if (isNonPref()) {
+  //     DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) -1;
+  //     _sourcePosition -= halfCap;
+  //     _targetPosition += halfCap;
+  //   }
+  // }
 
 
   void  AutoHorizontal::updateNativeConstraints ()
@@ -563,42 +573,42 @@ namespace Anabatic {
   }
 
 
-  bool  AutoHorizontal::checkPositions () const
-  {
-    bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSource()->getX() - getExtensionCap(Flags::Source);
-    DbU::Unit targetPosition = _horizontal->getTarget()->getX() + getExtensionCap(Flags::Target);
-    if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) -1;
-      sourcePosition -= halfCap;
-      targetPosition += halfCap;
-    }
+  // bool  AutoHorizontal::checkPositions () const
+  // {
+  //   bool      coherency      = true;
+  //   DbU::Unit sourcePosition = _horizontal->getSource()->getX() - getExtensionCap(Flags::Source);
+  //   DbU::Unit targetPosition = _horizontal->getTarget()->getX() + getExtensionCap(Flags::Target);
+  //   if (isNonPref()) {
+  //     DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) -1;
+  //     sourcePosition -= halfCap;
+  //     targetPosition += halfCap;
+  //   }
 
-    if ( _sourcePosition != sourcePosition ) {
-      cerr << "extensionCap: " << DbU::getValueString(getExtensionCap(Flags::Source)) << endl;
-      cerr << "ppitch:       " << DbU::getValueString(getPPitch()) << endl;
-      cerr << "via width:    " << DbU::getValueString(Session::getViaWidth(getLayer())) << endl;
-      cerr << Error ( "%s\n        Source position incoherency: "
-                      "shadow: %s, real: %s."
-                    , _getString().c_str() 
-                    , DbU::getValueString(_sourcePosition).c_str()
-                    , DbU::getValueString( sourcePosition).c_str()
-                    ) << endl;
-      coherency = false;
-    }
+  //   if ( _sourcePosition != sourcePosition ) {
+  //     cerr << "extensionCap: " << DbU::getValueString(getExtensionCap(Flags::Source)) << endl;
+  //     cerr << "ppitch:       " << DbU::getValueString(getPPitch()) << endl;
+  //     cerr << "via width:    " << DbU::getValueString(Session::getViaWidth(getLayer())) << endl;
+  //     cerr << Error ( "%s\n        Source position incoherency: "
+  //                     "shadow: %s, real: %s."
+  //                   , _getString().c_str() 
+  //                   , DbU::getValueString(_sourcePosition).c_str()
+  //                   , DbU::getValueString( sourcePosition).c_str()
+  //                   ) << endl;
+  //     coherency = false;
+  //   }
 
-    if ( _targetPosition != targetPosition ) {
-      cerr << Error ( "%s\n        Target position incoherency: "
-                      "shadow: %s, real: %s."
-                    , _getString().c_str() 
-                    , DbU::getValueString(_targetPosition).c_str()
-                    , DbU::getValueString( targetPosition).c_str()
-                    ) << endl;
-      coherency = false;
-    }
+  //   if ( _targetPosition != targetPosition ) {
+  //     cerr << Error ( "%s\n        Target position incoherency: "
+  //                     "shadow: %s, real: %s."
+  //                   , _getString().c_str() 
+  //                   , DbU::getValueString(_targetPosition).c_str()
+  //                   , DbU::getValueString( targetPosition).c_str()
+  //                   ) << endl;
+  //     coherency = false;
+  //   }
 
-    return coherency;
-  }
+  //   return coherency;
+  // }
 
 
   bool  AutoHorizontal::checkConstraints () const

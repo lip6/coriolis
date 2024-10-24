@@ -25,7 +25,7 @@
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/Session.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTurn.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/AutoHorizontal.h"
 #include "anabatic/AutoVertical.h"
@@ -789,10 +789,10 @@ namespace Anabatic {
       //                     << endl;
       // }
       if (not (flags & Flags::NoSegExt)) {
-        // cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+        //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          // cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          //cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
         }
       }
     } else {
@@ -923,12 +923,13 @@ namespace Anabatic {
 
     sourceAxis = getSourceU();
     targetAxis = getTargetU();
+    if (sourceAxis > targetAxis) std::swap( sourceAxis, targetAxis );
 
   //if (not isNotAligned()) {
-      for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
-        sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
-        targetAxis = std::max( targetAxis, aligned->getTargetU() );
-      }
+    for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
+      sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
+      targetAxis = std::max( targetAxis, aligned->getTargetU() );
+    }
   //}
   }
 
@@ -1543,6 +1544,87 @@ namespace Anabatic {
   }
 
 
+  void  AutoSegment::updatePositions ()
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    DbU::Unit targetPos1 = getTargetU() + targetCap;
+    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "updatePositions() " << this << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
+
+    if (sourcePos2 < sourcePos1) {
+      if (_sourcePosition != sourcePos2) {
+        if (sourcePos2 < _sourcePosition)
+          setFlags( SegBecomeBelowPitch );
+        _sourcePosition = sourcePos2;
+      }
+    } else
+      _sourcePosition = sourcePos1;
+
+    if (targetPos2 > targetPos1) {
+      if (_targetPosition != targetPos2) {
+        if (targetPos2 > _targetPosition)
+          setFlags( SegBecomeBelowPitch );
+        _targetPosition = targetPos2;
+      }
+    } else
+      _targetPosition = targetPos1;
+
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
+      _sourcePosition -= halfCap;
+      _targetPosition += halfCap;
+    }
+    cdebug_log(145,-1) << "updated() " << this << endl;
+    DebugSession::close();
+  }
+
+
+  bool  AutoSegment::checkPositions () const
+  {
+    bool      coherency      = true;
+    DbU::Unit sourceU        = getSourceU();
+    DbU::Unit targetU        = getTargetU();
+    DbU::Unit sourcePosition = std::min( sourceU - getExtensionCap(Flags::Source)
+                                       , targetU - getExtensionCap(Flags::Target|Flags::NoSegExt) );
+    DbU::Unit targetPosition = std::max( targetU + getExtensionCap(Flags::Target)
+                                       , sourceU + getExtensionCap(Flags::Source|Flags::NoSegExt) );
+    if (isNonPref()) {
+      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
+      sourcePosition -= halfCap;
+      targetPosition += halfCap;
+    }
+
+    if ( _sourcePosition != sourcePosition ) {
+      cerr << Error ( "%s\n        Source position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_sourcePosition).c_str()
+                    , DbU::getValueString( sourcePosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    if ( _targetPosition != targetPosition ) {
+      cerr << Error ( "%s\n        Target position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_targetPosition).c_str()
+                    , DbU::getValueString( targetPosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    return coherency;
+  }
+
+
   AutoSegment* AutoSegment::canonize ( Flags flags )
   {
     cdebug_log(149,0) << "canonize() - " << this << endl;
@@ -1720,7 +1802,10 @@ namespace Anabatic {
       cdebug_log(149,0) << "| Canonical axis length superior to P-Pitch " << this << endl;
       return false;
     }
-    cdebug_log(149,0) << "  Length below P-Pitch." << endl;
+    cdebug_log(149,0) << "  Length below P-Pitch (axis S:"
+                      << DbU::getValueString(sourceAxis) << " T:"
+                      << DbU::getValueString(targetAxis) << ")"
+                      << endl;
     return true;
   }
 
@@ -1799,27 +1884,27 @@ namespace Anabatic {
     DbU::Unit duTarget      = getDuTarget();
     DbU::Unit sourceCap     = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     DbU::Unit targetCap     = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
-    DbU::Unit segLength     = getTargetU() - getSourceU();
-    DbU::Unit segMinLength  = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit segLength     = getAnchoredLength();
+    DbU::Unit segMinLength  = segLength + sourceCap + targetCap;
     DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
 
     cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
-    cdebug_log(149,0) << "* Source cap " << DbU::getValueString(sourceCap) << endl;
-    cdebug_log(149,0) << "* Target cap " << DbU::getValueString(targetCap) << endl;
-    cdebug_log(149,0) << "* duSource " << DbU::getValueString(duSource) << endl;
-    cdebug_log(149,0) << "* duTarget " << DbU::getValueString(duTarget) << endl;
+    cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
+    cdebug_log(149,0) << "* duSource "        << DbU::getValueString(duSource) << endl;
+    cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(duTarget) << endl;
 
     if ((duSource == 0) and (duTarget == 0)) {
       cdebug_log(149,0) << "Already reset!" << endl;
       return;
     }
 
-    if (segLength <= techMinLength) {
+    if (segLength < techMinLength) {
       cdebug_log(149,0) << "Still at min area, do nothing." << endl;
       return;
     }
 
-    if (segMinLength > techMinLength) {
+    if (segMinLength >= techMinLength) {
       cdebug_log(149,0) << "Complete reset." << endl;
       setDuSource( 0 );
       setDuTarget( 0 );
@@ -2377,15 +2462,6 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::moveUpToPref ( Flags flags )
-  {
-    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
-    if (not isNonPref() or (depth >= Session::getAllowedDepth())) return false;
-    changeDepth( depth + 1, flags|Flags::Propagate );
-    return true;
-  }
-
-
   bool  AutoSegment::moveDown ( Flags flags )
   {
   //if ( not canPivotDown(0.0,flags) ) return false;
@@ -2614,6 +2690,79 @@ namespace Anabatic {
     return false;
   }
 #endif
+
+
+  bool  AutoSegment::promoteToPref ( Flags flags )
+  {
+    cdebug_log(149,0) << "AutoVertical::promoteToPref() " << this << endl;
+
+    if (not isNonPref()) return false;
+    size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    if (depth >= Session::getAllowedDepth()) return false;
+
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    AutoContact* terminal   = nullptr;
+
+    unsetFlags( SegNonPref );
+    if (autoSource->isTerminal()) terminal = autoSource;
+    if (autoTarget->isTerminal()) terminal = autoTarget;
+    if (not terminal) {
+      changeDepth( depth + 1, flags|Flags::Propagate );
+      return true;
+    }
+
+    Flags     perpandDir  = isHorizontal() ? Flags::Vertical  : Flags::Horizontal;
+    DbU::Unit perpandAxis = isHorizontal() ? terminal->getX() : terminal->getY();
+
+    Layer* contactLayer = Session::getRoutingGauge()->getContactLayer( depth );
+    Session::dogleg( this );
+
+    if (terminal == autoTarget) {
+      targetDetach();
+    } else {
+      sourceDetach();
+    }
+
+    invalidate( Flags::Topology );
+    terminal->invalidate( Flags::Topology );
+    AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), getNet(), contactLayer );
+    cdebug_log(149,0) << dlContact1 << endl;
+    AutoSegment* segment1 = AutoSegment::create( terminal, dlContact1, perpandDir );
+    cdebug_log(149,0) << segment1 << endl;
+    segment1->setLayer( depth );
+    segment1->_setAxis( perpandAxis );
+    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
+    cdebug_log(149,0) << "New " << dlContact1->base() << "." << endl;
+    Session::dogleg( segment1 );
+      
+    if (terminal == autoTarget) {
+      targetAttach( dlContact1 );
+      autoTarget->cacheAttach( segment1 );
+      autoSource->invalidate( Flags::Topology );
+    } else {
+      sourceAttach( dlContact1 );
+      autoSource->cacheAttach( segment1 );
+      autoTarget->invalidate( Flags::Topology );
+    }
+    setLayer( depth+1 );
+    Session::dogleg( nullptr );
+
+    if (isAnalog  ()) segment1->setFlags( SegAnalog );
+    if (isNoMoveUp()) segment1->setFlags( SegNoMoveUp );
+    unsetFlags( AutoSegment::SegDrag );
+    terminal  ->unsetFlags( CntWeakTerminal|CntDrag );
+    dlContact1->setFlags  ( CntWeakTerminal );
+
+    cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+2] new paral: " << nullptr << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+0] original:  " << this << endl;
+
+    dlContact1->updateCache();
+    updateNativeConstraints();
+
+    return true;
+  }
 
 
   Flags  AutoSegment::canDogleg ( Interval interval )
@@ -2908,6 +3057,9 @@ namespace Anabatic {
     s.insert ( s.size()-1, sdistance );
     s.insert ( s.size()-1, sblevel );
     s.insert ( s.size()-1, _getStringFlags() );
+    string shadowSpan = " [" + DbU::getValueString(_sourcePosition)
+                      +  ":" + DbU::getValueString(_targetPosition) + "]";
+    s.insert ( s.size()-1, shadowSpan );
     return s;
   }
 

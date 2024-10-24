@@ -223,7 +223,7 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth() // 2
+                                , gauge.getWireWidth() # // 2
                                 , gauge.getWireWidth()
                                 )
                 NetExternalComponents.setExternal( pin )

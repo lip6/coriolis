@@ -557,7 +557,12 @@ namespace Katana {
 
   bool  RoutingEvent::_rescheduleAsPref ()
   {
-    if (_segment->getDirection() xor Session::getDirection(_segment->getLayer()))
+    cdebug_log(159,0) << "_rescheduleAsPref() " << _segment << endl;
+    cdebug_log(159,0) << "_segment->getDirection() " << _segment->getDirection() << endl;
+    cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(_segment->getLayer()) << endl;
+    if (_segment->getDirection() == Session::getDirection(_segment->getLayer()))
+      return false;
+    if (_dataNegociate and (_dataNegociate->getState() < DataNegociate::MaximumSlack))
       return false;
     TrackSegmentNonPref* nonPref = dynamic_cast<TrackSegmentNonPref*>( _segment );
     if (nonPref) nonPref->promoteToPref();
