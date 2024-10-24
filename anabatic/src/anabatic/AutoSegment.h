@@ -338,7 +338,7 @@ namespace Anabatic {
                      bool                checkNotInvalidated        () const;
       inline         void                setParent                  ( AutoSegment* );
                      void                revalidate                 ();
-             virtual bool                promoteToPref              ( Flags ) = 0;
+                     bool                promoteToPref              ( Flags );
                      AutoSegment*        makeDogleg                 ( AutoContact* );
                      Flags               makeDogleg                 ( Interval, Flags flags=Flags::NoFlags );
                      Flags               makeDogleg                 ( GCell*  , Flags flags=Flags::NoFlags );
