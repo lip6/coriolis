@@ -55,7 +55,6 @@ namespace Anabatic {
       virtual void            updateOrient            ();
       virtual void            updateNativeConstraints ();
       virtual bool            checkConstraints        () const;
-      virtual bool            promoteToPref           ( Flags );
       virtual Flags           _makeDogleg             ( GCell*, Flags );
       virtual bool            moveULeft               ();
       virtual bool            moveURight              ();
