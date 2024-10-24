@@ -134,6 +134,11 @@ namespace Anabatic {
   void  AutoHorizontal::setDuSource ( DbU::Unit du )
   {
     _horizontal->setDxSource(du);
+    if (du > 0)
+      cerr << Warning( "AutoHorizontal::setDuSource(): Positive du=%s (should always be negative)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoHorizontal::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"
@@ -146,6 +151,11 @@ namespace Anabatic {
   void  AutoHorizontal::setDuTarget ( DbU::Unit du )
   {
     _horizontal->setDxTarget(du);
+    if (du < 0)
+      cerr << Warning( "AutoHorizontal::setDuTarget(): Negative du=%s (should always be positive)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , getString(this).c_str() ) << endl;
     if (abs(du) > getPitch())
       cerr << Warning( "AutoHorizontal::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
                        "          On %s"

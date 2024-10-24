@@ -923,12 +923,13 @@ namespace Anabatic {
 
     sourceAxis = getSourceU();
     targetAxis = getTargetU();
+    if (sourceAxis > targetAxis) std::swap( sourceAxis, targetAxis );
 
   //if (not isNotAligned()) {
-      for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
-        sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
-        targetAxis = std::max( targetAxis, aligned->getTargetU() );
-      }
+    for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
+      sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
+      targetAxis = std::max( targetAxis, aligned->getTargetU() );
+    }
   //}
   }
 
@@ -1801,7 +1802,10 @@ namespace Anabatic {
       cdebug_log(149,0) << "| Canonical axis length superior to P-Pitch " << this << endl;
       return false;
     }
-    cdebug_log(149,0) << "  Length below P-Pitch." << endl;
+    cdebug_log(149,0) << "  Length below P-Pitch (axis S:"
+                      << DbU::getValueString(sourceAxis) << " T:"
+                      << DbU::getValueString(targetAxis) << ")"
+                      << endl;
     return true;
   }
 
@@ -1880,27 +1884,27 @@ namespace Anabatic {
     DbU::Unit duTarget      = getDuTarget();
     DbU::Unit sourceCap     = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     DbU::Unit targetCap     = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
-    DbU::Unit segLength     = getTargetU() - getSourceU();
-    DbU::Unit segMinLength  = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit segLength     = getAnchoredLength();
+    DbU::Unit segMinLength  = segLength + sourceCap + targetCap;
     DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
 
     cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
-    cdebug_log(149,0) << "* Source cap " << DbU::getValueString(sourceCap) << endl;
-    cdebug_log(149,0) << "* Target cap " << DbU::getValueString(targetCap) << endl;
-    cdebug_log(149,0) << "* duSource " << DbU::getValueString(duSource) << endl;
-    cdebug_log(149,0) << "* duTarget " << DbU::getValueString(duTarget) << endl;
+    cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
+    cdebug_log(149,0) << "* duSource "        << DbU::getValueString(duSource) << endl;
+    cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(duTarget) << endl;
 
     if ((duSource == 0) and (duTarget == 0)) {
       cdebug_log(149,0) << "Already reset!" << endl;
       return;
     }
 
-    if (segLength <= techMinLength) {
+    if (segLength < techMinLength) {
       cdebug_log(149,0) << "Still at min area, do nothing." << endl;
       return;
     }
 
-    if (segMinLength > techMinLength) {
+    if (segMinLength >= techMinLength) {
       cdebug_log(149,0) << "Complete reset." << endl;
       setDuSource( 0 );
       setDuTarget( 0 );
