@@ -44,8 +44,6 @@ class Blif2Vst ( FlowTask ):
         self.addClean( self.targets )
 
     def __repr__ ( self ):
-        for d in self.file_dep:
-            print( d )
         return '<blif2vst {} depends=[{}]>' \
                .format( self.design, ','.join([f.as_posix() for f in self.file_dep]) )
 
