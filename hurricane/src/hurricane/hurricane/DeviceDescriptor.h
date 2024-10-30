@@ -26,8 +26,7 @@ namespace Hurricane {
 
   class DeviceDescriptor {
     public:
-      struct DeviceDescriptorComp:
-        public std::binary_function<const DeviceDescriptor*, const DeviceDescriptor*, bool> {
+      struct DeviceDescriptorComp {
           bool operator () ( const DeviceDescriptor* ldd, const DeviceDescriptor* rdd ) const
           { return ldd->getName() < rdd->getName(); }
       };

@@ -24,8 +24,7 @@ namespace Hurricane {
 
   class ModelDescriptor {
     public:
-      struct ModelDescriptorComp:
-        public std::binary_function<const ModelDescriptor*, const ModelDescriptor*, bool> {
+      struct ModelDescriptorComp {
           bool operator () ( const ModelDescriptor* lmd, const ModelDescriptor* rmd ) const
           { return lmd->getName() < rmd->getName(); }
       };

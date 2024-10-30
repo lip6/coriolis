@@ -40,7 +40,7 @@ namespace {
 
   class LvGCandidate {
     public:
-      struct Compare : public binary_function<LvGCandidate&,LvGCandidate&,bool> {
+      struct Compare {
           inline bool  operator() ( const LvGCandidate& lhs, const LvGCandidate& rhs ) const;
       };
     public:

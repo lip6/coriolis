@@ -35,7 +35,6 @@ namespace Katana {
 
   using std::set;
   using std::vector;
-  using std::binary_function;
   using std::labs;
   using Hurricane::DbU;
   using Hurricane::Interval;
@@ -55,7 +54,7 @@ namespace Katana {
     private:
       class Key {
         public:
-          class Compare : public binary_function<const Key&,const Key&,bool> {
+          class Compare {
             public:
               bool  operator() ( const Key& lhs, const Key& rhs ) const;
           };
@@ -80,12 +79,12 @@ namespace Katana {
 
     public:
     // Sub-Class: "Compare".
-      class Compare : public binary_function<const RoutingEvent*,const RoutingEvent*,bool> {
+      class Compare {
         public:
           bool  operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const;
       };
     // Sub-Class: "CompareById".
-      class CompareById : public binary_function<const RoutingEvent*,const RoutingEvent*,bool> {
+      class CompareById {
         public:
           inline bool  operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const;
       };

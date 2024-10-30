@@ -25,7 +25,6 @@ namespace Katana {
   using std::string;
   using std::map;
   using std::set;
-  using std::binary_function;
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;
@@ -48,7 +47,7 @@ namespace Katana {
 
   class TrackSegment : public TrackElement {
     public:
-      class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
+      class CompareById {
         public:
           inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const;
       };

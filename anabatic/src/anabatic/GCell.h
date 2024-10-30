@@ -43,7 +43,6 @@ namespace Anabatic {
   using std::string;
   using std::vector;
   using std::set;
-  using std::binary_function;
   using Hurricane::StaticObservable;
   using Hurricane::BaseObserver;
   using Hurricane::Name;
@@ -100,14 +99,14 @@ namespace Anabatic {
                  Observable& operator=  ( const StaticObservable& );
       };
     public:
-      class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
+      class CompareByDensity {
         public:
                       CompareByDensity ( size_t depth );
           inline bool operator()       ( GCell* lhs, GCell* rhs ) const;
         private:
           size_t  _depth;
       };
-      class CompareByKey : public binary_function<const GCell*,const GCell*,bool> {
+      class CompareByKey {
         public:
           inline bool  operator() ( const GCell* lhs, const GCell* rhs ) const;
       };

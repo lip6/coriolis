@@ -34,7 +34,7 @@ namespace Analog {
 
   class Device : public Hurricane::Cell {
     public:
-      struct ParameterCompare: public std::binary_function<Parameter*, Parameter*, bool> {
+      struct ParameterCompare {
           bool operator() ( Parameter* dp1, Parameter* dp2 ) const {
             if (dp1->getIndex() < dp2->getIndex()) return true;
             return     (dp1->getIndex() == dp2->getIndex()
