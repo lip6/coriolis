@@ -97,7 +97,7 @@ namespace Hurricane {
               unsigned int       _id;
       mutable set<Property*>     _propertySet;
     public:
-      struct CompareById : public std::binary_function<const DBo*,const DBo*,bool> {
+      struct CompareById {
           template<typename Key>
           inline bool  operator() ( const Key* lhs, const Key* rhs ) const;
       };

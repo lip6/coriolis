@@ -43,7 +43,6 @@ namespace Anabatic {
   using std::set;
   using std::cerr;
   using std::endl;
-  using std::binary_function;
   using Hurricane::StaticObservable;
   using Hurricane::BaseObserver;
   using Hurricane::tab;
@@ -435,26 +434,26 @@ namespace Anabatic {
              virtual void                _setAxis        ( DbU::Unit ) = 0;
 
     public:
-      struct CompareId : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareId {
           inline bool  operator() ( const AutoSegment* lhs, const AutoSegment* rhs ) const;
       };
     public:
-      struct CompareByDepthLength : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareByDepthLength {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
-      struct CompareByDepthAxis : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareByDepthAxis {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
-      struct CompareBySourceU : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareBySourceU {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
-      struct CompareByRevalidate : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareByRevalidate {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
-      struct CompareByReduceds : public binary_function<AutoSegment*,AutoSegment*,bool> {
+      struct CompareByReduceds {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:

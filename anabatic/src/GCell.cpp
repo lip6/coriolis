@@ -1734,16 +1734,20 @@ namespace Anabatic {
     if (flags & Flags::AllAbove) {
       for ( size_t i=depth; i <= Session::getAllowedDepth() ; i += 2 ) {
         capacity     += getCapacity( i );
-        feedthroughs += _feedthroughs[i] + 0.99 + reserve;
+        feedthroughs += _feedthroughs[i];
+        cdebug_log(149,0) << "(loop) feedthroughs=" <<  _feedthroughs << endl;
       }
     } else {
       capacity     += getCapacity( depth );
-      feedthroughs += _feedthroughs[depth] + 0.99 + reserve;
+      feedthroughs += _feedthroughs[depth];
+      cdebug_log(149,0) << "feedthroughs=" <<  _feedthroughs << endl;
     }
+    feedthroughs += + 0.99 + reserve;
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
                       << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-                      << " " << feedthroughs << " vs. " << capacity
+                      << " " <<  _feedthroughs[depth] << "+" << reserve
+                      << "/" << feedthroughs << " vs. " << capacity
                       << " " << this << endl;
 
     return (feedthroughs < capacity);

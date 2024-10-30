@@ -140,7 +140,7 @@ namespace Hurricane {
       virtual void  _preDestroy ();
 
     public:
-      struct CompareByMask : public binary_function<const Layer*,const Layer*,bool> {
+      struct CompareByMask {
           inline bool  operator() ( const Layer* lhs, const Layer* rhs ) const;
       };
   };

@@ -25,7 +25,6 @@ namespace Katana {
   using std::string;
   using std::map;
   using std::set;
-  using std::binary_function;
   using Hurricane::Record;
   using Hurricane::Interval;
   using Hurricane::DbU;

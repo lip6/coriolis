@@ -71,8 +71,8 @@ class CLibertyTechnology : public PrivateProperty {
 
 	};
 
-    public: struct TemplateComp : public binary_function<const CLuTableTemplate*, const CLuTableTemplate*, bool> {
-    // **********************************************************************************************************
+    public: struct TemplateComp {
+    // **************************
                
         public:bool operator() (const CLuTableTemplate* t1,const CLuTableTemplate* t2) const
         {
