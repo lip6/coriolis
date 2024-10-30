@@ -51,7 +51,6 @@ class QAction;
 namespace Hurricane {
 
   using std::vector;
-  using std::unary_function;
   using std::shared_ptr;
 
   class Technology;
@@ -638,7 +637,7 @@ namespace Hurricane {
           bool                _historyEnable;
       };
     public:
-      class FindStateName : public unary_function< const shared_ptr<State>&, bool > {
+      class FindStateName {
         public:
           inline      FindStateName ( const Name& );
           inline bool operator()    ( const shared_ptr<State>& );
@@ -1130,8 +1129,7 @@ namespace Hurricane {
 
 
   inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
-    : unary_function< const shared_ptr<State>&, bool >()
-    , _cellHierName(cellHierName)
+    : _cellHierName(cellHierName)
   { }
 
 

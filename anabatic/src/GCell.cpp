@@ -58,7 +58,7 @@ namespace {
           bool operator() ( const Axis* lhs, const Axis* rhs ) const;
       };
 
-      class AxisMatch : public unary_function<Axis*,bool> {
+      class AxisMatch {
         public:
           inline      AxisMatch  ( DbU::Unit axis );
           inline bool operator() ( const Axis* );
