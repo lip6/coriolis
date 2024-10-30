@@ -101,6 +101,7 @@ class ChipConf ( BlockConf ):
         self.cfg.chip.block.rails.hSpacing = None
         self.cfg.chip.block.rails.vSpacing = None
         self._railsCount = self.cfg.chip.block.rails.count
+        self.cfg.chip.mergeIoGrounds       = None
         self.cfg.chip.iopinRingLayer       = None
         trace( 550, 'iopinRingLayer="{}"'.format( self.cfg.chip.iopinRingLayer ))
         # Global Net names.    
@@ -148,6 +149,10 @@ class ChipConf ( BlockConf ):
     @property
     def iopinRingLayer ( self ):
         return self.cfg.chip.iopinRingLayer
+
+    @property
+    def mergeIoGrounds ( self ):
+        return self.cfg.chip.mergeIoGrounds
 
     def computeCoronaBorder ( self ):
         global af
