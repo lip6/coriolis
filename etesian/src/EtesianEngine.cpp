@@ -720,7 +720,7 @@ namespace Etesian {
     if (sliceHeight % vpitch) {
       throw Error( "EtesianEngine::toColoquinte(): Slice height (%s) must be a multiple of vpitch (%s)."
                  , DbU::getValueString(sliceHeight).c_str()
-                 , DbU::getValueString(vpitch) );
+                 , DbU::getValueString(vpitch).c_str() );
     }
     
     DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
