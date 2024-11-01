@@ -373,7 +373,7 @@ namespace {
     , _nthRouting      (0)
     , _routingGauge    (nullptr)
     , _cellGauge       (nullptr)
-    , _minTerminalWidth(Cfg::getParamInt("lefImport.minTerminalWidth",0)->asInt())
+    , _minTerminalWidth(DbU::fromMicrons( Cfg::getParamDouble("lefImport.minTerminalWidth",0)->asDouble() ))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -649,7 +649,6 @@ namespace {
         if (net->isGround()) parser->setGdsGround( net );
         if (parser->getForeignPosition() != Point(0,0)) {
           for ( Component* component : net->getComponents() ) {
-            cerr << "| Translate " << component << endl;
             component->translate( parser->getForeignPosition().getX()
                                 , parser->getForeignPosition().getY() );
           }
@@ -836,9 +835,9 @@ namespace {
     else           parser->_pinPadPostProcess();
     parser->clearPinComponents();
 
-    cerr << "     o " << cellName
-         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
-         << " " << gaugeName; 
+    cmess2 << "     o " << cellName
+           << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
+           << " " << gaugeName; 
     if (isPad) cerr << " (PAD)";
     cerr << endl; 
 
