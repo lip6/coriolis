@@ -329,6 +329,18 @@ Box& Box::translate(const DbU::Unit& dx, const DbU::Unit& dy)
     return *this;
 }
 
+Box& Box::translate(const Point& p)
+// ********************************
+{
+    if (!isEmpty()) {
+        _xMin += p.getX();
+        _yMin += p.getY();
+        _xMax += p.getX();
+        _yMax += p.getY();
+    }
+    return *this;
+}
+
 string Box::_getString() const
 // ***************************
 {

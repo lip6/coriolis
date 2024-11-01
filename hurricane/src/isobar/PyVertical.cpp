@@ -146,33 +146,6 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyVertical_translate ()"
-
-  static PyObject* PyVertical_translate ( PyVertical *self, PyObject* args ) {
-    cdebug_log(20,0) << "PyVertical_translate ()" << endl;
-    
-    HTRY
-    METHOD_HEAD ( "Vertical.translate()" )
-    PyObject* arg0 = NULL;
-    PyObject* arg1 = NULL;
-    __cs.init ("Vertical.translate");
-    if (PyArg_ParseTuple(args,"O&O&:Vertical.translate", Converter, &arg0, Converter, &arg1)) {
-      if (__cs.getObjectIds() == INTS2_ARG) vertical->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-      else {
-        PyErr_SetString ( ConstructorError, "Vertical.translate(): Invalid type for parameter(s)." );
-        return NULL;
-      }
-    } else {
-      PyErr_SetString ( ConstructorError, "Vertical.translate(): Invalid number of parameters." );
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
-  // ---------------------------------------------------------------
   // PyVertical Attribute Method table.
 
   PyMethodDef PyVertical_Methods[] =
@@ -184,7 +157,6 @@ extern "C" {
     , { "setX"       , (PyCFunction)PyVertical_setX       , METH_VARARGS, "Modify the segment X position." }
     , { "setDySource", (PyCFunction)PyVertical_setDySource, METH_VARARGS, "Modify the segment source Y offset." }
     , { "setDyTarget", (PyCFunction)PyVertical_setDyTarget, METH_VARARGS, "Modify the segment target Y offset." }
-    , { "translate"  , (PyCFunction)PyVertical_translate  , METH_VARARGS, "Translates the Vertical segment of dx and dy." }
     , { "destroy"    , (PyCFunction)PyVertical_destroy    , METH_NOARGS
                      , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */

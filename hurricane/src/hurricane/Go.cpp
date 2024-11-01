@@ -84,6 +84,9 @@ void Go::_preDestroy()
 //ltraceout(10);
 }
 
+void Go::translate(const Point& p )
+{ translate( p.getX(), p.getY() ); }
+
 string Go::_getString() const
 // **************************
 {

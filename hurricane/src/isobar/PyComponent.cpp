@@ -217,6 +217,31 @@ extern "C" {
   }
 
 
+  static PyObject* PyComponent_translate ( PyComponent *self, PyObject* args ) {
+    cdebug_log(20,0) << "PyComponent_translate ()" << endl;
+    
+    HTRY
+    METHOD_HEAD ( "Component.translate()" )
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    __cs.init ("Component.translate");
+    if (PyArg_ParseTuple(args,"O&|O&:Component.translate", Converter, &arg0, Converter, &arg1)) {
+      if      (__cs.getObjectIds() == INTS2_ARG) component->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else if (__cs.getObjectIds() == POINT_ARG) component->translate( *PYPOINT_O(arg0) );
+      else {
+        PyErr_SetString ( ConstructorError, "Component.translate(): Invalid type for parameter(s)." );
+        return NULL;
+      }
+    } else {
+      PyErr_SetString ( ConstructorError, "Component.translate(): Invalid number of parameters." );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   PyMethodDef PyComponent_Methods[] =
     { { "getBodyHook"          , (PyCFunction)PyComponent_getBodyHook        , METH_NOARGS , "Return the component body hook (is a master Hook)." }
     , { "getX"                 , (PyCFunction)PyComponent_getX               , METH_NOARGS , "Return the Component X value." }
@@ -229,6 +254,7 @@ extern "C" {
     , { "getContour"           , (PyCFunction)PyComponent_getContour         , METH_NOARGS , "Return the points of the polygonic contour." }
     , { "getConnexComponents"  , (PyCFunction)PyComponent_getConnexComponents, METH_NOARGS , "All the components connecteds to this one through hyper hooks." }
     , { "getSlaveComponents"   , (PyCFunction)PyComponent_getSlaveComponents , METH_NOARGS , "All the components anchored directly or indirectly on this one." }
+    , { "translate"            , (PyCFunction)PyComponent_translate          , METH_VARARGS, "Translate the component." }
     , { "destroy"              , (PyCFunction)PyComponent_destroy            , METH_NOARGS
                                , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */
