@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_BOX
-#define HURRICANE_BOX
-
+#pragma  once
 #include "hurricane/Point.h"
 
 namespace Hurricane {
@@ -118,6 +116,7 @@ class Box {
     public: Box& merge(const Box& box);
 
     public: Box& translate(const DbU::Unit& dx, const DbU::Unit& dy);
+    public: Box& translate(const Point& p);
 
 // Others
 // ******
@@ -146,9 +145,6 @@ class JsonBox : public JsonObject {
 
 
 INSPECTOR_PR_SUPPORT(Hurricane::Box);
-
-
-#endif // HURRICANE_BOX
 
 
 // ****************************************************************************************************

@@ -33,6 +33,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Slice.h"
 #include "hurricane/Rubber.h"
@@ -1066,7 +1067,6 @@ Cell* Cell::getClone()
 
   return clone;
 }
-
 
 void Cell::uniquify(unsigned int depth)
 // ************************************

@@ -163,33 +163,6 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyHorizontal_translate ()"
-
-  static PyObject* PyHorizontal_translate ( PyHorizontal *self, PyObject* args ) {
-    cdebug_log(20,0) << "PyHorizontal_translate ()" << endl;
-    
-    HTRY
-    METHOD_HEAD ( "Horizontal.translate()" )
-    PyObject* arg0 = NULL;
-    PyObject* arg1 = NULL;
-    __cs.init ("Horizontal.translate");
-    if (PyArg_ParseTuple(args,"O&O&:Horizontal.translate", Converter, &arg0, Converter, &arg1)) {
-      if (__cs.getObjectIds() == INTS2_ARG) horizontal->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
-      else {
-        PyErr_SetString ( ConstructorError, "Horizontal.translate(): Invalid type for parameter(s)." );
-        return NULL;
-      }
-    } else {
-      PyErr_SetString ( ConstructorError, "Horizontal.translate(): Invalid number of parameters." );
-      return NULL;
-    }
-    HCATCH
-
-    Py_RETURN_NONE;
-  }
-
-
-  // ---------------------------------------------------------------
   // PyHorizontal Attribute Method table.
 
   PyMethodDef PyHorizontal_Methods[] =
@@ -201,7 +174,6 @@ extern "C" {
     , { "setY"       , (PyCFunction)PyHorizontal_setY       , METH_VARARGS, "Modify the segment Y position." }
     , { "setDxSource", (PyCFunction)PyHorizontal_setDxSource, METH_VARARGS, "Modify the segment source X offset." }
     , { "setDxTarget", (PyCFunction)PyHorizontal_setDxTarget, METH_VARARGS, "Modify the segment target X offset." }
-    , { "translate"  , (PyCFunction)PyHorizontal_translate  , METH_VARARGS, "Translates the Horizontal segment of dx and dy." }
     , { "destroy"    , (PyCFunction)PyHorizontal_destroy    , METH_NOARGS
                      , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
