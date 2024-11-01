@@ -126,6 +126,8 @@ namespace {
     public:
       static       void               setMergeLibrary          ( Library* );
       static       void               setGdsForeignDirectory   ( string );
+      static       void               setGdsForeignLibrary     ( Library* );
+      static       Library*           getGdsForeignLibrary     ();
       static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
@@ -142,6 +144,9 @@ namespace {
                    Net*               earlyGetNet              ( string name );
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
+      inline const Point&             getOrigin                () const;
+      inline       DbU::Unit          getOriginX               () const;
+      inline       DbU::Unit          getOriginY               () const;
       inline       string             getForeignPath           () const;
       inline       void               setForeignPath           ( string );
       inline const Point&             getForeignPosition       () const;
@@ -156,6 +161,7 @@ namespace {
       inline       void               setCellGauge             ( CellGauge* );
       inline       Net*               getNet                   () const;
       inline       void               setNet                   ( Net* );
+      inline       void               setOrigin                ( DbU::Unit x, DbU::Unit y );
       static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
       static       DbU::Unit          getCoreSiteX             ();
       static       DbU::Unit          getCoreSiteY             ();
@@ -191,6 +197,7 @@ namespace {
     private:                                               
       static       string                _gdsForeignDirectory;
       static       Library*              _mergeLibrary;
+      static       Library*              _gdsForeignLibrary;
       static       PinRectilinearFilter  _pinFilter;
                    string                _file;
                    string                _libraryName;
@@ -200,6 +207,7 @@ namespace {
                    Net*                  _gdsPower;
                    Net*                  _gdsGround;
                    Cell*                 _cell;
+                   Point                 _origin;
                    Net*                  _net;
                    string                _busBits;
                    double                _unitsMicrons;
@@ -224,6 +232,10 @@ namespace {
   inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*             LefParser::getCell                  () const { return _cell; }
   inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline const Point&            LefParser::getOrigin                () const { return _origin; }
+  inline       DbU::Unit         LefParser::getOriginX               () const { return _origin.getX(); }
+  inline       DbU::Unit         LefParser::getOriginY               () const { return _origin.getY(); }
+  inline       void              LefParser::setOrigin                ( DbU::Unit x, DbU::Unit y ) { _origin=Point(x,y); }
   inline       string            LefParser::getForeignPath           () const { return _foreignPath; }
   inline       void              LefParser::setForeignPath           ( string path ) { _foreignPath=path; }
   inline const Point&            LefParser::getForeignPosition       () const { return _foreignPosition; }
@@ -269,7 +281,8 @@ namespace {
 
 
   string                LefParser::_gdsForeignDirectory = "";
-  Library*              LefParser::_mergeLibrary = nullptr;
+  Library*              LefParser::_gdsForeignLibrary   = nullptr;
+  Library*              LefParser::_mergeLibrary        = nullptr;
   PinRectilinearFilter  LefParser::_pinFilter;
   map<string,Layer*>    LefParser::_layerLut;
   DbU::Unit             LefParser::_coreSiteX = 0;
@@ -282,6 +295,14 @@ namespace {
 
   void  LefParser::setGdsForeignDirectory ( string path )
   { _gdsForeignDirectory = path; }
+
+
+  void  LefParser::setGdsForeignLibrary ( Library* library )
+  { _gdsForeignLibrary = library; }
+
+
+  Library* LefParser::getGdsForeignLibrary ()
+  { return _gdsForeignLibrary; }
 
 
   void  LefParser::setPinFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
@@ -341,6 +362,7 @@ namespace {
     , _gdsPower        (nullptr)
     , _gdsGround       (nullptr)
     , _cell            (nullptr)
+    , _origin          ()
     , _net             (nullptr)
     , _busBits         ("()")
     , _unitsMicrons    (0.01)
@@ -606,7 +628,10 @@ namespace {
     bool  created = false;
     Cell* cell    = parser->earlyGetCell( created, foreign->cellName() );
 
-    if (created) {
+    // parser->setForeignPosition( Point( parser->fromUnitsMicrons( - foreign->px() )
+    //                                  , parser->fromUnitsMicrons( - foreign->py() )));
+
+    if (not created) {
       if (_gdsForeignDirectory.empty()) {
         cerr << Warning( "LefParser::_macroForeignCbk(): GDS directory *not* set, ignoring FOREIGN statement." ) << endl;
         return 0;
@@ -618,21 +643,36 @@ namespace {
       Gds::setTopCellName( foreign->cellName() );
       Gds::load( parser->getLibrary(), parser->getForeignPath()
                , Gds::NoBlockages|Gds::Layer_0_IsBoundary);
-    }
 
-    parser->setForeignPosition( Point( parser->fromUnitsMicrons( foreign->px() )
-                                     , parser->fromUnitsMicrons( foreign->px() )));
-
-    for ( Net* net : cell->getNets() ) {
-      if (net->isPower ()) parser->setGdsPower ( net );
-      if (net->isGround()) parser->setGdsGround( net );
-      if (parser->getForeignPosition() != Point(0,0)) {
-        for ( Component* component : net->getComponents() ) {
-          component->translate( parser->getForeignPosition().getX()
-                              , parser->getForeignPosition().getY() );
+      for ( Net* net : cell->getNets() ) {
+        if (net->isPower ()) parser->setGdsPower ( net );
+        if (net->isGround()) parser->setGdsGround( net );
+        if (parser->getForeignPosition() != Point(0,0)) {
+          for ( Component* component : net->getComponents() ) {
+            cerr << "| Translate " << component << endl;
+            component->translate( parser->getForeignPosition().getX()
+                                , parser->getForeignPosition().getY() );
+          }
         }
       }
+
+      return 0;
     }
+
+    if (not _gdsForeignLibrary) {
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign library *not* set, ignoring FOREIGN statement." ) << endl;
+      return 0;
+    }
+    Cell* gdsCell = _gdsForeignLibrary->getCell( foreign->cellName() );
+    if (not gdsCell) {
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign cell *not* found in library." ) << endl;
+      return 0;
+    }
+
+    Instance::create( cell, "foreign"
+                    , gdsCell
+                    , Transformation( parser->getForeignPosition() )
+                    , Instance::PlacementStatus::FIXED );
 
     return 0;
   }
@@ -758,6 +798,9 @@ namespace {
     DbU::Unit  height   = 0;
     Cell*      cell     = parser->earlyGetCell( created );
 
+    parser->setOrigin( parser->fromUnitsMicrons( - macro->originX() )
+                     , parser->fromUnitsMicrons( - macro->originY() ));
+
     if (cell->getName() != Name(cellName)) {
       cell->setName( cellName );
     }
@@ -765,7 +808,7 @@ namespace {
     if (macro->hasSize()) {
       width  = parser->fromUnitsMicrons( macro->sizeX() );
       height = parser->fromUnitsMicrons( macro->sizeY() );
-      cell->setAbutmentBox( Box( 0, 0, width, height ) );
+      cell->setAbutmentBox( Box( 0, 0, width, height ).translate( parser->getOrigin() ));
     }
 
     bool   isPad     = false;
@@ -904,7 +947,7 @@ namespace {
                             << endl;
           if (formFactor > 1.0) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
-              Pad::create( net, layer, Box( xl, yl, xh, yh) );
+              Pad::create( net, layer, Box( xl, yl, xh, yh).translate( parser->getOrigin() ));
               yh -= DbU::oneGrid;
             }
             segment = Horizontal::create( net, layer
@@ -915,14 +958,14 @@ namespace {
                                         );
           } else {
             if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
-              Pad::create( net, layer, Box( xl, yl, xh, yh) );
+              Pad::create( net, layer, Box( xl, yl, xh, yh).translate( parser->getOrigin() ));
               xh -= DbU::oneGrid;
             }
             segment = Vertical::create( net, layer
-                                      , (xh + xl) / 2
+                                      , (xh + xl) / 2 + parser->getOriginX()
                                       ,  xh - xl
-                                      ,  yl
-                                      ,  yh
+                                      ,  yl + parser->getOriginY()
+                                      ,  yh + parser->getOriginY()
                                       );
           }
           cdebug_log(100,0) << "| " << segment << endl;
@@ -935,10 +978,10 @@ namespace {
           vector<Point>    points;
           for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
             points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
-                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
+                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ).translate( parser->getOrigin() ));
           }
           points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
-                                 , parser->fromUnitsMicrons(polygon->y[0]) ));
+                                 , parser->fromUnitsMicrons(polygon->y[0]) ).translate( parser->getOrigin() ));
           Rectilinear* rectilinear = Rectilinear::create( net, layer, points );
           if (rectilinear) parser->addPinComponent( pin->name(), rectilinear );
           continue;
@@ -1427,6 +1470,14 @@ namespace CRL {
   {
 #if defined(HAVE_LEFDEF)
     LefParser::setMergeLibrary( library );
+#endif
+  }
+
+
+  void  LefImport::setGdsForeignLibrary ( Library* library )
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::setGdsForeignLibrary( library );
 #endif
   }
 
