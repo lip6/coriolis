@@ -160,6 +160,20 @@ extern "C" {
   }
 
 
+  static PyObject *PyPolygon_getPoints ( PyPolygon *self )
+  {
+    cdebug_log(20,0) << "Polygon.getPoints()" << endl;
+
+    HTRY
+      METHOD_HEAD( "Polygon.getPoints()" )
+  
+      return VectorToList(polygon->getPoints());
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyPolygon_setPoints ( PyPolygon *self, PyObject* args )
   {
     cdebug_log(20,0) << "Polygon.setPoints()" << endl;
@@ -237,6 +251,7 @@ extern "C" {
     , { "getX"          , (PyCFunction)PyPolygon_getX          , METH_NOARGS , "Return the Polygon X value." }
     , { "getY"          , (PyCFunction)PyPolygon_getY          , METH_NOARGS , "Return the Polygon Y value." }
     , { "getBoundingBox", (PyCFunction)PyPolygon_getBoundingBox, METH_NOARGS , "Return the Polygon Bounding Box." }
+    , { "getPoints"     , (PyCFunction)PyPolygon_getPoints     , METH_NOARGS , "Gets the Polygon points." }
     , { "getMContour"   , (PyCFunction)PyPolygon_getMContour   , METH_NOARGS , "Return the points of the manhattanized contour." }
     , { "getSubPolygons", (PyCFunction)PyPolygon_getSubPolygons, METH_NOARGS , "Return the list of sub-polygons (GDSII compliants)." }
     , { "setPoints"     , (PyCFunction)PyPolygon_setPoints     , METH_VARARGS, "Sets the Polygon Bounding Box." }
