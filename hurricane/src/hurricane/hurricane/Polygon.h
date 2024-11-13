@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_POLYGON_H
-#define HURRICANE_POLYGON_H
-
+#pragma  once
 #include "hurricane/Component.h"
 #include "hurricane/Polygons.h"
 
@@ -52,6 +50,7 @@ namespace Hurricane {
       static const  uint32_t YIncrease  = (1<<4);
       static const  uint32_t Horizontal = (1<<5);
       static const  uint32_t Vertical   = (1<<6);
+      static const  uint32_t Convex     = (1<<7);
 
     public:
       class Edge {
@@ -108,6 +107,7 @@ namespace Hurricane {
     public:                                        
       virtual       bool           isNonRectangle  () const;
       virtual       bool           isManhattanized () const;
+      virtual       bool           isConvex        () const;
       virtual       DbU::Unit      getX            () const;
       virtual       DbU::Unit      getY            () const;
       inline  const vector<Point>& getPoints       () const;
@@ -134,6 +134,7 @@ namespace Hurricane {
                                    Polygon        ( Net*, const Layer*, const std::vector<Point>& );
                                   ~Polygon        ();
     private:
+                    uint32_t            _flags;
               const Layer*              _layer;
                     std::vector<Point>  _points;
                     std::vector<Edge*>  _edges;
@@ -187,5 +188,3 @@ namespace Hurricane {
 
 INSPECTOR_P_SUPPORT(Hurricane::Polygon::Edge);
 INSPECTOR_P_SUPPORT(Hurricane::Polygon);
-
-#endif // HURRICANE_POLYGON_H
