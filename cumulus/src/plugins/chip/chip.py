@@ -78,10 +78,6 @@ class Chip ( Block ):
         minVCorona = self.conf.minVCorona
         self.conf.chipValidate()
         if not self.conf.useHarness:
-            print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
-            print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
-            print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
-            print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
             self.conf.computeCoronaBorder()
             if not self.conf.validated:
                 raise ErrorMessage( 1, 'chip.doChipFloorplan(): Chip is not valid, aborting.' )
@@ -98,6 +94,12 @@ class Chip ( Block ):
             minVCorona = self.conf.minVCorona
             trace( 550, '\tminHCorona={}\n'.format(DbU.getValueString( minHCorona )))
             trace( 550, '\tminVCorona={}\n'.format(DbU.getValueString( minVCorona )))
+            print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
+            print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
+            print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
+            print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
+            print( '     - Chip die size  {} x {}.'.format( DbU.getValueString( self.conf.chip.getAbutmentBox().getWidth () )
+                                                          , DbU.getValueString( self.conf.chip.getAbutmentBox().getHeight() )))
         else:
             print( '     - Using harness.' )
             self.padsCorona = harnessPads.Corona( self )
@@ -126,6 +128,8 @@ class Chip ( Block ):
             y = y - (y % self.conf.sliceHeight)
             self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
             self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        print( '     - Chip core size {} x {}.'.format( DbU.getValueString( self.conf.core.getAbutmentBox().getWidth () )
+                                                      , DbU.getValueString( self.conf.core.getAbutmentBox().getHeight() )))
         self.conf.refresh()
 
     def doConnectCore ( self ):
