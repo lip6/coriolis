@@ -36,6 +36,7 @@ using namespace std;
 #include "hurricane/Vertical.h"
 #include "hurricane/Diagonal.h"
 #include "hurricane/Rectilinear.h"
+#include "hurricane/Polygon.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Text.h"
 #include "hurricane/Net.h"
@@ -946,6 +947,7 @@ namespace {
     cdebug_log(101,1) << "GdsStream::readStructure()" << endl;
     
     if (_record.isSTRNAME()) {
+      cdebug_log(101,0) << "name " << _record.getName() << endl;
       if (_library) {
         string cellName = _record.getName();
         _cell = getCell( cellName, true );
@@ -1022,7 +1024,6 @@ namespace {
 
     const Layer* layer = gdsToLayer( gdsLayer, gdsDatatype );
     if ((gdsLayer == 0) and not useLayer0AsBoundary()) {
-      cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
       if (not layer) {
         cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
                      , gdsLayer, gdsDatatype
@@ -1031,6 +1032,7 @@ namespace {
     }
     isBoundary = (not layer and (gdsLayer == 0) and useLayer0AsBoundary());
 
+    cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
     cdebug_tabw(101,-1);
     return layer;
   }
@@ -1197,9 +1199,12 @@ namespace {
       else if (not layer and useLayer0AsBoundary()) {
         xyToAbutmentBox();
       }
-      else
+      else {
+        cdebug_log(101,0) << "Cannot translate XY RECORD, missing Cell or Layer" << endl;
         _stream >> _record;
+      }
     } else {
+      cdebug_log(101,0) << "Unsupported RECORD type " << _record.getName() << endl;
       _validSyntax = false;
       cdebug_tabw(101,-1);
       return _validSyntax;
@@ -1330,10 +1335,10 @@ namespace {
         }
       }
 
-      // cerr << "Delayed Instance: "  << masterName
-      //      << " XR:" << _xReflection << " angle:" << _angle
-      //      << " " << Transformation(xpos,ypos,orient)
-      //      << " in " << _cell << endl;
+      cdebug_log(101,0) << "Delayed Instance: "  << masterName
+                        << " XR:" << _xReflection << " angle:" << _angle
+                        << " " << Transformation(xpos,ypos,orient)
+                        << " in " << _cell << endl;
       _delayedInstances.push_back( DelayedInstance( _cell
                                                   , masterName
                                                   , Transformation(xpos,ypos,orient)) );
@@ -1574,6 +1579,8 @@ namespace {
 
   void  GdsStream::xyToAbutmentBox ()
   {
+    cdebug_log(101,1) << "GdsStream::xyToAbutmetBox()" << endl;
+    
     DbU::Unit oneGrid = DbU::fromGrid( 1 );
     
     vector<Point>   points;
@@ -1597,7 +1604,7 @@ namespace {
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on abutment box (foundry grid: %s).\n"
+      cerr << Error( "GdsStream::xyToAbutmentBox(): Offgrid points on abutment box (foundry grid: %s).\n"
                      "%s"
                    , DbU::getValueString(oneGrid).c_str()
                    , m.str().c_str() ) << endl;
@@ -1609,7 +1616,9 @@ namespace {
        or (_record.getType() == GdsRecord::STRING)) {
     //_stream >> _record;
     } else {
+      cdebug_log(101,1) << "Missing ENDEL or STRING" << endl;
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return;
     }
     
@@ -1633,16 +1642,21 @@ namespace {
       _cell->setAbutmentBox( ab );
       cdebug_log(101,0) << "| Abutment box =" << ab << endl;
     }
+
+    cdebug_tabw(101,-1);
   }
 
 
   void  GdsStream::xyToComponent ( const Layer* layer )
   {
+    cdebug_log(101,1) << "GdsStream::xyToAbutmetBox()" << endl;
+    
     DbU::Unit oneGrid = DbU::fromGrid( 1 );
     
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
     vector<size_t>  offgrids;
+    bool            isRectilinear = true;
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
@@ -1675,6 +1689,7 @@ namespace {
     //_stream >> _record;
     } else {
       _validSyntax = false;
+      cdebug_tabw(101,-1);
       return;
     }
     
@@ -1696,8 +1711,10 @@ namespace {
     } else
       _skipENDEL = true;
 
-    if (layer->isBlockage() and (_flags & Gds::NoBlockages))
+    if (layer->isBlockage() and (_flags & Gds::NoBlockages)) {
+      cdebug_tabw(101,-1);
       return;
+    }
 
     if (not net) net = fusedNet();
     
@@ -1716,13 +1733,18 @@ namespace {
         for ( Point p : points ) boundingBox.merge( p );
         _component = Pad::create( net, layer, boundingBox );
       } else {
-        _component = Rectilinear::create( net, layer, points );
+        if (isRectilinear)
+          _component = Rectilinear::create( net, layer, points );
+        else
+          _component = Polygon::create( net, layer, points );
       }
       // cdebug_log(101,0) << "| " << net->getCell() << endl;
       cdebug_log(101,0) << "| " << _component << endl;
 
       if (not net->isAutomatic()) NetExternalComponents::setExternal( _component );
     }
+
+    cdebug_tabw(101,-1);
   }
 
 
@@ -1887,6 +1909,7 @@ namespace {
     cdebug_log(101,1) << "GdsStream::makeInstances(): " << endl;
 
     for ( const DelayedInstance& di : _delayedInstances ) {
+      cdebug_log(101,0) << "> " << di._masterName << " @" << di._transformation << " in " << di._owner << endl;
       Cell* masterCell = getCell( di._masterName );
 
       if (masterCell) {
@@ -2038,7 +2061,8 @@ namespace CRL {
 
   bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
-  //DebugSession::open( 101, 110 );
+    // if (library->getName() == "GDSBond")
+    //   DebugSession::open( 101, 110 );
     UpdateSession::open();
     Contact::disableCheckMinSize();
 
@@ -2053,7 +2077,8 @@ namespace CRL {
     Contact::enableCheckMinSize();
     UpdateSession::close();
     Gds::setTopCellName( "" );
-  //DebugSession::close();
+    // if (library->getName() == "GDSBond")
+    //   DebugSession::close();
 
     return true;
   }
