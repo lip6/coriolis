@@ -1589,8 +1589,8 @@ namespace {
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
-      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
-        offgrids.push_back( i );
+      if ( (points.back().getX() % oneGrid) or (points.back().getY() % oneGrid) ) {
+        offgrids.push_back( i/2 );
       }
     }
     if (not offgrids.empty()) {
@@ -1599,13 +1599,14 @@ namespace {
       for ( size_t i=0 ; i<points.size() ; ++i ) {
         if (i) m << "\n";
         m << "        | " << points[i];
-        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
           m << " offgrid";
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToAbutmentBox(): Offgrid points on abutment box (foundry grid: %s).\n"
+      cerr << Error( "GdsStream::xyToAbutmentBox(): %u offgrid points on abutment box (foundry grid: %s).\n"
                      "%s"
+                   , offgrids.size()
                    , DbU::getValueString(oneGrid).c_str()
                    , m.str().c_str() ) << endl;
     } 
@@ -1660,8 +1661,8 @@ namespace {
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
-      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
-        offgrids.push_back( i );
+      if ( (points.back().getX() % oneGrid) or (points.back().getY() % oneGrid) ) {
+        offgrids.push_back( i/2 );
       }
     }
     if (not offgrids.empty()) {
@@ -1670,13 +1671,14 @@ namespace {
       for ( size_t i=0 ; i<points.size() ; ++i ) {
         if (i) m << "\n";
         m << "        | " << points[i];
-        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
           m << " offgrid";
           ++offgrid;
         }
       }
-      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on layer \"%s\" (foundry grid: %s).\n"
+      cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s).\n"
                      "%s"
+                   , offgrids.size()
                    , getString(layer->getName()).c_str()
                    , DbU::getValueString(oneGrid).c_str()
                    , m.str().c_str() ) << endl;
