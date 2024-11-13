@@ -78,8 +78,10 @@ class DRC ( Klayout ):
         targets = [ depends[0].with_suffix('.kdrc-report.txt') ]
         if not DRC._drcRules:
             raise ErrorMessage( 1, 'DRC.doTask(): No DRC rules defined.' )
-        variables = { 'input'  : depends[0]
-                    , 'report' : targets[0]
+        variables = { 'in_gds'      : depends[0]
+                    , 'input'       : depends[0]
+                    , 'report'      : targets[0]
+                    , 'report_file' : targets[0]
                     }
         super().__init__( rule, targets, depends, DRC._drcRules, variables, flags )
         
