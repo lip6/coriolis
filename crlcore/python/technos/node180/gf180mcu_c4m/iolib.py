@@ -44,11 +44,12 @@ def _loadIoLib ( pdkDir ):
     """
     Load the I/O cells from the LEF+GDS files.
     """
-    af      = AllianceFramework.get()
-    db      = DataBase.getDB()
-    tech    = db.getTechnology()
-    rootlib = db.getRootLibrary()
-    ioLib   = Library.create( rootlib, 'iolib' )
+    af       = AllianceFramework.get()
+    db       = DataBase.getDB()
+    tech     = db.getTechnology()
+    rootlib  = db.getRootLibrary()
+    ioLib    = Library.create( rootlib, 'iolib' )
+    ioLibGds = Library.create( ioLib  , 'GDS'     )
     LefImport.setMergeLibrary( ioLib )
     LefImport.load( (pdkDir / 'libraries'
                             / 'gf180mcu_fd_sc_mcu9t5v0'
@@ -62,7 +63,7 @@ def _loadIoLib ( pdkDir ):
         gdsFile = lefFile.with_suffix( '.gds' )
         if gdsFile.is_file():
             Gds.setTopCellName( gdsFile.stem[:-4] )
-            Gds.load( ioLib, gdsFile.as_posix(), Gds.Layer_0_IsBoundary|Gds.NoBlockages )
+            Gds.load( ioLibGds, gdsFile.as_posix(), Gds.Layer_0_IsBoundary|Gds.NoBlockages|Gds.LefForeign )
         LefImport.load( lefFile.as_posix() )
     # Demote the VDD/VSS nets until we understand how that works.
     for cell in ioLib.getCells():

@@ -43,6 +43,7 @@ using namespace std;
 #include "hurricane/Cell.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Instance.h"
+#include "hurricane/Library.h"
 using namespace Hurricane;
 
 #include "crlcore/Utilities.h"
@@ -783,7 +784,6 @@ namespace {
     for ( Instance* instance : cell->getInstances() ) {
       if (instance->getMasterCell()->getName() == "control_r") continue;
       if (not hasLayout(instance->getMasterCell())) continue;
-    //cerr << "| " << getString(instance) << endl;
 
       if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) continue;
 

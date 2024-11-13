@@ -155,6 +155,7 @@ extern "C" {
     PyObject* constant;
     LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoGdsPrefix       ,"NoGdsPrefix");
     LoadObjectConstant(PyTypeGds.tp_dict,Gds::NoBlockages       ,"NoBlockages");
+    LoadObjectConstant(PyTypeGds.tp_dict,Gds::LefForeign        ,"LefForeign");
     LoadObjectConstant(PyTypeGds.tp_dict,Gds::Layer_0_IsBoundary,"Layer_0_IsBoundary");
   }
 

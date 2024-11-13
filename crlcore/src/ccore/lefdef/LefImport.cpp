@@ -625,8 +625,9 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-    bool  created = false;
-    Cell* cell    = parser->earlyGetCell( created, foreign->cellName() );
+    bool   created  = false;
+    string cellName = string(foreign->cellName()) + "_lef_foreign";
+    Cell*  cell     = parser->earlyGetCell( created, cellName );
 
     // parser->setForeignPosition( Point( parser->fromUnitsMicrons( - foreign->px() )
     //                                  , parser->fromUnitsMicrons( - foreign->py() )));
@@ -662,7 +663,7 @@ namespace {
       cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign library *not* set, ignoring FOREIGN statement." ) << endl;
       return 0;
     }
-    Cell* gdsCell = _gdsForeignLibrary->getCell( foreign->cellName() );
+    Cell* gdsCell = _gdsForeignLibrary->getCell( cellName );
     if (not gdsCell) {
       cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign cell *not* found in library." ) << endl;
       return 0;

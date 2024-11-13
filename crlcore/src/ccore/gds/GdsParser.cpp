@@ -659,6 +659,7 @@ namespace {
       static       void    _staticInit          ();
                            GdsStream            ( string gdsPath, uint32_t flags );
                    Cell*   getCell              ( string cellName, bool create=false );
+      inline       bool    isLefForeign         () const;
       inline       bool    useGdsPrefix         () const;
       inline       bool    useLayer0AsBoundary  () const;
       inline       bool    isValidSyntax        () const;
@@ -767,6 +768,7 @@ namespace {
 
 
   inline bool  GdsStream::isValidSyntax       () const { return _validSyntax; }
+  inline bool  GdsStream::isLefForeign        () const { return    (_flags & Gds::LefForeign); }
   inline bool  GdsStream::useGdsPrefix        () const { return not(_flags & Gds::NoGdsPrefix); }
   inline bool  GdsStream::useLayer0AsBoundary () const { return    (_flags & Gds::Layer_0_IsBoundary); }
 
@@ -950,6 +952,7 @@ namespace {
       cdebug_log(101,0) << "name " << _record.getName() << endl;
       if (_library) {
         string cellName = _record.getName();
+        if (isLefForeign()) cellName += "_lef_foreign";
         _cell = getCell( cellName, true );
         _stream >> _record;
       }
@@ -1279,6 +1282,7 @@ namespace {
 
     if (_record.isSNAME()) {
       masterName = _record.getName();
+      if (isLefForeign()) masterName += "_lef_foreign";
       _stream >> _record;
     } else {
       _validSyntax = false;
