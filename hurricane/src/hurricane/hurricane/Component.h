@@ -89,6 +89,7 @@ namespace Hurricane {
                                     Component                 ( Net* , bool inPlugCreate = false );
     public:                         
     // Accessors.                   
+      virtual       bool            isConvex                  () const;
       virtual       bool            isManhattanized           () const;
       virtual       bool            isNonRectangle            () const;
       virtual       Cell*           getCell                   () const;

@@ -36,6 +36,8 @@
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Error.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/Breakpoint.h"
 
 
 namespace Hurricane {
@@ -195,6 +197,7 @@ namespace Hurricane {
 
   Polygon::Polygon ( Net* net, const Layer* layer, const vector<Point>& points )
     : Super  (net)
+    , _flags (Convex)
     , _layer (layer)
     , _points(points)
     , _edges ()
@@ -209,12 +212,15 @@ namespace Hurricane {
     if (points.size() < 3)
       throw Error("Can't create " + _TName("Polygon") + " : less than three points");
 
-    float sign = 0.0;
+    bool  convex = true;
+    float sign   = 0.0;
     for ( size_t i=0 ; i<points.size() ; ++i ) {
       float nextSign = getSign( points, i );
-      if ( (sign != 0.0) and ( (sign < 0.0) xor (nextSign < 0.0) ) ) 
-        throw Error("Can't create " + _TName("Polygon") + " : non-convex polygon");
-
+      if ( (sign != 0.0) and ( (sign < 0.0) xor (nextSign < 0.0) ) ) {
+      //cerr << Error("Can't create " + _TName("Polygon") + " : non-convex polygon.") << endl;
+        convex = false;
+        break;
+      }
       sign = nextSign;
     }
 
@@ -239,10 +245,11 @@ namespace Hurricane {
     } else
       normalized = points;
 
-    Polygon* triangle = new Polygon ( net, layer, normalized );
-    triangle->_postCreate();
-    triangle->manhattanize();
-    return triangle;
+    Polygon* polygon = new Polygon ( net, layer, normalized );
+    polygon->_postCreate();
+    polygon->manhattanize();
+    if (not convex) polygon->_flags &= ~Convex; 
+    return polygon;
   }
 
 
@@ -250,6 +257,10 @@ namespace Hurricane {
   {
     for ( Edge* edge : _edges ) delete edge;
   }
+
+
+  bool  Polygon::isConvex () const
+  { return (_flags & Convex); }
 
 
   bool  Polygon::isNonRectangle () const

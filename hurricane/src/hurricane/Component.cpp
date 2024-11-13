@@ -515,6 +515,10 @@ void Component::_preDestroy()
 }
 
 
+bool  Component::isConvex () const
+{ return true; }
+
+
 bool  Component::isNonRectangle () const
 { return false; }
 
