@@ -918,13 +918,13 @@ class Corona ( object ):
                 trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
                 trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
                 trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
-                Vertical.create( chipNet
-                               , supplyLayer
-                               , chipAxis
-                               , stripeWidth
-                               , coronaAb.getYMax()
-                               , self.conf.chipAb.getYMax() - railAxis
-                               )
+                v = Vertical.create( chipNet
+                                   , supplyLayer
+                                   , chipAxis
+                                   , stripeWidth
+                                   , coronaAb.getYMax()
+                                   , self.conf.chipAb.getYMax() - railAxis
+                                   )
                 via = BigVia( chipNet
                             , supplyLayerDepth
                             , chipAxis
@@ -933,6 +933,7 @@ class Corona ( object ):
                             , width
                             , BigVia.FitToVias
                             )
+                trace( 550, '\tvertical={}\n'.format(v) ) 
                 trace( 550, '\tpower depth: {}\n'.format( self.conf.routingGauge.getPowerSupplyGauge().getDepth() ))
                 via.mergeDepth( self.conf.routingGauge.getPowerSupplyGauge().getDepth()-1 )
                 via.doLayout()
@@ -956,13 +957,13 @@ class Corona ( object ):
                 trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
                 trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
                 trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
-                Vertical.create( chipNet
-                               , supplyLayer
-                               , chipAxis
-                               , stripeWidth
-                               , self.conf.chipAb.getYMin() + railAxis
-                               , coronaAb.getYMin()
-                               )
+                v = Vertical.create( chipNet
+                                   , supplyLayer
+                                   , chipAxis
+                                   , stripeWidth
+                                   , self.conf.chipAb.getYMin() + railAxis
+                                   , coronaAb.getYMin()
+                                   )
                 via = BigVia( chipNet
                             , supplyLayerDepth
                             , chipAxis
@@ -973,6 +974,7 @@ class Corona ( object ):
                             )
                 via.mergeDepth( supplyLayerDepth-1 )
                 via.doLayout()
+                trace( 550, '\tvertical={}\n'.format(v) )
                 pin = Pin.create( coronaNet
                                 , '{}.{}'.format(coronaNet.getName(),self.powerCount)
                                 , Pin.Direction.SOUTH
@@ -1004,11 +1006,14 @@ class Corona ( object ):
         if not self.conf.routingGauge.hasPowerSupply(): return
         with UpdateSession():
             capViaWidth   = self.conf.vDeepRG.getPitch()*3
+            supplyLayer   = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
             coreAb        = self.conf.coreAb
             powerNet      = None
             groundNet     = None
             chipPowerNet  = None
             chipGroundNet = None
+            capViaWidth   = max( capViaWidth, supplyLayer.getMinimalSize() )
+
             corona = self.conf.corona
             for net in corona.getNets():
                 if net.isPower (): powerNet  = net
@@ -1049,7 +1054,7 @@ class Corona ( object ):
                                  // self.supplyRailPitch - 1 )
             offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) // 2
             stripeSpecs.append( [ xcore + capViaWidth//2 , capViaWidth ] )
-            stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + 4*capViaWidth + capViaWidth//2 , capViaWidth ] )
             if self.chip.spares and len(self.chip.spares.rleafX) > 1:
                 rleafX     = self.chip.spares.rleafX
                 spacing    = (rleafX[1] - rleafX[0]) // 2
@@ -1079,7 +1084,7 @@ class Corona ( object ):
                     stripeSpecs.append( [ xcore + offset + i*self.supplyRailPitch
                                         , self.supplyRailWidth
                                         ] )
-            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth - capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - 4*capViaWidth - capViaWidth//2 , capViaWidth ] )
             stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth//2 , capViaWidth ] )
 
             trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
