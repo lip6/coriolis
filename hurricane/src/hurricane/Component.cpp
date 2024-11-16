@@ -519,6 +519,10 @@ bool  Component::isConvex () const
 { return true; }
 
 
+bool  Component::isPolygon45 () const
+{ return false; }
+
+
 bool  Component::isNonRectangle () const
 { return false; }
 

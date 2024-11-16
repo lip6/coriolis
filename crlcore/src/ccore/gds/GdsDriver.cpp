@@ -800,17 +800,28 @@ namespace {
         cdebug_log(101,0) << "Writing " << component << endl;
         Polygon* polygon  = dynamic_cast<Polygon*>(component);
         if (polygon) {
-          vector< vector<Point> > subpolygons;
-          polygon->getSubPolygons( subpolygons );
-
-          for ( const vector<Point>& subpolygon : subpolygons ) {
+          if (polygon->isPolygon45()) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
               if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
               (*this) << LAYER(layer->getGds2Layer());
               (*this) << DATATYPE(layer->getGds2Datatype());
-              (*this) << subpolygon;
+              (*this) << polygon->getPoints();
               (*this) << ENDEL;
+            }
+          } else {
+            vector< vector<Point> > subpolygons;
+            polygon->getSubPolygons( subpolygons );
+            
+            for ( const vector<Point>& subpolygon : subpolygons ) {
+              for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
+                (*this) << BOUNDARY;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
+                (*this) << subpolygon;
+                (*this) << ENDEL;
+              }
             }
           }
         } else {
