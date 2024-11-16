@@ -379,6 +379,7 @@ class CoreWire ( object ):
                                    , yPadMin
                                    , yPadMax
                                    )
+            trace( 550, '\tvChip: {}\n'.format( vChip ))
             trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
             if self.arraySize:
                 contacts = self.conf.coronaContactArray( self.chipNet
