@@ -692,7 +692,7 @@ namespace {
       blockageNet->setType( Net::Type::BLOCKAGE );
     }
 
-  //cerr << "       @ _obstructionCbk: " << blockageNet->getName() << endl;
+    cdebug_log(100,1) << "@ LefParser::_obstructionCbk: " << blockageNet->getName() << endl;
       
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
@@ -763,6 +763,13 @@ namespace {
                                       , parser->fromUnitsMicrons( r->yh )
                                       );
           }
+          cdebug_log(100,0) <<  "xl=" << DbU::getValueString(xl)
+                            << " xh=" << DbU::getValueString(xh)
+                            << " w="  << DbU::getValueString(w)
+                            << " h="  << DbU::getValueString(h)
+                            << " Ox=" << DbU::getValueString(parser->getOriginX())
+                            << " Oy=" << DbU::getValueString(parser->getOriginY())
+                            << endl;
         }
         cdebug_log(100,0) << "| " << segment << endl;
       }
@@ -781,12 +788,15 @@ namespace {
       }
     }
 
+    cdebug_tabw(100,-1);
     return 0;
   }
 
   
   int  LefParser::_macroCbk ( lefrCallbackType_e c, lefiMacro* macro, lefiUserData ud )
   {
+    cdebug_log(100,1) << "@ LefParser::_macroCbk()" << endl;
+    
     AllianceFramework* af     = AllianceFramework::get();
     LefParser*         parser = (LefParser*)ud;
 
@@ -800,6 +810,8 @@ namespace {
 
     parser->setOrigin( parser->fromUnitsMicrons( - macro->originX() )
                      , parser->fromUnitsMicrons( - macro->originY() ));
+    cdebug_log(100,0) << "Macro: " << cellName << endl;
+    cdebug_log(100,0) << "Origin: " << parser->getOrigin() << endl;
 
     if (cell->getName() != Name(cellName)) {
       cell->setName( cellName );
@@ -809,7 +821,14 @@ namespace {
       width  = parser->fromUnitsMicrons( macro->sizeX() );
       height = parser->fromUnitsMicrons( macro->sizeY() );
       cell->setAbutmentBox( Box( 0, 0, width, height ).translate( parser->getOrigin() ));
+      cdebug_log(100,0) << "AB " << cell->getAbutmentBox() << endl;
     }
+
+    // for ( Net* net : cell->getNets() ) {
+    //   for ( Component* component : net->getComponents() ) {
+    //     component->translate( parser->getOrigin() );
+    //   }
+    // }
 
     bool   isPad     = false;
     string gaugeName = "Unknown SITE";
@@ -852,7 +871,9 @@ namespace {
     parser->setCell     ( nullptr );
     parser->setGdsPower ( nullptr );
     parser->setGdsGround( nullptr );
+    parser->setOrigin   ( 0, 0 );
 
+    cdebug_tabw(100,-1);
     return 0;
   }
 
@@ -870,7 +891,7 @@ namespace {
   //if (parser->getCell()->getName() == "NAND2B_X2_GF6T_1P5")
     if (parser->getCell()->getName() == "AOI222_X2_GF6T_1P5")
       DebugSession::open( 100, 110 );
-    cdebug_log(100,1) << "@ _pinCbk()" << endl;
+    cdebug_log(100,1) << "@ LefParser::_pinCbk()" << endl;
 
     bool  created = false;
     parser->earlyGetCell( created );
@@ -941,13 +962,20 @@ namespace {
           float         formFactor = (float)w / (float)h;
           const RoutingLayerGauge* gauge = parser->getRoutingGauge()->getLayerGauge( layer );
           
+          cdebug_log(100,0) <<  "xl=" << DbU::getValueString(xl)
+                            << " xh=" << DbU::getValueString(xh)
+                            << " yl=" << DbU::getValueString(yl)
+                            << " yh=" << DbU::getValueString(yh)
+                            << " Ox=" << DbU::getValueString(parser->getOriginX())
+                            << " Oy=" << DbU::getValueString(parser->getOriginY())
+                            << endl;
           cdebug_log(100,0) << "formFactor=" << formFactor
                             << " h=" << DbU::getValueString(h)
                             << " (> " << DbU::getValueString(parser->getMinTerminalWidth()) << ")"
                             << endl;
           if (formFactor > 1.0) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
-              Pad::create( net, layer, Box( xl, yl, xh, yh).translate( parser->getOrigin() ));
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
               yh -= DbU::oneGrid;
             }
             segment = Horizontal::create( net, layer
@@ -958,14 +986,14 @@ namespace {
                                         );
           } else {
             if ((xl % DbU::twoGrid) xor (xh % DbU::twoGrid)) {
-              Pad::create( net, layer, Box( xl, yl, xh, yh).translate( parser->getOrigin() ));
+              Pad::create( net, layer, Box( xl, yl, xh, yh) );
               xh -= DbU::oneGrid;
             }
             segment = Vertical::create( net, layer
-                                      , (xh + xl) / 2 + parser->getOriginX()
+                                      , (xh + xl) / 2
                                       ,  xh - xl
-                                      ,  yl + parser->getOriginY()
-                                      ,  yh + parser->getOriginY()
+                                      ,  yl
+                                      ,  yh
                                       );
           }
           cdebug_log(100,0) << "| " << segment << endl;
@@ -978,10 +1006,10 @@ namespace {
           vector<Point>    points;
           for ( int ipoint=0 ; ipoint<polygon->numPoints ; ++ipoint ) {
             points.push_back( Point( parser->fromUnitsMicrons(polygon->x[ipoint])
-                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ).translate( parser->getOrigin() ));
+                                   , parser->fromUnitsMicrons(polygon->y[ipoint]) ));
           }
           points.push_back( Point( parser->fromUnitsMicrons(polygon->x[0])
-                                 , parser->fromUnitsMicrons(polygon->y[0]) ).translate( parser->getOrigin() ));
+                                 , parser->fromUnitsMicrons(polygon->y[0]) ));
           Rectilinear* rectilinear = Rectilinear::create( net, layer, points );
           if (rectilinear) parser->addPinComponent( pin->name(), rectilinear );
           continue;
@@ -1042,7 +1070,7 @@ namespace {
   //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
     if (_cell->getName() == "AOI222_X2_GF6T_1P5")
       DebugSession::open( 100, 110 );
-    cdebug_log(100,1) << "@ _pinStdPostProcess" << endl;
+    cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
       string              pinName    = element.first;
@@ -1263,6 +1291,8 @@ namespace {
 
   void  LefParser::_pinPadPostProcess ()
   {
+    cdebug_log(100,1) << "@ LefParser::_pinPadPostProcess()" << endl;
+
     Box  ab          = getCell()->getAbutmentBox();
     bool isCornerPad = (_cellGauge) and (_cellGauge->getSliceHeight() == _cellGauge->getSliceStep());
 
@@ -1353,6 +1383,8 @@ namespace {
                                            , vspan.getVMin()
                                            , ab.getYMax()
                                            );
+              cdebug_log(100,0) << "| Native    " << segments[i] << endl;
+              cdebug_log(100,0) << "| cap North " << capSegment << endl;
               break;
           }
         }
@@ -1364,6 +1396,7 @@ namespace {
         }
       }
     }
+    cdebug_tabw(100,-1);
   }
 
 
@@ -1397,6 +1430,9 @@ namespace {
     string                libraryName = file.substr( islash, file.size()-4-islash );
     unique_ptr<LefParser> parser      ( new LefParser(file,libraryName) );
 
+    // if (libraryName == "sg13g2_io")
+    //   DebugSession::open( 100, 110 );
+
     FILE* lefStream = fopen( file.c_str(), "r" );
     if (not lefStream)
       throw Error( "LefImport::load(): Cannot open LEF file \"%s\".", file.c_str() );
@@ -1405,6 +1441,8 @@ namespace {
     lefrRead( lefStream, file.c_str(), (lefiUserData)parser.get() );
 
     fclose( lefStream );
+    // if (libraryName == "sg13g2_io")
+    //   DebugSession::close();
 
     if (not parser->getCellGauge()) {
       cerr << Warning( "LefParser::parse(): No default Alliance cell gauge, unable to check the Cell gauge." ) << endl;
@@ -1424,6 +1462,7 @@ namespace {
     
     return parser->getLibrary();
   }
+
 
 }  // Anonymous namespace.
 
@@ -1497,6 +1536,7 @@ namespace CRL {
 #endif
   }
 
+
   Layer* LefImport::getLayer ( string name )
   {
 #if defined(HAVE_LEFDEF)
@@ -1506,6 +1546,7 @@ namespace CRL {
 #endif
   }
 
+
   void  LefImport::addLayer ( string name, Layer* layer )
   {
 #if defined(HAVE_LEFDEF)
@@ -1513,10 +1554,13 @@ namespace CRL {
 #endif
   }
 
+
   void  LefImport::clearLayer ( string name )
   {
 #if defined(HAVE_LEFDEF)
     LefParser::clearLayer( name );
 #endif
   }
+
+
 }  // CRL namespace.
