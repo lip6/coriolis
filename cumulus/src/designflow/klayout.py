@@ -8,25 +8,48 @@ from   .task import FlowTask, ShellEnv
 
 class MissingTarget ( Exception ): pass
 class BadDrcRules   ( Exception ): pass
+class BadLypFile    ( Exception ): pass
 
 
 class Klayout ( FlowTask ):
 
     Verbose = 0x0001
 
+    _lypFile = None
+
+    @staticmethod
+    def setLypFile (lypFile ):
+        if   isinstance(lypFile,Path): pass
+        elif isinstance(lypFile,str):  lypFile = Path( lypFile )
+        else:
+            raise BadLypFile( '[ERROR] Klayout.setLypFile(): Should be <str> or <Path> ({})' \
+                              .format( lypFile ))
+        if not lypFile.is_file():
+            raise BadLypFile( '[ERROR] Klayout.setLypFile(): File not found "{}"' \
+                              .format( lypFile ))
+        Klayout._lypFile = lypFile
+
     @staticmethod
     def mkRule ( rule, targets=[], depends=[], script=None, variables={}, flags=0 ):
         return Klayout( rule, targets, depends, script, variables, flags )
 
     def __init__ ( self, rule, targets, depends, script, variables, flags ):
-        depends.insert( 0, script )
+        if script:
+            depends.insert( 0, script )
         super().__init__( rule, targets, depends )
         self.flags    = flags
         self.variable = variables
         self.command  = [ 'klayout' ]
+        if Klayout._lypFile:
+            self.command += [ '-l', Klayout._lypFile.as_posix() ]
         for name, value in variables.items():
             self.command += [ '-rd', '{}={}'.format(name,value) ]
-        self.command += [ '-b', '-r', self.file_depend(0).as_posix() ]
+        if script:
+            if isinstance(script,Path):
+                script = script.as_posix()
+            self.command += [ '-b', '-r', script ]
+        if self.file_depend(0):
+            self.command += [ self.file_depend(0).as_posix() ]
         self.addClean( self.targets )
 
     def __repr__ ( self ):
