@@ -212,44 +212,54 @@ namespace Hurricane {
     if (points.size() < 3)
       throw Error("Can't create " + _TName("Polygon") + " : less than three points");
 
-    bool  convex = true;
-    float sign   = 0.0;
-    for ( size_t i=0 ; i<points.size() ; ++i ) {
-      float nextSign = getSign( points, i );
+    Polygon* polygon = new Polygon ( net, layer, points );
+    normalize( polygon->_points, polygon->_flags );
+    polygon->_postCreate();
+    polygon->manhattanize();
+    return polygon;
+  }
+
+
+  void  Polygon::normalize ( vector<Point>& points, uint32_t& flags )
+  {
+    vector<Point> rawPoints ( points );
+    flags = Convex|Polygon45;
+
+    float sign = 0.0;
+    for ( size_t i=0 ; i<rawPoints.size() ; ++i ) {
+      float nextSign = getSign( rawPoints, i );
       if ( (sign != 0.0) and ( (sign < 0.0) xor (nextSign < 0.0) ) ) {
       //cerr << Error("Can't create " + _TName("Polygon") + " : non-convex polygon.") << endl;
-        convex = false;
+        flags &= ~Convex; 
         break;
       }
       sign = nextSign;
     }
 
+    for ( size_t i=0 ; i<rawPoints.size() ; ++i ) {
+      if (not isEdge45(rawPoints,i)) {
+        flags &= ~Polygon45;
+        break;
+      }
+    }
+
     size_t istart = 0;
-    for ( size_t i=0 ; i<points.size() ; ++i ) {
-      if (      (points[i].getX() >  points[istart].getX())
-         or (   (points[i].getX() == points[istart].getX())
-            and (points[i].getY() >  points[istart].getY()) ) )
+    for ( size_t i=0 ; i<rawPoints.size() ; ++i ) {
+      if (      (rawPoints[i].getX() >  rawPoints[istart].getX())
+         or (   (rawPoints[i].getX() == rawPoints[istart].getX())
+            and (rawPoints[i].getY() >  rawPoints[istart].getY()) ))
         istart = i;
     }
 
-    vector<Point> normalized ( points.size(), Point() );
     if ( (istart != 0) or (sign > 0.0) ) {
       if (sign < 0.0) {
-        for ( size_t i=0 ; i<points.size() ; ++i )
-          normalized[ (points.size()-i) % points.size() ] = points[ (istart+i) % points.size() ];
+        for ( size_t i=0 ; i<rawPoints.size() ; ++i )
+          points[ (rawPoints.size()-i) % rawPoints.size() ] = rawPoints[ (istart+i) % rawPoints.size() ];
       } else {
-        for ( size_t i=0 ; i<points.size() ; ++i )
-          normalized[ i ] = points[ (istart+i) % points.size() ];
+        for ( size_t i=0 ; i<rawPoints.size() ; ++i )
+          points[ i ] = rawPoints[ (istart+i) % points.size() ];
       }
-      
-    } else
-      normalized = points;
-
-    Polygon* polygon = new Polygon ( net, layer, normalized );
-    polygon->_postCreate();
-    polygon->manhattanize();
-    if (not convex) polygon->_flags &= ~Convex; 
-    return polygon;
+    }
   }
 
 
@@ -261,6 +271,10 @@ namespace Hurricane {
 
   bool  Polygon::isConvex () const
   { return (_flags & Convex); }
+
+
+  bool  Polygon::isPolygon45 () const
+  { return (_flags & Polygon45); }
 
 
   bool  Polygon::isNonRectangle () const
@@ -353,10 +367,12 @@ namespace Hurricane {
   {
     invalidate( true );
 
+
     vector<Point> emptyVector;
     _points.swap( emptyVector );
     _points.reserve( points.size() );
     _points = points;
+    normalize( _points, _flags );
 
     if (isManhattanized()) {
       for ( Edge* edge : _edges ) delete edge;
@@ -380,6 +396,18 @@ namespace Hurricane {
   }
 
 
+  bool  Polygon::isEdge45 ( const vector<Point>& points, size_t i )
+  {
+    size_t i1 = (i+1) % points.size();
+
+    DbU::Unit dx = std::abs( points[i1].getX() - points[i ].getX() );
+    DbU::Unit dy = std::abs( points[i1].getY() - points[i ].getY() );
+    // cerr << "| dx=" << dx << " dy=" << dy << "("
+    //      << DbU::getValueString(dx) << "," << DbU::getValueString(dy) << ")" << endl;
+    return (dx == 0) or (dy == 0) or (dx == dy);
+  }
+
+
   float  Polygon::getSlope ( const Point& origin, const Point& extremity )
   {
     float dx1 = (float)(extremity.getX() - origin.getX());
@@ -399,6 +427,8 @@ namespace Hurricane {
     for ( Edge* edge : _edges ) delete edge;
     _edges.clear();
 
+    if (isPolygon45()) return;
+
     for ( size_t i=0 ; i<_points.size() ; ++i ) {
       const Point&    origin     = _points[  i    % _points.size()];
       const Point&    extremity  = _points[ (i+1) % _points.size()];
@@ -415,6 +445,8 @@ namespace Hurricane {
     static const size_t subPolygonSize = 1000;
     
     // cerr << "Polygon::getSubPolygons(): " << this << endl;
+
+    if (isPolygon45()) return;
 
     vector<Point> upSide;
     vector<Point> downSide;

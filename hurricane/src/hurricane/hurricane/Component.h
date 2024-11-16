@@ -90,6 +90,7 @@ namespace Hurricane {
     public:                         
     // Accessors.                   
       virtual       bool            isConvex                  () const;
+      virtual       bool            isPolygon45               () const;
       virtual       bool            isManhattanized           () const;
       virtual       bool            isNonRectangle            () const;
       virtual       Cell*           getCell                   () const;

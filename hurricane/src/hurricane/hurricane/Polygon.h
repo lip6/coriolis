@@ -51,6 +51,7 @@ namespace Hurricane {
       static const  uint32_t Horizontal = (1<<5);
       static const  uint32_t Vertical   = (1<<6);
       static const  uint32_t Convex     = (1<<7);
+      static const  uint32_t Polygon45  = (1<<8);
 
     public:
       class Edge {
@@ -104,10 +105,12 @@ namespace Hurricane {
     public:
       static        Polygon*       create          ( Net*, const Layer*, const std::vector<Point>& );
       static        float          getSlope        ( const Point&, const Point& );
+      static        void           normalize       ( std::vector<Point>&, uint32_t& flags );
     public:                                        
       virtual       bool           isNonRectangle  () const;
       virtual       bool           isManhattanized () const;
       virtual       bool           isConvex        () const;
+      virtual       bool           isPolygon45     () const;
       virtual       DbU::Unit      getX            () const;
       virtual       DbU::Unit      getY            () const;
       inline  const vector<Point>& getPoints       () const;
@@ -122,6 +125,7 @@ namespace Hurricane {
       virtual       void           translate       ( const DbU::Unit& dx, const DbU::Unit& dy );
                     void           setPoints       ( const vector<Point>& );
       static        float          getSign         ( const vector<Point>&, size_t );
+      static        bool           isEdge45        ( const vector<Point>&, size_t );
                     float          getSlope        ( size_t i ) const;
                     void           manhattanize    ();
       virtual       Points         getMContour     () const;
