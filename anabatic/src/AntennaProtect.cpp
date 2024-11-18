@@ -1158,9 +1158,9 @@ namespace Anabatic {
     cmess2 << Dots::asString    ( "     - Antenna gate maximum WL"   , DbU::getValueString(etesian->getAntennaGateMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna diode maximum WL"  , DbU::getValueString(etesian->getAntennaDiodeMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna segment maximum WL", DbU::getValueString(segmentMaxWL) ) << endl;
-    cmess2 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
-    cmess2 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
-    cmess2 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
+    cmess1 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
+    cmess1 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
+    cmess1 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
 
     stopMeasures();
     printMeasures( "antennas" );
