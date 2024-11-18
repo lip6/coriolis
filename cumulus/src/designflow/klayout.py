@@ -30,26 +30,33 @@ class Klayout ( FlowTask ):
         Klayout._lypFile = lypFile
 
     @staticmethod
-    def mkRule ( rule, targets=[], depends=[], script=None, variables={}, flags=0 ):
-        return Klayout( rule, targets, depends, script, variables, flags )
+    def mkRule ( rule, targets=[], depends=[], script=None, arguments=[], variables={}, flags=0 ):
+        return Klayout( rule, targets, depends, script, arguments, variables, flags )
 
-    def __init__ ( self, rule, targets, depends, script, variables, flags ):
+    def __init__ ( self, rule, targets, depends, script, arguments, variables, flags ):
+        if script and not isinstance(script,Path):
+            script = Path( script )
         if script:
-            depends.insert( 0, script )
+            depends.append( script )
         super().__init__( rule, targets, depends )
-        self.flags    = flags
-        self.variable = variables
-        self.command  = [ 'klayout' ]
+        self.flags     = flags
+        self.arguments = arguments
+        self.variable  = variables
+        self.command   = [ 'klayout' ] + arguments
         if Klayout._lypFile:
             self.command += [ '-l', Klayout._lypFile.as_posix() ]
         for name, value in variables.items():
-            self.command += [ '-rd', '{}={}'.format(name,value) ]
+            if value is None:
+                self.command += [ '-rd', '{}'.format(name) ]
+            else:
+                self.command += [ '-rd', '{}={}'.format(name,value) ]
         if script:
-            if isinstance(script,Path):
-                script = script.as_posix()
-            self.command += [ '-b', '-r', script ]
-        if self.file_depend(0):
+            self.command += [ '-b', '-r', script.as_posix() ]
+        if self.file_depend(0) and not (self.file_depend(0) == script):
             self.command += [ self.file_depend(0).as_posix() ]
+        else:
+            if self.file_target(0):
+                self.command += [  self.file_target(0).as_posix() ]
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -97,8 +104,9 @@ class DRC ( Klayout ):
     def __init__ ( self, rule, depends, flags ):
         from ..helpers.io import ErrorMessage
 
-        depends = FlowTask._normFileList( depends )
-        targets = [ depends[0].with_suffix('.kdrc-report.txt') ]
+        arguments = []
+        depends   = FlowTask._normFileList( depends )
+        targets   = [ depends[0].with_suffix('.kdrc-report.txt') ]
         if not DRC._drcRules:
             raise ErrorMessage( 1, 'DRC.doTask(): No DRC rules defined.' )
         variables = { 'in_gds'      : depends[0]
@@ -106,5 +114,5 @@ class DRC ( Klayout ):
                     , 'report'      : targets[0]
                     , 'report_file' : targets[0]
                     }
-        super().__init__( rule, targets, depends, DRC._drcRules, variables, flags )
+        super().__init__( rule, targets, depends, DRC._drcRules, arguments, variables, flags )
         
