@@ -51,12 +51,12 @@ class Klayout ( FlowTask ):
             else:
                 self.command += [ '-rd', '{}={}'.format(name,value) ]
         if script:
-            self.command += [ '-b', '-r', script.as_posix() ]
+            self.command += [ '-r', script.as_posix() ]
         if self.file_depend(0) and not (self.file_depend(0) == script):
             self.command += [ self.file_depend(0).as_posix() ]
-        else:
-            if self.file_target(0):
-                self.command += [  self.file_target(0).as_posix() ]
+#       else:
+#           if self.file_target(0):
+#               self.command += [  self.file_target(0).as_posix() ]
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -65,6 +65,8 @@ class Klayout ( FlowTask ):
     def doTask ( self ):
         from ..helpers.io import ErrorMessage
 
+        shellEnv = ShellEnv()
+        shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'Klayout.doTask(): UNIX command failed ({}).' \
