@@ -16,6 +16,8 @@
  endif
  ifeq ($(findstring abuild/rpmbuild,$(shell pwd)),)
    $(info Using LIP6 build directory tree scheme)
+#  PYTHON_BIN   = /usr/bin/python3.11
+   PYTHON_BIN   = python3
    SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
    CORIOLIS_SRC = ${SRC_DIR}/coriolis
    ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
@@ -24,6 +26,7 @@
    PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
  else
    $(info Using rpmbuild directory tree scheme)
+   PYTHON_BIN   = python3
    SRC_DIR      = ${HOME}/rpmbuild/BUILD
    CORIOLIS_SRC = ${SRC_DIR}/coriolis-eda-2.5.5
    ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
@@ -33,6 +36,7 @@
  PDM_BIN     = $(CORIOLIS_SRC)/.venv/bin/pdm
  MESON_BIN   = $(CORIOLIS_SRC)/.venv/bin/meson
  PELICAN_BIN = $(CORIOLIS_SRC)/.venv/bin/pelican
+ DOIT_BIN    = $(CORIOLIS_SRC)/.venv/bin/doit
 
 
 
@@ -71,7 +75,7 @@ check_dir:
 
 
 $(CORIOLIS_SRC)/.venv:
-	python3 -m venv .venv
+	$(PYTHON_BIN) -m venv .venv
 
 
 $(MESON_BIN): $(CORIOLIS_SRC)/.venv
@@ -82,13 +86,17 @@ $(PELICAN_BIN): $(CORIOLIS_SRC)/.venv
 	$(venv) if [ ! -x "$(PELICAN_BIN)" ]; then pip install pelican; fi
 
 
+$(DOIT_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(DOIT_BIN)" ]; then pip install doit==0.33.1; fi
+
+
 ifeq ($(USE_SYSTEM_PDM),)
 
 $(PDM_BIN): $(CORIOLIS_SRC)/.venv
 	$(venv) if [ ! -x "$(PDM_BIN)" ]; then pip install pdm; pdm install --no-self -d --plugins; fi
 
 
-install_venv: $(PDM_BIN) $(MESON_BIN) $(PELICAN_BIN)
+install_venv: $(PDM_BIN) $(MESON_BIN) $(PELICAN_BIN) #$(DOIT_BIN)
 
 else
 
