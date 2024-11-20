@@ -1317,6 +1317,17 @@ namespace {
       return _validSyntax;
     }
 
+    while (_record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return _validSyntax;
+      }
+    }
+
     if (not masterName.empty()) {
       Transformation::Orientation orient = Transformation::Orientation::ID;
       if      (_angle ==  90.0) orient = Transformation::Orientation::R1;
@@ -1616,6 +1627,16 @@ namespace {
     } 
 
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
 
     if (  (_record.getType() == GdsRecord::ENDEL)
        or (_record.getType() == GdsRecord::STRING)) {
@@ -1689,6 +1710,16 @@ namespace {
     } 
 
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
 
     if (  (_record.getType() == GdsRecord::ENDEL)
        or (_record.getType() == GdsRecord::STRING)) {
@@ -1782,6 +1813,16 @@ namespace {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
     _stream >> _record;
+    while ( _record.getType() == GdsRecord::PROPATTR) {
+      _stream >> _record;
+      if (_record.isPROPVALUE()) { _stream >> _record; }
+      else {
+        cdebug_log(101,1) << "Missing PROPVALUE" << endl;
+        _validSyntax = false;
+        cdebug_tabw(101,-1);
+        return;
+      }
+    }
     if (_record.getType() != GdsRecord::ENDEL) {
       _validSyntax = false;
       return;
@@ -2067,7 +2108,7 @@ namespace CRL {
 
   bool  Gds::load ( Library* library, string gdsPath, uint32_t flags )
   {
-    // if (library->getName() == "GDSBond")
+    // if (library->getName() == "working")
     //   DebugSession::open( 101, 110 );
     UpdateSession::open();
     Contact::disableCheckMinSize();
@@ -2083,7 +2124,7 @@ namespace CRL {
     Contact::enableCheckMinSize();
     UpdateSession::close();
     Gds::setTopCellName( "" );
-    // if (library->getName() == "GDSBond")
+    // if (library->getName() == "working")
     //   DebugSession::close();
 
     return true;
