@@ -20,6 +20,10 @@ class ShellEnv ( object ):
     * ``GRAAL_TECHNO_NAME``.
     * ``DREAL_TECHNO_NAME``.
     * ``CHECK_TOOLKIT``, where the ``alliance-check-toolkit`` is installed.
+    * ``PDK_ROOT``, parent directory where all the PDKs should be storeds
+    * ``PDK``, name of the selected PDK.
+    * ``KLAYOUT_PATH``, technologies & scripts for Klayout.
+    * ``KLAYOUT_HOME``, user's work directory for Klayout.
 
     Mutable environment variables, could be changed in each instance.
     Their initial values are extracted from the Coriolis Alliance Framework.
@@ -41,6 +45,10 @@ class ShellEnv ( object ):
     RDS_TECHNO_NAME   = None
     GRAAL_TECHNO_NAME = None
     DREAL_TECHNO_NAME = None
+    PDK_ROOT          = None
+    PDK               = None
+    KLAYOUT_PATH      = None
+    KLAYOUT_HOME      = None
 
     def __init__ ( self ):
         self.shellEnv = {}
@@ -97,6 +105,14 @@ class ShellEnv ( object ):
             os.environ[ 'DREAL_TECHNO_NAME' ] = ShellEnv.DREAL_TECHNO_NAME
         if ShellEnv.CHECK_TOOLKIT is not None:
             os.environ[ 'CHECK_TOOLKIT' ] = ShellEnv.CHECK_TOOLKIT
+        if ShellEnv.PDK_ROOT is not None:
+            os.environ[ 'PDK_ROOT' ] = ShellEnv.PDK_ROOT
+        if ShellEnv.PDK is not None:
+            os.environ[ 'PDK' ] = ShellEnv.PDK
+        if ShellEnv.KLAYOUT_PATH is not None:
+            os.environ[ 'KLAYOUT_PATH' ] = ShellEnv.KLAYOUT_PATH
+        if ShellEnv.KLAYOUT_HOME is not None:
+            os.environ[ 'KLAYOUT_HOME' ] = ShellEnv.KLAYOUT_HOME
             
 
 class FlowTask ( object ):
