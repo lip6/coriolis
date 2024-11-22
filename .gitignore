@@ -23,10 +23,16 @@ html/
 latex/
 
 build/
+install/
+debug/
+release/
 venv/
+.venv/
+.env
 coriolis.egg-info/
 .pdm-python
 .doit.db
+.DS_Store
 
 bootstrap/coriolis2.spec
 
