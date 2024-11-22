@@ -1,6 +1,6 @@
 
 
- venv = source .venv/bin/activate;
+ venv = . .venv/bin/activate;
 
  REGRESSION_DIR = 
  ifneq ($(findstring nightly,$(shell pwd)),)
