@@ -40,7 +40,7 @@ include = [
   "unicorn",
   "unittests",
 ]
-dependencies = ["ninja>=1.11.1.1"]
+dependencies = ["ninja>=1.11.1.1", "doit<=0.34.2"]
 [build-system]
 requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake", "dunamai"]
 build-backend = "mesonpy"
