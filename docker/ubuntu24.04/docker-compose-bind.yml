@@ -1,0 +1,18 @@
+services:
+  coriolis-eda:
+    build:
+      context: .
+      dockerfile: ./coriolis-eda.dockerfile
+    image: coriolis-eda:ubuntu24.04
+    container_name: coriolis-eda
+    hostname: coriolis-eda
+    restart: unless-stopped
+    volumes:
+      - $WORKSPACE:/home/developer/coriolis-2.x
+    command: ["sleep", "infinity"]
+    networks:
+      - host
+
+networks:
+  host:
+    driver: bridge

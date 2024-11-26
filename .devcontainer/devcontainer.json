@@ -2,14 +2,13 @@
 	"name": "coriolis-eda",
     "dockerComposeFile": "../docker/ubuntu24.04/docker-compose.yml",
     "service": "coriolis-eda",
-    "workspaceFolder": "/home/developer/coriolis-2.x/src",
+    "workspaceFolder": "/home/developer/coriolis-2.x/src/coriolis",
     "customizations":{
         "vscode": {
             "settings":{
                 "terminal.integrated.shell.linux": "/bin/bash"
             },
             "extensions": [
-                "ms-ceintl.vscode-language-pack-fr",
                 "ms-python.python",
                 "ms-python.debugpy",
                 "ms-python.vscode-pylance",

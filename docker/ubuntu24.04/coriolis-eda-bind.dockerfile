@@ -2,13 +2,6 @@
 
 FROM ubuntu:24.04
 
-ARG CORIOLIS_URL=https://github.com/lip6/coriolis.git
-ARG CORIOLIS_BRANCH=main
-ARG ALLIANCE_URL=https://github.com/lip6/alliance.git
-ARG ALLIANCE_BRANCH=main
-ARG ALLIANCE_CT_URL=https://github.com/lip6/alliance-check-toolkit.git
-ARG ALLIANCE_CT_BRANCH=main
-
 RUN apt-get update -y && \
     apt-get install -y sudo vim git locales build-essential ccache cmake \
     python3 python3-pip python3-venv \
@@ -26,13 +19,11 @@ RUN adduser developer && \
     echo "developer:developer" | chpasswd && \
     usermod -aG sudo developer
 
-VOLUME /home/developer/coriolis-2.x
-
 USER developer
 
-RUN git clone -b $CORIOLIS_BRANCH --recurse-submodules $CORIOLIS_URL /home/developer/coriolis-2.x/src/coriolis
-RUN git clone -b $ALLIANCE_BRANCH $ALLIANCE_URL /home/developer/coriolis-2.x/src/alliance
-RUN git clone -b $ALLIANCE_CT_BRANCH $ALLIANCE_CT_URL /home/developer/coriolis-2.x/src/alliance-check-toolkit
+VOLUME /home/developer/coriolis-2.x
+
+WORKDIR /home/developer/coriolis-2.x/src
 
 RUN cat <<EOF >> /home/developer/.bashrc
 
@@ -46,7 +37,5 @@ export CORIOLIS_TOP="\${HOME}/coriolis-2.x/release/install"
 export ALLIANCE_TOP="\${HOME}/coriolis-2.x/release/install"
 export CELLS_TOP="\${HOME}/coriolis-2.x/release/install/cells"
 EOF
-
-WORKDIR /home/developer/coriolis-2.x/src/coriolis
 
 CMD ["/bin/bash"]

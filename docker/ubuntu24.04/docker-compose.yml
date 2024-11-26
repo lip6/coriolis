@@ -1,16 +1,25 @@
+volumes:
+  coriolis-workspace:
+
 services:
   coriolis-eda:
     build:
       context: .
       dockerfile: ./coriolis-eda.dockerfile
+      args:
+        - CORIOLIS_URL=${CORIOLIS_URL}
+        - CORIOLIS_BRANCH=${CORIOLIS_BRANCH}
+        - ALLIANCE_URL=${ALLIANCE_URL}
+        - ALLIANCE_BRANCH=${ALLIANCE_BRANCH}
+        - ALLIANCE_CT_URL=${ALLIANCE_CT_URL}
+        - ALLIANCE_CT_BRANCH=${ALLIANCE_CT_BRANCH}
+    env_file: .env
     image: coriolis-eda:ubuntu24.04
     container_name: coriolis-eda
     hostname: coriolis-eda
     restart: unless-stopped
-    environment:
-      - WORKSPACE=${WORKSPACE}
     volumes:
-      - $WORKSPACE:/home/developer/coriolis-2.x
+      - coriolis-workspace:/home/developer/coriolis-2.x
     command: ["sleep", "infinity"]
     networks:
       - host
