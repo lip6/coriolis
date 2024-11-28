@@ -5,7 +5,7 @@
 groups = ["default", "dev", "doc", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.5.0"
-content_hash = "sha256:09d9678a4eff2a0f6b20fb8b32d21994af9ef2cfd29799b954ba2692d0ca865a"
+content_hash = "sha256:6c6e89be1a788844bf0e109fb8f3daec3373004d9533ad1d87253f2ca3d7276a"
 
 [[metadata.targets]]
 requires_python = ">=3.8.1"
@@ -347,15 +347,16 @@ files = [
 [[package]]
 name = "doit"
 version = "0.34.2"
-requires_python = ">=3.8"
+requires_python = ">=3.6"
 summary = "doit - Automation Tool"
 dependencies = [
     "cloudpickle",
-    "importlib-metadata>=4.4",
+    "macfsevents; sys_platform == \"darwin\"",
+    "pyinotify; sys_platform == \"linux\"",
 ]
 files = [
-    {file = "doit-0.36.0-py3-none-any.whl", hash = "sha256:ebc285f6666871b5300091c26eafdff3de968a6bd60ea35dd1e3fc6f2e32479a"},
-    {file = "doit-0.36.0.tar.gz", hash = "sha256:71d07ccc9514cb22fe59d98999577665eaab57e16f644d04336ae0b4bae234bc"},
+    {file = "doit-0.34.2-py3-none-any.whl", hash = "sha256:a7f414de4c596a96a727890e0792709a103f1af48e8180e27e07862fff781238"},
+    {file = "doit-0.34.2.tar.gz", hash = "sha256:388111f8a6a5b3b44620ceeb287d0585927c85d0d6d3f8790d34fbb45c0cf6c3"},
 ]
 
 [[package]]
@@ -540,6 +541,14 @@ files = [
 ]
 
 [[package]]
+name = "macfsevents"
+version = "0.8.4"
+summary = "Thread-based interface to file system observation primitives."
+files = [
+    {file = "MacFSEvents-0.8.4.tar.gz", hash = "sha256:bf7283f1d517764ccdc8195b21631dbbac1c506b920bf9a8ea2956b3127651cb"},
+]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 requires_python = ">=3.8"
@@ -649,24 +658,27 @@ files = [
 
 [[package]]
 name = "ninja"
-version = "1.11.1.1"
+version = "1.11.1.2"
+requires_python = ">=3.7"
 summary = "Ninja is a small build system with a focus on speed"
 files = [
-    {file = "ninja-1.11.1.1-py2.py3-none-macosx_10_9_universal2.macosx_10_9_x86_64.macosx_11_0_arm64.macosx_11_0_universal2.whl", hash = "sha256:376889c76d87b95b5719fdd61dd7db193aa7fd4432e5d52d2e44e4c497bdbbee"},
-    {file = "ninja-1.11.1.1-py2.py3-none-manylinux1_i686.manylinux_2_5_i686.whl", hash = "sha256:ecf80cf5afd09f14dcceff28cb3f11dc90fb97c999c89307aea435889cb66877"},
-    {file = "ninja-1.11.1.1-py2.py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:84502ec98f02a037a169c4b0d5d86075eaf6afc55e1879003d6cab51ced2ea4b"},
-    {file = "ninja-1.11.1.1-py2.py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:73b93c14046447c7c5cc892433d4fae65d6364bec6685411cb97a8bcf815f93a"},
-    {file = "ninja-1.11.1.1-py2.py3-none-manylinux2014_ppc64le.manylinux_2_17_ppc64le.whl", hash = "sha256:18302d96a5467ea98b68e1cae1ae4b4fb2b2a56a82b955193c637557c7273dbd"},
-    {file = "ninja-1.11.1.1-py2.py3-none-manylinux2014_s390x.manylinux_2_17_s390x.whl", hash = "sha256:aad34a70ef15b12519946c5633344bc775a7656d789d9ed5fdb0d456383716ef"},
-    {file = "ninja-1.11.1.1-py2.py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:d491fc8d89cdcb416107c349ad1e3a735d4c4af5e1cb8f5f727baca6350fdaea"},
-    {file = "ninja-1.11.1.1-py2.py3-none-musllinux_1_1_i686.whl", hash = "sha256:7563ce1d9fe6ed5af0b8dd9ab4a214bf4ff1f2f6fd6dc29f480981f0f8b8b249"},
-    {file = "ninja-1.11.1.1-py2.py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:9df724344202b83018abb45cb1efc22efd337a1496514e7e6b3b59655be85205"},
-    {file = "ninja-1.11.1.1-py2.py3-none-musllinux_1_1_s390x.whl", hash = "sha256:3e0f9be5bb20d74d58c66cc1c414c3e6aeb45c35b0d0e41e8d739c2c0d57784f"},
-    {file = "ninja-1.11.1.1-py2.py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:76482ba746a2618eecf89d5253c0d1e4f1da1270d41e9f54dfbd91831b0f6885"},
-    {file = "ninja-1.11.1.1-py2.py3-none-win32.whl", hash = "sha256:fa2ba9d74acfdfbfbcf06fad1b8282de8a7a8c481d9dee45c859a8c93fcc1082"},
-    {file = "ninja-1.11.1.1-py2.py3-none-win_amd64.whl", hash = "sha256:95da904130bfa02ea74ff9c0116b4ad266174fafb1c707aa50212bc7859aebf1"},
-    {file = "ninja-1.11.1.1-py2.py3-none-win_arm64.whl", hash = "sha256:185e0641bde601e53841525c4196278e9aaf4463758da6dd1e752c0a0f54136a"},
-    {file = "ninja-1.11.1.1.tar.gz", hash = "sha256:9d793b08dd857e38d0b6ffe9e6b7145d7c485a42dcfea04905ca0cdb6017cc3c"},
+    {file = "ninja-1.11.1.2-py3-none-macosx_10_9_universal2.whl", hash = "sha256:1cfbb845095ea09da8c089375a8f999e75f4817d01506297c66181b533175647"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:ab4068ff7ff1f895485ad604116165b05d6810c802170a7f22c09dd678d5587d"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:33d258809c8eda81f9d80e18a081a6eef3215e5fd1ba8902400d786641994e89"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ed25892c16e49e66383a8db6a67a9f33b41230fc485426094d7da51e2255ec2b"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:232767144401847db62e8392047866698bb3678158a1ae4400a97111110e90f2"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:9200247cf4c1643a67d079836b8dd31a362e34e618b50b5e3a5c0d0171efc442"},
+    {file = "ninja-1.11.1.2-py3-none-manylinux_2_28_armv7l.manylinux_2_31_armv7l.whl", hash = "sha256:0c9c36f6e6f8946c7271b0ed14d98fc3ea467a0c0954fb73f5f656c42667d943"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:3e815e4147832b17ec38417efcb31df51671ae273f083409304c7cc32a14dd1a"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_1_i686.whl", hash = "sha256:ecf3df324b56fdfb0872990a71e706efdae286e010310816c72b6bf24431711b"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_1_ppc64le.whl", hash = "sha256:cb6b476eb4e84c0efcfd3ab04f660dedce8adb854b56b043639312f3af176df6"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_1_s390x.whl", hash = "sha256:508fb93395a5c82a4d99d30fce0cbaf5cb2bd33e5c1dc9faaa080e199802dbc9"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:52af7f45750c5c288d566fd0c927ed9bb0d8f2e50803709f582a42bcc4ec167b"},
+    {file = "ninja-1.11.1.2-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:99fc4b87299242e10d7edd1c7737fdfb1269019e32f9f4267630887f6183a49e"},
+    {file = "ninja-1.11.1.2-py3-none-win32.whl", hash = "sha256:949e23cb2e79a33ea37d23a07d26846d2e75464e8e6940f8751fe964bc141dfa"},
+    {file = "ninja-1.11.1.2-py3-none-win_amd64.whl", hash = "sha256:0bca4179119426a3c3c9d5661c3b244d68781064e50907a1e066bc55edc18e06"},
+    {file = "ninja-1.11.1.2-py3-none-win_arm64.whl", hash = "sha256:ee7b1924c28e6cab5b866f7b229f07777d25d8cfccbbedf3da5ffb4f72f57877"},
+    {file = "ninja-1.11.1.2.tar.gz", hash = "sha256:4fbd07b2b4232543726abafdd350453a2fabef4527664ca0e491c578aee5f857"},
 ]
 
 [[package]]
@@ -890,6 +902,14 @@ dependencies = [
 files = [
     {file = "pyhanko-certvalidator-0.26.2.tar.gz", hash = "sha256:d3ad4169aca30c0ffb7f30df045fd99fe18897a3ad38e03b1c29152e513d4dca"},
     {file = "pyhanko_certvalidator-0.26.2-py3-none-any.whl", hash = "sha256:2a7ca0673f918b45cba2bc0026d3d23a35202e013d7262701fbc562269158792"},
+]
+
+[[package]]
+name = "pyinotify"
+version = "0.9.6"
+summary = "Linux filesystem events monitoring"
+files = [
+    {file = "pyinotify-0.9.6.tar.gz", hash = "sha256:9c998a5d7606ca835065cdabc013ae6c66eb9ea76a00a1e3bc6e0cfe2b4f71f4"},
 ]
 
 [[package]]
