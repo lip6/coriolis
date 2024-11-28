@@ -1,8 +1,9 @@
 #!/bin/bash
 
-PKG_NAME=python3-coriolis
-PKG_VERSION=1.0
+PKG_NAME=python3-coriolis-eda
+PKG_VERSION=2.5.5
 PKG_REVISION=1
+PKG_MAINTAINER="Gabriel Rocherolle <gabriel.rocherolle@protonmail.com>"
 
 PKG_ARCH=""
 case $(uname -m) in
@@ -35,7 +36,7 @@ Package: ${PKG_NAME}
 Version: ${PKG_VERSION}
 Architecture: ${PKG_ARCH}
 Section: universe/python
-Maintainer: Gabriel Rocherolle <gabriel.rocherolle@protonmail.com>
+Maintainer: ${PKG_MAINTAINER}
 Build-Depends:
  build-essential,
  ccache,
@@ -57,9 +58,15 @@ Depends: python3:any, python3-pip, python3-venv
 Recommends: doxygen, pelican, texlive-latex-recommanded
 Provides: cyclop
 Homepage: https://coriolis.lip6.fr
-Description: Coriolis Open EDA Tool
+Description: Coriolis 2 EDA toolchain
  Coriolis provides several tools to perform the layout of VLSI circuits.
  Its main components are the Hurricane database, the Etesian placer and the Katana router, but other tools can use the Hurricane database and the parsers provided.
+EOF
+
+# PKG copyright
+cat << EOF > "${PKG_PATH}/DEBIAN/copyright"
+Files: *
+License: BSD-1-Clause AND LGPL-2.0-only AND GPL-2.0-only AND Apache-1.0
 EOF
 
 # PKG contents
@@ -69,5 +76,5 @@ cp -r ${PREFIX}/* ${PKG_PATH}/usr
 # Build PKG
 DISTRIB_NAME=$(grep -e "^ID=" /etc/os-release | cut -d '=' -f 2)
 
-echo "Building python3-coriolis for ${DISTRIB_NAME}";
+echo "Building ${PKG_NAME} for ${DISTRIB_NAME}";
 dpkg-deb --build --root-owner-group ${PKG_PATH}

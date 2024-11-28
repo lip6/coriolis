@@ -1,15 +1,25 @@
 services:
-  coriolis-eda:
+  coriolis-eda-bind:
     build:
       context: .
-      dockerfile: ./coriolis-eda.dockerfile
+      dockerfile: ./coriolis-eda-bind.dockerfile
+      args:
+        - UID=$UID
+        - GID=$GID
     image: coriolis-eda:ubuntu24.04
     container_name: coriolis-eda
     hostname: coriolis-eda
     restart: unless-stopped
     volumes:
-      - $WORKSPACE:/home/developer/coriolis-2.x
-    command: ["sleep", "infinity"]
+      - $WORKSPACE:/home/developer/coriolis-2.x:Z
+    environment:
+      - VIRTUAL_ENV=/home/developer/coriolis-2.x/src/coriolis/.venv
+      - BUILD_TYPE=release
+      - SRC_DIR=/home/developer/coriolis-2.x/src/coriolis
+      - OUT_DIR=/home/developer/coriolis-2.x/src/coriolis/docker/ubuntu24.04
+    command: bash -c "
+      make -f /home/developer/coriolis-2.x/src/coriolis/docker/ubuntu24.04/Makefile pdm-config &&
+      sleep infinity"
     networks:
       - host
 

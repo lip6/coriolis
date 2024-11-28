@@ -3,7 +3,7 @@
 FROM ubuntu:24.04
 
 RUN apt-get update -y && \
-    apt-get install -y sudo vim git locales build-essential ccache cmake \
+    apt-get install -y vim git locales build-essential ccache cmake \
     python3 python3-pip python3-venv \
     bison flex \
     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
@@ -15,15 +15,17 @@ RUN export LC_ALL=en_US.UTF-8 && \
     export LANG=en_US.UTF-8 && \
     locale-gen en_US.UTF-8
 
-RUN adduser developer && \
-    echo "developer:developer" | chpasswd && \
-    usermod -aG sudo developer
+ARG UID=1000
+ARG GID=1000
 
-USER developer
+# Clame back all user ids and create developer user
+RUN userdel ubuntu && \
+    adduser --uid $UID developer && \
+    echo "developer:developer" | chpasswd developer
+
+USER $UID:$GID
 
 VOLUME /home/developer/coriolis-2.x
-
-WORKDIR /home/developer/coriolis-2.x/src
 
 RUN cat <<EOF >> /home/developer/.bashrc
 
@@ -36,6 +38,10 @@ export LD_LIBRARY_PATH="\${HOME}/coriolis-2.x/release/install/lib:\${HOME}/corio
 export CORIOLIS_TOP="\${HOME}/coriolis-2.x/release/install"
 export ALLIANCE_TOP="\${HOME}/coriolis-2.x/release/install"
 export CELLS_TOP="\${HOME}/coriolis-2.x/release/install/cells"
+
+source \${VIRTUAL_ENV}/bin/activate
 EOF
+
+WORKDIR /home/developer/coriolis-2.x/src/coriolis
 
 CMD ["/bin/bash"]
