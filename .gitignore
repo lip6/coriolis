@@ -25,6 +25,7 @@ latex/
 build/
 install/
 debug/
+pkgs/
 release/
 venv/
 .venv/
