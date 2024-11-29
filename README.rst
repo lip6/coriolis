@@ -10,7 +10,6 @@
    :align: center
    :width: 10%
 
-
 ======================
 Coriolis Open EDA Tool
 ======================
@@ -23,7 +22,7 @@ Main documentation is available at: https://coriolis.lip6.fr/
 
 Development discussion can be found `on our Matrix Channel <https://matrix.to/#/#coriolis:matrix.org>`_ and in our `GitHub Discussions <https://github.com/lip6/coriolis/discussions>`_.
 
-Coriolis is part of a set of three repositories that are closely relateds.
+Coriolis is one of a three repositories set that are closely related:
 
 * Alliance
 
@@ -38,7 +37,6 @@ Coriolis is part of a set of three repositories that are closely relateds.
 
   https://github.com/lip6/alliance-check-toolkit
 
-
 Purpose
 =======
 
@@ -47,7 +45,7 @@ main components are the Hurricane database, the Etesian placer and the Katana
 router, but other tools can use the Hurricane database and the parsers
 provided.
 
-Coriolus can be used via both the  ```cgt`` graphical tool <http://coriolis.lip6.fr/pages/users-guide.html#id24>`_ and via the `rich Python API <http://coriolis.lip6.fr/pages/python-tutorial.html>`_.
+Coriolus can be used via both the  ``cgt`` graphical tool <http://coriolis.lip6.fr/pages/users-guide.html#id24>`_ and via the `rich Python API <http://coriolis.lip6.fr/pages/python-tutorial.html>`_.
 
 Installation
 ============
@@ -66,10 +64,17 @@ Building Coriolis
 
 Most folk will only need to install using pip, but if you want to develop or need to build from scratch, read on!
 
+Docker
+======
+
+A development container is provided for both development and Linux distributions specific packaging purposes.
+Check out the *docker* folder and its documentation.
+It gathers all three Coriolis, Alliance and Alliance Check Toolkit repositories in one comprehensive workspace.
+
 Ubuntu/Windows WSL2 Build Environment
 =====================================
 
-If you haven't already got them, install `build-essential` and `git`
+If you haven't already, install `build-essential` and `git`:
 
 .. code-block:: bash
 
@@ -91,7 +96,6 @@ Install the build dependencies:
                     bison flex \
                     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
                     rapidjson-dev libboost-all-dev libeigen3-dev libxml2-dev
-
 
 Mac OSX Build Environment
 =========================
@@ -122,8 +126,6 @@ We need to set some environment variables for finding the cask only components. 
    dotenv set CMAKE_FRAMEWORK_PATH "$HOMEBREW_PREFIX/opt/qt@5/lib/cmake/"
    dotenv set PKG_CONFIG_PATH "$HOMEBREW_PREFIX/opt/qt@5/lib/pkgconfig:$HOMEBREW_PREFIX/opt/qwt-qt5/lib/pkgconfig"
 
-
-
 Building Coriolis
 =================
 
@@ -149,6 +151,8 @@ Development environment
 
 For day-to-day development, its currently best to use meson and ninja directly. Currently there are `issues with using a Python editable install`_.
 
+An automated deployment and setup of the workspace is provided, refer to the docker development container.
+Manual configuration is described in the rest of this section.
 
 We use PDM_ to manage our development environment, which uses Python's venv_ system.
 
@@ -186,13 +190,11 @@ You can also install locally using:
    pdm run meson setup builddir -Dpython.install_env=system
    pdm run ninja -C builddir install
 
-
 For more configuration and install options, see:
 
 .. code-block:: bash
 
    pdm run meson configure
-
 
 .. _issues with using a Python editable install: https://github.com/lip6/coriolis/issues/67
 .. _venv: https://www.dataquest.io/blog/a-complete-guide-to-python-virtual-environments/#how-to-use-python-environments
@@ -226,11 +228,7 @@ You'll need the following prerequisites:
 * pelican
 * latex
 
-
-
-
 Documentation
 =============
 
 The full documentation for Coriolis can be found at http://coriolis.lip6.fr/pages/documentation.html
-
