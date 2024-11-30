@@ -38,8 +38,6 @@ export LD_LIBRARY_PATH="\${HOME}/coriolis-2.x/release/install/lib:\${HOME}/corio
 export CORIOLIS_TOP="\${HOME}/coriolis-2.x/release/install"
 export ALLIANCE_TOP="\${HOME}/coriolis-2.x/release/install"
 export CELLS_TOP="\${HOME}/coriolis-2.x/release/install/cells"
-
-source \${VIRTUAL_ENV}/bin/activate
 EOF
 
 WORKDIR /home/developer/coriolis-2.x/src/coriolis
