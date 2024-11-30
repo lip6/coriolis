@@ -80,6 +80,8 @@ Set their values in the .env file along docker compose:
     echo -e "UID=$(id -u)" >> ${WORKSPACE}/src/coriolis/docker/ubuntu24.04/.env
     echo -e "GID=$(id -g)" >> ${WORKSPACE}/src/coriolis/docker/ubuntu24.04/.env
 
+And obviously, the container runs in **non privileged** mode.
+
 Workspace view
 ^^^^^^^^^^^^^^
 
@@ -90,6 +92,9 @@ Then either run docker compose restart or rebuild the development container in V
 
 Persistence
 ^^^^^^^^^^^
+
+Data persistence is usually done using Docker volumes. We opted for another solution with a local folder binding.
+We found this a little more flexible as it keeps the data accessible at all times, even in the event of a Docker malfunction.
 
 The workspace remains a local folder from the Docker host. It is persistent, while the container's filesystem is transient, re-initialized upon every container restart cycle.
 The advantage of binding a local folder as workspace is to retain build outputs inside the *$WORKSPACE/coriolis-2.x* folder.
@@ -161,3 +166,20 @@ Graphic Server Socket (Work in Progress)
 Some of the Coriolis tools rely on the graphic server (Xorg or Wayland), such as **CGT**.
 Running a graphic application from inside a container is technically possible.
 This requires sharing the graphic server socket with the container.
+
+Docker production container
+============================
+
+Another set of docker and docker compose file is provided in this folder.
+
+Purpose
+^^^^^^^
+
+That second container is aimed at production usages, retrieves source codes directly from GitHub and has no binding to host filesystem.
+
+The idea is to reproduce the context of a Coriolis user, installation and using it either from GitHub repos or using distribution packaging.
+
+While very similar to the development container, that one is intended for package testing (installation / uninstallation) and running Coriolis tools
+from an clean, isolated environment. This may latter become available in a public Docker registry, an officially supported installation method.
+
+For those matters, this container uses a volume and grants sudo rights to the internal user.
