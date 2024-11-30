@@ -14,7 +14,7 @@ PREFIX       = ${OUT_DIR}/install
 
 venv         = . ${VIRTUAL_ENV}/bin/activate;
 
-pkg_python3-coriolis-eda = /bin/bash ${SRC_DIR}/docker/ubuntu24.04/pkg_python3-coriolis-eda.sh
+pkg_python3-coriolis-eda = /bin/bash ${SRC_DIR}/packaging/ubuntu24.04/pkg_python3-coriolis-eda.sh
 
 venv-setup:
 	python3 -m venv ${VIRTUAL_ENV}
