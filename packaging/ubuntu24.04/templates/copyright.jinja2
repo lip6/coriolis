@@ -1,0 +1,39 @@
+Files:
+{%- for file in lefdef_so %}
+    {{ file }}
+{%- endfor %}
+Copyright: Cadence Design Systems 2012-{{ current_year }}
+License: Apache-2.0
+
+Files:
+{%- for file in flute_so %}
+    {{ file }}
+{%- endfor %}
+Copyright: Dr. Chris C. N. Chu 2004, Iowa State University
+License: BSD-1-Clause
+
+Files:
+{%- for file in hurricane_so %}
+    {{ file }}
+{%- endfor %}
+Copyright: Bull S.A. 2000-{{ current_year }} (now ATOS)
+License: LGPL-2.0
+
+Files:
+{%- for file in coriolis_includes %}
+    {{ file }}
+{%- endfor %}
+{%- for file in coriolis_binaries %}
+    {{ file }}
+{%- endfor %}
+{%- for file in coriolis_bindings %}
+    {{ file }}
+{%- endfor %}
+{%- for file in coriolis_so %}
+    {{ file }}
+{%- endfor %}
+{%- for file in coriolis_docs %}
+    {{ file }}
+{%- endfor %}
+Copyright: Sorbonne Université 2000-{{ current_year }} (formerly UPMC)
+License: GPL-2.0

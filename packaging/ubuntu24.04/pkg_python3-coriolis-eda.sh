@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Arguments
+SRC_DIR=$1
+if [[ -z "${SRC_DIR}" ]]; then
+	SRC_DIR=${PWD}
+fi
+
+PREFIX=$2
+if [[ -z "${PREFIX}" ]]; then
+	PREFIX=${PWD}/${BUILD_TYPE}
+fi
+
+OUT_DIR=$3
+if [[ -z "${OUT_DIR}" ]]; then
+	OUT_DIR=${PWD}/${BUILD_TYPE}
+fi
+
 PKG_NAME=python3-coriolis-eda
 PKG_VERSION=2.5.5
 PKG_REVISION=1
@@ -14,17 +30,6 @@ case $(uname -m) in
 esac
 
 DEB_PKG=${PKG_NAME}_${PKG_VERSION}-${PKG_REVISION}_${PKG_ARCH}
-
-# Arguments
-PREFIX=$1
-if [[ -z "${PREFIX}" ]]; then
-	PREFIX=${PWD}/${BUILD_TYPE}
-fi
-
-OUT_DIR=$2
-if [[ -z "${OUT_DIR}" ]]; then
-	OUT_DIR=${PWD}/${BUILD_TYPE}
-fi
 
 PKG_PATH=${OUT_DIR}/pkgs/${DEB_PKG}
 
@@ -63,15 +68,13 @@ Description: Coriolis 2 EDA toolchain
  Its main components are the Hurricane database, the Etesian placer and the Katana router, but other tools can use the Hurricane database and the parsers provided.
 EOF
 
-# PKG copyright
-cat << EOF > "${PKG_PATH}/DEBIAN/copyright"
-Files: *
-License: BSD-1-Clause AND LGPL-2.0-only AND GPL-2.0-only AND Apache-1.0
-EOF
-
 # PKG contents
 mkdir -p ${PKG_PATH}/usr
 cp -r ${PREFIX}/* ${PKG_PATH}/usr
+
+# PKG copyright
+echo "Generate copyright file"
+python3 ${SRC_DIR}/packaging/ubuntu24.04/gen_coriolis-eda_copyright.py ${PKG_PATH}
 
 # Build PKG
 DISTRIB_NAME=$(grep -e "^ID=" /etc/os-release | cut -d '=' -f 2)

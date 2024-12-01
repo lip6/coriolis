@@ -51,7 +51,7 @@ uninstall:
 
 dist-pkg: install install_docs
 	@echo "Building distribution package for Ubuntu 24.04";
-	$(pkg_python3-coriolis-eda) ${PREFIX} ${OUT_DIR}
+	$(pkg_python3-coriolis-eda) ${SRC_DIR} ${PREFIX} ${OUT_DIR}
 
 clean:
 	rm -rf ${OUT_DIR}/build/*
