@@ -1,7 +1,7 @@
 {
-	"name": "coriolis-eda-bind",
-    "dockerComposeFile": "../docker/ubuntu24.04/docker-compose-bind.yml",
-    "service": "coriolis-eda-bind",
+	"name": "coriolis-eda",
+    "dockerComposeFile": "../docker/ubuntu24.04/docker-compose.yml",
+    "service": "coriolis-eda",
     "workspaceFolder": "/home/developer/coriolis-2.x/src/coriolis",
     "customizations":{
         "vscode": {

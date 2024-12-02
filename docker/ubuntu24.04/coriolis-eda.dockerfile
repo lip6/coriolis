@@ -10,7 +10,7 @@ ARG ALLIANCE_CT_URL=https://github.com/lip6/alliance-check-toolkit.git
 ARG ALLIANCE_CT_BRANCH=main
 
 RUN apt-get update -y && \
-    apt-get install -y sudo vim git locales build-essential ccache cmake \
+    apt-get install -y vim git locales build-essential ccache cmake \
     python3 python3-pip python3-venv \
     bison flex \
     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
@@ -23,16 +23,33 @@ RUN export LC_ALL=en_US.UTF-8 && \
     locale-gen en_US.UTF-8
 
 RUN adduser developer && \
-    echo "developer:developer" | chpasswd && \
-    usermod -aG sudo developer
+    echo "developer:developer" | chpasswd
 
 VOLUME /home/developer/coriolis-2.x
 
 USER developer
 
-RUN git clone -b $CORIOLIS_BRANCH --recurse-submodules $CORIOLIS_URL /home/developer/coriolis-2.x/src/coriolis
-RUN git clone -b $ALLIANCE_BRANCH $ALLIANCE_URL /home/developer/coriolis-2.x/src/alliance
-RUN git clone -b $ALLIANCE_CT_BRANCH $ALLIANCE_CT_URL /home/developer/coriolis-2.x/src/alliance-check-toolkit
+RUN cat <<EOF >> /home/developer/setup-coriolis-workspace.sh
+#!/bin/bash
+
+if [[ ! -d \${HOME}/coriolis-2.x/src/coriolis ]]; then
+    git clone -b \${CORIOLIS_BRANCH} --recurse-submodules \${CORIOLIS_URL} \${HOME}/coriolis-2.x/src/coriolis
+fi
+
+if [[ ! -d \${HOME}/coriolis-2.x/src/alliance ]]; then
+    git clone -b \${ALLIANCE_BRANCH} \${ALLIANCE_URL} \${HOME}/coriolis-2.x/src/alliance
+fi
+
+if [[ ! -d \${HOME}/coriolis-2.x/src/alliance-check-toolkit ]]; then
+    git clone -b \${ALLIANCE_CT_BRANCH} \${ALLIANCE_CT_URL} \${HOME}/coriolis-2.x/src/alliance-check-toolkit
+fi
+
+if [[ -f \${HOME}/coriolis-2.x/src/coriolis/docker/ubuntu24.04/Makefile ]]; then
+    make -C \${HOME}/coriolis-2.x/src/coriolis -f docker/ubuntu24.04/Makefile pdm-config
+fi
+EOF
+
+RUN chmod u+x /home/developer/setup-coriolis-workspace.sh
 
 RUN cat <<EOF >> /home/developer/.bashrc
 
@@ -47,6 +64,6 @@ export ALLIANCE_TOP="\${HOME}/coriolis-2.x/release/install"
 export CELLS_TOP="\${HOME}/coriolis-2.x/release/install/cells"
 EOF
 
-WORKDIR /home/developer/coriolis-2.x/src/coriolis
+WORKDIR /home/developer/coriolis-2.x
 
 CMD ["/bin/bash"]

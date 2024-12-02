@@ -3,8 +3,16 @@
 Docker development container
 ============================
 
-For users intending to build Coriolis from sources we provide this development container environment.
+For users intending to build Coriolis from sources we provide a development container environment.
 It is including companions projects Alliance and Alliance Check Toolkit.
+
+This folder provides two Docker compose deployments:
+    - A standard, volume based one
+    - A second one using local folder binding for the Coriolis workspace
+
+They mainly differ in the way the persistence of the Coriolis workspace folder is achieved.
+The default one (as used by VSCode's devcontainer extension) retrieves all repos from GitHub before configuring the workspace.
+While the bounded version requires the user to get the source code by himself previously. See guide bellow.
 
 Purpose
 ^^^^^^^
@@ -35,6 +43,28 @@ A Docker host is required, with docker and docker-compose properly installed and
 Current user also needs proper permissions. This is OS specific and out of this documentation scope.
 Refer to suitable instructions in `installation documentation <https://docs.docker.com/engine/install/>`_.
 
+**Classic container**
+
+User may adjust the Coriolis and Alliance GitHub repos URIs and branches being checked out in an .env file placed next the docker compose file.
+
+.. code-block:: bash
+
+    echo "CORIOLIS_URL=https://github.com/my_fork/coriolis.git"                  >> docker/ubuntu24.04/.env
+    echo "CORIOLIS_BRANCH=my_branch"                                             >> docker/ubuntu24.04/.env
+    echo "ALLIANCE_URL=https://github.com/my_fork/alliance.git"                  >> docker/ubuntu24.04/.env
+    echo "ALLIANCE_BRANCH=my_branch"                                             >> docker/ubuntu24.04/.env
+    echo "ALLIANCE_CT_URL=https://github.com/my_fork/alliance-check-toolkit.git" >> docker/ubuntu24.04/.env
+    echo "ALLIANCE_CT_BRANCH=my_branch"                                          >> docker/ubuntu24.04/.env
+
+From now on, simply "docker compose up" the deployment or use VSCode command 'Reopen in container'.
+At start, the repos will be cloned if needed and PDM project configured.
+
+    **Important note:** As the changes made to project repositories are kept inside a Docker volume, they persist even when restarting or rebuilding the container.
+    Which is intended through Docker container lifecycle. Nevertheless, they are not accessible from host filesystem.
+    **Do not** delete underlying volume without pushing your work toward your repos remotes, or it will be lost.
+
+**Bounded Workspace container**
+
 First, choose a workspace on the Docker host. That workspace will be mounted read-write inside the development container.
 Declare it using WORKSPACE environment variable, for instance:
 
@@ -57,15 +87,24 @@ It is also advised to set workspace environment variable in an .env file next to
 
     echo -e "WORKSPACE=${HOME}/coriolis-2.x" >> ${WORKSPACE}/src/coriolis/docker/ubuntu24.04/.env
 
-Note that for the time being, an *src* folder is te be created in workspace, and that repositories are cloned inside.
-This comes from compatibility reasons with existing Makefile. Build files will output along that *src* folder.
+Note that for the time being, legacy Coriolis build system requires an *src* folder is to be created in workspace, and that repositories are cloned inside.
+Build files will output along that *src* folder.
 The build system may remove that requirement in the future. This documentation will be updated accordingly.
 
 Security
 ^^^^^^^^
 
-For the local binding to work with respect to discretionary access control, the current user UID and GID have to match the **Developer** user inside the container.
-Those may be specified either using the .env file or environment variable.
+Obviously, neither of the provided containers run in **privileged** mode.
+
+In addition, container's internal user is denied sudo permissions, as it exposes to potential root-level exploitation. Remember Docker is daemon based.
+Compromising host security through volumes or local filesystem binding is a common attack pattern if the container is breached.
+
+All dependencies and requirements are already installed from Dockerfile. Feel free to add or modify them before rebuilding the container.
+For generated distribution package testing purposes, they are either available in bounded folder or can be copied over from volume.
+
+**On bind version**
+
+For the local folder binding to work with respect to discretionary access control, the current user UID and GID have to match the internal user inside the container.
 
 Note: For host distributions enforcing Mandatory Access Control with for instance SELinux, the local workspace binding defines the **:Z** attribute.
 This allows the binding in a private mode, e.g. only within this development container.
@@ -80,7 +119,9 @@ Set their values in the .env file along docker compose:
     echo -e "UID=$(id -u)" >> ${WORKSPACE}/src/coriolis/docker/ubuntu24.04/.env
     echo -e "GID=$(id -g)" >> ${WORKSPACE}/src/coriolis/docker/ubuntu24.04/.env
 
-And obviously, the container runs in **non privileged** mode.
+**On volume version**
+
+Previous remarks do not apply to the volume version, as it keeps complete isolation from host filesystem.
 
 Workspace view
 ^^^^^^^^^^^^^^
@@ -93,13 +134,16 @@ Then either run docker compose restart or rebuild the development container in V
 Persistence
 ^^^^^^^^^^^
 
-Data persistence is usually done using Docker volumes. We opted for another solution with a local folder binding.
-We found this a little more flexible as it keeps the data accessible at all times, even in the event of a Docker malfunction.
+Data persistence is usually done using Docker volumes, that is what the default development containers uses.
+We also provided a second one with a local folder binding. Feel free to used the one best suited and flexible regarding your preferences.
 
-The workspace remains a local folder from the Docker host. It is persistent, while the container's filesystem is transient, re-initialized upon every container restart cycle.
-The advantage of binding a local folder as workspace is to retain build outputs inside the *$WORKSPACE/coriolis-2.x* folder.
+The workspace is either a volume or a local folder from the Docker host.
+In both cases it is persistent, while the container's filesystem is transient, re-initialized upon every container restart cycle.
+Any changes made in the workspace like code edits and build outputs are retained inside the *$WORKSPACE/coriolis-2.x* folder.
 
-With Linux hosts, there is no performance penalty. Also, the binding is secured through Mandatory Access Control like **SELinux** or **AppArmor**, if the host distribution implements it.
+With Linux hosts, there is no performance penalty when using either volume or local binding. Also, the binding is secured through Mandatory Access Control like **SELinux** or **AppArmor**, if the host distribution implements it.
+That may render the binding variant a little less portable than volume though.
+That is why we recommend using the latter as a good standard practice.
 
 Starting up dev container
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -129,10 +173,10 @@ Simply configure aforementioned env variable then use the 'Reopen in container' 
 Virtual Environment
 ^^^^^^^^^^^^^^^^^^^
 
-Coriolis build system relies upon Python modules. Good practices recommends using a Python virtual environment.
+Coriolis build system relies upon Python modules, managed in a PDM project. It follows good practices by using a Python virtual environment.
 The idea is to install recommended version for every build dependency without messing up with system wide installations.
 
-The virtual environment is configured and activated upon container start.
+The virtual environment like the PDM project are configured and activated upon container start.
 
 Environment Variables
 ^^^^^^^^^^^^^^^^^^^^^
@@ -140,7 +184,7 @@ Environment Variables
 All environment variables required by Coriolis and Alliance are configured by the container.
 They may then be used by Makefiles and other build tools.
 
-For internal shells, the *developer* user bashrc is also configured to export proper variables,
+For internal shells, the internal user's bashrc is also configured to export proper variables,
 for instance:
 
 .. code-block:: bash
@@ -166,20 +210,3 @@ Graphic Server Socket (Work in Progress)
 Some of the Coriolis tools rely on the graphic server (Xorg or Wayland), such as **CGT**.
 Running a graphic application from inside a container is technically possible.
 This requires sharing the graphic server socket with the container.
-
-Docker production container
-============================
-
-Another set of docker and docker compose file is provided in this folder.
-
-Purpose
-^^^^^^^
-
-That second container is aimed at production usages, retrieves source codes directly from GitHub and has no binding to host filesystem.
-
-The idea is to reproduce the context of a Coriolis user, installation and using it either from GitHub repos or using distribution packaging.
-
-While very similar to the development container, that one is intended for package testing (installation / uninstallation) and running Coriolis tools
-from an clean, isolated environment. This may latter become available in a public Docker registry, an officially supported installation method.
-
-For those matters, this container uses a volume and grants sudo rights to the internal user.

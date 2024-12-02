@@ -20,7 +20,12 @@ services:
     restart: unless-stopped
     volumes:
       - coriolis-workspace:/home/developer/coriolis-2.x
-    command: ["sleep", "infinity"]
+    environment:
+      - VIRTUAL_ENV=/home/developer/coriolis-2.x/src/coriolis/.venv
+      - BUILD_TYPE=release
+      - SRC_DIR=/home/developer/coriolis-2.x/src/coriolis
+      - OUT_DIR=/home/developer/coriolis-2.x/src/coriolis/docker/ubuntu24.04
+    command: bash -c "/home/developer/setup-coriolis-workspace.sh && sleep infinity"
     networks:
       - host
 
