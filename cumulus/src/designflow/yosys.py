@@ -215,7 +215,7 @@ class Yosys ( FlowTask ):
         self._runScript()
         return self.success
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

@@ -74,7 +74,7 @@ class Klayout ( FlowTask ):
             return TaskFailed( e )
         return self.checkTargets( 'Klayout.doTask' )
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )
