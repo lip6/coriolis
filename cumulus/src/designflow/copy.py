@@ -34,7 +34,7 @@ class Copy ( FlowTask ):
             return TaskFailed( e )
         return self.checkTargets( 'Copy.doTask' )
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : 'copy_' + self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

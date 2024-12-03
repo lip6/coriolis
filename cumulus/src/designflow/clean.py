@@ -53,7 +53,7 @@ class Clean ( FlowTask ):
                         filePath.unlink()
         return True
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Clean all generated (targets) files.'

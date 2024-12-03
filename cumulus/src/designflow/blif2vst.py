@@ -59,7 +59,6 @@ class Blif2Vst ( FlowTask ):
         from ..helpers.io import ErrorMessage
         from ..plugins    import rsave
 
-        print( 'Blif2Vst.doTask() on "{}"'.format( self.design ))
         views = CRL.Catalog.State.Logical | self.flags
         cell  = CRL.Blif.load( self.file_depend().as_posix() )
         if cell.getName() == 'top':
@@ -74,13 +73,14 @@ class Blif2Vst ( FlowTask ):
 
         return self.checkTargets( 'Blif2Vst.doTask' )
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         if self.design: doc = 'Run {}.'.format( self )
         else:           doc = 'Run plain CGT (no loaded design)'
-        return { 'basename' : self.basename
+        params = { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : doc
                , 'targets'  : self.targets
                , 'file_dep' : self.file_dep
                }
+        return params
         

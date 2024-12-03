@@ -64,7 +64,7 @@ class Sv2v ( FlowTask ):
             status = subprocess.call( command, stdout=fdOut )
         return status == 0
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

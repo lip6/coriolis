@@ -115,6 +115,40 @@ class ShellEnv ( object ):
             os.environ[ 'KLAYOUT_HOME' ] = ShellEnv.KLAYOUT_HOME
             
 
+class Tasks ( object ):
+    """
+    Gather all the FlowTask to execute and provides them to doit through
+    the ``create_doit_tasks()`` class method.
+
+    In order for the tasks to be taken into account by doit, this class
+    *must* be imported into the ``dodo.py``:
+
+    .. code:: python
+
+              from coriolis.designflow.task import Tasks
+    """
+
+    tasks = []
+
+    @staticmethod
+    def hasRule ( name ):
+        for rule in Tasks.tasks:
+            if name == rule.basename: return True
+        return False
+
+    @staticmethod
+    def append ( task ):
+        Tasks.tasks.append( task )
+
+    @classmethod
+    def create_doit_tasks ( selfClass ):
+        """
+        Return the recorded tasks one by one.
+        """
+        for task in selfClass.tasks:
+            yield task.asDoitTask()
+            
+
 class FlowTask ( object ):
     """
     Add extra features over a doit task. This class *do not* provides the
@@ -135,7 +169,6 @@ class FlowTask ( object ):
        the special ``clean_flow`` task.
     """
 
-    rules        = {}
     cleanTargets = []
 
     @staticmethod
@@ -156,17 +189,16 @@ class FlowTask ( object ):
         Promote ``targets`` and ``depends`` arguments to list if needed.
         Check for duplicated rules, then register the rule name at class level.
         """
-        if FlowTask.hasRule(basename):
+        if Tasks.hasRule(basename):
             raise DuplicatedRule( 'FlowTask.__init__(): Duplicated rule "{}"'.format(basename) )
         self.basename = basename
         self.depends  = FlowTask._normFileList( depends )
         self.targets  = FlowTask._normFileList( targets )
-        FlowTask.rules[ self.basename ] = self
+        Tasks.append( self )
 
     @staticmethod
     def hasRule ( name ):
-        if name in FlowTask.rules: return True
-        return False
+        return Tasks.hasRule( name )
 
     @property
     def file_dep ( self ):
