@@ -6,12 +6,18 @@ services:
     build:
       context: .
       dockerfile: ./coriolis-eda.dockerfile
+      args:
+        - USER_ID=${UID}
+        - GROUP_ID=${GID}
     image: coriolis-eda:ubuntu24.04
     container_name: coriolis-eda
     hostname: coriolis-eda
     restart: unless-stopped
     volumes:
       - coriolis-workspace:/home/developer/coriolis-2.x
+      - ${XDG_RUNTIME_DIR}:${XDG_RUNTIME_DIR}:ro
+      - ${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}:${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
     environment:
       - CORIOLIS_URL=${CORIOLIS_URL}
       - CORIOLIS_BRANCH=${CORIOLIS_BRANCH}
@@ -23,10 +29,16 @@ services:
       - BUILD_TYPE=release
       - SRC_DIR=/home/developer/coriolis-2.x/src/coriolis
       - OUT_DIR=/home/developer/coriolis-2.x/src/coriolis/docker/ubuntu24.04
-    command: bash -c "/home/developer/setup-coriolis-workspace.sh && sleep infinity"
-    networks:
-      - host
-
-networks:
-  host:
-    driver: bridge
+      - XDG_SESSION_TYPE=${XDG_SESSION_TYPE}
+      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}
+      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - DISPLAY=${DISPLAY}
+    privileged: false
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - label:type:container_runtime_t
+      - label:level:s0
+    network_mode: "bridge"
+    command: ["sleep", "infinity"]

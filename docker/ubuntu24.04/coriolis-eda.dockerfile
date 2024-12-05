@@ -9,18 +9,24 @@ RUN apt-get update -y && \
     qtbase5-dev libqt5svg5-dev libqwt-qt5-dev libbz2-dev \
     rapidjson-dev libboost-all-dev libeigen3-dev libxml2-dev libcairo2-dev \
     libmotif-dev libxpm-dev \
-    doxygen pelican texlive-latex-recommended graphviz yosys klayout && \
+    doxygen pelican texlive-latex-recommended graphviz yosys klayout \
+    xwayland wayland-protocols libwayland-dev && \
     export LC_ALL=en_US.UTF-8 && \
     export LANG=en_US.UTF-8 && \
     locale-gen en_US.UTF-8
 
-RUN adduser --disabled-password --gecos "" developer
+COPY setup-coriolis-workspace.sh /usr/bin/setup-coriolis-workspace.sh
+
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+RUN userdel $(getent passwd ${USER_ID} | cut -d':' -f1) && \
+    groupadd -g ${GROUP_ID} developer && \
+    adduser --uid ${USER_ID} --gid ${GROUP_ID} --disabled-password --gecos "" --shell /bin/bash developer
 
 VOLUME /home/developer/coriolis-2.x
 
 USER developer
-
-COPY setup-coriolis-workspace.sh /home/developer/setup-coriolis-workspace.sh
 
 WORKDIR /home/developer/coriolis-2.x
 
