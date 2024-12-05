@@ -1,4 +1,4 @@
-VIRTUAL_ENV  := $(if $(VIRTUAL_ENV),$(VIRTUAL_ENV),${PWD})
+VENV_PATH  := $(if $(VENV_PATH),$(VENV_PATH),${PWD})
 
 BUILD_TYPE   := $(if $(BUILD_TYPE),$(BUILD_TYPE),release)
 
@@ -12,12 +12,12 @@ BUILD_DIR    = ${OUT_DIR}/build
 
 PREFIX       = ${OUT_DIR}/install
 
-venv         = . ${VIRTUAL_ENV}/bin/activate;
+venv         = . ${VENV_PATH}/bin/activate;
 
 pkg_python3-coriolis-eda = /bin/bash ${SRC_DIR}/packaging/ubuntu24.04/pkg_python3-coriolis-eda.sh
 
 venv-setup:
-	python3 -m venv ${VIRTUAL_ENV}
+	python3 -m venv ${VENV_PATH}
 
 pdm-setup: venv-setup
 	$(venv) pip3 install build
@@ -58,7 +58,7 @@ clean:
 	rm -rf ${OUT_DIR}/install/*
 
 nuke-everything:
-	rm -rf ${VIRTUAL_ENV}
+	rm -rf ${VENV_PATH}
 	rm -rf ${OUT_DIR}
 	@echo "";
 	@echo "Successfully nuked all files";
