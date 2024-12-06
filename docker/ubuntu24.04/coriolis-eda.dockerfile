@@ -15,8 +15,6 @@ RUN apt-get update -y && \
     export LANG=en_US.UTF-8 && \
     locale-gen en_US.UTF-8
 
-COPY setup-coriolis-workspace.sh /usr/bin/setup-coriolis-workspace.sh
-
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 
@@ -24,9 +22,28 @@ RUN userdel $(getent passwd ${USER_ID} | cut -d':' -f1) && \
     groupadd -g ${GROUP_ID} developer && \
     adduser --uid ${USER_ID} --gid ${GROUP_ID} --disabled-password --gecos "" --shell /bin/bash developer
 
-VOLUME /home/developer/coriolis-2.x
-
 USER developer
+
+COPY setup-coriolis-workspace.sh /home/developer/.local/bin/setup-coriolis-workspace.sh
+
+COPY .bashrc.d/10_coriolis_env.sh /home/developer/.bashrc.d/10_coriolis_env.sh
+
+RUN cat <<EOF >> /home/developer/.bashrc
+
+# Source all scripts in ~/.bashrc.d
+if [[ -d "\${HOME}/.bashrc.d" ]]; then
+  for file in "\${HOME}/.bashrc.d"/*; do
+    [ -r "\$file" ] && [ -f "\$file" ] && source "\$file"
+  done
+fi
+
+# Check if Coriolis workspace is setup
+if [[ ! -d "\${HOME}/coriolis-2.x/src/coriolis/.git" ]]; then
+  echo "Coriolis workspace is not setup yet, you may run 'setup-coriolis-workspace.sh'"
+fi
+EOF
+
+VOLUME /home/developer/coriolis-2.x
 
 WORKDIR /home/developer/coriolis-2.x
 
