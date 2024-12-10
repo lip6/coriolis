@@ -1,0 +1,79 @@
+ENTITY sram_w2r2_2x1_dec IS
+PORT (
+    at : in bit_vector(0 TO 2) ;	
+    wt : in BIT;	
+    az : in bit_vector(0 TO 2) ;	
+    wz : in BIT;	
+    ax : in bit_vector(0 TO 1) ;	
+    ay : in bit_vector(0 TO 1) ;	
+
+    at0 : inout BIT;	
+    at1 : inout BIT;	
+    az0 : inout BIT;	
+    az1 : inout BIT;	
+
+    rx0 : inout BIT;	
+    rx1 : out BIT;	
+    ry0 : inout BIT;	
+    ry1 : out BIT;	
+
+    nwt0 : inout BIT;	
+    nwt1 : inout BIT;	
+    nwz0 : inout BIT;	
+    nwz1 : inout BIT;	
+    nwd0 : inout BIT;	
+    nwd1 : inout BIT;	
+
+    wt0 : out BIT;	
+    wt1 : out BIT;	
+    wd0 : out BIT;	
+    wd1 : out BIT;	
+    wz0 : out BIT;	
+    wz1 : out BIT;	
+
+    ck : in BIT;	
+    ck0 : out BIT;	
+    ck1 : out BIT;	
+    nck0 : inout BIT;	
+    nck1 : inout BIT;	
+
+    vdd : in BIT;	
+    vss : in BIT	
+);
+END sram_w2r2_2x1_dec;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2_2x1_dec IS
+
+BEGIN
+
+    wt0 <= at0;
+    wt1 <= at1;
+    nwt0 <= NOT(at0);
+    nwt1 <= NOT(at1);
+
+    nwz0 <= (NOT(az0) OR NOT(nwt0));
+    nwz1 <= (NOT(az1) OR NOT(nwt1));
+    wz0 <= NOT(nwz0);
+    wz1 <= NOT(nwz1);
+
+    nwd0 <= (NOT(nwt0) OR NOT(nwz0));
+    nwd1 <= (NOT(nwt1) OR NOT(nwz1));
+    wd0 <= NOT(nwd0);
+    wd1 <= NOT(nwd1);
+
+    rx0 <= NOT(ax(0));
+    rx1 <= NOT(rx0);
+    ry0 <= NOT(ay(0));
+    ry1 <= NOT(ry0);
+
+    nck1 <= NOT(ck);
+    nck0 <= NOT(ck);
+    ck1 <= ck;
+    ck0 <= ck;
+
+    az1 <= (az(2) AND az(1) AND NOT(az(0)) AND wz);
+    az0 <= (az(2) AND az(1) AND az(0) AND wz);
+    at1 <= (at(2) AND at(1) AND NOT(at(0)) AND wt);
+    at0 <= (at(2) AND at(1) AND at(0) AND wt);
+
+END;

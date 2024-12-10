@@ -1,0 +1,90 @@
+ENTITY sram_w2r2nff_2x1 IS
+  PORT (
+    ck0  : in BIT;
+    nck0 : in BIT;
+    ck1  : in BIT;
+    nck1 : in BIT;
+
+    it0  : in BIT;
+    iz0  : in BIT;
+    wd0  : in BIT;
+    nwd0 : in BIT;
+    wt0  : in BIT;
+    nwt0 : in BIT;
+    wz0  : in BIT;
+    nwz0 : in BIT;
+
+    it1  : in BIT;
+    iz1  : in BIT;
+    wd1  : in BIT;
+    nwd1 : in BIT;
+    wt1  : in BIT;
+    nwt1 : in BIT;
+    wz1  : in BIT;
+    nwz1 : in BIT;
+
+    rx0  : in BIT;
+    rx1  : in BIT;
+    ry0  : in BIT;
+    ry1  : in BIT;
+
+    nqx  : out MUX_BIT BUS;
+    nqy  : out MUX_BIT BUS;
+
+    vss  : in BIT;
+    vdd  : in BIT
+);
+END sram_w2r2nff_2x1;
+
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2nff_2x1 IS
+
+  SIGNAL m1 : REG_BIT REGISTER;
+  SIGNAL s1 : REG_BIT REGISTER;
+  SIGNAL m0 : REG_BIT REGISTER;
+  SIGNAL s0 : REG_BIT REGISTER;
+
+BEGIN
+
+--- Master Latches
+
+  lmaster0 : BLOCK ((NOT(ck0) AND nck0) = '1')
+  BEGIN
+    m0 <= GUARDED ((((NOT(iz0) OR wd0 OR NOT(wz0)) AND ((((NOT(iz0) AND NOT(nwt0) AND NOT(nwz0)) OR NOT(wd0)) AND ( NOT(nwt0) OR NOT(nwz0)) AND NOT(it0) AND (NOT(iz0) OR NOT(nwt0))) OR (NOT(nwt0) AND nwz0 AND NOT(wd0) AND wt0) OR ((NOT(iz0) AND NOT(nwz0)) AND NOT(wd0) AND NOT(wt0)))) OR NOT(s0)) AND (((NOT(nwd0) OR NOT(nwz0)) AND NOT(nwd0 XOR nwt0) AND wt0) OR (NOT(it0) AND NOT(nwd0) AND NOT(nwt0)) OR NOT(iz0) OR NOT(wz0)) AND (NOT(it0) OR (NOT(iz0) AND NOT(nwd0) AND NOT(nwz0)) OR NOT( wt0)) AND ((NOT(iz0) AND NOT(nwz0)) OR (NOT(it0) AND NOT(nwt0)) OR NOT( nwd0)));
+  END BLOCK lmaster0;
+
+  lmaster1 : BLOCK ((NOT(ck1) AND nck1) = '1')
+  BEGIN
+    m1 <= GUARDED ((((NOT(iz1) OR wd1 OR NOT(wz1)) AND ((((NOT(iz1) AND NOT(nwt1) AND NOT(nwz1)) OR NOT(wd1)) AND ( NOT(nwt1) OR NOT(nwz1)) AND NOT(it1) AND (NOT(iz1) OR NOT(nwt1))) OR (NOT(nwt1) AND nwz1 AND NOT(wd1) AND wt1) OR ((NOT(iz1) AND NOT(nwz1)) AND NOT(wd1) AND NOT(wt1)))) OR NOT(s1)) AND (((NOT(nwd1) OR NOT(nwz1)) AND NOT(nwd1 XOR nwt1) AND wt1) OR (NOT(it1) AND NOT(nwd1) AND NOT(nwt1)) OR NOT(iz1) OR NOT(wz1)) AND (NOT(it1) OR (NOT(iz1) AND NOT(nwd1) AND NOT(nwz1)) OR NOT( wt1)) AND ((NOT(iz1) AND NOT(nwz1)) OR (NOT(it1) AND NOT(nwt1)) OR NOT( nwd1)));
+  END BLOCK lmaster1;
+
+--- Slave Latches
+
+    lslave0 : BLOCK (ck0 AND NOT(nck0))
+    BEGIN
+        s0 <= GUARDED NOT(m0);
+    END BLOCK lslave0;
+    lslave1 : BLOCK (ck1 AND NOT(nck1))
+    BEGIN
+        s1 <= GUARDED NOT(m1);
+    END BLOCK lslave1;
+
+--- Output Mux
+
+	lnqy0 : BLOCK ((ry0 AND s0) OR (ry1 AND s1))
+	BEGIN
+	    nqy <= GUARDED '0';
+	END BLOCK lnqy0;
+	lnqy1 : BLOCK ((NOT(ry1) AND NOT(s0)) OR (NOT(ry0) AND NOT(s1)))
+	BEGIN
+	    nqy <= GUARDED '1';
+	END BLOCK lnqy1;
+	lnqx0 : BLOCK ((rx0 AND s0) OR (rx1 AND s1))
+	BEGIN
+	    nqx <= GUARDED '0';
+	END BLOCK lnqx0;
+	lnqx1 : BLOCK ((NOT(rx1) AND NOT(s0)) OR (NOT(rx0) AND NOT(s1)))
+	BEGIN
+	    nqx <= GUARDED '1';
+	END BLOCK lnqx1;
+END;

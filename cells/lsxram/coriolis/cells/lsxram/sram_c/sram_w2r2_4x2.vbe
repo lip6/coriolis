@@ -1,0 +1,59 @@
+ENTITY sram_w2r2_4x2 IS
+PORT (
+
+    at : in bit_vector(2 DOWNTO 0) ;
+    az : in bit_vector(2 DOWNTO 0) ;
+    ax : in bit_vector(2 DOWNTO 0) ;
+    ay : in bit_vector(2 DOWNTO 0) ;
+    wt : in BIT;
+    wz : in BIT;
+
+    it : in bit_vector(1 DOWNTO 0) ;
+    iz : in bit_vector(1 DOWNTO 0) ;
+
+    nqx : out bit_vector(1 DOWNTO 0) ;
+    nqy : out bit_vector(1 DOWNTO 0) ;
+
+    ck : in BIT;
+
+    vdd : in BIT;
+    vss : in BIT
+);
+END sram_w2r2_4x2;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2_4x2 IS
+
+    SIGNAL w0m, w0s : REG_VECTOR(1 DOWNTO 0) REGISTER;
+    SIGNAL w1m, w1s : REG_VECTOR(1 DOWNTO 0) REGISTER;
+    SIGNAL w2m, w2s : REG_VECTOR(1 DOWNTO 0) REGISTER;
+    SIGNAL w3m, w3s : REG_VECTOR(1 DOWNTO 0) REGISTER;
+
+BEGIN
+
+    Masters : BLOCK (NOT(ck))
+    BEGIN
+        w0m <= GUARDED NOT(it) when (wt AND at = "100") else NOT(iz) when (wz AND az = "100") else NOT(w0s);
+        w1m <= GUARDED NOT(it) when (wt AND at = "101") else NOT(iz) when (wz AND az = "101") else NOT(w1s);
+        w2m <= GUARDED NOT(it) when (wt AND at = "110") else NOT(iz) when (wz AND az = "110") else NOT(w2s);
+        w3m <= GUARDED NOT(it) when (wt AND at = "111") else NOT(iz) when (wz AND az = "111") else NOT(w3s);
+    END BLOCK Masters;
+
+    Slaves : BLOCK (ck)
+    BEGIN
+        w0s <= GUARDED NOT(w0m);
+        w1s <= GUARDED NOT(w1m);
+        w2s <= GUARDED NOT(w2m);
+        w3s <= GUARDED NOT(w3m);
+    END BLOCK Slaves;
+
+    nqx <=    w0s when (ax(1 downto 0) = "00")
+        else  w1s when (ax(1 downto 0) = "01")
+        else  w2s when (ax(1 downto 0) = "10")
+        else  w3s;
+
+    nqy <=    w0s when (ay(1 downto 0) = "00")
+        else  w1s when (ay(1 downto 0) = "01")
+        else  w2s when (ay(1 downto 0) = "10")
+        else  w3s;
+
+END;

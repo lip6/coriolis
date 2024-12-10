@@ -1,0 +1,128 @@
+ENTITY sram_w2r2_2x2 IS
+PORT (
+
+    invi0 : in BIT;
+    invi1 : in BIT;
+    invnq0 : out BIT;
+    invnq1 : out BIT;
+
+    at : in bit_vector(2 downto 0) ;	
+    az : in bit_vector(2 downto 0) ;	
+    ax : in bit_vector(2 downto 0) ;	
+    ay : in bit_vector(2 downto 0) ;	
+    wt : in BIT;	
+    wz : in BIT;	
+    
+    it : in bit_vector(1 downto 0);	
+    iz : in bit_vector(1 downto 0);	
+    
+    nqx : out bit_vector(1 downto 0);	
+    nqy : out bit_vector(1 downto 0);	
+    
+    ck : in BIT;	
+    
+    at0 : inout BIT;	
+    at1 : inout BIT;	
+    az0 : inout BIT;	
+    az1 : inout BIT;	
+    
+    wt0 : inout BIT;	
+    wt1 : inout BIT;	
+    nwt0 : inout BIT;	
+    nwt1 : inout BIT;	
+    
+    wz0 : inout BIT;	
+    wz1 : inout BIT;	
+    nwz0 : inout BIT;	
+    nwz1 : inout BIT;	
+    
+    wd0 : inout BIT;	
+    wd1 : inout BIT;	
+    nwd0 : inout BIT;	
+    nwd1 : inout BIT;	
+    
+    rx0 : inout BIT;	
+    rx1 : inout BIT;	
+    
+    ry0 : inout BIT;	
+    ry1 : inout BIT;	
+    
+    ck0 : inout BIT;	
+    ck1 : inout BIT;	
+    nck0 : inout BIT;	
+    nck1 : inout BIT;	
+    
+    vdd : in BIT;	
+    vss : in BIT	
+);
+END sram_w2r2_2x2;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2_2x2 IS
+    SIGNAL b00ffm1 : REG_BIT REGISTER;	
+    SIGNAL b00ffs1 : REG_BIT REGISTER;	
+    SIGNAL b00ffm0 : REG_BIT REGISTER;	
+    SIGNAL b00ffs0 : REG_BIT REGISTER;	
+
+    SIGNAL b01ffm1 : REG_BIT REGISTER;	
+    SIGNAL b01ffs1 : REG_BIT REGISTER;	
+    SIGNAL b01ffm0 : REG_BIT REGISTER;	
+    SIGNAL b01ffs0 : REG_BIT REGISTER;	
+
+BEGIN
+    
+    invnq1 <= NOT(invi1);
+    invnq0 <= NOT(invi0);
+
+    at0 <= (at(2) AND at(1) AND at(0) AND wt);          -- at = 11
+    at1 <= (at(2) AND at(1) AND NOT(at(0)) AND wt);     -- at = 10
+    az0 <= (az(2) AND az(1) AND az(0) AND wz);          -- az = 11
+    az1 <= (az(2) AND az(1) AND NOT(az(0)) AND wz);     -- az = 10
+    
+    Masters : BLOCK (NOT(ck))
+    BEGIN
+        b00ffm0 <= GUARDED NOT(it(0)) when at0 else NOT(iz(0)) when az0 else NOT(b00ffs0);
+        b00ffm1 <= GUARDED NOT(it(0)) when at1 else NOT(iz(0)) when az1 else NOT(b00ffs1);
+
+        b01ffm0 <= GUARDED NOT(it(1)) when at0 else NOT(iz(1)) when az0 else NOT(b01ffs0);
+        b01ffm1 <= GUARDED NOT(it(1)) when at1 else NOT(iz(1)) when az1 else NOT(b01ffs1);
+    END BLOCK Masters;
+    
+    Slaves : BLOCK (ck)
+    BEGIN
+        b00ffs0 <= GUARDED NOT(b00ffm0);
+        b00ffs1 <= GUARDED NOT(b00ffm1);
+
+        b01ffs0 <= GUARDED NOT(b01ffm0);
+        b01ffs1 <= GUARDED NOT(b01ffm1);
+    END BLOCK Slaves;
+    
+    nqy(0) <= NOT(b00ffs1) when ay(0) else NOT(b00ffs0);
+    nqx(0) <= NOT(b00ffs1) when ax(0) else NOT(b00ffs0);
+    nqy(1) <= NOT(b01ffs1) when ay(0) else NOT(b01ffs0);
+    nqx(1) <= NOT(b01ffs1) when ax(0) else NOT(b01ffs0);
+
+    wt0 <= at0;
+    wt1 <= at1;
+    wz0 <= (az0 AND NOT(at0)); 
+    wz1 <= (az1 AND NOT(at1)); 
+    wd1 <= (NOT(az1) AND NOT(at1)); 
+    wd0 <= (NOT(az0) AND NOT(at0)); 
+
+    nwt0 <= NOT(wt0);
+    nwt1 <= NOT(wt1);
+    nwz0 <= NOT(wz0);
+    nwz1 <= NOT(wz1);
+    nwd1 <= NOT(wd1);
+    nwd0 <= NOT(wd0);
+
+    rx0 <= NOT(ax(0));
+    rx1 <= NOT(rx0);
+    ry0 <= NOT(ay(0));
+    ry1 <= NOT(ry0);
+    
+    ck1 <= ck;
+    ck0 <= ck;
+    nck1 <= NOT(ck);
+    nck0 <= NOT(ck);
+    
+END;

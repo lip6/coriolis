@@ -1,0 +1,19 @@
+ENTITY sram_noa2a22ct IS 
+PORT( 
+    ax : IN BIT;
+    ay : IN BIT;
+    rx0 : INOUT BIT;
+    rx1 : OUT BIT;
+    ry0 : INOUT BIT;
+    ry1 : OUT BIT;
+    vdd : IN BIT;
+    vss : IN BIT );
+END sram_noa2a22ct;
+
+ARCHITECTURE VBE OF sram_noa2a22ct IS 
+BEGIN 
+    rx0 <= NOT(ax);
+    rx1 <= NOT(rx0);
+    ry0 <= NOT(ay);
+    ry1 <= NOT(ry0);
+END VBE;

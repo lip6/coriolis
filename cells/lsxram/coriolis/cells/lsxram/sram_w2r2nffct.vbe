@@ -1,0 +1,67 @@
+ENTITY sram_w2r2nffct IS
+PORT (
+          ck0i : in BIT;
+          ck1i : in BIT;
+          ck0  : out BIT;
+          ck1  : out BIT;
+          nck0 : inout BIT;
+          nck1 : inout BIT;
+
+          at0  : in BIT;
+          az0  : in BIT;
+          wt0  : out BIT;
+          wz0  : out BIT;
+          wd0  : out BIT;
+          nwt0 : inout BIT;
+          nwz0 : inout BIT;
+          nwd0 : inout BIT;
+
+          at1  : in BIT;
+          az1  : in BIT;
+          wt1  : out BIT;
+          wz1  : out BIT;
+          wd1  : out BIT;
+          nwt1 : inout BIT;
+          nwz1 : inout BIT;
+          nwd1 : inout BIT;
+
+          ax   : in BIT;
+          ay   : in BIT;
+          rx1  : out BIT;
+          rx0  : inout BIT;
+          ry1  : out BIT;
+          ry0  : inout BIT;
+
+          vdd  : in BIT;
+          vss  : in BIT
+  );
+END sram_w2r2nffct ;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2nffct  IS
+BEGIN
+
+        nck0 <= NOT(ck0i);
+        ck0  <= NOT(nck0);
+        nck1 <= NOT(ck1i);
+        ck1  <= NOT(nck1);
+
+        nwt0 <= NOT(at0);
+        wt0  <= NOT(nwt0);
+        nwz0 <= NOT(az0 AND nwt0);
+        wz0  <= NOT(nwz0);
+        nwd0 <= NOT(nwt0 AND nwz0);
+        wd0  <= NOT(nwd0);
+
+        nwt1 <= NOT(at1);
+        wt1  <= NOT(nwt1);
+        nwz1 <= NOT(az1 AND nwt1);
+        wz1  <= NOT(nwz1);
+        nwd1 <= NOT(nwt1 AND nwz1);
+        wd1  <= NOT(nwd1);
+
+        rx0  <= NOT(ax);
+        rx1  <= NOT(rx0);
+        ry0  <= NOT(ay);
+        ry1  <= NOT(ry0);
+
+END;

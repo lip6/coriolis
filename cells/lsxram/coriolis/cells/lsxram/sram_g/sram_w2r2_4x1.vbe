@@ -1,0 +1,73 @@
+ENTITY sram_w2r2_4x1 IS
+PORT (
+
+    at : in bit_vector(2 DOWNTO 0) ;	
+    az : in bit_vector(2 DOWNTO 0) ;	
+    ax : in bit_vector(2 DOWNTO 0) ;	
+    ay : in bit_vector(2 DOWNTO 0) ;	
+    wt : in BIT;	
+    wz : in BIT;	
+    
+    it : in BIT;	
+    iz : in BIT;	
+    
+    nqx : out BIT;	
+    nqy : out BIT;	
+    
+    ck : in BIT;	
+    
+    vdd : in BIT;	
+    vss : in BIT	
+);
+END sram_w2r2_4x1;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2_4x1 IS
+
+    SIGNAL ff01_ffm0 : REG_BIT REGISTER;
+    SIGNAL ff01_ffm1 : REG_BIT REGISTER;
+    SIGNAL ff23_ffm0 : REG_BIT REGISTER;
+    SIGNAL ff23_ffm1 : REG_BIT REGISTER;
+
+    SIGNAL ff01_ffs0 : REG_BIT REGISTER;
+    SIGNAL ff01_ffs1 : REG_BIT REGISTER;
+    SIGNAL ff23_ffs0 : REG_BIT REGISTER;
+    SIGNAL ff23_ffs1 : REG_BIT REGISTER;
+
+BEGIN
+    
+    Masters : BLOCK (NOT(ck))
+    BEGIN
+
+        ff01_ffm0 <= GUARDED NOT(it) when (wt AND at = "111")
+                        else NOT(iz) when (wz AND az = "111")
+                        else NOT(ff01_ffs0);
+        ff01_ffm1 <= GUARDED NOT(it) when (wt AND at = "110")
+                        else NOT(iz) when (wz AND az = "110")
+                        else NOT(ff01_ffs1);
+        ff23_ffm0 <= GUARDED NOT(it) when (wt AND at = "101")
+                        else NOT(iz) when (wz AND az = "101")
+                        else NOT(ff23_ffs0);
+        ff23_ffm1 <= GUARDED NOT(it) when (wt AND at = "100")
+                        else NOT(iz) when (wz AND az = "100")
+                        else NOT(ff23_ffs1);
+    END BLOCK Masters;
+    
+    Slaves : BLOCK (ck)
+    BEGIN
+        ff01_ffs0 <= GUARDED NOT(ff01_ffm0);
+        ff01_ffs1 <= GUARDED NOT(ff01_ffm1);
+        ff23_ffs0 <= GUARDED NOT(ff23_ffm0);
+        ff23_ffs1 <= GUARDED NOT(ff23_ffm1);
+    END BLOCK Slaves;
+    
+    nqy <=   ff01_ffs0 when (ay(1 downto 0) = b"00")
+        else ff01_ffs1 when (ay(1 downto 0) = b"01")
+        else ff23_ffs0 when (ay(1 downto 0) = b"10")
+        else ff23_ffs1;
+    
+    nqx <=   ff01_ffs0 when (ax(1 downto 0) = b"00")
+        else ff01_ffs1 when (ax(1 downto 0) = b"01")
+        else ff23_ffs0 when (ax(1 downto 0) = b"10")
+        else ff23_ffs1;
+    
+END;

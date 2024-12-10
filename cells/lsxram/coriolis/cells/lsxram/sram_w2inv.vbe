@@ -1,0 +1,20 @@
+ENTITY sram_w2inv IS
+PORT (
+  i0	 : in  BIT;
+  i1	 : in  BIT;
+  nq0	 : out BIT;
+  nq1	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END sram_w2inv;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2inv IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on sram_w2inv"
+  SEVERITY WARNING;
+  nq0 <= not (i0);
+  nq1 <= not (i1);
+END;

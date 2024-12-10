@@ -1,0 +1,24 @@
+ENTITY sram_nmxr2_2x1 IS
+PORT (
+    ax   : in BIT;	
+    ix0  : in BIT;
+    ix1  : in BIT;
+    nqx  : out BIT;
+
+    ay   : in BIT;	
+    iy0  : in BIT;
+    iy1  : in BIT;
+    nqy  : out BIT;
+
+    vdd : in BIT;
+    vss : in BIT
+);
+END sram_nmxr2_2x1;
+
+ARCHITECTURE behaviour_data_flow OF sram_nmxr2_2x1 IS
+BEGIN
+
+    nqx <= NOT( (ix1 AND ax) OR (ix0 AND NOT(ax)) );
+    nqy <= NOT( (iy1 AND ay) OR (iy0 AND NOT(ay)) );
+
+END;

@@ -1,0 +1,36 @@
+ENTITY sram_w2dec4 IS
+PORT (
+    at_0    : in bit_vector(0 TO 2) ;
+    wt_0    : in BIT;
+    at0     : out BIT;
+            
+    az_0    : in bit_vector(0 TO 2) ;
+    wz_0    : in BIT;
+    az0     : out BIT;
+            
+    at_1    : in bit_vector(0 TO 2) ;
+    wt_1    : in BIT;
+    at1     : out BIT;
+            
+    az_1    : in bit_vector(0 TO 2) ;
+    wz_1    : in BIT;
+    az1     : out BIT;
+            
+    vdd	   	: in  BIT;
+    vss	   	: in  BIT
+);
+END sram_w2dec4;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2dec4 IS
+
+BEGIN
+    ASSERT ((vdd and not (vss)) = '1')
+    REPORT "power supply is missing on sram_w2dec4"
+    SEVERITY WARNING;
+
+    at0 <= (wt_0 AND at_0(2) AND at_0(1) AND at_0(0));
+    az0 <= (wz_0 AND az_0(2) AND az_0(1) AND az_0(0));
+    az1 <= (wz_1 AND az_1(2) AND az_1(1) AND NOT(az_1(0)));
+    at1 <= (wt_1 AND at_1(2) AND at_1(1) AND NOT(at_1(0)));
+
+END;

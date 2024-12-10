@@ -1,0 +1,38 @@
+ENTITY sram_w2r2_2x1_mx IS
+PORT (
+    iax : in BIT;
+    iay : in BIT;
+    at : in bit_vector(0 TO 2) ;	
+    az : in bit_vector(0 TO 2) ;	
+    ax : in bit_vector(0 TO 2) ;	
+    ay : in bit_vector(0 TO 2) ;	
+    rx0 : inout BIT;
+    rx1 : inout BIT;
+    ry0 : inout BIT;
+    ry1 : inout BIT;
+    it : in BIT;	
+    ix0 : in BIT;	
+    ix1 : in BIT;	
+    iy0 : in BIT;	
+    iy1 : in BIT;	
+    iz : in BIT;	
+    nqx : out BIT;	
+    nqy : out BIT;	
+    wt : in BIT;	
+    wz : in BIT;	
+    ck : in BIT;	
+    vdd : in BIT;	
+    vss : in BIT
+);
+END sram_w2r2_2x1_mx;
+
+ARCHITECTURE behaviour_data_flow OF sram_w2r2_2x1_mx IS
+BEGIN
+    ry1 <= NOT(ry0);
+    ry0 <= NOT(iay);
+    rx1 <= NOT(rx0);
+    rx0 <= NOT(iax);
+
+    nqy <= NOT(iy1) when iay else NOT(iy0);
+    nqx <= NOT(ix1) when iax else NOT(ix0);
+END;

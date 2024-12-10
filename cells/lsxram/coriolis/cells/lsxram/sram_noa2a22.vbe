@@ -1,0 +1,40 @@
+ENTITY sram_noa2a22 IS
+PORT (
+    rx0 : in BIT;
+    rx1 : in BIT;
+    ix0 : in BIT;
+    ix1 : in BIT;
+    nqx : out MUX_BIT BUS;
+
+    ry0 : in BIT;
+    ry1 : in BIT;
+    iy0 : in BIT;
+    iy1 : in BIT;
+    nqy : out MUX_BIT BUS;
+
+    vdd : in BIT;
+    vss : in BIT
+);
+END sram_noa2a22;
+
+ARCHITECTURE behaviour_data_flow OF sram_noa2a22 IS
+
+BEGIN
+	lnqx0 : BLOCK ((ix0 AND rx0) OR (ix1 AND rx1))
+	BEGIN
+	    nqx <= GUARDED '0';
+	END BLOCK lnqx0;
+	lnqx1 : BLOCK ((NOT(ix0) AND NOT(rx1)) OR (NOT(ix1) AND NOT(rx0)))
+	BEGIN
+	    nqx <= GUARDED '1';
+	END BLOCK lnqx1;
+
+	lnqy0 : BLOCK ((iy0 AND ry0) OR (ry1 AND iy1))
+	BEGIN
+	    nqy <= GUARDED '0';
+	END BLOCK lnqy0;
+	lnqy1 : BLOCK ((NOT(iy0) AND NOT(ry1)) OR (NOT(iy1) AND NOT(ry0)))
+	BEGIN
+	    nqy <= GUARDED '1';
+	END BLOCK lnqy1;
+END;
