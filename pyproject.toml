@@ -65,6 +65,17 @@ before-all = '''
  wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz; tar -xzf lemon-1.3.1.tar.gz; cd lemon-1.3.1; mkdir build; cd build; cmake ..; make install; cd ../..
 '''
 
+[tool.cibuildwheel.macos]
+build = "cp310-*"
+build-frontend = "build"
+skip = ["cp36-*", "cp37-*", "cp38-*", "cp39-*", "pp*"]
+before-all = '''
+ brew install ccache doxygen qt@5 qwt-qt5 rapidjson boost eigen pkg-config; \
+ brew install --cask mactex; \
+ brew install automake libtool libx11 openmotif; \
+ brew install --cask xquartz
+'''
+
 [tool.pdm.version]
 source = "scm"
 getter = "_build_utils.version"
