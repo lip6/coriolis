@@ -1,0 +1,19 @@
+ENTITY ram_prech_buf1 IS
+PORT (
+  nck  	   : in  BIT;
+  nckx 	   : out BIT;
+  vdd  	   : in  BIT;
+  vss	   : in  BIT
+);
+END ram_prech_buf1;
+
+ARCHITECTURE VBE OF ram_prech_buf1 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on ram_prech_buf1"
+  SEVERITY WARNING;
+
+  nckx <= nck;
+
+END;
