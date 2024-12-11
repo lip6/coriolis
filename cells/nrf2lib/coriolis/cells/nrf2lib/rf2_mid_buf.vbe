@@ -1,0 +1,26 @@
+ENTITY rf2_mid_buf IS
+PORT (
+  selra   : in  BIT;
+  selrb   : in  BIT;
+  selw   : in  BIT;
+  nck    : in  BIT;
+  reada	 : out BIT;
+  readb	 : out BIT;
+  write  : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END rf2_mid_buf;
+
+ARCHITECTURE VBE OF rf2_mid_buf IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf2_mid_buf"
+  SEVERITY WARNING;
+
+  reada <= selra;
+  readb <= selrb;
+  write <= selw and nck;
+
+END;

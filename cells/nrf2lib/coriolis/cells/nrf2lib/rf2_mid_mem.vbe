@@ -1,0 +1,37 @@
+ENTITY rf2_mid_mem IS
+PORT (
+  dinx	 : in  BIT;
+  write  : in  BIT;
+  reada  : in  BIT;
+  readb  : in  BIT;
+  busa   : out MUX_BIT BUS;
+  busb   : out MUX_BIT BUS;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END rf2_mid_mem;
+
+ARCHITECTURE VBE OF rf2_mid_mem IS
+  SIGNAL latch	 : REG_BIT REGISTER;
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf2_mid_mem"
+  SEVERITY WARNING;
+
+  label0 : BLOCK (write = '1')
+  BEGIN
+    latch <= GUARDED dinx;
+  END BLOCK label0;
+
+  label1 : BLOCK (reada = '1')
+  BEGIN
+    busa <= GUARDED latch;
+  END BLOCK label1;
+
+  label2 : BLOCK (readb = '1')
+  BEGIN
+    busb <= GUARDED latch;
+  END BLOCK label2;
+
+END;
