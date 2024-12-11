@@ -1,0 +1,20 @@
+V ALLIANCE : 6
+H padline,P,25/11/2016,100
+A 0,0,102400,6400
+I 0,0,padreal,pad0,NOSYM
+I 6400,0,padreal,pad1,NOSYM
+I 12800,0,padreal,pad2,NOSYM
+I 19200,0,padreal,pad3,NOSYM
+I 25600,0,padreal,pad4,NOSYM
+I 32000,0,padreal,pad5,NOSYM
+I 38400,0,padreal,pad6,NOSYM
+I 44800,0,padreal,pad7,NOSYM
+I 51200,0,padreal,pad8,NOSYM
+I 57600,0,padreal,pad9,NOSYM
+I 64000,0,padreal,pad10,NOSYM
+I 70400,0,padreal,pad11,NOSYM
+I 76800,0,padreal,pad12,NOSYM
+I 83200,0,padreal,pad13,NOSYM
+I 89600,0,padreal,pad14,NOSYM
+I 96000,0,padreal,pad15,NOSYM
+EOF

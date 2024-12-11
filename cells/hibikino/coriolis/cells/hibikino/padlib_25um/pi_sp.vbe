@@ -1,0 +1,37 @@
+-- VHDL data flow description generated from `pi_sp`
+--		date : Thu Feb 23 17:06:23 1995
+
+
+-- Entity Declaration
+
+ENTITY pi_sp IS
+  GENERIC (
+    CONSTANT area : NATURAL := 86000;	-- area
+    CONSTANT cin_pad : NATURAL := 654;	-- cin_pad
+    CONSTANT tpll_pad : NATURAL := 1487;	-- tpll_pad
+    CONSTANT rdown_pad : NATURAL := 234;	-- rdown_pad
+    CONSTANT tphh_pad : NATURAL := 233;	-- tphh_pad
+    CONSTANT rup_pad : NATURAL := 273	-- rup_pad
+  );
+  PORT (
+  pad : in BIT;	-- pad
+  t : out BIT;	-- t
+  ck : in BIT;	-- ck
+  vdd : in BIT;	-- vdd
+  vss : in BIT	-- vss
+  );
+END pi_sp;
+
+
+-- Architecture Declaration
+
+ARCHITECTURE behaviour_data_flow OF pi_sp IS
+
+BEGIN
+  ASSERT ((((vdd and vdd) and not (vss)) and not (vss)) = '1')
+    REPORT "power supply is missing on pi_sp"
+    SEVERITY WARNING;
+
+
+t <= pad;
+END;
