@@ -1,0 +1,36 @@
+ENTITY xor2v2x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 5184;   
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_a         : NATURAL := 4;      
+  CONSTANT rdown_b_z     : NATURAL := 2980;   
+  CONSTANT rdown_a_z     : NATURAL := 2990;   
+  CONSTANT rup_b_z       : NATURAL := 4690;   
+  CONSTANT rup_a_z       : NATURAL := 4650;   
+  CONSTANT tplh_a_z      : NATURAL := 82;     
+  CONSTANT tphl_b_z      : NATURAL := 43;     
+  CONSTANT tplh_b_z      : NATURAL := 74;     
+  CONSTANT tphh_b_z      : NATURAL := 78;     
+  CONSTANT tphl_a_z      : NATURAL := 49;     
+  CONSTANT tpll_a_z      : NATURAL := 96;     
+  CONSTANT tpll_b_z      : NATURAL := 91;     
+  CONSTANT tphh_a_z      : NATURAL := 84;     
+  CONSTANT transistors   : NATURAL := 10      
+);
+PORT (
+  b	 : in  BIT;
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END xor2v2x05;
+
+ARCHITECTURE behaviour_data_flow OF xor2v2x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on xor2v2x05"
+  SEVERITY WARNING;
+  z <= (b xor a) after 170 ps;
+END;

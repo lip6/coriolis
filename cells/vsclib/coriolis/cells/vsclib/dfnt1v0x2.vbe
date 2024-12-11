@@ -1,0 +1,39 @@
+ENTITY dfnt1v0x2 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 10368;  
+  CONSTANT cin_cp        : NATURAL := 3;      
+  CONSTANT cin_d         : NATURAL := 3;      
+  CONSTANT rdown_cp_z    : NATURAL := 1670;   
+  CONSTANT rup_cp_z      : NATURAL := 2130;   
+  CONSTANT taf_cp_z      : NATURAL := 222;    
+  CONSTANT tar_cp_z      : NATURAL := 193;    
+  CONSTANT thf_d_cp      : NATURAL := 36;     
+  CONSTANT thr_d_cp      : NATURAL := 204;    
+  CONSTANT tsf_d_cp      : NATURAL := 343;    
+  CONSTANT tsr_d_cp      : NATURAL := 227;    
+  CONSTANT transistors   : NATURAL := 24      
+);
+PORT (
+  cp	 : in  BIT;
+  d	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END dfnt1v0x2;
+
+ARCHITECTURE VBE OF dfnt1v0x2 IS
+  SIGNAL df_m	 : REG_BIT REGISTER;
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on dfnt1v0x2"
+  SEVERITY WARNING;
+
+  label0 : BLOCK (cp and not cp'STABLE)
+  BEGIN
+    df_m <= GUARDED d;
+  END BLOCK label0;
+
+  z <= df_m after 255 ps;
+END;

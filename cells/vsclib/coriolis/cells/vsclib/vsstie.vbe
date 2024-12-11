@@ -1,0 +1,20 @@
+ENTITY vsstie IS
+GENERIC (
+  CONSTANT area          : NATURAL := 1728;   
+  CONSTANT transistors   : NATURAL := 2       
+);
+PORT (
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END vsstie;
+
+ARCHITECTURE behaviour_data_flow OF vsstie IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on vsstie"
+  SEVERITY WARNING;
+  z <= '0';
+END;

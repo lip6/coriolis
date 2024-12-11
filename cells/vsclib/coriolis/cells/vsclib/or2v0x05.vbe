@@ -1,0 +1,32 @@
+ENTITY or2v0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 2880;   
+  CONSTANT cin_a         : NATURAL := 4;      
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT rdown_a_z     : NATURAL := 3920;   
+  CONSTANT rdown_b_z     : NATURAL := 3920;   
+  CONSTANT rup_a_z       : NATURAL := 4970;   
+  CONSTANT rup_b_z       : NATURAL := 4960;   
+  CONSTANT tpll_a_z      : NATURAL := 107;    
+  CONSTANT tphh_b_z      : NATURAL := 74;     
+  CONSTANT tpll_b_z      : NATURAL := 97;     
+  CONSTANT tphh_a_z      : NATURAL := 86;     
+  CONSTANT transistors   : NATURAL := 6       
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END or2v0x05;
+
+ARCHITECTURE behaviour_data_flow OF or2v0x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on or2v0x05"
+  SEVERITY WARNING;
+  z <= (a or b) after 202 ps;
+END;

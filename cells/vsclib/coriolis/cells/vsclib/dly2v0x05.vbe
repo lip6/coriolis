@@ -1,0 +1,26 @@
+ENTITY dly2v0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4608;   
+  CONSTANT cin_a         : NATURAL := 3;      
+  CONSTANT rdown_a_z     : NATURAL := 7080;   
+  CONSTANT rup_a_z       : NATURAL := 8860;   
+  CONSTANT tpll_a_z      : NATURAL := 216;    
+  CONSTANT tphh_a_z      : NATURAL := 170;    
+  CONSTANT transistors   : NATURAL := 9       
+);
+PORT (
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END dly2v0x05;
+
+ARCHITECTURE behaviour_data_flow OF dly2v0x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on dly2v0x05"
+  SEVERITY WARNING;
+  z <= a after 392 ps;
+END;

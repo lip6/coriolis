@@ -1,0 +1,38 @@
+ENTITY or3v0x2 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 5184;   
+  CONSTANT cin_a         : NATURAL := 7;      
+  CONSTANT cin_b         : NATURAL := 6;      
+  CONSTANT cin_c         : NATURAL := 6;      
+  CONSTANT rdown_a_z     : NATURAL := 1740;   
+  CONSTANT rdown_b_z     : NATURAL := 1740;   
+  CONSTANT rdown_c_z     : NATURAL := 1740;   
+  CONSTANT rup_a_z       : NATURAL := 2160;   
+  CONSTANT rup_b_z       : NATURAL := 2140;   
+  CONSTANT rup_c_z       : NATURAL := 2130;   
+  CONSTANT tphh_c_z      : NATURAL := 87;     
+  CONSTANT tpll_a_z      : NATURAL := 136;    
+  CONSTANT tphh_b_z      : NATURAL := 105;    
+  CONSTANT tpll_b_z      : NATURAL := 125;    
+  CONSTANT tphh_a_z      : NATURAL := 118;    
+  CONSTANT tpll_c_z      : NATURAL := 103;    
+  CONSTANT transistors   : NATURAL := 11      
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END or3v0x2;
+
+ARCHITECTURE behaviour_data_flow OF or3v0x2 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on or3v0x2"
+  SEVERITY WARNING;
+  z <= ((a or b) or c) after 161 ps;
+END;

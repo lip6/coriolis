@@ -1,0 +1,43 @@
+ENTITY lant1v0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 5760;   
+  CONSTANT cin_e         : NATURAL := 5;      
+  CONSTANT cin_d         : NATURAL := 3;      
+  CONSTANT rdown_e_z     : NATURAL := 4260;   
+  CONSTANT rdown_d_z     : NATURAL := 4450;   
+  CONSTANT rup_e_z       : NATURAL := 5100;   
+  CONSTANT rup_d_z       : NATURAL := 5170;   
+  CONSTANT taf_e_z       : NATURAL := 185;    
+  CONSTANT taf_d_z       : NATURAL := 162;    
+  CONSTANT tar_e_z       : NATURAL := 102;    
+  CONSTANT tar_d_z       : NATURAL := 117;    
+  CONSTANT thf_d_e       : NATURAL := 0;      
+  CONSTANT thr_d_e       : NATURAL := 0;      
+  CONSTANT tsf_d_e       : NATURAL := 365;    
+  CONSTANT tsr_d_e       : NATURAL := 384;    
+  CONSTANT transistors   : NATURAL := 14      
+);
+PORT (
+  e	 : in  BIT;
+  d	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END lant1v0x05;
+
+ARCHITECTURE VBE OF lant1v0x05 IS
+  SIGNAL la_m	 : REG_BIT REGISTER;
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on lant1v0x05"
+  SEVERITY WARNING;
+
+  label0 : BLOCK (e)
+  BEGIN
+    la_m <= GUARDED d;
+  END BLOCK label0;
+
+  z <= la_m after 260 ps;
+END;
