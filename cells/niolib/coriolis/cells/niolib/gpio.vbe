@@ -1,0 +1,38 @@
+ENTITY gpio IS
+  PORT (
+  i : in BIT;	
+  oe : in BIT;	
+  o : out BIT;	
+  pad : inout MUX_BIT BUS;	
+  iovdd : in BIT;	
+  vdd : in BIT;	
+  iovss : in BIT;	
+  vss : in BIT	
+  );
+END gpio;
+
+ARCHITECTURE behaviour_data_flow OF gpio IS
+  SIGNAL oe1 : BIT;
+  SIGNAL oe2 : BIT;
+  SIGNAL oe3 : BIT;
+  SIGNAL oe4 : BIT;
+  SIGNAL oe5 : BIT;
+  SIGNAL oe6 : BIT;
+
+BEGIN
+  oe6 <= oe5;
+  oe5 <= oe4;
+  oe4 <= oe3;
+  oe3 <= oe2;
+  oe2 <= oe1;
+  oe1 <= oe;
+  label0 : BLOCK (oe6 = '1')
+  BEGIN
+    pad <= GUARDED i;
+  END BLOCK label0;
+  o <= pad;
+
+  ASSERT ((((vdd and iovdd) and not (iovss)) and not (vss)) = '1')
+    REPORT "power supply is missing on gpio"
+    SEVERITY WARNING;
+END;
