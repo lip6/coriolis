@@ -1,0 +1,18 @@
+ENTITY powmid_x0 IS
+GENERIC (
+  CONSTANT area 	 : NATURAL := 7000;
+  CONSTANT transistors	 : NATURAL := 0
+);
+PORT (
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END powmid_x0;
+
+ARCHITECTURE behaviour_data_flow OF powmid_x0 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on powmid_x0"
+  SEVERITY WARNING;
+END;

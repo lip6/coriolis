@@ -1,0 +1,36 @@
+ENTITY xnr2_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 7000;
+  CONSTANT cin_b         : NATURAL := 10;     
+  CONSTANT cin_a         : NATURAL := 7;      
+  CONSTANT rdown_b_z     : NATURAL := 2020;   
+  CONSTANT rdown_a_z     : NATURAL := 2060;   
+  CONSTANT rup_b_z       : NATURAL := 2510;   
+  CONSTANT rup_a_z       : NATURAL := 2620;   
+  CONSTANT tphl_a_z      : NATURAL := 66;     
+  CONSTANT tphl_b_z      : NATURAL := 67;     
+  CONSTANT tplh_b_z      : NATURAL := 38;     
+  CONSTANT tplh_a_z      : NATURAL := 69;     
+  CONSTANT tphh_b_z      : NATURAL := 80;     
+  CONSTANT tpll_b_z      : NATURAL := 65;     
+  CONSTANT tphh_a_z      : NATURAL := 96;     
+  CONSTANT tpll_a_z      : NATURAL := 93;     
+  CONSTANT transistors   : NATURAL := 9       
+);
+PORT (
+  b	 : in  BIT;
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END xnr2_x1;
+
+ARCHITECTURE behaviour_data_flow OF xnr2_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on xnr2_x1"
+  SEVERITY WARNING;
+  z <= not ((b xor a)) after 1100 ps;
+END;

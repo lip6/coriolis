@@ -1,0 +1,38 @@
+ENTITY cgn2_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 8000;
+  CONSTANT cin_a         : NATURAL := 8;      
+  CONSTANT cin_b         : NATURAL := 9;      
+  CONSTANT cin_c         : NATURAL := 5;      
+  CONSTANT rdown_a_z     : NATURAL := 2320;   
+  CONSTANT rdown_b_z     : NATURAL := 2330;   
+  CONSTANT rdown_c_z     : NATURAL := 2340;   
+  CONSTANT rup_a_z       : NATURAL := 2980;   
+  CONSTANT rup_b_z       : NATURAL := 2970;   
+  CONSTANT rup_c_z       : NATURAL := 2970;   
+  CONSTANT tphh_c_z      : NATURAL := 95;     
+  CONSTANT tpll_c_z      : NATURAL := 118;    
+  CONSTANT tpll_a_z      : NATURAL := 134;    
+  CONSTANT tphh_b_z      : NATURAL := 104;    
+  CONSTANT tpll_b_z      : NATURAL := 132;    
+  CONSTANT tphh_a_z      : NATURAL := 102;    
+  CONSTANT transistors   : NATURAL := 12      
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END cgn2_x1;
+
+ARCHITECTURE behaviour_data_flow OF cgn2_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on cgn2_x1"
+  SEVERITY WARNING;
+  z <= ((b and (a or c)) or (a and c)) after 1200 ps;
+END;
