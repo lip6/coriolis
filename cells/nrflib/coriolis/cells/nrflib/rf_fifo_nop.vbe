@@ -1,0 +1,24 @@
+ENTITY rf_fifo_nop IS
+PORT (
+  ckm    : in  BIT;
+  nreset : in  BIT;
+  rw     : in  BIT;
+  rwok   : in  BIT;
+  nval	 : inout BIT;
+  nop    : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END rf_fifo_nop;
+
+ARCHITECTURE VBE OF rf_fifo_nop IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_fifo_nop"
+  SEVERITY WARNING;
+
+  nval <= rw nand rwok;
+  nop <= nval and nreset and ckm;
+
+END;

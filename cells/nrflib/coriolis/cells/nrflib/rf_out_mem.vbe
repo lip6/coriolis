@@ -1,0 +1,26 @@
+ENTITY rf_out_mem IS
+PORT (
+  rbus    : in  BIT;
+  xcks     : in  BIT;
+  dataout : out BIT;
+  vdd     : in  BIT;
+  vss     : in  BIT
+);
+END rf_out_mem;
+
+ARCHITECTURE VBE OF rf_out_mem IS
+  SIGNAL latch	 : REG_BIT REGISTER;
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_out_mem"
+  SEVERITY WARNING;
+
+  label0 : BLOCK (xcks = '1')
+  BEGIN
+    latch <= GUARDED rbus;
+  END BLOCK label0;
+
+  dataout <= latch;
+
+END;

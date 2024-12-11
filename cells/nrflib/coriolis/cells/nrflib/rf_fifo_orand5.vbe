@@ -1,0 +1,23 @@
+ENTITY rf_fifo_orand5 IS
+PORT (
+  a0        : in  BIT;
+  b0        : in  BIT;
+  a1        : in  BIT;
+  b1        : in  BIT;
+  ripplein  : in  BIT;
+  rippleout : out BIT;
+  vdd	    : in  BIT;
+  vss       : in  BIT
+);
+END rf_fifo_orand5;
+
+ARCHITECTURE VBE OF rf_fifo_orand5 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_fifo_orand5"
+  SEVERITY WARNING;
+
+  rippleout <= ripplein or (a0 and b0) or (a1 and b1);
+
+END;

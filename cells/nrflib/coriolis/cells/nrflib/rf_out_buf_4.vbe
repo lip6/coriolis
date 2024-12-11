@@ -1,0 +1,19 @@
+ENTITY rf_out_buf_4 IS
+PORT (
+  nck    : in  BIT;
+  xcks	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END rf_out_buf_4;
+
+ARCHITECTURE VBE OF rf_out_buf_4 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_out_buf_4"
+  SEVERITY WARNING;
+
+  xcks <= not nck;
+
+END;

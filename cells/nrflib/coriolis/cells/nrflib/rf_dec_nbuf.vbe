@@ -1,0 +1,19 @@
+ENTITY rf_dec_nbuf IS
+PORT (
+  i      : in  BIT;
+  nq   	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END rf_dec_nbuf;
+
+ARCHITECTURE VBE OF rf_dec_nbuf IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_dec_nbuf"
+  SEVERITY WARNING;
+
+  nq <= not i;
+
+END;
