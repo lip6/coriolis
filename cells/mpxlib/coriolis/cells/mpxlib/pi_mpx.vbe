@@ -1,0 +1,30 @@
+ENTITY pi_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT cin_pad : NATURAL := 654;	
+    CONSTANT tpll_pad : NATURAL := 1487;	
+    CONSTANT rdown_pad : NATURAL := 234;	
+    CONSTANT tphh_pad : NATURAL := 233;	
+    CONSTANT rup_pad : NATURAL := 273	
+  );
+  PORT (
+  pad : in BIT;	
+  t : out BIT;	
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pi_mpx;
+
+
+ARCHITECTURE behaviour_data_flow OF pi_mpx IS
+
+BEGIN
+  t <= pad;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on pi_mpx"
+    SEVERITY WARNING;
+END;

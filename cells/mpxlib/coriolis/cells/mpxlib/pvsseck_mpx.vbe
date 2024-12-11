@@ -1,0 +1,31 @@
+ENTITY pvsseck_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT cin_ck : NATURAL := 127;	
+    CONSTANT tpll_ck : NATURAL := 1055;	
+    CONSTANT rdown_ck : NATURAL := 126;	
+    CONSTANT tphh_ck : NATURAL := 963;	
+    CONSTANT rup_ck : NATURAL := 183	
+  );
+  PORT (
+  cko : out WOR_BIT BUS;	
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pvsseck_mpx;
+
+ARCHITECTURE behaviour_data_flow OF pvsseck_mpx IS
+
+BEGIN
+  label0 : BLOCK ('1' = '1')
+  BEGIN
+    cko <= GUARDED ck;
+  END BLOCK label0;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on pvsseck_mpx"
+    SEVERITY WARNING;
+END;

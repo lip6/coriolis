@@ -1,0 +1,20 @@
+ENTITY pvdde_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000	
+  );
+  PORT (
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pvdde_mpx;
+
+ARCHITECTURE behaviour_data_flow OF pvdde_mpx IS
+
+BEGIN
+  ASSERT ((((not (vssi) and not (vsse)) and vddi) and vdde) = '1')
+    REPORT "power supply is missing on pvdde_mpx"
+    SEVERITY WARNING;
+END;

@@ -1,0 +1,29 @@
+[project]
+name = "coriolis_cells_mpxlib"
+version = "0.1.0"
+description = "MPXLIB cells library for Coriolis EDA"
+authors = [ { name = "Coriolis EDA Contributers" } ]
+requires-python = ">= 3.9"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["coriolis"]
+
+[tool.setuptools.package-data]
+mpxlib = [
+  "*.ap",
+  "*.vbe"
+]
+
+[build-system]
+requires = [
+    "setuptools",
+    "cibuildwheel",
+    "build",
+    "pdm-backend"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+build = "cp310-*"
+skip = ["cp36-*", "cp37-*", "cp38-*", "cp39-*", "pp*"]
