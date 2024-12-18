@@ -7,7 +7,7 @@ requires-python = ">= 3.9"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["coriolis"]
+include = ["coriolis.cells.lsxlib"]
 
 [tool.setuptools.package-data]
 lsxlib = [
