@@ -3,7 +3,7 @@
 *.pyc
 *.log
 *.bak
-.#*
+*.log
 
 TAGS
 GTAGS
