@@ -14,7 +14,7 @@ venv-setup:
 
 ### Cells libraries CELLS_LIBS
 CELLS_LIBS = hibikino \
-	lsxlib lsxram \
+	lsxlib \
 	mpxlib msplib msxlib \
 	niolib nramlib nrf2lib \
 	nsxlib nsxlib2 \

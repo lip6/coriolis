@@ -1,15 +1,19 @@
 [project]
 name = "coriolis_cells_lsxram"
 version = "0.1.0"
-description = "LSXRAM cells library for Coriolis EDA"
+description = "LSXRAM IP for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 requires-python = ">= 3.9"
+dependencies = [
+  "coriolis-eda",
+  "coriolis_cells_lsxlib"
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = [
-  "coriolis.cells.lsxram",
-  "coriolis.cells.lsxram.*"
+  "coriolis.IP.lsxram",
+  "coriolis.IP.lsxram.*"
 ]
 
 [tool.setuptools.package-data]
