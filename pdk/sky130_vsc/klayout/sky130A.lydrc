@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description>DRC</description>
+ <version/>
+ <category>drc</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>false</autorun>
+ <autorun-early>false</autorun-early>
+ <priority>0</priority>
+ <shortcut/>
+ <show-in-menu>true</show-in-menu>
+ <group-name>sky130a</group-name>
+ <menu-path>tools_menu.sky130a&gt;lvs("Sky130A").end</menu-path>
+ <interpreter>dsl</interpreter>
+ <dsl-interpreter-name>drc-dsl-xml</dsl-interpreter-name>
+ <text>
+# Take input from layout window
+# $input = nil
+
+# Interactive report
+# $report = ""
+
+# Enable all parts
+$feol = "true"
+$beol = "true"
+$offgrid = "true"
+
+# Disabled for now
+$seal = "false"
+$floating_met = "false"
+
+# Default threads
+$thr = nil
+
+# %include ./core/sky130A_mr.drc
+</text>
+</klayout-macro>
