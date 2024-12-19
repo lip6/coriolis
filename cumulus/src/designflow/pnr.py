@@ -103,12 +103,15 @@ class PnR ( FlowTask ):
         return self.checkTargets( 'PnR.doTask' )
 
     def asDoitTask ( self ):
-        if self.design: doc = 'Run {}.'.format( self )
-        else:           doc = 'Run plain CGT (no loaded design)'
-        return { 'basename' : self.basename
-               , 'actions'  : [ self.doTask ]
-               , 'doc'      : doc
-               , 'targets'  : self.targets
-               , 'file_dep' : self.file_dep
-               }
+        taskDatas = { 'basename' : self.basename
+                    , 'actions'  : [ self.doTask ]
+                    , 'targets'  : self.targets
+                    , 'file_dep' : self.file_dep
+                    }
+        if self.design:
+            taskDatas[ 'doc' ] = 'Run {}.'.format( self )
+        else:
+            taskDatas[ 'doc'      ] = 'Run plain CGT (no loaded design)'
+            taskDatas[ 'uptodate' ] = [ False ]
+        return taskDatas
         
