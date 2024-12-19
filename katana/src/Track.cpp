@@ -1089,14 +1089,14 @@ namespace Katana {
 
   uint32_t  Track::repair () const
   {
-  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::open( 150, 160 );
-    cdebug_log(159,0) << "Track::repair() " << this << endl;
-
     if (getLayerGauge()->getType() != Constant::LayerGaugeType::Default) return 0;
+
+  //if ((getIndex() == 354) and isHorizontal()) DebugSession::open( 150, 160 );
+    cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
       fillHole( getMin(), getMax() );
-    //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
+    //if ((getIndex() == 354) and isHorizontal()) DebugSession::close();
       return 0;
     }
     DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
@@ -1111,7 +1111,7 @@ namespace Katana {
     GapSet   gapsetCurr ( this );
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
       cdebug_log(159,0) << "[" << i << "] " << _segments[i] << endl;
-      if (_segments[i]->isNonPref  ()) continue;
+    //if (_segments[i]->isNonPref  ()) continue;
       if (_segments[i]->isFixedSpan()) continue;
       netChange = false;
       gapsetCurr.merge( i );
@@ -1125,7 +1125,7 @@ namespace Katana {
             spacing = minSpacing - spacing;
             TrackElement* element = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ];
             AutoSegment*  prev    = element->base();
-            if (prev and (prev->getDuTarget() >= spacing)) {
+            if (prev and not prev->isNonPref() and (prev->getDuTarget() >= spacing)) {
               prev->setDuSource( prev->getDuSource() - spacing );
               prev->setDuTarget( prev->getDuTarget() - spacing );
               element->invalidate();
@@ -1136,7 +1136,7 @@ namespace Katana {
             } else {
               TrackElement* element = _segments[ gapsetCurr.span(0).first ];
               AutoSegment*  curr    = element->base();
-              if (curr and (-curr->getDuSource() >= spacing)) {
+              if (curr and not curr->isNonPref() and (-curr->getDuSource() >= spacing)) {
                 curr->setDuSource( curr->getDuSource() + spacing );
                 curr->setDuTarget( curr->getDuTarget() + spacing );
                 element->invalidate();
@@ -1225,7 +1225,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 354) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
