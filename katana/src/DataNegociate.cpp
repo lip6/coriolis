@@ -79,7 +79,7 @@ namespace Katana {
     }
     return attraction;
   }
-
+  
 
   void  DataNegociate::update ()
   {
@@ -226,7 +226,39 @@ namespace Katana {
                                 , -perpandicular->getExtensionCap( isSource ) ));
         }
       } else {
-        cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
+        DataNegociate* perpandData = perpandicular->getDataNegociate();
+        DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
+        if (perpandData and perpandicular->isLocal()) {
+          uint32_t limit = Session::getKatanaEngine()->getRipupLimit( _trackSegment );
+          if ((perpandData->getRipupCount() > 8) and (perpandData->getRipupCount() < 14)) {
+            cdebug_log(159,0) << "Highly riped-up local perpandicular" << endl;
+            RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
+            Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
+            Interval      trackFree;
+            if (_trackSegment->getAxis() == perpandicular->getSourceAxis()) {
+              trackFree = track->getFreeInterval( perpandicular->getTargetU(), _trackSegment->getNet() );
+              cdebug_log(159,0) << "Track Perpandicular Free (source highly riped up): " << trackFree << endl;
+            } else {
+              trackFree = track->getFreeInterval( perpandicular->getSourceU(), _trackSegment->getNet() );
+              cdebug_log(159,0) << "Track Perpandicular Free (target highly riped up): " << trackFree << endl;
+            }
+
+            if (trackFree.getSize() > 2*pitch) {
+              Flags    isSource           = std::get<1>( perpandiculars[i] );
+              Interval updatedPerpandFree = _perpandicularFree;
+              updatedPerpandFree.intersection( trackFree.inflate( -perpandicular->getExtensionCap( isSource )
+                                                                , -perpandicular->getExtensionCap( isSource ) ));
+              if (updatedPerpandFree.getSize() > 2*pitch) {
+                cdebug_log(159,0) << "Updated perpandicular Free: " << updatedPerpandFree << endl;
+                _perpandicularFree = updatedPerpandFree;
+              }
+            } else {
+              cdebug_log(159,0) << "Track Perpandicular Free empty, ignoring." << endl;
+            }
+          }
+        } else {
+          cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
+        }
       }
 
 #if 0
