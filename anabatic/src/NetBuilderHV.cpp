@@ -172,6 +172,25 @@ namespace Anabatic {
 
       if (flags & HAccess) {
         cdebug_log(145,0) << "case: HAccess" << endl;
+#ifdef NEW_IMPL
+        if ((flags & Punctual) or ((flags & VSmall) and not (flags & UseNonPref)) ) {
+          cdebug_log(145,0) << "case: Punctual or (VSmall and not UseNonPref)" << endl;
+          AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), contactLayer );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal, wireDepth );
+          rpSourceContact = subContact1;
+          subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
+          rpSourceContact = subContact1;
+        } else {
+          cdebug_log(145,0) << "case: VSmall or UseNonPref" << endl;
+          if ((flags & VSmall) or (flags & UseNonPref)) {
+            AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+            AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|Flags::UseNonPref );
+            rpSourceContact = subContact1;
+          }
+        }
+#endif
+
         if ( ((flags & VSmall) and not ((flags & UseNonPref))) or (flags & Punctual) ) {
           cdebug_log(145,0) << "case: VSmall and *not* UseNonPref" << endl;
   
@@ -186,8 +205,9 @@ namespace Anabatic {
         if (flags & (VSmall|UseNonPref)) {
           cdebug_log(145,0) << "case: UseNonPref" << endl;
 
-          if (flags & VSmall) 
+          if (flags & VSmall) {
             useNonPref.reset( Flags::UseNonPref );
+          }
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
           AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|useNonPref );
           rpSourceContact = subContact1;
