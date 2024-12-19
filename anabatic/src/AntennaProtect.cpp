@@ -983,7 +983,7 @@ namespace Anabatic {
       if (netData) {
         for ( auto item : clusterSegments ) {
           cdebug_log(147,0) << "No move up: " << item.first << endl;
-          netData->setNoMoveUp( item.first );
+        //netData->setNoMoveUp( item.first );
         }
       }
 
