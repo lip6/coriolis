@@ -495,8 +495,8 @@ class VerticalSide ( Side ):
                 if via[1].getNet() != via[2].getNet(): continue
                 spans.merge( via[1].y - via[1].height//2, via[1].y + via[1].height//2 )
         routingGauge = self.corona.routingGauge
-        for depth in range(next(iter(self.getOuterRail(0).vias.values()))[1].bottomDepth
-                          ,next(iter(self.getOuterRail(0).vias.values()))[1].topDepth ):
+        for depth in range(next(iter(self.getInnerRail(0).vias.values()))[1].bottomDepth
+                          ,next(iter(self.getInnerRail(0).vias.values()))[1].topDepth ):
             blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
             pitch         = routingGauge.getLayerPitch(depth)
             for chunk in spans.chunks:
@@ -621,8 +621,8 @@ class Builder ( object ):
         return self.conf.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
-        if self.conf.useClockTree and i < len(self.conf.coronaCks):
-            return self.conf.coronaCks[i]
+        if self.conf.useClockTree and i >= self.railsCount - len(self.conf.coronaCks):
+            return self.conf.coronaCks[self.railsCount - i - 1]
         if i % 2: return self.conf.coronaVss
         return self.conf.coronaVdd
 
