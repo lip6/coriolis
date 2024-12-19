@@ -30,10 +30,10 @@ class Klayout ( FlowTask ):
         Klayout._lypFile = lypFile
 
     @staticmethod
-    def mkRule ( rule, targets=[], depends=[], script=None, arguments=[], variables={}, flags=0 ):
-        return Klayout( rule, targets, depends, script, arguments, variables, flags )
+    def mkRule ( rule, targets=[], depends=[], script=None, arguments=[], variables={}, env={}, flags=0 ):
+        return Klayout( rule, targets, depends, script, arguments, variables, env, flags )
 
-    def __init__ ( self, rule, targets, depends, script, arguments, variables, flags ):
+    def __init__ ( self, rule, targets, depends, script, arguments, variables, env, flags ):
         if script and not isinstance(script,Path):
             script = Path( script )
         if script:
@@ -42,6 +42,7 @@ class Klayout ( FlowTask ):
         self.flags     = flags
         self.arguments = arguments
         self.variable  = variables
+        self.env       = env
         self.command   = [ 'klayout' ] + arguments
         if Klayout._lypFile:
             self.command += [ '-l', Klayout._lypFile.as_posix() ]
@@ -66,6 +67,8 @@ class Klayout ( FlowTask ):
         from ..helpers.io import ErrorMessage
 
         shellEnv = ShellEnv()
+        for variable, value in self.env.items():
+            shellEnv[ variable ] = value
         shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
@@ -111,10 +114,11 @@ class DRC ( Klayout ):
         targets   = [ depends[0].with_suffix('.kdrc-report.txt') ]
         if not DRC._drcRules:
             raise ErrorMessage( 1, 'DRC.doTask(): No DRC rules defined.' )
+        env       = {}
         variables = { 'in_gds'      : depends[0]
                     , 'input'       : depends[0]
                     , 'report'      : targets[0]
                     , 'report_file' : targets[0]
                     }
-        super().__init__( rule, targets, depends, DRC._drcRules, arguments, variables, flags )
+        super().__init__( rule, targets, depends, DRC._drcRules, arguments, variables, env, flags )
         
