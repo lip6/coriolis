@@ -325,44 +325,54 @@ namespace Tramontana {
 
     ostringstream shortMessage;
     ostringstream openMessage;
+    ostringstream supplyMessage;
     
     for ( Equipotential* equi : _shortedNets ) {
       const Equipotential::NetMap& netMap = equi->getNets(); 
-      shortMessage << "        - Short circuit between " << netMap.size() << " nets:\n";
+      shortMessage << "           - Short circuit between " << netMap.size() << " nets:\n";
       for ( auto netData : netMap ) {
         if (netData.first->isFused()) continue;
-        shortMessage << "          | \"" << netData.first->getName() << "\".\n";
+        shortMessage << "             | \"" << netData.first->getName() << "\".\n";
       }
-      shortMessage << "          + Shorted components:\n";
+      shortMessage << "             + Shorted components:\n";
       for ( const ShortCircuit* shortCircuit : equi->getShortCircuits() ) {
         if (shortCircuit->isTopLevel()) {
-          shortMessage << "            > T A:" << shortCircuit->getComponentA() << "\n"
-                       << "            | T B:" << shortCircuit->getComponentB() << "\n";
+          shortMessage << "               > T A:" << shortCircuit->getComponentA() << "\n"
+                       << "               | T B:" << shortCircuit->getComponentB() << "\n";
         } else if (shortCircuit->isAcrossLevels()) {
-          shortMessage << "            > A A:" << shortCircuit->getEquiA() << "\n"
-                       << "            | A B:" << shortCircuit->getComponentB() << "\n";
+          shortMessage << "               > A A:" << shortCircuit->getEquiA() << "\n"
+                       << "               | A B:" << shortCircuit->getComponentB() << "\n";
         } else if (shortCircuit->isDeepShort()) {
-          shortMessage << "            > D A:" << shortCircuit->getEquiA() << "\n"
-                       << "            | D B:" << shortCircuit->getEquiB() << "\n";
+          shortMessage << "               > D A:" << shortCircuit->getEquiA() << "\n"
+                       << "               | D B:" << shortCircuit->getEquiB() << "\n";
         }
-        shortMessage <<  "            | Shorting @" << shortCircuit->getShortingBox() << "\n";
+        shortMessage <<  "               | Shorting @" << shortCircuit->getShortingBox() << "\n";
       }
     }
 
     const ShortCircuit::ShortingEquis& shortingEquis = ShortCircuit::getShortingEquis( getCell() ); 
     if (not shortingEquis.empty()) {
-      shortMessage << "        - Trans-hierarchical shorts:\n";
+      shortMessage << "           - Trans-hierarchical shorts:\n";
       for ( auto equiDatas : shortingEquis ) {
-        shortMessage << "          | \"" << equiDatas.first->getName() << "\" in cell \""
+        shortMessage << "             | \"" << equiDatas.first->getName() << "\" in cell \""
                      << equiDatas.first->getCell()->getName() << "\" causes "
                      << equiDatas.second << " short circuits.\n";
       }
     }
 
     for ( auto& netEquis : _openNets ) {
-      openMessage << "        - Open on " << netEquis.first << ":\n";
+      openMessage << "           - Open on " << netEquis.first << ":\n";
       for ( Equipotential* equi : netEquis.second ) {
-        openMessage << "          | " << equi << ".\n";
+        openMessage << "             | " << equi << ".\n";
+      }
+    }
+
+    if (not doMergeSupplies()) {
+      if (_powerNets.size() != 1) {
+        supplyMessage << "           - Power network is splitted in " << _powerNets.size() << " components.\n"; 
+      }
+      if (_groundNets.size() != 1) {
+        supplyMessage << "           - Ground network is splitted in " << _groundNets.size() << " components.\n"; 
       }
     }
 
@@ -371,8 +381,12 @@ namespace Tramontana {
     cmess2 << Dots::asUInt  ("        - Ground nets"   , _groundNets .size()) << endl;
     cmess2 << Dots::asUInt  ("        - Short circuits", _shortedNets.size()) << endl;
     cmess2 << Dots::asUInt  ("        - Open circuits" , _openNets   .size()) << endl;
+    if (shortMessage.str().size() or openMessage.str().size() or supplyMessage.str().size())
+      cmess2 << "        o  LVS errors:" << endl;
     if (_shortedNets.size()) cmess2 << shortMessage.str() << endl;
     if (_openNets   .size()) cmess2 <<  openMessage.str() << endl;
+    if (not doMergeSupplies() and supplyMessage.str().size())
+      cmess2 << supplyMessage.str() << endl;
   }
   
 
