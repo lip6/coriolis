@@ -39,28 +39,32 @@ namespace Katana {
 
   class Statistics {
     public:
-      inline             Statistics              ();
-      inline size_t      getGCellsCount          () const;
-      inline size_t      getSegmentsCount        () const;
-      inline size_t      getEventsCount          () const;
-      inline size_t      getLoadedEventsCount    () const;
-      inline size_t      getProcessedEventsCount () const;
-      inline float       getRipupRatio           () const;
-      inline void        setGCellsCount          ( size_t );
-      inline void        setSegmentsCount        ( size_t );
-      inline void        setEventsCount          ( size_t );
-      inline void        setLoadedEventsCount    ( size_t );
-      inline void        setProcessedEventsCount ( size_t );
-      inline void        incGCellCount           ( size_t );
-      inline void        incSegmentsCount        ( size_t );
-      inline void        incEventsCount          ( size_t );
-      inline Statistics& operator+=              ( const Statistics& );
+      typedef std::map< size_t, size_t >  EventsMap;
+    public:
+      inline                  Statistics              ();
+      inline size_t           getGCellsCount          () const;
+      inline size_t           getSegmentsCount        () const;
+      inline size_t           getEventsCount          ( size_t depth ) const;
+      inline size_t           getLoadedEventsCount    () const;
+      inline size_t           getProcessedEventsCount () const;
+      inline float            getRipupRatio           () const;
+      inline const EventsMap& getEventsMap            () const;
+      inline void             setGCellsCount          ( size_t );
+      inline void             setSegmentsCount        ( size_t );
+      inline void             setEventsCount          ( size_t );
+      inline void             setLoadedEventsCount    ( size_t );
+      inline void             setProcessedEventsCount ( size_t );
+      inline void             incGCellCount           ( size_t );
+      inline void             incSegmentsCount        ( size_t );
+      inline void             incEventsCount          ( size_t count, size_t depth );
+      inline Statistics&      operator+=              ( const Statistics& );
     private:
-      size_t  _gcellsCount;
-      size_t  _segmentsCount;
-      size_t  _eventsCount;
-      size_t  _loadedEventsCount;
-      size_t  _processedEventsCount;
+      size_t     _gcellsCount;
+      size_t     _segmentsCount;
+      size_t     _eventsCount;
+      size_t     _loadedEventsCount;
+      size_t     _processedEventsCount;
+      EventsMap  _eventsCountByDepth;
   };
 
 
@@ -70,11 +74,12 @@ namespace Katana {
     , _eventsCount         (0)
     , _loadedEventsCount   (0)
     , _processedEventsCount(0)
+    , _eventsCountByDepth  ()
   { }
 
   inline size_t  Statistics::getGCellsCount          () const { return _gcellsCount; }
   inline size_t  Statistics::getSegmentsCount        () const { return _segmentsCount; }
-  inline size_t  Statistics::getEventsCount          () const { return _eventsCount; }
+  inline size_t  Statistics::getEventsCount          ( size_t depth ) const { return (depth < _eventsCountByDepth.size()) ? _eventsCountByDepth.at(depth) : 0; }
   inline size_t  Statistics::getLoadedEventsCount    () const { return _loadedEventsCount; }
   inline size_t  Statistics::getProcessedEventsCount () const { return _processedEventsCount; }
   inline float   Statistics::getRipupRatio           () const { return (_loadedEventsCount) ? ((float)(_processedEventsCount - _loadedEventsCount) / (float)_loadedEventsCount) : 0.0; }
@@ -85,7 +90,10 @@ namespace Katana {
   inline void    Statistics::setEventsCount          ( size_t count ) { _eventsCount = count; }
   inline void    Statistics::incGCellCount           ( size_t count ) { _gcellsCount += count; }
   inline void    Statistics::incSegmentsCount        ( size_t count ) { _segmentsCount += count; }
-  inline void    Statistics::incEventsCount          ( size_t count ) { _eventsCount += count; }
+  inline void    Statistics::incEventsCount          ( size_t count, size_t depth ) { _eventsCountByDepth[depth] += count; }
+
+  inline const Statistics::EventsMap& Statistics::getEventsMap () const
+  { return _eventsCountByDepth; }
 
   inline Statistics& Statistics::operator+= ( const Statistics& other )
   {

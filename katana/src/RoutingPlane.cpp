@@ -184,6 +184,19 @@ namespace Katana {
   }
 
 
+  DbU::Unit  RoutingPlane::getUsedWL () const
+  {
+    DbU::Unit usedWL = 0;
+    for ( size_t i=0 ; i<_tracks.size() ; ++i ) {
+      Track* track = _tracks[ i ];
+      for ( size_t j=0 ; j<track->getSize() ; ++j ) {
+        usedWL += track->getSegment( j )->getLength();
+      }
+    }
+    return usedWL;
+  }
+  
+
   string  RoutingPlane::_getString () const
   {
     return "<" + _getTypeName() + " @"

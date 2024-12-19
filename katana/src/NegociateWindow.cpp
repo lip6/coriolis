@@ -262,6 +262,7 @@ namespace Katana {
   using std::cerr;
   using std::endl;
   using std::setw;
+  using std::setfill;
   using std::left;
   using std::right;
   using std::setprecision;
@@ -664,8 +665,10 @@ namespace Katana {
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
+      size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
+      _statistics.incEventsCount( 1, depth );
+
       if (ofprofile.is_open()) {
-        size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
         if (depth < 6) {
           ofprofile << setw(10) << right << count << " ";
           for ( size_t i=0 ; i<6 ; ++i ) {
@@ -699,9 +702,9 @@ namespace Katana {
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
 
-      // if (RoutingEvent::getProcesseds() == 32512) {
+      // if (RoutingEvent::getProcesseds() == 446036) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After processing RoutingEvent 32511." );
+      //   Breakpoint::stop( 0, "After processing RoutingEvent 446035." );
       //   UpdateSession::open();
       // }
 
@@ -916,16 +919,30 @@ namespace Katana {
     ostringstream os;
     os << setprecision(2) << fixed << ripupRatio << "%";
 
+    size_t totalEvents = RoutingEvent::getProcesseds();
     cmess1 << "  o  Computing statistics." << endl;
-    cmess1 << Dots::asString( "     - Event ripup ratio", os.str() ) << endl;
-    cmess1 << Dots::asSizet ( "     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
+    cmess1 << Dots::asSizet ( "     - Loaded Events"
+                            , _statistics.getLoadedEventsCount()) << endl;
     cmess1 << Dots::asSizet ( "     - Unique Events Total"
-                           ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
+                            ,(totalEvents - RoutingEvent::getCloneds())) << endl;
+    cmess1 << Dots::asSizet ( "     - Processeds Events Total",totalEvents) << endl;
+    cmess1 << Dots::asString( "     - Event ripup ratio", os.str() ) << endl;
+    for ( auto keyValue : _statistics.getEventsMap() ) {
+      ostringstream title;
+      title << "     - Processeds Events in "
+            << getKatanaEngine()->getConfiguration()->getRoutingLayer( keyValue.first )->getName();
+      
+      ostringstream result;
+      result << keyValue.second << setprecision(2) << fixed << " (" << setfill(' ') << right << setw(5)
+             << ((float)keyValue.second / totalEvents) * 100.0 << "%)";
+      cmess1 << Dots::asString( title.str(), result.str() ) << endl;
+    }
+    
     cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
     _katana->printCompletion();
 
-    _katana->addMeasure<size_t>( "Events" , RoutingEvent::getProcesseds(), 12 );
-    _katana->addMeasure<size_t>( "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
+    _katana->addMeasure<size_t>( "Events" , totalEvents, 12 );
+    _katana->addMeasure<size_t>( "UEvents", totalEvents-RoutingEvent::getCloneds(), 12 );
 
     Histogram* densityHistogram = new Histogram ( 1.0, 0.1, 2 );
     _katana->addMeasure<Histogram>( "GCells Density Histogram", densityHistogram );
