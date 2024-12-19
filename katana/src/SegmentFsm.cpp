@@ -1548,7 +1548,7 @@ namespace Katana {
 
     if (not segment1 or not _data1) { cdebug_tabw(159,-1); DebugSession::close(); return false; }
 
-    if (segment1->isStrap() or segment1->isUnbreakable())
+    if (segment1->isStrap() or (segment1->isUnbreakable() and not segment1->isGlobal()))
       success = _slackenStrap ( segment1, _data1, flags );
     else if (segment1->isLocal())
       success = _slackenLocal ( segment1, _data1, flags );
