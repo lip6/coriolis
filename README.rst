@@ -117,6 +117,12 @@ To install the prereqisites:
    brew install ccache doxygen pelican qt@5 qwt-qt5 rapidjson boost eigen
    brew install --cask mactex 
 
+Also install X11 dependencies, we suggest using XQuartz as X11 is no longer included in MacOS:
+
+.. code-block:: bash
+
+   brew install automake libtool libx11 openmotif
+   brew install --cask xquartz
 
 We need to set some environment variables for finding the cask only components. We use dotenv to set these in the PDM venv (see below)
 

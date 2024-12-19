@@ -178,14 +178,17 @@ The idea is to install recommended version for every build dependency without me
 
 The virtual environment like the PDM project are configured and activated upon container start.
 
-Environment Variables
-^^^^^^^^^^^^^^^^^^^^^
+Workspace configuration
+^^^^^^^^^^^^^^^^^^^^^^^
+
+An initial configuration is to be done at container start, using provided *setup-coriolis-workspace.sh* script.
+That includes cloning the Coriolis, Alliance and Alliance Check Toolkit repositories, and setting up the PDM project.
+This operation is done only once, at the first container start or if the volume was recreated.
 
 All environment variables required by Coriolis and Alliance are configured by the container.
 They may then be used by Makefiles and other build tools.
 
-For internal shells, the internal user's bashrc is also configured to export proper variables,
-for instance:
+The internal user's bashrc is also configured to export proper variables:
 
 .. code-block:: bash
 
@@ -194,7 +197,7 @@ for instance:
     # Coriolis environment variables
     export PATH="${HOME}/coriolis-2.x/release/install/bin:${PATH}"
     export PYTHONPATH="${HOME}/coriolis-2.x/release/install/lib/python3/dist-packages:${PYTHONPATH}"
-    export VIRTUAL_ENV="${HOME}/coriolis-2.x/src/coriolis/.venv"
+    export VENV_PATH="${HOME}/coriolis-2.x/src/coriolis/.venv"
     export ARCH=x86_64-linux-gnu
     export LD_LIBRARY_PATH="${HOME}/coriolis-2.x/release/install/lib:${HOME}/coriolis-2.x/release/install/lib/${ARCH}:${LD_LIBRARY_PATH}"
     export CORIOLIS_TOP="${HOME}/coriolis-2.x/release/install"
@@ -204,9 +207,19 @@ for instance:
 
 Note: ARCH value depends on Docker host's architecture. It resolves to *$(gcc -dumpmachine)*.
 
-Graphic Server Socket (Work in Progress)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Graphic Server Socket
+^^^^^^^^^^^^^^^^^^^^^
 
 Some of the Coriolis tools rely on the graphic server (Xorg or Wayland), such as **CGT**.
-Running a graphic application from inside a container is technically possible.
-This requires sharing the graphic server socket with the container.
+
+Running a graphic application from inside a container requires sharing the graphic server socket and configuration with the container.
+In compose file, for X11 we use the environment variable:
+- DISPLAY
+- XDG_SESSION_TYPE
+- XDG_RUNTIME_DIR
+and X11 socket within /tmp/.X11-unix
+along with Wayland counterparts:
+- WAYLAND_DISPLAY
+and Wayland socket at: \${XDG_RUNTIME_DIR}/\${WAYLAND_DISPLAY}
+
+Be sure that your host has a graphic server running and those environment variables are properly set.
