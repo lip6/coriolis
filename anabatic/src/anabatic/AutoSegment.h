@@ -396,6 +396,7 @@ namespace Anabatic {
     // Internal: Static Attributes.
       static size_t                        _allocateds;
       static size_t                        _globalsCount;
+      static size_t                        _movedUp;
       static bool                          _analogMode;
       static bool                          _shortNetMode;
       static bool                          _initialized;
@@ -493,6 +494,7 @@ namespace Anabatic {
       static inline int           getTerminalCount           ( AutoSegment* seed );
       static inline size_t        getGlobalsCount            ();
       static inline size_t        getAllocateds              ();
+      static inline size_t        getMovedUp                 ();
       static inline unsigned long getMaxId                   ();
   };
 
@@ -616,6 +618,10 @@ namespace Anabatic {
     RoutingLayerGauge* layerGauge = Session::getLayerGauge( depth );
     base()->setLayer( layerGauge->getLayer    () );
     base()->setWidth( layerGauge->getWireWidth() );
+    if (getDirection() == layerGauge->getDirection())
+      unsetFlags( SegNonPref );
+    else
+      setFlags( SegNonPref );
 
     _depth = depth;
     _flags|=SegInvalidatedLayer;
@@ -710,6 +716,7 @@ namespace Anabatic {
 
   inline size_t  AutoSegment::getGlobalsCount () { return _globalsCount; }
   inline size_t  AutoSegment::getAllocateds   () { return _allocateds; }
+  inline size_t  AutoSegment::getMovedUp      () { return _movedUp; }
 
 
   inline void  AutoSegment::setObserver ( size_t slot, BaseObserver* observer )

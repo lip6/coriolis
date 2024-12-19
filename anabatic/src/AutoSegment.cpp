@@ -441,6 +441,7 @@ namespace Anabatic {
 
   size_t                         AutoSegment::_allocateds    = 0;
   size_t                         AutoSegment::_globalsCount  = 0;
+  size_t                         AutoSegment::_movedUp       = 0;
   bool                           AutoSegment::_analogMode    = false;
   bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
@@ -2105,6 +2106,8 @@ namespace Anabatic {
   {
     DebugSession::open( getNet(), 145, 150 );
 
+    if ((getDepth() < depth) and isCanonical()) _movedUp++;
+
     cdebug_log(149,1) << "changeDepth() " << depth << " - " << this << endl;
     Session::invalidate( getNet() );
 
@@ -2696,9 +2699,16 @@ namespace Anabatic {
   {
     cdebug_log(149,0) << "AutoVertical::promoteToPref() " << this << endl;
 
-    if (not isNonPref()) return false;
+    if (not isNonPref()) {
+      cdebug_log(149,0) << "Reject: not isNonPref() " << endl;
+      return false;
+    }
     size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
-    if (depth >= Session::getAllowedDepth()) return false;
+    if (depth >= Session::getAllowedDepth()) {
+      cdebug_log(149,0) << "Reject: at maximum depth (top layer)" << endl;
+      return false;
+    }
+    cdebug_log(149,0) << "promoting..." << endl;
 
     AutoContact* autoSource = getAutoSource();
     AutoContact* autoTarget = getAutoTarget();
