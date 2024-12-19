@@ -214,11 +214,15 @@ Some of the Coriolis tools rely on the graphic server (Xorg or Wayland), such as
 
 Running a graphic application from inside a container requires sharing the graphic server socket and configuration with the container.
 In compose file, for X11 we use the environment variable:
+
     - DISPLAY
     - XDG_SESSION_TYPE
     - XDG_RUNTIME_DIR
+
 and X11 socket within /tmp/.X11-unix, along with Wayland counterparts:
+
     - WAYLAND_DISPLAY
+
 and Wayland socket at: \${XDG_RUNTIME_DIR}/\${WAYLAND_DISPLAY}
 
 Be sure that your host has a graphic server running and those environment variables are properly set.
