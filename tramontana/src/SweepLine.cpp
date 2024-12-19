@@ -157,11 +157,24 @@ namespace Tramontana {
           continue;
         }
         if (_tiles[processeds].isLeftEdge()) {
+          // if (tile->getId() == 3) {
+          //   cdebug_log(160,0) << " Dumping tree:" << endl;
+          //   for ( const TileIntv& treeTile : intvTree->second ) {
+          //     cdebug_log(160,0) << " | " << treeTile << endl;
+          //   }
+          //   cdebug_log(160,0) << " Writing tree:" << endl;
+          //   intvTree->second.write( "debug-tree.dot" );
+          //   cdebug_log(160,0) << " Done" << endl;
+          //   DebugSession::open( 0, 169 );
+          // }
           for ( const TileIntv& overlap : intvTree->second.getOverlaps(
                                              Interval(tile->getYMin(), tile->getYMax() ))) {
             cdebug_log(160,0) << " | intersect " << overlap.getData() << endl;
             tile->merge( overlap.getData() );
           }
+          // if (tile->getId() == 3) {
+          //   DebugSession::close();
+          // }
           cdebug_log(160,0) << " | insert tile" << endl;
           intvTree->second.insert( tileIntv );
         } else {
