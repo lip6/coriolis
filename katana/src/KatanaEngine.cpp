@@ -151,6 +151,8 @@ namespace Katana {
   using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
+  using std::fixed;
+  using std::defaultfloat;
   using std::vector;
   using std::make_pair;
   using Hurricane::dbo_ptr;
@@ -723,8 +725,8 @@ namespace Katana {
       if (segment->isVertical  ()) ++vunrouteds;
     }
 
-    float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
-    float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
+    float segmentRatio     = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
+    float wireLengthRatio  = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
 
     setDetailedRoutingSuccess( unrouteds.empty() );
 
@@ -742,12 +744,21 @@ namespace Katana {
     //   }
     // }
 
-    string units = "L";
-    if (not isSymbolic) {
+  //DbU::Unit wlMetricUnit = const_cast<KatanaEngine*>(this)->getConfiguration()->getPitch( 1 );
+    DbU::Unit wlMetricUnit = const_cast<KatanaEngine*>(this)
+      ->getConfiguration()->getCellGauge()->getSliceHeight();
+    float     wlMetric     = 1.0;
+    string    units        = "L";
+    if (isSymbolic) {
+      wlMetric = DbU::toLambda( wlMetricUnit );
+    } else {
       units = "um";
       totalWireLength  /= 1000;
       routedWireLength /= 1000;
+      wlMetric = DbU::toPhysical( wlMetricUnit, DbU::UnitPower::Nano ) / 1000;
     }
+    float normedWireLength = (float)(totalWireLength) / wlMetric;
+
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";
     cmess1 << Dots::asString( "     - Track Segment Completion Ratio", result.str() ) << endl;
@@ -768,17 +779,43 @@ namespace Katana {
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
+    for ( RoutingPlane* rp : _routingPlanes ) {
+      DbU::Unit  rpTotalWL = rp->getTotalWL();
+      DbU::Unit  rpUsedWL  = rp->getUsedWL ();
+      
+      result.str("");
+      result << fixed << setprecision(2) << (((float)rpUsedWL / rpTotalWL) * 100.0) << "%";
+
+      ostringstream title;
+      title << "     - " << rp->getLayer()->getName() << " WL usage";
+      cmess1 << Dots::asString( title.str(), result.str() ) << endl;
+    }
+    
+
+    result.str("");
+    result << fixed << setprecision(0) << normedWireLength;
+    cmess1 << Dots::asString( "     - Normed Wire Length", result.str() ) << endl;
+    result.str("");
+    result << (normedWireLength / getNetDatas().size());
+    cmess1 << Dots::asString( "     - Normed Wire Length / Net", result.str() ) << endl;
+    result << defaultfloat;
+    result.str("");
+    result << defaultfloat << AutoSegment::getMovedUp()
+           << " (" << setprecision(2) << fixed << setfill(' ') << right << setw(5)
+           << ((float)AutoSegment::getMovedUp() / AutoSegment::getAllocateds()) * 100.0 << "%)";
+    cmess1 << Dots::asString( "     - Moved up segments", result.str() ) << endl;
+
     float ratio = 0.0;
     if (not unrouteds.empty())
       ratio = ((float)hunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
-    result << setprecision(4) << ratio << "% [" << hunrouteds << "]";
+    result << ratio << "% [" << hunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted horizontals", result.str() ) << endl;
 
     if (not unrouteds.empty())
       ratio = ((float)vunrouteds / (float)unrouteds.size()) * 100.0;
     result.str("");
-    result << setprecision(4) << ratio << "% [" << vunrouteds << "]";
+    result << ratio << "% [" << vunrouteds << "]";
     cmess1 << Dots::asString( "     - Unrouted verticals", result.str() ) << endl;
 
     addMeasure<size_t>  ( "Segs"   , routeds+unrouteds.size() );
