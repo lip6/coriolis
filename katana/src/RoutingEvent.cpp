@@ -560,6 +560,7 @@ namespace Katana {
     cdebug_log(159,0) << "_rescheduleAsPref() " << _segment << endl;
     cdebug_log(159,0) << "_segment->getDirection() " << _segment->getDirection() << endl;
     cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(_segment->getLayer()) << endl;
+    if (Session::getStage() != StageNegociate) return false;
     if (_segment->getDirection() == Session::getDirection(_segment->getLayer()))
       return false;
     if (_dataNegociate and (_dataNegociate->getState() < DataNegociate::MaximumSlack))
@@ -600,8 +601,12 @@ namespace Katana {
   {
     cdebug_log(159,0) << "* Mode:Repair." << endl;
 
-    if ( _segment->getTrack() != NULL ) {
+    if (_segment->getTrack() != NULL) {
       cdebug_log(159,0) << "* Cancel: already in Track." << endl;
+      return;
+    }
+    if (_segment->isNonPref()) {
+      cdebug_log(159,0) << "* Cancel: cannot repair non-prefs." << endl;
       return;
     }
 
