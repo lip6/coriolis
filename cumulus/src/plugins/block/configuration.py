@@ -1456,13 +1456,14 @@ class BlockConf ( GaugeConf ):
         self.ioPinsCounts  = {}
         self.ioPinsArg     = ioPins
         self.ioPadsArg     = ioPads
-        self.doLvx         = False
+        self.doLvx         = 'corona'
         self.cfg.etesian.aspectRatio      = None
         self.cfg.etesian.spaceMargin      = None
         self.cfg.etesian.latchUpDistance  = None
         self.cfg.block.spareSide          = None
         self.cfg.block.vRailsPeriod       = None
         self.cfg.katana.dumpMeasures      = None
+        self.cfg.tramontana.mergeSupplies = False
         self.cfg.spares.useFeedTrackAvoid = CfgDefault(False)
         self.cfg.spares.htreeRootOffset   = CfgDefault(3)
         self.cfg.spares.htreeOffset       = CfgDefault(5)
