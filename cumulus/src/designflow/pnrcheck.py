@@ -56,7 +56,7 @@ def mkRuleSet ( callerGlobals, vlogDesignName, flags=0, extraRtlDepends=[], extr
                               , flags=Lvx.Flatten )
     ruleDruc   = Druc  .mkRule( 'druc'  , [rulePnR], flags=0 )
     ruleLayout = Alias .mkRule( 'layout', [rulePnR] )
-    ruleCgt    = PnR   .mkRule( 'cgt' )
+    ruleCgt    = PnR   .mkRule( 'cgt', depends=rtlDepends )
     ruleGraal  = Graal .mkRule( 'graal', rulePnR.file_target(0) )
 
     if not (flags & NoGDS):
