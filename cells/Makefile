@@ -1,12 +1,13 @@
 ## Cells wheel packages build Makefile
 
 ### Environment variables and venv setup
-LOG_FILE   := cells-build.log
+LOG_FILE   		:= cells-build.log
+DIST_PATH  		:= ../dist
 
-venv        = . ${VENV_PATH}/bin/activate;
+venv        	= . ${VENV_PATH}/bin/activate;
 
-PIP_INSTALL = $(venv) pip3 install --upgrade
-PACKAGES    = pip setuptools build wheel cibuildwheel
+PIP_INSTALL 	= $(venv) pip3 install --upgrade
+PACKAGES    	= pip setuptools build wheel cibuildwheel
 
 venv-setup:
 	${PYTHON3} -m venv ${VENV_PATH} > $(LOG_FILE) 2>&1
@@ -24,7 +25,7 @@ CELLS_LIBS = hibikino \
 
 define build_target
 $(1): venv-setup
-	$(venv) ${PYTHON3} -m build -w -o dist $(1) >> $(LOG_FILE) 2>&1
+	$(venv) ${PYTHON3} -m build -w -o ${DIST_PATH} $(1) >> $(LOG_FILE) 2>&1
 endef
 
 # Generate build targets
@@ -33,10 +34,6 @@ $(foreach target,$(CELLS_LIBS),$(eval $(call build_target,$(target))))
 ### All target
 all: $(CELLS_LIBS)
 	@echo "Finished building all cells wheel packages" >> $(LOG_FILE) 2>&1
-
-### Install target
-install: all
-	$(venv) pip3 install --upgrade dist/*.whl
 
 ## Uninstall target
 define uninstall_cells_lib
@@ -60,7 +57,3 @@ $(foreach target,$(CELLS_LIBS),$(eval $(call clean_target,$(target))))
 
 clean: $(foreach target,$(CELLS_LIBS),clean-$(target))
 	rm -f $(LOG_FILE)
-
-### MrProper target
-mrproper: clean
-	rm -rf dist

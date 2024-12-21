@@ -1,5 +1,5 @@
 [project]
-name = "coriolis_cells_lsxram"
+name = "coriolis_ip_lsxram"
 version = "0.1.0"
 description = "LSXRAM IP for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
@@ -12,8 +12,8 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = [
-  "coriolis.IP.lsxram",
-  "coriolis.IP.lsxram.*"
+  "coriolis.ip.lsxram",
+  "coriolis.ip.lsxram.*"
 ]
 
 [tool.setuptools.package-data]
