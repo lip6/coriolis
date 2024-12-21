@@ -1,7 +1,7 @@
-## IP wheel packages build Makefile
+## IPs wheel packages build Makefile
 
 ### Environment variables and venv setup
-LOG_FILE   		:= ip-build.log
+LOG_FILE   		:= ips-build.log
 DIST_PATH  		:= ../dist
 
 venv        	= . ${VENV_PATH}/bin/activate;
@@ -31,7 +31,7 @@ all: $(IPS)
 ## Uninstall target
 define uninstall_ips
 uninstall-$(1):
-	$(venv) pip3 uninstall -y coriolis_ip_$(1)
+	$(venv) pip3 uninstall -y coriolis_ips_$(1)
 endef
 
 $(foreach ip,$(IPS),$(eval $(call uninstall_ips,$(ip))))
