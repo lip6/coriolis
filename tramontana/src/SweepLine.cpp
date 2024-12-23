@@ -110,7 +110,7 @@ namespace Tramontana {
   void  SweepLine::run ( bool isTopLevel )
   {
     UpdateSession::open();
-    // if (getCell()->getName() == "arlet6502_cts_r")
+    // if (getCell()->getName() == "a2_x2")
     //   DebugSession::open( 160, 169 );
     cdebug_log(160,1) << "SweepLine::run()" << endl;
     Box       ab         = getCell()->getBoundingBox();
@@ -204,7 +204,7 @@ namespace Tramontana {
     mergeEquipotentials( Tile::MakeLeafEqui );
     if (isTopLevel) printSummary();
     Tile::deleteAllTiles();
-    // if (getCell()->getName() == "arlet6502_cts_r")
+    // if (getCell()->getName() == "a2_x2")
     //   DebugSession::close();
     UpdateSession::close();
   }
@@ -235,7 +235,8 @@ namespace Tramontana {
     if (_tiles.size() > 1) {
       size_t itile = _tiles.size();
       while ( itile > 1 ) {
-        if (_tiles[--itile].isLeftEdge()) {
+        itile--;
+        if (_tiles[itile].isLeftEdge() and (_tiles[itile].getX() < _slidingWindow.getXMax())) {
           _lastLeftEdge = _tiles[itile].getTile();
           cdebug_log(160,0) << "_lastLeftEdge: " << _lastLeftEdge << endl;
           break;
