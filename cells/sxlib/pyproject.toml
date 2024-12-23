@@ -1,0 +1,38 @@
+[project]
+name = "coriolis_cells_sxlib"
+version = "0.1.0"
+description = "Sxlib cells library for Coriolis EDA"
+authors = [ { name = "Coriolis EDA Contributers" } ]
+requires-python = ">= 3.9"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+  "coriolis.cells.sxlib",
+  "coriolis.cells.sxlib.*"
+]
+
+[tool.setuptools.package-data]
+sxlib = [
+  "CATAL", "sxlib.lib", "sxlib.cct", "sxlib.db", "sxlib.lef", "sxlib.slib",
+  "*.ap",
+  "*.vbe",
+  "*.dat",
+  "*.sym",
+  "*.al",
+  "*.vbe",
+  "*.vhd",
+]
+
+[build-system]
+requires = [
+    "setuptools",
+    "cibuildwheel",
+    "build",
+    "pdm-backend"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+build = "cp310-*"
+skip = ["cp36-*", "cp37-*", "cp38-*", "cp39-*", "pp*"]

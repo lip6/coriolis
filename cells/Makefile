@@ -14,7 +14,8 @@ venv-setup:
 	$(foreach pkg,$(PACKAGES),$(PIP_INSTALL) $(pkg);)
 
 ### Cells libraries CELLS_LIBS
-CELLS_LIBS = hibikino \
+CELLS_LIBS = sxlib \
+	hibikino \
 	lsxlib \
 	mpxlib msplib msxlib \
 	niolib nramlib nrf2lib \
