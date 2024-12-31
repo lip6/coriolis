@@ -27,7 +27,7 @@
  else
    $(info Using rpmbuild directory tree scheme)
    PYTHON_BIN   = python3
-   ifeq ($(findstring coriolis-eda-2.5.5-build,$(shell pwd)),)
+   ifneq ($(findstring coriolis-eda-2.5.5-build,$(shell pwd)),)
      SRC_DIR    = ${HOME}/rpmbuild/BUILD/coriolis-eda-2.5.5-build
    else
      SRC_DIR    = ${HOME}/rpmbuild/BUILD
