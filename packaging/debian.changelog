@@ -1,0 +1,7 @@
+coriolis-eda (2.5.5) unstable; urgency=low
+
+  * Initial release. Closes: #00001
+  * Updated debian packages files
+  * Update control file.
+  
+  -- Mazher Iqbal <mazher.iqbal@lip6.fr> Tue, 28 May 2024 11:46:00 +0100

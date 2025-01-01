@@ -72,13 +72,22 @@
 
  echo "* Update files in OBS project directory."
  echo "  OBS package directory: \"${obsDir}\"."
- for distribFile in packaging/coriolis-eda.spec       \
-                    packaging/patchvenv.sh            \
-                    packaging/find_files.sh           \
-                    packaging/coloquinte-clamp.patch  \
-                    coriolis-eda-${version}.tar.gz    \
-                    venv-al9-${version}.tar.gz        \
-                    coriolis-docs-${docGithash}.tar.gz; do
+ for distribFile in packaging/coriolis-eda.spec               \
+                    packaging/patchvenv.sh                    \
+                    packaging/find_files.sh                   \
+                    packaging/coloquinte-clamp.patch          \
+                    coriolis-eda-${version}.tar.gz            \
+                    venv-al9-${version}.tar.gz                \
+                    coriolis-docs-${docGithash}.tar.gz        \
+		    packaging/coriolis-eda.dsc                \
+		    packaging/debian.copyright                \
+		    packaging/debian.changelog                \
+		    packaging/debian.control                  \
+		    packaging/debian.rules                    \
+		    packaging/debian.coriolis-eda.install     \
+		    packaging/debian.coriolis-eda-dev.install \
+		    packaging/debian.coriolis-eda-doc.install \
+		    ; do
    if [ ! -f "${distribFile}" ]; then continue; fi
    if [[ "${distribFile}" == packaging* ]]; then
      echo "  - copy ${distribFile}."

@@ -1,6 +1,6 @@
 
 
- venv = source .venv/bin/activate;
+ venv = . .venv/bin/activate;
 
  REGRESSION_DIR = 
  ifneq ($(findstring nightly,$(shell pwd)),)
@@ -14,18 +14,10 @@
  ifneq ($(shell which nproc 2> /dev/null),)
    SMP_FLAGS = -j$(shell nproc)
  endif
- ifeq ($(findstring abuild/rpmbuild,$(shell pwd)),)
-   $(info Using LIP6 build directory tree scheme)
-#  PYTHON_BIN   = /usr/bin/python3.11
-   PYTHON_BIN   = python3
-   SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
-   CORIOLIS_SRC = ${SRC_DIR}/coriolis
-   ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
-   BUILDTYPE    = release
-   BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
-   PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
- else
-   $(info Using rpmbuild directory tree scheme)
+
+ USE_VENV = Yes
+ ifneq ($(findstring abuild/rpmbuild,$(shell pwd)),)
+   $(info Using RPM directory tree scheme)
    PYTHON_BIN   = python3
    ifneq ($(findstring coriolis-eda-2.5.5-build,$(shell pwd)),)
      SRC_DIR    = ${HOME}/rpmbuild/BUILD/coriolis-eda-2.5.5-build
@@ -36,11 +28,39 @@
    ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
    BUILDDIR     = ${CORIOLIS_SRC}/build
    PREFIX       = /usr
+ else
+   ifneq ($(findstring packages/BUILD,$(shell pwd)),)
+     $(info Using DEB directory tree scheme)
+     PYTHON_BIN   = python3
+     SRC_DIR      = /usr/src/packages/BUILD
+     CORIOLIS_SRC = ${SRC_DIR}
+     ALLIANCE_SRC = ${SRC_DIR}
+     BUILDDIR     = ${CORIOLIS_SRC}/build
+     PREFIX       = /usr
+   else
+     $(info Using LIP6 build directory tree scheme)
+#    PYTHON_BIN   = /usr/bin/python3.11
+     PYTHON_BIN   = python3
+     SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
+     CORIOLIS_SRC = ${SRC_DIR}/coriolis
+     ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+     BUILDTYPE    = release
+     BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
+     PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+   endif
  endif
- PDM_BIN     = $(CORIOLIS_SRC)/.venv/bin/pdm
- MESON_BIN   = $(CORIOLIS_SRC)/.venv/bin/meson
- PELICAN_BIN = $(CORIOLIS_SRC)/.venv/bin/pelican
- DOIT_BIN    = $(CORIOLIS_SRC)/.venv/bin/doit
+
+ ifeq ($(USE_VENV),Yes)
+   PDM_BIN     = $(CORIOLIS_SRC)/.venv/bin/pdm
+   MESON_BIN   = $(CORIOLIS_SRC)/.venv/bin/meson
+   PELICAN_BIN = $(CORIOLIS_SRC)/.venv/bin/pelican
+   DOIT_BIN    = $(CORIOLIS_SRC)/.venv/bin/doit
+ else
+   PDM_BIN     = /usr/bin/pdm
+   MESON_BIN   = /usr/bin/meson
+   PELICAN_BIN = /usr/bin/pelican
+   DOIT_BIN    = /usr/bin/doit
+ endif
 
 
 
