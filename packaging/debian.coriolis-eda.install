@@ -1,0 +1,4 @@
+/usr/bin/*
+/usr/lib/*
+/usr/lib/python*
+/usr/lib/x86_64-linux-gnu/*.so

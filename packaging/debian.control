@@ -1,0 +1,71 @@
+Source: coriolis-eda
+Section: Science/Electronics
+Priority: optional
+Maintainer: Mazher Iqbal <mazher.iqbal@lip6.fr>
+Build-Depends: debhelper-compat (= 13),
+               bison,
+               meson,
+               pelican,
+               cmake,
+               doxygen,
+               flex,
+               pkg-config,
+               libstdc++6,
+               libboost-all-dev,
+               libbz2-dev,
+               qtbase5-dev,
+               libqt5svg5-dev,
+               libqwt-qt5-dev,
+               libqt5opengl5-dev,
+               libeigen3-dev,
+               libxml2-dev,
+               libxpm-dev,
+               libmotif-common,
+               libmotif-dev,
+               libxm4,
+               ninja-build,
+               python3,
+               python3-pip,
+               python3-pdm,
+               python3-setuptools,
+               python3-wheel,
+               python3-virtualenv,
+               python3-venv, 
+               rapidjson-dev,
+               build-essential,
+               texlive-latex-recommended,
+               graphviz,
+               xpdf,
+Standards-Version: 2.5.5
+X-Python3-Version: >= 3.5
+Homepage: https://coriolis.lip6.fr/
+Rules-Requires-Root: no
+#Vcs-Git: https://salsa.debian.org/debian/coriolis.git
+#Vcs-Browser: https://salsa.debian.org/debian/coriolis
+
+Package: coriolis-eda
+Architecture: any
+Multi-Arch: foreign
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends} 
+Description: A FOSS EDA tool suite for physical design. Provides an integrated place & route for ASICs. Support symbolic layout (Alliance) and real layout (GDS). While mainly written in C++, it has an extensive Python interface.
+
+Package: coriolis-eda-dev
+Architecture: any
+Multi-Arch: foreign
+Depends:
+  ${misc:Depends},
+  ${shlibs:Depends} 
+Description: Development files for the Coriolis EDA toolchain.
+
+Package: coriolis-eda-doc
+Architecture: any
+Multi-Arch: foreign
+Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends} 
+Description: This documentation is a subset of the Coriolis website. It provides informations for:
+ - The Hurricane database (C++).
+ - The Coriolis Core (CRL) infrastructure (C++).
+ - The dedicated C++/Python wrapper (Isobar,C/C++/Python). The Python interface has been made so that it mimics closely the C++ one, so the C++ doc can be used for both.
+ - Some technical specifications.
+ - A general introduction and user's manual.
