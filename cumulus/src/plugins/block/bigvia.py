@@ -181,10 +181,13 @@ class BigVia ( object ):
         self.hasLayout = True
 
     def _computeCutMatrix ( self, depth ):
+        twoGrid      = DbU.fromGrid( 2.0 )
         viaLayer     = rg.getContactLayer( depth )
         cutLayer     = viaLayer.getCut()
         cutSide      = cutLayer.getMinimalSize()
         cutSpacing   = cutLayer.getMinimalSpacing()
+        cutVSpacing  = int(cutSpacing * 1.4)
+        cutVSpacing  = cutVSpacing - cutVSpacing%twoGrid
         if not cutSide:
             raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Minimal side of cut layer "{}" is zero.' \
                                    .format( cutLayer.getName() ))
@@ -203,9 +206,9 @@ class BigVia ( object ):
                 botPlate.setWidth( minHSide )
 
             botVEnclosure = viaLayer.getBottomEnclosure( Layer.EnclosureV )
-            cutNb         = (self.rheight - 2*botVEnclosure + cutSpacing) // (cutSide + cutSpacing)
+            cutNb         = (self.rheight - 2*botVEnclosure + cutVSpacing) // (cutSide + cutVSpacing)
             if cutNb == 0: cutNb = 1
-            minVSide = 2*botVEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
+            minVSide = 2*botVEnclosure + cutNb*cutSide + (cutNb-1)*cutVSpacing
             if (depth == self.bottomDepth) or (botPlate.getHeight() < minVSide):
                 botPlate.setHeight( minVSide )
 
@@ -218,9 +221,9 @@ class BigVia ( object ):
             topPlate.setWidth( minHSide )
 
             topVEnclosure = viaLayer.getTopEnclosure( Layer.EnclosureV )
-            cutNb         = (self.rheight - 2*topVEnclosure + cutSpacing) // (cutSide + cutSpacing)
+            cutNb         = (self.rheight - 2*topVEnclosure + cutVSpacing) // (cutSide + cutVSpacing)
             if cutNb == 0: cutNb = 1
-            minVSide = 2*topVEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
+            minVSide = 2*topVEnclosure + cutNb*cutSide + (cutNb-1)*cutVSpacing
             topPlate.setHeight( minVSide )
 
             return [cutSide, cutSpacing, botHEnclosure]
@@ -259,15 +262,20 @@ class BigVia ( object ):
         return [cutSide, cutSpacing, hEnclosure]
 
     def _doCutMatrix ( self, depth, cutMatrix ):
-        cutSide    = cutMatrix[0]
-        cutSpacing = cutMatrix[1]
-        hEnclosure = cutMatrix[2]
-        viaLayer   = rg.getContactLayer( depth )
-        cutLayer   = viaLayer.getCut()
-        cutArea    = self.plates[ depth ].getBoundingBox()
+        twoGrid     = DbU.fromGrid( 2.0 )
+        cutSide     = cutMatrix[0]
+        cutSpacing  = cutMatrix[1]
+        cutVSpacing = int(cutSpacing * 1.4)
+        cutVSpacing = cutVSpacing - cutVSpacing%twoGrid
+        hEnclosure  = cutMatrix[2]
+        viaLayer    = rg.getContactLayer( depth )
+        cutLayer    = viaLayer.getCut()
+        cutAreaBot  = self.plates[ depth   ].getBoundingBox()
+        cutAreaTop  = self.plates[ depth+1 ].getBoundingBox()
+        cutArea     = cutAreaTop.getIntersection( cutAreaBot )
         cutArea.inflate( -hEnclosure, -hEnclosure )
-        xoffset    = (cutArea.getWidth () % (cutSide+cutSpacing)) // 2
-        yoffset    = (cutArea.getHeight() % (cutSide+cutSpacing)) // 2
+        xoffset    = (cutArea.getWidth () % (cutSide+ cutSpacing)) // 2
+        yoffset    = (cutArea.getHeight() % (cutSide+cutVSpacing)) // 2
         cutArea.translate( xoffset, yoffset )
         self.vias[ depth ] = []
         y = cutArea.getYMin()
@@ -279,5 +287,5 @@ class BigVia ( object ):
                 self.vias[ depth ][ -1 ].append( cut )
                 x += cutSide + cutSpacing
                 trace( 550, '\t| cut {})\n'.format( cut ))
-            y += cutSide + cutSpacing
+            y += cutSide + cutVSpacing
         

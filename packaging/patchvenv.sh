@@ -10,11 +10,13 @@
 
     useSystemPackages="False"
  removeVEnvWatchfiles="False"
+            removePip="False"
           badArgument=""
  while [ $# -gt 0 ]; do
    case $1 in
      --use-system-packages)    useSystemPackages="True";;
      --remove-venv-watchfiles) removeVEnvWatchfiles="True";;
+     --remove-pip)             removePip="True";;
      *)                        badArgument="$1";;
    esac
    shift
@@ -35,6 +37,14 @@
    sed -i "s,#!.*venv/bin/python,#!${VIRTUAL_ENV}/bin/python," ${binfile}
  done
 
+ if [ "${removeVEnvWatchfiles}" = "True" ]; then 
+   rm -r ${VIRTUAL_ENV}/bin/watchfiles
+   rm -r ${VIRTUAL_ENV}/lib/python3.9/site-packages/watchfiles*
+ fi
+ if [ "${removePip}" = "True" ]; then 
+   rm -r ${VIRTUAL_ENV}/bin/pip*
+   rm -r ${VIRTUAL_ENV}/lib/python3.9/site-packages/pip* 
+ fi
  if [ "${useSystemPackages}" = "True" ]; then
     sed -i "s,include-system-site-packages.*=.*false,include-system-site-packages.*=.*true," .venv/pyvenv.cfg
  fi
@@ -44,10 +54,6 @@
    ln -sf ${VIRTUAL_ENV}/lib/${PYTHON_VERSION} ${VIRTUAL_ENV}/lib/python3.9 
    ln -sf python3                              ${VIRTUAL_ENV}/bin/${PYTHON_VERSION}
    ln -sf /usr/bin/${PYTHON_VERSION}           ${VIRTUAL_ENV}/bin/python3
- fi
- if [ "${removeVEnvWatchfiles}" = "True" ]; then 
-   rm -r ${VIRTUAL_ENV}/bin/watchfiles
-   rm -r ${VIRTUAL_ENV}/lib/python3.9/site-packages/watchfiles*
  fi
  ls -al .venv/bin
  source ${VIRTUAL_ENV}/bin/activate

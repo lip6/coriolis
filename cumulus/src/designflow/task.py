@@ -97,6 +97,7 @@ class ShellEnv ( object ):
         for variable, value in self.shellEnv.items():
             if value is None: continue
             os.environ[ variable ] = value
+            print( '{} = {}'.format( variable, value ))
         if ShellEnv.RDS_TECHNO_NAME is not None:
             os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
         if ShellEnv.GRAAL_TECHNO_NAME is not None:
