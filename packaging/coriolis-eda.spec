@@ -149,7 +149,7 @@ Warning: This package is only a stub for now.
 
 %install
  CFLAGS=`echo ${CFLAGS} | sed 's,-Werror[^ ]*,,'`
- CXXFLAGS=`echo ${CFLAGS} | sed 's,-Werror[^ ]*,,'`
+ CXXFLAGS=`echo ${CXXFLAGS} | sed 's,-Werror[^ ]*,,'`
  CORIOLIS_TOP=%{_prefix}; export CORIOLIS_TOP
  DESTDIR=%{buildroot};    export DESTDIR
 
