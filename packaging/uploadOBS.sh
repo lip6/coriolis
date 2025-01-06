@@ -5,7 +5,7 @@
 
  printHelp () {
    echo ""
-   echo "  Usage: mkArchives.sh [--sources] [--docs] [--venv] [--commit] [--run]"
+   echo "  Usage: uploadOBSs.sh [--sources] [--docs] [--venv] [--commit] [--run]"
    echo ""
    echo "  Options:"
    echo "    [--sources] : Build an archive from the HEAD of the current branch."
@@ -49,7 +49,7 @@
    exit 1
  fi
 
- echo "Running mkArchives.sh"
+ echo "Running uploadOBSs.sh"
  echo "* Using HEAD githash as release: ${githash}."
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
@@ -82,6 +82,7 @@
 		    packaging/coriolis-eda.dsc                \
 		    packaging/debian.copyright                \
 		    packaging/debian.changelog                \
+		    packaging/debian.series                   \
 		    packaging/debian.control                  \
 		    packaging/debian.rules                    \
 		    packaging/debian.coriolis-eda.install     \
