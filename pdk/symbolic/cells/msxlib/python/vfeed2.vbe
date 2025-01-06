@@ -1,0 +1,18 @@
+ENTITY vfeed2 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 2000;
+  CONSTANT transistors	 : NATURAL := 0
+);
+PORT (
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END vfeed2;
+
+ARCHITECTURE behaviour_data_flow OF vfeed2 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on vfeed2"
+  SEVERITY WARNING;
+END;

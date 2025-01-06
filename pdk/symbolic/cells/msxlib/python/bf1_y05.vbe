@@ -1,0 +1,26 @@
+ENTITY bf1_y05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4000;
+  CONSTANT cin_a         : NATURAL := 3;      
+  CONSTANT rdown_a_z     : NATURAL := 3810;   
+  CONSTANT rup_a_z       : NATURAL := 4940;   
+  CONSTANT tpll_a_z      : NATURAL := 78;     
+  CONSTANT tphh_a_z      : NATURAL := 66;     
+  CONSTANT transistors   : NATURAL := 4       
+);
+PORT (
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END bf1_y05;
+
+ARCHITECTURE behaviour_data_flow OF bf1_y05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on bf1_y05"
+  SEVERITY WARNING;
+  z <= a after 1000 ps;
+END;

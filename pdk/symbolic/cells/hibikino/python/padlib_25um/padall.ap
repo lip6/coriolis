@@ -1,0 +1,8 @@
+V ALLIANCE : 6
+H padall,P,25/11/2016,100
+A -64000,-128000,64000,0
+I 52800,-115200,padline,east,ROT_M
+I -59200,-115200,padline,west,ROT_P
+I -51200,-123200,padline,south,SYMXY
+I -51200,-11200,padline,north,NOSYM
+EOF

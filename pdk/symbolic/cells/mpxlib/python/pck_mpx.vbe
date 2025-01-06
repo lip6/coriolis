@@ -1,0 +1,29 @@
+ENTITY pck_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT cin_pad : NATURAL := 1326;	
+    CONSTANT tpll_pad : NATURAL := 1443;	
+    CONSTANT rdown_pad : NATURAL := 58;	
+    CONSTANT tphh_pad : NATURAL := 228;	
+    CONSTANT rup_pad : NATURAL := 68	
+  );
+  PORT (
+  pad : in BIT;	
+  ck : out BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pck_mpx;
+
+
+ARCHITECTURE behaviour_data_flow OF pck_mpx IS
+
+BEGIN
+  ck <= pad;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on pck_mpx"
+    SEVERITY WARNING;
+END;

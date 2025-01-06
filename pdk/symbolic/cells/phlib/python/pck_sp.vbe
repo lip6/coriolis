@@ -1,0 +1,40 @@
+-- VHDL data flow description generated from `pck_sp`
+--		date : Thu Feb 23 17:05:59 1995
+
+
+-- Entity Declaration
+
+ENTITY pck_sp IS
+  GENERIC (
+    CONSTANT area : NATURAL := 86000;	-- area
+    CONSTANT cin_pad : NATURAL := 1326;	-- cin_pad
+    CONSTANT tpll_pad : NATURAL := 1443;	-- tpll_pad
+    CONSTANT rdown_pad : NATURAL := 58;	-- rdown_pad
+    CONSTANT tphh_pad : NATURAL := 228;	-- tphh_pad
+    CONSTANT rup_pad : NATURAL := 68	-- rup_pad
+  );
+  PORT (
+  pad : in BIT;	-- pad
+  ck : out BIT;	-- ck
+  vdd : in BIT;	-- vdd
+  vss : in BIT	-- vsi
+  --vdde : in BIT;	-- vdde
+  --vddi : in BIT;	-- vddi
+  --vsse : in BIT;	-- vsse
+  --vssi : in BIT	-- vssi
+  );
+END pck_sp;
+
+
+-- Architecture Declaration
+
+ARCHITECTURE behaviour_data_flow OF pck_sp IS
+
+BEGIN
+  ASSERT ((((vdd and vdd)and not (vss)) and not (vss)) = '1')
+    REPORT "power supply is missing on pck_sp"
+    SEVERITY WARNING;
+
+
+ck <= pad;
+END;

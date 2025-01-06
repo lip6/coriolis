@@ -1,0 +1,44 @@
+ENTITY xaon21_x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 8000;
+  CONSTANT cin_b         : NATURAL := 5;      
+  CONSTANT cin_a1        : NATURAL := 4;      
+  CONSTANT cin_a2        : NATURAL := 4;      
+  CONSTANT rdown_b_z     : NATURAL := 3870;   
+  CONSTANT rdown_a1_z    : NATURAL := 3870;   
+  CONSTANT rdown_a2_z    : NATURAL := 3870;   
+  CONSTANT rup_b_z       : NATURAL := 3790;   
+  CONSTANT rup_a1_z      : NATURAL := 4790;   
+  CONSTANT rup_a2_z      : NATURAL := 4780;   
+  CONSTANT tplh_a1_z     : NATURAL := 82;     
+  CONSTANT tplh_a2_z     : NATURAL := 78;     
+  CONSTANT tphl_b_z      : NATURAL := 29;     
+  CONSTANT tplh_b_z      : NATURAL := 88;     
+  CONSTANT tphh_b_z      : NATURAL := 55;     
+  CONSTANT tphl_a1_z     : NATURAL := 76;     
+  CONSTANT tphl_a2_z     : NATURAL := 78;     
+  CONSTANT tpll_a1_z     : NATURAL := 111;    
+  CONSTANT tpll_a2_z     : NATURAL := 105;    
+  CONSTANT tpll_b_z      : NATURAL := 88;     
+  CONSTANT tphh_a1_z     : NATURAL := 113;    
+  CONSTANT tphh_a2_z     : NATURAL := 114;    
+  CONSTANT transistors   : NATURAL := 11      
+);
+PORT (
+  b	 : in  BIT;
+  a1	 : in  BIT;
+  a2	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END xaon21_x05;
+
+ARCHITECTURE behaviour_data_flow OF xaon21_x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on xaon21_x05"
+  SEVERITY WARNING;
+  z <= (b xor (a1 and a2)) after 1000 ps;
+END;

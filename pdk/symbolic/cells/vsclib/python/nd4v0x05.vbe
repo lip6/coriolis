@@ -1,0 +1,44 @@
+ENTITY nd4v0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4032;   
+  CONSTANT cin_a         : NATURAL := 3;      
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_c         : NATURAL := 4;      
+  CONSTANT cin_d         : NATURAL := 3;      
+  CONSTANT rdown_a_z     : NATURAL := 5440;   
+  CONSTANT rdown_b_z     : NATURAL := 5440;   
+  CONSTANT rdown_c_z     : NATURAL := 5440;   
+  CONSTANT rdown_d_z     : NATURAL := 5430;   
+  CONSTANT rup_a_z       : NATURAL := 5990;   
+  CONSTANT rup_b_z       : NATURAL := 5960;   
+  CONSTANT rup_c_z       : NATURAL := 5950;   
+  CONSTANT rup_d_z       : NATURAL := 5960;   
+  CONSTANT tphl_a_z      : NATURAL := 59;     
+  CONSTANT tphl_b_z      : NATURAL := 58;     
+  CONSTANT tphl_c_z      : NATURAL := 52;     
+  CONSTANT tphl_d_z      : NATURAL := 46;     
+  CONSTANT tplh_d_z      : NATURAL := 59;     
+  CONSTANT tplh_c_z      : NATURAL := 69;     
+  CONSTANT tplh_b_z      : NATURAL := 78;     
+  CONSTANT tplh_a_z      : NATURAL := 84;     
+  CONSTANT transistors   : NATURAL := 8       
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  d	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END nd4v0x05;
+
+ARCHITECTURE behaviour_data_flow OF nd4v0x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on nd4v0x05"
+  SEVERITY WARNING;
+  z <= not ((((a and b) and c) and d)) after 206 ps;
+END;

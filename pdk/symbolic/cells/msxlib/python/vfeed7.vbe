@@ -1,0 +1,18 @@
+ENTITY vfeed7 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 7000;
+  CONSTANT transistors	 : NATURAL := 0
+);
+PORT (
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END vfeed7;
+
+ARCHITECTURE behaviour_data_flow OF vfeed7 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on vfeed7"
+  SEVERITY WARNING;
+END;

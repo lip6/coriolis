@@ -1,0 +1,26 @@
+ENTITY iv1_x3 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4000;
+  CONSTANT cin_a         : NATURAL := 9;      
+  CONSTANT rdown_a_z     : NATURAL := 810;    
+  CONSTANT rup_a_z       : NATURAL := 1060;   
+  CONSTANT tphl_a_z      : NATURAL := 33;     
+  CONSTANT tplh_a_z      : NATURAL := 37;     
+  CONSTANT transistors   : NATURAL := 4       
+);
+PORT (
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END iv1_x3;
+
+ARCHITECTURE behaviour_data_flow OF iv1_x3 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on iv1_x3"
+  SEVERITY WARNING;
+  z <= not (a) after 700 ps;
+END;

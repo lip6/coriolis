@@ -1,0 +1,44 @@
+ENTITY or4v0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4608;   
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_c         : NATURAL := 4;      
+  CONSTANT cin_a         : NATURAL := 4;      
+  CONSTANT cin_d         : NATURAL := 5;      
+  CONSTANT rdown_b_z     : NATURAL := 4290;   
+  CONSTANT rdown_c_z     : NATURAL := 4290;   
+  CONSTANT rdown_a_z     : NATURAL := 4290;   
+  CONSTANT rdown_d_z     : NATURAL := 4280;   
+  CONSTANT rup_b_z       : NATURAL := 5030;   
+  CONSTANT rup_c_z       : NATURAL := 4980;   
+  CONSTANT rup_a_z       : NATURAL := 5100;   
+  CONSTANT rup_d_z       : NATURAL := 4960;   
+  CONSTANT tphh_d_z      : NATURAL := 86;     
+  CONSTANT tphh_c_z      : NATURAL := 101;    
+  CONSTANT tphh_b_z      : NATURAL := 111;    
+  CONSTANT tpll_a_z      : NATURAL := 184;    
+  CONSTANT tphh_a_z      : NATURAL := 116;    
+  CONSTANT tpll_b_z      : NATURAL := 175;    
+  CONSTANT tpll_d_z      : NATURAL := 123;    
+  CONSTANT tpll_c_z      : NATURAL := 155;    
+  CONSTANT transistors   : NATURAL := 10      
+);
+PORT (
+  b	 : in  BIT;
+  c	 : in  BIT;
+  a	 : in  BIT;
+  d	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END or4v0x05;
+
+ARCHITECTURE behaviour_data_flow OF or4v0x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on or4v0x05"
+  SEVERITY WARNING;
+  z <= (((b or c) or a) or d) after 248 ps;
+END;

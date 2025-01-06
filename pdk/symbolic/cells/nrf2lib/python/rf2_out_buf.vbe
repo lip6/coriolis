@@ -1,0 +1,21 @@
+ENTITY rf2_out_buf IS
+PORT (
+  ck     : in    BIT;
+  nck    : inout BIT;
+  xcks	 : out   BIT;
+  vdd	 : in    BIT;
+  vss	 : in    BIT
+);
+END rf2_out_buf;
+
+ARCHITECTURE VBE OF rf2_out_buf IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf2_out_buf"
+  SEVERITY WARNING;
+
+  nck  <= not ck;
+  xcks <= not nck;
+
+END;

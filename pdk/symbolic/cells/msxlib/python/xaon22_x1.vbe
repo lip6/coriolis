@@ -1,0 +1,52 @@
+ENTITY xaon22_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 10000;
+  CONSTANT cin_b1        : NATURAL := 10;     
+  CONSTANT cin_b2        : NATURAL := 10;     
+  CONSTANT cin_a1        : NATURAL := 8;      
+  CONSTANT cin_a2        : NATURAL := 8;      
+  CONSTANT rdown_b1_z    : NATURAL := 1960;   
+  CONSTANT rdown_b2_z    : NATURAL := 1970;   
+  CONSTANT rdown_a1_z    : NATURAL := 1970;   
+  CONSTANT rdown_a2_z    : NATURAL := 1970;   
+  CONSTANT rup_b1_z      : NATURAL := 2330;   
+  CONSTANT rup_b2_z      : NATURAL := 2350;   
+  CONSTANT rup_a1_z      : NATURAL := 2880;   
+  CONSTANT rup_a2_z      : NATURAL := 2870;   
+  CONSTANT tplh_a1_z     : NATURAL := 98;     
+  CONSTANT tplh_a2_z     : NATURAL := 89;     
+  CONSTANT tphl_b1_z     : NATURAL := 37;     
+  CONSTANT tphl_b2_z     : NATURAL := 39;     
+  CONSTANT tplh_b1_z     : NATURAL := 103;    
+  CONSTANT tplh_b2_z     : NATURAL := 106;    
+  CONSTANT tphh_b1_z     : NATURAL := 66;     
+  CONSTANT tphh_b2_z     : NATURAL := 71;     
+  CONSTANT tphl_a1_z     : NATURAL := 65;     
+  CONSTANT tphl_a2_z     : NATURAL := 66;     
+  CONSTANT tpll_a1_z     : NATURAL := 113;    
+  CONSTANT tpll_a2_z     : NATURAL := 104;    
+  CONSTANT tpll_b1_z     : NATURAL := 100;    
+  CONSTANT tpll_b2_z     : NATURAL := 96;     
+  CONSTANT tphh_a1_z     : NATURAL := 94;     
+  CONSTANT tphh_a2_z     : NATURAL := 94;     
+  CONSTANT transistors   : NATURAL := 14      
+);
+PORT (
+  b1	 : in  BIT;
+  b2	 : in  BIT;
+  a1	 : in  BIT;
+  a2	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END xaon22_x1;
+
+ARCHITECTURE behaviour_data_flow OF xaon22_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on xaon22_x1"
+  SEVERITY WARNING;
+  z <= ((b1 and b2) xor (a1 and a2)) after 1000 ps;
+END;

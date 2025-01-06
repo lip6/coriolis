@@ -1,0 +1,44 @@
+ENTITY piot_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT rup : NATURAL := 402;	
+    CONSTANT rdown : NATURAL := 0	
+  );
+  PORT (
+  i : in BIT;	
+  b : in BIT;	
+  t : out BIT;	
+  pad : inout MUX_BIT BUS;	
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END piot_mpx;
+
+ARCHITECTURE behaviour_data_flow OF piot_mpx IS
+  SIGNAL b1 : BIT;		
+  SIGNAL b2 : BIT;		
+  SIGNAL b3 : BIT;		
+  SIGNAL b4 : BIT;		
+  SIGNAL b5 : BIT;		
+  SIGNAL b6 : BIT;		
+
+BEGIN
+  b6 <= b5;
+  b5 <= b4;
+  b4 <= b3;
+  b3 <= b2;
+  b2 <= b1;
+  b1 <= b;
+  label0 : BLOCK (b6 = '1')
+  BEGIN
+    pad <= GUARDED i;
+  END BLOCK label0;
+  t <= pad;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on piot_mpx"
+    SEVERITY WARNING;
+END;

@@ -1,0 +1,20 @@
+ENTITY pvsse_msp IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000	
+  );
+  PORT (
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pvsse_msp;
+
+ARCHITECTURE behaviour_data_flow OF pvsse_msp IS
+
+BEGIN
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on pvsse_msp"
+    SEVERITY WARNING;
+END;

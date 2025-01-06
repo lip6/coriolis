@@ -1,0 +1,20 @@
+ENTITY one_x0 IS
+GENERIC (
+  CONSTANT area 	 : NATURAL := 750;
+  CONSTANT transistors	 : NATURAL := 1
+);
+PORT (
+  q	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END one_x0;
+
+ARCHITECTURE behaviour_data_flow OF one_x0 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on one_x0"
+  SEVERITY WARNING;
+  q <= '1';
+END;

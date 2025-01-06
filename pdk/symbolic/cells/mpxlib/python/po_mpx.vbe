@@ -1,0 +1,29 @@
+ENTITY po_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT cin_i : NATURAL := 191;	
+    CONSTANT tpll_i : NATURAL := 2176;	
+    CONSTANT rdown_i : NATURAL := 15;	
+    CONSTANT tphh_i : NATURAL := 2032;	
+    CONSTANT rup_i : NATURAL := 16	
+  );
+  PORT (
+  i : in BIT;	
+  pad : out BIT;	
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END po_mpx;
+
+ARCHITECTURE behaviour_data_flow OF po_mpx IS
+
+BEGIN
+  pad <= i;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on po_mpx"
+    SEVERITY WARNING;
+END;

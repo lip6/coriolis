@@ -1,0 +1,42 @@
+ENTITY pot_mpx IS
+  GENERIC (
+    CONSTANT area : NATURAL := 80000;	
+    CONSTANT rup : NATURAL := 684404;	
+    CONSTANT rdown : NATURAL := 24	
+  );
+  PORT (
+  i : in BIT;	
+  b : in BIT;	
+  pad : out MUX_BIT BUS;	
+  ck : in BIT;	
+  vdde : in BIT;	
+  vddi : in BIT;	
+  vsse : in BIT;	
+  vssi : in BIT	
+  );
+END pot_mpx;
+
+ARCHITECTURE behaviour_data_flow OF pot_mpx IS
+  SIGNAL b1 : BIT;		
+  SIGNAL b2 : BIT;		
+  SIGNAL b3 : BIT;		
+  SIGNAL b4 : BIT;		
+  SIGNAL b5 : BIT;		
+  SIGNAL b6 : BIT;		
+
+BEGIN
+  b6 <= b5;
+  b5 <= b4;
+  b4 <= b3;
+  b3 <= b2;
+  b2 <= b1;
+  b1 <= b;
+  label0 : BLOCK (b6 = '1')
+  BEGIN
+    pad <= GUARDED i;
+  END BLOCK label0;
+
+  ASSERT ((((vddi and vdde) and not (vssi)) and not (vsse)) = '1')
+    REPORT "power supply is missing on pot_mpx"
+    SEVERITY WARNING;
+END;

@@ -1,0 +1,32 @@
+ENTITY nd2av0x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 2880;   
+  CONSTANT cin_b         : NATURAL := 2;      
+  CONSTANT cin_a         : NATURAL := 3;      
+  CONSTANT rdown_b_z     : NATURAL := 5290;   
+  CONSTANT rdown_a_z     : NATURAL := 5280;   
+  CONSTANT rup_b_z       : NATURAL := 7420;   
+  CONSTANT rup_a_z       : NATURAL := 7430;   
+  CONSTANT tphl_b_z      : NATURAL := 36;     
+  CONSTANT tplh_b_z      : NATURAL := 48;     
+  CONSTANT tpll_a_z      : NATURAL := 86;     
+  CONSTANT tphh_a_z      : NATURAL := 78;     
+  CONSTANT transistors   : NATURAL := 6       
+);
+PORT (
+  b	 : in  BIT;
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END nd2av0x05;
+
+ARCHITECTURE behaviour_data_flow OF nd2av0x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on nd2av0x05"
+  SEVERITY WARNING;
+  z <= (not (b) or a) after 221 ps;
+END;

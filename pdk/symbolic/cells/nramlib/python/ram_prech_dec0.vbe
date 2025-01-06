@@ -1,0 +1,15 @@
+ENTITY ram_prech_dec0 IS
+PORT (
+  vdd  	   : in  BIT;
+  vss	   : in  BIT
+);
+END ram_prech_dec0;
+
+ARCHITECTURE VBE OF ram_prech_dec0 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on ram_prech_dec0"
+  SEVERITY WARNING;
+
+END;

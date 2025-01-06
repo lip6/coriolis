@@ -1,0 +1,19 @@
+ENTITY ram_mem_dec2 IS
+PORT (
+  i0   	   : in  BIT;
+  i1   	   : in  BIT;
+  ndeca    : out  BIT;
+  ndecb    : out  BIT;
+  vdd  	   : in  BIT;
+  vss	   : in  BIT
+);
+END ram_mem_dec2;
+
+ARCHITECTURE VBE OF ram_mem_dec2 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on ram_mem_dec2"
+  SEVERITY WARNING;
+
+END;

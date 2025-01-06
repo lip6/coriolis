@@ -1,0 +1,44 @@
+ENTITY an4_x2 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 7000;
+  CONSTANT cin_a         : NATURAL := 7;      
+  CONSTANT cin_b         : NATURAL := 6;      
+  CONSTANT cin_c         : NATURAL := 6;      
+  CONSTANT cin_d         : NATURAL := 6;      
+  CONSTANT rdown_a_z     : NATURAL := 1220;   
+  CONSTANT rdown_b_z     : NATURAL := 1220;   
+  CONSTANT rdown_c_z     : NATURAL := 1210;   
+  CONSTANT rdown_d_z     : NATURAL := 1210;   
+  CONSTANT rup_a_z       : NATURAL := 1570;   
+  CONSTANT rup_b_z       : NATURAL := 1570;   
+  CONSTANT rup_c_z       : NATURAL := 1570;   
+  CONSTANT rup_d_z       : NATURAL := 1570;   
+  CONSTANT tphh_a_z      : NATURAL := 112;    
+  CONSTANT tphh_b_z      : NATURAL := 110;    
+  CONSTANT tpll_d_z      : NATURAL := 105;    
+  CONSTANT tphh_c_z      : NATURAL := 104;    
+  CONSTANT tpll_c_z      : NATURAL := 118;    
+  CONSTANT tphh_d_z      : NATURAL := 97;     
+  CONSTANT tpll_b_z      : NATURAL := 130;    
+  CONSTANT tpll_a_z      : NATURAL := 139;    
+  CONSTANT transistors   : NATURAL := 10      
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  d	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END an4_x2;
+
+ARCHITECTURE behaviour_data_flow OF an4_x2 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on an4_x2"
+  SEVERITY WARNING;
+  z <= (((a and b) and c) and d) after 1200 ps;
+END;

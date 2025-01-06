@@ -1,0 +1,44 @@
+ENTITY nr4v0x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 5760;   
+  CONSTANT cin_c         : NATURAL := 6;      
+  CONSTANT cin_d         : NATURAL := 6;      
+  CONSTANT cin_b         : NATURAL := 7;      
+  CONSTANT cin_a         : NATURAL := 7;      
+  CONSTANT rdown_c_z     : NATURAL := 3900;   
+  CONSTANT rdown_d_z     : NATURAL := 3890;   
+  CONSTANT rdown_b_z     : NATURAL := 4000;   
+  CONSTANT rdown_a_z     : NATURAL := 4150;   
+  CONSTANT rup_c_z       : NATURAL := 5460;   
+  CONSTANT rup_d_z       : NATURAL := 5400;   
+  CONSTANT rup_b_z       : NATURAL := 5480;   
+  CONSTANT rup_a_z       : NATURAL := 5480;   
+  CONSTANT tphl_d_z      : NATURAL := 58;     
+  CONSTANT tplh_a_z      : NATURAL := 116;    
+  CONSTANT tplh_d_z      : NATURAL := 49;     
+  CONSTANT tphl_c_z      : NATURAL := 80;     
+  CONSTANT tplh_b_z      : NATURAL := 106;    
+  CONSTANT tplh_c_z      : NATURAL := 83;     
+  CONSTANT tphl_b_z      : NATURAL := 95;     
+  CONSTANT tphl_a_z      : NATURAL := 103;    
+  CONSTANT transistors   : NATURAL := 12      
+);
+PORT (
+  c	 : in  BIT;
+  d	 : in  BIT;
+  b	 : in  BIT;
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END nr4v0x1;
+
+ARCHITECTURE behaviour_data_flow OF nr4v0x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on nr4v0x1"
+  SEVERITY WARNING;
+  z <= not ((((c or d) or b) or a)) after 204 ps;
+END;

@@ -1,0 +1,38 @@
+ENTITY an3_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 6000;
+  CONSTANT cin_a         : NATURAL := 5;      
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_c         : NATURAL := 4;      
+  CONSTANT rdown_a_z     : NATURAL := 2310;   
+  CONSTANT rdown_b_z     : NATURAL := 2300;   
+  CONSTANT rdown_c_z     : NATURAL := 2290;   
+  CONSTANT rup_a_z       : NATURAL := 2970;   
+  CONSTANT rup_b_z       : NATURAL := 2970;   
+  CONSTANT rup_c_z       : NATURAL := 2970;   
+  CONSTANT tphh_c_z      : NATURAL := 88;     
+  CONSTANT tphh_b_z      : NATURAL := 91;     
+  CONSTANT tphh_a_z      : NATURAL := 93;     
+  CONSTANT tpll_a_z      : NATURAL := 121;    
+  CONSTANT tpll_b_z      : NATURAL := 111;    
+  CONSTANT tpll_c_z      : NATURAL := 100;    
+  CONSTANT transistors   : NATURAL := 8       
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END an3_x1;
+
+ARCHITECTURE behaviour_data_flow OF an3_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on an3_x1"
+  SEVERITY WARNING;
+  z <= ((a and b) and c) after 1100 ps;
+END;

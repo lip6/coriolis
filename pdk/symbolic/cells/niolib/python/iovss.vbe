@@ -1,0 +1,17 @@
+ENTITY iovss IS
+  PORT (
+  iovss : in BIT;	
+  vdd : in BIT;	
+  iovdd : in BIT;	
+  vss : in BIT	
+  );
+END iovss;
+
+ARCHITECTURE behaviour_data_flow OF iovss IS
+
+BEGIN
+
+  ASSERT ((((vdd and iovss) and not (iovss)) and not (vss)) = '1')
+    REPORT "power supply is missing on iovss"
+    SEVERITY WARNING;
+END;

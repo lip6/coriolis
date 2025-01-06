@@ -1,0 +1,38 @@
+ENTITY aoi21_x2 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 9000;
+  CONSTANT cin_a1        : NATURAL := 13;     
+  CONSTANT cin_a2        : NATURAL := 12;     
+  CONSTANT cin_b         : NATURAL := 10;     
+  CONSTANT rdown_a1_z    : NATURAL := 1120;   
+  CONSTANT rdown_a2_z    : NATURAL := 1120;   
+  CONSTANT rdown_b_z     : NATURAL := 1040;   
+  CONSTANT rup_a1_z      : NATURAL := 1490;   
+  CONSTANT rup_a2_z      : NATURAL := 1490;   
+  CONSTANT rup_b_z       : NATURAL := 1360;   
+  CONSTANT tphl_a1_z     : NATURAL := 53;     
+  CONSTANT tphl_a2_z     : NATURAL := 54;     
+  CONSTANT tphl_b_z      : NATURAL := 41;     
+  CONSTANT tplh_b_z      : NATURAL := 43;     
+  CONSTANT tplh_a2_z     : NATURAL := 60;     
+  CONSTANT tplh_a1_z     : NATURAL := 68;     
+  CONSTANT transistors   : NATURAL := 9       
+);
+PORT (
+  a1	 : in  BIT;
+  a2	 : in  BIT;
+  b	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END aoi21_x2;
+
+ARCHITECTURE behaviour_data_flow OF aoi21_x2 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on aoi21_x2"
+  SEVERITY WARNING;
+  z <= not (((a1 and a2) or b)) after 900 ps;
+END;

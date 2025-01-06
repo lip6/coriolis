@@ -1,0 +1,29 @@
+ENTITY ram_sense_buf1 IS
+PORT (
+  ck      : in  BIT;
+  selram  : in  BIT;
+  w       : in  BIT;
+  nck     : out  BIT;
+  selramx : out  BIT;
+  nsense  : out  BIT;
+  nwrite  : out  BIT;
+  nckx    : out  BIT;
+  vdd	  : in  BIT;
+  vss	  : in  BIT
+);
+END ram_sense_buf1;
+
+ARCHITECTURE VBE OF ram_sense_buf1 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on ram_sense_buf1"
+  SEVERITY WARNING;
+
+  nck  <= not ck;
+  nckx <= not ck;
+  selramx <= selram;
+  nsense <= not(not ck and selram and not w);
+  nwrite <= not(not ck and w);
+
+END;

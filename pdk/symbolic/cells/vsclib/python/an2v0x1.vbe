@@ -1,0 +1,32 @@
+ENTITY an2v0x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 2880;   
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_a         : NATURAL := 4;      
+  CONSTANT rdown_b_z     : NATURAL := 2570;   
+  CONSTANT rdown_a_z     : NATURAL := 2580;   
+  CONSTANT rup_b_z       : NATURAL := 3310;   
+  CONSTANT rup_a_z       : NATURAL := 3310;   
+  CONSTANT tphh_a_z      : NATURAL := 73;     
+  CONSTANT tphh_b_z      : NATURAL := 73;     
+  CONSTANT tpll_b_z      : NATURAL := 91;     
+  CONSTANT tpll_a_z      : NATURAL := 101;    
+  CONSTANT transistors   : NATURAL := 6       
+);
+PORT (
+  b	 : in  BIT;
+  a	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END an2v0x1;
+
+ARCHITECTURE behaviour_data_flow OF an2v0x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on an2v0x1"
+  SEVERITY WARNING;
+  z <= (b and a) after 158 ps;
+END;

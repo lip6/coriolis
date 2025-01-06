@@ -1,0 +1,38 @@
+ENTITY nd3_x4 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 9000;
+  CONSTANT cin_a         : NATURAL := 13;     
+  CONSTANT cin_b         : NATURAL := 15;     
+  CONSTANT cin_c         : NATURAL := 15;     
+  CONSTANT rdown_a_z     : NATURAL := 770;    
+  CONSTANT rdown_b_z     : NATURAL := 770;    
+  CONSTANT rdown_c_z     : NATURAL := 770;    
+  CONSTANT rup_a_z       : NATURAL := 900;    
+  CONSTANT rup_b_z       : NATURAL := 900;    
+  CONSTANT rup_c_z       : NATURAL := 900;    
+  CONSTANT tphl_a_z      : NATURAL := 37;     
+  CONSTANT tphl_b_z      : NATURAL := 41;     
+  CONSTANT tphl_c_z      : NATURAL := 42;     
+  CONSTANT tplh_c_z      : NATURAL := 63;     
+  CONSTANT tplh_b_z      : NATURAL := 56;     
+  CONSTANT tplh_a_z      : NATURAL := 48;     
+  CONSTANT transistors   : NATURAL := 12      
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END nd3_x4;
+
+ARCHITECTURE behaviour_data_flow OF nd3_x4 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on nd3_x4"
+  SEVERITY WARNING;
+  z <= not (((a and b) and c)) after 1000 ps;
+END;

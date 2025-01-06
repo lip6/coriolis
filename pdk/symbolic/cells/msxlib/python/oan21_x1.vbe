@@ -1,0 +1,38 @@
+ENTITY oan21_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 7000;
+  CONSTANT cin_a1        : NATURAL := 5;      
+  CONSTANT cin_a2        : NATURAL := 5;      
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT rdown_a1_z    : NATURAL := 2310;   
+  CONSTANT rdown_a2_z    : NATURAL := 2310;   
+  CONSTANT rdown_b_z     : NATURAL := 2300;   
+  CONSTANT rup_a1_z      : NATURAL := 2970;   
+  CONSTANT rup_a2_z      : NATURAL := 2960;   
+  CONSTANT rup_b_z       : NATURAL := 2960;   
+  CONSTANT tphh_b_z      : NATURAL := 77;     
+  CONSTANT tpll_b_z      : NATURAL := 100;    
+  CONSTANT tpll_a1_z     : NATURAL := 125;    
+  CONSTANT tphh_a2_z     : NATURAL := 83;     
+  CONSTANT tpll_a2_z     : NATURAL := 116;    
+  CONSTANT tphh_a1_z     : NATURAL := 95;     
+  CONSTANT transistors   : NATURAL := 8       
+);
+PORT (
+  a1	 : in  BIT;
+  a2	 : in  BIT;
+  b	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END oan21_x1;
+
+ARCHITECTURE behaviour_data_flow OF oan21_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on oan21_x1"
+  SEVERITY WARNING;
+  z <= ((a1 or a2) and b) after 1200 ps;
+END;

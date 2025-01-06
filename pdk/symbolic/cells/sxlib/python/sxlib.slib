@@ -1,0 +1,472 @@
+/******************************************************************************
+ **
+ **	FILE NAME: sclib.slib
+ **
+ **	Created by Mokhtar HIRECH (MASI laboratory) on 26 October 1995
+ ** from $SYNOPSYS/libraries/syn/class.slib
+ **
+ ** Modified September 1, 1999 Franck
+ **
+ *****************************************************************************
+*/
+
+
+TRUE = 1;
+FALSE = 0;
+
+
+library("sxlib.sdb") {
+
+  ROUTE_GRID = 1024;
+  INCHES_PER_GRID = .1;
+  DB_PER_GRID = ROUTE_GRID;
+
+  CENTEMETERS_PER_GRID = INCHES_PER_GRID * 2.54;
+  METERS_PER_GRID = CENTEMETERS_PER_GRID / 100;
+  METERS_PER_DB = METERS_PER_GRID / DB_PER_GRID;
+
+  set_route_grid(ROUTE_GRID);
+  set_external_scale(METERS_PER_DB);
+  set_meter_scale(METERS_PER_DB);
+
+  grid_pins : TRUE ;
+
+
+
+  /* note: One ROUTE_GRID is equivalent to 13 / 2 "units" of the IEEE / ANSI symbol
+   * standard (Std 91 - 1984).  One ROUTE_GRID is equivalent to .2 MIL standard
+   * units (inches) (MIL - STD - 8086)
+   * Dimensions were derrived from these standards.
+   *
+   *        -          ***************************
+   *        |          *                          ****
+   *       	|          ***            -               **
+   *       	|          *  ****        |                 *
+   *        |    *******     ***     DYNAMIC HEIGHT      *  **** --------
+   *                   *  ****        |                  * *    *       |
+   *    AND_HEIGHT     ***            -                   **    * BUBBLE_DIAMETER
+   *                   *                                  **    *       |
+   *        |          <------->                         *. **** --------
+   *        |          *    DYNAMIC WIDTH                *.
+   *        |    *******                                * .
+   *        |          *                              **  .
+   *        |          *                           ***    .
+   *        -          ***************************        .
+   *                   .                                  .
+   *                   .                                  .
+   *                   .                                  .
+   *                   <-------------- AND_WIDTH --------->
+   *
+   *
+   *
+   *       	     XOR_GAP
+   *       	   <------->
+   *    	   .       .
+   *           .       .
+   *           .       .
+   *           .       .
+   *           *       ***********************                            -
+   *            *       *                  	  ********                    |
+   *             *       *                            ****                |
+   *              *       *                               **              |
+   *               *       *                               	**            |
+   *               *       *                               	  *
+   *  -.............*.......*..........+                	   *       OR_HEIGHT
+   *  |             *       *                           	   *
+   *  |            *       *.          .                      *.          |
+   * OR_Y_ORIGIN   *       *.      	   .                	** .          |
+   *  |           *       * .          .                  **   .          |
+   *  |          *       *  .          .              ****     .          |
+   *  |         *       *   .          .      ********         .          |
+   *  -........*.......***********************     		   .          -
+   *		        .          .
+   *                   <- OR_X_ORIGIN ->                       .
+   *                        .                                  .
+   *                        .                                  .
+   *                        <---------- OR_WIDTH -------------->
+   *
+   *
+   *
+   * NOTE:
+   *
+   * Both OR_HEIGHT and AND_HEIGHT are defined to be four.
+   * The rest of the parameters are under "user" control.
+   *
+   * The radius of the arcs in an OR gate are defined to be equal to the
+   * height of the OR gate (this seems to be an industry standard).  Thus,
+   * The radius of all three arcs are defined to be four.
+   *
+   * Both the MIL standard and the ANSI / IEEE standard have slightly different
+   * ideas on these dimensions, so choose the dimensions you like best:
+   *
+   */
+
+/* REQUIRED SIZES: */
+
+AND_HEIGHT = 4;
+OR_HEIGHT = 4;
+
+grid_pins : TRUE ;
+
+/* ANSI Dimensions: 
+ * The ANSI dimensions have been commented out in favor of the MIL dimensions:
+ *
+ *   ANSI_AND_HEIGHT = 26.0;
+ *   SCALE = AND_HEIGHT / ANSI_AND_HEIGHT;
+ *
+ *   AND_WIDTH = 32 * SCALE;
+ *   OR_WIDTH = 32 * SCALE;
+ *   INVERTER_HEIGHT = 22.5 * SCALE;
+ *   XOR_GAP = 5 * SCALE;
+ *   BUBBLE_DIAMETER = 4 * SCALE;
+ *   DYNAMIC_HEIGHT = 4 * SCALE;
+ *   DYNAMIC_WIDTH = 6 * SCALE;
+ *   OFF_SHEET_HEIGHT = 8 * SCALE;   Not specified by ANSI,
+ *			           this value from MIL
+ *
+ */
+
+
+/* MIL Dimensions: */
+
+GRIDS_PER_INCH = 1 / INCHES_PER_GRID;
+MIL_AND_HEIGHT = .8;
+SCALE = AND_HEIGHT / MIL_AND_HEIGHT;
+
+AND_WIDTH = 1.00 * SCALE;
+OR_WIDTH = 1.00 * SCALE;
+OR_INTERNAL_WIDTH = 0.50 * GRIDS_PER_INCH;
+INVERTER_HEIGHT = .70 * SCALE;
+XOR_GAP = (2.0 / 13.0) * SCALE;   /* Not specifed by MIL, this value from ANSI */
+BUBBLE_DIAMETER = .16 * SCALE;
+DYNAMIC_HEIGHT = .15 * SCALE;
+DYNAMIC_WIDTH = .30 * SCALE;
+OFF_SHEET_HEIGHT = .25 * SCALE;
+
+
+/* The following values are not specified by MIL or ANSI: */
+
+/* Origins are defined as offset from the lower left corner */
+OR_X_ORIGIN = 3;
+OR_Y_ORIGIN = 2;
+AND_X_ORIGIN = 3;
+AND_Y_ORIGIN = 2;
+INVERTER_X_ORIGIN = 1;
+INVERTER_Y_ORIGIN = INVERTER_HEIGHT / 2.0;
+
+EXTRA_WING_SPAN = .5; /* ON 3 + GATES, CONTROLS WING SIZE */
+GATE_GAP = 0;	       /* CONTROLS VERTICAL GAP ON STACKED GATES */
+
+/* The following values are deduced from the above values: */
+
+BUBBLE_RADIUS = BUBBLE_DIAMETER / 2.0;
+DYNAMIC_RADIUS = DYNAMIC_HEIGHT / 2.0;
+
+
+  symbol(and_outline) {
+    AND_LEFT_X = - AND_X_ORIGIN;
+    AND_BOTTOM_Y = - AND_Y_ORIGIN;
+
+    AND_TOP_Y = AND_BOTTOM_Y + AND_HEIGHT;
+    X_START_OF_ARC = AND_LEFT_X + AND_WIDTH - AND_HEIGHT / 2.0;
+    AND_MIDDLE_Y = AND_BOTTOM_Y + AND_HEIGHT / 2.0;
+    AND_RIGHT_X = AND_LEFT_X + AND_WIDTH;
+
+    line(AND_LEFT_X, AND_TOP_Y, X_START_OF_ARC, AND_TOP_Y);
+    line(AND_LEFT_X, AND_BOTTOM_Y, X_START_OF_ARC, AND_BOTTOM_Y);
+    arc(X_START_OF_ARC, AND_TOP_Y, X_START_OF_ARC, AND_BOTTOM_Y,       	      \
+	X_START_OF_ARC, AND_MIDDLE_Y);
+  }
+
+
+  symbol(inverter_triangle) {
+
+    /* The origins are defined to be the offset from the lower left corner */
+    INVERTER_LEFT_X = - INVERTER_X_ORIGIN;
+    INVERTER_BOTTOM_Y = - INVERTER_Y_ORIGIN;
+
+    INVERTER_RIGHT_X = INVERTER_LEFT_X + INVERTER_HEIGHT * SQRT(3) / 2.0;
+    INVERTER_TOP_Y = INVERTER_BOTTOM_Y + INVERTER_HEIGHT;
+    INVERTER_MIDDLE_Y = INVERTER_BOTTOM_Y + INVERTER_HEIGHT / 2.0;
+
+    line(INVERTER_LEFT_X, INVERTER_TOP_Y, INVERTER_RIGHT_X, INVERTER_MIDDLE_Y);
+    line(INVERTER_RIGHT_X, INVERTER_MIDDLE_Y,  	       	       	       	      \
+	 INVERTER_LEFT_X, INVERTER_BOTTOM_Y);
+    line(INVERTER_LEFT_X, INVERTER_BOTTOM_Y, INVERTER_LEFT_X, INVERTER_TOP_Y);
+  }
+
+  symbol(solder_dot) {
+    line( -.25,-.25,.25,-.25);
+    line(.25,.25,.25,-.25);
+    line(.25,.25,-.25,.25);
+    line( -.25,.25,-.25,-.25);
+    line( -.25,-.25,.25,.25);
+    line(.25,-.25,-.25,.25);
+  }
+
+/******************************************************************************
+**	
+**	New symbols added for SCLIB cells
+**
+******************************************************************************/
+
+  symbol(inv_x1) {
+    sub_symbol(inverter_triangle, 0,0,0);
+
+    circle(INVERTER_RIGHT_X + BUBBLE_RADIUS, INVERTER_MIDDLE_Y, BUBBLE_RADIUS);
+    pin(nq, INVERTER_RIGHT_X + BUBBLE_DIAMETER, INVERTER_MIDDLE_Y, RIGHT);
+    pin(i, INVERTER_LEFT_X, INVERTER_MIDDLE_Y, LEFT);
+  }
+
+  symbol(a2_x1) {
+    sub_symbol(and_outline, 0,0,0);
+
+    line(AND_LEFT_X, AND_BOTTOM_Y, AND_LEFT_X, AND_TOP_Y);
+
+    pin(i0, AND_LEFT_X, AND_BOTTOM_Y + 3, LEFT);
+    pin(i1, AND_LEFT_X, AND_BOTTOM_Y + 1, LEFT);
+    pin(q, AND_RIGHT_X, AND_MIDDLE_Y, RIGHT);
+  }
+
+  symbol(na2_x1) {
+    sub_symbol(and_outline, 0,0,0);
+
+    line(AND_LEFT_X, AND_BOTTOM_Y, AND_LEFT_X, AND_TOP_Y);
+    circle(AND_LEFT_X - BUBBLE_RADIUS, AND_BOTTOM_Y + 1, BUBBLE_RADIUS);
+
+    pin(i0, AND_LEFT_X, AND_BOTTOM_Y + 3, LEFT);
+    pin(i1, (AND_LEFT_X - BUBBLE_DIAMETER), AND_BOTTOM_Y + 1, LEFT);
+    pin(nq, AND_RIGHT_X, AND_MIDDLE_Y, RIGHT);
+  }
+
+  
+  OR_LEFT_X = - OR_X_ORIGIN;
+  OR_BOTTOM_Y = - OR_Y_ORIGIN;
+
+  OR_TOP_Y = OR_BOTTOM_Y + OR_HEIGHT;
+  OR_LEFT_ARC_CENTER_X = OR_LEFT_X - sqrt(.75 * OR_HEIGHT * OR_HEIGHT);
+  OR_MIDDLE_Y = OR_BOTTOM_Y + OR_HEIGHT / 2.0;
+  OR_RIGHT_X = OR_LEFT_ARC_CENTER_X + OR_HEIGHT + OR_INTERNAL_WIDTH;
+  OR_RIGHT_ARCS_X_START = OR_RIGHT_X - sqrt(.75 * OR_HEIGHT * OR_HEIGHT);
+/*
+  OR_WIDTH = OR_RIGHT_X - OR_LEFT_X;
+*/
+  symbol(left_side_of_or) {
+    arc(OR_LEFT_X,OR_TOP_Y,OR_LEFT_X, OR_BOTTOM_Y,                            \
+        OR_LEFT_ARC_CENTER_X, OR_MIDDLE_Y);
+  }
+
+
+  symbol(or_outline) {
+    sub_symbol(left_side_of_or, 0,0,0);
+
+
+    arc(OR_RIGHT_ARCS_X_START, OR_TOP_Y, OR_RIGHT_X, OR_MIDDLE_Y,             \
+        OR_RIGHT_ARCS_X_START, OR_BOTTOM_Y);
+    arc(OR_RIGHT_X, OR_MIDDLE_Y, OR_RIGHT_ARCS_X_START, OR_BOTTOM_Y,          \
+        OR_RIGHT_ARCS_X_START, OR_TOP_Y);
+
+    line(OR_LEFT_X, OR_TOP_Y, OR_RIGHT_ARCS_X_START, OR_TOP_Y);
+    line(OR_LEFT_X, OR_BOTTOM_Y, OR_RIGHT_ARCS_X_START, OR_BOTTOM_Y);
+  }
+
+  OR_EVEN_LEFT_PIN_X = OR_LEFT_ARC_CENTER_X + sqrt((15.0 / 16.0) *            \
+                                                   OR_HEIGHT * OR_HEIGHT);
+  OR_ODD_LEFT_PIN_X = OR_LEFT_ARC_CENTER_X + OR_HEIGHT;
+
+  symbol(o2_x1) {
+    sub_symbol(or_outline,0,0,0);
+
+    pin(i0, OR_EVEN_LEFT_PIN_X, OR_BOTTOM_Y + 3, LEFT);
+    pin(i1, OR_EVEN_LEFT_PIN_X, OR_BOTTOM_Y + 1, LEFT);
+    pin(q, OR_RIGHT_X, 0, RIGHT);
+  }
+
+  /* height assumed to be radius of or arc */
+  OR_NOT_CIRCLE_X = OR_LEFT_ARC_CENTER_X + sqrt(((OR_HEIGHT - BUBBLE_RADIUS) * \
+                                              (OR_HEIGHT - BUBBLE_RADIUS)) - 1);
+  symbol(no2_x1) {
+    sub_symbol(or_outline, 0,0,0);
+
+    circle(OR_NOT_CIRCLE_X, OR_BOTTOM_Y + 1, BUBBLE_RADIUS);
+
+    pin(i0, OR_EVEN_LEFT_PIN_X, OR_BOTTOM_Y + 3, LEFT);
+    pin(i1, OR_NOT_CIRCLE_X - BUBBLE_RADIUS, OR_BOTTOM_Y + 1, LEFT);
+    pin(nq, OR_RIGHT_X, 0, RIGHT);
+  }
+
+
+  symbol(B2I) {
+    LEFT_INVERTER_ORIGIN_X = - INVERTER_X_ORIGIN - 2;
+    sub_symbol(inverter_triangle, LEFT_INVERTER_ORIGIN_X,0,0);
+    circle(LEFT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_RADIUS,  	      \
+             INVERTER_MIDDLE_Y, BUBBLE_RADIUS);
+
+    RIGHT_INVERTER_ORIGIN_X = INVERTER_X_ORIGIN + 2;
+    sub_symbol(inverter_triangle, RIGHT_INVERTER_ORIGIN_X,0,0);
+    circle(RIGHT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_RADIUS, 	      \
+             INVERTER_MIDDLE_Y, BUBBLE_RADIUS);
+
+    line(LEFT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_DIAMETER,  	      \
+         INVERTER_MIDDLE_Y,    	       	       	       	       	       	      \
+         RIGHT_INVERTER_ORIGIN_X + INVERTER_LEFT_X, INVERTER_MIDDLE_Y);
+    sub_symbol(solder_dot, INVERTER_X_ORIGIN,0,0);
+    line(INVERTER_X_ORIGIN, INVERTER_MIDDLE_Y, 	       	       	       	      \
+             INVERTER_X_ORIGIN, ceil(INVERTER_TOP_Y) + 1);
+    line(INVERTER_X_ORIGIN, ceil(INVERTER_TOP_Y) + 1,  	       	       	      \
+             RIGHT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_DIAMETER,    \
+             ceil(INVERTER_TOP_Y) + 1);
+    pin(Z1, RIGHT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_DIAMETER,     \
+             ceil(INVERTER_TOP_Y) + 1, RIGHT);
+    pin(Z2, RIGHT_INVERTER_ORIGIN_X + INVERTER_RIGHT_X + BUBBLE_DIAMETER,     \
+             INVERTER_MIDDLE_Y, RIGHT);
+    pin(A, LEFT_INVERTER_ORIGIN_X + INVERTER_LEFT_X, INVERTER_MIDDLE_Y, LEFT);
+  }
+  symbol(B2IP) {
+    sub_symbol(B2I, 0,0,0);
+  }
+  symbol(B3I) {
+    sub_symbol(B2I, 0,0,0);
+  }
+  symbol(B3IP) {
+    sub_symbol(B2I, 0,0,0);
+  }
+  symbol(mux2) {
+    MUX_WIDTH = 2.0;
+    MUX_X_ORIGIN = MUX_WIDTH / 2.0;
+    MUX_HEIGHT = 4.0;
+    MUX_Y_ORIGIN = MUX_HEIGHT / 2.0;
+
+    MUX_LEFT =   MUX_X_ORIGIN - (MUX_WIDTH / 2.0);
+    MUX_RIGHT =  MUX_X_ORIGIN + (MUX_WIDTH / 2.0);
+    MUX_TOP =    MUX_Y_ORIGIN + (MUX_HEIGHT / 2.0);
+    MUX_BOTTOM = MUX_Y_ORIGIN - (MUX_HEIGHT / 2.0);
+    line(MUX_LEFT, MUX_BOTTOM, MUX_RIGHT, MUX_BOTTOM);
+    line(MUX_LEFT, MUX_BOTTOM, MUX_LEFT, MUX_TOP);
+    line(MUX_RIGHT, MUX_TOP, MUX_RIGHT, MUX_BOTTOM);
+    line(MUX_RIGHT, MUX_TOP, MUX_LEFT, MUX_TOP);
+    pin(A,   MUX_LEFT,  MUX_Y_ORIGIN + 1, LEFT);
+    pin(B,   MUX_LEFT,  MUX_Y_ORIGIN - 1, LEFT);
+    pin(S,   MUX_X_ORIGIN, MUX_BOTTOM , DOWN);
+  }
+  symbol(MUX21H) {
+    sub_symbol(mux2, 0,0,0);
+    pin(Z,   MUX_RIGHT, MUX_Y_ORIGIN, RIGHT);
+  }
+  symbol(MUX21HP) {
+    sub_symbol(MUX21H, 0,0,0);
+  }
+  symbol(MUX21L) {
+    sub_symbol(mux2, 0,0,0);
+    pin(Z,   MUX_RIGHT + BUBBLE_DIAMETER, MUX_Y_ORIGIN, RIGHT);
+    circle(MUX_RIGHT + BUBBLE_RADIUS, MUX_Y_ORIGIN, BUBBLE_RADIUS);
+  }
+  symbol(MUX21LP) {
+    sub_symbol(MUX21L, 0,0,0);
+  }
+  symbol(mux2sel) {
+    MUX_WIDTH = 3.0;
+    MUX_X_ORIGIN = MUX_WIDTH / 2.0;
+    MUX_HEIGHT = 4.0;
+    MUX_Y_ORIGIN = MUX_HEIGHT / 2.0;
+
+    MUX_LEFT =   MUX_X_ORIGIN - (MUX_WIDTH / 2.0);
+    MUX_RIGHT =  MUX_X_ORIGIN + (MUX_WIDTH / 2.0);
+    MUX_TOP =    MUX_Y_ORIGIN + (MUX_HEIGHT / 2.0);
+    MUX_BOTTOM = MUX_Y_ORIGIN - (MUX_HEIGHT / 2.0);
+    line(MUX_LEFT, MUX_BOTTOM, MUX_RIGHT, MUX_BOTTOM);
+    line(MUX_LEFT, MUX_BOTTOM, MUX_LEFT, MUX_TOP);
+    line(MUX_RIGHT, MUX_TOP, MUX_RIGHT, MUX_BOTTOM);
+    line(MUX_RIGHT, MUX_TOP, MUX_LEFT, MUX_TOP);
+  }
+  symbol(MUX21LA) {
+    sub_symbol(mux2sel, 0,0,0);
+    pin(A,   MUX_LEFT,  MUX_Y_ORIGIN + 1, LEFT);
+    pin(B,   MUX_LEFT,  MUX_Y_ORIGIN - 1, LEFT);
+    pin(SN,  MUX_X_ORIGIN - 0.5, MUX_BOTTOM - BUBBLE_DIAMETER , DOWN);
+    circle(MUX_X_ORIGIN - 0.5, MUX_BOTTOM - BUBBLE_RADIUS, BUBBLE_RADIUS);
+    pin(S,   MUX_X_ORIGIN + 0.5, MUX_BOTTOM , DOWN);
+    circle(MUX_RIGHT + BUBBLE_RADIUS, MUX_Y_ORIGIN, BUBBLE_RADIUS);
+    pin(Z,   MUX_RIGHT + BUBBLE_DIAMETER, MUX_Y_ORIGIN, RIGHT);
+  }
+  symbol(MUX21LAP) {
+    sub_symbol(MUX21LA, 0,0,0);
+  }
+  symbol(MUX31L) {
+    sub_symbol(mux2sel, 0,0,0);
+    pin(D0,   MUX_LEFT,  MUX_Y_ORIGIN + 1, LEFT);
+    pin(D1,   MUX_LEFT,  MUX_Y_ORIGIN , LEFT);
+    pin(D2,   MUX_LEFT,  MUX_Y_ORIGIN - 1, LEFT);
+    pin(A,  MUX_X_ORIGIN - 0.5, MUX_BOTTOM , DOWN);
+    pin(B,   MUX_X_ORIGIN + 0.5, MUX_BOTTOM , DOWN);
+    circle(MUX_RIGHT + BUBBLE_RADIUS, MUX_Y_ORIGIN, BUBBLE_RADIUS);
+    pin(Z,   MUX_RIGHT + BUBBLE_DIAMETER, MUX_Y_ORIGIN, RIGHT);
+  }
+  symbol(MUX31LP) {
+    sub_symbol(MUX31L, 0,0,0);
+  }
+
+FFBOX_WIDTH = 6.0;
+FFBOX_X_ORIGIN = FFBOX_WIDTH / 2.0;
+FFBOX_HEIGHT = 10.0;
+FFBOX_Y_ORIGIN = FFBOX_HEIGHT / 2.0;
+
+FFBOX_LEFT =   FFBOX_X_ORIGIN - (FFBOX_WIDTH / 2.0);
+FFBOX_RIGHT =  FFBOX_X_ORIGIN + (FFBOX_WIDTH / 2.0);
+
+  symbol(ff_box) {
+    FFBOX_TOP =    FFBOX_Y_ORIGIN + (FFBOX_HEIGHT / 2.0);
+    FFBOX_BOTTOM = FFBOX_Y_ORIGIN - (FFBOX_HEIGHT / 2.0);
+    line(FFBOX_LEFT, FFBOX_BOTTOM, FFBOX_RIGHT, FFBOX_BOTTOM);
+    line(FFBOX_LEFT, FFBOX_BOTTOM, FFBOX_LEFT, FFBOX_TOP);
+    line(FFBOX_RIGHT, FFBOX_TOP, FFBOX_RIGHT, FFBOX_BOTTOM);
+    line(FFBOX_RIGHT, FFBOX_TOP, FFBOX_LEFT, FFBOX_TOP);
+    pin(Q,   FFBOX_RIGHT, FFBOX_Y_ORIGIN + 4 , RIGHT);
+    pin(QN,  FFBOX_RIGHT + BUBBLE_DIAMETER, FFBOX_Y_ORIGIN - 4 , RIGHT);
+    circle(FFBOX_RIGHT + BUBBLE_RADIUS, FFBOX_Y_ORIGIN - 4, BUBBLE_RADIUS);
+  }
+
+  symbol(FD1) {
+    sub_symbol(ff_box, 0,0,0);
+    pin(D,   FFBOX_LEFT,  FFBOX_Y_ORIGIN + 4,  LEFT);
+
+    CLOCK_Y = FFBOX_Y_ORIGIN - 4;
+    pin(CP, FFBOX_LEFT,  CLOCK_Y , LEFT);
+    line(FFBOX_LEFT, CLOCK_Y - 0.5, FFBOX_LEFT + 1, CLOCK_Y);
+    line(FFBOX_LEFT, CLOCK_Y + 0.5, FFBOX_LEFT + 1, CLOCK_Y);
+  }
+
+  symbol(FD1P) {
+    sub_symbol(FD1, 0,0,0);
+  }
+  symbol(FDW) {
+    sub_symbol(FD1, 0,0,0);
+    pin(CD,   FFBOX_X_ORIGIN,  FFBOX_BOTTOM - BUBBLE_DIAMETER,  DOWN);
+    circle(FFBOX_X_ORIGIN,FFBOX_BOTTOM - BUBBLE_RADIUS, BUBBLE_RADIUS);
+  }
+
+  symbol(FD4) {
+    sub_symbol(FD1, 0,0,0);
+    pin(SD,   FFBOX_X_ORIGIN,  FFBOX_TOP + BUBBLE_DIAMETER,  UP);
+    circle(FFBOX_X_ORIGIN,FFBOX_TOP + BUBBLE_RADIUS, BUBBLE_RADIUS);
+  }
+  symbol(box_3x6) {
+    BOX_3X6_WIDTH = 3.0;
+    BOX_3X6_X_ORIGIN = BOX_3X6_WIDTH / 2.0;
+    BOX_3X6_HEIGHT = 6.0;
+    BOX_3X6_Y_ORIGIN = BOX_3X6_HEIGHT / 2.0;
+
+    BOX_3X6_LEFT =   BOX_3X6_X_ORIGIN - (BOX_3X6_WIDTH / 2.0);
+    BOX_3X6_RIGHT =  BOX_3X6_X_ORIGIN + (BOX_3X6_WIDTH / 2.0);
+    BOX_3X6_TOP =    BOX_3X6_Y_ORIGIN + (BOX_3X6_HEIGHT / 2.0);
+    BOX_3X6_BOTTOM = BOX_3X6_Y_ORIGIN - (BOX_3X6_HEIGHT / 2.0);
+    line(BOX_3X6_LEFT, BOX_3X6_BOTTOM, BOX_3X6_RIGHT, BOX_3X6_BOTTOM);
+    line(BOX_3X6_LEFT, BOX_3X6_BOTTOM, BOX_3X6_LEFT, BOX_3X6_TOP);
+    line(BOX_3X6_RIGHT, BOX_3X6_TOP, BOX_3X6_RIGHT, BOX_3X6_BOTTOM);
+    line(BOX_3X6_RIGHT, BOX_3X6_TOP, BOX_3X6_LEFT, BOX_3X6_TOP);
+  }
+}
+
+
+
+/*****************************************************************************/

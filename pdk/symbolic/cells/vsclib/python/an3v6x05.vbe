@@ -1,0 +1,38 @@
+ENTITY an3v6x05 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 4032;   
+  CONSTANT cin_a         : NATURAL := 3;      
+  CONSTANT cin_b         : NATURAL := 4;      
+  CONSTANT cin_c         : NATURAL := 3;      
+  CONSTANT rdown_a_z     : NATURAL := 3930;   
+  CONSTANT rdown_b_z     : NATURAL := 3910;   
+  CONSTANT rdown_c_z     : NATURAL := 3880;   
+  CONSTANT rup_a_z       : NATURAL := 4990;   
+  CONSTANT rup_b_z       : NATURAL := 5000;   
+  CONSTANT rup_c_z       : NATURAL := 5000;   
+  CONSTANT tphh_c_z      : NATURAL := 86;     
+  CONSTANT tphh_b_z      : NATURAL := 90;     
+  CONSTANT tphh_a_z      : NATURAL := 91;     
+  CONSTANT tpll_a_z      : NATURAL := 117;    
+  CONSTANT tpll_b_z      : NATURAL := 109;    
+  CONSTANT tpll_c_z      : NATURAL := 98;     
+  CONSTANT transistors   : NATURAL := 8       
+);
+PORT (
+  a	 : in  BIT;
+  b	 : in  BIT;
+  c	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END an3v6x05;
+
+ARCHITECTURE behaviour_data_flow OF an3v6x05 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on an3v6x05"
+  SEVERITY WARNING;
+  z <= ((a and b) and c) after 210 ps;
+END;

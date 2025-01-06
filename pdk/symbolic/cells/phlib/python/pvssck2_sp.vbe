@@ -1,0 +1,42 @@
+-- VHDL data flow description generated from `pvssck2_sp`
+--		date : Thu Feb 23 17:11:45 1995
+
+
+-- Entity Declaration
+
+ENTITY pvssck2_sp IS
+  GENERIC (
+    CONSTANT area : NATURAL := 86000;	-- area
+    CONSTANT cin_ck : NATURAL := 127;	-- cin_ck
+    CONSTANT tpll_ck : NATURAL := 1055;	-- tpll_ck
+    CONSTANT rdown_ck : NATURAL := 126;	-- rdown_ck
+    CONSTANT tphh_ck : NATURAL := 963;	-- tphh_ck
+    CONSTANT rup_ck : NATURAL := 183	-- rup_ck
+  );
+  PORT (
+  cko : out WOR_BIT BUS;	-- cko
+  ck : in BIT;	-- ck
+  vdd : in BIT;	-- vdd
+  vss : in BIT	-- vss
+  -- vdde : in BIT;	-- vdde
+  -- vddi : in BIT;	-- vddi
+  -- vsse : in BIT;	-- vsse
+  -- vssi : in BIT	-- vssi
+  );
+END pvssck2_sp;
+
+
+-- Architecture Declaration
+
+ARCHITECTURE behaviour_data_flow OF pvssck2_sp IS
+
+BEGIN
+  ASSERT ((((not (vss) and not (vss)) and vdd) and vdd) = '1')
+    REPORT "power supply is missing on pvssck2_sp"
+    SEVERITY WARNING;
+
+	label0 : BLOCK ('1' = '1')
+	BEGIN
+	cko <= GUARDED ck;
+	END BLOCK label0;
+END;

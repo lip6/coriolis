@@ -1,0 +1,38 @@
+ENTITY na3_x4 IS
+GENERIC (
+  CONSTANT area 	 : NATURAL := 2000;
+  CONSTANT cin_i0	 : NATURAL := 10;
+  CONSTANT cin_i1	 : NATURAL := 10;
+  CONSTANT cin_i2	 : NATURAL := 10;
+  CONSTANT rdown_i0_nq	 : NATURAL := 810;
+  CONSTANT rdown_i1_nq	 : NATURAL := 810;
+  CONSTANT rdown_i2_nq	 : NATURAL := 810;
+  CONSTANT rup_i0_nq	 : NATURAL := 890;
+  CONSTANT rup_i1_nq	 : NATURAL := 890;
+  CONSTANT rup_i2_nq	 : NATURAL := 890;
+  CONSTANT tphl_i1_nq	 : NATURAL := 460;
+  CONSTANT tphl_i2_nq	 : NATURAL := 519;
+  CONSTANT tphl_i0_nq	 : NATURAL := 556;
+  CONSTANT tplh_i0_nq	 : NATURAL := 601;
+  CONSTANT tplh_i2_nq	 : NATURAL := 647;
+  CONSTANT tplh_i1_nq	 : NATURAL := 691;
+  CONSTANT transistors	 : NATURAL := 12
+);
+PORT (
+  i0	 : in  BIT;
+  i1	 : in  BIT;
+  i2	 : in  BIT;
+  nq	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END na3_x4;
+
+ARCHITECTURE behaviour_data_flow OF na3_x4 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on na3_x4"
+  SEVERITY WARNING;
+  nq <= not (((i0 and i1) and i2)) after 1300 ps;
+END;

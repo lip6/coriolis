@@ -1,0 +1,24 @@
+ENTITY rf_fifo_ok IS
+PORT (
+  rw      : in  BIT;
+  ripple  : in  BIT;
+  nrw 	  : in  BIT;
+  prev    : in  BIT;
+  nextval : out BIT;
+  ok      : out BIT;
+  vdd	  : in  BIT;
+  vss	  : in  BIT
+);
+END rf_fifo_ok;
+
+ARCHITECTURE VBE OF rf_fifo_ok IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on rf_fifo_ok"
+  SEVERITY WARNING;
+
+  ok <= (not prev);
+  nextval <= not(((rw and ripple) or prev) and nrw);
+
+END;

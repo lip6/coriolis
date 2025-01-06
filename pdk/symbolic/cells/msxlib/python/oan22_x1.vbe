@@ -1,0 +1,44 @@
+ENTITY oan22_x1 IS
+GENERIC (
+  CONSTANT area          : NATURAL := 8000;
+  CONSTANT cin_b1        : NATURAL := 5;      
+  CONSTANT cin_b2        : NATURAL := 5;      
+  CONSTANT cin_a2        : NATURAL := 5;      
+  CONSTANT cin_a1        : NATURAL := 5;      
+  CONSTANT rdown_b1_z    : NATURAL := 2320;   
+  CONSTANT rdown_b2_z    : NATURAL := 2320;   
+  CONSTANT rdown_a2_z    : NATURAL := 2340;   
+  CONSTANT rdown_a1_z    : NATURAL := 2340;   
+  CONSTANT rup_b1_z      : NATURAL := 2970;   
+  CONSTANT rup_b2_z      : NATURAL := 2960;   
+  CONSTANT rup_a2_z      : NATURAL := 2960;   
+  CONSTANT rup_a1_z      : NATURAL := 2970;   
+  CONSTANT tphh_a2_z     : NATURAL := 96;     
+  CONSTANT tpll_b1_z     : NATURAL := 122;    
+  CONSTANT tphh_a1_z     : NATURAL := 107;    
+  CONSTANT tphh_b2_z     : NATURAL := 87;     
+  CONSTANT tpll_a1_z     : NATURAL := 146;    
+  CONSTANT tpll_b2_z     : NATURAL := 112;    
+  CONSTANT tphh_b1_z     : NATURAL := 99;     
+  CONSTANT tpll_a2_z     : NATURAL := 136;    
+  CONSTANT transistors   : NATURAL := 10      
+);
+PORT (
+  b1	 : in  BIT;
+  b2	 : in  BIT;
+  a2	 : in  BIT;
+  a1	 : in  BIT;
+  z	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END oan22_x1;
+
+ARCHITECTURE behaviour_data_flow OF oan22_x1 IS
+
+BEGIN
+  ASSERT ((vdd and not (vss)) = '1')
+  REPORT "power supply is missing on oan22_x1"
+  SEVERITY WARNING;
+  z <= ((b1 or b2) and (a2 or a1)) after 1200 ps;
+END;

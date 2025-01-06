@@ -1,0 +1,18 @@
+ENTITY invbuf_x3 IS
+PORT(
+  i	    : IN BIT;
+  c0	: INOUT BIT;
+  c1	: OUT BIT;
+  vdd	: IN BIT;
+  vss	: IN BIT
+);
+END invbuf_x3;
+
+ARCHITECTURE VBE OF invbuf_x3 IS
+
+BEGIN
+
+  c0 <= NOT(i);
+  c1 <= NOT(c0);
+
+END VBE;

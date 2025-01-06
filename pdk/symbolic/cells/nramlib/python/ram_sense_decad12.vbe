@@ -1,0 +1,21 @@
+ENTITY ram_sense_decad12 IS
+PORT (
+  ad1  	   : in  BIT;
+  ad2  	   : in  BIT;
+  ndec00   : out  BIT;
+  ndec01   : out  BIT;
+  ndec10   : out  BIT;
+  ndec11   : out  BIT;
+  vdd  	   : in  BIT;
+  vss	   : in  BIT
+);
+END ram_sense_decad12;
+
+ARCHITECTURE VBE OF ram_sense_decad12 IS
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on ram_sense_decad12"
+  SEVERITY WARNING;
+
+END;
