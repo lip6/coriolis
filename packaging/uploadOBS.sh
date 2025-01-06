@@ -5,7 +5,7 @@
 
  printHelp () {
    echo ""
-   echo "  Usage: uploadOBSs.sh [--sources] [--docs] [--venv] [--commit] [--run]"
+   echo "  Usage: uploadOBSs.sh [--sources] [--docs] [--venv] [--commit] [--all]"
    echo ""
    echo "  Options:"
    echo "    [--sources] : Build an archive from the HEAD of the current branch."
@@ -17,7 +17,7 @@
    echo "                  This will effectively triggers the rebuild of the packages."
    echo "                  OBS local repository is hardwired to:"
    echo "                      \"${obsDir}\""
-   echo "    [--run]     : Perform all actions at once."
+   echo "    [--all]     : Perform all actions at once."
    echo ""
 
  }
@@ -36,7 +36,7 @@
      --docs)    doDocs="true";;
      --venv)    doVEnv="true";;
      --commit)  doCommit="true";;
-     --run)     doSources="true"
+     --all)     doSources="true"
                 doDocs="true"
                 doVEnv="true"
                 doCommit="true";;
@@ -53,8 +53,8 @@
  echo "* Using HEAD githash as release: ${githash}."
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
-   ./packaging/git-archive-all.sh -v --prefix coriolis-eda-2.5.5/ --format tar.gz coriolis-eda-${version}.tar.gz
-   #git archive --prefix=coriolis-2.5.5/ --format=tar.gz -o coriolis-${version}.tar.gz HEAD
+   ./packaging/git-archive-all.sh -v --prefix coriolis-eda-${version}/ --format tar.gz coriolis-eda-${version}.tar.gz
+   #git archive --prefix=coriolis-${version}/ --format=tar.gz -o coriolis-${version}.tar.gz HEAD
  fi
  
  if [ "${doDocs}" = "true" ]; then
@@ -103,6 +103,7 @@
  sed -i "s,^%define docGithash .*,%define docGithash ${docGithash},"  ${obsDir}/coriolis-eda.spec
  if [ "${doCommit}" = "true" ]; then
    pushd ${obsDir}
+   osc add *
    osc commit
    popd
  fi
