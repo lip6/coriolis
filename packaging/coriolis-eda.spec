@@ -15,6 +15,7 @@ Source2:        patchvenv.sh
 Source3:        find_files.sh
 Source10:       coriolis-docs-%{docGithash}.tar.gz
 Patch0:         coloquinte-clamp.patch 
+Requires:       python3-doit
 
 
 BuildRequires:  flex
