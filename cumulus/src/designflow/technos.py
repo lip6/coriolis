@@ -3,7 +3,18 @@ import sys
 import os
 import socket
 from   pathlib import Path
-from   .task   import ShellEnv
+import warnings
+
+import coriolis     # Import the coriolis package to get its path
+from   .task        import ShellEnv
+from   .klayout     import DRC
+from   .yosys       import Yosys
+
+# Imports from C++ bindings
+from coriolis           import Cfg 
+from coriolis           import Viewer
+from coriolis           import CRL 
+from coriolis.helpers   import overlay, l, u, n, setNdaTopDir
 
 
 __all__ = [ 'Where', 'setupCMOS', 'setupCMOS45', 'setupLCMOS' ]
@@ -17,23 +28,23 @@ class Where ( object ):
     checkToolkit = None
 
     def __init__ ( self, checkToolkit=None ):
-        if 'CORIOLIS_TOP' in os.environ: Where.coriolisTop = Path( os.environ['CORIOLIS_TOP'] )
-        if 'ALLIANCE_TOP' in os.environ: Where.allianceTop = Path( os.environ['ALLIANCE_TOP'] )
-        if 'CELLS_TOP'    in os.environ: Where.cellsTop    = Path( os.environ['CELLS_TOP'] )
-        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
-        #print( Where.coriolisTop, Where.allianceTop )
-        if not Where.coriolisTop:
-            print( 'technos.Where.__init__(): Unable to locate Coriolis top.' )
         if checkToolkit is None:
             checkToolkit = Path.home() / 'coriolis-2.x' / 'src' / 'alliance-check-toolkit'
-        else:
-            if isinstance(checkToolkit,str):
-                checkToolkit = Path( checkToolkit )
-            if not Where.cellsTop:
-                Where.cellsTop = checkToolkit / 'cells'
+
         Where.checkToolkit = checkToolkit
-        if not Where.cellsTop and Where.allianceTop:
-            Where.cellsTop = Where.allianceTop / 'cells'
+        
+        coriolisTop = os.environ.get('CORIOLIS_TOP', None)
+        if coriolisTop:
+            Where.coriolisTop = Path(coriolisTop)
+        else:
+            Where.coriolisTop = Path( os.path.dirname(os.path.abspath(coriolis.__file__)) )
+
+        allianceTop = os.environ.get('ALLIANCE_TOP', None)
+        if allianceTop:
+            Where.allianceTop = Path(allianceTop)
+        else:
+            Where.allianceTop = Where.coriolisTop  #TODO Kept from previous version, but why?
+
         ShellEnv.ALLIANCE_TOP = Where.allianceTop.as_posix()
 
     def __repr__ ( self ):
@@ -41,58 +52,31 @@ class Where ( object ):
             return '<Where coriolisTop=NOT_FOUND>'
         return '<Where coriolisTop="{}">'.format( Where.coriolisTop.as_posix() )
 
+    @property
+    def cellsTop( self ):
+        warnings.warn(
+            "Where.cellsTop property property is deprecated. Use appropriate PDK instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return None
 
 def setupCMOS ( checkToolkit=None ):
-    Where( checkToolkit )
-    ShellEnv().export()
-
-    from ..         import Cfg 
-    from ..         import Viewer
-    from ..         import CRL 
-    from ..helpers  import overlay, l, u, n
-    from .yosys     import Yosys
-    import coriolis.technos.symbolic.cmos
+    warnings.warn(
+        "setupCMOS function has moved to coriolis.pdk.cmos.techno, use it instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     
-    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
-        cfg.misc.catchCore              = False
-        cfg.misc.info                   = False
-        cfg.misc.paranoid               = False
-        cfg.misc.bug                    = False
-        cfg.misc.logMode                = True
-        cfg.misc.verboseLevel1          = True
-        cfg.misc.verboseLevel2          = True
-        cfg.misc.minTraceLevel          = 1900
-        cfg.misc.maxTraceLevel          = 3000
-        cfg.katana.eventsLimit          = 1000000
-        cfg.katana.termSatReservedLocal = 6 
-        cfg.katana.termSatThreshold     = 9 
-        Viewer.Graphics.setStyle( 'Alliance.Classic [black]' )
-        af  = CRL.AllianceFramework.get()
-        env = af.getEnvironment()
-        env.setCLOCK( '^ck$|m_clock|^clk' )
-        env.addSYSTEM_LIBRARY( library=(Where.checkToolkit / 'cells' / 'niolib').as_posix()
-                             , mode   =CRL.Environment.Append )
-
-    Yosys.setLiberty( Where.allianceTop / 'cells' / 'sxlib' / 'sxlib.lib' )
-    ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
-
-    path = None
-    for pathVar in [ 'PATH', 'path' ]:
-        if pathVar in os.environ:
-            path = os.environ[ pathVar ]
-            os.environ[ pathVar ] = path + ':' + (Where.allianceTop / 'bin').as_posix()
-            break
+    from coriolis.pdk.cmos import techno
+    
+    return techno.setup(checkToolkit)
 
 
 def setupLCMOS ( checkToolkit=None ):
     Where( checkToolkit )
     ShellEnv().export()
 
-    from ..         import Cfg 
-    from ..         import Viewer
-    from ..         import CRL 
-    from ..helpers  import overlay, l, u, n
-    from .yosys     import Yosys
     import coriolis.technos.symbolic.lcmos
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
@@ -112,9 +96,9 @@ def setupLCMOS ( checkToolkit=None ):
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk$' )
-        env.addSYSTEM_LIBRARY ( library=(Where.checkToolkit / 'cells' / 'lsxlib').as_posix(), mode=CRL.Environment.Append )
+        env.addSYSTEM_LIBRARY ( library=(Where.cellsTop / 'lsxlib').as_posix(), mode=CRL.Environment.Append )
 
-    Yosys.setLiberty( Where.checkToolkit / 'cells' / 'lsxlib' / 'lsxlib.lib' )
+    Yosys.setLiberty( Where.cellsTop / 'lsxlib' / 'lsxlib.lib' )
     ShellEnv.RDS_TECHNO_NAME = (Where.allianceTop / 'etc' / 'cmos.rds').as_posix()
 
     path = None
@@ -128,20 +112,8 @@ def setupLCMOS ( checkToolkit=None ):
 def setupPhenitec600 ( checkToolkit=None ):
     Where( checkToolkit )
     ShellEnv().export()
-    cellsTop = Where.checkToolkit / 'cells'
-    if cellsTop is None:
-        cellsTop = Where.cellsTop
-    else:
-        if isinstance(cellsTop,str):
-            cellsTop = Path( cellsTop )
 
-    from ..         import Cfg 
-    from ..         import Viewer
-    from ..         import CRL 
-    from ..helpers  import overlay, l, u, n
-    from .yosys     import Yosys
     import coriolis.technos.node600.phenitec
-
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.misc.catchCore              = False
@@ -161,8 +133,8 @@ def setupPhenitec600 ( checkToolkit=None ):
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk' )
 
-        nsxlib  = cellsTop / 'nsxlib'
-        phlib80 = cellsTop / 'phlib80'
+        nsxlib  = Where.cellsTop / 'nsxlib'
+        phlib80 = Where.cellsTop / 'phlib80'
         liberty = nsxlib   / 'nsxlib.lib'
         env.addSYSTEM_LIBRARY( library=nsxlib .as_posix(), mode=CRL.Environment.Append )
         env.addSYSTEM_LIBRARY( library=phlib80.as_posix(), mode=CRL.Environment.Append )
@@ -196,6 +168,14 @@ def setupSky130_nsx2 ( checkToolkit=None ):
     liberty   = cellsTop / 'nsxlib2' / 'nsxlib2.lib'
     kdrcRules = pdkDir / 'klayout' / 'drc_sky130.lydrc'
 
+
+    from ..          import Cfg 
+    from ..          import Viewer
+    from ..          import CRL 
+    from ..helpers   import overlay, l, u, n
+    from .yosys      import Yosys
+    from .klayout    import DRC
+    
     from ..          import Cfg 
     from ..          import Viewer
     from ..          import CRL 
@@ -248,16 +228,10 @@ def setupSky130_lsx ( checkToolkit=None ):
     liberty   = cellsTop / 'lsxlib' / 'lsxlib.lib'
     kdrcRules = pdkDir / 'klayout' / 'drc_sky130.lydrc'
 
-    from ..          import Cfg 
-    from ..          import Viewer
-    from ..          import CRL 
-    from ..helpers   import overlay, l, u, n
-    from .yosys      import Yosys
-    from .klayout    import DRC
     from sky130_lsx import techno, lsxlib
     techno.setup( coriolisTechDir )
     lsxlib.setup( cellsTop )
-    
+
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.misc.catchCore              = False
         cfg.misc.info                   = False
@@ -285,11 +259,6 @@ def setupSky130_lsx ( checkToolkit=None ):
             break
 
 def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
-    from   ..        import Cfg 
-    from   ..        import Viewer
-    from   ..        import CRL 
-    from   ..helpers import overlay, l, u, n
-    from   .yosys    import Yosys
     import coriolis.technos.symbolic.cmos45
 
     Where( checkToolkit )
@@ -347,11 +316,6 @@ def setupCMOS45 ( useNsxlib=False, checkToolkit=None, cellsTop=None ):
 
 
 def setupMOSIS ( checkToolkit=None, cellsTop=None ):
-    from   ..        import Cfg 
-    from   ..        import Viewer
-    from   ..        import CRL 
-    from   ..helpers import overlay, l, u, n
-    from   .yosys    import Yosys
     import coriolis.technos.node180.scn6m_deep_09
 
     Where( checkToolkit )
@@ -406,12 +370,6 @@ def setupMOSIS ( checkToolkit=None, cellsTop=None ):
 
 
 def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import setNdaTopDir, overlay, l, u, n
-    from .yosys    import Yosys
-
     if isinstance(pdkMasterTop,str):
         pdkMasterTop = Path( pdkMasterTop )
     ndaDirectory = None
@@ -467,11 +425,6 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
 
 def setupGf180mcu_c4m ( checkToolkit=None
                       , pdkMasterTop=Path('/usr/share/open_pdks/C4M.gf180mcu') ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import overlay, l, u, n
-    from .yosys    import Yosys
 
     if isinstance(pdkMasterTop,str):
         pdkMasterTop = Path( pdkMasterTop )
@@ -517,12 +470,6 @@ def setupGf180mcu_c4m ( checkToolkit=None
 
 
 def setupFreePDK45_c4m ( checkToolkit=None, pdkMasterTop=None ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import setNdaTopDir, overlay, l, u, n
-    from .yosys    import Yosys
-
     if isinstance(pdkMasterTop,str):
         pdkMasterTop = Path( pdkMasterTop )
     if not pdkMasterTop.is_dir():
@@ -564,12 +511,6 @@ def setupFreePDK45_c4m ( checkToolkit=None, pdkMasterTop=None ):
 
 
 def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import setNdaTopDir, overlay, l, u, n
-    from .yosys    import Yosys
-
     ndaDirectory = None
     if ndaTop is not None:
         if not isinstance(ndaTop,Path):
@@ -620,12 +561,6 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
 
 
 def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None, useHV=False ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import setNdaTopDir, overlay, l, u, n
-    from .yosys    import Yosys
-
     if isinstance(pdkTop,str):
         pdkTop = Path( pdkTop )
     if not pdkTop:
@@ -669,12 +604,6 @@ def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None, useHV=False ):
 
 
 def setupAMS350 ( checkToolkit=None, ndaTop=None, cellsTop=None ):
-    from   ..        import Cfg 
-    from   ..        import Viewer
-    from   ..        import CRL 
-    from   ..helpers import setNdaTopDir, overlay, l, u, n
-    from   .yosys    import Yosys
-
     if isinstance(ndaTop,str):
         ndaTop = Path( ndaTop )
     setNdaTopDir( ndaTop.as_posix() )
