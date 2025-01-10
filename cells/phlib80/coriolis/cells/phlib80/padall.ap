@@ -1,8 +1,0 @@
-V ALLIANCE : 6
-H padall,P,25/ 9/2019,100
-A 0,0,600000,600000
-I 56300,18700,padline,south,SYM_Y
-I 56300,561300,padline,north,NOSYM
-I 18700,56300,padline,west,ROT_P
-I 561300,56300,padline,east,ROT_M
-EOF
