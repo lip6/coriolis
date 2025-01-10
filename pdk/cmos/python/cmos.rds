@@ -1,0 +1,948 @@
+#=====================================================================
+#
+#                         ALLIANCE VLSI CAD                  
+#            (R)eal (D)ata (S)tructure parameter file
+#         (c) copyright 1992 Laboratory UPMC/MASI/CAO-VLSI   
+#                        all rights reserved                 
+#                   e-mail : cao-vlsi@masi.ibp.fr            
+#
+#                   file       : cmos.rds
+#                   version    : 12
+#                   last modif : Apr 4, 2002
+#
+##-------------------------------------------------------------------
+# Symbolic to micron on a 'one lambda equals one micron' basis
+##-------------------------------------------------------------------
+# Refer to the documentation for more precise information.
+#=====================================================================
+# 01/11/09 ALU5/6 pitch 10
+#
+# 99/11/3 ALU5/6 rules
+# . theses rules are preliminary rules, we hope that they wil change
+#   in future. For now, ALU5/6 are dedicated to supplies an clock.
+# 
+# 99/3/22 new symbolics rules
+# . ALU1 width remains 1, ALU2/3/4 is 2
+# . ALU1/2/3/4 distance (edge to edge) is now 3 for all
+# . GATE to GATE distance is 3 but POLY wire to POLY wire remains 2
+# . All via stacking are allowed
+#
+# 98/12/1 drc rules were updated
+# distance VIA to POLY or gate is one rather 2
+# VIA2 and ALU3 appeared
+# . ALU3 width is 3
+# . ALU2/VIA2/ALU3 is resp. 3/1/3
+# . ALU3 edge distance is 2
+# . stacked VIA/VIA2 is allowed
+# . if they are not stacked they must distant of 2
+# . CONT/VIA2 is free
+# note
+# . stacked CONT/VIA is always not allowed
+# NWELL is automatically drawn with the DIFN and NTIE layers
+#=====================================================================
+
+##-------------------------------------------------------------------
+# PHYSICAL_GRID :
+##-------------------------------------------------------------------
+
+DEFINE  PHYSICAL_GRID  .5
+
+##-------------------------------------------------------------------
+# LAMBDA : 
+##-------------------------------------------------------------------
+
+DEFINE  LAMBDA         1
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_SEGMENT :
+#
+# MBK      RDS layer 1                 RDS layer 2         
+# name     name TRANS DLR DWR OFFSET   name TRANS DLR DWR OFFSET  ...
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_SEGMENT
+
+  PWELL    RDS_PWELL  VW  0.0  0.0  0.0  EXT
+  NWELL    RDS_NWELL  VW  0.0  0.0  0.0  ALL
+  NDIF     RDS_NDIF   VW  0.5  0.0  0.0  ALL
+  PDIF     RDS_PDIF   VW  0.5  0.0  0.0  ALL \
+           RDS_NWELL  VW  1.0  1.0  0.0  ALL
+  NTIE     RDS_NTIE   VW  0.5  0.0  0.0  ALL \
+           RDS_NWELL  VW  1.0  1.0  0.0  ALL
+  PTIE     RDS_PTIE   VW  0.5  0.0  0.0  ALL
+  NTRANS   RDS_POLY   VW  0.0  0.0  0.0  ALL \
+           RDS_NDIF  LCW -1.5  2.0  0.0  EXT \
+           RDS_NDIF  RCW -1.5  2.0  0.0  EXT \
+           RDS_NDIF   VW -1.5  4.0  0.0  DRC \
+           RDS_ACTIV  VW -1.5  5.0  0.0  ALL \
+	       RDS_PWELL  VW -1.5  0.0  0.0  EXT
+  PTRANS   RDS_POLY   VW  0.0  0.0  0.0  ALL \
+           RDS_PDIF  LCW -1.5  2.0  0.0  EXT \
+           RDS_PDIF  RCW -1.5  2.0  0.0  EXT \
+           RDS_PDIF   VW -1.5  4.0  0.0  DRC \
+           RDS_ACTIV  VW -1.5  5.0  0.0  ALL \
+           RDS_NWELL  VW -1.0  5.0  0.0  ALL 
+  POLY     RDS_POLY   VW  0.5  0.0  0.0  ALL
+  POLY2    RDS_POLY2  VW  0.5  0.0  0.0  ALL
+  ALU1     RDS_ALU1   VW  0.5  0.0  0.0  ALL
+  ALU2     RDS_ALU2   VW  1.0  0.0  0.0  ALL
+  ALU3     RDS_ALU3   VW  1.0  0.0  0.0  ALL
+  ALU4     RDS_ALU4   VW  1.0  0.0  0.0  ALL
+  ALU5     RDS_ALU5   VW  1.0  0.0  0.0  ALL 
+  ALU6     RDS_ALU6   VW  1.0  0.0  0.0  ALL 
+  CALU1    RDS_ALU1   VW  1.0  0.0  0.0  ALL
+  CALU2    RDS_ALU2   VW  1.0  0.0  0.0  ALL
+  CALU3    RDS_ALU3   VW  1.0  0.0  0.0  ALL
+  CALU4    RDS_ALU4   VW  1.0  0.0  0.0  ALL
+  CALU5    RDS_ALU5   VW  1.0  0.0  0.0  ALL 
+  CALU6    RDS_ALU6   VW  1.0  0.0  0.0  ALL 
+  TPOLY    RDS_TPOLY  VW  0.5  0.0  0.0  ALL
+  TALU1    RDS_TALU1  VW  0.5  0.0  0.0  ALL
+  TALU2    RDS_TALU2  VW  1.0  0.0  0.0  ALL
+  TALU3    RDS_TALU3  VW  1.0  0.0  0.0  ALL
+  TALU4    RDS_TALU4  VW  1.0  0.0  0.0  ALL
+  TALU5    RDS_TALU5  VW  1.0  0.0  0.0  ALL
+  TALU6    RDS_TALU6  VW  1.0  0.0  0.0  ALL
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_CONNECTOR :
+#
+# MBK      RDS layer 
+# name     name     DER DWR 
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_CONNECTOR
+
+  POLY    RDS_POLY  .5  0  
+  POLY2   RDS_POLY2 .5  0  
+  ALU1    RDS_ALU1  .5  0  
+  ALU2    RDS_ALU2 1.0  0  
+  ALU3    RDS_ALU3 1.0  0  
+  ALU4    RDS_ALU4 1.0  0  
+  ALU5    RDS_ALU5 1.0  0  
+  ALU6    RDS_ALU6 1.0  0  
+  CALU1   RDS_ALU1  .5  0 
+  CALU2   RDS_ALU2 1.0  0 
+  CALU3   RDS_ALU3 1.0  0 
+  CALU4   RDS_ALU4 1.0  0  
+  CALU5   RDS_ALU5 1.0  0  
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_REFERENCE :
+#
+# MBK ref    RDS layer 
+# name       name       width
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_REFERENCE
+
+  REF_REF    RDS_REF    1
+  REF_CON    RDS_VALU1  2  RDS_TVIA1 1  RDS_TALU2  2
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_VIA1 :
+#
+# MBK via      RDS layer 1  RDS  layer 2  RDS  layer 3  RDS layer 4      
+# name         name  width  name   width  name   width  name  width  
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_VIA
+
+  CONT_BODY_P  RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_PTIE 3 ALL  
+  CONT_BODY_N  RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_NTIE 3 ALL  RDS_NWELL 4 ALL
+  CONT_DIF_N   RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_NDIF 3 ALL
+  CONT_DIF_P   RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_PDIF 3 ALL  RDS_NWELL 4 ALL
+  CONT_POLY    RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_POLY 3 ALL
+  CONT_POLY2   RDS_ALU1 2 ALL  RDS_CONT 1 ALL  RDS_POLY2 3 ALL
+  CONT_VIA     RDS_ALU1 2 ALL  RDS_VIA1 1 ALL  RDS_ALU2 2 ALL
+  CONT_VIA2    RDS_ALU2 2 ALL  RDS_VIA2 1 ALL  RDS_ALU3 2 ALL
+  CONT_VIA3    RDS_ALU3 2 ALL  RDS_VIA3 1 ALL  RDS_ALU4 2 ALL
+  CONT_VIA4    RDS_ALU4 2 ALL  RDS_VIA4 1 ALL  RDS_ALU5 2 ALL
+  CONT_VIA5    RDS_ALU5 2 ALL  RDS_VIA5 1 ALL  RDS_ALU6 2 ALL
+  C_X_N        RDS_POLY 1 ALL  RDS_NDIF 5 ALL  RDS_ACTIV 6 ALL
+  C_X_P        RDS_POLY 1 ALL  RDS_PDIF 5 ALL  RDS_NWELL 6 ALL  RDS_ACTIV 6 ALL
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_BIGVIA_HOLE :
+#
+# MBK via      RDS Hole        
+# name         name  side step mode
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_BIGVIA_HOLE
+
+CONT_VIA   RDS_VIA1 1 4 ALL
+CONT_VIA2  RDS_VIA2 1 4 ALL
+CONT_VIA3  RDS_VIA3 1 4 ALL
+CONT_VIA4  RDS_VIA4 1 4 ALL   # should be more than 4 
+CONT_VIA5  RDS_VIA5 1 4 ALL   # should be more than 4 
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_BIGVIA_METAL :
+#
+# MBK via      RDS layer 1                      ...
+# name         name  delta-width overlap mode
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_BIGVIA_METAL
+
+CONT_VIA  RDS_ALU1 0.0 0.5 ALL RDS_ALU2 0.0 0.5 ALL
+CONT_VIA2 RDS_ALU2 0.0 0.5 ALL RDS_ALU3 0.0 0.5 ALL
+CONT_VIA3 RDS_ALU3 0.0 0.5 ALL RDS_ALU4 0.0 0.5 ALL
+CONT_VIA4 RDS_ALU4 0.0 0.5 ALL RDS_ALU5 0.0 0.5 ALL
+CONT_VIA5 RDS_ALU5 0.0 0.5 ALL RDS_ALU6 0.0 0.5 ALL
+
+END 
+
+##-------------------------------------------------------------------
+# TABLE MBK_TO_RDS_TURNVIA :
+#
+# MBK via      RDS layer 1                      ...
+# name         name  DWR MODE
+##-------------------------------------------------------------------
+
+TABLE MBK_TO_RDS_TURNVIA
+
+CONT_TURN1 RDS_ALU1 0 ALL
+CONT_TURN2 RDS_ALU2 0 ALL
+CONT_TURN3 RDS_ALU3 0 ALL
+CONT_TURN4 RDS_ALU4 0 ALL
+CONT_TURN5 RDS_ALU5 0 ALL
+CONT_TURN6 RDS_ALU6 0 ALL
+
+END
+
+
+##-------------------------------------------------------------------
+# TABLE LYNX_GRAPH :
+#
+# RDS layer   Rds layer 1   Rds layer 2    ...
+# name        name          name           ...
+##-------------------------------------------------------------------
+
+TABLE LYNX_GRAPH
+
+##---------------------------
+#
+# Modifie par L.Jacomme (Pb Bulk/Alim avec Lynx)
+# 23.11.99
+#
+# RDS_NWELL  RDS_NTIE   RDS_NWELL
+# RDS_PWELL  RDS_PTIE   RDS_PWELL
+# RDS_NDIF  RDS_CONT RDS_NDIF
+# RDS_PDIF  RDS_CONT RDS_PDIF
+# RDS_NTIE  RDS_CONT RDS_NTIE RDS_NWELL
+# RDS_PTIE  RDS_CONT RDS_PTIE RDS_PWELL
+
+  RDS_NDIF  RDS_CONT RDS_NDIF
+  RDS_PDIF  RDS_CONT RDS_PDIF
+  RDS_NTIE  RDS_CONT RDS_NTIE
+  RDS_PTIE  RDS_CONT RDS_PTIE
+
+  RDS_POLY  RDS_CONT RDS_POLY 
+  RDS_POLY2  RDS_CONT RDS_POLY2 
+  RDS_CONT  RDS_PDIF RDS_NDIF RDS_POLY RDS_PTIE  RDS_NTIE RDS_ALU1 RDS_CONT
+  RDS_ALU1  RDS_CONT RDS_VIA1 RDS_ALU1 RDS_VALU1 RDS_ALU1
+  RDS_VALU1 RDS_CONT RDS_VIA1 RDS_ALU1 RDS_VALU1
+  RDS_VIA1  RDS_ALU1 RDS_ALU2 RDS_VIA1
+  RDS_VIA2  RDS_ALU2 RDS_ALU3 RDS_VIA2
+  RDS_VIA3  RDS_ALU3 RDS_ALU4 RDS_VIA3
+  RDS_VIA4  RDS_ALU4 RDS_ALU5 RDS_VIA4
+  RDS_VIA5  RDS_ALU5 RDS_ALU6 RDS_VIA5
+  RDS_ALU2  RDS_VIA1 RDS_VIA2 RDS_ALU2 
+  RDS_ALU3  RDS_VIA2 RDS_VIA3 RDS_ALU3
+  RDS_ALU4  RDS_VIA3 RDS_VIA4 RDS_ALU4 
+  RDS_ALU5  RDS_VIA4 RDS_VIA5 RDS_ALU5 
+  RDS_ALU6  RDS_VIA5          RDS_ALU6 
+
+END
+
+##-------------------------------------------------------------------
+# TABLE LYNX_CAPA : 
+#
+# RDS layer   Surface capacitance  Perimetric capacitance
+# name        piF / Micron^2       piF / Micron 
+##-------------------------------------------------------------------
+
+TABLE LYNX_CAPA
+
+  RDS_POLY    1.00e-04    1.00e-04
+  RDS_POLY2   1.00e-04    1.00e-04
+  RDS_ALU1    0.50e-04    0.90e-04
+  RDS_ALU2    0.25e-04    0.95e-04
+  RDS_ALU3    0.25e-04    0.95e-04
+  RDS_ALU4    0.25e-04    0.95e-04
+  RDS_ALU5    0.25e-04    0.95e-04
+  RDS_ALU6    0.25e-04    0.95e-04
+
+END
+
+##-------------------------------------------------------------------
+# TABLE LYNX_RESISTOR :
+#
+# RDS layer   Surface resistor
+# name        Ohm / Micron^2 
+##-------------------------------------------------------------------
+
+TABLE LYNX_RESISTOR
+
+  RDS_POLY    50.0
+  RDS_POLY2   50.0
+  RDS_ALU1     0.1
+  RDS_ALU2     0.05
+  RDS_ALU3     0.05
+  RDS_ALU4     0.05
+  RDS_ALU5     0.05
+  RDS_ALU6     0.05
+
+END
+
+##-------------------------------------------------------------------
+# TABLE LYNX_TRANSISTOR : 
+#
+# MBK layer  Transistor Type  MBK via
+# name       name             name
+##-------------------------------------------------------------------
+
+TABLE LYNX_TRANSISTOR
+
+  NTRANS  NTRANS  C_X_N   RDS_POLY   RDS_NDIF  RDS_NDIF  RDS_PWELL
+  PTRANS  PTRANS  C_X_P   RDS_POLY   RDS_PDIF  RDS_PDIF  RDS_NWELL
+
+END
+
+##-------------------------------------------------------------------
+# TABLE LYNX_DIFFUSION :
+#
+# RDS layer  RDS layer
+# name       name    
+##-------------------------------------------------------------------
+
+TABLE LYNX_DIFFUSION
+END
+
+##-------------------------------------------------------------------
+# TABLE LYNX_BULK_IMPLICIT :
+#
+# RDS layer  Bulk type
+# name       EXPLICIT/IMPLICIT
+##-------------------------------------------------------------------
+
+TABLE LYNX_BULK_IMPLICIT
+
+##---------------------------
+#
+# Modifie par L.Jacomme (Pb Bulk/Alim avec Lynx)
+# 23.11.99
+#
+# NWELL  EXPLICIT
+# PWELL  IMPLICIT
+
+END
+
+
+
+##-------------------------------------------------------------------
+# TABLE S2R_OVERSIZE_DENOTCH :
+##-------------------------------------------------------------------
+
+TABLE S2R_OVERSIZE_DENOTCH 
+END
+
+##-------------------------------------------------------------------
+# TABLE S2R_BLOC_RING_WIDTH :
+##-------------------------------------------------------------------
+
+TABLE S2R_BLOC_RING_WIDTH
+END
+
+##-------------------------------------------------------------------
+# TABLE S2R_MINIMUM_LAYER_WIDTH :
+##-------------------------------------------------------------------
+
+TABLE S2R_MINIMUM_LAYER_WIDTH 
+
+  RDS_NWELL   4
+  RDS_PDIF    2
+  RDS_NTIE    2
+  RDS_PTIE    2
+  RDS_POLY    1
+  RDS_POLY2   1
+  RDS_TPOLY   1
+  RDS_CONT    1
+  RDS_ALU1    1
+  RDS_TALU1   1
+  RDS_VIA1    1
+  RDS_ALU2    2
+  RDS_TALU2   2
+  RDS_VIA2    1
+  RDS_ALU3    2
+  RDS_TALU3   2
+  RDS_VIA3    1
+  RDS_ALU4    2
+  RDS_TALU4   2
+  RDS_VIA4    1
+  RDS_ALU5    2
+  RDS_TALU5   2
+  RDS_VIA5    1
+  RDS_ALU6    2
+  RDS_TALU6   2
+
+END
+
+##-------------------------------------------------------------------
+# TABLE MBK_WIRESETTING :
+##-------------------------------------------------------------------
+#
+# This table is used by ocp, nero & ring. It supplies *symbolic*
+# information about the routing grid, the cell gauge and the power
+# wires.
+
+
+TABLE MBK_WIRESETTING
+
+  X_GRID                  5
+  Y_GRID                  5
+  Y_SLICE                50
+  WIDTH_VDD               6
+  WIDTH_VSS               6
+  TRACK_WIDTH_ALU8        0
+  TRACK_WIDTH_ALU7        2
+  TRACK_WIDTH_ALU6        2
+  TRACK_WIDTH_ALU5        2
+  TRACK_WIDTH_ALU4        2
+  TRACK_WIDTH_ALU3        2
+  TRACK_WIDTH_ALU2        2
+  TRACK_WIDTH_ALU1        2
+  TRACK_SPACING_ALU8      0
+  TRACK_SPACING_ALU7      8
+  TRACK_SPACING_ALU6      8
+  TRACK_SPACING_ALU5      3
+  TRACK_SPACING_ALU4      3
+  TRACK_SPACING_ALU3      3
+  TRACK_SPACING_ALU2      3
+  TRACK_SPACING_ALU1      3
+
+END
+
+
+##-------------------------------------------------------------------
+# TABLE CIF_LAYER :
+##-------------------------------------------------------------------
+
+TABLE CIF_LAYER
+
+  RDS_NWELL    LNWELL
+  RDS_NDIF     LNDIF
+  RDS_PDIF     LPDIF
+  RDS_NTIE     LNTIE
+  RDS_PTIE     LPTIE
+  RDS_POLY     LPOLY
+  RDS_POLY2    LPOLY2
+  RDS_TPOLY    LTPOLY
+  RDS_CONT     LCONT
+  RDS_ALU1     LALU1
+  RDS_VALU1    LVALU1
+  RDS_TALU1    LTALU1
+  RDS_VIA1     LVIA
+  RDS_TVIA1    LTVIA1
+  RDS_ALU2     LALU2
+  RDS_TALU2    LTALU2
+  RDS_VIA2     LVIA2
+  RDS_ALU3     LALU3
+  RDS_TALU3    LTALU3
+  RDS_VIA3     LVIA3
+  RDS_ALU4     LALU4
+  RDS_TALU4    LTALU4
+  RDS_VIA4     LVIA4
+  RDS_ALU5     LALU5
+  RDS_TALU5    LTALU5
+  RDS_VIA5     LVIA5
+  RDS_ALU6     LALU6
+  RDS_TALU6    LTALU6
+  RDS_REF      LREF
+
+END
+
+##-------------------------------------------------------------------
+# TABLE GDS_LAYER :
+##-------------------------------------------------------------------
+
+TABLE GDS_LAYER
+
+  RDS_NWELL    1
+  RDS_NDIF     3
+  RDS_PDIF     4
+  RDS_NTIE     5
+  RDS_PTIE     6
+  RDS_POLY     7
+  RDS_POLY2    8
+  RDS_TPOLY    9
+  RDS_CONT    10
+  RDS_ALU1    11	11
+  RDS_VALU1   12
+  RDS_TALU1   13
+  RDS_VIA1    14
+  RDS_TVIA1   15
+  RDS_ALU2    16	16
+  RDS_TALU2   17
+  RDS_VIA2    18
+  RDS_ALU3    19	19
+  RDS_TALU3   20
+  RDS_VIA3    21
+  RDS_ALU4    22	22
+  RDS_TALU4   23
+  RDS_VIA4    25
+  RDS_ALU5    26	26
+  RDS_TALU5   27
+  RDS_VIA5    28
+  RDS_ALU6    29	29
+  RDS_TALU6   30
+  RDS_REF     24
+
+END
+
+##-------------------------------------------------------------------
+# TABLE S2R_POST_TREAT :
+##-------------------------------------------------------------------
+
+TABLE S2R_POST_TREAT
+
+END
+DRC_RULES
+
+layer RDS_NWELL 4.;
+layer RDS_NTIE 2.;
+layer RDS_PTIE 2.;
+layer RDS_NDIF 2.;
+layer RDS_PDIF 2.;
+layer RDS_ACTIV 2.;
+layer RDS_CONT 1.;
+layer RDS_VIA1 1.;
+layer RDS_VIA2 1.;
+layer RDS_VIA3 1.;
+layer RDS_VIA4 1.;
+layer RDS_VIA5 1.;
+layer RDS_POLY 1.;
+layer RDS_POLY2 1.;
+layer RDS_ALU1 1.;
+layer RDS_ALU2 2.;
+layer RDS_ALU3 2.;
+layer RDS_ALU4 2.;
+layer RDS_ALU5 2.;
+layer RDS_ALU6 2.;
+layer RDS_USER0 1.;
+layer RDS_USER1 1.;
+layer RDS_USER2 1.;
+
+regles
+
+# Note : ``min'' is different from ``>=''. 
+# min is applied on polygons and >= is applied on rectangles.
+# There is the same difference between max and <=.
+# >= is faster than min, but min must be used where it is
+# required to consider polygons, for example distance of
+# two objects in the same layer 
+#
+# There is no rule to check NTIE and PDIF are included in NWELL
+# since this is necessarily true
+#----------------------------------------------------------- 
+
+# Check the NWELL shapes
+#-----------------------
+caracterise RDS_NWELL (
+  regle 1 : largeur >= 4. ;
+  regle 2 : longueur_inter min 4. ;
+  regle 3 : notch >= 12. ;
+);
+relation RDS_NWELL , RDS_NWELL (
+  regle 4 : distance axiale min 12. ;
+);
+
+# Check RDS_PTIE is really excluded outside NWELL
+#------------------------------------------------
+relation RDS_PTIE , RDS_NWELL (
+  regle 5 : distance axiale >= 7.5;
+  regle 6 : enveloppe longueur_inter < 0. ;
+  regle 7 : marge longueur_inter < 0. ;
+  regle 8 : croix longueur_inter < 0. ;
+  regle 9 : intersection longueur_inter < 0. ;
+  regle 10 : extension longueur_inter < 0. ;
+  regle 11 : inclusion longueur_inter < 0. ;
+);
+
+# Check RDS_NDIF is really excluded outside NWELL
+#------------------------------------------------
+relation RDS_NDIF , RDS_NWELL (
+  regle 12 : distance axiale >= 7.5;
+  regle 13 : enveloppe longueur_inter < 0. ;
+  regle 14 : marge longueur_inter < 0. ;
+  regle 15 : croix longueur_inter < 0. ;
+  regle 16 : intersection longueur_inter < 0. ;
+  regle 17 : extension longueur_inter < 0. ;
+  regle 18 : inclusion longueur_inter < 0. ;
+);
+
+# Check the RDS_PDIF shapes
+#--------------------------
+caracterise RDS_PDIF (
+  regle 19 : largeur >= 2. ;
+  regle 20 : longueur_inter min 2. ;
+  regle 21 : notch >= 3. ;
+);
+relation RDS_PDIF , RDS_PDIF (
+  regle 22 : distance axiale min 3. ;
+);
+
+# Check the RDS_NDIF shapes
+#--------------------------
+caracterise RDS_NDIF (
+  regle 23 : largeur >= 2. ;
+  regle 24 : longueur_inter min 2. ;
+  regle 25 : notch >= 3. ;
+);
+relation RDS_NDIF , RDS_NDIF (
+  regle 26 : distance axiale min 3. ;
+);
+
+# Check the RDS_PTIE shapes
+#--------------------------
+caracterise RDS_PTIE (
+  regle 27 : largeur >= 2. ;
+  regle 28 : longueur_inter min 2. ;
+  regle 29 : notch >= 3. ;
+);
+relation RDS_PTIE , RDS_PTIE (
+  regle 30 : distance axiale min 3. ;
+);
+
+# Check the RDS_NTIE shapes
+#--------------------------
+caracterise RDS_NTIE (
+  regle 31 : largeur >= 2. ;
+  regle 32 : longueur_inter min 2. ;
+  regle 33 : notch >= 3. ;
+);
+relation RDS_NTIE , RDS_NTIE (
+  regle 34 : distance axiale min 3. ;
+);
+
+define RDS_PDIF , RDS_PTIE union -> ANY_P_DIF;
+define RDS_NDIF , RDS_NTIE union -> ANY_N_DIF;
+
+# Check the ANY_N_DIF ANY_P_DIFF exclusion
+#--------------------------------------
+relation ANY_N_DIF , ANY_P_DIF (
+  regle 35 : distance axiale >= 3. ;
+  regle 36 : enveloppe longueur_inter < 0. ;
+  regle 37 : marge longueur_inter < 0. ;
+  regle 38 : croix longueur_inter < 0. ;
+  regle 39 : intersection longueur_inter < 0. ;
+  regle 40 : extension longueur_inter < 0. ;
+  regle 41 : inclusion longueur_inter < 0. ;
+);
+
+undefine ANY_P_DIF;
+undefine ANY_N_DIF;
+
+define RDS_NDIF , RDS_PDIF union -> NP_DIF;
+
+# Check RDS_POLY related to NP_DIF
+#---------------------------------
+relation RDS_POLY , NP_DIF (
+  regle 42 : distance axiale >= 1. ;
+  regle 43 : intersection longueur_inter < 0. ;
+);
+
+define NP_DIF , RDS_POLY intersection -> CHANNEL;
+
+# Check the RDS_POLY shapes
+#--------------------------
+caracterise RDS_POLY (
+  regle 44 : largeur >= 1. ;
+  regle 45 : longueur_inter min 1. ;
+  regle 46 : notch >= 2. ;
+);
+relation RDS_POLY , RDS_POLY (
+  regle 47 : distance axiale min 2.;
+);
+
+define NP_DIF , RDS_CONT intersection -> CONT_DIFF;
+# Check the CHANNEL shapes
+#--------------------------
+caracterise CHANNEL (
+  regle 48 : notch >= 3. ;
+);
+relation CHANNEL , CHANNEL (
+  regle 49 : distance axiale min 3.;
+);
+
+undefine CHANNEL;
+
+# Check RDS_POLY is distant from ACTIV ZONE of TRANSISTOR
+#--------------------------------------------------------
+relation RDS_POLY , RDS_ACTIV (
+  regle 79 : distance axiale >= 1. ;
+);
+
+relation RDS_POLY , CONT_DIFF (
+  regle 50 : distance axiale >= 2. ;
+);
+
+undefine CONT_DIFF;
+undefine NP_DIF;
+
+
+# Check RDS_ALU1 shapes
+#----------------------
+caracterise RDS_ALU1 (
+  regle 51 : largeur >= 1. ;
+  regle 52 : longueur_inter min 1. ;
+  regle 53 : notch >= 3. ;
+);
+relation RDS_ALU1 , RDS_ALU1 (
+  regle 54 : distance axiale min 3. ;
+);
+
+# Check RDS_ALU2 shapes
+#----------------------
+caracterise RDS_ALU2 (
+  regle 55 : largeur >= 2. ;
+  regle 56 : longueur_inter min 2. ;
+  regle 57 : notch >= 3. ;
+);
+relation RDS_ALU2 , RDS_ALU2 (
+  regle 58 : distance axiale min 3. ;
+);
+
+# Check RDS_ALU3 shapes
+#----------------------
+caracterise RDS_ALU3 (
+  regle 59 : largeur >= 2. ;
+  regle 60 : longueur_inter min 2. ;
+  regle 61 : notch >= 3. ;
+);
+relation RDS_ALU3 , RDS_ALU3 (
+  regle 62 : distance axiale min 3. ;
+);
+
+# Check RDS_ALU4 shapes
+#----------------------
+caracterise RDS_ALU4 (
+  regle 63 : largeur >= 2. ;
+  regle 64 : longueur_inter min 2. ;
+  regle 65 : notch >= 3. ;
+);
+relation RDS_ALU4 , RDS_ALU4 (
+  regle 66 : distance axiale min 3. ;
+);
+
+# Check RDS_ALU5 shapes
+#----------------------
+caracterise RDS_ALU5 (
+  regle 80 : largeur >= 2. ;
+  regle 81 : longueur_inter min 2. ;
+  regle 82 : notch >= 3. ;
+);
+relation RDS_ALU5 , RDS_ALU5 (
+  regle 83 : distance axiale min 3. ;
+);
+
+# Check RDS_ALU6 shapes
+#----------------------
+caracterise RDS_ALU6 (
+  regle 84 : largeur >= 2. ;
+  regle 85 : longueur_inter min 2. ;
+  regle 86 : notch >= 3. ;
+);
+relation RDS_ALU6 , RDS_ALU6 (
+  regle 87 : distance axiale min 3. ;
+);
+
+# Check ANY_VIA layers, stacking are free
+#----------------------------------------
+relation RDS_CONT , RDS_CONT (
+  regle 67 : distance axiale >= 3. ;
+);
+relation RDS_VIA , RDS_VIA (
+  regle 68 : distance axiale >= 4. ;
+);
+relation RDS_VIA2 , RDS_VIA2 (
+  regle 69 : distance axiale >= 4. ;
+);
+relation RDS_VIA3 , RDS_VIA3 (
+  regle 70 : distance axiale >= 4. ;
+);
+relation RDS_VIA4 , RDS_VIA4 (
+  regle 88 : distance axiale >= 4. ;
+);
+relation RDS_VIA5 , RDS_VIA5 (
+  regle 89 : distance axiale >= 4. ;
+);
+caracterise RDS_CONT (
+  regle 71 : largeur >= 1. ;
+  regle 72 : longueur <= 1. ;
+);
+caracterise RDS_VIA (
+  regle 73 : largeur >= 1. ;
+  regle 74 : longueur <= 1. ;
+);
+caracterise RDS_VIA2 (
+  regle 75 : largeur >= 1. ;
+  regle 76 : longueur <= 1. ;
+);
+caracterise RDS_VIA3 (
+  regle 77 : largeur >= 1. ;
+  regle 78 : longueur <= 1. ;
+);
+caracterise RDS_VIA4 (
+  regle 90 : largeur >= 1. ;
+  regle 91 : longueur <= 1. ;
+);
+caracterise RDS_VIA5 (
+  regle 92 : largeur >= 1. ;
+  regle 93 : longueur <= 1. ;
+);
+
+# Check the POLY2 shapes
+#-----------------------
+caracterise RDS_POLY2 (
+  regle 94 : largeur >= 1. ;
+  regle 95 : longueur_inter min 1. ;
+  regle 96 : notch >= 5. ;
+);
+relation RDS_POLY2 , RDS_POLY2 (
+  regle 97 : distance axiale min 5. ;
+);
+
+# Check RDS_POLY2 is really included inside RDS_POLY1
+#----------------------------------------------------
+relation RDS_POLY , RDS_POLY2 (
+  regle 98 : distance axiale < 0.;
+  regle 99 : enveloppe inferieure min 5. ;
+  regle 100 : marge longueur_inter < 0. ;
+  regle 101 : croix longueur_inter < 0. ;
+  regle 102 : intersection longueur_inter < 0. ;
+  regle 103 : extension longueur_inter < 0. ;
+  regle 104 : inclusion longueur_inter < 0. ;
+);
+
+
+fin regles
+DRC_COMMENT
+1 (RDS_NWELL) minimum width 4. 
+2 (RDS_NWELL) minimum width 4. 
+3 (RDS_NWELL) Manhatan distance min 12. 
+4 (RDS_NWELL,RDS_NWELL) Manhatan distance min 12. 
+5 (RDS_PTIE,RDS_NWELL) Manhatan distance min 7.5
+6 (RDS_PTIE,RDS_NWELL) must never been in contact
+7 (RDS_PTIE,RDS_NWELL) must never been in contact
+8 (RDS_PTIE,RDS_NWELL) must never been in contact
+9 (RDS_PTIE,RDS_NWELL) must never been in contact
+10 (RDS_PTIE,RDS_NWELL) must never been in contact
+11 (RDS_PTIE,RDS_NWELL) must never been in contact
+12 (RDS_NDIF,RDS_NWELL) Manhatan distance min 7.5
+13 (RDS_NDIF,RDS_NWELL) must never been in contact
+14 (RDS_NDIF,RDS_NWELL) must never been in contact
+15 (RDS_NDIF,RDS_NWELL) must never been in contact
+16 (RDS_NDIF,RDS_NWELL) must never been in contact
+17 (RDS_NDIF,RDS_NWELL) must never been in contact
+18 (RDS_NDIF,RDS_NWELL) must never been in contact
+19 (RDS_PDIF) minimum width 2. 
+20 (RDS_PDIF) minimum width 2. 
+21 (RDS_PDIF) Manhatan distance min 3. 
+22 (RDS_PDIF,RDS_PDIF) Manhatan distance min 3. 
+23 (RDS_NDIF) minimum width 2. 
+24 (RDS_NDIF) minimum width 2. 
+25 (RDS_NDIF) Manhatan distance min 3. 
+26 (RDS_NDIF,RDS_NDIF) Manhatan distance min 3. 
+27 (RDS_PTIE) minimum width 2. 
+28 (RDS_PTIE) minimum width 2. 
+29 (RDS_PTIE) Manhatan distance min 3. 
+30 (RDS_PTIE,RDS_PTIE) Manhatan distance min 3. 
+31 (RDS_NTIE) minimum width 2. 
+32 (RDS_NTIE) minimum width 2. 
+33 (RDS_NTIE) Manhatan distance min 3. 
+34 (RDS_NTIE,RDS_NTIE) Manhatan distance min 3. 
+35 (ANY_N_DIF,ANY_P_DIF) Manhatan distance min 3. 
+36 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+37 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+38 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+39 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+40 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+41 (ANY_N_DIF,ANY_P_DIF) must never been in contact
+42 (RDS_POLY,ANY_N_DIF) Manhatan distance min 1. 
+43 (RDS_POLY,NP_DIF) bad intersection
+44 (RDS_POLY) minimum width 1. 
+45 (RDS_POLY) minimum width 1. 
+46 (RDS_POLY) Manhatan distance min 2. 
+47 (RDS_POLY,RDS_POLY) Manhatan distance min 2.
+48 (CHANNEL) Manhatan distance min 3. 
+49 (CHANNEL,CHANNEL) Manhatan distance min 3.
+50 (RDS_POLY,CONT_DIFF) Manhatan distance min 2. 
+51 (RDS_ALU1) minimum width 1. 
+52 (RDS_ALU1) minimum width 1. 
+53 (RDS_ALU1) Manhatan distance min 3.
+54 (RDS_ALU1,RDS_ALU1) Manhatan distance min 3.
+55 (RDS_ALU2) minimum width 2. 
+56 (RDS_ALU2) minimum width 2. 
+57 (RDS_ALU2) Manhatan distance min 3. 
+58 (RDS_ALU2,RDS_ALU2) Manhatan distance min 3. 
+59 (RDS_ALU3) minimum width 2. 
+60 (RDS_ALU3) minimum width 2. 
+61 (RDS_ALU3) Manhatan distance min 3. 
+62 (RDS_ALU3,RDS_ALU3) Manhatan distance min 3. 
+63 (RDS_ALU4) minimum width 2. 
+64 (RDS_ALU4) minimum width 2. 
+65 (RDS_ALU4) Manhatan distance min 3. 
+66 (RDS_ALU4,RDS_ALU4) Manhatan distance min 3. 
+67 (RDS_CONT,RDS_CONT) Manhatan distance min 3. 
+68 (RDS_VIA,RDS_VIA) Manhatan distance min 4. 
+69 (RDS_VIA2,RDS_VIA2) Manhatan distance min 4. 
+70 (RDS_VIA3,RDS_VIA3) Manhatan distance min 4. 
+71 (RDS_CONT) minimum width 1. 
+72 (RDS_CONT) maximum length 1. 
+73 (RDS_VIA) minimum width 1. 
+74 (RDS_VIA) maximum length 1. 
+75 (RDS_VIA2) minimum width 1. 
+76 (RDS_VIA2) maximum length 1. 
+77 (RDS_VIA3) minimum width 1. 
+78 (RDS_VIA3) maximum length 1. 
+79 (RDS_POLY,RDS_ACTIV) Manhatan distance min 1. 
+80 (RDS_ALU5) minimum width 2. 
+81 (RDS_ALU5) minimum width 2. 
+82 (RDS_ALU5) Manhatan distance min 4. 
+83 (RDS_ALU5,RDS_ALU5) Manhatan distance min 4. 
+84 (RDS_ALU6) minimum width 2. 
+85 (RDS_ALU6) minimum width 2. 
+86 (RDS_ALU6) Manhatan distance min 4. 
+87 (RDS_ALU6,RDS_ALU6) Manhatan distance min 4. 
+88 (RDS_VIA4,RDS_VIA4) Manhatan distance min 4. 
+89 (RDS_VIA5,RDS_VIA5) Manhatan distance min 4. 
+90 (RDS_VIA4) minimum width 1. 
+91 (RDS_VIA4) maximum length 1. 
+92 (RDS_VIA5) minimum width 1. 
+93 (RDS_VIA5) maximum length 1. 
+94 (RDS_POLY2) minimum width 1. 
+95 (RDS_POLY2) minimum width 1. 
+96 (RDS_POLY2) Manhatan distance min 5. 
+97 (RDS_POLY2,POLY2) Manhatan distance min 5. 
+98 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+99 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+100 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+101 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+102 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+103 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+104 (RDS_POLY,RDS_POLY2) POLY2 must be enclosed by POLY of 5. 
+END_DRC_COMMENT
+END_DRC_RULES
