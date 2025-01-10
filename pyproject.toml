@@ -1,5 +1,5 @@
 [project]
-name = "coriolis-eda"
+name = "coriolis_eda"
 dynamic = ["version"]
 description = "Place and Route for semiconductors"
 authors = [ { name = "Coriolis EDA Contributers" } ]
