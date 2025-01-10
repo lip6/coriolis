@@ -6,6 +6,11 @@ DIST_PATH  		:= ../dist
 
 venv        	= . ${VENV_PATH}/bin/activate;
 
+ifneq (,$(wildcard ../.env))
+    include ../.env
+    export $(shell sed 's/=.*//' ../.env)
+endif
+
 PIP_INSTALL 	= $(venv) pip3 install --upgrade
 PACKAGES    	= pip setuptools build wheel cibuildwheel
 
@@ -14,10 +19,10 @@ venv-setup:
 	$(foreach pkg,$(PACKAGES),$(PIP_INSTALL) $(pkg);)
 
 ### PDK
-PDKS = common sky130_vsc
+PDKS = cmos common sky130_vsc symbolic
 
 define build_pdk
-$(1): venv-setup
+coriolis_pdk_$(1): venv-setup
 	$(venv) ${PYTHON3} -m build -w -o ${DIST_PATH} $(1) >> $(LOG_FILE) 2>&1
 endef
 
@@ -25,8 +30,13 @@ endef
 $(foreach pdk,$(PDKS),$(eval $(call build_pdk,$(pdk))))
 
 ### All target
-all: $(PDKS)
+all: $(foreach pdk,$(PDKS),coriolis_pdk_$(pdk))
 	@echo "Finished building all PDK wheel packages" >> $(LOG_FILE) 2>&1
+
+### Install target
+# No install target for PDKs
+# as pip complains about not finding dependencies whithin current venv.
+# The install target is in the main Makefile.
 
 ## Uninstall target
 define uninstall_pdk
