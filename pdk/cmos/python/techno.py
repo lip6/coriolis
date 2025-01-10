@@ -39,10 +39,10 @@ def setup( checkToolkit=None ):
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk' )
-        env.addSYSTEM_LIBRARY( library=(Where.coriolisTop / 'pdk' / 'symbolic' / 'cells' / 'niolib').as_posix()
+        env.addSYSTEM_LIBRARY( library=(Where.coriolisTop / 'pdk' / 'symbolic' / 'niolib' / 'cells' ).as_posix()
                              , mode=CRL.Environment.Append )
 
-    Yosys.setLiberty( Where.coriolisTop / 'pdk' / 'symbolic' / 'cells' / 'sxlib' / 'sxlib.lib' )
+    Yosys.setLiberty( Where.coriolisTop / 'pdk' / 'symbolic' / 'sxlib' / 'cells' / 'sxlib.lib' )
     ShellEnv.RDS_TECHNO_NAME = ( Where.coriolisTop / 'pdk' / 'cmos' / 'cmos.rds' ).as_posix()
 
     path = None
