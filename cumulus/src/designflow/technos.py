@@ -20,7 +20,6 @@ class Where ( object ):
         if 'CORIOLIS_TOP' in os.environ: Where.coriolisTop = Path( os.environ['CORIOLIS_TOP'] )
         if 'ALLIANCE_TOP' in os.environ: Where.allianceTop = Path( os.environ['ALLIANCE_TOP'] )
         if 'CELLS_TOP'    in os.environ: Where.cellsTop    = Path( os.environ['CELLS_TOP'] )
-        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
         #print( Where.coriolisTop, Where.allianceTop )
         if not Where.coriolisTop:
             Where.coriolisTop = Path.cwd().parent
@@ -31,6 +30,7 @@ class Where ( object ):
                 checkToolkit = Path( checkToolkit )
             if not Where.cellsTop:
                 Where.cellsTop = checkToolkit / 'cells'
+        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
         Where.checkToolkit = checkToolkit
         if not Where.cellsTop and Where.allianceTop:
             Where.cellsTop = Where.allianceTop / 'cells'
