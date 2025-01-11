@@ -23,7 +23,7 @@ class Where ( object ):
         if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
         #print( Where.coriolisTop, Where.allianceTop )
         if not Where.coriolisTop:
-            print( 'technos.Where.__init__(): Unable to locate Coriolis top.' )
+            Where.coriolisTop = Path.cwd().parent
         if checkToolkit is None:
             checkToolkit = Path.home() / 'coriolis-2.x' / 'src' / 'alliance-check-toolkit'
         else:

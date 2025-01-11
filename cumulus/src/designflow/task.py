@@ -84,7 +84,9 @@ class ShellEnv ( object ):
         if ShellEnv.ALLIANCE_TOP:
             self.shellEnv[ 'ALLIANCE_TOP'   ] = ShellEnv.ALLIANCE_TOP
             libPath         = ShellEnv.ALLIANCE_TOP + '/lib'
-            LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
+            LD_LIBRARY_PATH = ''
+            if 'LD_LIBRARY_PATH' in os.environ:
+                LD_LIBRARY_PATH = os.environ[ 'LD_LIBRARY_PATH' ]
             if LD_LIBRARY_PATH != '':
                 libPath += ':' + LD_LIBRARY_PATH
             self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
