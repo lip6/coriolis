@@ -30,7 +30,6 @@ Build-Depends: debhelper-compat (= 13),
                python3-wheel,
                python3-virtualenv,
                python3-venv, 
-               python3-doit, 
                rapidjson-dev,
                build-essential,
                texlive-latex-recommended,
@@ -48,7 +47,8 @@ Architecture: any
 Multi-Arch: foreign
 Depends:
   ${misc:Depends},
-  ${shlibs:Depends} 
+  ${shlibs:Depends},
+  python3-doit, 
 Description: A FOSS EDA tool suite for physical design. Provides an integrated place & route for ASICs. Support symbolic layout (Alliance) and real layout (GDS). While mainly written in C++, it has an extensive Python interface.
 
 Package: coriolis-eda-dev
