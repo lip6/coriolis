@@ -100,7 +100,7 @@ Install the build dependencies:
 Mac OSX Build Environment
 =========================
 
-To build on Mac, first install _Homebrew: https://brew.sh. Be sure to follow all the instructions it gives after install  so HOMEBREW_PREFIX gets set!
+To build on Mac, first install _Homebrew: https://brew.sh. Be sure to follow all the instructions it gives after install so HOMEBREW_PREFIX gets set!
 
 Clone the repo:
 
@@ -114,8 +114,25 @@ To install the prereqisites:
 
 .. code-block:: bash
 
-   brew install ccache doxygen pelican qt@5 qwt-qt5 rapidjson boost eigen
-   brew install --cask mactex 
+   brew install ccache doxygen pelican qt@5 qwt-qt5 rapidjson boost eigen binutils
+   brew install --cask mactex
+
+If required for debug, install binutils. Under MacOS > 12, libiberty is to be installed explicitly.
+Modify the Brew formulae:
+
+.. code-block:: bash
+
+   export HOMEBREW_NO_INSTALL_FROM_API=1
+   brew tap --force homebrew/core
+   brew edit binutils
+
+Add "--enable-install-libiberty" to configuration args. Then reinstall binutils:
+
+.. code-block:: bash
+
+   brew reinstall -s binutils
+
+Both libbfd, libiberty are installed in $HOMEBREW_PREFIX/opt/binutils/bin.
 
 Also install X11 dependencies, we suggest using XQuartz as X11 is no longer included in MacOS:
 
