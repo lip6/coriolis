@@ -27,6 +27,30 @@ add_project_arguments(
   language: ['c','cpp']
 )
 
+# Using libbfd for proper backtrace in Python bindings
+if build_machine.system() == 'darwin'
+  binutils_prefix = '/opt/homebrew/opt/binutils'
+else
+  binutils_prefix = '/usr'
+endif
+
+libbfd    = cpp.find_library('bfd',           dirs: [binutils_prefix / 'lib'], required: true)
+if libbfd.found()
+    add_project_arguments('-DHAVE_LIBBFD', language: ['c', 'cpp'])
+
+    libiberty   = cpp.find_library('iberty',  dirs: [binutils_prefix / 'lib'], required: true)
+    zlib        = cpp.find_library('z',       required: true)
+    libsframe   = cpp.find_library('sframe',  dirs: [binutils_prefix / 'lib'], required: true)
+    
+    libbfd_deps = declare_dependency(
+        dependencies: [libbfd, libiberty, zlib, libsframe],
+        include_directories: include_directories(binutils_prefix / 'include'),
+        link_args: ['-Wl,-rpath,' + binutils_prefix / 'lib'],
+    )
+else
+    libbfd_deps = disabler()
+endif
+
 if get_option('check-database')
   add_project_arguments('-DCHECK_DATABASE')
 endif
@@ -34,7 +58,7 @@ endif
 py = import('python').find_installation(pure:false)
 py_deps = dependency('python3', required: true)
 
-py_mod_deps = declare_dependency(dependencies: py_deps, compile_args: '-D__PYTHON_MODULE__=1')
+py_mod_deps = declare_dependency(dependencies: [py_deps, libbfd_deps], compile_args: '-D__PYTHON_MODULE__=1')
 qt = import('qt5', disabler: true)
 
 sed = find_program('sed',  disabler: true)
