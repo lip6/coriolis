@@ -1,0 +1,28 @@
+volumes:
+  coriolis-workspace:
+
+services:
+  coriolis-eda-noX11:
+    build:
+      context: .
+      dockerfile: ./coriolis-eda-noX11.dockerfile
+    image: coriolis-eda-nox11:ubuntu24.04
+    container_name: coriolis-eda-noX11
+    hostname: coriolis-eda-noX11
+    restart: unless-stopped
+    volumes:
+      - coriolis-workspace:/home/developer/coriolis-2.x
+    environment:
+      - CORIOLIS_URL=${CORIOLIS_URL}
+      - CORIOLIS_BRANCH=${CORIOLIS_BRANCH}
+      - ALLIANCE_URL=${ALLIANCE_URL}
+      - ALLIANCE_BRANCH=${ALLIANCE_BRANCH}
+      - ALLIANCE_CT_URL=${ALLIANCE_CT_URL}
+      - ALLIANCE_CT_BRANCH=${ALLIANCE_CT_BRANCH}
+      - VENV_PATH=/home/developer/coriolis-2.x/src/coriolis/.venv
+      - BUILD_TYPE=release
+      - SRC_DIR=/home/developer/coriolis-2.x/src/coriolis
+      - OUT_DIR=/home/developer/coriolis-2.x/src/coriolis/docker/ubuntu24.04
+    privileged: false
+    network_mode: "bridge"
+    command: ["sleep", "infinity"]
