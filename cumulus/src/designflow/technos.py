@@ -22,28 +22,28 @@ __all__ = [ 'Where', 'setupCMOS', 'setupCMOS45', 'setupLCMOS' ]
 
 class Where ( object ):
 
-    coriolisTop  = None
-    allianceTop  = None
-    cellsTop     = None
-    checkToolkit = None
+    coriolisTop         : Path | None = None
+    allianceTop         : Path | None = None
+    cellsTop            : Path | None = None
+    checkToolkit        : Path | None = None
 
     def __init__ ( self, checkToolkit=None ):
-        if checkToolkit is None:
+        if checkToolkit is None:  #TODO Keep this as a hard coded path?
             checkToolkit = Path.home() / 'coriolis-2.x' / 'src' / 'alliance-check-toolkit'
 
-        Where.checkToolkit = checkToolkit
-        
+        Where.checkToolkit = Path( checkToolkit )
+
         coriolisTop = os.environ.get('CORIOLIS_TOP', None)
         if coriolisTop:
-            Where.coriolisTop = Path(coriolisTop)
+            Where.coriolisTop = Path( coriolisTop )
         else:
             Where.coriolisTop = Path( os.path.dirname(os.path.abspath(coriolis.__file__)) )
 
         allianceTop = os.environ.get('ALLIANCE_TOP', None)
         if allianceTop:
-            Where.allianceTop = Path(allianceTop)
+            Where.allianceTop = Path( allianceTop )
         else:
-            Where.allianceTop = Where.coriolisTop  #TODO Kept from previous version, but why?
+            Where.allianceTop = Where.coriolisTop
 
         ShellEnv.ALLIANCE_TOP = Where.allianceTop.as_posix()
 
@@ -63,12 +63,12 @@ class Where ( object ):
 
 def setupCMOS ( checkToolkit=None ):
     warnings.warn(
-        "setupCMOS function has moved to coriolis.pdk.cmos.techno, use it instead.",
+        "setupCMOS function has moved to pdks.cmos.techno, use it instead.",
         DeprecationWarning,
         stacklevel=2,
     )
     
-    from coriolis.pdk.cmos import techno
+    from pdks.cmos import techno
     
     return techno.setup(checkToolkit)
 
