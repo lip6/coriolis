@@ -11,6 +11,10 @@ from coriolis           import Viewer
 from coriolis           import CRL
 from coriolis.helpers   import overlay
 
+# Imports from PDKs
+from pdks import symbolic
+from pdks import cmos
+
 
 __all__ = [ "setup" ]
 
@@ -38,7 +42,7 @@ def setup( checkToolkit=None ):
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk' )
-        env.addSYSTEM_LIBRARY( library=(Where.coriolisTop / 'pdk' / 'symbolic' / 'niolib' / 'cells' ).as_posix()
+        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'libs.ref' / 'niolib' ).as_posix()
                             , mode=CRL.Environment.Append )
 
         alliance_bin = (Where.allianceTop / 'bin').as_posix()
@@ -49,5 +53,5 @@ def setup( checkToolkit=None ):
                     paths.append(alliance_bin)
                     os.environ[env_var] = os.pathsep.join(paths)
 
-    Yosys.setLiberty( Where.coriolisTop / 'pdk' / 'symbolic' / 'sxlib' / 'cells' / 'sxlib.lib' )
-    ShellEnv.RDS_TECHNO_NAME = Where.coriolisTop / 'pdk' / 'cmos' / 'cmos.rds'
+    Yosys.setLiberty( symbolic.path / 'libs.ref' / 'sxlib' / 'liberty' / 'sxlib.lib' )
+    ShellEnv.RDS_TECHNO_NAME = cmos.path / 'libs.ref' / 'cmos' / 'cmos.rds'
