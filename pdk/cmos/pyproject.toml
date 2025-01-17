@@ -1,13 +1,9 @@
 [project]
-name = "coriolis_pdk_cmos"
+name = "pdk_cmos"
 version = "0.1.0"
 description = "CMOS PDK for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 requires-python = ">= 3.9"
-dependencies = [
-  "coriolis_eda",
-  "coriolis_pdk_symbolic",
-]
 
 [build-system]
 requires = [
