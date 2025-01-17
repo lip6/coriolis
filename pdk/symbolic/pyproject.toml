@@ -1,12 +1,9 @@
 [project]
-name = "coriolis_pdk_symbolic"
+name = "pdk_symbolic"
 version = "0.1.0"
-description = "Symbolic cells PDK for Coriolis EDA"
+description = "Symbolic PDK for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 requires-python = ">= 3.9"
-dependencies = [
-  "coriolis_eda",
-]
 
 [build-system]
 requires = [
