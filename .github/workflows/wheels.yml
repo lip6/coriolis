@@ -89,7 +89,7 @@ jobs:
           -  [macos-13, macosx_x86_64]
           #- [ubuntu-20.04, musllinux_x86_64]
           #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
@@ -172,7 +172,7 @@ jobs:
           - [macos-13, macosx_x86_64]
             #- [ubuntu-20.04, musllinux_x86_64]
             #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
@@ -206,7 +206,7 @@ jobs:
           - [macos-13, macosx_x86_64]
             #- [ubuntu-20.04, musllinux_x86_64]
             #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
