@@ -41,17 +41,23 @@ def setup( checkToolkit=None ):
         
         af  = CRL.AllianceFramework.get()
         env = af.getEnvironment()
+        
         env.setCLOCK( '^ck$|m_clock|^clk' )
+    
         env.addSYSTEM_LIBRARY( library=(symbolic.path / 'libs.ref' / 'niolib' ).as_posix()
                             , mode=CRL.Environment.Append )
+    
+        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'libs.ref' / 'sxlib' ).as_posix()
+                    , mode=CRL.Environment.Append )
 
-        alliance_bin = (Where.allianceTop / 'bin').as_posix()
-        for env_var in ['PATH', 'path']:
-            if env_var in os.environ:
-                paths = os.environ[env_var].split(os.pathsep)
-                if alliance_bin not in paths:
-                    paths.append(alliance_bin)
-                    os.environ[env_var] = os.pathsep.join(paths)
+    alliance_bin = (Where.allianceTop / 'bin').as_posix()
+    for env_var in ['PATH', 'path']:
+        if env_var in os.environ:
+            paths = os.environ[env_var].split(os.pathsep)
+            if alliance_bin not in paths:
+                paths.append(alliance_bin)
+                os.environ[env_var] = os.pathsep.join(paths)
 
     Yosys.setLiberty( symbolic.path / 'libs.ref' / 'sxlib' / 'liberty' / 'sxlib.lib' )
+
     ShellEnv.RDS_TECHNO_NAME = cmos.path / 'libs.ref' / 'cmos' / 'cmos.rds'
