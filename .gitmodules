@@ -13,3 +13,6 @@
 [submodule "pdks/common/libs.tech/globalfoundries-pdk-libs-gf180mcu_fd_pr"]
 	path = pdks/common/libs.tech/globalfoundries-pdk-libs-gf180mcu_fd_pr
 	url = https://github.com/google/globalfoundries-pdk-libs-gf180mcu_fd_pr.git
+[submodule "pdks/common/libs.tech/IHP-Open-PDK"]
+	path = pdks/common/libs.tech/IHP-Open-PDK
+	url = https://github.com/IHP-GmbH/IHP-Open-PDK.git
