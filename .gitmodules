@@ -10,3 +10,6 @@
 [submodule "pdks/common/libs.tech/skywater-pdk-libs-sky130_fd_pr"]
 	path = pdks/common/libs.tech/skywater-pdk-libs-sky130_fd_pr
 	url = https://github.com/google/skywater-pdk-libs-sky130_fd_pr.git
+[submodule "pdks/common/libs.tech/globalfoundries-pdk-libs-gf180mcu_fd_pr"]
+	path = pdks/common/libs.tech/globalfoundries-pdk-libs-gf180mcu_fd_pr
+	url = https://github.com/google/globalfoundries-pdk-libs-gf180mcu_fd_pr.git
