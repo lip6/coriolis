@@ -7,3 +7,6 @@
 [submodule "documentation/pelican-plugins"]
 	path = documentation/pelican-plugins
 	url = https://github.com/getpelican/pelican-plugins
+[submodule "pdks/common/libs.tech/skywater-pdk-libs-sky130_fd_pr"]
+	path = pdks/common/libs.tech/skywater-pdk-libs-sky130_fd_pr
+	url = https://github.com/google/skywater-pdk-libs-sky130_fd_pr.git
