@@ -2,6 +2,7 @@ lefdef_includes = include_directories('src/lef/lef', 'src/def/def')
 
 subdir('src/lef')
 subdir('src/def')
+subdir('doc')
 
 lef_generated =  custom_target('lef.tab.cpp',
   output: [ 'lef.tab.cpp', 'lef.tab.hpp' ],

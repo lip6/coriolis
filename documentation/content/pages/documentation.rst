@@ -48,6 +48,9 @@ Coriolis Documentation
       :width:  5
       :offset: 1
 
+      `Presentations <{filename}/pages/presentations/Presentations_HTML.rst>`_ |br|
+      Various presentations made around Coriolis
+
       `Coriolis User's Guide <{filename}/pages/users-guide/UsersGuide_HTML.rst>`_ |br|
       Using the software
 

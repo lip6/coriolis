@@ -18,6 +18,7 @@ STATIC_PATHS = [ 'pages/users-guide',
                  'pages/check-toolkit',
                  'pages/design-flow',
                  'pages/rds',
+                 'pages/presentations',
                  'pages/packaging',
                  'pages/technical-log',
                  'images',
@@ -116,6 +117,9 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'RDSpage.rst'
 
                , 'Installation.rst'   # For Alliance.
+
+               , 'Presentations.rst'  # For Presentations.
+               , 'PresentationsPage.rst'
                ]
 
 # Uncomment following line if you want document-relative URLs when developing

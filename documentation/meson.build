@@ -1,4 +1,4 @@
-pdfcontent = files(
+pdfcontent = [
   'content/pages/users-guide/UsersGuide.rst',
   'content/pages/python-tutorial/PythonTutorial.rst',
   'content/pages/python-cpp/PythonCpp.rst',
@@ -6,7 +6,7 @@ pdfcontent = files(
   'content/pages/stratus/Stratus.rst',
   'content/pages/check-toolkit/CheckToolkit.rst',
   'content/pages/rds/RDS.rst',
-)
+]
 
 
 rstcontent = files(
@@ -35,6 +35,8 @@ rstcontent = files(
   'content/pages/python-tutorial/RealDesigns.rst',
   'content/pages/python-tutorial/ToolEngines.rst',
   'content/pages/rds/RDS_HTML.rst',
+  'content/pages/presentations/PresentationsPage.rst',
+  'content/pages/presentations/Presentations_HTML.rst',
   'content/pages/rds/RDSpage.rst',
   'content/pages/stratus/Developper.rst',
   'content/pages/stratus/DpGen.rst',
@@ -91,57 +93,70 @@ plugins = files(
 
 dopdf = find_program('etc/doPdf.sh')
 
-pdf_gen = generator(
-  dopdf,
-  output: '@BASENAME@.pdf',
-  arguments: ['@INPUT@', '@CURRENT_SOURCE_DIR@', rst2latex.full_path(), pdflatex.full_path()],
-)
+pdf_documents = []
+foreach document : pdfcontent
+    basename = document.split( '/' )[ -1 ].replace( '.rst', '' )
+    pdf_documents += custom_target( basename + '_pdf'
+                                  , command: [ dopdf
+    			                 , '--buildDir=@0@'.format( meson.current_build_dir() )
+    			                 , '--sourceDir=@0@'.format( meson.current_source_dir() )
+                                         , '--stylesheet=etc/SoC-ReST.tex'
+    			                 , '--rst2latex=@0@'.format( rst2latex.full_path() )
+    			                 , '--pdflatex=@0@'.format( pdflatex.full_path() )
+    			                 , document ]
+                                  , input:       document
+                                  , output:      basename + '.pdf'
+                                  , install:     true
+                                  , install_dir: pdfdir
+                                  )
+endforeach
 
-pdfs_list = pdf_gen.process(pdfcontent)
-pdfs_dep = declare_dependency(sources: pdfs_list)
-
-pdfs = build_target('pelican-pdfs', target_type: 'library', dependencies: pdfs_dep)
 
 cdata = configuration_data()
-cdata.set('SOURCEDIR', meson.current_source_dir())
+cdata.set('SOURCEDIR'  , meson.current_source_dir())
 cdata.set('OUTPUT_PATH', meson.current_build_dir())
-cdata.set('SITEURL', docsiteurl )
-pelicanconf = configure_file(
-  input: 'pelicanconf.py.in',
-  output: 'pelicanconf.py',
-  configuration: cdata,
-  install: false
-)
+cdata.set('SITEURL'    , docsiteurl )
+pelicanconf = configure_file( input:        'pelicanconf.py.in'
+                            , output:       'pelicanconf.py'
+                            , configuration: cdata
+                            , install:       false
+                            )
 
+htmldoc = custom_target( 'htmldoc'
+                       , output: [ 'archives.html'
+                                 , 'authors.html'
+                                 , 'categories.html'
+                                 , 'images'
+                                 , 'index.html'
+                                 , 'pages'
+                                 , 'pdfs'
+                                 , 'tags.html'
+                                 , 'theme'
+                                 ]
+                       , depend_files: [ rstcontent, css, plugins, pelicanconf ]
+		       , depends: [ pdf_documents ]
+                       , command: [ pelican
+                                  , '-vD'
+                                  , '--ignore-cache'
+                                  , '-s'
+                                  , pelicanconf
+                                  , meson.current_source_dir()/'content'
+				  ]
+                       , install: true
+                       , install_dir: htmldir
+                       )
 
-htmldoc = custom_target(
-  'htmldoc',
-  output: [
-    'archives.html',
-    'authors.html',
-    'categories.html',
-    'images',
-    'index.html',
-    'pages',
-    'pdfs',
-    'tags.html',
-    'theme',
-    ],
-  depend_files: [rstcontent, css, plugins, pelicanconf],
-  depends: pdfs,
-  command: [
-    pelican,
-    '-vD',
-    '--ignore-cache',
-    '-s',
-    pelicanconf,
-    meson.current_source_dir()/'content'],
-  install: true,
-  install_dir: htmldir,
-)
+docs = run_target( 'docs'
+                 , command: 'true'
+                 , depends: [ htmldoc
+		            , crlcore_docs
+			    , analog_docs
+			    , hurricane_docs
+			    , viewer_docs
+			    , oroshi_docs
+			    , unicorn_docs
+			    ]
+                 )
 
-docs = run_target(
-   'docs',
-   command: 'true',
-   depends: [htmldoc, crlcore_docs, analog_docs, hurricane_docs, viewer_docs, oroshi_docs, unicorn_docs],
-   )
+install_data( install_dir: pdfdir
+            , sources:     files('content/pdfs/SAL.Bootcamp.pdf') )
