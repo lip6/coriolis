@@ -28,7 +28,7 @@ add_project_arguments(
 )
 
 if get_option('check-database')
-  add_project_arguments('-DCHECK_DATABASE')
+  add_project_arguments('-DCHECK_DATABASE', language: ['c', 'cpp'])
 endif
 
 py = import('python').find_installation(pure:false)
