@@ -1,0 +1,468 @@
+# 20240801
+# ---------------------------------------------------------------------------
+# For sg13g2
+# ---------------------------------------------------------------------------
+
+include "symbolic_lsx.rules.exp" //
+include "sg13g2_lsx.rules.exp" //
+include "lambda_lsx.exp"//
+
+[# symbolic to real parametrisation
+BE_POLT = (BW_ACTI + 2*BE_POLT_ACTI - (SW_DIFX + 2*SE_POLT_DIFT)*LAMBDA)/2;
+
+DW_NWEL       = sup(GRID, BW_NWEL-SW_WELL*LAMBDA);
+DW_PWEL       = sup(GRID, BW_PWEL-SW_WELL*LAMBDA);
+DW_POLY       = sup(GRID, BW_POLY-SW_POLY*LAMBDA);
+DW_POLY_CONT  = sup(GRID, BW_VIA0+2*BE_POLY_VIA0-2*LAMBDA);
+DW_TRAN_POLY  = sup(GRID, DW_POLY);
+DW_TRAN_ACTI  = sup(GRID, 2*BE_ACTI_POLT+DW_POLY);
+DW_ACTI       = sup(GRID, BW_ACTI-SW_DIFX*LAMBDA);
+DW_ATIE       = sup(GRID, BW_ATIE-SW_DIFX*LAMBDA);
+DW_ALU1       = sup(GRID, BW_ALU1-SW_ALU1*LAMBDA);
+DW_ALU2       = sup(GRID, BW_ALU2-SW_ALU2*LAMBDA);
+DW_ALU3       = sup(GRID, BW_ALU3-SW_ALU3*LAMBDA);
+
+DL_NWEL       = sup(GRID, 2*LAMBDA); #DW_NWEL/2);
+DL_PWEL       = sup(GRID, 2*LAMBDA); #DW_PWEL/2);
+DL_POLY       = sup(GRID, BW_POLY/2);
+DL_TRAN_POLY  = sup(GRID, BE_POLT);
+DL_TRAN_ACTI  = sup(GRID, DL_TRAN_POLY-BE_POLT_ACTI);
+DL_ACTI       = sup(GRID, 2*LAMBDA+DL_TRAN_ACTI);
+DL_ATIE       = sup(GRID, BW_ATIE/2);
+DL_ALU1       = sup(GRID, BW_ALU1/2);
+DL_ALU2       = sup(GRID, BW_ALU2/2);
+DL_ALU3       = sup(GRID, BW_ALU3/2);
+
+T_OFFSET      = (BW_POLY - SW_POLY*LAMBDA)/2;   # Drain & Source for extractor
+]//
+
+# -------------------------------------------------------------------
+# globals define
+# -------------------------------------------------------------------
+
+define physical_grid    [GRID]
+define lambda           [LAMBDA]
+
+include "sg13g2_lsx.values.exp" //
+//
+table mbk_to_rds_segment
+# ----------------------------------------------------------------------------------
+# mbk_name     rds_name1 dlr dwr offset mode     rds_name2 dlr dwr offset mode
+# ----------------------------------------------------------------------------------
+// calculation of the transisor offset
+
+  nwell   rds_nwell  vw  [ DL_NWEL+BE_NTIE_ATIE+BE_NWEL_NTIE      ] [ DW_NWEL                                     ]  .0  all\
+          rds_pimp   vw  [ DL_NWEL-BE_NWEL_PIMP                   ] [ DW_NWEL-2*(BE_NWEL_PIMP)                    ]  .0  all
+                                                                                                                  
+  pwell   rds_pwell  vw  [ DL_PWEL+BE_PTIE_ATIE+BE_PWEL_PTIE      ] [ DW_PWEL                                     ]  .0  all\
+          rds_nimp   vw  [ DL_NWEL-BE_PWEL_NIMP                   ] [ DW_NWEL-2*(BE_PWEL_NIMP)                    ]  .0  all
+                                                                                                                  
+  ndif    rds_activ  vw  [ DL_ACTI                                ] [ DW_ACTI                                     ]  .0  all\
+          rds_ndif   vw  [ DL_ACTI                                ] [ DW_ACTI                                     ]  .0  ext
+                                                                                                                  
+  pdif    rds_activ  vw  [ DL_ACTI                                ] [ DW_ACTI                                     ]  .0  all\
+          rds_pdif   vw  [ DL_ACTI                                ] [ DW_ACTI                                     ]  .0  ext
+                                                                                                                  
+  ntie    rds_activ  vw  [ DL_ATIE                                ] [ DW_ATIE                                     ]  .0  all\
+          rds_ntie   vw  [ DL_ATIE+BE_NTIE_ATIE                   ] [ DW_ATIE+2*(BE_NTIE_ATIE)                    ]  .0  all\
+          rds_nwell  vw  [ DL_NWEL+BE_NTIE_ATIE+BE_NWEL_NTIE      ] [ DW_ATIE+2*(BE_NTIE_ATIE+BE_NWEL_NTIE+LAMBDA)]  .0  all
+                                                                                                                  
+  ptie    rds_activ  vw  [ DL_ATIE                                ] [ DW_ATIE                                     ]  .0  all\
+          rds_ptie   vw  [ DL_ATIE+BE_PTIE_ATIE                   ] [ DW_ATIE+2*(BE_PTIE_ATIE)                    ]  .0  all\
+          rds_pwell  vw  [ DL_PWEL+BE_PTIE_ATIE+BE_PWEL_PTIE      ] [ DW_ATIE+2*(BE_PTIE_ATIE+BE_PWEL_PTIE+LAMBDA)]  .0  all
+                                                                                                                  
+  ntrans  rds_poly   vw  [ DL_TRAN_POLY                           ] [ DW_TRAN_POLY                                ]  .0  all\
+          rds_activ  vw  [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI                                ]  .0  drc\
+          rds_ndif   lcw [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI/2                              ]  [T_OFFSET] ext\
+          rds_ndif   rcw [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI/2                              ]  [T_OFFSET] ext
+                                                                                                                  
+  ptrans  rds_poly   vw  [ DL_TRAN_POLY                           ] [ DW_TRAN_POLY                                ]  .0  all\
+          rds_activ  vw  [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI                                ]  .0  drc\
+          rds_pdif   lcw [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI/2                              ]  [T_OFFSET] ext\
+          rds_pdif   rcw [ DL_TRAN_ACTI                           ] [ DW_TRAN_ACTI/2                              ]  [T_OFFSET] ext
+                                                                                                                  
+  poly    rds_poly   vw  [ DL_POLY                                ] [ DW_POLY                                     ]  .0  all
+
+  alu1    rds_alu1   vw  [ DL_ALU1                                ] [ DW_ALU1                                     ]  .0  all
+  calu1   rds_alu1   vw  [ DL_ALU1                                ] [ DW_ALU1                                     ]  .0  all
+  talu1   rds_talu1  vw  [ DL_ALU1                                ] [ DW_ALU1                                     ]  .0  all
+
+  alu2    rds_alu2   vw  [ DL_ALU2                                ] [ DW_ALU2                                     ]  .0  all
+  calu2   rds_alu2   vw  [ DL_ALU2                                ] [ DW_ALU2                                     ]  .0  all
+  talu2   rds_talu2  vw  [ DL_ALU2                                ] [ DW_ALU2                                     ]  .0  all
+
+  alu3    rds_alu3   vw  [ DL_ALU3                                ] [ DW_ALU3                                     ]  .0  all
+  calu3   rds_alu3   vw  [ DL_ALU3                                ] [ DW_ALU3                                     ]  .0  all
+  talu3   rds_talu3  vw  [ DL_ALU3                                ] [ DW_ALU3                                     ]  .0  all
+end
+
+table mbk_to_rds_connector
+# -------------------------------------------------------------------
+# mbk_name  rds_name der dwr
+# -------------------------------------------------------------------
+end
+
+table mbk_to_rds_reference
+# -------------------------------------------------------------------
+# mbk_name  rds_name  width
+# -------------------------------------------------------------------
+  ref_ref  rds_ref  [ BW_ALU1 ]
+  ref_con  rds_ref  [ BW_ALU1 ]
+end
+
+table mbk_to_rds_via
+# -------------------------------------------------------------------
+# mbk_name  rds_name1 width mode   rds_name2 width mode   ...
+## ------------------------------------------------------------------
+  cont_body_n \
+    rds_cont      [ BW_VIA0                               ]  all\
+    rds_alu1      [ BW_VIA0+2*(BE_ALU1_VIA0)              ]  all\
+    rds_activ     [ BW_VIA0+2*(BE_ATIE_VIA0)              ]  drc\
+    rds_ntie      [ BW_VIA0+2*(BE_ATIE_VIA0)              ]  ext
+
+  cont_body_p \
+    rds_cont      [ BW_VIA0                               ]  all\
+    rds_alu1      [ BW_VIA0+2*(BE_ALU1_VIA0)              ]  all\
+    rds_activ     [ BW_VIA0+2*(BE_ATIE_VIA0)              ]  drc\
+    rds_ptie      [ BW_VIA0+2*(BE_ATIE_VIA0)              ]  ext
+
+  cont_dif_n  \
+    rds_cont      [ BW_VIA0                               ]  all\
+    rds_alu1      [ BW_VIA0+2*(BE_ALU1_VIA0)              ]  all\
+    rds_activ     [ BW_VIA0+2*(BE_ACTI_VIA0)              ]  drc\
+    rds_ndif      [ BW_VIA0+2*(BE_ACTI_VIA0)              ]  ext
+
+  cont_dif_p  \
+    rds_cont      [ BW_VIA0                               ]  all\
+    rds_alu1      [ BW_VIA0+2*(BE_ALU1_VIA0)              ]  all\
+    rds_activ     [ BW_VIA0+2*(BE_ACTI_VIA0)              ]  drc\
+    rds_pdif      [ BW_VIA0+2*(BE_ACTI_VIA0)              ]  ext
+
+  cont_poly   \
+    rds_cont      [ BW_VIA0                               ]  all\
+    rds_poly      [ BW_VIA0+2*(BE_POLY_VIA0)              ]  all\
+    rds_alu1      [ BW_VIA0+2*(BE_ALU1_VIA0)              ]  all
+
+  cont_via    \
+    rds_via1      [ BW_VIA1                               ]  all\
+    rds_alu1      [ BW_VIA1+2*(BE_ALU1_VIA1)              ]  all\
+    rds_alu2      [ BW_VIA1+2*(BE_ALU2_VIA1)              ]  all
+
+  cont_via2   \
+    rds_via2      [ BW_VIA2                               ]  all\
+    rds_alu2      [ BW_VIA2+2*(BE_ALU2_VIA2)              ]  all\
+    rds_alu3      [ BW_VIA2+2*(BE_ALU3_VIA2)              ]  all
+end
+
+table mbk_to_rds_bigvia_hole
+# -------------------------------------------------------------------
+# mbk_via_name  rds_hole_name side step mode
+# -------------------------------------------------------------------
+end
+
+table mbk_to_rds_bigvia_metal
+# -------------------------------------------------------------------
+# mbk_via_name  rds_name  dwr overlap  mode
+# -------------------------------------------------------------------
+end
+
+table mbk_to_rds_turnvia
+# -------------------------------------------------------------------
+# mbk_name rds_name dwr mode
+# -------------------------------------------------------------------
+  cont_turn1 rds_alu1  [ DW_ALU1 ] all
+  cont_turn2 rds_alu2  [ DW_ALU2 ] all
+  cont_turn3 rds_alu3  [ DW_ALU3 ] all
+  cont_turn8 rds_poly  [ DW_POLY_CONT ] all
+end
+
+table lynx_bulk_implicit
+# -------------------------------------------------------------------
+# rds_name  type[explicit|implicit]
+# -------------------------------------------------------------------
+end
+
+table lynx_transistor
+# -------------------------------------------------------------------
+# mbk_name trans_name compostion
+# -------------------------------------------------------------------
+  NTRANS  NTRANS  C_X_N   RDS_POLY   RDS_NDIF  RDS_NDIF  RDS_PWELL
+  PTRANS  PTRANS  C_X_P   RDS_POLY   RDS_PDIF  RDS_PDIF  RDS_NWELL
+end
+
+table lynx_diffusion
+# -------------------------------------------------------------------
+# rds_name compostion
+# -------------------------------------------------------------------
+  rds_ndif  rds_activ 1 rds_nimp 1 rds_nwell 0
+  rds_pdif  rds_activ 1 rds_pimp 1 rds_nwell 1
+  rds_ntie  rds_activ 1 rds_nimp 1 rds_nwell 1
+  rds_ptie  rds_activ 1 rds_pimp 1 rds_nwell 0
+end
+
+table lynx_graph
+# -------------------------------------------------------------------
+# rds_name  in_contact_with rds_name1 rds_name2 ...
+# -------------------------------------------------------------------
+  rds_ndif   rds_cont   rds_ndif
+  rds_pdif   rds_cont   rds_pdif
+  rds_poly   rds_cont   rds_poly
+  rds_cont   rds_pdif   rds_ndif   rds_poly  rds_alu1  rds_cont
+  rds_alu1   rds_cont   rds_via1   rds_ref   rds_alu1  
+  rds_ref    rds_cont   rds_via1   rds_alu1  rds_ref
+  rds_alu2   rds_via1   rds_via2   rds_alu2 
+  rds_alu3   rds_via2   rds_alu3
+end
+
+table s2r_oversize_denotch
+# -------------------------------------------------------------------
+# rds_name oversized_value_for_denotching
+# -------------------------------------------------------------------
+  rds_nwell   [ sup(GRID,RD_NWEL/2)      ]
+  rds_pwell   [ sup(GRID,RD_PWEL/2)      ]
+  rds_poly    [ inf(GRID,RD_POLY/2-GRID) ]
+  rds_alu1    [ inf(GRID,RD_ALU1/2-GRID) ]
+  rds_alu2    [ inf(GRID,RD_ALU2/2-GRID) ]
+  rds_alu3    [ inf(GRID,RD_ALU3/2-GRID) ]
+  rds_activ   [ inf(GRID,RD_ACTI/2-GRID) ]
+  rds_ntie    [ sup(GRID,RD_NIMP/2)      ]
+  rds_ptie    [ sup(GRID,RD_PIMP/2)      ]
+  rds_nimp    [ sup(GRID,RD_NIMP/2)      ]
+  rds_pimp    [ sup(GRID,RD_NIMP/2)      ]
+end
+
+table s2r_bloc_ring_width
+# -------------------------------------------------------------------
+# rds_name ring_width_to_copy_up
+# -------------------------------------------------------------------
+  rds_nwell   0. # [ RD_NWEL ]
+  rds_pwell   0. # [ RD_PWEL ]
+  rds_poly    0. # [ RD_POLY ]
+  rds_alu1    0. # [ RD_ALU1 ]
+  rds_alu2    0. # [ RD_ALU2 ]
+  rds_alu3    0. # [ RD_ALU3 ]
+  rds_activ   0. # [ RD_ACTI ]
+  rds_ntie    0. # [ RD_NIMP ]
+  rds_ptie    0. # [ RD_PIMP ]
+  rds_nimp    0. # [ RD_NIMP ]
+  rds_pimp    0. # [ RD_PIMP ]
+end
+
+table s2r_minimum_layer_width
+# -------------------------------------------------------------------
+# rds_name  min_layer_width_to_keep
+# -------------------------------------------------------------------
+  rds_nwell   [ BW_NWEL ]
+  rds_pwell   [ BW_PWEL ]
+  rds_poly    [ BW_POLY ]
+  rds_alu1    [ BW_ALU1 ]
+  rds_alu2    [ BW_ALU2 ]
+  rds_alu3    [ BW_ALU3 ]
+  rds_activ   [ BW_ACTI ]
+  rds_ntie    [ BW_NIMP ]
+  rds_ptie    [ BW_PIMP ]
+  rds_nimp    [ BW_NIMP ]
+  rds_pimp    [ BW_PIMP ]
+end
+
+table s2r_post_treat
+# -------------------------------------------------------------------
+# rds_name  s2r_must_treat_or_not  second_layer_whenever_scotch
+# -------------------------------------------------------------------
+  rds_nwell        treat null
+  rds_pwell        treat null
+  rds_poly         treat null
+  rds_activ        treat null
+  rds_ntie         treat rds_pimp
+  rds_ptie         treat rds_nimp
+  rds_nimp         treat rds_ptie
+  rds_pimp         treat rds_ntie
+  rds_alu1         treat null
+  rds_alu2         treat null
+  rds_alu3         treat null
+  rds_cont       notreat null
+end
+
+DRC_RULES
+ 
+layer RDS_NWELL [ RW_NWEL ] ;
+layer RDS_NTIE  [ RW_NTIE ] ;
+layer RDS_PTIE  [ RW_PTIE ] ;
+layer RDS_NIMP  [ RW_NIMP ] ;
+layer RDS_PIMP  [ RW_PIMP ] ;
+layer RDS_ACTIV [ RW_ACTI ] ;
+layer RDS_CONT  [ RW_VIA0 ] ;
+layer RDS_POLY  [ RW_POLY ] ;
+layer RDS_ALU1  [ RW_ALU1 ] ;
+layer RDS_ALU2  [ RW_ALU2 ] ;
+layer RDS_ALU3  [ RW_ALU3 ] ;
+layer RDS_USER0 [ GRID    ] ;
+layer RDS_USER1 [ GRID    ] ;
+layer RDS_USER2 [ GRID    ] ;
+
+regles
+
+# note : ``min'' is different from ``>=''.
+# min is applied on polygons and >= is applied on rectangles.
+# there is the same difference between max and <=.
+# >= is faster than min, but min must be used where it is
+# required to consider polygons, for example distance of
+# two objects in the same layer
+#
+# ----------------------------------------------------------
+
+# check the nwell shapes
+# ----------------------
+caracterise RDS_NWELL (
+  regle {N=1;N++} : largeur      >=   [ RW_NWEL ] ;
+  regle {N++} : longueur_inter   min  [ RW_NWEL ] ;
+  regle {N++} : notch            >=   [ RD_NWEL ] ;
+);
+relation RDS_NWELL , RDS_NWELL (
+  regle {N++} : distance axiale  min  [ RD_NWEL ] ;
+);
+relation RDS_NWELL , RDS_ACTI (
+  regle {N++} : distance axiale  min  [ RD_NWEL_ACTI ] ;
+);
+
+# check the RDS_PIMP shapes
+# -------------------------
+caracterise RDS_PIMP (
+  regle {N++} : surface          min  [ RA_PIMP ] ;
+  regle {N++} : largeur          >=   [ RW_PIMP ] ;
+  regle {N++} : longueur_inter   min  [ RW_PIMP ] ;
+  regle {N++} : notch            >=   [ RD_PIMP ] ;
+);
+relation RDS_PIMP , RDS_PIMP (
+  regle {N++} : distance axiale  min  [ RD_PIMP ] ;
+);
+
+# check the RDS_NIMP shapes
+# -------------------------
+caracterise RDS_NIMP (
+  regle {N++} : surface          min  [ RA_NIMP ] ;
+  regle {N++} : largeur          >=   [ RW_NIMP ] ;
+  regle {N++} : longueur_inter   min  [ RW_NIMP ] ;
+  regle {N++} : notch            >=   [ RD_NIMP ] ;
+);
+relation RDS_NIMP , RDS_NIMP (
+  regle {N++} : distance axiale  min  [ RD_NIMP ] ;
+);
+
+# check the RDS_PTIE shapes
+# -------------------------
+caracterise RDS_PTIE (
+  regle {N++} : surface          min  [ RA_PIMP ] ;
+  regle {N++} : largeur          >=   [ RW_PIMP ] ;
+  regle {N++} : longueur_inter   min  [ RW_PIMP ] ;
+  regle {N++} : notch            >=   [ RD_PIMP ] ;
+);
+relation RDS_PTIE , RDS_PTIE (
+  regle {N++} : distance axiale  min  [ RD_PIMP ] ;
+);
+
+# check the RDS_NTIE shapes
+# -------------------------
+caracterise RDS_NTIE (
+  regle {N++} : surface          min  [ RA_NIMP ] ;
+  regle {N++} : largeur          >=   [ RW_NIMP ] ;
+  regle {N++} : longueur_inter   min  [ RW_NIMP ] ;
+  regle {N++} : notch            >=   [ RD_NIMP ] ;
+);
+relation RDS_NTIE , RDS_NTIE (
+  regle {N++} : distance axiale  min  [ RD_NIMP ] ;
+);
+
+# check the RDS_ACTI shapes
+# -------------------------
+caracterise RDS_ACTI (
+  regle {N++} : surface          min  [ RA_ACTI ] ;
+  regle {N++} : largeur          >=   [ RW_ACTI ] ;
+  regle {N++} : longueur_inter   min  [ RW_ACTI ] ;
+  regle {N++} : notch            >=   [ RD_ACTI ] ;
+);
+relation RDS_ACTI, RDS_ACTI (
+  regle {N++} : distance axiale   min [ RD_ACTI ] ;
+);
+
+# check the RDS_NIMP RDS_PTIE exclusion
+# -------------------------------------
+define RDS_NIMP , RDS_PTIE intersection -> NPIMP;
+caracterise NPIMP (
+  regle {N++} : largeur          =    0. ;
+);
+undefine NPIMP;
+
+# check the RDS_NTIE RDS_PIMP exclusion
+# -------------------------------------
+define RDS_NTIE , RDS_PIMP intersection -> NPIMP;
+caracterise NPIMP (
+  regle {N++} : largeur          =    0. ;
+);
+undefine NPIMP;
+
+# check the RDS_POLY shapes
+# -------------------------
+caracterise RDS_POLY (
+  regle {N++} : largeur          >=   [ RW_POLY ] ;
+  regle {N++} : longueur_inter   min  [ RW_POLY ] ;
+  regle {N++} : notch            >=   [ RD_POLY ] ;
+);
+relation RDS_POLY , RDS_POLY (
+  regle {N++} : distance axiale  min  [ RD_POLY ] ;
+);
+
+define RDS_ACTI , RDS_POLY intersection -> channel;
+
+  # check the channel shapes
+  # -------------------------
+  caracterise channel (
+    regle {N++} : notch            >=   [ RD_GATE ] ;
+  );
+  relation channel , channel (
+    regle {N++} : distance axiale  min  [ RD_GATE ] ;
+  );
+
+undefine channel;
+
+define RDS_ACTI , RDS_CONT intersection -> cont_diff;
+
+  relation RDS_POLY , cont_diff (
+    regle {N++} : distance axiale  >=   [ RD_POLR_VIA0 ] ;
+  );
+
+undefine cont_diff;
+
+# check RDS_ALU1 shapes
+# ---------------------
+caracterise RDS_ALU1 (
+  regle {N++} : surface          min  [ RA_ALU1 ] ;
+  regle {N++} : largeur          >=   [ RW_ALU1 ] ;
+  regle {N++} : longueur_inter   min  [ RW_ALU1 ] ;
+  regle {N++} : notch            >=   [ RD_ALU1 ] ;
+);
+relation RDS_ALU1 , RDS_ALU1 (
+  regle {N++} : distance axiale  min  [ RD_ALU1 ] ;
+);
+
+# check any_via layers, stacking are free
+# ---------------------------------------
+relation RDS_CONT , RDS_CONT (
+  regle {N++} : distance axiale  >=   [ RD_VIA0 ] ;
+);
+
+caracterise RDS_CONT (
+  regle {N++} : largeur           =   [ RW_VIA0 ] ;
+  regle {N++} : longueur          =   [ RW_VIA0 ] ;
+);
+
+# check RDS_POLY is distant from activ zone of transistor
+# -------------------------------------------------------
+relation RDS_POLY , RDS_ACTIV (
+  regle {N++} : distance axiale  >=   [ RD_POLR_ACTI ] ;
+);
+
+fin regles
+DRC_COMMENT
+END_DRC_COMMENT
+END_DRC_RULES

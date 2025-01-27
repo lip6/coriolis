@@ -1,0 +1,127 @@
+table cif_layer
+# -------------------------------------------------------------------
+# rds_name     cif_name
+# -------------------------------------------------------------------
+  rds_nwell    nwel
+# rds_pwell    pwel
+  rds_activ    active
+  rds_ntie     nplus
+  rds_ptie     pplus
+  rds_nimp     nplus
+  rds_pimp     pplus
+  rds_poly     poly
+  rds_alu1     metal1
+  rds_alu2     metal2
+  rds_alu3     metal3
+  rds_alu4     metal4
+  rds_alu5     metal5
+  rds_alu6     metal6
+  rds_cont     contact
+  rds_via1     via1
+  rds_via2     via2
+  rds_via3     via3
+  rds_via4     via4
+  rds_via5     via5
+  rds_cpas     pad
+end
+
+table gds_layer
+# -------------------------------------------------------------------
+# rds_name     gds_number
+# -------------------------------------------------------------------
+  rds_nwell    31
+# rds_pwell     
+  rds_activ    1
+  rds_ptie     14
+  rds_ntie     7 
+  rds_pimp     14
+  rds_nimp     7 
+  rds_poly     5      5   
+  rds_alu1     8      8   
+  rds_alu2     10     10  
+  rds_alu3     30     30  
+  rds_alu4     50     50  
+  rds_alu5     67     67  
+  rds_alu6     0      0   
+  rds_cont     6 
+  rds_via1     19
+  rds_via2     29
+  rds_via3     49
+  rds_via4     66
+  rds_via5     0 
+  rds_cpas     0 
+end
+
+table lynx_resistor
+# -------------------------------------------------------------------
+# rds_name square_resistor(ohm/square) # typical values
+# -------------------------------------------------------------------
+  rds_poly    48
+  rds_alu1    13
+  rds_alu2    0.125
+  rds_alu3    0.125
+  rds_alu4    0.047
+  rds_alu5    0.047
+  rds_alu6    0.029
+  rds_cont    15
+  rds_via1    152
+  rds_via2    4.5
+  rds_via3    3.4
+  rds_via4    3.4
+  rds_via5    0.38
+end
+
+table lynx_capa
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+  rds_poly  25.2e-6  51.8e-6  # Ca max POLY_NWELL 2Cf0 max POLY_NWELL 
+  rds_alu1   2.6e-5   8.5e-5  # Ca max M1_NWELL   2Cf0 max M1_NWELL
+  rds_alu2   1.6e-5   7.9e-5  # Ca max M2_NWELL   2Cf0 max M2_NWELL
+  rds_alu3   8.0e-6   6.8e-5  # Ca max M3_NWELL   2Cf0 max M3_NWELL
+  rds_alu4   6.0e-6   6.0e-5  # Ca max M4_NWELL   2Cf0 max M4_NWELL
+  rds_alu5   6.0e-6   6.0e-5  # hyp
+  rds_alu6   6.0e-6   6.0e-5
+end
+
+table lynx_capa_poly
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_poly2
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_alu1
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_alu2
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_alu3
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_alu4
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end
+ 
+table lynx_capa_alu5
+# -------------------------------------------------------------------
+# rds_name area_capa(pif/um^2) peri_capa(pif/um)
+# -------------------------------------------------------------------
+end

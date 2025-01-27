@@ -1,0 +1,174 @@
+[
+# date 20230223:1357
+# ---------------------------------------------------------------------------
+# Lambda Definition 
+# ---------------------------------------------------------------------------
+
+# all lambda constraints
+# ----------------------
+
+BW_CTIE = BW_VIA0+2*BE_ATIE_VIA0;
+BW_CDIF = BW_VIA0+2*BE_ACTI_VIA0;
+SW_CDIF = SW_VIAX+2*SE_DIFX_VIA0;
+
+"Lambda: Pitch run NWELL - run NWELL ||" =
+         (RD_NWEL+BW_NWEL)
+        /(SD_WELL+SW_WELL);
+
+"Lambda: Pitch run NWELL - run NWELL |-" =
+         (RD_NWEL+BW_NWEL)
+        /(SD_WELL+2*SE_WELL);
+
+"Lambda: Pitch run DIF - run DIF" =
+         (RD_ACTI+BW_ACTI)
+        /(SD_DIFX+SW_DIFX);
+
+"Lambda: Pitch run DIF - contact DIF on VIA0" =
+         (BW_CDIF/2+RD_ACTI+BW_ACTI/2)
+        /(SW_CDIF/2+SD_DIFX+SW_DIFX/2) ;
+
+"Lambda: Pitch contact DIF on VIA0 - contact DIF on VIA0" =
+         (BW_CDIF+RD_ACTI)
+        /(SW_CDIF+SD_DIFX) ;
+
+"Lambda: Pitch run TRANSISTOR - run TRANSISTOR (1 active area)" =
+         (RD_GATE+BW_POLY)
+        /(SD_GATE+SW_POLY) ;
+
+"Lambda: Pitch run TRANSISTOR - run TRANSISTOR (2 actives area)" =
+         (BW_POLY+2*BE_ACTI_POLT+RD_ACTI)
+        /(SW_POLY+2*SE_DIFT_POLT+SD_DIFX) ;
+
+"Lambda: Pitch run TRANSISTOR - cont - run TRANSISTOR" =
+         (2*RD_POLR_VIA0+BW_VIA0+BW_POLY)
+        /(2*SD_POLY_VIA0+SW_VIAX+SW_POLY) ;
+
+"Lambda: Pitch contact PDIF on VIA0 - contact NDIF on VIA0" =
+         (BW_CDIF+BE_PIMP_ACTI+BE_NWEL_PIMP+RD_NWEL_ACTI)
+        /(SW_CDIF+SE_WELL_DIFX+SD_WELL_DIFX) ;
+
+"Lambda: Pitch contact NTIE on VIA0 - transistor gate (sidewise)" =
+         (BW_CTIE/2+BE_NTIE_ATIE+BE_PIMP_GATE)
+        /(SW_CDIF/2+SD_GATE_TIEX);
+
+"Lambda: Pitch contact PTIE on VIA0 - transistor gate (sidewise)" =
+         (BW_CTIE/2+BE_PTIE_ATIE+BE_NIMP_GATE)
+        /(SW_CDIF/2+SD_GATE_TIEX);
+
+if (def(BE_POLT),
+    "Lambda: Pitch contact NTIE on VIA0 - transistor gate (lengthwise)" =
+             (BW_CTIE/2+BE_NTIE_ATIE+BE_PIMP_GATE+BE_GATE_POLT+BE_POLT)
+            /(SW_CDIF/2+SD_GATE_TIEX+SE_GATE_POLT+SE_POLT),
+    
+    "Lambda: Pitch contact PTIE on VIA0 - transistor gate (lengthwise)" =
+             (BW_CTIE/2+BE_PTIE_ATIE+BE_NIMP_GATE+BE_GATE_POLT+BE_POLT)
+            /(SW_CDIF/2+SD_GATE_TIEX+SE_GATE_POLT+SE_POLT)
+);
+    
+"Lambda: minimal transistor" =
+         (BW_ACTI+BE_POLT_ACTI*2)
+        /(SW_DIFX+SE_POLT_DIFT*2);
+
+"Lambda: Pitch run POLY - run POLY" =
+         (RD_POLY+BW_POLY)
+        /(SD_POLY+SW_POLY) ;
+
+"Lambda: Pitch contact NTIE on VIA0 - contact NDIF on VIA0" =
+         (BW_CTIE+BE_NTIE_ATIE+BE_NWEL_NTIE+RD_NWEL_ACTI)
+        /(SW_CDIF+SE_WELL_DIFX+SD_WELL_DIFX) ;
+
+"Lambda: Pitch run POLY - contact POLY on VIA0" =
+         (BW_VIA0/2+BE_POLY_VIA0+RD_POLY+BW_POLY/2)
+        /(SW_VIAX/2+SE_POLY_VIA0+SD_POLY+SW_POLY/2);
+
+# as SD_POLY < SD_ALU1, it is impossible to have 2 contact closest
+"Lambda: Pitch contact POLY on VIA0 - contact POLY on VIA0" =
+         (BW_VIA0+2*BE_POLY_VIA0+RD_POLY)
+        /(SW_VIAX+2*SE_POLY_VIA0+SD_ALU1) ; 
+
+# ---------------------------------------------------------------------------
+
+"Lambda: Pitch run TRANS - run POLY" =
+         (BE_ACTI_POLT+RD_POLR_ACTI+BW_POLY)
+        /(SE_DIFT_POLT+SD_POLR_DIFT+SW_POLY) ;
+
+"Lambda: Pitch run DIF - run POLY" =
+         (BW_ACTI/2+RD_POLR_ACTI+BW_POLY/2)
+        /(SW_DIFX/2+SD_POLY_DIFX+SW_POLY/2) ;
+
+"Lambda: Pitch contact DIF on VIA0 - run POLY" =
+         (BW_VIA0/2+BE_ACTI_VIA0+RD_POLR_ACTI+BW_POLY/2)
+        /(SW_VIAX/2+SE_DIFX_VIA0+SD_POLY_DIFX+SW_POLY/2) ;
+
+"Lambda: Pitch contact DIF on VIA0 - contact POLY on VIA0" =
+         (BW_VIA0+BE_ACTI_VIA0+RD_POLR_ACTI+BE_POLY_VIA0)
+        /(SW_VIAX+SE_DIFX_VIA0+SD_POLY_DIFX+SE_POLY_VIA0) ;
+
+# ---------------------------------------------------------------------------
+
+"Lambda: Pitch run ALU1 - run ALU1" =
+         (RD_ALU1+BW_ALU1)
+        /(SD_ALU1+SW_ALU1) ;
+
+"Lambda: Pitch run ALU1 - contact ALU1 on VIA0" =
+         (BW_VIA0/2+BE_ALU1_VIA0+RD_ALU1+BW_ALU1/2)
+        /(SW_VIAX/2+SE_ALU1_VIA0+SD_ALU1+SW_ALU1/2) ;
+
+"Lambda: Pitch contact ALU1 on VIA0 - contact ALU1 on VIA0" =
+         (BW_VIA0+2*BE_ALU1_VIA0+RD_ALU1)
+        /(SW_VIAX+2*SE_ALU1_VIA0+SD_ALU1) ;
+
+"Lambda: Pitch VIA0 - VIA0" =
+         (BW_VIA0+RD_VIA0)
+        /(SW_VIAX+SD_VIA0) ;
+
+# ---------------------------------------------------------------------------
+
+"Lambda: Pitch run ALU2 - run ALU2" =
+         (RD_ALU2+BW_ALU2)
+        /(SD_ALU2+SW_ALU2) ;
+
+"Lambda: Pitch run ALU2 - contact ALU2 on VIA1" =
+         (BW_VIA1/2+BE_ALU2_VIA1+RD_ALU2+BW_ALU2/2)
+        /(SW_VIAX/2+SE_ALU2_VIA1+SD_ALU2+SW_ALU2/2) ;
+
+"Lambda: Pitch contact ALU2 on VIA1 - contact ALU2 on VIA1" =
+         (BW_VIA1+2*BE_ALU2_VIA1+RD_ALU2)
+        /(SW_VIAX+2*SE_ALU2_VIA1+SD_ALU2) ;
+
+"Lambda: Pitch contact ALU2 on VIA2 - contact ALU2 on VIA2" =
+         (BW_VIA1+2*BE_ALU2_VIA2+RD_ALU2)
+        /(SW_VIAX+2*SE_ALU2_VIA2+SD_ALU2) ;
+
+"Lambda: Pitch VIA1 - VIA1" =
+         (BW_VIA1+RD_VIA1)
+        /(SW_VIAX+SD_VIA1) ;
+
+# ---------------------------------------------------------------------------
+
+"Lambda: Pitch run ALU3 - run ALU3" =
+         (RD_ALU3+BW_ALU3)
+        /(SD_ALU3+SW_ALU3) ;
+
+"Lambda: Pitch run ALU3 - contact ALU3 on VIA2" =
+         (BW_VIA2/2+BE_ALU3_VIA2+RD_ALU3+BW_ALU3/2)
+        /(SW_VIAX/2+SE_ALU3_VIA2+SD_ALU3+SW_ALU3/2) ;
+
+"Lambda: Pitch contact ALU3 on VIA2 - contact ALU3 on VIA2" =
+         (BW_VIA2+2*BE_ALU3_VIA2+RD_ALU3)
+        /(SW_VIAX+2*SE_ALU3_VIA2+SD_ALU3) ;
+
+"Lambda: Pitch VIA1 - VIA1" =
+         (BW_VIA2+RD_VIA2)
+        /(SW_VIAX+SD_VIA2) ;
+
+# ---------------------------------------------------------------------------
+
+LAMBDA = sup(GRID, max('Lambda.*'));   # finally LAMBDA is the greatest constraint
+LAMBDA = inf(GRID, (LAMBDA+GRID)/2)*2; # but LAMBDA must be pair
+LAMBDA = 0.11;
+]//
+
+[# print results
+# ---------------------------------------------------------------------------
+sort('Lambda.*')][message (LAMBDA)]//

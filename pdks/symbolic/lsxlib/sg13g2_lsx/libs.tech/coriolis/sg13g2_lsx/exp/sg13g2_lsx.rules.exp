@@ -1,0 +1,158 @@
+[
+# -----------------------------------------------------------------------------
+#   16 january 2023, revision MML
+#   23 january 2023, MML
+#   2  february 2023, MML
+#   1  march 2023, MML
+#   18 april 2023, FW
+#       creation of two types of real rules:
+#        R) the true "Real" rules found in the PDK, they are prefixed by R
+#        B) the "Beautiful" rules computed to improve the quality of the layout without increasing the lambda, they are prefixed by B
+#       The lambda now is computed from low level mask (ALU1 and below)
+#   19 June 2024, FW, IHP
+#
+#   Layer Name
+#
+#   NWEL : N WELL        (NW)
+#   PWEL : P WELL        (PW)
+#   NIMP : N+ implanted zone        ("N+")
+#   PIMP : P+ implanted zone        ("P+")
+#   NTIE : N+ implanted zone for NWELL body tie "NW STRAP" (NP)
+#   PTIE : P+ implanted zone for PWELL body tie "PW STRAP" (PP)
+#   ACTI : active zone    (OD)            (N+ ACTIVE or P+ACTIVE)
+#   ATIE : active zone  
+#   POLY : POLY wire or Transistors       ("PO" or "GATE")
+#   POLT : POLY transistor (T stands for Transistor)
+#   POLR : POLY wire (R stands for Run)
+#   VIA0 : CONTACT (cut to join ALU1 to POLX or DIFX) ("CO")   # licon
+#   ALU1 : ALU first level        (ALU1)                       # li local Interconnect to diff/tap and poly
+#
+# Real Rule type
+#
+#   RA_LAYER          : Real Area
+#   RW_LAYER          : Real Width
+#   RD_LAYER          : Real Distance between two edges of the same layer
+#   RD_LAYER1_LAYER2  : Real Distance between layer1 and layer2
+#   RE_LAYER1_LAYER2  : Real Extension of Layer1 on Layer2 (all directions)
+#   REL_LAYER1_LAYER2 : Real Extension of Layer1 on Layer2 (linearly)
+#
+# In order to make layout "beautiful" (less edges)
+#
+#   BW_LAYER         : Beautiful Width
+#   BE_LAYER1_LAYER2 : Beautiful Extension of Layer1 on Layer2
+#
+# GRID is the physical grid, every physical rule is a multiple of it.
+# ---------------------------------------------------------------------------
+
+GRID          =  0.001  ; # sky130: 0.005  ; # derived from distance values
+
+RA_ACTI       =  1.222  ; # sky130: 0.0    ; # Act.2
+RA_ATIE       =  1.222  ; # sky130: 0.0    ; # Act.2
+RA_NIMP       =  0.250  ; # sky130: 0.265  ; # pSD.k
+RA_PIMP       =  0.250  ; # sky130: 0.255  ; # pSD.k
+RA_ALU1       =  0.090  ; # sky130: 0.06   ; # M1.d
+RA_ALU2       =  0.144  ; # sky130: 0.00   ; # Mn.d
+RA_ALU3       =  0.144  ; # sky130: 0.00   ; # Mn.d
+
+RW_NWEL       =  0.62   ; # sky130: 0.84   ; # NW.a
+RW_PWEL       =  0.62   ; # sky130: RW_NWEL; # PWB.a
+RW_ACTI       =  0.15   ; # sky130: 0.42   ; # Act.a 
+RW_ATIE       =  0.15   ; # sky130: 0.15   ; # Act.a
+RW_NTIE       =  0.15   ; # sky130: 0.38   ; # Act.a
+RW_PTIE       =  0.15   ; # sky130: 0.38   ; # Act.a
+RW_NIMP       =  0.31   ; # sky130: 0.38   ; # nSD.1 = NOT (pSD OR nSD:block)
+RW_PIMP       =  0.31   ; # sky130: 0.38   ; # pSD.a
+RW_POLY       =  0.13   ; # sky130: 0.15   ; # Gat.a
+RW_VIA0       =  0.16   ; # sky130: 0.17   ; # Cnt.a
+RW_VIA1       =  0.19   ; # sky130: 0.17   ; # V1.a
+RW_VIA2       =  0.19   ; # sky130: 0.17   ; # Vn.a
+RW_ALU1       =  0.16   ; # sky130: 0.17   ; # M1.a
+RW_ALU2       =  0.20   ; # sky130: 0.17   ; # Mn.a
+RW_ALU3       =  0.20   ; # sky130: 0.17   ; # Mn.a
+
+RD_NWEL       =  1.80   ; # sky130: 1.27   ; # max(NW.b[0.62],NW.b1[1.80])
+RD_PWEL       =  1.80   ; # sky130: RD_NWEL; # not sure there is PWELL
+RD_ACTI       =  0.21   ; # sky130: 0.27   ; # Act.b
+RD_ATIE       =  0.21   ; # sky130: 0.27   ; # Act.b
+RD_PIMP       =  0.31   ; # sky130: 0.38   ; # pSD.b
+RD_NIMP       =  0.31   ; # sky130: 0.38   ; # nsd.2
+RD_POLY       =  0.18   ; # sky130: 0.21   ; # Gat.b
+RD_GATE       =  0.18   ; # sky130: 0.21   ; # Gat.b
+RD_VIA0       =  0.18   ; # sky130: 0.17   ; # Cnt.b
+RD_VIA1       =  0.22   ; # sky130: 0.17   ; # V1.b
+RD_VIA2       =  0.22   ; # sky130: 0.17   ; # Vn.b
+RD_ALU1       =  0.18   ; # sky130: 0.17   ; # M1.b
+RD_ALU2       =  0.21   ; # sky130: 0.17   ; # Mn.b
+RD_ALU3       =  0.21   ; # sky130: 0.17   ; # Mn.b
+
+RD_POLR_ACTI  =  0.07   ; # sky130: 0.075  ; # Gat.d
+RD_POLR_ATIE  =  0.07   ; # sky130: 0.075  ; # Gat.d
+RD_POLR_VIA0  =  0.11   ; # sky130: 0.25   ; # Cnt.f
+RD_NWEL_ACTI  =  0.62   ; # sky130: 0.34   ; # max(NW.d[0.31],NW.d1[0.62]) 
+
+RE_NWEL_PIMP  =  0.13   ; # sky130: 0.055  ; # max(NW.c[0.31],NW.c1[0.62]) - pSD.c[0.18]
+RE_NWEL_NTIE  =  0.21   ; # sky130: 0.055  ; # max(NW.e[0.24],NW.e1[0.62]) - pSD.c1[0.03]
+RE_PWEL_NIMP  =  0.13   ; # sky130: RE_NWEL_PIMP; # like RE_NWEL_PIMP ?
+RE_PWEL_PTIE  =  0.21   ; # sky130: RE_NWEL_NTIE; # like RE_NWEL_NTIE ?
+RE_NIMP_GATE  =  0.00   ; # sky130: 0.00   ; # NA ?
+RE_PIMP_GATE  =  0.00   ; # sky130: 0.00   ; # NA ?
+RE_GATE_POLT  =  -0.18  ; # sky130: -0.130 ; # -Gat.c (RE_POLT_ACTI) to be checked see above RE_NIMP_GATE not found
+RE_NIMP_ACTI  =  0.18   ; # sky130: 0.125  ; # no rule since NIMP is by default
+RE_PIMP_ACTI  =  0.18   ; # sky130: 0.125  ; # pSD.c
+RE_NTIE_ATIE  =  0.03   ; # sky130: 0.125  ; # no rule since NIMP is by default
+RE_PTIE_ATIE  =  0.03   ; # sky130: 0.125  ; # pSD.c1
+RE_ACTI_POLT  =  0.23   ; # sky130: 0.250  ; # Act.c
+RE_POLT_ACTI  =  0.18   ; # sky130: 0.130  ; # Gat.c
+RE_ACTI_VIA0  =  0.07   ; # sky130: 0.06   ; # Cnt.c
+RE_ATIE_VIA0  =  0.07   ; # sky130: 0.06   ; # Cnt.c
+RE_POLY_VIA0  =  0.07   ; # sky130: 0.05   ; # Cnt.d 
+RE_ALU1_VIA0  =  0.05   ; # sky130: 0.08   ; # max(M1.c[0.00],M1.c1[0.05])
+RE_ALU1_VIA1  =  0.05   ; # sky130: 0.08   ; # max(Mn.c[0.005],Mn.c1[0.05])
+RE_ALU2_VIA1  =  0.05   ; # sky130: 0.08   ; # max(Mn.c[0.005],Mn.c1[0.05])
+RE_ALU2_VIA2  =  0.05   ; # sky130: 0.08   ; # max(Mn.c[0.005],Mn.c1[0.05])
+RE_ALU3_VIA2  =  0.05   ; # sky130: 0.08   ; # max(Mn.c[0.005],Mn.c1[0.05])
+
+# ---------------------------------------------------------------------------
+# Modifications in order to get a more beautiful layout
+# Symbolic technology for all metals : SW_VIAX+2*SE_ALUX_VIAX == SW_ALUX
+# then it is possible to blot layers in order to have contacts included in wire
+# ---------------------------------------------------------------------------
+
+BW_NWEL       = RW_NWEL;
+BW_PWEL       = RW_PWEL;
+BW_ACTI       = RW_ACTI + 0.15;
+BW_ATIE       = RW_ATIE + 0.15;
+BW_NTIE       = RW_NTIE;
+BW_PTIE       = RW_PTIE;
+BW_NIMP       = RW_NIMP;
+BW_PIMP       = RW_PIMP;
+BW_POLY       = RW_POLY;
+BW_VIA0       = RW_VIA0;
+BW_VIA1       = RW_VIA1;
+BW_VIA2       = RW_VIA2;
+BW_ALU1       = RW_VIA0+2*RE_ALU1_VIA0; # RW_ALU1 + 0.02; to have cont_alu1 width = 2 lambda alu1 wire width
+BW_ALU2       = RW_VIA1+2*RE_ALU2_VIA1; # FIXME
+BW_ALU3       = RW_VIA2+2*RE_ALU3_VIA2; # FIXME 
+
+BE_NWEL_PIMP  = RE_NWEL_PIMP;
+BE_NWEL_NTIE  = RE_NWEL_NTIE;
+BE_PWEL_NIMP  = RE_PWEL_NIMP;
+BE_PWEL_PTIE  = RE_PWEL_PTIE;
+BE_NIMP_GATE  = RE_NIMP_GATE;
+BE_PIMP_GATE  = RE_PIMP_GATE;
+BE_GATE_POLT  = RE_GATE_POLT;
+BE_NIMP_ACTI  = RE_NIMP_ACTI;
+BE_PIMP_ACTI  = RE_PIMP_ACTI;
+BE_NTIE_ATIE  = RE_NTIE_ATIE;
+BE_PTIE_ATIE  = RE_PTIE_ATIE;
+BE_ACTI_POLT  = RE_ACTI_POLT; # + 0.025;
+BE_POLT_ACTI  = RE_POLT_ACTI; # + 0.005;
+BE_ACTI_VIA0  = RE_ACTI_VIA0; # + 0.065;
+BE_ATIE_VIA0  = RE_ATIE_VIA0;
+BE_POLY_VIA0  = RE_POLY_VIA0; # + 0.01; # to have cont_poly width = 2 lambda poly wire width
+BE_ALU1_VIA0  = RE_ALU1_VIA0;
+BE_ALU1_VIA1  = RE_ALU1_VIA1;
+BE_ALU2_VIA1  = RE_ALU2_VIA1;
+BE_ALU2_VIA2  = RE_ALU2_VIA2;
+BE_ALU3_VIA2  = RE_ALU3_VIA2;
+]//
