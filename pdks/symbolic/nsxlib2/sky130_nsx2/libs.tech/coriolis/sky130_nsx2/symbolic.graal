@@ -1,0 +1,386 @@
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Title      :      Parameters File for Graal                 |
+# |                                                             |
+# | Technology :              Cmos V7                           |
+# |                                                             |
+# | Date       :             27/06/95                           |
+# |                                                             |
+# \------------------------------------------------------------*/
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                 Graal Peek Bound in lambda                  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_PEEK_BOUND 7
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |               Lower Grid Step in pixel by lambda            |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_GRID_STEP 10
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |          Lower Figure Text Step in pixel by lambda          |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_FIGURE_STEP 1
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |         Lower Instance Text Step in pixel by lambda         |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_INSTANCE_STEP 1
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |        Lower Connector Text Step in pixel by lambda         |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_CONNECTOR_STEP 5
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |          Lower Segment Text Step in pixel by lambda         |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_SEGMENT_STEP 7
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |         Lower Reference Text Step in pixel by lambda        |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_LOWER_REFERENCE_STEP 10
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                 Graal Cursor Color Name                     |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_CURSOR_COLOR_NAME  Gray
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                 Graal Cursor Size in pixel                  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE GRAAL_CURSOR_SIZE 10 
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |  Segment Panel Button Label, Foreground , Background Color  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_SEGMENT_NAME
+
+  NWELL    Nwell  tan              Black
+  PWELL    Pwell  light_yellow     Black
+  NDIF     Ndif   lawn_green       Black
+  PDIF     Pdif   yellow           Black
+  NTIE     Ntie   spring_green     Black
+  PTIE     Ptie   light_goldenrod  Black
+  POLY     Poly   red              Black
+  POLY2    Poly2  orange           Black
+  ALU1     Alu1   royal_blue       Black
+  ALU2     Alu2   Cyan             Black
+  ALU3     Alu3   light_pink       Black
+  ALU4     Alu4   GReen            Black
+  ALU5     Alu5   yellow           Black
+  ALU6     Alu6   violet           Black
+  ALU7     Alu7   red              Black
+  ALU8     Alu8   blue             Black
+  TPOLY    Tpoly  hot_pink         Black
+  TALU1    Talu1  royal_blue       Black
+  TALU2    Talu2  turquoise        Black
+  TALU3    Talu3  light_pink       Black
+  TALU4    Talu4  green            Black
+  TALU5    Talu5  yellow           Black
+  TALU6    Talu6  violet           Black
+  TALU7    Talu7  red              Black
+  TALU8    Talu8  blue             Black
+  CALU1    CAlu1  royal_blue       Black
+  CALU2    CAlu2  Cyan             Black
+  CALU3    CAlu3  light_pink       Black
+  CALU4    CAlu4  green            Black
+  CALU5    CAlu5  yellow           Black
+  CALU6    CAlu6  violet           Black
+  CALU7    CAlu7  red              Black
+  CALU8    CAlu8  blue             Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Transistor Panel Button Label, Foreground, Background Color |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_TRANSISTOR_NAME
+
+  NTRANS   Ntrans lawn_green       Black
+  PTRANS   Ptrans yellow           Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Connector Panel Button Label, Foreground , Background Color |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_CONNECTOR_NAME
+
+  POLY     Poly   red              Black
+  POLY2    Poly2  orange           Black
+  ALU1     Alu1   royal_blue       Black
+  ALU2     Alu2   Cyan             Black
+  ALU3     Alu3   light_pink       Black
+  ALU4     Alu4   green            Black
+  ALU5     Alu5   yellow           Black
+  ALU6     Alu6   violet           Black
+  ALU7     Alu7   red              Black
+  ALU8     Alu8   blue             Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |       Minimun Length and Width for a symbolic Segment       |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_SEGMENT_VALUE
+
+  NWELL    4   4
+  PWELL    4   4
+  NDIF     3   2        # LSX 2 -> 3
+  PDIF     3   2        # LSX 2 -> 3
+  NTIE     3   1        # LSX 2 -> 3
+  PTIE     3   1        # LSX 2 -> 3
+  NTRANS   1   5        # LSX 4 -> 5
+  PTRANS   1   5        # LSX 4 -> 5
+  POLY     1   1
+  POLY2    1   1
+  ALU1     2   1        # LSX 1 -> 2
+  ALU2     2   1
+  ALU3     2   1
+  ALU4     2   1
+  ALU5     2   1
+  ALU6     2   1
+  ALU7     2   1
+  ALU8     2   1
+  TPOLY    1   1
+  TALU1    2   1        # LSX 1 -> 2
+  TALU2    2   1        # LSX 2 -> 1        
+  TALU3    2   1        # LSX 2 -> 1
+  TALU4    2   1        # LSX 2 -> 1
+  TALU5    2   1        # LSX 2 -> 1
+  TALU6    2   1        # LSX 2 -> 1
+  TALU7    2   1        # LSX 2 -> 1
+  TALU8    2   1        # LSX 2 -> 1
+  CALU1    2   0
+  CALU2    2   0
+  CALU3    2   0
+  CALU4    2   0
+  CALU5    2   0
+  CALU6    2   0
+  CALU7    2   0
+  CALU8    2   0
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Reference Panel Button Label, Foreground, Background Color  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_REFERENCE_NAME
+
+  REF_REF  Ref_Ref red  Black
+  REF_CON  Ref_Con Cyan Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |     Via Panel Button Label, Foreground , Background Color   |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_VIA_NAME
+
+  CONT_DIF_N   Cont_NDif   lawn_green       Black
+  CONT_DIF_P   Cont_PDif   yellow           Black
+  CONT_BODY_N  Cont_NTie   spring_green     Black
+  CONT_BODY_P  Cont_PTie   light_goldenrod  Black
+  CONT_POLY    Cont_Poly   red              Black
+  CONT_POLY2   Cont_Poly2  orange           Black
+  CONT_VIA     Via_1-2     cyan             Black
+  CONT_VIA2    Via_2-3     light_pink       Black
+  CONT_VIA3    Via_3-4     green            Black
+  CONT_VIA4    Via_4-5     yellow           Black
+  CONT_VIA5    Via_5-6     violet           Black
+  CONT_VIA6    Via_6-7     red              Black
+  CONT_VIA7    Via_7-8     blue             Black
+  C_X_N        Cont_CxN    orange           Black
+  C_X_P        Cont_CxP    orange           Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |  Big Via Panel Button Label, Foreground , Background Color  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_BIGVIA_NAME
+
+  CONT_VIA     Big_Via_1-2  cyan       Black
+  CONT_VIA2    Big_Via_2-3  light_pink Black
+  CONT_VIA3    Big_Via_3-4  green      Black
+  CONT_VIA4    Big_Via_4-5  yellow     Black
+  CONT_VIA5    Big_Via_5-6  violet     Black
+  CONT_VIA6    Big_Via_6-7  red        Black
+  CONT_VIA7    Big_Via_7-8  blue       Black
+
+  CONT_TURN1   Turn_Via_1   royal_blue Black
+  CONT_TURN2   Turn_Via_2   Cyan       Black
+  CONT_TURN3   Turn_Via_3   light_pink Black
+  CONT_TURN4   Turn_Via_4   green      Black
+  CONT_TURN5   Turn_Via_5   yellow     Black
+  CONT_TURN6   Turn_Via_6   violet     Black
+  CONT_TURN7   Turn_Via_7   red        Black
+  CONT_TURN8   Turn_Via_7   blue       Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |            Minimun Size for a symbolic Big Via              |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_BIGVIA_VALUE
+
+  CONT_VIA     2
+  CONT_VIA2    2
+  CONT_VIA3    2
+  CONT_VIA4    2
+  CONT_VIA5    2
+  CONT_VIA6    2
+  CONT_VIA7    2
+
+  CONT_TURN1   2
+  CONT_TURN2   2
+  CONT_TURN3   2
+  CONT_TURN4   2
+  CONT_TURN5   2
+  CONT_TURN6   2
+  CONT_TURN7   2
+  CONT_TURN8   2
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |   Orient Panel Button Label, Foreground , Background Color  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_ORIENT_NAME 
+
+  NORTH  North   lawn_green  Black
+  SOUTH  South   yellow      Black
+  EAST   East    tan         Black
+  WEST   West    red         Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Symmetry Panel Button Label, Foreground , Background Color  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_SYMMETRY_NAME
+
+  NOSYM No_Sym  LightBlue         Black
+  SYM_X Sym_X   turquoise         Black
+  SYM_Y Sym_Y   cyan              Black
+  SYMXY Sym_XY  lightCyan         Black
+  ROT_P Rot_P   MediumAquamarine  Black
+  ROT_M Rot_M   aquamarine        Black
+  SY_RP Sym_RP  green             Black
+  SY_RM Sym_RM  MediumSpringGreen Black
+
+END
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | View Layer Panel Button Label, Foreground, Background Color |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TABLE GRAAL_RDS_LAYER_NAME
+
+  RDS_NWELL    Nwell   tan               Black
+  RDS_PWELL    Pwell   light_yellow      Black
+  RDS_NIMP     Nimp    forest_green      Black
+  RDS_PIMP     Pimp    goldenrod         Black
+  RDS_ACTIV    Activ   brown             Black
+  RDS_NDIF     Ndif    lawn_green        Black
+  RDS_PDIF     Pdif    yellow            Black
+  RDS_NTIE     Ntie    spring_green      Black
+  RDS_PTIE     Ptie    light_goldenrod   Black
+  RDS_POLY     Poly    red               Black
+  RDS_POLY2    Poly2   orange            Black
+  RDS_VPOLY    VPoly   coral             Black
+  RDS_GATE     Gate    orange            Black
+  RDS_TPOLY    Tpoly   hot_pink          Black
+  RDS_CONT     Cont    dark_violet       Black
+  RDS_TCONT    TCont   orchid            Black
+  RDS_ALU1     Alu1    royal_blue        Black
+  RDS_VALU1    VAlu1   sky_blue          Black
+  RDS_TALU1    Talu1   royal_blue        Black
+  RDS_VIA1     Via1    deep_sky_blue     Black
+  RDS_TVIA1    TVia1   dodger_blue       Black
+  RDS_ALU2     Alu2    cyan              Black
+  RDS_TALU2    Talu2   turquoise         Black
+  RDS_VIA2     Via2    deep_pink         Black
+  RDS_ALU3     Alu3    light_pink        Black
+  RDS_TALU3    Talu3   light_pink        Black
+  RDS_VIA3     Via3    sea_green         Black
+  RDS_ALU4     Alu4    green             Black
+  RDS_TALU4    Talu4   green             Black
+  RDS_VIA4     Via4    gold              Black
+  RDS_ALU5     Alu5    yellow            Black
+  RDS_TALU5    Talu5   yellow            Black
+  RDS_VIA5     Via5    violet_red        Black
+  RDS_ALU6     Alu6    violet            Black
+  RDS_TALU6    Talu6   violet            Black
+  RDS_VIA6     Via6    dark_red          Black
+  RDS_ALU7     Alu7    red               Black
+  RDS_TALU7    Talu7   red               Black
+  RDS_VIA7     Via7    dark_blue         Black
+  RDS_ALU8     Alu8    blue              Black
+  RDS_TALU8    Talu8   blue              Black
+  RDS_CPAS     Cpas    gray              Black
+  RDS_REF      Ref     coral             Black
+  RDS_ABOX     Abox    pink              Black
+
+END

@@ -1,0 +1,25 @@
+[project]
+name = "pdk_sky130_nsx2"
+version = "0.1.0"
+description = "IHP Sky130 nsxlib2 PDK for Coriolis EDA"
+authors = [ { name = "Coriolis EDA Contributers" } ]
+requires-python = ">= 3.8"
+
+[build-system]
+requires = [
+  "meson",
+  "meson-python",
+  "ninja",
+  "setuptools",
+  "cibuildwheel",
+  "build",
+  "pdm-backend"
+]
+build-backend = "mesonpy"
+
+[tool.meson]
+build-dir = "build"
+
+[tool.cibuildwheel]
+build = "cp310-*"
+skip = ["cp36-*", "cp37-*", "pp*"]
