@@ -1266,22 +1266,26 @@ namespace Anabatic {
              and north->canDrag()
              and (south->getNet() != north->getNet())
              and (south->getX  () == north->getX  ()) ) {
-            Interval constraints ( gcell->getYMin(), north->getCBYMin() /*- pitch3*/ );
-            AutoSegment* terminal = south->getSegment();
-            AutoContact* opposite = terminal->getOppositeAnchor( south );
+            if (south->getSegment()->isVertical()) {
+              Interval     constraints ( gcell->getYMin(), north->getCBYMin() /*- pitch3*/ );
+              AutoSegment* terminal    = south->getSegment();
+              AutoContact* opposite    = terminal->getOppositeAnchor( south );
 
-            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-              segment->mergeUserConstraints( constraints );
-              constraineds.insert( segment );
+              for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+                segment->mergeUserConstraints( constraints );
+                constraineds.insert( segment );
+              }
             }
 
-            constraints = Interval( south->getCBYMax() /*+ pitch3*/, gcell->getYMax() );
-            terminal    = north->getSegment();
-            opposite    = terminal->getOppositeAnchor( north );
+            if (north->getSegment()->isVertical()) {
+              Interval     constraints = Interval( south->getCBYMax() /*+ pitch3*/, gcell->getYMax() );
+              AutoSegment* terminal    = north->getSegment();
+              AutoContact* opposite    = terminal->getOppositeAnchor( north );
 
-            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-              segment->mergeUserConstraints( constraints );
-              constraineds.insert( segment );
+              for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+                segment->mergeUserConstraints( constraints );
+                constraineds.insert( segment );
+              }
             }
           }
         }
