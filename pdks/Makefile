@@ -19,11 +19,13 @@ venv_setup:
 ### PDKs
 PDKS := \
 	common \
+	symbolic \
 	sg13g2_lsx \
 
 PDKS_PATHS := \
 	common \
-	symbolic/lsxlib/sg13g2_lsx \ 
+	symbolic \
+	symbolic/lsxlib/sg13g2_lsx \
 
 ### Build targets
 define map_path
