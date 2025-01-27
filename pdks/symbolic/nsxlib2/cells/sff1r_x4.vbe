@@ -1,0 +1,48 @@
+ENTITY sff1r_x4 IS
+GENERIC (
+  CONSTANT area 	 : NATURAL := 4500;
+  CONSTANT cin_ck	 : NATURAL := 8;
+  CONSTANT cin_i	 : NATURAL := 8;
+  CONSTANT cin_nrst	 : NATURAL := 16;
+  CONSTANT rdown_ck_q	 : NATURAL := 800;
+  CONSTANT rup_ck_q	 : NATURAL := 890;
+  CONSTANT taf_ck_q	 : NATURAL := 500;
+  CONSTANT tar_ck_q	 : NATURAL := 500;
+  CONSTANT taf_nrst_q	 : NATURAL := 500;
+  CONSTANT tar_nrst_q	 : NATURAL := 500;
+  CONSTANT thf_i_ck	 : NATURAL := 0;
+  CONSTANT thr_i_ck	 : NATURAL := 0;
+  CONSTANT tsf_i_ck	 : NATURAL := 585;
+  CONSTANT tsr_i_ck	 : NATURAL := 476;
+  CONSTANT transistors	 : NATURAL := 30
+);
+PORT (
+  ck	 : in  BIT;
+  i	 : in  BIT;
+  nrst   : in  BIT;
+  q	 : out BIT;
+  vdd	 : in  BIT;
+  vss	 : in  BIT
+);
+END sff1r_x4;
+
+ARCHITECTURE VBE OF sff1r_x4 IS
+  SIGNAL sff_m	 : REG_BIT REGISTER;
+  SIGNAL sff_s : REG_BIT REGISTER;	-- sff_s
+
+BEGIN
+  ASSERT (vdd and not (vss))
+  REPORT "power supply is missing on sff1r_x4"
+  SEVERITY WARNING;
+
+  label0 : BLOCK (ck = '1')
+  BEGIN
+    sff_s <= GUARDED (NOT(nrst) OR NOT(sff_m));
+  END BLOCK label0;
+  label1 : BLOCK (NOT(ck) = '1')
+  BEGIN
+      sff_m <= GUARDED i;
+  END BLOCK label1;
+
+  q <= NOT(sff_s) after 1700 ps;
+END;
