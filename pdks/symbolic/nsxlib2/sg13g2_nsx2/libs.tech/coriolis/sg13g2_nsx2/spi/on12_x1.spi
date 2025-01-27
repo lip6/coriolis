@@ -1,0 +1,27 @@
+* Spice description of on12_x1
+* Spice driver version -1095123173
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:32
+
+* INTERF i0 i1 q vdd vss 
+
+
+.subckt on12_x1 2 5 4 1 6 
+* NET 1 = vdd
+* NET 2 = i0
+* NET 4 = q
+* NET 5 = i1
+* NET 6 = vss
+Xtr_00006 4 7 1 1 sg13_lv_pmos L=0.13U W=2.12U AS=0.5088P AD=0.5088P PS=4.72U PD=4.72U 
+Xtr_00005 1 5 7 1 sg13_lv_pmos L=0.13U W=2.12U AS=0.5088P AD=0.5088P PS=4.72U PD=4.72U 
+Xtr_00004 1 2 4 1 sg13_lv_pmos L=0.13U W=2.12U AS=0.5088P AD=0.5088P PS=4.72U PD=4.72U 
+Xtr_00003 3 7 6 6 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+Xtr_00002 6 5 7 6 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+Xtr_00001 4 2 3 6 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+C7 1 6 1.39459e-15
+C6 2 6 2.09852e-14
+C4 4 6 2.09437e-15
+C3 5 6 1.52052e-14
+C2 6 6 1.51933e-15
+C1 7 6 2.0721e-14
+.ends on12_x1
+

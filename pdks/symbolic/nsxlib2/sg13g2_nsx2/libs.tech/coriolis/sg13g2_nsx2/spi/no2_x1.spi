@@ -1,0 +1,24 @@
+* Spice description of no2_x1
+* Spice driver version 1034870555
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:20
+
+* INTERF i0 i1 nq vdd vss 
+
+
+.subckt no2_x1 3 4 5 1 6 
+* NET 1 = vdd
+* NET 3 = i0
+* NET 4 = i1
+* NET 5 = nq
+* NET 6 = vss
+Xtr_00004 2 4 5 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00003 1 3 2 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00002 6 3 5 6 sg13_lv_nmos L=0.13U W=1.07U AS=0.2568P AD=0.2568P PS=2.62U PD=2.62U 
+Xtr_00001 5 4 6 6 sg13_lv_nmos L=0.13U W=1.07U AS=0.2568P AD=0.2568P PS=2.62U PD=2.62U 
+C6 1 6 1.10757e-15
+C4 3 6 2.32077e-14
+C3 4 6 2.17999e-14
+C2 5 6 2.13655e-15
+C1 6 6 1.31919e-15
+.ends no2_x1
+

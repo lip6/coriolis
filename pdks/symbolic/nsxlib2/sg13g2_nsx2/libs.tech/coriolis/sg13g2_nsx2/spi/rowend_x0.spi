@@ -1,0 +1,14 @@
+* Spice description of rowend_x0
+* Spice driver version -785486053
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:52
+
+* INTERF vdd vss 
+
+
+.subckt rowend_x0 1 2 
+* NET 1 = vdd
+* NET 2 = vss
+C2 1 2 4.15422e-16
+C1 2 2 4.15422e-16
+.ends rowend_x0
+

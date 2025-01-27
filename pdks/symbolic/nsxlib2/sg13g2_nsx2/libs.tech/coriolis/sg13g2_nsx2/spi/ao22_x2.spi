@@ -1,0 +1,32 @@
+* Spice description of ao22_x2
+* Spice driver version -74666213
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:12
+
+* INTERF i0 i1 i2 q vdd vss 
+
+
+.subckt ao22_x2 7 6 3 4 2 5 
+* NET 2 = vdd
+* NET 3 = i2
+* NET 4 = q
+* NET 5 = vss
+* NET 6 = i1
+* NET 7 = i0
+Xtr_00008 4 8 2 2 sg13_lv_pmos L=0.13U W=2.34U AS=0.5616P AD=0.5616P PS=5.17U PD=5.17U 
+Xtr_00007 2 3 8 2 sg13_lv_pmos L=0.13U W=2.34U AS=0.5616P AD=0.5616P PS=5.17U PD=5.17U 
+Xtr_00006 1 7 2 2 sg13_lv_pmos L=0.13U W=2.34U AS=0.5616P AD=0.5616P PS=5.17U PD=5.17U 
+Xtr_00005 8 6 1 2 sg13_lv_pmos L=0.13U W=2.34U AS=0.5616P AD=0.5616P PS=5.17U PD=5.17U 
+Xtr_00004 4 8 5 5 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00003 5 3 9 5 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00002 9 6 8 5 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00001 8 7 9 5 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+C8 2 5 1.86267e-15
+C7 3 5 2.07938e-14
+C6 4 5 1.99952e-15
+C5 5 5 1.75005e-15
+C4 6 5 1.77448e-14
+C3 7 5 1.7821e-14
+C2 8 5 3.01232e-14
+C1 9 5 4.17738e-16
+.ends ao22_x2
+

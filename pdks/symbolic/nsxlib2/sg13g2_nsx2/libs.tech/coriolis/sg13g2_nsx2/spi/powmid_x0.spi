@@ -1,0 +1,14 @@
+* Spice description of powmid_x0
+* Spice driver version 512347931
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:52
+
+* INTERF vdd vss 
+
+
+.subckt powmid_x0 1 2 
+* NET 1 = vdd
+* NET 2 = vss
+C2 1 2 1.85602e-15
+C1 2 2 1.85602e-15
+.ends powmid_x0
+

@@ -1,0 +1,33 @@
+* Spice description of nao2o22_x1
+* Spice driver version 9346843
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:19
+
+* INTERF i0 i1 i2 i3 nq vdd vss 
+
+
+.subckt nao2o22_x1 8 6 4 5 9 2 7 
+* NET 2 = vdd
+* NET 4 = i2
+* NET 5 = i3
+* NET 6 = i1
+* NET 7 = vss
+* NET 8 = i0
+* NET 9 = nq
+Xtr_00008 2 4 1 2 sg13_lv_pmos L=0.13U W=3.24U AS=0.7776P AD=0.7776P PS=6.97U PD=6.97U 
+Xtr_00007 1 5 9 2 sg13_lv_pmos L=0.13U W=3.24U AS=0.7776P AD=0.7776P PS=6.97U PD=6.97U 
+Xtr_00006 9 6 3 2 sg13_lv_pmos L=0.13U W=3.24U AS=0.7776P AD=0.7776P PS=6.97U PD=6.97U 
+Xtr_00005 3 8 2 2 sg13_lv_pmos L=0.13U W=3.24U AS=0.7776P AD=0.7776P PS=6.97U PD=6.97U 
+Xtr_00004 10 4 7 7 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00003 7 5 10 7 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00002 9 8 10 7 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00001 10 6 9 7 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+C9 2 7 1.55555e-15
+C7 4 7 1.46389e-14
+C6 5 7 1.97158e-14
+C5 6 7 1.94401e-14
+C4 7 7 1.49924e-15
+C3 8 7 1.50671e-14
+C2 9 7 2.09132e-15
+C1 10 7 8.3247e-16
+.ends nao2o22_x1
+

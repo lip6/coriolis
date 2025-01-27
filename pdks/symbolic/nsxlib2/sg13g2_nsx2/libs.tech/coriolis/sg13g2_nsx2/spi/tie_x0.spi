@@ -1,0 +1,14 @@
+* Spice description of tie_x0
+* Spice driver version -146899173
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:52
+
+* INTERF vdd vss 
+
+
+.subckt tie_x0 1 2 
+* NET 1 = vdd
+* NET 2 = vss
+C2 1 2 1.28561e-15
+C1 2 2 1.09145e-15
+.ends tie_x0
+

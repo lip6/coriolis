@@ -1,0 +1,27 @@
+* Spice description of an12_x1
+* Spice driver version 1731657499
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:12
+
+* INTERF i0 i1 q vdd vss 
+
+
+.subckt an12_x1 5 3 7 1 6 
+* NET 1 = vdd
+* NET 3 = i1
+* NET 5 = i0
+* NET 6 = vss
+* NET 7 = q
+Xtr_00006 1 4 2 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00005 4 3 1 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00004 2 5 7 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00003 7 5 6 6 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00002 4 3 6 6 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00001 6 4 7 6 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+C7 1 6 1.33828e-15
+C5 3 6 1.40667e-14
+C4 4 6 2.12482e-14
+C3 5 6 1.68442e-14
+C2 6 6 1.85553e-15
+C1 7 6 2.05558e-15
+.ends an12_x1
+

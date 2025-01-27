@@ -21,11 +21,13 @@ PDKS := \
 	common \
 	symbolic \
 	sg13g2_lsx \
+	sg13g2_nsx2 \
 
 PDKS_PATHS := \
 	common \
 	symbolic \
 	symbolic/lsxlib/sg13g2_lsx \
+	symbolic/nsxlib2/sg13g2_nsx2 \
 
 ### Build targets
 define map_path

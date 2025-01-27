@@ -1,0 +1,27 @@
+* Spice description of a2_x2
+* Spice driver version -824762597
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:10
+
+* INTERF i0 i1 q vdd vss 
+
+
+.subckt a2_x2 5 2 3 1 4 
+* NET 1 = vdd
+* NET 2 = i1
+* NET 3 = q
+* NET 4 = vss
+* NET 5 = i0
+Xtr_00006 3 7 1 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00005 1 2 7 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00004 7 5 1 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00003 3 7 4 4 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00002 6 5 7 4 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00001 4 2 6 4 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+C7 1 4 1.50705e-15
+C6 2 4 1.61474e-14
+C5 3 4 1.93831e-15
+C4 4 4 1.26852e-15
+C3 5 4 2.05714e-14
+C1 7 4 2.16616e-14
+.ends a2_x2
+

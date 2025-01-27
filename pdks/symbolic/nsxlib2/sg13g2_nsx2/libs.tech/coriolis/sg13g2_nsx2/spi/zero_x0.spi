@@ -1,0 +1,17 @@
+* Spice description of zero_x0
+* Spice driver version 2011418395
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:35
+
+* INTERF nq vdd vss 
+
+
+.subckt zero_x0 3 1 2 
+* NET 1 = vdd
+* NET 2 = vss
+* NET 3 = nq
+Xtr_00001 3 1 2 2 sg13_lv_nmos L=0.13U W=0.77U AS=0.1848P AD=0.1848P PS=2.02U PD=2.02U 
+C3 1 2 1.34211e-14
+C2 2 2 1.17529e-15
+C1 3 2 1.82452e-15
+.ends zero_x0
+

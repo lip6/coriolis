@@ -1,0 +1,20 @@
+* Spice description of inv_x2
+* Spice driver version -1336692965
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:14
+
+* INTERF i nq vdd vss 
+
+
+.subckt inv_x2 2 4 1 3 
+* NET 1 = vdd
+* NET 2 = i
+* NET 3 = vss
+* NET 4 = nq
+Xtr_00002 4 2 1 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00001 4 2 3 3 sg13_lv_nmos L=0.13U W=1.82U AS=0.4368P AD=0.4368P PS=4.12U PD=4.12U 
+C4 1 3 1.10043e-15
+C3 2 3 1.81907e-14
+C2 3 3 1.0579e-15
+C1 4 3 1.99462e-15
+.ends inv_x2
+

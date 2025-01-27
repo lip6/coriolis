@@ -1,0 +1,28 @@
+* Spice description of no3_x1
+* Spice driver version -202014949
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:21
+
+* INTERF i0 i1 i2 nq vdd vss 
+
+
+.subckt no3_x1 4 6 5 8 1 7 
+* NET 1 = vdd
+* NET 4 = i0
+* NET 5 = i2
+* NET 6 = i1
+* NET 7 = vss
+* NET 8 = nq
+Xtr_00006 1 5 2 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00005 2 4 3 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00004 3 6 8 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00003 7 5 8 7 sg13_lv_nmos L=0.13U W=0.77U AS=0.1848P AD=0.1848P PS=2.02U PD=2.02U 
+Xtr_00002 8 4 7 7 sg13_lv_nmos L=0.13U W=0.77U AS=0.1848P AD=0.1848P PS=2.02U PD=2.02U 
+Xtr_00001 7 6 8 7 sg13_lv_nmos L=0.13U W=0.77U AS=0.1848P AD=0.1848P PS=2.02U PD=2.02U 
+C8 1 7 1.33828e-15
+C5 4 7 1.98384e-14
+C4 5 7 2.03159e-14
+C3 6 7 2.07834e-14
+C2 7 7 1.43662e-15
+C1 8 7 2.53758e-15
+.ends no3_x1
+

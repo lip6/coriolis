@@ -1,0 +1,29 @@
+* Spice description of nao22_x1
+* Spice driver version -1818972389
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:18
+
+* INTERF i0 i1 i2 nq vdd vss 
+
+
+.subckt nao22_x1 6 5 3 7 1 4 
+* NET 1 = vdd
+* NET 3 = i2
+* NET 4 = vss
+* NET 5 = i1
+* NET 6 = i0
+* NET 7 = nq
+Xtr_00006 1 3 7 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00005 7 5 2 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00004 2 6 1 1 sg13_lv_pmos L=0.13U W=2.94U AS=0.7056P AD=0.7056P PS=6.37U PD=6.37U 
+Xtr_00003 4 3 8 4 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+Xtr_00002 8 5 7 4 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+Xtr_00001 7 6 8 4 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+C8 1 4 1.39459e-15
+C6 3 4 2.26299e-14
+C5 4 4 1.33828e-15
+C4 5 4 1.57434e-14
+C3 6 4 1.50395e-14
+C2 7 4 2.15177e-15
+C1 8 4 3.90167e-16
+.ends nao22_x1
+

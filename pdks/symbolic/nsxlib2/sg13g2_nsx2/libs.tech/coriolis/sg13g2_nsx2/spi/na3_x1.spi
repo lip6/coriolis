@@ -1,0 +1,28 @@
+* Spice description of na3_x1
+* Spice driver version 1547018011
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:17
+
+* INTERF i0 i1 i2 nq vdd vss 
+
+
+.subckt na3_x1 5 6 2 4 1 8 
+* NET 1 = vdd
+* NET 2 = i2
+* NET 4 = nq
+* NET 5 = i0
+* NET 6 = i1
+* NET 8 = vss
+Xtr_00006 1 6 4 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00005 4 5 1 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00004 4 2 1 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00003 4 2 3 8 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00002 7 5 8 8 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+Xtr_00001 3 6 7 8 sg13_lv_nmos L=0.13U W=1.44U AS=0.3456P AD=0.3456P PS=3.37U PD=3.37U 
+C8 1 8 1.85553e-15
+C7 2 8 2.07469e-14
+C5 4 8 2.74648e-15
+C4 5 8 1.92629e-14
+C3 6 8 2.03187e-14
+C1 8 8 1.33828e-15
+.ends na3_x1
+

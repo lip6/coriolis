@@ -1,0 +1,24 @@
+* Spice description of na2_x1
+* Spice driver version 1377578779
+* Date ( dd/mm/yyyy hh:mm:ss ): 21/12/2024 at 16:03:16
+
+* INTERF i0 i1 nq vdd vss 
+
+
+.subckt na2_x1 4 2 3 1 6 
+* NET 1 = vdd
+* NET 2 = i1
+* NET 3 = nq
+* NET 4 = i0
+* NET 6 = vss
+Xtr_00004 1 2 3 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00003 3 4 1 1 sg13_lv_pmos L=0.13U W=2.19U AS=0.5256P AD=0.5256P PS=4.87U PD=4.87U 
+Xtr_00002 3 2 5 6 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+Xtr_00001 5 4 6 6 sg13_lv_nmos L=0.13U W=1.52U AS=0.3648P AD=0.3648P PS=3.52U PD=3.52U 
+C6 1 6 1.55588e-15
+C5 2 6 2.33033e-14
+C4 3 6 2.08024e-15
+C3 4 6 2.26546e-14
+C1 6 6 1.24726e-15
+.ends na2_x1
+

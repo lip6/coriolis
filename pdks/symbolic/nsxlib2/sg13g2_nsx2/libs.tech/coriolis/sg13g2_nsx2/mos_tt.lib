@@ -1,0 +1,5 @@
+*Load MOS tt corner library
+
+.lib cornerMOSlv.lib mos_tt
+
+.end
