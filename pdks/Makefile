@@ -23,6 +23,7 @@ PDKS := \
 	sg13g2_lsx \
 	sg13g2_nsx2 \
 	sky130_nsx2 \
+	gf180mcu_nsx2 \
 
 PDKS_PATHS := \
 	common \
@@ -30,6 +31,7 @@ PDKS_PATHS := \
 	symbolic/lsxlib/sg13g2_lsx \
 	symbolic/nsxlib2/sg13g2_nsx2 \
 	symbolic/nsxlib2/sky130_nsx2 \
+	symbolic/nsxlib2/gf180mcu_nsx2 \
 
 ### Build targets
 define map_path
@@ -82,9 +84,9 @@ uninstall: $(foreach pdk,$(PDKS),uninstall_$(pdk))
 define clean
 clean_$(1):
 	@find $($(1)_path) -type f -name "*.log" 		-delete
-	@find $($(1)_path) -type d -name ".mesonpy*"	-delete
-	@find $($(1)_path) -type d -name "build*"		-delete
-	@find $($(1)_path) -type d -name "*.egg-info"	-delete
+	@find $($(1)_path) -type d -name ".mesonpy*"	-exec rm -rf {} \;
+	@find $($(1)_path) -type d -name "build*"		-exec rm -rf {} \;
+	@find $($(1)_path) -type d -name "*.egg-info"	-exec rm -rf {} \;
 endef
 
 # Generate clean targets

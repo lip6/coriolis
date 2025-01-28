@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>true</autorun>
+ <autorun-early>false</autorun-early>
+ <priority>0</priority>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>
+
+import sys
+import os
+
+technology_macros_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, technology_macros_path)
+
+from cells import gf180mcu
+
+# Instantiate and register the library
+gf180mcu()
+
+print("## gf180mcu PDK Pcells loaded.")
+print(sys.path)
+
+</text>
+</klayout-macro>
