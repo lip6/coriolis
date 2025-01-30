@@ -1,7 +1,7 @@
 [project]
 name = "pdk_sky130_nsx2"
 version = "0.1.0"
-description = "IHP Sky130 nsxlib2 PDK for Coriolis EDA"
+description = "Sky130 nsxlib2 PDK for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 requires-python = ">= 3.8"
 
