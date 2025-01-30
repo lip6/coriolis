@@ -1,0 +1,43 @@
+* Spice description of oa2ao222_x4
+* Spice driver version 1182886824
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:24
+
+* INTERF i0 i1 i2 i3 i4 q vdd vss 
+
+
+.subckt oa2ao222_x4 8 5 7 1 6 4 3 13 
+* NET 1 = i3
+* NET 3 = vdd
+* NET 4 = q
+* NET 5 = i1
+* NET 6 = i4
+* NET 7 = i2
+* NET 8 = i0
+* NET 13 = vss
+Mtr_00014 4 12 3 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00013 3 12 4 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00012 9 7 12 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00011 2 1 9 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00010 3 8 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00009 3 5 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00008 12 6 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00007 4 12 13 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00006 13 12 4 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00005 10 1 13 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00004 11 8 13 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00003 13 7 10 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00002 10 6 12 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00001 12 5 11 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+C13 1 13 8.17567e-16
+C12 2 13 1.36614e-15
+C11 3 13 3.8095e-15
+C10 4 13 1.22684e-15
+C9 5 13 1.05589e-15
+C8 6 13 8.68268e-16
+C7 7 13 9.00243e-16
+C6 8 13 1.02689e-15
+C4 10 13 8.83971e-16
+C2 12 13 2.75148e-15
+C1 13 13 3.39162e-15
+.ends oa2ao222_x4
+

@@ -1,0 +1,42 @@
+* Spice description of noa2a2a23_x1
+* Spice driver version -223765592
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:05
+
+* INTERF i0 i1 i2 i3 i4 i5 nq vdd vss 
+
+
+.subckt noa2a2a23_x1 5 8 6 7 1 2 12 3 14 
+* NET 1 = i4
+* NET 2 = i5
+* NET 3 = vdd
+* NET 5 = i0
+* NET 6 = i2
+* NET 7 = i3
+* NET 8 = i1
+* NET 12 = nq
+* NET 14 = vss
+Mtr_00012 3 1 9 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00011 9 2 3 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00010 12 5 10 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00009 9 7 10 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00008 10 6 9 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00007 10 8 12 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00006 11 6 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00005 12 7 11 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00004 13 8 12 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00003 14 5 13 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00002 12 2 4 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00001 4 1 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C14 1 14 7.53139e-16
+C13 2 14 8.60287e-16
+C12 3 14 3.01822e-15
+C10 5 14 8.85424e-16
+C9 6 14 7.53139e-16
+C8 7 14 6.45991e-16
+C7 8 14 8.60287e-16
+C6 9 14 1.01255e-15
+C5 10 14 1.20006e-15
+C3 12 14 1.97688e-15
+C1 14 14 2.55748e-15
+.ends noa2a2a23_x1
+

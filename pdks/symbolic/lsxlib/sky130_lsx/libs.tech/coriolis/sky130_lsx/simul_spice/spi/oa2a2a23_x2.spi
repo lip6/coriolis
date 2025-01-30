@@ -1,0 +1,45 @@
+* Spice description of oa2a2a23_x2
+* Spice driver version 1518148520
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:20
+
+* INTERF i0 i1 i2 i3 i4 i5 q vdd vss 
+
+
+.subckt oa2a2a23_x2 8 11 9 10 4 3 6 5 15 
+* NET 3 = i5
+* NET 4 = i4
+* NET 5 = vdd
+* NET 6 = q
+* NET 8 = i0
+* NET 9 = i2
+* NET 10 = i3
+* NET 11 = i1
+* NET 15 = vss
+Mtr_00014 5 13 6 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00013 2 10 1 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00012 1 9 2 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00011 1 11 13 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00010 5 4 2 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00009 2 3 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00008 13 8 1 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00007 6 13 15 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00006 7 4 15 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00005 12 9 15 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00004 13 10 12 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00003 14 11 13 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00002 15 8 14 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00001 13 3 7 15 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+C15 1 15 1.20006e-15
+C14 2 15 7.87538e-16
+C13 3 15 8.89936e-16
+C12 4 15 9.46424e-16
+C11 5 15 3.02196e-15
+C10 6 15 1.22684e-15
+C8 8 15 1.07871e-15
+C7 9 15 9.46424e-16
+C6 10 15 9.46424e-16
+C5 11 15 1.05357e-15
+C3 13 15 2.83717e-15
+C1 15 15 2.7273e-15
+.ends oa2a2a23_x2
+

@@ -1,0 +1,24 @@
+* Spice description of na2_x1
+* Spice driver version -903439448
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:57:48
+
+* INTERF i0 i1 nq vdd vss 
+
+
+.subckt na2_x1 2 3 5 1 4 
+* NET 1 = vdd
+* NET 2 = i0
+* NET 3 = i1
+* NET 4 = vss
+* NET 5 = nq
+Mtr_00004 1 3 5 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00003 5 2 1 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00002 6 3 5 4 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00001 4 2 6 4 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C6 1 4 1.2921e-15
+C5 2 4 1.09629e-15
+C4 3 4 1.09629e-15
+C3 4 4 1.04566e-15
+C2 5 4 1.23756e-15
+.ends na2_x1
+

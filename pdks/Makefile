@@ -21,6 +21,7 @@ PDKS := \
 	common \
 	symbolic \
 	sg13g2_lsx \
+	sky130_lsx \
 	sg13g2_nsx2 \
 	sky130_nsx2 \
 	gf180mcu_nsx2 \
@@ -30,6 +31,7 @@ PDKS_PATHS := \
 	common \
 	symbolic \
 	symbolic/lsxlib/sg13g2_lsx \
+	symbolic/lsxlib/sky130_lsx \
 	symbolic/nsxlib2/sg13g2_nsx2 \
 	symbolic/nsxlib2/sky130_nsx2 \
 	symbolic/nsxlib2/gf180mcu_nsx2 \

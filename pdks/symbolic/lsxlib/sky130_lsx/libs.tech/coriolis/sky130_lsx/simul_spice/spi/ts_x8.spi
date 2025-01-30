@@ -1,0 +1,39 @@
+* Spice description of ts_x8
+* Spice driver version 2037853096
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:31
+
+* INTERF cmd i q vdd vss 
+
+
+.subckt ts_x8 3 1 8 6 7 
+* NET 1 = i
+* NET 3 = cmd
+* NET 6 = vdd
+* NET 7 = vss
+* NET 8 = q
+Mtr_00016 6 4 8 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00015 8 4 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00014 8 4 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00013 4 2 5 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.38U AS=0.4002P AD=0.4002P PS=3.34U PD=3.34U 
+Mtr_00012 6 4 8 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00011 2 3 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00010 6 3 4 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.38U AS=0.4002P AD=0.4002P PS=3.34U PD=3.34U 
+Mtr_00009 4 1 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.38U AS=0.4002P AD=0.4002P PS=3.34U PD=3.34U 
+Mtr_00008 8 5 7 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00007 8 5 7 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00006 7 5 8 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00005 2 3 7 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00004 7 2 5 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00003 4 3 5 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00002 5 1 7 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00001 7 5 8 7 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C8 1 7 1.06032e-15
+C7 2 7 1.93239e-15
+C6 3 7 2.50082e-15
+C5 4 7 2.65331e-15
+C4 5 7 2.39371e-15
+C3 6 7 4.35272e-15
+C2 7 7 3.68841e-15
+C1 8 7 2.76978e-15
+.ends ts_x8
+

@@ -1,0 +1,234 @@
+* Spice description of sram2bw2r2
+* Spice driver version -186262616
+* Date ( dd/mm/yyyy hh:mm:ss ):  8/08/2024 at 10:57:57
+
+* INTERF at0 at1 ax ay az0 az1 ck it iz nqx nqy vdd vss 
+
+
+.subckt sram2bw2r2 21 7 14 13 25 6 26 70 68 52 69 28 73 
+* NET 1 = ctr_bn3
+* NET 2 = ctr_bn8
+* NET 3 = ctr_an8
+* NET 4 = ctr_an2
+* NET 5 = sff_bp2
+* NET 6 = az1
+* NET 7 = at1
+* NET 8 = sff_bp6
+* NET 9 = sff_bp9
+* NET 10 = sff_bp10
+* NET 11 = sff_bp12
+* NET 13 = ay
+* NET 14 = ax
+* NET 15 = sff_bp15
+* NET 16 = sff_ap16
+* NET 17 = sff_bp17
+* NET 18 = sff_ap14
+* NET 19 = sff_ap12
+* NET 20 = sff_ap11
+* NET 21 = at0
+* NET 22 = sff_ap5
+* NET 23 = sff_ap8
+* NET 24 = sff_ap7
+* NET 25 = az0
+* NET 26 = ck
+* NET 27 = sff_ap1
+* NET 28 = vdd
+* NET 29 = sff_bn2
+* NET 30 = sff_bn0
+* NET 31 = sff_nwz1
+* NET 32 = sff_bn3
+* NET 33 = sff_bp3
+* NET 34 = sff_bn5
+* NET 35 = sff_bn4
+* NET 37 = sff_nwd1
+* NET 38 = sff_nwt1
+* NET 39 = sff_bn9
+* NET 40 = sff_bn10
+* NET 41 = sff_bn12
+* NET 42 = sff_bn11
+* NET 43 = sff_bn13
+* NET 48 = sff_bn16
+* NET 49 = sff_an16
+* NET 51 = sff_bn17
+* NET 52 = nqx
+* NET 53 = sff_nwd0
+* NET 54 = sff_nwt0
+* NET 56 = sff_wt0
+* NET 57 = sff_wd0
+* NET 59 = sff_an14
+* NET 62 = sff_nwz0
+* NET 63 = sff_wz0
+* NET 64 = sff_an5
+* NET 65 = sff_an7
+* NET 66 = sff_an8
+* NET 68 = iz
+* NET 69 = nqy
+* NET 70 = it
+* NET 73 = vss
+Msff_bp0 28 46 30 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp1 5 30 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp2 46 32 5 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp3 35 33 46 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp4 35 36 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp5 8 35 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp6 36 33 8 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_bp7 36 32 12 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp8 12 31 9 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp9 9 68 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp10 28 70 10 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp11 10 38 12 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp12 12 37 11 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp13 11 46 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap13 19 75 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap12 24 53 19 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap11 20 54 24 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap10 28 70 20 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap8 23 68 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap8_1 24 62 23 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap7 65 72 24 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_ap6 65 71 22 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap5 22 74 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap4 74 65 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap3 74 71 75 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap2 75 72 27 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap1 27 77 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Msff_ap0 28 75 77 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Msff_bp16 69 47 17 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_bp17 17 75 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_ap17 16 46 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_ap16 52 58 16 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_ap15 18 55 52 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_ap14 28 75 18 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_bp14 28 46 15 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Msff_bp15 15 48 69 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp11 28 48 47 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp10 48 13 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap11 58 14 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap10 28 58 55 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap9 57 53 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap7 53 54 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap8 28 62 53 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap5 28 21 54 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap6 56 54 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap3 28 54 62 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap2 62 25 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_ap4 63 62 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp5 28 7 38 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp6 40 38 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp2 31 6 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp3 28 38 31 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp4 39 31 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp8 28 31 37 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp9 41 37 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp7 37 38 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.74U AS=0.5046P AD=0.5046P PS=4.06U PD=4.06U 
+Mctr_bp0 28 33 32 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.1U AS=0.609P AD=0.609P PS=4.78U PD=4.78U 
+Mctr_bp1 33 26 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.1U AS=0.609P AD=0.609P PS=4.78U PD=4.78U 
+Mctr_ap1 71 26 28 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.1U AS=0.609P AD=0.609P PS=4.78U PD=4.78U 
+Mctr_ap0 28 71 72 28 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.1U AS=0.609P AD=0.609P PS=4.78U PD=4.78U 
+Msff_bn0 30 46 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn1 73 30 29 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn2 29 33 46 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn3 46 32 35 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn4 35 36 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn5 73 35 34 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn6 34 32 36 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn7 36 33 44 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_bn8 44 68 45 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn9 45 39 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn10 73 40 42 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn11 42 70 44 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn12 44 41 43 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_bn13 43 46 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an13 61 75 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an12 66 57 61 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an11 60 70 66 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an10 73 56 60 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an9 67 63 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an8 66 68 67 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an7 65 71 66 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an6 64 72 65 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an5 73 74 64 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an4 74 65 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an3 75 72 74 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an2 76 71 75 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an1 73 77 76 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.42U AS=0.1218P AD=0.1218P PS=1.42U PD=1.42U 
+Msff_an0 77 75 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Msff_an15 52 58 59 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_an14 59 75 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_bn14 50 46 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_bn15 69 47 50 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_bn16 51 48 69 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_bn17 73 75 51 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_an17 73 46 49 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Msff_an16 49 55 52 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mctr_bn10 48 13 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn11 73 48 47 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an11 58 14 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an10 73 58 55 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an7 3 54 53 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an9 57 53 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an8 73 62 3 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an4 63 62 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an3 73 54 4 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an2 4 25 62 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn4 39 31 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn5 73 7 38 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn6 40 38 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn2 1 6 31 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn3 73 38 1 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an6 56 54 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_an5 73 21 54 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn7 2 38 37 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn8 73 31 2 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn9 41 37 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mctr_bn0 73 33 32 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mctr_bn1 33 26 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mctr_an1 71 26 73 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mctr_an0 73 71 72 73 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+C72 6 73 1.43638e-15
+C71 7 73 1.35941e-15
+C66 12 73 9.80404e-16
+C65 13 73 1.62912e-15
+C64 14 73 1.23562e-15
+C57 21 73 1.46656e-15
+C54 24 73 9.80404e-16
+C53 25 73 1.43638e-15
+C52 26 73 5.59343e-15
+C50 28 73 3.16245e-14
+C48 30 73 2.08267e-15
+C47 31 73 5.76819e-15
+C46 32 73 5.0999e-15
+C45 33 73 5.19769e-15
+C43 35 73 1.7283e-15
+C42 36 73 2.40339e-15
+C41 37 73 4.01699e-15
+C40 38 73 4.23877e-15
+C39 39 73 3.07607e-15
+C38 40 73 2.8962e-15
+C37 41 73 3.39444e-15
+C34 44 73 9.80404e-16
+C32 46 73 7.49709e-15
+C31 47 73 3.66263e-15
+C30 48 73 4.33664e-15
+C26 52 73 5.6582e-15
+C25 53 73 3.94278e-15
+C24 54 73 4.23877e-15
+C23 55 73 3.42481e-15
+C22 56 73 2.8962e-15
+C21 57 73 3.39444e-15
+C20 58 73 4.0496e-15
+C16 62 73 5.70925e-15
+C15 63 73 3.07607e-15
+C13 65 73 2.42482e-15
+C12 66 73 9.80404e-16
+C10 68 73 5.86487e-15
+C9 69 73 5.6582e-15
+C8 70 73 5.86487e-15
+C7 71 73 5.2275e-15
+C6 72 73 5.0999e-15
+C5 73 73 3.87201e-14
+C4 74 73 1.7283e-15
+C3 75 73 7.95873e-15
+C1 77 73 2.08267e-15
+.ends sram2bw2r2
+

@@ -1,0 +1,54 @@
+********************************************************************************
+* a2_x2.cir
+* ngspice simulation
+* lsxlib
+********************************************************************************
+
+.option  nopage nomod
++        newtol numdgt=7 ingold=2 gmindc=1e-18
+.option DOTNODE
+.option MSGNODE = 0
+
+********************************************************************************
+* BSIM4 transistor model parameters for ngspice and simulation conditions
+********************************************************************************
+
+.lib _TECHNO _MODEL
+.TEMP _TEMP
+Vground vss 0 0
+Vsupply vdd 0 DC _VDD
+gfoncd vdd 0 vdd 0 1.0e-15
+
+********************************************************************************
+* Circuit Instantiation with loading output
+********************************************************************************
+.INCLUDE ../spi/a2_x2.spi
+*.subckt a2_x2 i0 i1 q vdd vss
+
+Xa i0 i1 q vdd vss a2_x2
+*Cload q vss 0.0020pF
+
+********************************************************************************
+* input stimluli and transient analysis
+********************************************************************************
+
+vi0 i0 vss dc 0.8 pulse (0 _VDD 170ps 30ps 30ps 170ps 400ps)
+vi1 i1 vss dc 1.8
+
+.control
+TRAN 1ps 800ps 0 
+
+set width=110
+
+meas tran inputRslope TRIG v(q) val=0.001 RISE=1 TARG v(q) VAL=_VMAX RISE=1
+meas tran inputFslope TRIG v(q) val=_VMAX FALL=1 TARG v(q) VAL=0.001 FALL=1
+meas tran proptimeRF TRIG v(i0) val=0.9 RISE=1 TARG v(q) VAL=0.9 FALL=1
+meas tran proptimeFR TRIG v(i0) val=0.9 FALL=1 TARG v(q) VAL=0.9 RISE=1
+
+gnuplot a2_x2/a2_x2._MODEL v(i0) v(q)
++ title 'input and output of the a2_x2'
++ xlabel 'time / s' ylabel 'Voltage / V' 
+
+.endc
+
+.end

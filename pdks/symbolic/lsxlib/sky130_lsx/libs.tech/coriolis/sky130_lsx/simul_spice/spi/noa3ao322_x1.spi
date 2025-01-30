@@ -1,0 +1,46 @@
+* Spice description of noa3ao322_x1
+* Spice driver version 252046248
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:09
+
+* INTERF i0 i1 i2 i3 i4 i5 i6 nq vdd vss 
+
+
+.subckt noa3ao322_x1 8 11 10 2 4 3 9 16 1 13 
+* NET 1 = vdd
+* NET 2 = i3
+* NET 3 = i5
+* NET 4 = i4
+* NET 8 = i0
+* NET 9 = i6
+* NET 10 = i2
+* NET 11 = i1
+* NET 13 = vss
+* NET 16 = nq
+Mtr_00014 1 8 5 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00013 5 11 1 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00012 1 10 5 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00011 5 9 16 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00010 7 2 16 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00009 6 4 7 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00008 6 3 5 1 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00007 15 4 13 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00006 13 2 15 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00005 15 9 16 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00004 16 10 14 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00003 14 11 12 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00002 12 8 13 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00001 13 3 15 13 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+C16 1 13 2.31104e-15
+C15 2 13 9.37601e-16
+C14 3 13 1.04475e-15
+C13 4 13 9.37601e-16
+C12 5 13 1.51614e-15
+C9 8 13 1.10854e-15
+C8 9 13 8.2639e-16
+C7 10 13 1.08341e-15
+C6 11 13 1.08341e-15
+C4 13 13 2.55748e-15
+C2 15 13 9.42902e-16
+C1 16 13 1.30721e-15
+.ends noa3ao322_x1
+

@@ -1,0 +1,71 @@
+* Spice description of sff2_x4
+* Spice driver version 1964698536
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:29
+
+* INTERF ck cmd i0 i1 q vdd vss 
+
+
+.subckt sff2_x4 14 19 18 15 7 6 22 
+* NET 6 = vdd
+* NET 7 = q
+* NET 9 = sff_m
+* NET 12 = sff_s
+* NET 13 = y
+* NET 14 = ck
+* NET 15 = i1
+* NET 16 = nckr
+* NET 17 = ckr
+* NET 18 = i0
+* NET 19 = cmd
+* NET 21 = u
+* NET 22 = vss
+Mtr_00034 21 24 4 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00033 4 15 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00032 6 18 5 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00031 24 19 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00030 5 19 21 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00029 6 12 7 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00028 6 21 2 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00027 9 16 3 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00026 3 13 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00025 2 17 9 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00024 7 12 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00023 13 16 12 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00022 12 17 1 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00021 13 9 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00020 16 14 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00019 6 16 17 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00018 1 7 6 6 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00017 20 19 21 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00016 22 15 20 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00015 21 24 23 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00014 23 18 22 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00013 22 19 24 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00012 11 21 22 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00011 8 16 12 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00010 7 12 22 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00009 22 12 7 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00008 22 14 16 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00007 17 16 22 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00006 22 7 8 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00005 12 17 13 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00004 13 9 22 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00003 22 13 10 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00002 10 17 9 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00001 9 16 11 22 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+C19 6 22 7.14761e-15
+C18 7 22 2.18618e-15
+C16 9 22 2.60658e-15
+C13 12 22 2.39854e-15
+C12 13 22 2.2951e-15
+C11 14 22 1.08172e-15
+C10 15 22 1.20041e-15
+C9 16 22 3.59755e-15
+C8 17 22 3.84562e-15
+C7 18 22 9.45644e-16
+C6 19 22 1.73907e-15
+C4 21 22 2.99952e-15
+C3 22 22 6.25292e-15
+C1 24 22 2.78554e-15
+.ends sff2_x4
+

@@ -1,0 +1,47 @@
+* Spice description of oa2a2a23_x4
+* Spice driver version -1528611928
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:21
+
+* INTERF i0 i1 i2 i3 i4 i5 q vdd vss 
+
+
+.subckt oa2a2a23_x4 11 10 8 9 3 4 6 5 14 
+* NET 3 = i4
+* NET 4 = i5
+* NET 5 = vdd
+* NET 6 = q
+* NET 8 = i2
+* NET 9 = i3
+* NET 10 = i1
+* NET 11 = i0
+* NET 14 = vss
+Mtr_00016 1 10 13 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00015 1 8 2 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00014 13 11 1 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00013 5 3 2 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00012 2 9 1 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00011 2 4 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.5U AS=0.435P AD=0.435P PS=3.58U PD=3.58U 
+Mtr_00010 6 13 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00009 5 13 6 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00008 13 4 7 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00007 14 11 12 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00006 12 10 13 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00005 13 9 15 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00004 15 8 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00003 7 3 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00002 6 13 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00001 14 13 6 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C15 1 14 1.20006e-15
+C14 2 14 7.87538e-16
+C13 3 14 9.07767e-16
+C12 4 14 8.51279e-16
+C11 5 14 3.97932e-15
+C10 6 14 1.22684e-15
+C8 8 14 9.07767e-16
+C7 9 14 9.07767e-16
+C6 10 14 1.01491e-15
+C5 11 14 1.04005e-15
+C3 13 14 3.11643e-15
+C2 14 14 3.3525e-15
+.ends oa2a2a23_x4
+

@@ -1,0 +1,54 @@
+********************************************************************************
+* sff1_x4.cir
+* ngspice simulation
+* lsxlib
+********************************************************************************
+
+.option  nopage nomod
++        newtol numdgt=7 ingold=2 gmindc=1e-18
+.option DOTNODE
+.option MSGNODE = 0
+
+********************************************************************************
+* BSIM4 transistor model parameters for ngspice and simulation conditions
+********************************************************************************
+
+.lib _TECHNO _MODEL
+.TEMP _TEMP
+Vground vss 0 0
+Vsupply vdd 0 DC _VDD
+gfoncd vdd 0 vdd 0 1.0e-15
+
+********************************************************************************
+* Circuit Instantiation with loading output
+********************************************************************************
+.INCLUDE ../spi/sff1_x4.spi
+*.subckt sff1_x4 ck i q vdd vss
+
+Xa ck i q vdd vss sff1_x4 
+*Cload q vss 0.0020pF
+
+********************************************************************************
+* input stimluli and transient analysis
+********************************************************************************
+
+vck ck vss dc 0.8 pulse (0 _VDD 1000ps 30ps 30ps 470ps 1000ps)
+vi  i  vss dc 0.8 pulse (0 _VDD 800ps 30ps 30ps 970ps 2025ps)
+
+.control
+TRAN 1ps 12ns 0 
+
+set width=110
+
+*meas tran inputRslope TRIG v(q) val=0.001 RISE=1 TARG v(q) VAL=_VMAX RISE=1
+*meas tran inputFslope TRIG v(q) val=_VMAX FALL=1 TARG v(q) VAL=0.001 FALL=1
+meas tran proptimeRF TRIG v(ck) val=0.9 RISE=1 TARG v(q) VAL=0.9 FALL=1
+meas tran proptimeFR TRIG v(ck) val=0.9 FALL=1 TARG v(q) VAL=0.9 RISE=1
+
+gnuplot sff1_x4/sff1_x4._MODEL v(ck) v(i) v(q)
++ title 'input and output of the sff1_x4'
++ xlabel 'time / s' ylabel 'Voltage / V' 
+
+.endc
+
+.end

@@ -1,0 +1,41 @@
+* Spice description of na4_x4
+* Spice driver version -1253262424
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:57:51
+
+* INTERF i0 i1 i2 i3 nq vdd vss 
+
+
+.subckt na4_x4 7 5 4 6 2 8 12 
+* NET 2 = nq
+* NET 4 = i2
+* NET 5 = i1
+* NET 6 = i3
+* NET 7 = i0
+* NET 8 = vdd
+* NET 12 = vss
+Mtr_00014 8 13 1 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00013 8 6 13 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.9U AS=0.261P AD=0.261P PS=2.38U PD=2.38U 
+Mtr_00012 13 5 8 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.9U AS=0.261P AD=0.261P PS=2.38U PD=2.38U 
+Mtr_00011 13 4 8 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.9U AS=0.261P AD=0.261P PS=2.38U PD=2.38U 
+Mtr_00010 8 7 13 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=0.9U AS=0.261P AD=0.261P PS=2.38U PD=2.38U 
+Mtr_00009 8 1 2 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00008 2 1 8 8 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00007 1 13 12 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00006 10 4 9 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.62U AS=0.4698P AD=0.4698P PS=3.82U PD=3.82U 
+Mtr_00005 10 5 11 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.62U AS=0.4698P AD=0.4698P PS=3.82U PD=3.82U 
+Mtr_00004 11 7 13 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.62U AS=0.4698P AD=0.4698P PS=3.82U PD=3.82U 
+Mtr_00003 12 1 2 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00002 2 1 12 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00001 9 6 12 12 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.62U AS=0.4698P AD=0.4698P PS=3.82U PD=3.82U 
+C13 1 12 1.99373e-15
+C12 2 12 1.22684e-15
+C11 3 12 4.57512e-17
+C10 4 12 1.08036e-15
+C9 5 12 9.32656e-16
+C8 6 12 6.91806e-16
+C7 7 12 7.3979e-16
+C6 8 12 3.65575e-15
+C2 12 12 2.66463e-15
+C1 13 12 4.3406e-15
+.ends na4_x4
+

@@ -1,0 +1,40 @@
+* Spice description of xr2_x4
+* Spice driver version -816538712
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:33
+
+* INTERF i0 i1 q vdd vss 
+
+
+.subckt xr2_x4 3 4 1 5 9 
+* NET 1 = q
+* NET 3 = i0
+* NET 4 = i1
+* NET 5 = vdd
+* NET 9 = vss
+Mtr_00016 1 7 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00015 5 7 1 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00014 6 3 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.34U AS=0.6786P AD=0.6786P PS=5.26U PD=5.26U 
+Mtr_00013 2 4 5 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00012 5 3 10 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00011 5 2 6 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.34U AS=0.6786P AD=0.6786P PS=5.26U PD=5.26U 
+Mtr_00010 6 10 7 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.34U AS=0.6786P AD=0.6786P PS=5.26U PD=5.26U 
+Mtr_00009 7 4 6 5 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.34U AS=0.6786P AD=0.6786P PS=5.26U PD=5.26U 
+Mtr_00008 9 4 2 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00007 9 7 1 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00006 1 7 9 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00005 11 4 9 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00004 7 10 11 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00003 8 2 7 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00002 9 3 8 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.14U AS=0.3306P AD=0.3306P PS=2.86U PD=2.86U 
+Mtr_00001 10 3 9 9 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+C11 1 9 1.22684e-15
+C10 2 9 1.97158e-15
+C9 3 9 1.31112e-15
+C8 4 9 1.72126e-15
+C7 5 9 4.22576e-15
+C6 6 9 1.38221e-15
+C5 7 9 3.11621e-15
+C3 9 9 3.30965e-15
+C2 10 9 1.57758e-15
+.ends xr2_x4
+

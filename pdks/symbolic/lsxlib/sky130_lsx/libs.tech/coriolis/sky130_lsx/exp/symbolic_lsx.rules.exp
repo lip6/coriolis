@@ -1,0 +1,70 @@
+[
+# 20230418
+# ---------------------------------------------------------------------------
+# Symbolic layer names, which appear below, are not exactly the MBK names,
+# because this file must contain as less values as possible.
+# Theses names are chosen to avoid giving twice the same value.
+#
+#   WELL  : NWELL PWELL
+#   DIFR  : NDIF, PDIF in wires
+#   DIFT  : NDIF or PDIF in transistors
+#   TIEX  : NTIE or PTIE
+#   DIFX  : all DIFFUSIONs
+#   POLR  : POLY wire
+#   POLT  : POLY in Transistors
+#   POLY  : POLR or POLT
+#   GATE  : GATE is over POLT but not with the same lengthwise extension
+#   VIA0  : VIA0ACT (cut to join ALU1 to POLY or DIFX)
+#   ALU1  : METAL LEVEL 1
+#
+# Symbolic rules type, minimum values (Theses Data should not be changed)
+#
+#   SW_LAYER         : Symbolic Width
+#   SE_LAYER         : Symbolic Extension (if not defined, it is SW_LAYER/2)
+#   SD_LAYER         : Symbolic Distance between two edges of the same layer
+#   SD_LAYER1_LAYER2 : Symbolic Distance between layer1 and layer2
+#   SE_LAYER1_LAYER2 : Symbolic Extension of Layer1 on Layer2
+# --------------------------------------------------------------------------
+
+SW_WELL       =  4.0    ;
+SW_DIFX       =  3.0    ; #  2.0
+SW_POLY       =  1.0    ; 
+SW_VIAX       =  1.0    ; 
+SW_ALU1       =  2.0    ; 
+
+SE_WELL       =  2.0    ;
+SE_POLT       =  0.0    ;
+SE_DIFX       =  0.5    ;
+
+SD_WELL       = 20.0    ; # 12.0 NWELL are never too close
+SD_DIFX       =  3.0    ;
+SD_POLY       =  2.5    ; #  2.0
+SD_GATE       =  3.0    ;
+SD_VIA0       =  3.0    ;
+SD_ALU1       =  3.0    ;
+
+SD_WELL_DIFX  =  7.5    ;
+SD_GATE_TIEX  =  3.0    ;
+SD_POLY_DIFX  =  1.0    ;
+SD_POLR_DIFT  =  1.5    ;
+SD_POLY_VIA0  =  2.0    ;
+
+SE_WELL_DIFX  =  0.5    ;
+SE_GATE_POLT  = -1.5    ; # lengthwise extension 
+SE_POLT_DIFT  =  1.5    ;
+SE_DIFT_POLT  =  2.5    ;
+SE_DIFX_VIA0  =  1.5    ; #  1.0
+SE_POLY_VIA0  =  0.5    ; #  1.0
+SE_ALU1_VIA0  =  0.5    ;
+SE_ALU1_VIA1  =  0.5    ;
+
+SD_VIA1       =  3.0    ;
+SW_ALU2       =  2.0    ; 
+SD_ALU2       =  3.0    ;
+SE_ALU2_VIA1  =  0.5    ;
+SE_ALU2_VIA2  =  0.5    ;
+SD_VIA2       =  3.0    ;
+SW_ALU3       =  2.0    ; 
+SD_ALU3       =  3.0    ;
+SE_ALU3_VIA2  =  0.5    ;
+] // 

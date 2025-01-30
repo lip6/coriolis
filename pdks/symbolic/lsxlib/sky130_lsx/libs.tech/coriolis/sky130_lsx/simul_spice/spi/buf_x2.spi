@@ -1,0 +1,23 @@
+* Spice description of buf_x2
+* Spice driver version 1893776296
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:57:39
+
+* INTERF i q vdd vss 
+
+
+.subckt buf_x2 1 5 2 3 
+* NET 1 = i
+* NET 2 = vdd
+* NET 3 = vss
+* NET 5 = q
+Mtr_00004 2 1 4 2 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.02U AS=0.2958P AD=0.2958P PS=2.62U PD=2.62U 
+Mtr_00003 5 4 2 2 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00002 4 1 3 3 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.54U AS=0.1566P AD=0.1566P PS=1.66U PD=1.66U 
+Mtr_00001 3 4 5 3 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C5 1 3 1.01022e-15
+C4 2 3 1.04566e-15
+C3 3 3 1.04566e-15
+C2 4 3 2.07106e-15
+C1 5 3 1.22684e-15
+.ends buf_x2
+

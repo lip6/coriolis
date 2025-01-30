@@ -1,0 +1,46 @@
+* Spice description of noa2ao222_x4
+* Spice driver version 408943528
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:08
+
+* INTERF i0 i1 i2 i3 i4 nq vdd vss 
+
+
+.subckt noa2ao222_x4 9 8 6 1 7 4 3 14 
+* NET 1 = i3
+* NET 3 = vdd
+* NET 4 = nq
+* NET 6 = i2
+* NET 7 = i4
+* NET 8 = i1
+* NET 9 = i0
+* NET 14 = vss
+Mtr_00016 3 9 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00015 3 8 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00014 13 7 2 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00013 3 13 5 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00012 3 5 4 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00011 4 5 3 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00010 10 6 13 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00009 2 1 10 3 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00008 11 1 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00007 12 9 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00006 14 6 11 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00005 11 7 13 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00004 13 8 12 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00003 5 13 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.66U AS=0.1914P AD=0.1914P PS=1.9U PD=1.9U 
+Mtr_00002 14 5 4 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+Mtr_00001 4 5 14 14 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C14 1 14 8.17567e-16
+C13 2 14 1.36614e-15
+C12 3 14 3.97932e-15
+C11 4 14 1.22684e-15
+C10 5 14 2.35032e-15
+C9 6 14 9.59174e-16
+C8 7 14 8.68268e-16
+C7 8 14 1.05589e-15
+C6 9 14 1.02689e-15
+C4 11 14 8.83971e-16
+C2 13 14 2.56202e-15
+C1 14 14 3.3525e-15
+.ends noa2ao222_x4
+

@@ -1,0 +1,61 @@
+********************************************************************************
+* inv_x4_chain.cir
+* ngspice simulation
+* lsxlib
+********************************************************************************
+
+.option  nopage nomod
++        newtol numdgt=7 ingold=2 gmindc=1e-18
+.option DOTNODE
+.option MSGNODE = 0
+
+********************************************************************************
+* BSIM4 transistor model parameters for ngspice and simulation conditions
+********************************************************************************
+
+.lib _TECHNO _MODEL
+.TEMP _TEMP
+Vground vss 0 0
+Vsupply vdd 0 DC _VDD
+gfoncd vdd 0 vdd 0 1.0e-15
+
+********************************************************************************
+* Circuit Instantiation with loading output
+********************************************************************************
+.INCLUDE ../spi/inv_x4.spi
+*.subckt inv_x4 i nq vdd vss
+Xa i  1   vdd vss inv_x4
+Xb 1  2   vdd vss inv_x4
+Xc 2  3   vdd vss inv_x4
+Xd 3  4   vdd vss inv_x4
+Xe 4  5   vdd vss inv_x4
+Xf 5  6   vdd vss inv_x4
+Xg 6  7   vdd vss inv_x4
+Xh 7  q   vdd vss inv_x4
+*Cload q vss 0.0020pF
+
+********************************************************************************
+* input stimluli and transient analysis
+********************************************************************************
+
+vi0 i vss dc 0.8 pulse (0 _VDD 170ps 30ps 30ps 170ps 400ps)
+
+.control
+TRAN 1ps 1500ps 0 
+
+set width=110
+
+meas tran inputRslope TRIG v(4) val=0.1 RISE=1 TARG v(4) VAL=_VMAX RISE=1
+meas tran inputFslope TRIG v(4) val=_VMAX FALL=1 TARG v(4) VAL=0.001 FALL=1
+meas tran inputRslope TRIG v(6) val=0.1 RISE=1 TARG v(6) VAL=_VMAX RISE=1
+meas tran inputFslope TRIG v(6) val=_VMAX FALL=1 TARG v(6) VAL=0.001 FALL=1
+meas tran proptimeRF TRIG v(i) val=0.9 RISE=1 TARG v(q) VAL=0.9 FALL=1
+meas tran proptimeFR TRIG v(i) val=0.9 FALL=1 TARG v(q) VAL=0.9 RISE=1
+
+gnuplot inv_x4_chain/inv_x4_chain._MODEL v(i) v(2) v(4) v(6) v(q)
++ title 'input and output of the inverter chain'
++ xlabel 'time / s' ylabel 'Voltage / V' 
+
+.endc
+
+.end

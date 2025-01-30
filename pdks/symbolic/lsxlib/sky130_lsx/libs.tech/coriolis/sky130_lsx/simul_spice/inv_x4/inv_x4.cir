@@ -1,0 +1,53 @@
+********************************************************************************
+* inv_x4.cir
+* ngspice simulation
+* lsxlib
+********************************************************************************
+
+.option  nopage nomod
++        newtol numdgt=7 ingold=2 gmindc=1e-18
+.option DOTNODE
+.option MSGNODE = 0
+
+********************************************************************************
+* BSIM4 transistor model parameters for ngspice and simulation conditions
+********************************************************************************
+
+.lib _TECHNO _MODEL
+.TEMP _TEMP
+Vground vss 0 0
+Vsupply vdd 0 DC _VDD
+gfoncd vdd 0 vdd 0 1.0e-15
+
+********************************************************************************
+* Circuit Instantiation with loading output
+********************************************************************************
+.INCLUDE ../spi/inv_x4.spi
+*.subckt inv_x4 i nq vdd vss
+
+Xa i  nq  vdd vss inv_x4
+*Cload nq vss 0.0020pF
+
+********************************************************************************
+* input stimluli and transient analysis
+********************************************************************************
+
+vi i vss dc 0.8 pulse (0 _VDD 170ps 30ps 30ps 170ps 400ps)
+
+.control
+TRAN 1ps 800ps 0 
+
+set width=110
+
+meas tran inputRslope TRIG v(nq) val=0.001 RISE=1 TARG v(nq) VAL=_VMAX RISE=1
+meas tran inputFslope TRIG v(nq) val=_VMAX FALL=1 TARG v(nq) VAL=0.001 FALL=1
+meas tran proptimeRF TRIG v(i) val=0.9 RISE=1 TARG v(nq) VAL=0.9 FALL=1
+meas tran proptimeFR TRIG v(i) val=0.9 FALL=1 TARG v(nq) VAL=0.9 RISE=1
+
+gnuplot inv_x4/inv_x4._MODEL v(i) v(nq)
++ title 'input and output of the inv_x4'
++ xlabel 'time / s' ylabel 'Voltage / V' 
+
+.endc
+
+.end

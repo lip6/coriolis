@@ -1,0 +1,54 @@
+* Spice description of oa2a2a2a24_x2
+* Spice driver version -1569252440
+* Date ( dd/mm/yyyy hh:mm:ss ):  1/08/2024 at 18:58:22
+
+* INTERF i0 i1 i2 i3 i4 i5 i6 i7 q vdd vss 
+
+
+.subckt oa2a2a2a24_x2 10 12 11 9 5 4 2 3 1 13 17 
+* NET 1 = q
+* NET 2 = i6
+* NET 3 = i7
+* NET 4 = i5
+* NET 5 = i4
+* NET 9 = i3
+* NET 10 = i0
+* NET 11 = i2
+* NET 12 = i1
+* NET 13 = vdd
+* NET 17 = vss
+Mtr_00018 15 12 13 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00017 15 11 14 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00016 6 3 18 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00015 13 10 15 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00014 18 2 6 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00013 14 5 6 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00012 14 9 15 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00011 6 4 14 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00010 1 18 13 13 sky130_fd_pr__pfet_01v8__model L=0.15U W=2.46U AS=0.7134P AD=0.7134P PS=5.5U PD=5.5U 
+Mtr_00009 8 4 18 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00008 18 9 16 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00007 17 5 8 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00006 16 11 17 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00005 18 2 7 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00004 7 3 17 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00003 17 10 19 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00002 19 12 18 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=0.78U AS=0.2262P AD=0.2262P PS=2.14U PD=2.14U 
+Mtr_00001 17 18 1 17 sky130_fd_pr__nfet_01v8__model L=0.15U W=1.26U AS=0.3654P AD=0.3654P PS=3.1U PD=3.1U 
+C19 1 17 1.22684e-15
+C18 2 17 8.04682e-16
+C17 3 17 8.04682e-16
+C16 4 17 8.04682e-16
+C15 5 17 8.29818e-16
+C14 6 17 1.03398e-15
+C11 9 17 8.04682e-16
+C10 10 17 9.36966e-16
+C9 11 17 7.48194e-16
+C8 12 17 1.01898e-15
+C7 13 17 3.70125e-15
+C6 14 17 5.62527e-16
+C5 15 17 1.20006e-15
+C3 17 17 4.10842e-15
+C2 18 17 3.0026e-15
+.ends oa2a2a2a24_x2
+
