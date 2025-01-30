@@ -1,12 +1,9 @@
 [project]
-name = "coriolis_pdk_common"
+name = "pdk_sky130_vsc"
 version = "0.1.0"
-description = "Common PDK for Coriolis EDA"
+description = "Sky130 vsc PDK for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
-requires-python = ">= 3.9"
-dependencies = [
-  "coriolis_eda",
-]
+requires-python = ">= 3.8"
 
 [build-system]
 requires = [
@@ -20,6 +17,9 @@ requires = [
 ]
 build-backend = "mesonpy"
 
+[tool.meson]
+build-dir = "build"
+
 [tool.cibuildwheel]
 build = "cp310-*"
-skip = ["cp36-*", "cp37-*", "cp38-*", "cp39-*", "pp*"]
+skip = ["cp36-*", "cp37-*", "pp*"]
