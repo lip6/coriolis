@@ -1,0 +1,127 @@
+# /*------------------------------------------------------------\
+# |                                                             |
+# | Title      :      Parameters File for Dreal                 |
+# |                                                             |
+# | Technology :              Cmos V7                           |
+# |                                                             |
+# | Date       :             02/08/95                           |
+# |                                                             |
+# \------------------------------------------------------------*/
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                   Lower Grid Step in pixel                  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_LOWER_GRID_STEP 10
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |               Lower Figure Text Step in pixel               |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+dEFINE DREAL_LOWER_FIGURE_STEP 0.1
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |              Lower Instance Text Step in pixel              |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_LOWER_INSTANCE_STEP 0.1
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |             Lower Connector Text Step in pixel              |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_LOWER_CONNECTOR_STEP 0.5
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |               Lower Segment Text Step in pixel              |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_LOWER_SEGMENT_STEP 0.7
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |              Lower Reference Text Step in pixel             |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_LOWER_REFERENCE_STEP 1.0
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                 Dreal Cursor Color Name                     |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_CURSOR_COLOR_NAME  Gray
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# |                 Dreal Cursor Size in pixel                  |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+DEFINE DREAL_CURSOR_SIZE 10
+
+# /*------------------------------------------------------------\
+# |                                                             |
+# | View Layer Panel Button Label, Foreground, Background Color |
+# |                                                             |
+# \------------------------------------------------------------*/
+
+TAbLE DREAL_RDS_LAYER_NAME
+
+  RDS_NWELL    Nwell   tan               Black
+  RDS_PWELL    Pwell   light_yellow      Black
+  RDS_NIMP     Nimp    forest_green      Black
+  RDS_PIMP     Pimp    goldenrod         Black
+  RDS_ACTIV    Activ   brown             Black
+  RDS_NDIF     Ndif    lawn_green        Black
+  RDS_PDIF     Pdif    yellow            Black
+  RDS_NTIE     Ntie    spring_green      Black
+  RDS_PTIE     Ptie    light_goldenrod   Black
+  RDS_POLY     Poly    red               Black
+  RDS_POLY2    Poly2   orange            Black
+  RDS_VPOLY    VPoly   coral             Black
+  RDS_GATE     Gate    orange            Black
+  RDS_TPOLY    Tpoly   hot_pink          Black
+  RDS_CONT     Cont    dark_violet       Black
+  RDS_TCONT    TCont   orchid            Black
+  RDS_ALU1     Alu1    royal_blue        Black
+  RDS_VALU1    VAlu1   sky_blue          Black
+  RDS_TALU1    Talu1   royal_blue        Black
+  RDS_VIA1     Via1    deep_sky_blue     Black
+  RDS_TVIA1    TVia1   dodger_blue       Black
+  RDS_ALU2     Alu2    cyan              Black
+  RDS_TALU2    Talu2   turquoise         Black
+  RDS_VIA2     Via2    deep_pink         Black
+  RDS_ALU3     Alu3    light_pink        Black
+  RDS_TALU3    Talu3   light_pink        Black
+  RDS_VIA3     Via3    sea_green         Black
+  RDS_ALU4     Alu4    green             Black
+  RDS_TALU4    Talu4   green             Black
+  RDS_VIA4     Via4    gold              Black
+  RDS_ALU5     Alu5    yellow            Black
+  RDS_TALU5    Talu5   yellow            Black
+  RDS_VIA5     Via5    violet_red        Black
+  RDS_ALU6     Alu6    violet            Black
+  RDS_TALU6    Talu6   violet            Black
+  RDS_VIA6     Via6    dark_red          Black
+  RDS_ALU7     Alu7    red               Black
+  RDS_TALU7    Talu7   red               Black
+  RDS_VIA7     Via7    dark_blue         Black
+  RDS_ALU8     Alu8    blue              Black
+  RDS_TALU8    Talu8   blue              Black
+  RDS_CPAS     Cpas    gray              Black
+  RDS_REF      Ref     coral             Black
+  RDS_ABOX     Abox    pink              Black
+
+END
