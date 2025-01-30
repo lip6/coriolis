@@ -27,6 +27,7 @@ PDKS := \
 	gf180mcu_nsx2 \
 	scmos2m1u_nsx2 \
 	sky130_vsc \
+	cmos_sx \
 
 PDKS_PATHS := \
 	common \
@@ -38,6 +39,7 @@ PDKS_PATHS := \
 	symbolic/nsxlib2/gf180mcu_nsx2 \
 	symbolic/nsxlib2/scmos2m1u_nsx2 \
 	symbolic/vsclib/sky130_vsc \
+	symbolic/sxlib/cmos_sx \
 
 ### Build targets
 define map_path

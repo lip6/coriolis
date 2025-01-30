@@ -15,3 +15,4 @@ pdks_dir = py.get_install_dir() / 'pdks' / 'symbolic' / 'cells'
 install_subdir( 'lsxlib/cells'  , strip_directory:true,   install_dir: pdks_dir / 'lsxlib' )
 install_subdir( 'nsxlib2/cells' , strip_directory:true,   install_dir: pdks_dir / 'nsxlib2' )
 install_subdir( 'vsclib/cells'  , strip_directory:true,   install_dir: pdks_dir / 'vsclib' )
+install_subdir( 'sxlib/cells'   , strip_directory:true,   install_dir: pdks_dir / 'sxlib' )
