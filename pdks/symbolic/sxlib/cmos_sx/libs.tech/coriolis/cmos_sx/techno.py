@@ -13,7 +13,7 @@ from coriolis.helpers   import overlay
 
 # Imports from PDKs
 from pdks import symbolic
-from pdks import cmos
+from pdks import cmos_sx
 
 
 __all__ = [ "setup" ]
@@ -44,10 +44,10 @@ def setup( checkToolkit=None ):
         
         env.setCLOCK( '^ck$|m_clock|^clk' )
     
-        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'libs.ref' / 'niolib' ).as_posix()
+        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'cells' / 'niolib' ).as_posix()
                             , mode=CRL.Environment.Append )
     
-        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'libs.ref' / 'sxlib' ).as_posix()
+        env.addSYSTEM_LIBRARY( library=(symbolic.path / 'cells' / 'sxlib' ).as_posix()
                     , mode=CRL.Environment.Append )
 
     alliance_bin = (Where.allianceTop / 'bin').as_posix()
@@ -58,6 +58,6 @@ def setup( checkToolkit=None ):
                 paths.append(alliance_bin)
                 os.environ[env_var] = os.pathsep.join(paths)
 
-    Yosys.setLiberty( symbolic.path / 'libs.ref' / 'sxlib' / 'liberty' / 'sxlib.lib' )
+    Yosys.setLiberty( symbolic.path / 'cells' / 'sxlib' / 'sxlib.lib' )
 
-    ShellEnv.RDS_TECHNO_NAME = cmos.path / 'libs.ref' / 'cmos' / 'cmos.rds'
+    ShellEnv.RDS_TECHNO_NAME = cmos_sx.path / 'cmos_sx' / 'cmos.rds'

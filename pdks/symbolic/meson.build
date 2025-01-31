@@ -12,6 +12,8 @@ py_deps = py.dependency()
 
 pdks_dir = py.get_install_dir() / 'pdks' / 'symbolic' / 'cells'
 
+py.install_sources('__init__.py', subdir: 'pdks/symbolic' )
+
 install_subdir( 'lsxlib/cells'    , strip_directory:true,   install_dir: pdks_dir / 'lsxlib'    )
 install_subdir( 'niolib/cells'    , strip_directory:true,   install_dir: pdks_dir / 'niolib'    )
 install_subdir( 'nsxlib2/cells'   , strip_directory:true,   install_dir: pdks_dir / 'nsxlib2'   )

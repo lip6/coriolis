@@ -63,12 +63,12 @@ class Where ( object ):
 
 def setupCMOS ( checkToolkit=None ):
     warnings.warn(
-        "setupCMOS function has moved to pdks.cmos.techno, use it instead.",
+        "setupCMOS function has moved to PDK like pdks.cmos_sx.techno, use them instead.",
         DeprecationWarning,
         stacklevel=2,
     )
     
-    from pdks.cmos import techno
+    from pdks.cmos_sx import techno
     
     return techno.setup(checkToolkit)
 
