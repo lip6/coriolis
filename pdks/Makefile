@@ -55,7 +55,7 @@ $(foreach i,$(indices),\
 
 define build_pdk
 pdk_$(1): venv_setup
-	@echo -e "\n\t### Building PDK $(1)" 					2>&1 | tee -a $($(1)_path)/$(1)_build.log
+	@echo 	"\n\t### Building PDK $(1)" 					2>&1 | tee -a $($(1)_path)/$(1)_build.log
 	$(venv_python) -m build -w -o ${DIST_PATH} $($(1)_path)	2>&1 | tee -a $($(1)_path)/$(1)_build.log
 endef
 

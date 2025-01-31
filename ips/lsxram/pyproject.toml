@@ -1,12 +1,10 @@
 [project]
-name = "coriolis_ips_lsxram"
+name = "ip_lsxram"
 version = "0.1.0"
 description = "LSXRAM IP for Coriolis EDA"
 authors = [ { name = "Coriolis EDA Contributers" } ]
 requires-python = ">= 3.9"
-dependencies = [
-  "coriolis-eda"
-]
+dependencies = []
 
 [tool.setuptools.packages.find]
 where = ["."]
