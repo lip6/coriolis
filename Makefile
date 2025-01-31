@@ -22,7 +22,7 @@ init:
 		set +a; \
 	fi
 
-venv-setup:
+venv-setup: init
 	${PYTHON3} -m venv ${VENV_PATH} 										2>&1 | tee -a  $(LOG_FILE)
 	$(foreach pkg,$(PACKAGES),$(PIP_INSTALL) $(pkg);)
 
