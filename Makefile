@@ -1,26 +1,26 @@
 ## Main Coriolis EDA Makefile
 
 ### Environment variables and venv setup
-
-# Check for .env file and copy from .env.example if missing
-ifeq ($(wildcard .env),)
-	@echo "Missing .env file. Copying .env.example to .env"
-	@cp .env.example .env
-endif
-
-# Include .env file if it exists
-ifneq ($(wildcard .env),)
-	include .env
-	export $(shell sed 's/=.*//' .env)
-endif
-
 LOG_FILE   		:= coriolis_eda-build.log
 DIST_PATH  		:= ./dist
+VENV_PATH       := .venv
 
 venv        	:= . ${VENV_PATH}/bin/activate;
-
 PIP_INSTALL 	:= $(venv) pip3 install --upgrade
 PACKAGES    	:= pip setuptools build wheel cibuildwheel
+
+.PHONY: init venv-setup coriolis_eda
+
+init:
+	@if [ ! -f .env ]; then \
+		echo "Missing .env file. Copying .env.example to .env"; \
+		cp .env.example .env; \
+	fi
+	@if [ -f .env ]; then \
+		set -a; \
+		. ./.env; \
+		set +a; \
+	fi
 
 venv-setup:
 	${PYTHON3} -m venv ${VENV_PATH} 										2>&1 | tee -a  $(LOG_FILE)
