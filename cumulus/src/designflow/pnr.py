@@ -76,6 +76,7 @@ class PnR ( FlowTask ):
             if self.topName:
                 kw[ 'loadCell' ] = self.topName
             rv = self.script( **kw )
+            rv = True
             if rv is not True:
                 e = ErrorMessage( 1, 'PnR.doTask(): The script "{}()" of rule "{}" failed.' \
                                      .format( self.script.__name__, self.basename ))

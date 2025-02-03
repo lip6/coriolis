@@ -1,3 +1,4 @@
+
 designflow = files([
   '__init__.py',
   'alias.py',
@@ -22,6 +23,7 @@ designflow = files([
   'pnrcheck.py',
   'routecheck.py',
   's2r.py',
+  'sta.py',
   'surelog.py',
   'sv2v.py',
   'svase.py',

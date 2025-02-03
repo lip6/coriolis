@@ -1,10 +1,12 @@
 subdir('src')
 subdir('src/designflow')
+subdir('src/designflow/scripts')
 subdir('src/plugins')
 subdir('src/tools')
 
 py.install_sources(cumulus, subdir: 'coriolis')
 py.install_sources(designflow, subdir: 'coriolis/designflow')
+py.install_sources(designflow_scripts, subdir: 'coriolis/designflow/scripts')
 py.install_sources(plugins, subdir: 'coriolis/plugins')
 py.install_sources(block, subdir: 'coriolis/plugins/block')
 py.install_sources(chip, subdir: 'coriolis/plugins/chip')
