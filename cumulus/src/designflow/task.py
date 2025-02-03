@@ -36,10 +36,12 @@ class ShellEnv ( object ):
     * ``MBK_IN_PH``.
     * ``MBK_OUT_PH``.
     * ``MBK_CATAL_NAME``.
+    * ``MBK_SPI_MODEL``.
     * ``RDS_IN``.
     * ``RDS_OUT``.
     """
 
+    Show              = 0x0001
     CHECK_TOOLKIT     = None
     ALLIANCE_TOP      = None
     RDS_TECHNO_NAME   = None
@@ -50,7 +52,8 @@ class ShellEnv ( object ):
     KLAYOUT_PATH      = None
     KLAYOUT_HOME      = None
 
-    def __init__ ( self ):
+    def __init__ ( self, name='unamed_env' ):
+        self.name     = name
         self.shellEnv = {}
         self.capture()
 
@@ -79,6 +82,7 @@ class ShellEnv ( object ):
         self.shellEnv[ 'MBK_IN_PH'      ] = env.getIN_PH()
         self.shellEnv[ 'MBK_OUT_PH'     ] = env.getOUT_PH()
         self.shellEnv[ 'MBK_CATAL_NAME' ] = env.getCATALOG()
+        self.shellEnv[ 'MBK_SPI_MODEL'  ] = 'MBK_SPI_MODEL_not_set'
         self.shellEnv[ 'RDS_IN'         ] = 'gds'
         self.shellEnv[ 'RDS_OUT'        ] = 'gds'
         if ShellEnv.ALLIANCE_TOP:
@@ -91,15 +95,20 @@ class ShellEnv ( object ):
                 libPath += ':' + LD_LIBRARY_PATH
             self.shellEnv[ 'LD_LIBRARY_PATH' ] = libPath
 
-    def export ( self ):
+    def export ( self, flags=0 ):
         """
         Write back the variables into the environement for usage by the
         sub-processes.
         """
+        if flags & ShellEnv.Show:
+            print( 'ShellEnv:' )
+            print( '  Name:', self.name )
+            print( '  Variable:' )
         for variable, value in self.shellEnv.items():
             if value is None: continue
             os.environ[ variable ] = value
-            print( '{} = {}'.format( variable, value ))
+            if flags & ShellEnv.Show:
+                print( '    {}: {}'.format( variable, value ))
         if ShellEnv.RDS_TECHNO_NAME is not None:
             os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
         if ShellEnv.GRAAL_TECHNO_NAME is not None:
