@@ -157,7 +157,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          pattern: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
+          name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./wheelhouse/*.whl
 
   test_upload_pypi:
