@@ -4,8 +4,6 @@ from   pathlib         import Path
 from   doit.exceptions import TaskFailed
 from   .task           import FlowTask, ShellEnv
 
-CalcCPathBin = Path(__file__).parent / 'scripts' / 'calcCPath.tcl'
-
 
 def guessAVERTEC_TOP ():
     modulePath = Path( __file__ )
@@ -35,6 +33,7 @@ def toArgStr ( fileList ):
 
 class MissingTarget      ( Exception ): pass
 class UndefinedParameter ( Exception ): pass
+class ScriptNotFound     ( Exception ): pass
 
 class STA ( FlowTask ):
     flags               = 0
@@ -52,10 +51,10 @@ class STA ( FlowTask ):
     ClockName           = None
 
     @staticmethod
-    def mkRule ( rule, targets, depends=[], flags=0 ):
-        return STA( rule, targets, depends, flags )
+    def mkRule ( rule, targets, depends, script, flags=0 ):
+        return STA( rule, targets, depends, script, flags )
 
-    def __init__ ( self, rule, targets, depends, flags ):
+    def __init__ ( self, rule, targets, depends, script, flags ):
         super().__init__( rule, targets, depends )
 
         if STA.SpiceType is None:
@@ -83,12 +82,22 @@ class STA ( FlowTask ):
             e = ErrorMessage( 1, 'STA.__init__(): Parameter <STA.MBK_SPI_MODEL> has not been defined.' )
             return UndefinedParameter( e )
 
+        self.script = script
+        if self.script and not isinstance(self.script,Path):
+            self.script = Path( self.script )
+        if script:
+            depends.append( self.script )
+        if not self.script.is_file():
+            e = ErrorMessage( 1, [ 'STA.__init__(): Script not found.\n'
+                                 , '<{}>'.format( self.script ) ] )
+            return ScriptNotFound( e )
+
         self.flags      = flags
         self.inputFile  = self.file_depend(0)
         self.outputFile = self.targets[0]
         models = toArgStr( self.SpiceTrModel )
         self.command = [ 'avt_shell'
-                       , CalcCPathBin.as_posix()
+                       , self.script.as_posix()
                        , '-Target'     , self.inputFile.stem
                        , '-SpiceModel' , models
                        , '-SpiceType'  ,     STA.SpiceType
@@ -130,3 +139,18 @@ class STA ( FlowTask ):
                , 'file_dep' : self.file_dep
                }
         
+
+class FMax ( STA ):
+
+    scriptFMax = Path(__file__).parent / 'scripts' / 'calcCPath.tcl'
+
+    @staticmethod
+    def mkRule ( rule, targets, depends, flags=0 ):
+        return FMax( rule, targets, depends, flags )
+
+    def __init__ ( self, rule, targets, depends, flags ):
+        from ..helpers.io import ErrorMessage
+
+        depends   = FlowTask._normFileList( depends )
+        #targets   = [ depends[0].with_suffix('.kdrc-report.txt') ]
+        super().__init__( rule, targets, depends, FMax.scriptFMax, flags )
