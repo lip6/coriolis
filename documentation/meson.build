@@ -93,23 +93,23 @@ plugins = files(
 
 dopdf = find_program('etc/doPdf.sh')
 
-pdf_documents = []
-foreach document : pdfcontent
-    basename = document.split( '/' )[ -1 ].replace( '.rst', '' )
-    pdf_documents += custom_target( basename + '_pdf'
-                                  , command: [ dopdf
-    			                 , '--buildDir=@0@'.format( meson.current_build_dir() )
-    			                 , '--sourceDir=@0@'.format( meson.current_source_dir() )
-                                         , '--stylesheet=etc/SoC-ReST.tex'
-    			                 , '--rst2latex=@0@'.format( rst2latex.full_path() )
-    			                 , '--pdflatex=@0@'.format( pdflatex.full_path() )
-    			                 , document ]
-                                  , input:       document
-                                  , output:      basename + '.pdf'
-                                  , install:     true
-                                  , install_dir: pdfdir
-                                  )
-endforeach
+#pdf_documents = []
+#foreach document : pdfcontent
+#    basename = document.split( '/' )[ -1 ].replace( '.rst', '' )
+#    pdf_documents += custom_target( basename + '_pdf'
+#                                  , command: [ dopdf
+#    			                 , '--buildDir=@0@'.format( meson.current_build_dir() )
+#    			                 , '--sourceDir=@0@'.format( meson.current_source_dir() )
+#                                         , '--stylesheet=etc/SoC-ReST.tex'
+#    			                 , '--rst2latex=@0@'.format( rst2latex.full_path() )
+#    			                 , '--pdflatex=@0@'.format( pdflatex.full_path() )
+#    			                 , document ]
+#                                  , input:       document
+#                                  , output:      basename + '.pdf'
+#                                  , install:     true
+#                                  , install_dir: pdfdir
+#                                  )
+#endforeach
 
 
 cdata = configuration_data()
@@ -134,7 +134,8 @@ htmldoc = custom_target( 'htmldoc'
                                  , 'theme'
                                  ]
                        , depend_files: [ rstcontent, css, plugins, pelicanconf ]
-		       , depends: [ pdf_documents ]
+		      #, depends: [ pdf_documents ]
+		       , depends: [ ]
                        , command: [ pelican
                                   , '-vD'
                                   , '--ignore-cache'
