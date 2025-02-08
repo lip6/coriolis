@@ -15,6 +15,9 @@ class Lvx ( FlowTask ):
     SaveReorder     = 0x0002
     CheckUnassigned = 0x0004
     Flatten         = 0x0008
+    Verbose         = 0x0010
+
+    MBK_CATA_LIB    = None
 
     @staticmethod
     def mkRule ( rule, depends=[], flags=0 ):
@@ -36,6 +39,7 @@ class Lvx ( FlowTask ):
         if flags & Lvx.SaveReorder:     self.command.append( '-o' )
         if flags & Lvx.CheckUnassigned: self.command.append( '-u' )
         if flags & Lvx.Flatten:         self.command.append( '-f' )
+        if flags & Lvx.Verbose:         self.command.append( '-v' )
 
         if self.flags & Lvx.SaveReorder:
             env = CRL.AllianceFramework.get().getEnvironment()
@@ -49,8 +53,10 @@ class Lvx ( FlowTask ):
         from ..CRL        import AllianceFramework
         from ..helpers.io import ErrorMessage
 
-        shellEnv = ShellEnv()
-        shellEnv.export()
+        shellEnv    = ShellEnv( 'Lvx.doTask()' )
+        if Lvx.MBK_CATA_LIB is not None:
+            shellEnv[ 'MBK_CATA_LIB' ] = Lvx.MBK_CATA_LIB + ':' + shellEnv[ 'MBK_CATA_LIB' ]
+        shellEnv.export( ShellEnv.Show )
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'Lvx.doTask(): UNIX command failed ({}).' \
