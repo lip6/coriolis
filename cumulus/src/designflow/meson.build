@@ -23,7 +23,7 @@ designflow = files([
   'pnrcheck.py',
   'routecheck.py',
   's2r.py',
-  'sta.py',
+  'tasyagle.py',
   'surelog.py',
   'sv2v.py',
   'svase.py',
