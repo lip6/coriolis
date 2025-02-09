@@ -303,3 +303,4 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackElement);
+MSTREAM_P_SUPPORT(Katana::TrackElement);
