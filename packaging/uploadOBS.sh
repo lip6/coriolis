@@ -73,6 +73,7 @@
  echo "* Update files in OBS project directory."
  echo "  OBS package directory: \"${obsDir}\"."
  for distribFile in packaging/coriolis-eda.spec               \
+                    packaging/coriolis-eda-rpmlintrc          \
                     packaging/patchvenv.sh                    \
                     packaging/find_files.sh                   \
                     packaging/coloquinte-clamp.patch          \

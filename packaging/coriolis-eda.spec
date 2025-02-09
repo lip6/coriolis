@@ -51,6 +51,9 @@ BuildRequires:  libboost_filesystem-devel
 BuildRequires:  libboost_iostreams-devel
 BuildRequires:  libboost_test-devel
 BuildRequires:  graphviz-gnome
+BuildRequires:  texlive-l3kernel
+BuildRequires:  texlive-cmap
+BuildRequires:  texlive-metafont
 %endif
 
 #opensuse_leap-15.6
@@ -89,6 +92,10 @@ BuildRequires:  expat-devel
 BuildRequires:  python3-pdm-pep517
 BuildRequires:  python-unversioned-command
 BuildRequires:  xpdf
+BuildRequires:  texlive-l3kernel
+BuildRequires:  texlive-cmap
+BuildRequires:  texlive-texlive-scripts
+BuildRequires:  texlive-metafont
 %endif
 
 %if 0%{?fedora} >= 39
