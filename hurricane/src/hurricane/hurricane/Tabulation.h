@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_TABULATION_H
-#define HURRICANE_TABULATION_H
-
+#pragma once
 #ifndef HURRICANE_COMMONS_H
 #error "Tabulation.h must be included through Commons.h"
 #endif
@@ -87,15 +85,51 @@ extern Tabulation tab;
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PR_SUPPORT(Hurricane::Tabulation);
+inline std::string getString ( Hurricane::Tabulation& data )
+{ return data._getString(); }
+
+inline std::string getString ( const Hurricane::Tabulation& data )
+{ return data._getString(); }
+
+inline std::string getString ( Hurricane::Tabulation* data )
+{ if (!data) return "NULL [Tabulation]"; return data->_getString(); }
+
+inline std::string getString ( const Hurricane::Tabulation* data )
+{ if (!data) return "NULL [const Tabulation]"; return data->_getString(); }
+
+inline std::ostream& operator<< ( std::ostream& o, Hurricane::Tabulation* d )
+{
+  if (!d) return o << "NULL [Tabulation]";
+  return o << "&" << d->_getString();
+}
+
+inline std::ostream& operator<< ( std::ostream& o, const Hurricane::Tabulation* d )
+{
+  if (!d) return o << "NULL [const Tabulation]";
+  return o << "&" << d->_getString();
+}
+
+inline std::ostream& operator<< ( std::ostream& o, Hurricane::Tabulation& d )
+{ return o << d._getString(); }
+
+inline std::ostream& operator<< ( std::ostream& o, const Hurricane::Tabulation& d )
+{ return o << d._getString(); }
+
+inline Hurricane::Record* getRecord ( Hurricane::Tabulation* data )
+{ if (!data) return NULL; return data->_getRecord(); }
+
+inline Hurricane::Record* getRecord ( const Hurricane::Tabulation* data )
+{ if (!data) return NULL; return data->_getRecord(); }
+
+
+
+//INSPECTOR_PR_SUPPORT(Hurricane::Tabulation);
 
 
 
 // ****************************************************************************************************
 // Generic functions
 // ****************************************************************************************************
-
-#endif // HURRICANE_TABULATION_H
 
 
 // ****************************************************************************************************
