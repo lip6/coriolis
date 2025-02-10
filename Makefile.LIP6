@@ -129,6 +129,10 @@ install_venv: $(MESON_BIN) $(PELICAN_BIN)
 endif
 
 
+wheel: check_dir install_venv 
+	$(venv) python -m pip --use-feature=in-tree-build wheel .
+
+
 wipe: check_dir install_venv
 	$(venv) meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
 
