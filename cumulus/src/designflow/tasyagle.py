@@ -6,11 +6,15 @@ from   .task           import FlowTask, ShellEnv
 
 
 def guessAVERTEC_TOP ():
-    modulePath = Path( __file__ )
-    if modulePath.match('/usr/*'):
-        avertecTop = '/usr/share/tasyag'
+    avertecTop = os.getenv( 'AVERTEC_TOP' )
+    if avertecTop is None:
+        modulePath = Path( __file__ )
+        if modulePath.match('/usr/*'):
+            avertecTop = Path( '/usr/share/tasyag' )
+        else:
+            avertecTop = modulePath.parents[5] / 'share' / 'tasyag'
     else:
-        avertecTop = modulePath.parents[5] / 'share' / 'tasyag'
+        avertecTop = Path( avertecTop )
     return avertecTop
 
 
