@@ -887,7 +887,7 @@ namespace Anabatic {
       const vector<RoutingLayerGauge*>& layerGauges
         = getAnabatic()->getConfiguration()->getRoutingGauge()->getLayerGauges();
       const Edge* edge = getEastEdge();
-      if (edge) {
+      if (edge and edge->getCapacities()) {
         cout << "     o  East capacities of south west GCell (Horizontal)." << endl;
         for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
           ostringstream os;
@@ -899,7 +899,7 @@ namespace Anabatic {
         cout << Dots::asUInt( "        - Whole GR/H edge" ,edge->getCapacity() ) << endl;
       }
       edge = getNorthEdge();
-      if (edge) {
+      if (edge and edge->getCapacities()) {
         cout << "     o  North capacities of south west GCell (Vertical)." << endl;
         for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
           ostringstream os;
