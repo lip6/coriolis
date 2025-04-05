@@ -30,6 +30,7 @@ designflow = files([
   'task.py',
   'technos.py',
   'vasy.py',
+  'x2y.py',
   'yosys.py',
   'yosysnp.py',
 ])
