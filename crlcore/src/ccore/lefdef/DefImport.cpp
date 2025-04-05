@@ -579,8 +579,9 @@ namespace {
     if (pin->hasSpecial() and (hnet->isSupply() or hnet->isClock()))
        hnet->setGlobal( true );
 
+    Pin::AccessDirection orient = Pin::AccessDirection::UNDEFINED;
     if (pin->isPlaced() or pin->isFixed()) {
-      Point position ( fromDefUnits(pin->placementX()), fromDefUnits(pin->placementY()) );
+      Point  position ( fromDefUnits(pin->placementX()), fromDefUnits(pin->placementY()) );
       string layerName = pin->layer(0);
       Layer* layer     = parser->lookupLayer( layerName );
       int    x1        = 0;
@@ -592,6 +593,16 @@ namespace {
                 , fromDefUnits(y1)
                 , fromDefUnits(x2)
                 , fromDefUnits(y2) );
+      switch ( pin->orient() ) {
+        case 0:
+        case 4: orient = Pin::AccessDirection::NORTH; break;
+        case 1:
+        case 5: orient = Pin::AccessDirection::WEST ; break;
+        case 2:
+        case 6: orient = Pin::AccessDirection::SOUTH; break;
+        case 3:
+        case 7: orient = Pin::AccessDirection::EAST ; break;
+      }
 
       if (not layer) {
         ostringstream message;
@@ -603,7 +614,7 @@ namespace {
 
       Pin* pin = Pin::create( hnet
                             , pinName
-                            , Pin::AccessDirection::UNDEFINED
+                            , orient
                             , Pin::PlacementStatus::FIXED
                             , layer
                             , position.getX()
