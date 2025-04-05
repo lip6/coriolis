@@ -1690,12 +1690,12 @@ namespace Anabatic {
     }
 
     if (driverCount == 0) {
-      cerr << Error( "Diskstra::load(): Net \"%s\" do not have a driver.\n"
+      cerr << Error( "Dijkstra::load(): Net \"%s\" do not have a driver.\n"
                    , getString(_net->getName()).c_str()
                    ) << endl;
     }
     if ((driverCount > 1) and not (net->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr))) {
-      cerr << Error( "Diskstra::load(): Net \"%s\" have multiple drivers (%u).\n"
+      cerr << Error( "Dijkstra::load(): Net \"%s\" have multiple drivers (%u).\n"
                    , getString(_net->getName()).c_str(), driverCount
                    ) << endl;
     }
@@ -1704,7 +1704,7 @@ namespace Anabatic {
       if (state->isSymVertical()) {
         if (   (_searchArea.getXMin() < state->getSymAxis())
            and (_searchArea.getXMax() > state->getSymAxis()) ) {
-          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+          cerr << Error( "Dijkstra::load(): For net \"%s\" (paired with \"%s\"),\n"
                          "        Vertical symmetry axis @%s is inside the net area %s."
                        , getString(_net->getName()).c_str()
                        , getString(state->getSymNet()->getName()).c_str()
@@ -1717,7 +1717,7 @@ namespace Anabatic {
       if (state->isSymHorizontal()) {
         if (   (_searchArea.getYMin() < state->getSymAxis())
            and (_searchArea.getYMax() > state->getSymAxis()) ) {
-          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+          cerr << Error( "Dijkstra::load(): For net \"%s\" (paired with \"%s\"),\n"
                          "        Horizontal symmetry axis @%s is inside the net area %s."
                        , getString(_net->getName()).c_str()
                        , getString(state->getSymNet()->getName()).c_str()
