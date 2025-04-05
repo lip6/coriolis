@@ -151,6 +151,7 @@ namespace Spice {
     for ( Bit* bit : _bits ) {
       const Net* net = bit->getNet();
       if (not net->isExternal() and asInterf) continue;
+      if (net->isDeepNet()) continue;
       if (asInterf) {
         out << "* " << "INTERF" //<< setw(6) << BitExtension::getName(net)
             << " " << NamingScheme::vhdlToVlog(net->getName()) << "\n";
