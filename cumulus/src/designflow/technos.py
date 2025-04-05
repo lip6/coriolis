@@ -714,9 +714,9 @@ def setupAMS350 ( checkToolkit=None, ndaTop=None, cellsTop=None ):
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk$' )
 
-        sxlib   = cellsTop / 'nsxlib'
+        sxlib   = cellsTop / 'nsxlib2'
         iolib   = cellsTop / 'niolib'
-        liberty = sxlib    / 'nsxlib.lib'
+        liberty = sxlib    / 'nsxlib2.lib'
         env.addSYSTEM_LIBRARY( library=iolib.as_posix(), mode=CRL.Environment.Prepend )
         env.addSYSTEM_LIBRARY( library=sxlib.as_posix(), mode=CRL.Environment.Prepend )
         if not sxlib.is_dir():
