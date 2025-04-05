@@ -1114,6 +1114,120 @@ void Cell::uniquify(unsigned int depth)
   cdebug_log(18,0) << "Cell::uniquify() END " << this << endl;
 }
 
+
+void Cell::flatten ( Instance* instance )
+// **************************************
+{
+  if (not instance) {
+    cerr << Error( "Cell::flatten(): \"%s\", NULL instance argument."
+                 , getString(getName()).c_str()
+                 ) << endl;
+    return; 
+  }
+  if (instance->getCell() != this) {
+    cerr << Error( "Cell::flatten(): \"%s\" has no instance \"%s\"."
+                 , getString(getName()).c_str()
+                 , getString(instance->getName()).c_str()
+                 ) << endl;
+    return; 
+  }
+
+  map<Net*,Net*> upNets;
+  for ( Net* instanceNet : instance->getMasterCell()->getNets() ) {
+    for ( Component* component : instanceNet->getComponents() ) {
+      if (not dynamic_cast<Plug*>(component)) {
+        cerr << Error( "Cell::flatten(): Physical component in Net %s."
+                     , getString(component).c_str()
+                     ) << endl;
+        break;
+      }
+    }
+    
+    if (instanceNet->isGlobal()) {
+      Net* upNet = getNet( instanceNet->getName() );
+      if (not upNet) {
+        upNet = Net::create( this, instanceNet->getName() );
+        upNet->setGlobal( true );
+        upNet->setDirection( instanceNet->getDirection() );
+        upNet->setType     ( instanceNet->getType     () );
+      }
+      upNets.insert( make_pair( instanceNet, upNet ));
+      continue;
+    }
+
+    if (instanceNet->isFused()) {
+      Net* upNet = getNet( instanceNet->getName() );
+      if (not upNet) {
+        for ( Net* cellNet : getNets() ) {
+          if (cellNet->isFused()) {
+            upNet = cellNet;
+            break;
+          }
+        }
+        if (not upNet) {
+          upNet = Net::create( this, instanceNet->getName() );
+          upNet->setType( instanceNet->getType() );
+        }
+      }
+      upNets.insert( make_pair( instanceNet, upNet ));
+      continue;
+    }
+
+    if (instanceNet->isExternal()) {
+      Plug* plug  = instance->getPlug( instanceNet );
+      Net*  upNet = plug->getNet();
+      if (upNet)
+        upNets.insert( make_pair( instanceNet, upNet ));
+    }
+
+    string upName = getString(getName()) + "_f_" + getString(instanceNet->getName());
+    Net*   upNet  = getNet( upName );
+    if (upNet) {
+      throw Error( "Cell::flatten(): Net name clash while flattening, \"%s\" already exists"
+                 , upName.c_str() );
+    }
+    upNet = Net::create( this, upName );
+    upNet->setDirection( instanceNet->getDirection() );
+    upNet->setType     ( instanceNet->getType     () );
+    upNets.insert( make_pair( instanceNet, upNet ));
+  }
+
+  Transformation instanceTransf = instance->getTransformation();
+  for ( Instance* subInstance : instance->getMasterCell()->getInstances() ) {
+    string    upName     = getString(getName()) + "_f_" + getString(subInstance->getName());
+    Instance* upInstance = getInstance( upName );
+    if (upInstance) {
+      throw Error( "Cell::flatten(): Instance name clash while flattening, \"%s\" already exists"
+                 , upName.c_str() );
+    }
+
+    upInstance = Instance::create( this, upName, subInstance->getMasterCell() );
+    for ( Plug* plug : subInstance->getPlugs() ) {
+      Net* connectedNet = plug->getNet();
+      if (not connectedNet) continue; 
+      auto iupNet = upNets.find( connectedNet );
+      if (iupNet == upNets.end()) {
+        cerr << Error( "Cell::flatten(): Missing up net for \"%s\"."
+                     , getString(connectedNet).c_str()
+                     ) << endl;
+        continue;
+      }
+      Plug* upPlug = upInstance->getPlug( plug->getMasterNet() );
+      upPlug->setNet( iupNet->second );
+      
+      if (subInstance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED) {
+        Transformation upTransf = subInstance->getTransformation();
+        instanceTransf.applyOn( upTransf );
+        upInstance->setTransformation( upTransf );
+        upInstance->setPlacementStatus( subInstance->getPlacementStatus() );
+      }
+    }
+  }
+
+  instance->destroy();
+}
+
+
 void Cell::materialize()
 // *********************
 {
