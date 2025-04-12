@@ -527,7 +527,10 @@ namespace Anabatic {
       size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
         DebugSession::open( isegment.second->getNet(), 159, 160 );
-        if (isegment.second->isReducedDone()) continue;
+        if (isegment.second->isReducedDone()) {
+          DebugSession::close();
+          continue;
+        }
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->canReduce( Flags::NullLength )) {
           if (isegment.second->isFixed()) isegment.second->reduce();
