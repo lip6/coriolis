@@ -129,8 +129,8 @@ namespace Anabatic {
                        "          On %s"
                      , DbU::getValueString(du).c_str()
                      , getString(this).c_str() ) << endl;
-    if (abs(du) > getPitch())
-      cerr << Warning( "AutoVertical::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+    if (abs(du) > 2*getPitch())
+      cerr << Warning( "AutoVertical::setDuSource(): Suspiciously big du=%s (should not exceed two routing pitch %s)\n"
                        "          On %s"
                      , DbU::getValueString(du).c_str()
                      , DbU::getValueString(getPitch()).c_str()
@@ -146,8 +146,8 @@ namespace Anabatic {
                        "          On %s"
                      , DbU::getValueString(du).c_str()
                      , getString(this).c_str() ) << endl;
-    if (abs(du) > getPitch())
-      cerr << Warning( "AutoVertical::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+    if (abs(du) > 2*getPitch())
+      cerr << Warning( "AutoVertical::setDuTarget(): Suspiciously big du=%s (should not exceed two routing pitch %s)\n"
                        "          On %s"
                      , DbU::getValueString(du).c_str()
                      , DbU::getValueString(getPitch()).c_str()
