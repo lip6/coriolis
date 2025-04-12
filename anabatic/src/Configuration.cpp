@@ -86,9 +86,11 @@ namespace Anabatic {
     , _rg               (NULL)
     , _extensionCaps    ()
     , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",100.0)->asDouble())
-    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio"   , 80.0)->asDouble())
+    , _saturateRatio    (Cfg::getParamDouble    ("anabatic.saturateRatio"   ,  0.8)->asDouble())
     , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      , 8   )->asInt())
     , _globalThreshold  (0)
+    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hmsallThreshold" , 3   )->asInt())
+    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vmsallThreshold" , 3   )->asInt())
     , _allowedDepth     (0)
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
@@ -200,6 +202,8 @@ namespace Anabatic {
     , _gcellAspectRatio (other._gcellAspectRatio)
     , _saturateRatio    (other._saturateRatio)
     , _globalThreshold  (other._globalThreshold)
+    , _hsmallThreshold  (other._hsmallThreshold)
+    , _vsmallThreshold  (other._vsmallThreshold)
     , _allowedDepth     (other._allowedDepth)
     , _edgeCostH        (other._edgeCostH)
     , _edgeCostK        (other._edgeCostK)
@@ -515,11 +519,14 @@ namespace Anabatic {
     DbU::Unit  bestSpan         = 0;
     Component* ongridComponent  = NULL;
     Component* offgridComponent = NULL;
-    DbU::Unit  viaShrink        = 0;
+    DbU::Unit  viaHShrink       = 0;
+    DbU::Unit  viaVShrink       = 0;
     if (not isSymbolic()) {
-      viaShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
+      viaHShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
+      viaVShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureV );
       cdebug_log(112,0) << "viaWidth/2: " << DbU::getValueString(_rg->getViaWidth( (size_t)0 )/2) << endl;
       cdebug_log(112,0) << "via12.BH:   " << DbU::getValueString(via12->getBottomEnclosure( Layer::EnclosureH )) << endl;
+      cdebug_log(112,0) << "via12.BV:   " << DbU::getValueString(via12->getBottomEnclosure( Layer::EnclosureV )) << endl;
     }
 
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
@@ -544,11 +551,23 @@ namespace Anabatic {
       }
 
       Box        bb       = transformation.getBox( candidate->getBoundingBox() );
+      Box        bbViaId  = bb;
+      Box        bbViaPp  = bb;
       DbU::Unit  trackPos = 0;
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
       
-      bb.inflate( -viaShrink );
+      bbViaId.inflate( -viaHShrink, -viaVShrink );
+      bbViaPp.inflate( -viaVShrink, -viaHShrink );
+      if (bbViaId.isEmpty()) {
+        if (bbViaPp.isEmpty()) {
+          cdebug_log(112,0) << "Component too small to host a VIA12, fully discard." << endl;
+          continue;
+        }
+        cdebug_log(112,0) << "Component not in the right direction." << endl;
+        bb = bbViaPp;
+      } else
+        bb = bbViaId;
       if (gauge->isVertical()) {
         trackPos = gauge->getTrackPosition( ab.getXMin()
                                           , ab.getXMax()
@@ -656,6 +675,7 @@ namespace Anabatic {
 
   void  Configuration::checkRoutingPadSize ( RoutingPad* rp ) const
   {
+    DebugSession::open( rp->getNet(), 145, 160 );
     Point  source;
     Point  target;
 
@@ -669,9 +689,11 @@ namespace Anabatic {
 
     DbU::Unit width  = abs( target.getX() - source.getX() );
     DbU::Unit height = abs( target.getY() - source.getY() );
+    cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
+    cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;
     uint64_t  flags  = 0;
-    flags |= (width  < 3*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
-    flags |= (height < 3*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
+    flags |= (width  < _hsmallThreshold*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
+    flags |= (height < _vsmallThreshold*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
     flags |= ((width < punctualLength) and (height < punctualLength)) ? RoutingPad::Punctual : 0;
 
     rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
@@ -682,6 +704,8 @@ namespace Anabatic {
                << ((flags & RoutingPad::VSmall  ) ? "VSmall "   : " ")
                << ((flags & RoutingPad::Punctual) ? "Punctual " : " ")
                << endl;
+
+    DebugSession::close();
   }
   
 
@@ -698,6 +722,7 @@ namespace Anabatic {
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
     cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
     cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
+    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"  ,_saturateRatio) << endl;
   }
 
 
