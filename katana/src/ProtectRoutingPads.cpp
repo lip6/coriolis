@@ -106,19 +106,21 @@ namespace {
       return;
     }
 
-    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    Box           bb          = rp->getBoundingBox();
-    Track*        track       = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
-    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
-    Box           metal2bb    = Box( bb.getXMin() - halfViaSide
-                                   , bb.getYCenter()
-                                   , bb.getXMax() + halfViaSide
-                                   , bb.getYCenter()
-                                   );
+    RoutingPlane* plane          = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    Box           bb             = rp->getBoundingBox();
+    Track*        track          = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
+    DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
+    DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
+    Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
+                                      , bb.getYCenter()
+                                      , bb.getXMax() + halfViaTopSide - halfViaBotSide
+                                      , bb.getYCenter()
+                                      );
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
     TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, track );
-    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
+    cdebug_log(145,0) << "halfViaTopSide=" << DbU::getValueString(halfViaTopSide) << endl;
+    cdebug_log(145,0) << "halfViaBotSide=" << DbU::getValueString(halfViaBotSide) << endl;
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);
