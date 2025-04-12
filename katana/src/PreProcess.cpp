@@ -67,29 +67,47 @@ namespace {
   }
 
 
-  void  getPerpandiculars ( TrackElement*           segment
+  void  getPerpandiculars ( TrackElement*           startSegment
                           , Anabatic::AutoContact*  from
                           , Flags                   direction
+                          , int                     maxDepth
                           , vector<TrackElement*>&  perpandiculars
                           )
   {
-    TrackElement* perpandicular;
-    for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( osegment );
-      cdebug_log(159,0) << "S " << perpandicular << endl;
+    vector< pair<TrackElement*, int> > stack;
+    stack.push_back( make_pair( startSegment, maxDepth ));
+    
+    while ( not stack.empty() ) {
+      TrackElement* segment = stack.back().first;
+      int           depth   = stack.back().second;
+      stack.pop_back();
+    
+      TrackElement* perpandicular;
+      for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
+        perpandicular = Session::lookup ( osegment );
+        cdebug_log(159,0) << "S " << perpandicular << endl;
+      
+        if (not perpandicular) continue;
+        if (perpandicular->getDirection() == direction) {
+          if (depth > 0)
+            stack.push_back( make_pair( perpandicular, depth-1 ));
+          continue;
+        }
+        perpandiculars.push_back( perpandicular );
+      }
 
-      if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
-
-      perpandiculars.push_back ( perpandicular );
-    }
-
-    for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
-      perpandicular = Session::lookup ( osegment );
-      cdebug_log(159,0) << "T " << perpandicular << endl;
-
-      if ( not perpandicular or (perpandicular->getDirection() == direction) ) continue;
-
-      perpandiculars.push_back ( perpandicular );
+      for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
+        perpandicular = Session::lookup ( osegment );
+        cdebug_log(159,0) << "T " << perpandicular << endl;
+      
+        if (not perpandicular) continue;
+        if (perpandicular->getDirection() == direction) {
+          if (depth > 0)
+            stack.push_back( make_pair( perpandicular, depth-1 ));
+          continue;
+        }
+        perpandiculars.push_back( perpandicular );
+      }
     }
   }
 
@@ -126,7 +144,10 @@ namespace {
     DebugSession::open( segment->getNet(), 150, 160 );
     cdebug_log(159,0) << "propagateCagedConstraints(): " << segment << endl;
 
-    if (not segment->isFixed() or segment->isFixedAxis()) return;
+    if (not segment->isFixed() or segment->isFixedAxis()) {
+      DebugSession::close();
+      return;
+    }
 
     Track*                 track         = segment->getTrack();
     Flags                  direction     = segment->getDirection();
@@ -141,7 +162,10 @@ namespace {
       rp    = dynamic_cast<TrackFixedSpanRp*>( segment )->getRoutingPad();
       gcell = katana->getGCellUnder( rp->getCenter() );
     } else {
-      if (not segment->base()) return;
+      if (not segment->base()) {
+        DebugSession::close();
+        return;
+      }
 
       source = segment->base()->getAutoSource();
       rp     = dynamic_cast<RoutingPad*>(source->getAnchor());
@@ -207,11 +231,12 @@ namespace {
       parallel = Session::lookup( osegment );
       if (not parallel) continue;
 
-      cdebug_log(159,0) << "* " << parallel << endl;
+      int depth = (parallel->isForOffgrid()) ? 1 : 0;
+      cdebug_log(159,0) << "* " << parallel << " depth=" << depth << endl;
       if (parallel->isFixed ()) continue;
       if (parallel->isGlobal()) continue;
-      getPerpandiculars( parallel, parallel->base()->getAutoSource(), direction, perpandiculars );
-      getPerpandiculars( parallel, parallel->base()->getAutoTarget(), direction, perpandiculars );
+      getPerpandiculars( parallel, parallel->base()->getAutoSource(), direction, depth, perpandiculars );
+      getPerpandiculars( parallel, parallel->base()->getAutoTarget(), direction, depth, perpandiculars );
     }
 
   // Apply caging constraints to perpandiculars.
@@ -227,10 +252,12 @@ namespace {
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       cdebug_log(159,0) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
-      if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
+      Interval ppConstraints = perpandiculars[iperpand]->base()->getUserConstraints();
+      if (ppConstraints.isEmpty()) {
         cdebug_log(159,0) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
         findFailedPerpandiculars( rp, direction, faileds );
       }
+      perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX() );
     }
 
     cdebug_tabw(159,-1);
@@ -379,7 +406,8 @@ namespace Katana {
           TrackElement* segment = track->getSegment( i );
           if (not segment->isFixedSpanRp()) {
             if (segment->isFixedSpan()) continue;
-            if (not segment->isFixed() or not segment->isFixedAxis()) continue;
+            if (  not segment->isFixed()
+               or not segment->isFixedAxis()) continue;
           }
           propagateCagedConstraints( this, segment, i, faileds );
         }
