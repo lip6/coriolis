@@ -354,7 +354,6 @@ namespace Anabatic {
 
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
-    cdebug_log(149,0) << "Session::getSaturateRatio()=" << Session::getSaturateRatio() << endl;
 
     GCellKeyQueue  queue;
     GCell::Set     invalidateds;
