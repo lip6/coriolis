@@ -215,9 +215,9 @@ namespace Anabatic {
     DbU::Unit   xMax;
     DbU::Unit   yMin;
     DbU::Unit   yMax;
-    Vertical*   vertical;
-    Horizontal* horizontal;
-    RoutingPad* routingPad;
+    Vertical*   vertical   = nullptr;
+    Horizontal* horizontal = nullptr;
+    RoutingPad* routingPad = nullptr;
 
     if ( (horizontal = dynamic_cast<Horizontal*>(component)) ) {
       cdebug_log(145,0) << "Anchor: " << horizontal << "@" << horizontal->getSourcePosition() << endl;
@@ -234,8 +234,9 @@ namespace Anabatic {
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
       Occurrence     occurrence     = routingPad->getOccurrence();
       Transformation transformation = occurrence.getPath().getTransformation();
-      Horizontal*    horizontal     = dynamic_cast<Horizontal*>( occurrence.getEntity() );
-      Vertical*      vertical       = dynamic_cast<Vertical*  >( occurrence.getEntity() );
+
+      horizontal = dynamic_cast<Horizontal*>( occurrence.getEntity() );
+      vertical   = dynamic_cast<Vertical*  >( occurrence.getEntity() );
 
       cdebug_log(145,0) << "Anchor: " << occurrence.getEntity() << endl;
       cdebug_log(145,0) << "transf: " << transformation << endl;
@@ -251,10 +252,9 @@ namespace Anabatic {
                           <<              " y:" << DbU::getValueString(yborder)
                           << endl;
 
-      // HARDCODED.
-        if (   (Session::getRoutingGauge()->getName() == "sxlib")
-           and (bb.getWidth() == DbU::fromLambda(1.0)) ) {
-          bb.inflate( DbU::fromLambda(0.5), 0 );
+        if (lg->isHorizontal() xor (horizontal != nullptr)) {
+          cdebug_log(145,0) << "Gauge and segment orientation differ, rotating VIA bottom." << endl;
+          std::swap( xborder, yborder );
         }
 
         bb.inflate( -xborder, -yborder );
