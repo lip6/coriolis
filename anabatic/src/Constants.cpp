@@ -229,13 +229,14 @@ namespace Anabatic {
 // Class  :  "Anabatic::StyleFlags".
 
   
-  const BaseFlags  StyleFlags::NoStyle   =  0;
-  const BaseFlags  StyleFlags::HV        = (1L <<  0);
-  const BaseFlags  StyleFlags::VH        = (1L <<  1);
-  const BaseFlags  StyleFlags::OTH       = (1L <<  2);
-  const BaseFlags  StyleFlags::Channel   = (1L <<  3);
-  const BaseFlags  StyleFlags::Hybrid    = (1L <<  4);
-  const BaseFlags  StyleFlags::M1Offgrid = (1L <<  5);
+  const BaseFlags  StyleFlags::NoStyle         =  0;
+  const BaseFlags  StyleFlags::HV              = (1L <<  0);
+  const BaseFlags  StyleFlags::VH              = (1L <<  1);
+  const BaseFlags  StyleFlags::OTH             = (1L <<  2);
+  const BaseFlags  StyleFlags::Channel         = (1L <<  3);
+  const BaseFlags  StyleFlags::Hybrid          = (1L <<  4);
+  const BaseFlags  StyleFlags::M1Offgrid       = (1L <<  5);
+  const BaseFlags  StyleFlags::VSmallAsOffgrid = (1L <<  6);
 
 
   StyleFlags::~StyleFlags ()
@@ -244,13 +245,14 @@ namespace Anabatic {
 
   StyleFlags  StyleFlags::toFlag ( std::string textFlag )
   {
-    if (textFlag == "HV")        return HV;
-    if (textFlag == "VH")        return VH;
-    if (textFlag == "OTH")       return OTH;
-    if (textFlag == "Channel")   return Channel;
-    if (textFlag == "Hybrid")    return Hybrid;
-    if (textFlag == "NoStyle")   return NoStyle;
-    if (textFlag == "M1Offgrid") return M1Offgrid;
+    if (textFlag == "HV")              return HV;
+    if (textFlag == "VH")              return VH;
+    if (textFlag == "OTH")             return OTH;
+    if (textFlag == "Channel")         return Channel;
+    if (textFlag == "Hybrid")          return Hybrid;
+    if (textFlag == "NoStyle")         return NoStyle;
+    if (textFlag == "M1Offgrid")       return M1Offgrid;
+    if (textFlag == "VSmallAsOffgrid") return VSmallAsOffgrid;
     std::cerr << Error( "StyleFlags::toFlag(): Unknown flag value \"%s\"", textFlag.c_str() ) << std::endl;
     return NoStyle;
   }
@@ -274,12 +276,13 @@ namespace Anabatic {
   {
     ostringstream s;
 
-    if (_flags & (uint64_t)HV)        { s << (s.tellp() ? "|" : "") << "HV"; }
-    if (_flags & (uint64_t)VH)        { s << (s.tellp() ? "|" : "") << "VH"; }
-    if (_flags & (uint64_t)OTH)       { s << (s.tellp() ? "|" : "") << "OTH"; }
-    if (_flags & (uint64_t)Channel)   { s << (s.tellp() ? "|" : "") << "Channel"; }
-    if (_flags & (uint64_t)Hybrid )   { s << (s.tellp() ? "|" : "") << "Hybrid"; }
-    if (_flags & (uint64_t)M1Offgrid) { s << (s.tellp() ? "|" : "") << "M1Offgrid"; }
+    if (_flags & (uint64_t)HV)              { s << (s.tellp() ? "|" : "") << "HV"; }
+    if (_flags & (uint64_t)VH)              { s << (s.tellp() ? "|" : "") << "VH"; }
+    if (_flags & (uint64_t)OTH)             { s << (s.tellp() ? "|" : "") << "OTH"; }
+    if (_flags & (uint64_t)Channel)         { s << (s.tellp() ? "|" : "") << "Channel"; }
+    if (_flags & (uint64_t)Hybrid )         { s << (s.tellp() ? "|" : "") << "Hybrid"; }
+    if (_flags & (uint64_t)M1Offgrid)       { s << (s.tellp() ? "|" : "") << "M1Offgrid"; }
+    if (_flags & (uint64_t)VSmallAsOffgrid) { s << (s.tellp() ? "|" : "") << "VSmallAsOffgrid"; }
     s << " (0x" << hex << _flags << ")";
     return s.str();
   }

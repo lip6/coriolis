@@ -142,7 +142,7 @@ namespace Anabatic {
   AutoContact* NetBuilderHV::doRp_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
-    if (rp->isM1Offgrid()) {
+    if (rp->isM1Offgrid() or (useVSmallAsOffgrid() and rp->isVSmall())) {
       cdebug_tabw(145,-1);
       return doRp_AccessOffgrid( gcell, rp, flags );
     }
@@ -152,7 +152,10 @@ namespace Anabatic {
     AutoContact* rpContactTarget = NULL;
 
     Flags useNonPref = Flags::NoFlags;
-    if (flags & UseNonPref) useNonPref |= Flags::UseNonPref;
+    if (flags & UseNonPref) {
+      cdebug_log(145,0) << getTypeName() << "useNonPref=" << useNonPref << endl;
+      useNonPref |= Flags::UseNonPref;
+    }
     
     flags |= checkRoutingPadSize( rp );
 
@@ -293,7 +296,8 @@ namespace Anabatic {
     doRp_AutoContacts( gcell, rp, rpSourceContact, rpContactTarget, flags );
 
     AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildRoutingLayer(rpDepth+1) );
-    AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|Flags::UseNonPref );
+    AutoSegment* nonPref     = AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical|Flags::UseNonPref );
+    nonPref->setFlags( AutoSegment::SegForOffgrid );
     rpSourceContact = subContact1;
 
     subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );

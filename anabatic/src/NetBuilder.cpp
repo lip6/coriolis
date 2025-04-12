@@ -296,6 +296,7 @@ namespace Anabatic {
 
   NetBuilder::NetBuilder ()
     : _anabatic              (NULL)
+    , _routingStyle          (StyleFlags::NoStyle)
     , _forks                 ()
     , _connexity             ()
     , _topology              (0)
@@ -2425,7 +2426,8 @@ namespace Anabatic {
     cdebug_log(149,0) << "NetBuilder::load( " << net << " )" << endl;
     cdebug_tabw(145,1);
 
-    _anabatic = anabatic;
+    _anabatic     = anabatic;
+    _routingStyle = anabatic->getConfiguration()->getRoutingStyle();
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;

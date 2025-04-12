@@ -137,13 +137,14 @@ namespace Anabatic {
 
   class StyleFlags : public Hurricane::BaseFlags {
     public:
-      static const BaseFlags  NoStyle  ; // =  0;
-      static const BaseFlags  HV       ; // = (1 <<  0);
-      static const BaseFlags  VH       ; // = (1 <<  1);
-      static const BaseFlags  OTH      ; // = (1 <<  2);
-      static const BaseFlags  Channel  ; // = (1 <<  3);
-      static const BaseFlags  Hybrid   ; // = (1 <<  4);
-      static const BaseFlags  M1Offgrid; // = (1 <<  5);
+      static const BaseFlags  NoStyle        ; // =  0;
+      static const BaseFlags  HV             ; // = (1 <<  0);
+      static const BaseFlags  VH             ; // = (1 <<  1);
+      static const BaseFlags  OTH            ; // = (1 <<  2);
+      static const BaseFlags  Channel        ; // = (1 <<  3);
+      static const BaseFlags  Hybrid         ; // = (1 <<  4);
+      static const BaseFlags  M1Offgrid      ; // = (1 <<  5);
+      static const BaseFlags  VSmallAsOffgrid; // = (1 <<  6);
     public:
       inline               StyleFlags   ( std::string );
       inline               StyleFlags   ( uint64_t flags = NoStyle );

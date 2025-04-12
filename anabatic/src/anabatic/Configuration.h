@@ -128,6 +128,8 @@ namespace Anabatic {
       inline  DbU::Unit          getAntennaGateMaxWL  () const;
       inline  DbU::Unit          getAntennaDiodeMaxWL () const;
               DbU::Unit          getGlobalThreshold   () const;
+      inline  int                getHsmallThreshold   () const;
+      inline  int                getVsmallThreshold   () const;
               void               setAllowedDepth      ( size_t );
               void               setSaturateRatio     ( float );
               void               setSaturateRp        ( size_t );
@@ -168,6 +170,8 @@ namespace Anabatic {
       float                   _saturateRatio;
       size_t                  _saturateRp;
       DbU::Unit               _globalThreshold;
+      int                     _hsmallThreshold;
+      int                     _vsmallThreshold;
       size_t                  _allowedDepth;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;
@@ -208,13 +212,15 @@ namespace Anabatic {
   inline  const Layer* Configuration::getDContactLayer     () const { return getContactLayer( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
-  inline float         Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
-  inline float         Configuration::getSaturateRatio     () const { return _saturateRatio; }
-  inline size_t        Configuration::getSaturateRp        () const { return _saturateRp; }
+  inline  float        Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
+  inline  float        Configuration::getSaturateRatio     () const { return _saturateRatio; }
+  inline  size_t       Configuration::getSaturateRp        () const { return _saturateRp; }
   inline  std::string  Configuration::getDiodeName         () const { return _diodeName; }
   inline  DbU::Unit    Configuration::getAntennaGateMaxWL  () const { return _antennaGateMaxWL; }
   inline  DbU::Unit    Configuration::getAntennaDiodeMaxWL () const { return _antennaDiodeMaxWL; }
-  inline DbU::Unit     Configuration::getGlobalThreshold   () const { return _globalThreshold; }
+  inline  DbU::Unit    Configuration::getGlobalThreshold   () const { return _globalThreshold; }
+  inline  int          Configuration::getVsmallThreshold   () const { return _vsmallThreshold; }
+  inline  int          Configuration::getHsmallThreshold   () const { return _hsmallThreshold; }
   inline  void         Configuration::setRoutingStyle      ( StyleFlags flags ) { _routingStyle  =  flags; }
   inline  void         Configuration::resetRoutingStyle    ( StyleFlags flags ) { _routingStyle &= ~flags; }
 

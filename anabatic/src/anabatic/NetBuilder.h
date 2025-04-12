@@ -161,6 +161,7 @@ namespace Anabatic {
       inline  bool                          isStrictChannel        () const;
       inline  bool                          isUpperMetalRp         () const;
       inline  AnabaticEngine*               getAnabatic            () const;
+      inline  bool                          useVSmallAsOffgrid     () const;
       inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
@@ -373,6 +374,7 @@ namespace Anabatic {
     // Attributes.
     private:
              AnabaticEngine*              _anabatic;
+             StyleFlags                   _routingStyle;
              ForkStack                    _forks;
              UConnexity                   _connexity;
              unsigned int                 _topology;
@@ -399,6 +401,7 @@ namespace Anabatic {
 
   inline bool                          NetBuilder::isStrictChannel        () const { return _isStrictChannel; }
   inline AnabaticEngine*               NetBuilder::getAnabatic            () const { return _anabatic; }
+  inline bool                          NetBuilder::useVSmallAsOffgrid     () const { return _routingStyle & StyleFlags::VSmallAsOffgrid; }
   inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
   inline NetBuilder::UConnexity&       NetBuilder::getConnexity           ()       { return _connexity; }

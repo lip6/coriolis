@@ -185,7 +185,7 @@ namespace Anabatic {
         if (aligneds.empty()) canonical->setFlags( AutoSegment::SegNotAligned );
 
         if (not getRoutingGauge()->isSymbolic()
-           and (userConstraints.getSize() < Session::getPitch(1)*2) ) {
+           and (userConstraints.getSize() < Session::getPitch(1)) ) {
             cerr << Warning( "Session::_canonize(): On %s\n"
                              "          Combined user constraints are too tight [%s : %s]."
                            , getString(canonical).c_str()

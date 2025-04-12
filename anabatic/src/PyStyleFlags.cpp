@@ -86,13 +86,14 @@ extern "C" {
   extern  void  PyStyleFlags_postModuleInit ()
   {
     PyObject* constant = NULL;
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::NoStyle  , "NoStyle" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::HV       , "HV" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::VH       , "VH" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::OTH      , "OTH" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::Channel  , "Channel" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::Hybrid   , "Hybrid" );
-    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::M1Offgrid, "M1Offgrid" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::NoStyle        , "NoStyle" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::HV             , "HV" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::VH             , "VH" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::OTH            , "OTH" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::Channel        , "Channel" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::Hybrid         , "Hybrid" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::M1Offgrid      , "M1Offgrid" );
+    LoadObjectConstant( PyTypeStyleFlags.tp_dict, (uint64_t)StyleFlags::VSmallAsOffgrid, "VSmallAsOffgrid" );
   }
 
 
@@ -113,7 +114,8 @@ extern "C" {
        or (value == (uint64_t)StyleFlags::OTH)
        or (value == (uint64_t)StyleFlags::Channel)
        or (value == (uint64_t)StyleFlags::Hybrid)
-       or (value == (uint64_t)StyleFlags::M1Offgrid))
+       or (value == (uint64_t)StyleFlags::M1Offgrid)
+       or (value == (uint64_t)StyleFlags::VSmallAsOffgrid))
       return value;
     return StyleFlags::NoStyle;
   }

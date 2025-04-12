@@ -25,6 +25,7 @@
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/Session.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoContactTurn.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/AutoHorizontal.h"
@@ -725,10 +726,12 @@ namespace Anabatic {
     }
 
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
-    if (_flags & SegCreated) oldSpan.makeEmpty();
-    expandToMinLength( oldSpan );
-    if (_flags & SegAtMinArea) unexpandToMinLength();
     updatePositions();
+    if (_flags & SegCreated) oldSpan.makeEmpty();
+    if (expandToMinLength(oldSpan)) updatePositions();
+    if (_flags & SegAtMinArea) {
+      if (unexpandToMinLength()) updatePositions();
+    }
 
     unsigned int observerFlags = Revalidate;
     if ( (_flags & SegCreated) or (oldSpinFlags != (_flags & SegDepthSpin)) )
@@ -778,7 +781,8 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
+      if      (isNonPref())                  cap = getViaToSameCap  (depth);
+      else if (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
       // if (getId() == 473829) {
@@ -798,7 +802,8 @@ namespace Anabatic {
       }
     } else {
       if (flags & Flags::Target) {
-        if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
+        if      (isNonPref())                  cap = getViaToSameCap  (depth);
+        else if (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
         else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
         else                                   cap = getViaToSameCap  (depth);
         // if (getId() == 473829) {
@@ -867,22 +872,19 @@ namespace Anabatic {
   }
 
 
-  AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max )
+  AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max ) const
   {
     cdebug_log(145,0) << "AutoSegment::getCanonical() - " << this << endl;
 
     min = getSourcePosition();
     max = getTargetPosition();
-
     if (max < min) swap( min, max );
 
   //cdebug_log(145,0) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
 
-    AutoSegment* canonical    = this;
+    AutoSegment* canonical    = const_cast<AutoSegment*>( this );
     size_t       canonicals   = isCanonical();
     size_t       aligneds     = 1;
-    DbU::Unit    collapsedMin;
-    DbU::Unit    collapsedMax;
 
     if (not isNotAligned()) {
       for ( AutoSegment* segment : getAligneds() ) {
@@ -891,8 +893,8 @@ namespace Anabatic {
           canonicals++;
         }
 
-        collapsedMin = segment->getSourcePosition();
-        collapsedMax = segment->getTargetPosition();
+        DbU::Unit collapsedMin = segment->getSourcePosition();
+        DbU::Unit collapsedMax = segment->getTargetPosition();
         if (collapsedMax < collapsedMin) swap( collapsedMin, collapsedMax );
         if (collapsedMin < min) min = collapsedMin;
         if (collapsedMax > max) max = collapsedMax;
@@ -957,8 +959,8 @@ namespace Anabatic {
   { return AutoSegments_CachedOnContact( getAutoTarget(), direction ); }
 
 
-  AutoSegments  AutoSegment::getAligneds ( Flags flags )
-  { return AutoSegments_Aligneds( this, flags ); }
+  AutoSegments  AutoSegment::getAligneds ( Flags flags ) const
+  { return AutoSegments_Aligneds( const_cast<AutoSegment*>(this), flags ); }
 
 
   AutoSegments  AutoSegment::getConnecteds ( Flags flags )
@@ -1180,6 +1182,33 @@ namespace Anabatic {
     if (flags & Flags::Realignate) setAxis( getAxis(), flags );
 
   //setAxis( optimalMin, flags );
+
+    if (isNonPref()) {
+      cdebug_log(149,0) << "Non-pref: aligning parallel" << endl;
+      AutoContactTerminal* source = dynamic_cast<AutoContactTerminal*>( getAutoSource() );
+      AutoContactTerminal* target = dynamic_cast<AutoContactTerminal*>( getAutoTarget() );
+      AutoContactTurn*     turn   = nullptr;
+      if (source or target) {
+        if (target) {
+          source = target;
+          turn   = dynamic_cast<AutoContactTurn*>( getAutoSource() );
+        } else {
+          turn   = dynamic_cast<AutoContactTurn*>( getAutoTarget() );
+        }
+        if (turn) {
+          AutoSegment* perpandicular = turn->getPerpandicular( this );
+          cdebug_log(149,0) << "perpandicular: " << perpandicular << endl;
+          turn = dynamic_cast<AutoContactTurn*>( perpandicular->getOppositeAnchor( turn ));
+          if (turn) {
+            AutoSegment* parallel = turn->getPerpandicular( perpandicular );
+            if (parallel->isUnsetAxis()) {
+              parallel->setAxis( getAxis() );
+              cdebug_log(149,0) << "parallel aligned: " << parallel << endl;
+            }
+          }
+        }
+      }
+    }
 
     cdebug_tabw(149,-1);
     return false;
@@ -1795,6 +1824,15 @@ namespace Anabatic {
       if (getLength() > getPPitch()) return false;
       cdebug_log(149,0) << "| Considering this global anyway because it is too short. " << endl;
     }
+    if (not isNotAligned()) {
+      Interval alignedLength;
+      getCanonical( alignedLength );
+      if (alignedLength.getSize() >= getPPitch()) {
+        cdebug_log(149,0) << "| Canonical " << DbU::getValueString( alignedLength.getSize() )
+                          << " length superior to P-Pitch " << this << endl;
+        return false;
+      }
+    }
 
     DbU::Unit sourceAxis = 0;
     DbU::Unit targetAxis = 0;
@@ -1811,9 +1849,9 @@ namespace Anabatic {
   }
 
 
-  void  AutoSegment::expandToMinLength ( Interval span )
+  bool  AutoSegment::expandToMinLength ( Interval span )
   {
-    if (not isNearMinArea()) return;
+    if (not isNearMinArea()) return false;
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(149,1) << "AutoSegment::expandToMinLength() " << this << endl;
     cdebug_log(149,0) << "In span=" << span << endl;
@@ -1826,6 +1864,19 @@ namespace Anabatic {
     DbU::Unit targetCap      = getExtensionCap( Flags::Target|Flags::LayerCapOnly );
     DbU::Unit segMinLength   = getAnchoredLength() + sourceCap + targetCap;
     DbU::Unit techMinLength  = getMinimalLength( Session::getLayerDepth( getLayer() ));
+
+    if (not isNotAligned()) {
+      Interval alignedLength;
+      getCanonical( alignedLength );
+      cdebug_log(149,0) << "Aligned length "      << DbU::getValueString(alignedLength.getSize())
+                        << " vs. current length " << DbU::getValueString(segMinLength) << endl;
+      if (alignedLength.getSize() >= techMinLength) {
+        cdebug_tabw(149,-1);
+        DebugSession::close();
+        return false;
+      }
+    }
+
     cdebug_log(149,0) << "Minimal length "      << DbU::getValueString(techMinLength)
                       << " vs. current length " << DbU::getValueString(segMinLength) << endl;
     if (segMinLength >= techMinLength) {
@@ -1833,15 +1884,23 @@ namespace Anabatic {
         setFlags( SegAtMinArea );
       cdebug_tabw(149,-1);
       DebugSession::close();
-      return;
+      return false;
     }
     sourceCap    = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     targetCap    = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
     segMinLength = getAnchoredLength() + sourceCap + targetCap;
+
+    cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
+    cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
+    cdebug_log(149,0) << "* duSource "        << DbU::getValueString(getDuSource()) << endl;
+    cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(getDuTarget()) << endl;
     
     DbU::Unit oneGrid      = DbU::fromGrid( 1 );
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
+    cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
+                      << " before shift targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (targetExpand % oneGrid)
       targetExpand += oneGrid - targetExpand % oneGrid;
     if (sourceExpand % oneGrid)
@@ -1870,12 +1929,15 @@ namespace Anabatic {
                       << " "        << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
                       << "] expand:" << DbU::getValueString(techMinLength - segMinLength)<< endl;
     setFlags( SegAtMinArea );
+    updatePositions();
     cdebug_tabw(149,-1);
     DebugSession::close();
+
+    return true;
   }
 
 
-  void  AutoSegment::unexpandToMinLength ()
+  bool  AutoSegment::unexpandToMinLength ()
   {
     cdebug_log(149,0) << "AutoSegment::unexpandToMinLength() " << this << endl;
   // Note: sourceU is a negative number.
@@ -1886,10 +1948,12 @@ namespace Anabatic {
     DbU::Unit sourceCap     = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     DbU::Unit targetCap     = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
     DbU::Unit segLength     = getAnchoredLength();
+    DbU::Unit segFullLength = segLength - duSource  + duTarget;
     DbU::Unit segMinLength  = segLength + sourceCap + targetCap;
     DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
 
     cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
+    cdebug_log(149,0) << "* Full length "     << DbU::getValueString(segFullLength) << endl;
     cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
     cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
     cdebug_log(149,0) << "* duSource "        << DbU::getValueString(duSource) << endl;
@@ -1897,20 +1961,20 @@ namespace Anabatic {
 
     if ((duSource == 0) and (duTarget == 0)) {
       cdebug_log(149,0) << "Already reset!" << endl;
-      return;
+      return false;
     }
 
-    if (segLength < techMinLength) {
+    if (segFullLength <= techMinLength) {
       cdebug_log(149,0) << "Still at min area, do nothing." << endl;
-      return;
+      return false;
     }
 
-    if (segMinLength >= techMinLength) {
+    if (segLength >= techMinLength) {
       cdebug_log(149,0) << "Complete reset." << endl;
       setDuSource( 0 );
       setDuTarget( 0 );
       unsetFlags( SegAtMinArea );
-      return;
+      return true;
     }
 
     DbU::Unit shrink = (getAnchoredLength() + duTarget - duSource) - techMinLength;
@@ -1920,7 +1984,7 @@ namespace Anabatic {
                      , DbU::getValueString(shrink).c_str()
                      , getString(this).c_str()
                      ) << endl;
-      return;
+      return false;
     }
     
     DbU::Unit margin = -duSource - sourceCap;
@@ -1928,7 +1992,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "Shrink source of " << DbU::getValueString(shrink) << endl;
       duSource += shrink;
       setDuSource( duSource );
-      return;
+      return true;
     }
 
     setDuSource( 0 );
@@ -1940,6 +2004,8 @@ namespace Anabatic {
       cdebug_log(149,0) << "Target reset" << endl;
       setDuTarget( 0 );
     }
+
+    return true;
   }
 
 
@@ -2002,10 +2068,14 @@ namespace Anabatic {
     // if (  source->isHTee() or source->isVTee()
     //    or target->isHTee() or target->isVTee() ) return false;
 
-    cdebug_log(159,0) << "  length:" << DbU::getValueString(length) << endl;
+    cdebug_log(159,0) << "  length:" << DbU::getValueString(length)
+                      << " (" << length << ")" << endl;
     if (flags & Flags::NullLength) return (length == 0); 
 
     unsigned int perpandicularDepth = getDepth();
+    cdebug_log(159,0) << "  perpandicularDepth=" << perpandicularDepth
+                      << " Session::getDepth()=" << Session::getDepth()
+                      << endl;
     if (isSpinBottom()) {
       if (perpandicularDepth > 0) --perpandicularDepth;
     } else if (isSpinTop()) {
@@ -2014,8 +2084,10 @@ namespace Anabatic {
     } else
       return false;
     
-    if (getAnchoredLength() >= Session::getPitch(perpandicularDepth) * 2) return false;
+    cdebug_log(159,0) << "  ppitch*2:" << DbU::getValueString(Session::getPitch(perpandicularDepth)*2) << endl;
+    if (length >= Session::getPitch(perpandicularDepth) * 2) return false;
 
+    cdebug_log(159,0) << "Can be reduced" << endl;
     return true;
   }
 
