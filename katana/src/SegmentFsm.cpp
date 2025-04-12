@@ -787,6 +787,8 @@ namespace Katana {
     _event1->setEventLevel( 0 );
 
     cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+    if (not (getSegment1()->isGlobal() or getSegment1()->isFixed()))
+      getSegment1()->forcePositions( getCost(i)->getRefTrackFree() );
     Session::addInsertEvent( getSegment1(), getTrack1(i), getCandidateAxis1(i) );
 
     if (_event2) {

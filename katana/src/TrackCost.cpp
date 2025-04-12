@@ -50,6 +50,7 @@ namespace Katana {
     , _segment2        (symSegment)
     , _interval1       (refSegment->getCanonicalInterval())
     , _interval2       ((symSegment) ? symSegment->getCanonicalInterval() : Interval())
+    , _refTrackFree    ()
     , _terminals       (0)
     , _delta           (-_interval1.getSize() -_interval2.getSize())
     , _deltaShared     (0)

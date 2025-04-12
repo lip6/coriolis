@@ -194,6 +194,8 @@ namespace Katana {
   void           TrackElement::setDoglegLevel       ( uint32_t ) { }
   void           TrackElement::swapTrack            ( TrackElement* ) { }
   void           TrackElement::reschedule           ( uint32_t ) { }
+  void           TrackElement::forcePositions       ( const Interval& ) { }
+  void           TrackElement::forcePositions       ( DbU::Unit, DbU::Unit ) { }
 //void           TrackElement::detach               () { }
 //void           TrackElement::detach               ( TrackSet& ) { }
   void           TrackElement::revalidate           () { }

@@ -210,6 +210,8 @@ namespace Katana {
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();
       virtual void                    updateTrackSpan        ();
+      virtual void                    forcePositions         ( const Interval& freeSpan );
+      virtual void                    forcePositions         ( DbU::Unit source, DbU::Unit target );
       virtual void                    addTrackCount          ( int32_t );
       virtual void                    incOverlapCost         ( TrackCost& ) const;
       virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::AutoSegment::SegAxisSet );

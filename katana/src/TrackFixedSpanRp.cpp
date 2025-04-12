@@ -96,9 +96,12 @@ namespace Katana {
   
   void  TrackFixedSpanRp::setNet ( Net* )
   {
-    throw Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
-                 "        on %s."
-               , getString(this).c_str() );
+    // throw Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
+    //              "        on %s."
+    //            , getString(this).c_str() );
+    cerr << Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
+                   "        on %s."
+                 , getString(this).c_str() ) << endl;
   }
 
   Net* TrackFixedSpanRp::getNet () const

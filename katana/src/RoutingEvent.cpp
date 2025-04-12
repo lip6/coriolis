@@ -559,8 +559,10 @@ namespace Katana {
   {
     cdebug_log(159,0) << "_rescheduleAsPref() " << _segment << endl;
     cdebug_log(159,0) << "_segment->getDirection() " << _segment->getDirection() << endl;
+    cdebug_log(159,0) << "_segment->isForOffgrid() " << _segment->isForOffgrid() << endl;
     cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(_segment->getLayer()) << endl;
     if (Session::getStage() != StageNegociate) return false;
+    if (_segment->isForOffgrid()) return false;
     if (_segment->getDirection() == Session::getDirection(_segment->getLayer()))
       return false;
     if (_dataNegociate and (_dataNegociate->getState() < DataNegociate::MaximumSlack))

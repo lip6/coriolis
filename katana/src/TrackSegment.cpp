@@ -407,6 +407,17 @@ namespace Katana {
   }
 
 
+  void  TrackSegment::forcePositions ( DbU::Unit source, DbU::Unit target )
+  { _base->forcePositions( source, target ); }
+
+
+  void  TrackSegment::forcePositions ( const Interval& freeSpan )
+  {
+    _base->forcePositions( freeSpan );
+    _base->invalidate();
+  }
+
+
   void  TrackSegment::setTrack ( Track* track )
   {
     if (track) {
@@ -480,6 +491,9 @@ namespace Katana {
       Interval perpandicularSpan ( getAxis() );
       DbU::Unit cap = std::max( base()->getExtensionCap( Anabatic::Flags::Source )
                               , base()->getExtensionCap( Anabatic::Flags::Target ));
+      cdebug_log(159,0) << "  axis=" << DbU::getValueString(getAxis())
+                        <<   " cap=" << DbU::getValueString(cap)
+                        << endl;
       perpandicularSpan.inflate( cap );
 
       _sourceU = perpandicularSpan.getVMin();
@@ -1150,8 +1164,13 @@ namespace Katana {
     base()->checkPositions();
 
     if (isNonPref()) {
-      Interval perpandicularSpan ( getAxis() );
-      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
+      Interval   perpandicularSpan ( getAxis() );
+      DbU::Unit  cap               = base()->getExtensionCap( Anabatic::Flags::Source );
+      perpandicularSpan.inflate( cap );
+      if (getId() == 825)
+        cerr << "  axis=" << DbU::getValueString(getAxis())
+             <<   " cap=" << DbU::getValueString(cap)
+             << endl;
 
       min = perpandicularSpan.getVMin();
       max = perpandicularSpan.getVMax();

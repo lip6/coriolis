@@ -553,6 +553,7 @@ namespace Katana {
     const Interval& interval     = cost.getInterval();
           Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
+    cost.setRefTrackFree( freeInterval );
     if (not freeInterval.contains(interval)) {
       cost.setFreeLength( 0 );
     } else {
