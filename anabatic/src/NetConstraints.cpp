@@ -28,7 +28,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Cell.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTurn.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/Session.h"
 #include "anabatic/AnabaticEngine.h"
@@ -133,16 +133,36 @@ namespace {
         // Propagate constraint on non-pref segments (directly on the RP).
         cdebug_log(146,0) << "Propagate constraint on non-pref segments" << endl;
         for ( AutoSegment* segment : nonprefSegments ) {
-          RoutingLayerGauge* segRlg            = Session::getLayerGauge( segment->getLayer() );
-          AutoContact*       targetContact     = segment->getOppositeAnchor( sourceContact );
-          Box                nonPrefConstraint = constraintBox;
+          RoutingLayerGauge* segRlg             = Session::getLayerGauge( segment->getLayer() );
+          DbU::Unit          pitch              = segRlg->getPitch();
+          AutoContact*       targetContact      = segment->getOppositeAnchor( sourceContact );
+          Box                nonPrefConstraint  = constraintBox;
+          Box                parallelConstraint = constraintBox;
           if (not segRlg or not targetContact) continue;
           if (segment->isVertical()) {
-            nonPrefConstraint.inflate( 0, segRlg->getPitch(), 0, segRlg->getPitch() );
+            nonPrefConstraint .inflate( 0      , pitch, 0      , pitch );
+            parallelConstraint.inflate( 2*pitch, pitch, 2*pitch, pitch );
           } else {
-            nonPrefConstraint.inflate( segRlg->getPitch(), 0, segRlg->getPitch(), 0 );
+            nonPrefConstraint .inflate( pitch, 0      , pitch, 0       );
+            parallelConstraint.inflate( pitch, 2*pitch, pitch, 2*pitch );
           }
           targetContact->setConstraintBox( nonPrefConstraint );
+          cdebug_log(146,0) << "targetContact " << targetContact << endl;
+          cdebug_log(146,0) << "-> non-pref constraint " << nonPrefConstraint << endl;
+          cdebug_log(146,0) << "-> parallel constraint " << parallelConstraint << endl;
+
+          if (rp->isVSmall()) {
+            AutoContactTurn* turn = dynamic_cast<AutoContactTurn*>( targetContact );
+            if (turn) {
+              AutoSegment* perpandicular = turn->getPerpandicular( segment );
+              cdebug_log(149,0) << "perpandicular: " << perpandicular << endl;
+              turn = dynamic_cast<AutoContactTurn*>( perpandicular->getOppositeAnchor( turn ));
+              if (turn and perpandicular->isLocal()) {
+                cdebug_log(146,0) << "turn " << turn << endl;
+                turn->setConstraintBox( parallelConstraint );
+              }
+            }
+          }
         }
 
         // Propagate constraint through vertically aligned segments.

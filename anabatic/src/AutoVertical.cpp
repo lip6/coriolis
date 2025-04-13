@@ -452,6 +452,7 @@ namespace Anabatic {
       mergeNativeMin( gcell->getXMin() );
       mergeNativeMax( gcell->getConstraintXMax() );
     }
+    resetUserConstraints();
   }
 
 

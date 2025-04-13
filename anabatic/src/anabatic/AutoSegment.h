@@ -612,7 +612,7 @@ namespace Anabatic {
   inline  void            AutoSegment::mergeNativeMax         ( DbU::Unit max ) { _nativeConstraints.getVMax() = std::min( max, _nativeConstraints.getVMax() ); }
   inline  void            AutoSegment::resetNativeConstraints ( DbU::Unit min, DbU::Unit max ) { _nativeConstraints = Interval( min, max ); }
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
-  inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
+  inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = _nativeConstraints; }
   inline  DbU::Unit       AutoSegment::getAnchoredLength      () const { return std::abs(getTargetU() - getSourceU()); }
   inline  void            AutoSegment::forcePositions         ( const Interval& freeSpan ) { _sourcePosition=freeSpan.getVMin(); _targetPosition=freeSpan.getVMax(); }
   inline  void            AutoSegment::forcePositions         ( DbU::Unit source, DbU::Unit target ) { _sourcePosition=source; _targetPosition=target; }

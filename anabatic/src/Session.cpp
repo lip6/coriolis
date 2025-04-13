@@ -186,12 +186,12 @@ namespace Anabatic {
 
         if (not getRoutingGauge()->isSymbolic()
            and (userConstraints.getSize() < Session::getPitch(1)) ) {
-            cerr << Warning( "Session::_canonize(): On %s\n"
-                             "          Combined user constraints are too tight [%s : %s]."
-                           , getString(canonical).c_str()
-                           , DbU::getValueString(userConstraints.getVMin()).c_str()
-                           , DbU::getValueString(userConstraints.getVMax()).c_str()
-                           ) << endl;
+          cerr << Warning( "Session::_canonize(): On %s\n"
+                           "          Combined user constraints are too tight [%s : %s]."
+                         , getString(canonical).c_str()
+                         , DbU::getValueString(userConstraints.getVMin()).c_str()
+                         , DbU::getValueString(userConstraints.getVMax()).c_str()
+                         ) << endl;
         }
 
         cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
