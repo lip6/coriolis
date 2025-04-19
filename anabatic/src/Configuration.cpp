@@ -89,8 +89,8 @@ namespace Anabatic {
     , _saturateRatio    (Cfg::getParamDouble    ("anabatic.saturateRatio"   ,  0.8)->asDouble())
     , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      , 8   )->asInt())
     , _globalThreshold  (0)
-    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hmsallThreshold" , 3   )->asInt())
-    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vmsallThreshold" , 3   )->asInt())
+    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hsmallThreshold" , 3   )->asInt())
+    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vsmallThreshold" , 3   )->asInt())
     , _allowedDepth     (0)
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
@@ -689,6 +689,10 @@ namespace Anabatic {
 
     DbU::Unit width  = abs( target.getX() - source.getX() );
     DbU::Unit height = abs( target.getY() - source.getY() );
+    cdebug_log(145,0) << "pitch="  << DbU::getValueString(getPitch(rpDepth))
+                      << " hsmallTHreshold=" << _hsmallThreshold
+                      << " vsmallTHreshold=" << _vsmallThreshold
+                      << endl;
     cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
     cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;
     uint64_t  flags  = 0;

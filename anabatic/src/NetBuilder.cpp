@@ -2428,6 +2428,8 @@ namespace Anabatic {
 
     _anabatic     = anabatic;
     _routingStyle = anabatic->getConfiguration()->getRoutingStyle();
+    cdebug_log(149,0) << "_routingStyle=" << _routingStyle.asString() << endl;
+    
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;
