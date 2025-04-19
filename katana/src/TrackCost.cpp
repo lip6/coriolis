@@ -111,9 +111,10 @@ namespace Katana {
 
   bool  TrackCost::Compare::operator() ( const TrackCost* lhs, const TrackCost* rhs )
   {
-    if (lhs->isInfinite    () xor rhs->isInfinite    ()) return rhs->isInfinite();
-    if (lhs->isAtRipupLimit() xor rhs->isAtRipupLimit()) return rhs->isAtRipupLimit();
-    if (lhs->isBlacklisted()  xor rhs->isBlacklisted ()) return rhs->isBlacklisted();
+    if (lhs->isInfinite        () xor rhs->isInfinite        ()) return rhs->isInfinite();
+    if (lhs->isAtRipupLimit    () xor rhs->isAtRipupLimit    ()) return rhs->isAtRipupLimit();
+    if (lhs->isBlacklisted     () xor rhs->isBlacklisted     ()) return rhs->isBlacklisted();
+    if (lhs->isForcedAxisChange() xor rhs->isForcedAxisChange()) return rhs->isForcedAxisChange();
 
     if (   (_flags & TrackCost::DiscardGlobals)
        and (lhs->isOverlapGlobal() xor rhs->isOverlapGlobal()) )
@@ -266,18 +267,19 @@ namespace Katana {
     s += " "    + getString(_dataState);
     s += "+"    + getString(_ripupCount);
     s += ":"    + getString((_dataState<<2)+_ripupCount);
-    s += " "    + string ( (isInfinite()      )?"I":"-" );
-    s +=          string ( (isBlockage()      )?"b":"-" );
-    s +=          string ( (isFixed()         )?"f":"-" );
-    s +=          string ( (isHardOverlap()   )?"h":"-" );
-    s +=          string ( (isOverlap()       )?"o":"-" );
-    s +=          string ( (isOverlapGlobal ())?"g":"-" );
-    s +=          string ( (isGlobalEnclosed())?"e":"-" );
-    s +=          string ( (isAtRipupLimit  ())?"R":"-" );
-    s +=          string ( (isAnalog        ())?"a":"-" );
-    s +=          string ( (isShortNet      ())?"N":"-" );
-    s +=          string ( (isAtRipupLimit  ())?"R":"-" );
-    s +=          string ( (isBlacklisted   ())?"B":"-" );
+    s += " "    + string ( (isInfinite()        )?"I":"-" );
+    s +=          string ( (isBlockage()        )?"b":"-" );
+    s +=          string ( (isFixed()           )?"f":"-" );
+    s +=          string ( (isHardOverlap()     )?"h":"-" );
+    s +=          string ( (isOverlap()         )?"o":"-" );
+    s +=          string ( (isOverlapGlobal   ())?"g":"-" );
+    s +=          string ( (isGlobalEnclosed  ())?"e":"-" );
+    s +=          string ( (isAtRipupLimit    ())?"R":"-" );
+    s +=          string ( (isAnalog          ())?"a":"-" );
+    s +=          string ( (isShortNet        ())?"N":"-" );
+    s +=          string ( (isForcedAxisChange())?"f":"-" );
+    s +=          string ( (isAtRipupLimit    ())?"R":"-" );
+    s +=          string ( (isBlacklisted     ())?"B":"-" );
     s += " t:"  + getString(_terminals);
     s += "/d:"  + /*DbU::getValueString(_delta)*/       DbU::getValueString(_delta);
     s += "-"    + /*DbU::getValueString(_deltaShared)*/ DbU::getValueString(_deltaShared);
