@@ -29,7 +29,9 @@ namespace CRL {
 
   class DefImport {
     public:
-      enum Flags { FitAbOnCells=0x1 };
+      enum Flags { FitAbOnCells = (1 << 0)
+                 , VHDLRename   = (1 << 1)
+                 };
     public:
       static void             reset ();
       static Hurricane::Cell* load  ( std::string design, unsigned int flags );

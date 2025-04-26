@@ -71,8 +71,8 @@ namespace {
 
   class DefParser {
     public:
-      const uint32_t NoPatch =  0;
-      const uint32_t Sky130  = (1 << 10);
+      const uint32_t NoPatch    =  0;
+      const uint32_t Sky130     = (1 << 10);
     public:
       static AllianceFramework* getFramework             ();
       static Cell*              getLefCell               ( string name );
@@ -90,6 +90,7 @@ namespace {
                                ~DefParser                ();
       inline bool               hasErrors                ();
       inline bool               isSky130                 () const;
+      inline bool               doVHDLRename             () const;
       inline unsigned int       getFlags                 () const;
       inline AllianceLibrary*   getLibrary               ();
       inline Cell*              getCell                  ();
@@ -199,6 +200,7 @@ namespace {
   inline void               DefParser::setUnits                 ( double units ) { _defUnits = 1/units; }
   inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::fromPhysical(_defUnits*(double)u,DbU::UnitPower::Micro); }
   inline bool               DefParser::isSky130                 () const { return _flags & Sky130; }
+  inline bool               DefParser::doVHDLRename             () const { return _flags & DefImport::VHDLRename; }
   inline bool               DefParser::hasErrors                () { return not _errors.empty(); }
   inline unsigned int       DefParser::getFlags                 () const { return _flags; }
   inline string             DefParser::getBusBits               () const { return _busBits; }
@@ -273,7 +275,7 @@ namespace {
 
   void  DefParser::toHurricaneName ( string& defName )
   {
-    if (_busBits != "()") {
+    if ((_busBits != "()") and doVHDLRename()) {
       if (defName[defName.size()-1] == _busBits[1]) {
         size_t pos = defName.rfind( _busBits[0] );
         if (pos != string::npos) {

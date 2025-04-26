@@ -116,6 +116,14 @@ extern "C" {
   PyTypeObjectDefinitionsOfModule(CRL,DefImport)
 
 
+  extern  void  PyDefImport_postModuleInit ()
+  {
+    PyObject* constant;
+    LoadObjectConstant(PyTypeDefImport.tp_dict,DefImport::FitAbOnCells,"FitAbOnCells");
+    LoadObjectConstant(PyTypeDefImport.tp_dict,DefImport::VHDLRename  ,"VHDLRename"  );
+  }
+
+
 #endif  // End of Shared Library Code Part.
 
 }  // extern "C".

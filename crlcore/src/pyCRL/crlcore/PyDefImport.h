@@ -41,7 +41,8 @@ extern "C" {
   extern  PyTypeObject  PyTypeDefImport;
   extern  PyMethodDef   PyDefImport_Methods[];
 
-  extern  void          PyDefImport_LinkPyType();
+  extern  void          PyDefImport_LinkPyType     ();
+  extern  void          PyDefImport_postModuleInit ();
 
 
 #define IsPyDefImport(v)    ( (v)->ob_type == &PyTypeDefImport )
