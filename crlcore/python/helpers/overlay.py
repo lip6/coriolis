@@ -25,6 +25,7 @@ Contains:
 * ``overlay.CfgCache``      : A cache for Cfg parameters.
 """
 
+import sys
 from ..  import Cfg
 from ..  import Hurricane
 from .io import isVL
@@ -353,4 +354,6 @@ class CfgCache ( object ):
                 self._rattr[attrName].display()
                 continue
             print( '     - {}.{} = {}'.format(self._path,attrName,self._rattr[attrName]) )
+        sys.stdout.flush()
+        sys.stderr.flush()
 
