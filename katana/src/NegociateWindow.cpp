@@ -735,7 +735,12 @@ namespace Katana {
       //   Breakpoint::stop( 0, "Overlap has happened" );
       //   UpdateSession::open();
       // }
-      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+      if (RoutingEvent::getProcesseds() >= limit) {
+        setInterrupt( true );
+        cerr << Error( "NegociateWindow::_negociate(): Routing events limit has been reached (%ld).\n"
+                       "        You may consider increasing \"katana.eventsLimit\"."
+                     , limit ) << endl;
+      }
     }
     _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );
   //_pack( count, true );
@@ -774,7 +779,12 @@ namespace Katana {
         }
         event->process( _eventQueue, _eventHistory, _eventLoop );
         count++;
-        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+        if (RoutingEvent::getProcesseds() >= limit) {
+          setInterrupt( true );
+          cerr << Error( "NegociateWindow::_negociate(): Routing events limit has been reached (%ld).\n"
+                         "        You may consider increasing \"katana.eventsLimit\"."
+                       , limit ) << endl;
+        }
 
         // if (RoutingEvent::getProcesseds() == 55063) {
         //   UpdateSession::close();
