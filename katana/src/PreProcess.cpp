@@ -154,8 +154,6 @@ namespace {
     Anabatic::AutoContact* source        = nullptr;
     GCell*                 gcell         = nullptr;
     RoutingPad*            rp            = nullptr;
-    DbU::Unit              minConstraint = DbU::Min;
-    DbU::Unit              maxConstraint = DbU::Max;
     vector<TrackElement*>  perpandiculars;
 
     if (segment->isFixedSpanRp()) {
@@ -178,7 +176,9 @@ namespace {
         return;
       }
     }
-    Interval  uside = gcell->getSide( direction );
+    Interval  uside         = gcell->getSide( direction );
+    DbU::Unit minConstraint = uside.getVMin();
+    DbU::Unit maxConstraint = uside.getVMax();
 
     if ( not track ) {
       cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
