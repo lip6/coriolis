@@ -215,6 +215,7 @@ namespace Anabatic {
     DbU::Unit   xMax;
     DbU::Unit   yMin;
     DbU::Unit   yMax;
+    Pin*        pin        = nullptr;
     Vertical*   vertical   = nullptr;
     Horizontal* horizontal = nullptr;
     RoutingPad* routingPad = nullptr;
@@ -237,15 +238,17 @@ namespace Anabatic {
 
       horizontal = dynamic_cast<Horizontal*>( occurrence.getEntity() );
       vertical   = dynamic_cast<Vertical*  >( occurrence.getEntity() );
+      pin        = dynamic_cast<Pin*       >( occurrence.getEntity() );
 
       cdebug_log(145,0) << "Anchor: " << occurrence.getEntity() << endl;
       cdebug_log(145,0) << "transf: " << transformation << endl;
 
-      if (horizontal or vertical) {
+      if (horizontal or vertical or pin) {
         Box bb;
       // Assume that transformation contains no rotations (for now).
         if (horizontal) { bb = horizontal->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnHorizontal ); }
         if (vertical)   { bb = vertical  ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnVertical ); }
+        if (pin)        { bb = pin       ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnPin ); }
 
         transformation.applyOn( bb );
         cdebug_log(145,0) << "Shrink border x:" << DbU::getValueString(xborder)
@@ -411,13 +414,13 @@ namespace Anabatic {
     }
     if (horizontals[0] != NULL ) {
       _segment = Session::lookup( horizontals[0] );
-      if (getFlags() & CntOnHorizontal) {
+      if (getFlags() & (CntOnHorizontal|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
       }
     } else {
       _segment = Session::lookup( verticals[0] );
-      if (getFlags() & CntOnVertical) {
+      if (getFlags() & (CntOnVertical|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
       }

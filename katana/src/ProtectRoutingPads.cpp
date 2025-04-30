@@ -22,6 +22,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Rectilinear.h"
@@ -58,6 +59,7 @@ namespace {
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
   using Hurricane::RegularLayer;
+  using Hurricane::Pin;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::Rectilinear;
@@ -210,6 +212,15 @@ namespace {
       const Layer*  layer = component->getLayer();
       RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer( layer );
       if (not plane) continue;
+
+      Pin* pin = dynamic_cast<Pin*>( component );
+      if (pin) {
+        Box bb = pin->getBoundingBox();
+        transformation.applyOn( bb );
+        bbs.push_back( make_pair( bb, layer ));
+        cdebug_log(145,0) << "@ " << pin << " bb:" << bb << endl;
+        continue;
+      }
 
       Segment* segment = dynamic_cast<Segment*>( component );
       if (segment) {

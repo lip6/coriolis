@@ -71,10 +71,11 @@ namespace Anabatic {
                        , CntUserNativeConstraints = (1 << 14)
                        , CntOnVertical            = (1 << 15)
                        , CntOnHorizontal          = (1 << 16)
-                       , CntDrag                  = (1 << 17)
-                       , CntHDogleg               = (1 << 18)
-                       , CntVDogleg               = (1 << 19)
-                       , CntMetalOnly             = (1 << 20)
+                       , CntOnPin                 = (1 << 17)
+                       , CntDrag                  = (1 << 18)
+                       , CntHDogleg               = (1 << 19)
+                       , CntVDogleg               = (1 << 20)
+                       , CntMetalOnly             = (1 << 21)
                        };
 
   class AutoContact {
