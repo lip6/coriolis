@@ -677,10 +677,11 @@ namespace Anabatic {
   void  AutoSegment::invalidate ( AutoContact* contact )
   {
     cdebug_log(149,0) << "AutoSegment::invalidate() " << this << endl;
-    cdebug_log(149,0) << " -> " << contact << endl;
+    cdebug_log(149,0) << "  -> " << contact << endl;
     if (Session::doDestroyTool()) return;
     if (contact == getAutoSource()) setFlags( SegInvalidatedSource );
     if (contact == getAutoTarget()) setFlags( SegInvalidatedTarget );
+    cdebug_log(149,0) << "  Done" << endl;
   }
 
 

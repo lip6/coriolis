@@ -1486,11 +1486,12 @@ namespace Anabatic {
     cdebug_log(149,0) << "Anabatic::updateNetTopology( " << net << " )" << endl;
     cdebug_tabw(145,1);
 
-    for ( AutoContact* contact : Session::getInvalidatedContacts() ) {
-      cdebug_log(145,0) << "Invalidated " << contact << endl;
-      if (contact->isInvalidatedTopology() and (contact->getNet() == net)) {
+    const vector<AutoContact*> contacts = Session::getInvalidatedContacts();
+    for ( size_t i=0 ; i<contacts.size() ; ++i ) {
+      cdebug_log(145,0) << "Invalidated [" << i << "] " << endl;
+      AutoContact* contact = contacts[i];
+      if (contact->isInvalidatedTopology() and (contact->getNet() == net))
         contact->updateTopology();
-      }
     }
 
     cdebug_tabw(145,-1);
