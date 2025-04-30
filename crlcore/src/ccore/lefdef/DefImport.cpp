@@ -595,16 +595,34 @@ namespace {
                 , fromDefUnits(y1)
                 , fromDefUnits(x2)
                 , fromDefUnits(y2) );
-      switch ( pin->orient() ) {
-        case 0:
-        case 4: orient = Pin::AccessDirection::NORTH; break;
-        case 1:
-        case 5: orient = Pin::AccessDirection::WEST ; break;
-        case 2:
-        case 6: orient = Pin::AccessDirection::SOUTH; break;
-        case 3:
-        case 7: orient = Pin::AccessDirection::EAST ; break;
-      }
+      Transformation transf = Transformation( 0, 0, fromDefOrientation( pin->orient() ));
+      transf.applyOn( shape );
+      Box dieArea = parser->getCell()->getAbutmentBox();
+      DbU::Unit westDistance  = std::abs( position.getX() - dieArea.getXMin() );
+      DbU::Unit eastDistance  = std::abs( position.getX() - dieArea.getXMax() );
+      DbU::Unit southDistance = std::abs( position.getY() - dieArea.getYMin() );
+      DbU::Unit northDistance = std::abs( position.getY() - dieArea.getYMax() );
+      DbU::Unit minDistance   = westDistance;
+      Pin::AccessDirection side = Pin::AccessDirection::WEST;
+      if (eastDistance  < minDistance) { side = Pin::AccessDirection::EAST;  minDistance = eastDistance; }
+      if (southDistance < minDistance) { side = Pin::AccessDirection::SOUTH; minDistance = southDistance; }
+      if (northDistance < minDistance) { side = Pin::AccessDirection::NORTH; }
+      orient = side;
+      // if (orient != side) {
+      //   cerr << Warning( "Pin \"%s\" of net \"%s\" has a suspicious orientation.\n"
+      //                  "          @%s, (dW=%s dE=%s dS=%s dN=%s) DEF: %s vs. guessed %s."
+      //                  , pinName.c_str()
+      //                  , netName.c_str()
+      //                  , getString( position   ).c_str()
+      //                  , DbU::getValueString(  westDistance ).c_str()
+      //                  , DbU::getValueString(  eastDistance ).c_str()
+      //                  , DbU::getValueString( southDistance ).c_str()
+      //                  , DbU::getValueString( northDistance ).c_str()
+      //                  , getString( orient     ).c_str()
+      //                  , getString( side ).c_str()
+      //                  ) << endl;
+      //   orient = side;
+      // }
 
       if (not layer) {
         ostringstream message;
