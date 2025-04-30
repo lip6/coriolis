@@ -333,26 +333,25 @@ namespace Anabatic {
     Net* net = rp->getNet();
     Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
     Pin::AccessDirection pinDir = pin->getAccessDirection();
+    turn = AutoContactTurn::create( gcell, net, Session::getBuildRoutingLayer(1) );
+    AutoSegment* segment = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+    segment->setAxis( rp->getX(), Flags::Force );
+    segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+    rpSourceContact = turn;
+
+    turn    = AutoContactTurn::create( gcell, net, Session::getBuildContactLayer(1) );
+    segment = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+    rpSourceContact = turn;
+
+    DbU::Unit axis = gcell->getYMin() + Session::getDHorizontalPitch();
     if (pinDir == Pin::AccessDirection::NORTH) {
-      turn = AutoContactTurn::create( gcell, net, Session::getBuildRoutingLayer(1) );
-      AutoSegment* segment = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
-      segment->setAxis( rp->getX(), Flags::Force );
-      segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
-      rpSourceContact = turn;
-
-      turn    = AutoContactTurn::create( gcell, net, Session::getBuildContactLayer(1) );
-      segment = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
-      rpSourceContact = turn;
-
       DbU::Unit axis = gcell->getYMax() - Session::getDHorizontalPitch();
-      cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
-      
-      segment->setAxis( axis, Flags::Force );
-    //segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
-      cdebug_log(145,0) << segment << endl;
-    } else {
-      turn = rpSourceContact;
     }
+    cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+    segment->setAxis( axis, Flags::Force );
+  //segment->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+    cdebug_log(145,0) << segment << endl;
 
     cdebug_tabw(145,-1);
     return turn;
@@ -935,10 +934,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
 
-    AutoContact* rpSourceContact = NULL;
-    AutoContact* rpContactTarget = NULL;
-
-    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoFlags );
+    AutoContact* rpSourceContact = doRp_AccessNorthSouthPin( getGCell(), getRoutingPads()[0] );
 
     if (getConnexity().fields.globals == 2) {
       if (west() and south()) {
