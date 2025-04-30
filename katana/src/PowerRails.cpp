@@ -17,6 +17,7 @@
 #include <map>
 #include <list>
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -47,6 +48,7 @@ namespace {
 
   using namespace std;
   using Hurricane::DebugSession;
+  using Hurricane::Breakpoint;
   using Hurricane::Warning;
   using Hurricane::Error;
   using Hurricane::DbU;
@@ -1251,6 +1253,7 @@ namespace Katana {
   //DebugSession::close();
 
     printCompletion();
+    Breakpoint::stop( 100, "PowerRails setup done." );
   }
 
 
