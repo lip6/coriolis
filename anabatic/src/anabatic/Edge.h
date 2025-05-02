@@ -79,7 +79,7 @@ namespace Anabatic {
     //inline        void              incCapacity          ( int );
       inline        void              forceCapacity        ( int );
       inline        void              reserveCapacity      ( int );
-      inline        int               decreaseCapacity     ( int delta, size_t depth );
+                    int               decreaseCapacity     ( int delta, size_t depth );
       inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
                     void              incRealOccupancy2    ( int );
@@ -161,26 +161,6 @@ namespace Anabatic {
 
   inline void  Edge::forceCapacity ( int capacity )
   { if (_capacities) _capacities->forceCapacity( capacity ); }
-
-  inline int  Edge::decreaseCapacity ( int delta, size_t depth )
-  {
-    if (not _capacities) return 0;
-    if (_capacities->getCapacity(depth) == 0) return delta;
-    // if (getId() == 236678) {
-    //   std::cerr << "decreaseCapacity() id:" << getId()
-    //             << " capacity=" << _capacities->getCapacity()
-    //             << " " << (void*)_capacities << std::endl;
-    // }
-    if (not _capacities->isUnique()) {
-      EdgeCapacity* sharedCapacities = _capacities;
-      _capacities = new EdgeCapacity ( *_capacities );
-      _capacities->incref();
-      sharedCapacities->decref();
-    }
-    int remains = _capacities->decreaseCapacity( delta, depth );
-    cdebug_log(159,0) << "decreaseCapacity() " << this << std::endl;
-    return remains;
-  }
 
   inline unsigned int  Edge::getCapacity () const
   {

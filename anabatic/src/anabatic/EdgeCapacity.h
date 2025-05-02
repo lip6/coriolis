@@ -72,7 +72,7 @@ namespace Anabatic {
   inline       bool            EdgeCapacity::isUnique      () const { return (_flags & Flags::UniqueCapacity); }
   inline       size_t          EdgeCapacity::size          () const { return _capacities.size(); }
   inline       size_t          EdgeCapacity::incref        () { return ++_refCount; }
-  inline       size_t          EdgeCapacity::decref        () { if (_refCount < 2) { delete this; return 0; } return --_refCount; }
+  inline       size_t          EdgeCapacity::decref        () { if (_refCount == 1) { delete this; return 0; } return --_refCount; }
   inline       size_t          EdgeCapacity::getref        () const { return _refCount; }
   inline       AnabaticEngine* EdgeCapacity::getAnabatic   () const { return _anabatic; }
   inline const Interval&       EdgeCapacity::getSpan       () const { return _span; }

@@ -311,6 +311,7 @@ namespace Anabatic {
                     AutoContact*      _lookup                 ( Contact* ) const;
                     AutoSegment*      _lookup                 ( Segment* ) const;
                     EdgeCapacity*     _createCapacity         ( Flags, Interval );
+                    EdgeCapacity*     _cloneCapacity          ( EdgeCapacity* );
                     size_t            _unrefCapacity          ( EdgeCapacity* );
                     void              _loadGrByNet            ();
                     void              _computeNetOptimals     ( Net* );

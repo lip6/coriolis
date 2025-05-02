@@ -1488,7 +1488,6 @@ namespace Anabatic {
 
     const vector<AutoContact*> contacts = Session::getInvalidatedContacts();
     for ( size_t i=0 ; i<contacts.size() ; ++i ) {
-      cdebug_log(145,0) << "Invalidated [" << i << "] " << endl;
       AutoContact* contact = contacts[i];
       if (contact->isInvalidatedTopology() and (contact->getNet() == net))
         contact->updateTopology();
@@ -1816,9 +1815,18 @@ namespace Anabatic {
   }
 
   
+  EdgeCapacity* AnabaticEngine::_cloneCapacity ( EdgeCapacity* capacity )
+  {
+    EdgeCapacity* clonedCapacity = new EdgeCapacity ( *capacity );
+    clonedCapacity->incref();
+    _unrefCapacity( capacity );
+    return clonedCapacity;
+  }
+
+  
   size_t  AnabaticEngine::_unrefCapacity ( EdgeCapacity* capacity )
   {
-    if (capacity->getref() < 2) _edgeCapacitiesLut.erase( capacity );
+    if (capacity->getref() == 1) _edgeCapacitiesLut.erase( capacity );
     return capacity->decref();
   }
   
