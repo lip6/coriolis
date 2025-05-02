@@ -76,8 +76,13 @@ namespace Katana {
 
   void  RoutingEventHistory::clear ()
   {
-    for ( size_t i=0 ; i < _events.size() ; i++ )
-      _events[i]->destroy();
+    set<RoutingEvent*> destroyeds;
+    for ( size_t i=0 ; i < _events.size() ; i++ ) {
+      if (destroyeds.find(_events[i]) == destroyeds.end()) {
+        _events[i]->destroy();
+        destroyeds.insert( _events[i] );
+      }
+    }
     _events.clear ();
   }
 
