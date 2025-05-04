@@ -39,6 +39,7 @@ namespace Katana {
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::Net;
+  using Anabatic::AutoSegment;
   class TrackElement;
   class Track;
   class RoutingEventHistory;
@@ -60,15 +61,17 @@ namespace Katana {
           };
 
         public:
-                Key    ( const RoutingEvent* );
-          void  update ( const RoutingEvent* );
+                       Key          ( const RoutingEvent* );
+                 void  update       ( const RoutingEvent* );
+          inline bool  isNonPref    () const;
+          inline bool  isHorizontal () const;
         private:
           unsigned int  _tracksNb  :16;
           unsigned int  _rpDistance: 4;
           float         _priority;
           uint32_t      _eventLevel;
-          uint32_t      _segFlags;
           uint32_t      _layerDepth;
+          uint64_t      _segFlags;
           DbU::Unit     _length;
           DbU::Unit     _axis;
           DbU::Unit     _sourceU;
@@ -242,6 +245,10 @@ namespace Katana {
 
 
   typedef  set<RoutingEvent*,RoutingEvent::CompareById>  RoutingEventSet;
+
+  
+  inline bool  RoutingEvent::Key::isNonPref    () const { return _segFlags & AutoSegment::SegNonPref; }
+  inline bool  RoutingEvent::Key::isHorizontal () const { return _segFlags & AutoSegment::SegHorizontal; }
 
 
 // -------------------------------------------------------------------

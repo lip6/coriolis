@@ -62,7 +62,6 @@ namespace Katana {
   using Hurricane::Net;
   using Hurricane::Layer;
   using Anabatic::GCell;
-  using Anabatic::AutoSegment;
 
 
 // -------------------------------------------------------------------
@@ -99,6 +98,11 @@ namespace Katana {
   //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
   //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
 
+    if ((lhs._layerDepth == rhs._layerDepth) and (lhs.isNonPref() or rhs.isNonPref())) {
+      if (lhs.isNonPref() xor rhs.isNonPref())
+        return lhs.isNonPref();
+    }
+
   // For VH gauge, process fixed axis first.
     if (    (lhs._segFlags & AutoSegment::SegFixedAxis) and not (rhs._segFlags & AutoSegment::SegFixedAxis)) return false;
     if (not (lhs._segFlags & AutoSegment::SegFixedAxis) and     (rhs._segFlags & AutoSegment::SegFixedAxis)) return true;
@@ -120,7 +124,7 @@ namespace Katana {
     if (lhs._length > rhs._length) return false;
     if (lhs._length < rhs._length) return true;
 
-    if ((lhs._segFlags & AutoSegment::SegHorizontal) xor (rhs._segFlags & AutoSegment::SegHorizontal))
+    if ((lhs.isHorizontal()) xor (rhs.isHorizontal()))
       return (rhs._segFlags & AutoSegment::SegHorizontal);
 
     if (lhs._axis > rhs._axis) return true;
@@ -141,8 +145,8 @@ namespace Katana {
     , _rpDistance  (event->getSegment()->base()->getRpDistance())
     , _priority    (event->getPriority())
     , _eventLevel  (event->getEventLevel())
-    , _segFlags    (event->getSegment()->base()->getFlags())
     , _layerDepth  (Session::getRoutingGauge()->getLayerDepth(event->getSegment()->getLayer()))
+    , _segFlags    (event->getSegment()->base()->getFlags())
     , _length      (event->getSegment()->getLength())
     , _axis        (event->getSegment()->getAxis())
     , _sourceU     (event->getSegment()->getSourceU())
