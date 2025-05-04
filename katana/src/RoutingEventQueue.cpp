@@ -113,6 +113,31 @@ namespace Katana {
                  , addeds,(after-before) ) << endl;
     }
 
+#ifdef CHECK_UPCOMING_5_EVENTS
+    size_t topStackSize = std::min( (size_t)5, (size_t)_events.size() );
+    if (topStackSize > 1) {
+      vector<RoutingEvent*> topStack;
+      auto ievent = _events.end();
+      for ( size_t i=0 ; i<topStackSize ; ++i ) {
+        topStack.push_back( *(--ievent) );
+      }
+
+      bool badOrder = false;
+      for ( size_t i=0 ; i<topStackSize-1 ; ++i ) {
+        if (topStack[i]->getEventLevel() > topStack[i+1]->getEventLevel()) {
+          badOrder = true;
+          break;
+        }
+      }
+
+      if (badOrder or (RoutingEvent::getProcesseds() > 813620)) {
+        cerr << "Suspicious event queue order" << endl;
+        for ( size_t i=0 ; i<topStackSize-1 ; ++i )
+          cerr << "[" << i << "] " << topStack[i] << endl;
+      }
+    }
+#endif
+
     cdebug_tabw(159,-1);
   }
 
