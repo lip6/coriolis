@@ -364,19 +364,23 @@ namespace Katana {
   //   must be re-inserted *before* any parallel. Must look to solve the redundancy.
 
     DebugSession::open( _segment->getNet(), 156, 160 );
-    cdebug_log(159,0) << "* doAction() on "<< _segment << endl;
+    cdebug_log(159,1) << "* doAction() on "<< _segment << endl;
 
     if (_type & Lock) {
-      cdebug_log(159,1) << "* Lock // " << _segment << endl;
+      cdebug_log(159,0) << "* Lock // " << _segment << endl;
     } else if (_type & Perpandicular) {
-      cdebug_log(159,1) << "* Riping Pp " << _segment << endl;
+      cdebug_log(159,0) << "* Riping Pp " << _segment << endl;
     } else if (_type & OtherRipup) {
-      cdebug_log(159,1) << "* Riping Other " << _segment << endl;
+      cdebug_log(159,0) << "* Riping Other " << _segment << endl;
     } else {
-      cdebug_log(159,1) << "* Riping // " << _segment << endl;
+      cdebug_log(159,0) << "* Riping // " << _segment << endl;
     }
 
-    if (_segment->isFixed()) { DebugSession::close(); return true; }
+    if (_segment->isFixed()) {
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return true;
+    }
 
     DataNegociate* data = _segment->getDataNegociate();
     if (data == NULL) {
@@ -1565,15 +1569,17 @@ namespace Katana {
     }
 
     if (success) {
-      actionFlags |= SegmentAction::ResetRipup;
-      if (isMinimizeDrag()) {
-        actionFlags &= ~SegmentAction::EventLevel5;
-        actionFlags |=  SegmentAction::EventLevel3;
+      if (not hasAction(segment1)) {
+        actionFlags |= SegmentAction::ResetRipup;
+        if (isMinimizeDrag()) {
+          actionFlags &= ~SegmentAction::EventLevel5;
+          actionFlags |=  SegmentAction::EventLevel3;
+        }
+        if (segment1->isNonPref()) {
+          actionFlags &= ~SegmentAction::AllEventLevels;
+        }
+        addAction( segment1, actionFlags );
       }
-      if (segment1->isNonPref()) {
-        actionFlags &= ~SegmentAction::AllEventLevels;
-      }
-      addAction( segment1, actionFlags );
     } else {
       clearActions();
       if (_data1->getState() == DataNegociate::Unimplemented) {
