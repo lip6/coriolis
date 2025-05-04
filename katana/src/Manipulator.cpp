@@ -1869,84 +1869,92 @@ namespace Katana {
       return false;
     }
 
-    Interval xspan ( terminal->getX() );
-    xspan.inflate( ( plane->getLayerGauge()->getPWireWidth()
-                   + plane->getLayerGauge()->getPitch()
-                   - plane->getLayerGauge()->getWireWidth()) / 2 );
-
-    Box termConstraints ( terminal->getConstraintBox() );
-    Box turnConstraints ( turn    ->getConstraintBox() );
-    Interval axisRange = terminal->getUConstraints( Flags::Vertical );
-    axisRange.inflate( plane->getLayerGauge()->getPitch() );
-    cdebug_log(159,0) << "Axis range (UConstraints) " << axisRange << endl;
-
-    size_t offset      = Track::npos;
-    size_t minBlockage = Track::npos;
-    size_t maxBlockage = Track::npos;
-    for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
-      if (offset == Track::npos) offset = track->getIndex();
-      cdebug_log(159,0) << "| track=" << track << endl;
-      Interval  freeInterval = track->getFreeInterval( xspan.getCenter(), _segment->getNet() );
-      if (freeInterval.contains(xspan)) continue;
-
-      size_t begin = Track::npos;
-      size_t end   = Track::npos;
-      track->getOverlapBounds( xspan, begin, end );
-      if (begin == Track::npos) continue;
-
-      for ( bool trackDone=false ; not trackDone and (begin < end) ; begin++ ) {
-        TrackElement* element = track->getSegment( begin );
-        if (element->getNet() == _segment->getNet()) continue;
-        if (xspan.getIntersection( element->getCanonicalInterval() ).getSize() == 0) continue;
-        if (element->isBlockage() or element->isFixed()) {
-          trackDone = true;
-          if (track->getIndex() == offset) {
-            minBlockage = track->getIndex();
-            continue;
-          }
-          if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
-            minBlockage = track->getIndex();
-            continue;
-          }
-          maxBlockage = track->getIndex();
-        }
-      }
-      if (maxBlockage != Track::npos) break;
-    }
-    cdebug_log(159,0) << "minBlockage=" << minBlockage << endl;
-    cdebug_log(159,0) << "maxBlockage=" << maxBlockage << endl;
-    Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
-                                                       : plane->getTrackByIndex(minBlockage)->getAxis()
-                        , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()
-                                                       : plane->getTrackByIndex(maxBlockage)->getAxis() );
-    cdebug_log(159,0) << "Non blocked vertical " << nonBlocked << endl;
-    Interval turnVConstraints = Interval( turn    ->getUConstraints(Flags::Vertical) );
-    Interval termVConstraints = Interval( terminal->getUConstraints(Flags::Vertical) );
-    turnVConstraints.inflate( perpandicular->getPitch() );
-    turnVConstraints.intersection( nonBlocked );
-    termVConstraints.intersection( nonBlocked );
-
-    cdebug_log(159,0) << "Using: pitch=" << DbU::getValueString(perpandicular->getPitch())
-                      << " axis=" << DbU::getValueString(perpandicular->getAxis())
-                      << " pp=" << perpandicular << endl;
-    terminal->setConstraintBox( Box( termConstraints.getXMin()
-                                   , termVConstraints.getVMin()
-                                   , termConstraints.getXMax()
-                                   , termVConstraints.getVMax()
-                                   ) );
-    turn->setConstraintBox( Box( turnConstraints.getXMin()
-                               , turnVConstraints.getVMin()
-                               , turnConstraints.getXMax()
-                               , turnVConstraints.getVMax()
-                               ) );
-
-    cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
-    cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;
-
-    _fsm.addAction ( perpandicular, SegmentAction::SelfRipupPerpand|SegmentAction::EventLevel4 );
+    _fsm.addAction ( _segment     , SegmentAction::SelfRipup|SegmentAction::EventLevel1 );
+    _fsm.addAction ( perpandicular, SegmentAction::Perpandicular
+                                  | SegmentAction::Ripup
+                                  | SegmentAction::EventLevel4 );
 
     cdebug_tabw(159,-1);
     return true;
+
+    // Interval xspan ( terminal->getX() );
+    // xspan.inflate( ( plane->getLayerGauge()->getPWireWidth()
+    //                + plane->getLayerGauge()->getPitch()
+    //                - plane->getLayerGauge()->getWireWidth()) / 2 );
+
+    // Box termConstraints ( terminal->getConstraintBox() );
+    // Box turnConstraints ( turn    ->getConstraintBox() );
+    // Interval axisRange = terminal->getUConstraints( Flags::Vertical );
+    // axisRange.inflate( plane->getLayerGauge()->getPitch() );
+    // cdebug_log(159,0) << "Axis range (UConstraints) " << axisRange << endl;
+
+    // size_t offset      = Track::npos;
+    // size_t minBlockage = Track::npos;
+    // size_t maxBlockage = Track::npos;
+    // for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
+    //   if (offset == Track::npos) offset = track->getIndex();
+    //   cdebug_log(159,0) << "| track=" << track << endl;
+    //   Interval  freeInterval = track->getFreeInterval( xspan.getCenter(), _segment->getNet() );
+    //   if (freeInterval.contains(xspan)) continue;
+
+    //   size_t begin = Track::npos;
+    //   size_t end   = Track::npos;
+    //   track->getOverlapBounds( xspan, begin, end );
+    //   if (begin == Track::npos) continue;
+
+    //   for ( bool trackDone=false ; not trackDone and (begin < end) ; begin++ ) {
+    //     TrackElement* element = track->getSegment( begin );
+    //     if (element->getNet() == _segment->getNet()) continue;
+    //     if (xspan.getIntersection( element->getCanonicalInterval() ).getSize() == 0) continue;
+    //     if (element->isBlockage() or element->isFixed()) {
+    //       trackDone = true;
+    //       if (track->getIndex() == offset) {
+    //         minBlockage = track->getIndex();
+    //         continue;
+    //       }
+    //       if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
+    //         minBlockage = track->getIndex();
+    //         continue;
+    //       }
+    //       maxBlockage = track->getIndex();
+    //     }
+    //   }
+    //   if (maxBlockage != Track::npos) break;
+    // }
+    // cdebug_log(159,0) << "minBlockage=" << minBlockage << endl;
+    // cdebug_log(159,0) << "maxBlockage=" << maxBlockage << endl;
+    // Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
+    //                                                    : plane->getTrackByIndex(minBlockage)->getAxis()
+    //                     , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()
+    //                                                    : plane->getTrackByIndex(maxBlockage)->getAxis() );
+    // cdebug_log(159,0) << "Non blocked vertical " << nonBlocked << endl;
+    // Interval turnVConstraints = Interval( turn    ->getUConstraints(Flags::Vertical) );
+    // Interval termVConstraints = Interval( terminal->getUConstraints(Flags::Vertical) );
+    // turnVConstraints.inflate( perpandicular->getPitch() );
+    // turnVConstraints.intersection( nonBlocked );
+    // termVConstraints.intersection( nonBlocked );
+
+    // cdebug_log(159,0) << "Using: pitch=" << DbU::getValueString(perpandicular->getPitch())
+    //                   << " axis=" << DbU::getValueString(perpandicular->getAxis())
+    //                   << " pp=" << perpandicular << endl;
+    // terminal->setConstraintBox( Box( termConstraints.getXMin()
+    //                                , termVConstraints.getVMin()
+    //                                , termConstraints.getXMax()
+    //                                , termVConstraints.getVMax()
+    //                                ) );
+    // turn->setConstraintBox( Box( turnConstraints.getXMin()
+    //                            , turnVConstraints.getVMin()
+    //                            , turnConstraints.getXMax()
+    //                            , turnVConstraints.getVMax()
+    //                            ) );
+
+    // cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
+    // cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;
+
+    // _fsm.addAction ( perpandicular, SegmentAction::SelfRipupPerpand|SegmentAction::EventLevel4 );
+
+    // cdebug_tabw(159,-1);
+    // return true;
   }
 
 
