@@ -263,8 +263,12 @@ namespace Anabatic {
         setFlags( CntBadTopology );
       } else {
         if (delta > 1) {
-          bool updateH1 = (_horizontal1->isInvalidatedLayer() and not _horizontal1->isNonPref())
-                          or _vertical1->isNonPref();
+          setLayerAndWidth( delta, std::min( depthH1, depthV1 ));
+
+          bool updateH1 = (depthH1 > depthV1);
+          if (_vertical1->isNonPref() xor _horizontal1->isNonPref())
+            updateH1 = _vertical1->isNonPref();
+          
           if (updateH1) {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
