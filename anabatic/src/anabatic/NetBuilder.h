@@ -86,6 +86,39 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "NetBuilder".
 
+  
+  const uint64_t  BitsG    = 8;
+  const uint64_t  BitsM1   = 4;
+  const uint64_t  BitsM2   = 4;
+  const uint64_t  BitsM3   = 4;
+  const uint64_t  BitsM4   = 4;
+  const uint64_t  BitsM5   = 4;
+  const uint64_t  BitsM6   = 4;
+  const uint64_t  BitsPads = 4;
+  const uint64_t  BitsPins = 4;
+
+
+  static constexpr uint64_t  connexConfig ( uint64_t Gs
+                                          , uint64_t M1s
+                                          , uint64_t M2s
+                                          , uint64_t M3s
+                                          , uint64_t M4s
+                                          , uint64_t M5s
+                                          , uint64_t M6s
+                                          , uint64_t Pads
+                                          , uint64_t Pins )
+  {
+    return Gs + (M1s  << (BitsG))
+              + (M2s  << (BitsG + BitsM1))
+              + (M3s  << (BitsG + BitsM1 + BitsM2))
+              + (M4s  << (BitsG + BitsM1 + BitsM2 + BitsM3))
+              + (M5s  << (BitsG + BitsM1 + BitsM2 + BitsM3 + BitsM4))
+              + (M6s  << (BitsG + BitsM1 + BitsM2 + BitsM3 + BitsM4 + BitsM5))
+              + (Pads << (BitsG + BitsM1 + BitsM2 + BitsM3 + BitsM4 + BitsM5 + BitsM6))
+              + (Pins << (BitsG + BitsM1 + BitsM2 + BitsM3 + BitsM4 + BitsM5 + BitsM6 + BitsPads));
+  };
+
+
   class NetBuilder {
     public:
       enum FunctionFlags { NoFlags         = 0
@@ -126,22 +159,18 @@ namespace Anabatic {
                          };
 
     // Connexity Union Type.
-      enum ConnexityBits { GlobalBSize = 8
-                         , Metal1BSize = 4
-                         , Metal2BSize = 4
-                         , Metal3BSize = 4
-                         , PadsBSize   = 4
-                         , PinsBSize   = 4
-                         };
       union UConnexity {
         uint64_t connexity;
         struct {
-          unsigned int globals : GlobalBSize;
-          unsigned int M1      : Metal1BSize;
-          unsigned int M2      : Metal2BSize;
-          unsigned int M3      : Metal3BSize;
-          unsigned int Pad     : PadsBSize;
-          unsigned int Pin     : PinsBSize;
+          unsigned int globals : BitsG;
+          unsigned int M1      : BitsM1;
+          unsigned int M2      : BitsM2;
+          unsigned int M3      : BitsM3;
+          unsigned int M4      : BitsM4;
+          unsigned int M5      : BitsM5;
+          unsigned int M6      : BitsM6;
+          unsigned int Pad     : BitsPads;
+          unsigned int Pin     : BitsPins;
         } fields;
       };
     public:
@@ -258,118 +287,108 @@ namespace Anabatic {
       virtual string                        getTypeName            () const;
     private:
 
-#define CONNEXITY_VALUE( Gs, M1s, M2s, M3s, pads, pins )                 \
-      Gs + ((M1s ) <<  GlobalBSize)                                      \
-         + ((M2s ) << (GlobalBSize+Metal1BSize))                         \
-         + ((M3s ) << (GlobalBSize+Metal1BSize+Metal2BSize))             \
-         + ((pads) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize)) \
-         + ((pins) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize+PadsBSize))
-
-    //                     Connexity Name                      | G|M1|M2|M3|Pad|Pin|
-      enum ConnexityFlag { Conn_0G            = CONNEXITY_VALUE( 0, 0, 0, 0, 0 , 0 )
-                         , Conn_2G            = CONNEXITY_VALUE( 2, 0, 0, 0, 0 , 0 )
-                         , Conn_3G            = CONNEXITY_VALUE( 3, 0, 0, 0, 0 , 0 )
-                         , Conn_4G            = CONNEXITY_VALUE( 4, 0, 0, 0, 0 , 0 )
-                         , Conn_5G            = CONNEXITY_VALUE( 5, 0, 0, 0, 0 , 0 )
-                         , Conn_6G            = CONNEXITY_VALUE( 6, 0, 0, 0, 0 , 0 )
-                         , Conn_0G_2M1        = CONNEXITY_VALUE( 0, 2, 0, 0, 0 , 0 )
-                         , Conn_1G_1M1        = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 0 )
-                         , Conn_1G_2M1        = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )
-                         , Conn_1G_3M1        = CONNEXITY_VALUE( 1, 3, 0, 0, 0 , 0 )
-                         , Conn_1G_4M1        = CONNEXITY_VALUE( 1, 4, 0, 0, 0 , 0 )
-                         , Conn_1G_5M1        = CONNEXITY_VALUE( 1, 5, 0, 0, 0 , 0 )
-                         , Conn_1G_6M1        = CONNEXITY_VALUE( 1, 6, 0, 0, 0 , 0 )
-                         , Conn_1G_7M1        = CONNEXITY_VALUE( 1, 7, 0, 0, 0 , 0 )
-                         , Conn_1G_8M1        = CONNEXITY_VALUE( 1, 8, 0, 0, 0 , 0 )
-                         , Conn_1G_9M1        = CONNEXITY_VALUE( 1, 9, 0, 0, 0 , 0 )
-                         , Conn_1G_1M2        = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 0 )
-                         , Conn_1G_2M2        = CONNEXITY_VALUE( 1, 0, 2, 0, 0 , 0 )
-                         , Conn_1G_3M2        = CONNEXITY_VALUE( 1, 0, 3, 0, 0 , 0 )
-                         , Conn_1G_4M2        = CONNEXITY_VALUE( 1, 0, 4, 0, 0 , 0 )
-                         , Conn_1G_1M3        = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 0 )
-                         , Conn_1G_2M3        = CONNEXITY_VALUE( 1, 0, 0, 2, 0 , 0 )
-                         , Conn_1G_3M3        = CONNEXITY_VALUE( 1, 0, 0, 3, 0 , 0 )
-                         , Conn_1G_4M3        = CONNEXITY_VALUE( 1, 0, 0, 4, 0 , 0 )
-                         , Conn_1G_1M1_1M2    = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 0 )
-                         , Conn_1G_1M1_1M3    = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 0 )
-                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
-                         , Conn_2G_1M1        = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 0 )
-                         , Conn_2G_2M1        = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
-                         , Conn_2G_3M1        = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
-                         , Conn_2G_4M1        = CONNEXITY_VALUE( 2, 4, 0, 0, 0 , 0 )
-                         , Conn_2G_5M1        = CONNEXITY_VALUE( 2, 5, 0, 0, 0 , 0 )
-                         , Conn_2G_6M1        = CONNEXITY_VALUE( 2, 6, 0, 0, 0 , 0 )
-                         , Conn_2G_7M1        = CONNEXITY_VALUE( 2, 7, 0, 0, 0 , 0 )
-                         , Conn_2G_8M1        = CONNEXITY_VALUE( 2, 8, 0, 0, 0 , 0 )
-                         , Conn_2G_9M1        = CONNEXITY_VALUE( 2, 9, 0, 0, 0 , 0 )
-                         , Conn_2G_1M2        = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 0 )
-                         , Conn_2G_2M2        = CONNEXITY_VALUE( 2, 0, 2, 0, 0 , 0 )
-                         , Conn_2G_3M2        = CONNEXITY_VALUE( 2, 0, 3, 0, 0 , 0 )
-                         , Conn_2G_4M2        = CONNEXITY_VALUE( 2, 0, 4, 0, 0 , 0 )
-                         , Conn_2G_1M3        = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 0 )
-                         , Conn_2G_2M3        = CONNEXITY_VALUE( 2, 0, 0, 2, 0 , 0 )
-                         , Conn_2G_3M3        = CONNEXITY_VALUE( 2, 0, 0, 3, 0 , 0 )
-                         , Conn_2G_4M3        = CONNEXITY_VALUE( 2, 0, 0, 4, 0 , 0 )
-                         , Conn_2G_1M1_1M2    = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 0 )
-                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
-                         , Conn_3G_1M1        = CONNEXITY_VALUE( 3, 1, 0, 0, 0 , 0 )
-                         , Conn_3G_2M1        = CONNEXITY_VALUE( 3, 2, 0, 0, 0 , 0 )
-                         , Conn_3G_3M1        = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
-                         , Conn_3G_4M1        = CONNEXITY_VALUE( 3, 4, 0, 0, 0 , 0 )
-                         , Conn_3G_5M1        = CONNEXITY_VALUE( 3, 5, 0, 0, 0 , 0 )
-                         , Conn_3G_6M1        = CONNEXITY_VALUE( 3, 6, 0, 0, 0 , 0 )
-                         , Conn_3G_7M1        = CONNEXITY_VALUE( 3, 7, 0, 0, 0 , 0 )
-                         , Conn_3G_8M1        = CONNEXITY_VALUE( 3, 8, 0, 0, 0 , 0 )
-                         , Conn_3G_9M1        = CONNEXITY_VALUE( 3, 9, 0, 0, 0 , 0 )
-                         , Conn_3G_1M2        = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 0 )
-                         , Conn_3G_2M2        = CONNEXITY_VALUE( 3, 0, 2, 0, 0 , 0 )
-                         , Conn_3G_1M3        = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 0 )
-                         , Conn_3G_2M3        = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
-                         , Conn_3G_3M3        = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
-                         , Conn_3G_4M3        = CONNEXITY_VALUE( 3, 0, 0, 4, 0 , 0 )
-                         // Connexity Name                     | G|M1|M2|M3|Pad|Pin|
-                         , Conn_4G_1M1        = CONNEXITY_VALUE( 4, 1, 0, 0, 0 , 0 )
-                         , Conn_4G_2M1        = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
-                         , Conn_4G_3M1        = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
-                         , Conn_4G_4M1        = CONNEXITY_VALUE( 4, 4, 0, 0, 0 , 0 )
-                         , Conn_4G_5M1        = CONNEXITY_VALUE( 4, 5, 0, 0, 0 , 0 )
-                         , Conn_4G_6M1        = CONNEXITY_VALUE( 4, 6, 0, 0, 0 , 0 )
-                         , Conn_4G_7M1        = CONNEXITY_VALUE( 4, 7, 0, 0, 0 , 0 )
-                         , Conn_4G_8M1        = CONNEXITY_VALUE( 4, 8, 0, 0, 0 , 0 )
-                         , Conn_4G_9M1        = CONNEXITY_VALUE( 4, 9, 0, 0, 0 , 0 )
-                         , Conn_4G_1M2        = CONNEXITY_VALUE( 4, 0, 1, 0, 0 , 0 )
-                         , Conn_4G_1M3        = CONNEXITY_VALUE( 4, 0, 0, 1, 0 , 0 )
-                         , Conn_1G_1Pad       = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
-                         , Conn_2G_1Pad       = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
-                         , Conn_3G_1Pad       = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
-                         , Conn_1G_1PinM1     = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
-                         , Conn_2G_1PinM1     = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 1 )
-                         , Conn_1G_1PinM2     = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
-                         , Conn_2G_1PinM2     = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
-                         , Conn_3G_1PinM2     = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )
-                         , Conn_1G_1M1_1PinM1 = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
-                         , Conn_1G_2M1_1PinM1 = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 1 )
-                         , Conn_1G_1M1_1PinM2 = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 1 )
-                         , Conn_1G_2M1_1PinM2 = CONNEXITY_VALUE( 1, 2, 1, 0, 0 , 1 )
-                         , Conn_1G_3M1_1PinM2 = CONNEXITY_VALUE( 1, 3, 1, 0, 0 , 1 )
-                         , Conn_1G_4M1_1PinM2 = CONNEXITY_VALUE( 1, 4, 1, 0, 0 , 1 )
-                         , Conn_1G_5M1_1PinM2 = CONNEXITY_VALUE( 1, 5, 1, 0, 0 , 1 )
-                         , Conn_2G_1M1_1PinM2 = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 1 )
-                         , Conn_2G_2M1_1PinM2 = CONNEXITY_VALUE( 2, 2, 1, 0, 0 , 1 )
-                         , Conn_1G_1PinM3     = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 1 )
-                         , Conn_2G_1PinM3     = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
-                         , Conn_3G_1PinM3     = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
-                         , Conn_1G_1M1_1PinM3 = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 1 )
-                         , Conn_1G_2M1_1PinM3 = CONNEXITY_VALUE( 1, 2, 0, 1, 0 , 1 )
-                         , Conn_2G_1M1_1PinM3 = CONNEXITY_VALUE( 2, 1, 0, 1, 0 , 1 )
-                         , Conn_2G_2M1_1PinM3 = CONNEXITY_VALUE( 2, 2, 0, 1, 0 , 1 )
-                         , Conn_2G_3M1_1PinM3 = CONNEXITY_VALUE( 2, 3, 0, 1, 0 , 1 )
-                         , Conn_3G_1M1_1PinM3 = CONNEXITY_VALUE( 3, 1, 0, 1, 0 , 1 )
-                         , Conn_3G_2M1_1PinM3 = CONNEXITY_VALUE( 3, 2, 0, 1, 0 , 1 )
-                         , Conn_3G_3M1_1PinM3 = CONNEXITY_VALUE( 3, 3, 0, 1, 0 , 1 )
-                         };
-
-#undef CONNEXITY_VALUE
+    //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
+      static constexpr uint64_t  Conn_0G            = connexConfig( 0, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G            = connexConfig( 2, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G            = connexConfig( 3, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G            = connexConfig( 4, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_5G            = connexConfig( 5, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_6G            = connexConfig( 6, 0, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_0G_2M1        = connexConfig( 0, 2, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M1        = connexConfig( 1, 1, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_2M1        = connexConfig( 1, 2, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_3M1        = connexConfig( 1, 3, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_4M1        = connexConfig( 1, 4, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_5M1        = connexConfig( 1, 5, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_6M1        = connexConfig( 1, 6, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_7M1        = connexConfig( 1, 7, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_8M1        = connexConfig( 1, 8, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_9M1        = connexConfig( 1, 9, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M2        = connexConfig( 1, 0, 1, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_2M2        = connexConfig( 1, 0, 2, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_3M2        = connexConfig( 1, 0, 3, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_4M2        = connexConfig( 1, 0, 4, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M3        = connexConfig( 1, 0, 0, 1, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_2M3        = connexConfig( 1, 0, 0, 2, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_3M3        = connexConfig( 1, 0, 0, 3, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_4M3        = connexConfig( 1, 0, 0, 4, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M1_1M2    = connexConfig( 1, 1, 1, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M1_1M3    = connexConfig( 1, 1, 0, 1, 0, 0, 0,  0,  0 );
+    //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
+      static constexpr uint64_t  Conn_2G_1M1        = connexConfig( 2, 1, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_2M1        = connexConfig( 2, 2, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_3M1        = connexConfig( 2, 3, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_4M1        = connexConfig( 2, 4, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_5M1        = connexConfig( 2, 5, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_6M1        = connexConfig( 2, 6, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_7M1        = connexConfig( 2, 7, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_8M1        = connexConfig( 2, 8, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_9M1        = connexConfig( 2, 9, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_1M2        = connexConfig( 2, 0, 1, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_2M2        = connexConfig( 2, 0, 2, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_3M2        = connexConfig( 2, 0, 3, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_4M2        = connexConfig( 2, 0, 4, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_1M3        = connexConfig( 2, 0, 0, 1, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_2M3        = connexConfig( 2, 0, 0, 2, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_3M3        = connexConfig( 2, 0, 0, 3, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_4M3        = connexConfig( 2, 0, 0, 4, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_1M1_1M2    = connexConfig( 2, 1, 1, 0, 0, 0, 0,  0,  0 );
+    //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
+      static constexpr uint64_t  Conn_3G_1M1        = connexConfig( 3, 1, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_2M1        = connexConfig( 3, 2, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_3M1        = connexConfig( 3, 3, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_4M1        = connexConfig( 3, 4, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_5M1        = connexConfig( 3, 5, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_6M1        = connexConfig( 3, 6, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_7M1        = connexConfig( 3, 7, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_8M1        = connexConfig( 3, 8, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_9M1        = connexConfig( 3, 9, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_1M2        = connexConfig( 3, 0, 1, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_2M2        = connexConfig( 3, 0, 2, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_1M3        = connexConfig( 3, 0, 0, 1, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_2M3        = connexConfig( 3, 0, 0, 2, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_3M3        = connexConfig( 3, 0, 0, 3, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_4M3        = connexConfig( 3, 0, 0, 4, 0, 0, 0,  0,  0 );
+    //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
+      static constexpr uint64_t  Conn_4G_1M1        = connexConfig( 4, 1, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_2M1        = connexConfig( 4, 2, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_3M1        = connexConfig( 4, 3, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_4M1        = connexConfig( 4, 4, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_5M1        = connexConfig( 4, 5, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_6M1        = connexConfig( 4, 6, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_7M1        = connexConfig( 4, 7, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_8M1        = connexConfig( 4, 8, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_9M1        = connexConfig( 4, 9, 0, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_1M2        = connexConfig( 4, 0, 1, 0, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_4G_1M3        = connexConfig( 4, 0, 0, 1, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1Pad       = connexConfig( 1, 0, 0, 0, 0, 0, 0,  1,  0 );
+      static constexpr uint64_t  Conn_2G_1Pad       = connexConfig( 2, 0, 0, 0, 0, 0, 0,  1,  0 );
+      static constexpr uint64_t  Conn_3G_1Pad       = connexConfig( 3, 0, 0, 0, 0, 0, 0,  1,  0 );
+      static constexpr uint64_t  Conn_1G_1PinM1     = connexConfig( 1, 1, 0, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1PinM1     = connexConfig( 2, 1, 0, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1PinM2     = connexConfig( 1, 0, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1PinM2     = connexConfig( 2, 0, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_1PinM2     = connexConfig( 3, 0, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1M1_1PinM1 = connexConfig( 1, 1, 0, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_2M1_1PinM1 = connexConfig( 1, 2, 0, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1M1_1PinM2 = connexConfig( 1, 1, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_2M1_1PinM2 = connexConfig( 1, 2, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_3M1_1PinM2 = connexConfig( 1, 3, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_4M1_1PinM2 = connexConfig( 1, 4, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_5M1_1PinM2 = connexConfig( 1, 5, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1M1_1PinM2 = connexConfig( 2, 1, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_2M1_1PinM2 = connexConfig( 2, 2, 1, 0, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1PinM3     = connexConfig( 1, 0, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1PinM3     = connexConfig( 2, 0, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_1PinM3     = connexConfig( 3, 0, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1M1_1PinM3 = connexConfig( 1, 1, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_2M1_1PinM3 = connexConfig( 1, 2, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1M1_1PinM3 = connexConfig( 2, 1, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_2M1_1PinM3 = connexConfig( 2, 2, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_3M1_1PinM3 = connexConfig( 2, 3, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_1M1_1PinM3 = connexConfig( 3, 1, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_2M1_1PinM3 = connexConfig( 3, 2, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_3M1_1PinM3 = connexConfig( 3, 3, 0, 1, 0, 0, 0,  0,  1 );
 
     // Attributes.
     private:
