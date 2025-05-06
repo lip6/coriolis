@@ -1997,15 +1997,15 @@ namespace Anabatic {
       setDuSource( duSource );
       return true;
     }
+    if (margin < 0) setDuSource( 0 );
 
-    setDuSource( 0 );
     cdebug_log(149,0) << "Shrink target of " << DbU::getValueString(shrink) << endl;
     margin = duTarget - targetCap;
     if (margin > shrink)
       setDuTarget( duTarget - shrink );
     else {
       cdebug_log(149,0) << "Target reset" << endl;
-      setDuTarget( 0 );
+      if (margin < 0) setDuTarget( 0 );
     }
 
     return true;
