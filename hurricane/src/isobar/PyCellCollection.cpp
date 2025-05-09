@@ -1,5 +1,5 @@
-#include "hurricane/isobar/PyInstanceCollection.h"
-#include "hurricane/isobar/PyInstance.h"
+#include "hurricane/isobar/PyCellCollection.h"
+#include "hurricane/isobar/PyCell.h"
 
 namespace  Isobar {
 
@@ -10,22 +10,22 @@ extern "C" {
 
 
 // x=================================================================x
-// |             "PyInstanceCollection" Python Module Code Part           |
+// |             "PyCellCollection" Python Module Code Part           |
 // x=================================================================x
 
 #if defined(__PYTHON_MODULE__)
 
 
   // x-------------------------------------------------------------x
-  // |                 "PyInstanceCollection" Attribute Methods         |
+  // |                 "PyCellCollection" Attribute Methods         |
   // x-------------------------------------------------------------x
 
 
-  DirectDeleteMethod(PyInstanceCollection_DeAlloc, PyInstanceCollection)
+  DirectDeleteMethod(PyCellCollection_DeAlloc, PyCellCollection)
 
 
-  LocatorNextMethod(Instance)
-  CollectionMethods(Instance)
+  LocatorNextMethod(Cell)
+  CollectionMethods(Cell)
 
 
 
@@ -34,15 +34,15 @@ extern "C" {
 
 
 // x=================================================================x
-// |            "PyInstanceCollection" Shared Library Code Part           |
+// |            "PyCellCollection" Shared Library Code Part           |
 // x=================================================================x
 
 
   // ---------------------------------------------------------------
-  // PyInstanceCollection Object Definitions.
+  // PyCellCollection Object Definitions.
   
-  PyTypeCollectionObjectDefinitions(InstanceCollection)
-  PyTypeCollectionObjectDefinitions(InstanceCollectionLocator)
+  PyTypeCollectionObjectDefinitions(CellCollection)
+  PyTypeCollectionObjectDefinitions(CellCollectionLocator)
 
 #endif  // End of Shared Library Code Part.
 
