@@ -821,7 +821,11 @@ namespace {
     Cell*    cell        = workLibrary->getCell( cellName );
     if (cell) return cell;
 
-    if (not Gds::getTopCellName().empty() and (cellName != Gds::getTopCellName())) {
+    string lefImportTopCellName = Gds::getTopCellName();
+    if (isLefForeign())
+      lefImportTopCellName += "_lef_foreign";
+      
+    if (not Gds::getTopCellName().empty() and (cellName != lefImportTopCellName)) {
       cellName.insert( 0, "." );
       cellName.insert( 0, Gds::getTopCellName() );
       workLibrary = _library->getLibrary( Gds::getTopCellName() );

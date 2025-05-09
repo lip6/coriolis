@@ -665,7 +665,8 @@ namespace {
     }
     Cell* gdsCell = _gdsForeignLibrary->getCell( cellName );
     if (not gdsCell) {
-      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign cell *not* found in library." ) << endl;
+      cerr << Warning( "LefParser::_macroForeignCbk(): GDS foreign cell \"%s\" *not* found in library."
+                     , getString(cellName).c_str() ) << endl;
       return 0;
     }
 
