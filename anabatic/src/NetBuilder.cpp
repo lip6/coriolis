@@ -390,6 +390,9 @@ namespace Anabatic {
                         << "+"  << (int)_connexity.fields.M1     
                         << "+"  << (int)_connexity.fields.M2     
                         << "+"  << (int)_connexity.fields.M3
+                        << "+"  << (int)_connexity.fields.M4
+                        << "+"  << (int)_connexity.fields.M5
+                        << "+"  << (int)_connexity.fields.M6
                         << "+"  << (int)_connexity.fields.Pin
                         << "+"  << (int)_connexity.fields.Pad
                         << "] " << _gcell
@@ -477,8 +480,8 @@ namespace Anabatic {
               if      (rpDepth == 0) _connexity.fields.M1++; // M1 V
               else if (rpDepth == 1) _connexity.fields.M2++; // M2 H
               else if (rpDepth == 2) _connexity.fields.M3++; // M3 V
-              else if (rpDepth == 3) _connexity.fields.M2++; // M4 H
-              else if (rpDepth == 4) _connexity.fields.M3++; // M5 V
+              else if (rpDepth == 3) _connexity.fields.M4++; // M4 H
+              else if (rpDepth == 4) _connexity.fields.M5++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()
@@ -618,6 +621,9 @@ namespace Anabatic {
                       << "+"  << (int)_connexity.fields.M1     
                       << "+"  << (int)_connexity.fields.M2     
                       << "+"  << (int)_connexity.fields.M3
+                      << "+"  << (int)_connexity.fields.M4
+                      << "+"  << (int)_connexity.fields.M5
+                      << "+"  << (int)_connexity.fields.M6
                       << "+"  << (int)_connexity.fields.Pin
                       << "+"  << (int)_connexity.fields.Pad
                       << "] " << _gcell
@@ -712,6 +718,12 @@ namespace Anabatic {
         case Conn_2G_4M3:
         case Conn_3G_1M3:  _do_xG_xM3(); break;
         // End xG_xM3 cascaded cases.
+        case Conn_1G_1M4:
+        case Conn_2G_1M4:
+        case Conn_3G_1M4:  _do_xG_1M4(); break;
+        // End xG_1M4 cascaded cases.
+        case Conn_1G_1M5:  _do_1G_1M5(); break;
+        case Conn_2G_1M5:  _do_2G_1M5(); break;
 
         case Conn_2G:      if (_do_2G()) break;
         case Conn_3G:
@@ -1192,6 +1204,27 @@ namespace Anabatic {
   bool  NetBuilder::_do_xG_xM3 ()
   {
     throw Error ( "%s::_do_xG_xM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_xG_1M4 ()
+  {
+    throw Error ( "%s::_do_2G_1M4() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_1G_1M5 ()
+  {
+    throw Error ( "%s::_do_1G_1M5() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_2G_1M5 ()
+  {
+    throw Error ( "%s::_do_2G_1M5() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 

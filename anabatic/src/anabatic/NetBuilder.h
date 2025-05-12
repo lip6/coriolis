@@ -267,6 +267,9 @@ namespace Anabatic {
       virtual bool                          _do_xG_xM2             ();
       virtual bool                          _do_1G_1M3             ();
       virtual bool                          _do_xG_xM3             ();
+      virtual bool                          _do_xG_1M4             ();
+      virtual bool                          _do_1G_1M5             ();
+      virtual bool                          _do_2G_1M5             ();
       virtual bool                          _do_1G_xM1_1PinM1      ();
       virtual bool                          _do_1G_xM1_1PinM2      ();
       virtual bool                          _do_2G_xM1_1PinM2      ();
@@ -312,6 +315,8 @@ namespace Anabatic {
       static constexpr uint64_t  Conn_1G_2M3        = connexConfig( 1, 0, 0, 2, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_1G_3M3        = connexConfig( 1, 0, 0, 3, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_1G_4M3        = connexConfig( 1, 0, 0, 4, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M4        = connexConfig( 1, 0, 0, 0, 1, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_1G_1M5        = connexConfig( 1, 0, 0, 0, 0, 1, 0,  0,  0 );
       static constexpr uint64_t  Conn_1G_1M1_1M2    = connexConfig( 1, 1, 1, 0, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_1G_1M1_1M3    = connexConfig( 1, 1, 0, 1, 0, 0, 0,  0,  0 );
     //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
@@ -332,6 +337,8 @@ namespace Anabatic {
       static constexpr uint64_t  Conn_2G_2M3        = connexConfig( 2, 0, 0, 2, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_2G_3M3        = connexConfig( 2, 0, 0, 3, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_2G_4M3        = connexConfig( 2, 0, 0, 4, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_1M4        = connexConfig( 2, 0, 0, 0, 1, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_2G_1M5        = connexConfig( 2, 0, 0, 0, 0, 1, 0,  0,  0 );
       static constexpr uint64_t  Conn_2G_1M1_1M2    = connexConfig( 2, 1, 1, 0, 0, 0, 0,  0,  0 );
     //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
       static constexpr uint64_t  Conn_3G_1M1        = connexConfig( 3, 1, 0, 0, 0, 0, 0,  0,  0 );
@@ -349,6 +356,9 @@ namespace Anabatic {
       static constexpr uint64_t  Conn_3G_2M3        = connexConfig( 3, 0, 0, 2, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_3G_3M3        = connexConfig( 3, 0, 0, 3, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_3G_4M3        = connexConfig( 3, 0, 0, 4, 0, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_1M4        = connexConfig( 3, 0, 0, 0, 1, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_2M4        = connexConfig( 3, 0, 0, 0, 2, 0, 0,  0,  0 );
+      static constexpr uint64_t  Conn_3G_3M4        = connexConfig( 3, 0, 0, 0, 3, 0, 0,  0,  0 );
     //                           Connexity Name                   | G|M1|M2|M3|M4|M5|M6|Pad|Pin |
       static constexpr uint64_t  Conn_4G_1M1        = connexConfig( 4, 1, 0, 0, 0, 0, 0,  0,  0 );
       static constexpr uint64_t  Conn_4G_2M1        = connexConfig( 4, 2, 0, 0, 0, 0, 0,  0,  0 );

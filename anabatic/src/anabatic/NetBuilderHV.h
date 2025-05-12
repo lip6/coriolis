@@ -56,6 +56,9 @@ namespace Anabatic {
       virtual bool          _do_xG_xM3               ();
               bool          _do_xG_xM3_baseRouting   ();
               bool          _do_xG_xM3_upperRouting  ();
+      virtual bool          _do_xG_1M4               ();
+      virtual bool          _do_1G_1M5               ();
+      virtual bool          _do_2G_1M5               ();
       virtual bool          _do_1G_xM1_1PinM2        ();
       virtual bool          _do_2G_xM1_1PinM2        ();
       virtual bool          _do_1G_1M1_1PinM3        ();
