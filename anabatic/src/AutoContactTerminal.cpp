@@ -255,9 +255,25 @@ namespace Anabatic {
                           <<              " y:" << DbU::getValueString(yborder)
                           << endl;
 
-        if (lg->isHorizontal() xor (horizontal != nullptr)) {
-          cdebug_log(145,0) << "Gauge and segment orientation differ, rotating VIA bottom." << endl;
-          std::swap( xborder, yborder );
+        if (Session::getRoutingGauge()->isSymbolic()) {
+          if (lg->isHorizontal() xor (horizontal != nullptr)) {
+            cdebug_log(145,0) << "Gauge and segment orientation differ, rotating VIA bottom." << endl;
+            std::swap( xborder, yborder );
+          }
+        } else {
+          if ((bb.getHeight() > 2*xborder) and (bb.getWidth () > 2*yborder)) {
+            if (lg->isVertical()) {
+              if (xborder < yborder) {
+                cdebug_log(145,0) << "H gauge and (xborder < yborder) -> rotate VIA bot metal." << endl;
+                std::swap( xborder, yborder );
+              }
+            } else {
+              if (xborder > yborder) {
+                cdebug_log(145,0) << "V gauge and (xborder > yborder) -> rotate VIA bot metal." << endl;
+                std::swap( xborder, yborder );
+              }
+            }
+          }
         }
 
         bb.inflate( -xborder, -yborder );
@@ -349,6 +365,7 @@ namespace Anabatic {
   void  AutoContactTerminal::cacheDetach ( AutoSegment* segment )
   {
     if (_segment == segment) {
+      cdebug_log(145,0) << _getTypeName() << "::cacheDetach() " << this << endl;
     //_segment->unsetFlags( AutoSegment::SegAxisSet );
       _segment = NULL;
       setFlags( CntInvalidatedCache );
@@ -375,12 +392,14 @@ namespace Anabatic {
     _segment = segment;
     unsetFlags( CntInvalidatedCache  );
 
-    if (  (dynamic_cast<AutoHorizontal*>(_segment) and (getFlags() & CntOnHorizontal))
-       or (dynamic_cast<AutoVertical*>  (_segment) and (getFlags() & CntOnVertical  )) ) {
+    Box landingZone = getNativeConstraintBox();
+    if (  (dynamic_cast<AutoHorizontal*>(_segment) and (landingZone.getWidth () > 0))
+       or (dynamic_cast<AutoVertical*>  (_segment) and (landingZone.getHeight() > 0)) ) {
       _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegAxisSet );
       setFlags( CntDrag );
 
       cdebug_log(145,0) << "Drag Contact/Segment set" << endl;
+      cdebug_log(145,0) << "  " << this << endl;
     }
 
     cdebug_log(145,0) << "Cached:" << _segment << endl;

@@ -2772,7 +2772,7 @@ namespace Anabatic {
 
   bool  AutoSegment::promoteToPref ( Flags flags )
   {
-    cdebug_log(149,0) << "AutoVertical::promoteToPref() " << this << endl;
+    cdebug_log(149,0) << "AutoSegment::promoteToPref() " << this << endl;
 
     if (not isNonPref()) {
       cdebug_log(149,0) << "Reject: not isNonPref() " << endl;
@@ -2803,11 +2803,16 @@ namespace Anabatic {
     Layer* contactLayer = Session::getRoutingGauge()->getContactLayer( depth );
     Session::dogleg( this );
 
+    AutoSegment* perpandicular = nullptr;
     if (terminal == autoTarget) {
       targetDetach();
+      perpandicular = autoSource->getPerpandicular( this );
     } else {
       sourceDetach();
+      perpandicular = autoTarget->getPerpandicular( this );
     }
+    if (perpandicular)
+      perpandicular->unsetFlags( AutoSegment::SegDrag );
 
     invalidate( Flags::Topology );
     terminal->invalidate( Flags::Topology );
@@ -2821,6 +2826,8 @@ namespace Anabatic {
     cdebug_log(149,0) << "New " << dlContact1->base() << "." << endl;
     Session::dogleg( segment1 );
       
+    terminal  ->unsetFlags( CntWeakTerminal|CntDrag );
+    dlContact1->setFlags  ( CntWeakTerminal );
     if (terminal == autoTarget) {
       targetAttach( dlContact1 );
       autoTarget->cacheAttach( segment1 );
@@ -2836,9 +2843,8 @@ namespace Anabatic {
     if (isAnalog  ()) segment1->setFlags( SegAnalog );
     if (isNoMoveUp()) segment1->setFlags( SegNoMoveUp );
     unsetFlags( AutoSegment::SegDrag );
-    terminal  ->unsetFlags( CntWeakTerminal|CntDrag );
-    dlContact1->setFlags  ( CntWeakTerminal );
 
+    cdebug_log(149,0) << "terminal: " << terminal << endl;
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
     cdebug_log(149,0) << "Session::dogleg[x+2] new paral: " << nullptr << endl;
     cdebug_log(149,0) << "Session::dogleg[x+0] original:  " << this << endl;
