@@ -14,13 +14,12 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_MATRIX_H
-#define  ANABATIC_MATRIX_H
-
+#pragma  once
 #include <string>
 #include <vector>
 #include <iostream>
 #include "hurricane/Box.h"
+#include "anabatic/Constants.h"
 namespace Hurricane {
   class Cell;
 }
@@ -67,42 +66,45 @@ namespace Anabatic {
           int     _index;
       };
     public:
-                         Matrix       ();
-                         Matrix       ( Box area, DbU::Unit side );
-                        ~Matrix       ();
-      inline  Box        getArea      () const;
-      inline  DbU::Unit  getSide      () const;
-      inline  Point      getGridPoint ( int i, int j ) const;
-      inline  Point      getGridPoint ( int index ) const;
-      inline  Point      getGridPoint ( const Index& ) const;
-      inline  int        getIMax      () const;
-      inline  int        getJMax      () const;
-      inline  int        index2i      (       int    ) const;
-      inline  int        index2j      (       int    ) const;
-      inline  int        index2i      ( const Index& ) const;
-      inline  int        index2j      ( const Index& ) const;
-      inline  int        ij2index     ( int i, int j ) const;
-      inline  int        xy2minIndex  ( DbU::Unit x, DbU::Unit y ) const;
-      inline  int        xy2minIndex  ( Point ) const;
-      inline  int        xy2maxIndex  ( DbU::Unit x, DbU::Unit y ) const;
-      inline  int        xy2maxIndex  ( Point ) const;
-      inline  Index&     west         ( Index& ) const;
-      inline  Index&     east         ( Index& ) const;
-      inline  Index&     south        ( Index& ) const;
-      inline  Index&     north        ( Index& ) const;
-              GCell*     getUnder     ( DbU::Unit x, DbU::Unit y ) const;
-      inline  GCell*     getUnder     ( Point ) const;
-              void       setCell      ( Cell*, DbU::Unit side );
-              void       updateLookup ( GCell* );
-              void       resize       ( Cell*, const vector<GCell*>& );
-              void       show         () const;
+                         Matrix           ();
+                         Matrix           ( Box area, DbU::Unit side );
+                        ~Matrix           ();
+              Cell*      getCell          () const;
+      inline  Box        getArea          () const;
+      inline  DbU::Unit  getSide          () const;
+      inline  Point      getGridPoint     ( int i, int j ) const;
+      inline  Point      getGridPoint     ( int index ) const;
+      inline  Point      getGridPoint     ( const Index& ) const;
+      inline  int        getIMax          () const;
+      inline  int        getJMax          () const;
+      inline  int        index2i          (       int    ) const;
+      inline  int        index2j          (       int    ) const;
+      inline  int        index2i          ( const Index& ) const;
+      inline  int        index2j          ( const Index& ) const;
+      inline  int        ij2index         ( int i, int j ) const;
+      inline  int        xy2minIndex      ( DbU::Unit x, DbU::Unit y ) const;
+      inline  int        xy2minIndex      ( Point ) const;
+      inline  int        xy2maxIndex      ( DbU::Unit x, DbU::Unit y ) const;
+      inline  int        xy2maxIndex      ( Point ) const;
+      inline  Index&     west             ( Index& ) const;
+      inline  Index&     east             ( Index& ) const;
+      inline  Index&     south            ( Index& ) const;
+      inline  Index&     north            ( Index& ) const;
+              GCell*     getUnder         ( DbU::Unit x, DbU::Unit y ) const;
+      inline  GCell*     getUnder         ( Point ) const;
+              void       setCell          ( Cell*, DbU::Unit side );
+              void       updateLookup     ( GCell* );
+              void       resize           ( Cell*, const vector<GCell*>& );
+              void       show             () const;
+              void       resetGCellsFlags ( Flags ); 
+              size_t     addStdCellArea   ( const Box& );
     // Inspector support.                            
-      virtual Record*    _getRecord   () const;
-      virtual string     _getString   () const;
-      virtual string     _getTypeName () const;
-    private:
-                         Matrix       ( const Matrix& );
-              Matrix&    operator=    ( const Matrix& );
+      virtual Record*    _getRecord       () const;
+      virtual string     _getString       () const;
+      virtual string     _getTypeName     () const;
+    private:                              
+                         Matrix           ( const Matrix& );
+              Matrix&    operator=        ( const Matrix& );
     private:
       Box             _area;
       DbU::Unit       _side;
@@ -238,5 +240,3 @@ GETSTRING_POINTER_SUPPORT(Anabatic::Matrix::Index);
 GETSTRING_VALUE_SUPPORT(Anabatic::Matrix::Index);
 IOSTREAM_POINTER_SUPPORT(Anabatic::Matrix::Index);
 IOSTREAM_VALUE_SUPPORT(Anabatic::Matrix::Index);
-
-#endif  // ANABATIC_MATRIX_H

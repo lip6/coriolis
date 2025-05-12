@@ -31,6 +31,7 @@ namespace Anabatic {
   using std::setfill;
   using std::ostringstream;
   using Hurricane::Error;
+  using Hurricane::Go;
 
 
   Matrix::Matrix ()
@@ -57,6 +58,10 @@ namespace Anabatic {
 
   Matrix::~Matrix ()
   { }
+
+
+  Cell* Matrix::getCell () const
+  { return (not _gcells.empty()) ? _gcells.front()->getCell() : nullptr; }
 
 
   void  Matrix::setCell ( Cell* cell, DbU::Unit side )
@@ -144,6 +149,21 @@ namespace Anabatic {
   {
     setCell( cell, _side );
     for ( GCell* gcell : gcells ) updateLookup( gcell );
+  }
+
+
+  void  Matrix::resetGCellsFlags ( Flags flags )
+  { for ( GCell* gcell : _gcells ) gcell->flags().reset( flags ); }
+
+
+  size_t  Matrix::addStdCellArea ( const Box& area )
+  {
+    size_t flaggeds = 0;
+    for ( Go* goGcell : getCell()->getExtensionGosUnder(area,GCell::staticGetName()) ) {
+      static_cast<GCell*>( goGcell )->flags().set( Flags::StdCellArea );
+      flaggeds++;
+    }
+    return flaggeds;
   }
 
 

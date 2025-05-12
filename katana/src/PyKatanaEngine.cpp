@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/ExceptionWidget.h"
@@ -52,6 +53,8 @@ namespace  Katana {
   using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::PyBox;
+  using Isobar::PyTypeBox;
   using Isobar::PyNet;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
@@ -202,6 +205,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyKatanaEngine_addStdCellArea ( PyKatanaEngine *self, PyObject* args )
+  {
+    cdebug_log(34,0) << "KatanaEngine.addStdCellArea()" << endl;
+    HTRY
+      METHOD_HEAD ( "KatanaEngine.addStdCellArea()" )
+      PyBox* pyBox;
+      if (not PyArg_ParseTuple(args,"O!:KatanaEngine.addStdCellArea", &PyTypeBox, &pyBox)) {
+        PyErr_SetString( ConstructorError, "KatanaEngine.addStdCellArea(): Parameter is not an Box." );
+        return NULL;
+      }
+      katana->addStdCellArea( *PYBOX_O(pyBox) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   PyObject* PyKatanaEngine_runGlobalRouter ( PyKatanaEngine* self, PyObject* args )
   {
     cdebug_log(40,0) << "PyKatanaEngine_runGlobalRouter()" << endl;
@@ -334,6 +353,7 @@ extern "C" {
   DirectVoidToolMethod  (KatanaEngine,katana,printConfiguration)
   DirectVoidToolMethod  (KatanaEngine,katana,finalizeLayout)
   DirectVoidToolMethod  (KatanaEngine,katana,resetRouting)
+  DirectVoidToolMethod  (KatanaEngine,katana,resetStdCellArea)
   DirectVoidMethod      (KatanaEngine,katana,dumpMeasures)
   DirectGetBoolAttribute(PyKatanaEngine_isGlobalRoutingSuccess,isGlobalRoutingSuccess,PyKatanaEngine,KatanaEngine)
   DirectGetBoolAttribute(PyKatanaEngine_isDetailedRoutingSuccess,isDetailedRoutingSuccess,PyKatanaEngine,KatanaEngine)
@@ -354,6 +374,10 @@ extern "C" {
                                    , "Setup Katana for digital routing." }
     , { "exclude"                  , (PyCFunction)PyKatanaEngine_exclude                 , METH_VARARGS
                                    , "Exclude a net from routing." }
+    , { "resetStdCellArea"         , (PyCFunction)PyKatanaEngine_resetStdCellArea        , METH_NOARGS
+                                   , "Delete all areas flagged as standart cells." }
+    , { "addStdCellArea"           , (PyCFunction)PyKatanaEngine_addStdCellArea          , METH_VARARGS
+                                   , "Add a new area containing standard cells." }
     , { "printConfiguration"       , (PyCFunction)PyKatanaEngine_printConfiguration      , METH_NOARGS
                                    , "Display on the console the configuration of Katana." }
     , { "getSuccessState"          , (PyCFunction)PyKatanaEngine_getSuccessState         , METH_NOARGS

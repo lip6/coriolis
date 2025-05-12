@@ -279,6 +279,7 @@ namespace Anabatic {
 
   uint32_t  GCell::getDisplayMode () { return _displayMode; }
   void      GCell::setDisplayMode ( uint32_t mode ) { _displayMode = mode; }
+  Name      GCell::staticGetName  () { return _extensionName; }
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
@@ -720,6 +721,7 @@ namespace Anabatic {
     GCell* chunk = _create( x, getYMin() );
     cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
+    if (_flags & Flags::StdCellArea) chunk->_flags |= Flags::StdCellArea;
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
 
@@ -781,6 +783,7 @@ namespace Anabatic {
     GCell* chunk = _create( getXMin(), y );
     cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
+    if (_flags & Flags::StdCellArea) chunk->_flags |= Flags::StdCellArea;
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
 
@@ -849,6 +852,7 @@ namespace Anabatic {
     //   return false;
     // }
 
+    _flags |= Flags::StdCellArea;
     GCell*    row    = this;
     GCell*    column = NULL;
     DbU::Unit ycut   = vspan.getVMin()+vside;

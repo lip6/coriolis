@@ -819,6 +819,14 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::resetStdCellArea ()
+  { _matrix.resetGCellsFlags( Flags::StdCellArea ); }
+
+  
+  void  AnabaticEngine::addStdCellArea ( const Box& area )
+  { _matrix.addStdCellArea( area ); }
+
+
   void AnabaticEngine::updateMatrix()
   {
     _matrix.setCell( getCell(), Session::getSliceHeight() );

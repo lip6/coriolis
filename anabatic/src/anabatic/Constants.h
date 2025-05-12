@@ -45,6 +45,7 @@ namespace Anabatic {
       static const BaseFlags  HRailGCell          ; // = (1 << 14);
       static const BaseFlags  VRailGCell          ; // = (1 << 15);
       static const BaseFlags  GoStraight          ; // = (1 << 16);
+      static const BaseFlags  StdCellArea         ; // = (1 << 17);
     // Flags for Edge objects states only.                      
       static const BaseFlags  NullCapacity        ; // = (1 <<  5);
       static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);

@@ -50,6 +50,7 @@ namespace Anabatic {
   const BaseFlags  Flags::HRailGCell          = (1L << 14);
   const BaseFlags  Flags::VRailGCell          = (1L << 15);
   const BaseFlags  Flags::GoStraight          = (1L << 16);
+  const BaseFlags  Flags::StdCellArea         = (1L << 17);
 // Flags for Edge objects states only.                      
   const BaseFlags  Flags::NullCapacity        = (1L <<  5);
   const BaseFlags  Flags::InfiniteCapacity    = (1L <<  6);
@@ -215,6 +216,7 @@ namespace Anabatic {
     s += (_flags & (uint64_t)StdCellRow   ) ? 'R' : '-';
     s += (_flags & (uint64_t)ChannelRow   ) ? 'C' : '-';
     s += (_flags & (uint64_t)GoStraight   ) ? 'g' : '-';
+    s += (_flags & (uint64_t)StdCellArea  ) ? 'S' : '-';
     s += ",";
     s += (_flags & (uint64_t)Invalidated  ) ? 'i' : '-';
     s += (_flags & (uint64_t)DestroyGCell ) ? 'D' : '-';

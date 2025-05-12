@@ -288,6 +288,8 @@ namespace Anabatic {
       inline        void              setSaturateRatio        ( float );
       inline        void              setSaturateRp           ( size_t );
       inline        void              setBlockageNet          ( Net* );
+                    void              resetStdCellArea        ();
+                    void              addStdCellArea          ( const Box& );
                     void              chipPrep                ();
                     void              computeEdgeCapacities   ( int maxHCap, int maxVCap, int termSatThreshold, int maxTermSat );
                     void              antennaProtect          ( Net*, uint32_t& failed, uint32_t& total );
