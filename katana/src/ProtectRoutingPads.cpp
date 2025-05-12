@@ -103,21 +103,31 @@ namespace {
   void  protectRoutingPadHV ( RoutingPad* rp )
   {
     cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
-    if (not rp->isPunctual()) {
+
+    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch = plane->getLayerGauge()->getPitch();
+    Box           bb    = rp->getBoundingBox();
+    if (not rp->isVSmall() and (bb.getWidth() < 3*pitch)) {
       cdebug_tabw(145,-1);
       return;
     }
 
-    RoutingPlane* plane          = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    Box           bb             = rp->getBoundingBox();
     Track*        track          = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
+    DbU::Unit     m2spacing      = plane->getLayer()->getMinimalSpacing();
     DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
     DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
-    Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
-                                      , bb.getYCenter()
-                                      , bb.getXMax() + halfViaTopSide - halfViaBotSide
-                                      , bb.getYCenter()
-                                      );
+    Box           metal2bb       = Box( bb.getXMin(), bb.getYCenter(), bb.getXMax(), bb.getYCenter() );
+
+    if (bb.getWidth() < pitch)
+      metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+    else
+      metal2bb.inflate( - m2spacing / 2, 0 );
+
+    // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   , bb.getXMax() + halfViaTopSide - halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   );
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
     TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, track );
