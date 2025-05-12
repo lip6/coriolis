@@ -59,7 +59,7 @@ namespace Hurricane {
       static const uint32_t M1Offgrid          = (1 << 9); 
       static const uint32_t UserCenter         = (1 << 10); 
       static const uint32_t SizeFlags          = HSmall|VSmall|Punctual|M1Offgrid;
-      static const uint32_t SelectedComponent  = (1 << 10); 
+      static const uint32_t SelectedComponent  = (1 << 11); 
     public:
       static RoutingPad*   create                ( Net*, Occurrence, uint32_t flags=0 );
       static RoutingPad*   create                ( Pin* );
