@@ -257,7 +257,10 @@ namespace {
         cdebug_log(159,0) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;
         findFailedPerpandiculars( rp, direction, faileds );
       }
-      perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX() );
+      if (perpandiculars[ iperpand ]->isHorizontal())
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getY() );
+      else
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX() );
     }
 
     cdebug_tabw(159,-1);
