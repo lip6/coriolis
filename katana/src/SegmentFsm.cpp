@@ -436,7 +436,8 @@ namespace Katana {
     if (_type & EventLevel5) eventLevel = 5;
     event->setRipedByLocal( _type&RipedByLocal );
 
-  //RoutingEvent* fork =
+    if (_type & ToPref)
+      event->_rescheduleAsPref();
     event->reschedule( queue, eventLevel );
 
     cdebug_tabw(159,-1);

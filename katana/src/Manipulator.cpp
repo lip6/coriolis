@@ -217,6 +217,17 @@ namespace Katana {
         continue;
       }
 
+      if (perpandiculars[i]->isNonPref()) {
+        cdebug_log(159,0) << "One perpandicular is non-pref, promote to pref." << endl;
+        cdebug_tabw(159,-1);
+        DataNegociate* data = perpandiculars[i]->getDataNegociate();
+        if (data and (data->getState() >= DataNegociate::Minimize)) {
+          data->setState( DataNegociate::MaximumSlack, true );
+          _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandToPref );
+          return true;
+        }
+      }
+
       bool dislodgeCaged = false;
       if (Manipulator(perpandiculars[i],_fsm).isCaged(_event->getSegment()->getAxis())) {
         cagedPerpandiculars = true;
@@ -1473,6 +1484,11 @@ namespace Katana {
 
       RoutingEvent* event2 = data2->getRoutingEvent();
       if (not event2) continue;
+
+      if (perpandiculars[i]->isNonPref()) {
+        _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandToPref );
+        return true;
+      }
 
       cdebug_log(159,0) << "  | Constraints: " << event2->getConstraints() << endl;
 
