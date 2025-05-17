@@ -177,6 +177,9 @@ template<typename Data> inline std::string  getString ( Data data )
          + Hurricane::demangle(typeid(data).name())
          + std::string(" unsupported by getString()>"); }
 
+template<> inline std::string  getString<std::nullptr_t> ( std::nullptr_t )
+{ return "nullptr" ; }
+
 // "const &" flavors.
 
 template<> inline std::string  getString<const bool&> ( const bool& b )
