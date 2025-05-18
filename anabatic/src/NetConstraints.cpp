@@ -64,6 +64,7 @@ namespace {
     cdebug_log(146,1) << "propagateConstraintFromRp() - " << rp << endl;
     RoutingLayerGauge* rlg          = Session::getLayerGauge( rp->getLayer() );
     bool               allowOffgrid = (rlg->getType() == Constant::LocalOnly);
+    bool               isSymbolic   = Session::getRoutingGauge()->isSymbolic();
 
     for ( Component* component : rp->getSlaveComponents() ) {
       cdebug_log(146,0) << "slave component: " << component << endl;
@@ -136,9 +137,14 @@ namespace {
           RoutingLayerGauge* segRlg             = Session::getLayerGauge( segment->getLayer() );
           DbU::Unit          pitch              = segRlg->getPitch();
           AutoContact*       targetContact      = segment->getOppositeAnchor( sourceContact );
+          AutoContactTurn*   turn               = dynamic_cast<AutoContactTurn*>( targetContact );
+          AutoSegment*       perpandicular      = (turn) ? turn->getPerpandicular( segment ) : nullptr;
           Box                nonPrefConstraint  = constraintBox;
           Box                parallelConstraint = constraintBox;
+
           if (not segRlg or not targetContact) continue;
+          if (not isSymbolic and perpandicular and perpandicular->isGlobal()) continue;
+
           if (segment->isVertical()) {
             nonPrefConstraint .inflate( 0      , pitch, 0      , pitch );
             parallelConstraint.inflate( 2*pitch, pitch, 2*pitch, pitch );
@@ -152,14 +158,31 @@ namespace {
           cdebug_log(146,0) << "-> parallel constraint " << parallelConstraint << endl;
 
           if (rp->isVSmall()) {
-            AutoContactTurn* turn = dynamic_cast<AutoContactTurn*>( targetContact );
             if (turn) {
-              AutoSegment* perpandicular = turn->getPerpandicular( segment );
-              cdebug_log(149,0) << "perpandicular: " << perpandicular << endl;
               turn = dynamic_cast<AutoContactTurn*>( perpandicular->getOppositeAnchor( turn ));
-              if (turn and perpandicular->isLocal()) {
-                cdebug_log(146,0) << "turn " << turn << endl;
-                turn->setConstraintBox( parallelConstraint );
+              cdebug_log(149,0) << "turn:          " << turn << endl;
+              cdebug_log(149,0) << "perpandicular: " << perpandicular << endl;
+              if (turn) {
+                AutoSegment* parallel = turn->getPerpandicular( perpandicular );
+                cdebug_log(149,0) << "parallel: " << parallel << endl;
+                if (   not parallel->isNonPref()
+                   and not parallel->isGlobal()) {
+                  AutoContact* oppositeTurn   = parallel->getOppositeAnchor( turn );
+                  Box          segConstraints = oppositeTurn->getConstraintBox();
+                  segConstraints = segConstraints.getIntersection( parallelConstraint );
+                  cdebug_log(149,0) << "oppositeTurn:   " << oppositeTurn << endl;
+                  cdebug_log(149,0) << "segConstraints: " << segConstraints << endl;
+                  if (  (parallel->isVertical  () and (segConstraints.getWidth () > pitch))
+                     or (parallel->isHorizontal() and (segConstraints.getHeight() > pitch))) {
+                    cdebug_log(146,0) << "Applies on perpandicular turn " << turn << endl;
+                    turn->setConstraintBox( parallelConstraint );
+
+                    if (parallel->getBreakLevel() > 0) {
+                      cdebug_log(146,0) << "Applies on parallel turn " << turn << endl;
+                      oppositeTurn->setConstraintBox( parallelConstraint );
+                    }
+                  }
+                }
               }
             }
           }
@@ -197,6 +220,7 @@ namespace {
           AutoContact* targetContact     = perpandicular->getOppositeAnchor( sourceContact );
           Box          nonPrefConstraint = constraintBox;
           Box          ongridConstraint  = constraintBox;
+          AutoSegment* parallel          = targetContact->getPerpandicular( perpandicular );
           if (rlg->isHorizontal()) {
             nonPrefConstraint.inflate( 0, rlg->getPitch(), 0, rlg->getPitch() );
           } else {
@@ -204,12 +228,20 @@ namespace {
           }
           ongridConstraint.inflate( rlg->getPitch() );
 
+          if (targetContact->isTurn()) {
+            AutoSegment* nextPerpand = targetContact->getPerpandicular( parallel );
+            if (nextPerpand->isNonPref()) {
+              cdebug_log(146,0) << "Next perpand is non-pref -> not applying constraints" << endl;
+              cdebug_log(146,0) << "  " << nextPerpand << endl;
+              continue;
+            }
+          }
+
           cdebug_log(146,0) << "perpandicular offgrid: " << perpandicular << endl;
           targetContact->setConstraintBox( nonPrefConstraint );
           cdebug_log(146,0) << "Apply to first turn: " << targetContact << endl;
           if (not targetContact->isTurn()) continue;
 
-          AutoSegment* parallel = targetContact->getPerpandicular( perpandicular );
           cdebug_log(146,0) << "parallel offgrid: " << parallel << endl;
           targetContact = parallel->getOppositeAnchor( targetContact );
           if (not targetContact) continue;

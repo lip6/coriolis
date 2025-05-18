@@ -76,6 +76,7 @@ namespace {
   {
     vector< pair<TrackElement*, int> > stack;
     stack.push_back( make_pair( startSegment, maxDepth ));
+    bool  isSymbolic = Session::getRoutingGauge()->isSymbolic();
     
     while ( not stack.empty() ) {
       TrackElement* segment = stack.back().first;
@@ -88,11 +89,14 @@ namespace {
         cdebug_log(159,0) << "S " << perpandicular << endl;
       
         if (not perpandicular) continue;
+        if (not isSymbolic and perpandicular->isGlobal()) continue;
         if (perpandicular->getDirection() == direction) {
           if (depth > 0)
             stack.push_back( make_pair( perpandicular, depth-1 ));
           continue;
         }
+        if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
+          continue;
         perpandiculars.push_back( perpandicular );
       }
 
@@ -101,11 +105,14 @@ namespace {
         cdebug_log(159,0) << "T " << perpandicular << endl;
       
         if (not perpandicular) continue;
+        if (not isSymbolic and perpandicular->isGlobal()) continue;
         if (perpandicular->getDirection() == direction) {
           if (depth > 0)
             stack.push_back( make_pair( perpandicular, depth-1 ));
           continue;
         }
+        if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
+          continue;
         perpandiculars.push_back( perpandicular );
       }
     }
