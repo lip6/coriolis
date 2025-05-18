@@ -76,6 +76,7 @@ namespace Anabatic {
                        , CntHDogleg               = (1 << 19)
                        , CntVDogleg               = (1 << 20)
                        , CntMetalOnly             = (1 << 21)
+                       , CntLockConstraintBox     = (1 << 22)
                        };
 
   class AutoContact {
@@ -162,6 +163,7 @@ namespace Anabatic {
       inline  DbU::Unit        getCBYMax                  () const;
       inline  Box              getConstraintBox           () const;
               Box&             intersectConstraintBox     ( Box& box ) const;
+      inline  void             lockConstraintBox          ();
     // Collections.
               AutoSegments     getAutoSegments            ();
     // Modifiers.              
@@ -291,6 +293,7 @@ namespace Anabatic {
   inline DbU::Unit     AutoContact::getCBXMax               () const { return isFixed() ? _contact->getX() : _xMax; }
   inline DbU::Unit     AutoContact::getCBYMin               () const { return isFixed() ? _contact->getY() : _yMin; }
   inline DbU::Unit     AutoContact::getCBYMax               () const { return isFixed() ? _contact->getY() : _yMax; }
+  inline  void         AutoContact::lockConstraintBox       () { _flags |= CntLockConstraintBox; }
 
   inline unsigned int  AutoContact::getMinDepth () const
   { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return minDepth; }

@@ -545,7 +545,10 @@ namespace Anabatic {
 
 
   void  AutoContact::restoreNativeConstraintBox ()
-  { setConstraintBox ( getNativeConstraintBox() ); }
+  {
+    if (_flags & CntLockConstraintBox) return;
+    setConstraintBox ( getNativeConstraintBox() );
+  }
 
                  
   Box& AutoContact::intersectConstraintBox ( Box& box ) const
