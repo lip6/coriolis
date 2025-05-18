@@ -79,7 +79,6 @@ namespace Katana {
   const uint32_t  TElemRipple          = (1 << 13);
   const uint32_t  TElemInvalidated     = (1 << 14);
   const uint32_t  TElemForwardSetTrack = (1 << 15);
-  const uint32_t  TElemDisabled        = (1 << 16);
 
 
   struct Compare {
@@ -137,7 +136,6 @@ namespace Katana {
       virtual bool                    isFixedSpan            () const;
       virtual bool                    isFixedSpanRp          () const;
       inline  bool                    isForwardSetTrack      () const;
-      inline  bool                    isDisabled             () const;
       virtual bool                    hasSymmetric           () const;
       inline  bool                    hasSourceDogleg        () const;
       inline  bool                    hasTargetDogleg        () const;
@@ -269,7 +267,6 @@ namespace Katana {
   inline bool                    TrackElement::isLocked             () const { return _flags & TElemLocked; }
   inline bool                    TrackElement::isRouted             () const { return _flags & TElemRouted; }
   inline bool                    TrackElement::isForwardSetTrack    () const { return _flags & TElemForwardSetTrack; }
-  inline bool                    TrackElement::isDisabled           () const { return _flags & TElemDisabled; }
   inline bool                    TrackElement::hasSourceDogleg      () const { return _flags & TElemSourceDogleg; }
   inline bool                    TrackElement::hasTargetDogleg      () const { return _flags & TElemTargetDogleg; }
   inline bool                    TrackElement::canRipple            () const { return _flags & TElemRipple; }

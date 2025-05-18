@@ -1012,7 +1012,6 @@ namespace Katana {
     TrackElement* parallel      = nullptr;
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
-    setFlags( TElemDisabled );
     DataNegociate* data = getDataNegociate();
     if (data and data->hasRoutingEvent())
       data->getRoutingEvent()->setDisabled( true );
@@ -1208,7 +1207,6 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU) + " "
-              + ((isDisabled()     ) ? "D" : "-")
               + ((isNonPref()      ) ? "P" : "-")
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")

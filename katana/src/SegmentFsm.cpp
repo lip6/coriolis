@@ -366,7 +366,22 @@ namespace Katana {
     DebugSession::open( _segment->getNet(), 156, 160 );
     cdebug_log(159,1) << "* doAction() on "<< _segment << endl;
 
-    if (_segment->isDisabled()) {
+    DataNegociate* data = _segment->getDataNegociate();
+    if (data == NULL) {
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return true;
+    }
+
+    RoutingEvent* event = data->getRoutingEvent();
+    if (event == NULL) {
+      cerr << Bug( "Missing Event on %p:%s"
+                 , _segment->base()->base(),getString(_segment).c_str() ) << endl;
+      DebugSession::close();
+      return true;
+    }
+
+    if (event->isDisabled()) {
       cdebug_log(159,0) << "* Disabled, skip." << endl;
       cdebug_tabw(159,-1);
       DebugSession::close();
@@ -389,13 +404,6 @@ namespace Katana {
       return true;
     }
 
-    DataNegociate* data = _segment->getDataNegociate();
-    if (data == NULL) {
-      cdebug_tabw(159,-1);
-      DebugSession::close();
-      return true;
-    }
-
     if (_type & ResetRipup   ) data->resetRipupCount();
     if (_type & DecreaseRipup) data->decRipupCount  ();
 
@@ -405,14 +413,6 @@ namespace Katana {
     }
 
     if (_segment->getTrack()) Session::addRemoveEvent( _segment );
-
-    RoutingEvent* event = data->getRoutingEvent();
-    if (event == NULL) {
-      cerr << Bug( "Missing Event on %p:%s"
-                 , _segment->base()->base(),getString(_segment).c_str() ) << endl;
-      DebugSession::close();
-      return true;
-    }
 
     if (_type&Lock) Session::addLockEvent( _segment );
 
