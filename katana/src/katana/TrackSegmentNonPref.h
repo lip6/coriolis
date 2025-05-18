@@ -50,6 +50,7 @@ namespace Katana {
       virtual void                 _postCreate         ();
       virtual void                 _preDestroy         ();
       virtual bool                 isNonPref           () const;
+      virtual bool                 canPromoteToPref    ( Flags ) const;
       virtual size_t               getTrackSpan        () const;
       virtual uint32_t             getTrackCount       () const;
       virtual void                 addOverlapCost      ( TrackCost& ) const;

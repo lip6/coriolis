@@ -91,6 +91,22 @@ namespace Katana {
   uint32_t  TrackSegmentNonPref::getTrackCount () const { return _trackCount; }
 
 
+  bool  TrackSegmentNonPref::canPromoteToPref ( Flags flags ) const
+  {
+    cdebug_log(159,0) << "canPromoteToPref() " << this << endl;
+    cdebug_log(159,0) << "_segment->getDirection() " << getDirection() << endl;
+    cdebug_log(159,0) << "_segment->isForOffgrid() " << isForOffgrid() << endl;
+    cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(getLayer()) << endl;
+    if (Session::getStage() != StageNegociate) return false;
+    if (isForOffgrid()) return false;
+    if (getDirection() == Session::getDirection(getLayer())) return false;
+    if (flags & Flags::IgnoreRipupState) return true;
+    if (getDataNegociate() and (getDataNegociate()->getState() < DataNegociate::MaximumSlack))
+      return false;
+    return true;
+  }
+
+
   void  TrackSegmentNonPref::updateTrackSpan ()
   {
     DebugSession::open( getNet(), 150, 160 );

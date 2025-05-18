@@ -337,17 +337,18 @@ namespace Katana {
   {
     RoutingEvent* active = _segment->getDataNegociate()->getRoutingEvent();
     if (active != this) return active->reschedule( queue, eventLevel );
+    if (isDisabled()) return nullptr;
 
-    RoutingEvent* fork = NULL;
+    RoutingEvent* fork = nullptr;
 
     if (getState() == DataNegociate::RepairFailed) {
       cdebug_log(159,0) << "Reschedule: cancelled (RepairFailed) -> " << fork << endl;
-      return NULL;
+      return nullptr;
     }
 
     if ( (Session::getStage() != StageRepair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
-      return NULL;
+      return nullptr;
     }
 
     if (not isProcessed()) {
@@ -457,7 +458,9 @@ namespace Katana {
       setProcessed();
       setTimeStamp( _processeds );
 
-      if (not (_segment->isNonPref() and _rescheduleAsPref())) {
+      if (_segment->canPromoteToPref(Flags::NoFlags)) {
+        _rescheduleAsPref();
+      } else {
         switch ( Session::getStage() ) {
           case StageNegociate: _processNegociate( queue, history ); break;
           case StagePack:      _processPack     ( queue, history ); break;
@@ -561,18 +564,11 @@ namespace Katana {
 
   bool  RoutingEvent::_rescheduleAsPref ()
   {
-    cdebug_log(159,0) << "_rescheduleAsPref() " << _segment << endl;
-    cdebug_log(159,0) << "_segment->getDirection() " << _segment->getDirection() << endl;
-    cdebug_log(159,0) << "_segment->isForOffgrid() " << _segment->isForOffgrid() << endl;
-    cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(_segment->getLayer()) << endl;
-    if (Session::getStage() != StageNegociate) return false;
-    if (_segment->isForOffgrid()) return false;
-    if (_segment->getDirection() == Session::getDirection(_segment->getLayer()))
-      return false;
-    if (_dataNegociate and (_dataNegociate->getState() < DataNegociate::MaximumSlack))
-      return false;
     TrackSegmentNonPref* nonPref = dynamic_cast<TrackSegmentNonPref*>( _segment );
-    if (nonPref) nonPref->promoteToPref();
+    if (nonPref) {
+      nonPref->promoteToPref();
+      cdebug_log(159,0) << "non-pref *after* " << nonPref << endl;
+    }
     return true;
   }
   
@@ -639,7 +635,8 @@ namespace Katana {
           DataNegociate* data = perpandicular->getDataNegociate();
           if (data and (data->getState() < DataNegociate::Repair)) {
             data->setState( DataNegociate::Repair );
-            data->resetRipupCount();
+            if (not perpandicular->isNonPref())
+              data->resetRipupCount();
           }
         }
       }

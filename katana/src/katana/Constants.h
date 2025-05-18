@@ -50,6 +50,7 @@ namespace Katana {
       static const Hurricane::BaseFlags  ShowBloatedInstances;
       static const Hurricane::BaseFlags  ProtectSelf;
       static const Hurricane::BaseFlags  PlacementCallback;
+      static const Hurricane::BaseFlags  IgnoreRipupState;
     public:
       inline  Flags ( uint64_t );
       inline  Flags ( const Super& );

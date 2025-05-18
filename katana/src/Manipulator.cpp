@@ -194,13 +194,22 @@ namespace Katana {
     Track* track = NULL;
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
 
+    bool nonPrefFounds = false;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       cdebug_log(159,0) << "| " << perpandiculars[i] << endl;
 
       track = perpandiculars[i]->getTrack();
+      DataNegociate* dataPp = perpandiculars[i]->getDataNegociate();
+
       if (not track) {
       // The perpandicular is not placed yet.
-        if (perpandiculars[i]->isFixedAxis()) {
+        if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+          cdebug_log(159,0) << "Promote non-pref perpandicular" << endl;
+          AutoContact*  terminal = nullptr;
+          TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+          parallel->makeDogleg( terminal->getGCell() );
+          nonPrefFounds = true;
+        } else if (perpandiculars[i]->isFixedAxis()) {
           RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandiculars[i]->getLayer());
           Track*        track = plane->getTrackByPosition( perpandiculars[i]->getAxis() );
           if (track) {
@@ -217,15 +226,14 @@ namespace Katana {
         continue;
       }
 
-      if (perpandiculars[i]->isNonPref()) {
+      if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
         cdebug_log(159,0) << "One perpandicular is non-pref, promote to pref." << endl;
         cdebug_tabw(159,-1);
-        DataNegociate* data = perpandiculars[i]->getDataNegociate();
-        if (data and (data->getState() >= DataNegociate::Minimize)) {
-          data->setState( DataNegociate::MaximumSlack, true );
-          _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandToPref );
-          return true;
-        }
+        AutoContact*  terminal = nullptr;
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+        parallel->makeDogleg( terminal->getGCell() );
+        nonPrefFounds = true;
+        continue;
       }
 
       bool dislodgeCaged = false;
@@ -275,6 +283,13 @@ namespace Katana {
           return false;
         }
       }
+    }
+
+    if (nonPrefFounds) {
+      cdebug_log(159,0) << "Some non-pref perpandiculars has been found." << endl;
+      _fsm.addAction( _segment, SegmentAction::SelfRipup );
+      cdebug_tabw(159,-1);
+      return true;
     }
 
     if (cagedPerpandiculars and not placedPerpandiculars) {
@@ -1485,8 +1500,10 @@ namespace Katana {
       RoutingEvent* event2 = data2->getRoutingEvent();
       if (not event2) continue;
 
-      if (perpandiculars[i]->isNonPref()) {
-        _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandToPref );
+      if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+        AutoContact*  terminal = nullptr;
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+        parallel->makeDogleg( terminal->getGCell() );
         return true;
       }
 
@@ -1885,11 +1902,15 @@ namespace Katana {
       return false;
     }
 
-    _fsm.addAction ( _segment     , SegmentAction::SelfRipup|SegmentAction::EventLevel1 );
-    _fsm.addAction ( perpandicular, SegmentAction::Perpandicular
-                                  | SegmentAction::Ripup
-                                  | SegmentAction::EventLevel4 );
-
+    if (_segment->isNonPref()) {
+      _segment->promoteToPref();
+    } else {
+      _fsm.addAction ( _segment     , SegmentAction::SelfRipup|SegmentAction::EventLevel1 );
+      _fsm.addAction ( perpandicular, SegmentAction::Perpandicular
+                                    | SegmentAction::Ripup
+                                    | SegmentAction::EventLevel4 );
+    }
+      
     cdebug_tabw(159,-1);
     return true;
 
