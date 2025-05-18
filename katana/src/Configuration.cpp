@@ -60,6 +60,7 @@ namespace Katana {
     , _runRealignStage     (Cfg::getParamBool  ("katana.runRealignStage"      ,true   )->asBool())
     , _disableStackedVias  (Cfg::getParamBool  ("katana.disableStackedVias"   ,false  )->asBool())
   {
+    _ripupLimits[NonPrefRipupLimit]    = Cfg::getParamInt("katana.nonPrefRipupLimit"    , 5)->asInt();
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 6)->asInt();
@@ -202,6 +203,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Terminal saturated edge capacity"   ,_termSatReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Terminal saturated GCell threshold" ,_termSatThreshold) << endl;
     cout << Dots::asULong ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, non-preferreds"        ,_ripupLimits[NonPrefRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
@@ -242,6 +244,7 @@ namespace Katana {
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
+      record->add ( getSlot("_ripupLimits[NonPrefRipupLimit]"    ,_ripupLimits[NonPrefRipupLimit]   ) );
       record->add ( getSlot("_ripupLimits[StrapRipupLimit]"      ,_ripupLimits[StrapRipupLimit]     ) );
       record->add ( getSlot("_ripupLimits[LocalRipupLimit]"      ,_ripupLimits[LocalRipupLimit]     ) );
       record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"     ,_ripupLimits[GlobalRipupLimit]    ) );
