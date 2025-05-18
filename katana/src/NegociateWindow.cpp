@@ -702,9 +702,9 @@ namespace Katana {
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
 
-      // if (RoutingEvent::getProcesseds() == 446036) {
+      // if (RoutingEvent::getProcesseds() == 41911) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After processing RoutingEvent 446035." );
+      //   Breakpoint::stop( 0, "After processing RoutingEvent 41910." );
       //   UpdateSession::open();
       // }
 
