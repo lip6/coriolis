@@ -2770,6 +2770,21 @@ namespace Anabatic {
 #endif
 
 
+  AutoSegment* AutoSegment::getNonPrefPerpand ( AutoContact*& terminal ) const
+  {
+    if (not isNonPref()) return nullptr;
+    AutoContact* autoSource       = getAutoSource();
+    AutoContact* autoTarget       = getAutoTarget();
+    AutoContact* turn             = nullptr;
+
+    if (autoSource->isTerminal()) { turn = autoTarget; terminal = autoSource; }
+    if (autoTarget->isTerminal()) { turn = autoSource; terminal = autoTarget; }
+    if (not turn) return nullptr;
+
+    return turn->getPerpandicular( this );
+  }
+
+
   bool  AutoSegment::promoteToPref ( Flags flags )
   {
     cdebug_log(149,0) << "AutoSegment::promoteToPref() " << this << endl;
@@ -2778,16 +2793,19 @@ namespace Anabatic {
       cdebug_log(149,0) << "Reject: not isNonPref() " << endl;
       return false;
     }
-    size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    size_t     depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    DbU::Unit  pitch = Session::getRoutingGauge()->getPitch( getLayer() );
     if (depth >= Session::getAllowedDepth()) {
       cdebug_log(149,0) << "Reject: at maximum depth (top layer)" << endl;
       return false;
     }
     cdebug_log(149,0) << "promoting..." << endl;
 
-    AutoContact* autoSource = getAutoSource();
-    AutoContact* autoTarget = getAutoTarget();
-    AutoContact* terminal   = nullptr;
+    Box          viaConstraints;
+    Interval     cagedConstraints = getUserConstraints();
+    AutoContact* autoSource       = getAutoSource();
+    AutoContact* autoTarget       = getAutoTarget();
+    AutoContact* terminal         = nullptr;
 
     unsetFlags( SegNonPref );
     if (autoSource->isTerminal()) terminal = autoSource;
@@ -2806,17 +2824,24 @@ namespace Anabatic {
     AutoSegment* perpandicular = nullptr;
     if (terminal == autoTarget) {
       targetDetach();
-      perpandicular = autoSource->getPerpandicular( this );
+      viaConstraints = autoSource->getConstraintBox();
+      perpandicular  = autoSource->getPerpandicular( this );
     } else {
       sourceDetach();
-      perpandicular = autoTarget->getPerpandicular( this );
+      perpandicular  = autoTarget->getPerpandicular( this );
+      viaConstraints = autoTarget->getConstraintBox();
     }
-    if (perpandicular)
+    if (perpandicular) {
       perpandicular->unsetFlags( AutoSegment::SegDrag );
+      perpandicular->updateNativeConstraints();
+    }
+    viaConstraints.inflate( 2*pitch );
 
     invalidate( Flags::Topology );
     terminal->invalidate( Flags::Topology );
     AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), getNet(), contactLayer );
+    dlContact1->setConstraintBox( viaConstraints );
+    dlContact1->lockConstraintBox();
     cdebug_log(149,0) << dlContact1 << endl;
     AutoSegment* segment1 = AutoSegment::create( terminal, dlContact1, perpandDir );
     cdebug_log(149,0) << segment1 << endl;
@@ -2851,6 +2876,7 @@ namespace Anabatic {
 
     dlContact1->updateCache();
     updateNativeConstraints();
+    mergeUserConstraints( cagedConstraints );
 
     return true;
   }

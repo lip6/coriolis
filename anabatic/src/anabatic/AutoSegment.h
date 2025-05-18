@@ -300,6 +300,7 @@ namespace Anabatic {
              virtual DbU::Unit           getCost                    ( DbU::Unit axis ) const;
              virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max ) const;
       inline         AutoSegment*        getCanonical               ( Interval& i ) const;
+                     AutoSegment*        getNonPrefPerpand          ( AutoContact*& terminal ) const;
                      float               getMaxUnderDensity         ( Flags flags );
       inline         uint32_t            getReduceds                () const;
                      uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;
