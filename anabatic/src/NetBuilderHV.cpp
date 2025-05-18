@@ -301,13 +301,16 @@ namespace Anabatic {
       nonPref->setFlags( AutoSegment::SegForOffgrid );
     rpSourceContact = subContact1;
 
-    subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
-    AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
-    rpSourceContact = subContact1;
-
-    subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
-    AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
-    rpSourceContact = subContact1;
+    if (rp->isM1Offgrid()) {
+      cdebug_log(145,0) << "Truly offgrid terminal, add Metal3 vertical." << endl;
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+      AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
+      rpSourceContact = subContact1;
+     
+      subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
+      AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
+      rpSourceContact = subContact1;
+    }
 
     if (not (flags & HAccess)) {
       subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getBuildContactLayer(rpDepth+1) );
