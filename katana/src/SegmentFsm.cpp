@@ -366,6 +366,13 @@ namespace Katana {
     DebugSession::open( _segment->getNet(), 156, 160 );
     cdebug_log(159,1) << "* doAction() on "<< _segment << endl;
 
+    if (_segment->isDisabled()) {
+      cdebug_log(159,0) << "* Disabled, skip." << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return true;
+    }
+
     if (_type & Lock) {
       cdebug_log(159,0) << "* Lock // " << _segment << endl;
     } else if (_type & Perpandicular) {
@@ -438,7 +445,8 @@ namespace Katana {
 
     if (_type & ToPref)
       event->_rescheduleAsPref();
-    event->reschedule( queue, eventLevel );
+    else
+      event->reschedule( queue, eventLevel );
 
     cdebug_tabw(159,-1);
     DebugSession::close();
@@ -1296,7 +1304,9 @@ namespace Katana {
 
     // if (not (flags&NoTransition)) {
       data->setState( nextState );
-      cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
+      cdebug_log(159,0) << "Incrementing state (after): " << nextState
+                        << " count:" << data->getStateCount()
+                        << " ripup:" << data->getRipupCount() << endl;
     // }
 
     return success;
@@ -1335,8 +1345,12 @@ namespace Katana {
                   break;
                 }
               }
-              nextState = DataNegociate::Unimplemented;
-              break;
+              if (data->getRipupCount() > 1) {
+                cdebug_log(159,0) << "Already gone through Minimize once ("
+                                  << data->getRipupCount() << ")." << endl;
+                nextState = DataNegociate::Unimplemented;
+                break;
+              }
             }
             if (segment->isNonPref() and (data->getRipupCount() > 3)) {
               cdebug_log(159,0) << "Non pref. "  << data->getRipupCount() << endl;
@@ -1563,10 +1577,10 @@ namespace Katana {
       success = _slackenGlobal( segment1, _data1, flags );
 
     _event1->resetInsertState();
-    _data1->resetRipupCount();
+    if (not segment1->isNonPref()) _data1->resetRipupCount();
     if (_event2) {
       _event2->resetInsertState();
-      _data2->resetRipupCount();
+      if (not segment1->isNonPref()) _data2->resetRipupCount();
     }
 
     if (success) {
