@@ -177,19 +177,30 @@ namespace Katana {
     _keyCheck ();
 #endif
 
-    multiset<RoutingEvent*,RoutingEvent::Compare>::iterator ievent = _events.find(event);
-    size_t count = _events.count(event);
-    if (count > 1) {
-      cerr << Bug( "RoutingEventQueue::repush(): %d events matches key %p.", count, event ) << endl;
-#if defined(CHECK_ROUTINGEVENT_QUEUE)
-      _keyCheck ();
-#endif
+    auto   duplicates = _events.equal_range( event );
+    size_t count      = 0;
+    for ( auto ievent = duplicates.first ; ievent != duplicates.second ; ++ievent ) {
+      if ((*ievent == event) and not (*ievent)->isDisabled()) count++;
     }
 
-    if (ievent != _events.end()) {
-      _events.erase( ievent );
+    if (count > 1) {
+      cerr << Bug( "RoutingEventQueue::repush(): %d events matches key %p:%s."
+                 , count , event, getString(event).c_str()
+                 ) << endl;
     }
-    push ( event );
+
+    if (count > 0) {
+      auto ievent = duplicates.first;
+      while (ievent != duplicates.second ) {
+        auto eraseEvent = ievent++;
+        if (*eraseEvent == event) _events.erase( eraseEvent );
+      }
+// #if defined(CHECK_ROUTINGEVENT_QUEUE)
+//    _keyCheck ();
+// #endif
+    }
+
+    push( event );
   }
 
 
