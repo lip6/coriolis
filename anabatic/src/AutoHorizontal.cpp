@@ -228,15 +228,18 @@ namespace Anabatic {
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
-    if (constraintMin > constraintMax)
-      cerr << Error( "AutoHorizontal::getConstraints(): Invalid interval [%s : %s] -> [%d : %d]\n"
-                     "        on %s"
-                   , DbU::getValueString(constraintMin).c_str()
-                   , DbU::getValueString(constraintMax).c_str()
-                   , constraintMin
-                   , constraintMax
-                   , getString(this).c_str()
-                   ) << endl;
+    if (constraintMin > constraintMax) {
+      if (  (getAutoSource()->getLayer() != getLayer()) 
+         or (getAutoTarget()->getLayer() != getLayer()) )
+        cerr << Error( "AutoHorizontal::getConstraints(): Invalid interval [%s : %s] -> [%d : %d]\n"
+                       "        on %s"
+                     , DbU::getValueString(constraintMin).c_str()
+                     , DbU::getValueString(constraintMax).c_str()
+                     , constraintMin
+                     , constraintMax
+                     , getString(this).c_str()
+                     ) << endl;
+    }
     
     cdebug_tabw(155,-1);
     return true;
@@ -1012,7 +1015,10 @@ namespace Anabatic {
 
     if (autoTarget->canDrag() and not autoSource->canDrag()) {
       if (not autoTarget->getGCell()->isDevice() and (segment1->getGCell() == autoTarget->getGCell())) {
+        size_t    topDepth = autoTarget->getMaxDepth();
+        DbU::Unit topPitch  = Session::getPitch( topDepth );
         Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
+        dragConstraints.inflate( topPitch );
         segment1->mergeUserConstraints( dragConstraints );
 
         cdebug_log(149,0) << "Perpandicular has drag constraints: " << dragConstraints << endl;
