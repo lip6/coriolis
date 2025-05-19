@@ -1299,27 +1299,20 @@ namespace Anabatic {
         setNorthEastContact( contact1 );
         setSouthWestContact( contact2 );
       } else if (east() and west()) {
-        // AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-        // AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-        // AutoSegment::create( contact1, contact2, Flags::Vertical );
-        // setBothCornerContacts( contact2 );
         AutoContact* contact1  = NULL;
         AutoContact* contact2  = NULL;
         uint64_t     flags     = checkRoutingPadSize( getRoutingPads()[0] );
 
         if (flags & VSmall) {
-        //doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
           contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
           contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
           AutoSegment::create( contact1, contact2, Flags::Vertical );
 
           setBothCornerContacts( contact2 );
         } else {
-        //doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
           contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
           setSouthWestContact( contact1 );
 
-        //doRp_AutoContacts( getGCell(), getRoutingPads()[0], contact1, contact2, NoFlags );
           contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
           setNorthEastContact( contact1 );
         }

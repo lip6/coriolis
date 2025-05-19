@@ -137,9 +137,6 @@ namespace Anabatic {
     set<Segment*>        exploredSegments;
     vector<AutoSegment*> aligneds;
 
-  // Should no longer be necessary to ensure determinism.
-  //sort( _segmentInvalidateds.begin(), _segmentInvalidateds.end(), AutoSegment::CompareId() );
-
     for ( size_t i=0 ; i<_segmentInvalidateds.size() ; i++ ) {
       AutoSegment* seedSegment = _segmentInvalidateds[i];
       AutoSegment* canonical   = seedSegment;
