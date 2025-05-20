@@ -368,8 +368,7 @@ namespace Anabatic {
       AutoSegment* autoSegment = Session::lookup( segment );
       if (not autoSegment) continue;
       if (autoSegment->isUnbreakable()) continue;
-      if (autoSegment->getRpDistance() >= 2) continue;
-      if (autoSegment->getRpDistance() == 1) continue;
+      if (autoSegment->getRpDistance() >= 1) continue;
 
       vector<GCell*> gcells;
       autoSegment->getGCells( gcells );

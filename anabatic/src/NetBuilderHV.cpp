@@ -153,8 +153,8 @@ namespace Anabatic {
 
     Flags useNonPref = Flags::NoFlags;
     if (flags & UseNonPref) {
-      cdebug_log(145,0) << getTypeName() << "useNonPref=" << useNonPref << endl;
       useNonPref |= Flags::UseNonPref;
+      cdebug_log(145,0) << "useNonPref=" << useNonPref << endl;
     }
     
     flags |= checkRoutingPadSize( rp );
@@ -2145,9 +2145,13 @@ namespace Anabatic {
     AutoContact* source = NULL;
     AutoContact* target = NULL;
 
+    uint64_t rpFlags = HAccess;
+    if (not Session::getRoutingGauge()->isSymbolic())
+      rpFlags |= UseNonPref;
+
     for ( size_t irp=1 ; irp<rpM1s.size() ; ++irp ) {
-      source = doRp_Access( gcell1, rpM1s[irp-1], HAccess );
-      target = doRp_Access( gcell1, rpM1s[irp  ], HAccess );
+      source = doRp_Access( gcell1, rpM1s[irp-1], rpFlags );
+      target = doRp_Access( gcell1, rpM1s[irp  ], rpFlags );
 
       if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical))) {
         uint64_t flags = checkRoutingPadSize( rpM1s[irp-1] );
