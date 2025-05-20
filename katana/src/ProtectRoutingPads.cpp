@@ -100,26 +100,68 @@ namespace {
   };
 
 
+
+  void  postProtectRoutingPadHV ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::postProtectRoutingPadHV() " << rp << endl;
+
+    RoutingGauge* rg         = Session::getRoutingGauge();
+    RoutingPlane* planeM2    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     m2spacing  = planeM2->getLayer()->getMinimalSpacing();
+    const Layer*  via12      = Session::getContactLayer( 0 );
+    DbU::Unit     viaVShrink = rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureV );
+    Box           bb         = rp->getBoundingBox();
+
+    bb.inflate( m2spacing/2, -viaVShrink );
+    Track*        track      = planeM2->getTrackByPosition( bb.getYMin(), Constant::Superior );
+
+    Track*   trackFree  = nullptr;
+    size_t   freeAccess = 0;
+    Interval rpInterval ( bb.getXMin(), bb.getXMax() );
+    for ( ; track and (track->getAxis() <= bb.getYMax()) ; track = track->getNextTrack() ) {
+      Interval freeInterval = track->getFreeInterval( bb.getXCenter(), rp->getNet() );
+      if (not freeInterval.isEmpty() and freeInterval.contains(rpInterval)) {
+        freeAccess++;
+        if (not trackFree) trackFree = track;
+      }
+    }
+
+    if (freeAccess < 2) {
+      cdebug_log(145,0) << "RoutingPad is almost fully obstructed" << endl;
+      if (trackFree) {
+        Box metal2bb ( bb.getXMin(), trackFree->getAxis()-1, bb.getXMax(), trackFree->getAxis()+1 );
+        TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, trackFree );
+        cdebug_log(145,0) << "| " << element << endl;
+      }
+    }
+    
+    cdebug_tabw(145,-1);
+  }
+
+
   void  protectRoutingPadHV ( RoutingPad* rp )
   {
     cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
 
-    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    DbU::Unit     pitch = plane->getLayerGauge()->getPitch();
-    Box           bb    = rp->getBoundingBox();
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+    Box           bb      = rp->getBoundingBox();
     if (not rp->isVSmall() and (bb.getWidth() < 3*pitch)) {
       cdebug_tabw(145,-1);
       return;
     }
 
-    Track*        track          = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
-    DbU::Unit     m2spacing      = plane->getLayer()->getMinimalSpacing();
+    DbU::Unit     m1spacing      = planeM1->getLayer()->getMinimalSpacing();
+    DbU::Unit     m2spacing      = planeM2->getLayer()->getMinimalSpacing();
+    Track*        track          = planeM2->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
     DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
     DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
     Box           metal2bb       = Box( bb.getXMin(), bb.getYCenter(), bb.getXMax(), bb.getYCenter() );
 
     if (bb.getWidth() < pitch)
-      metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+    //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+      metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
     else
       metal2bb.inflate( - m2spacing / 2, 0 );
 
@@ -136,7 +178,6 @@ namespace {
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);
-    return;
   }
 
 
@@ -410,6 +451,10 @@ namespace Katana {
 
     openSession();
 
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
@@ -427,6 +472,30 @@ namespace Katana {
         protectRoutingPad( rps[i], flags );
 
       DebugSession::close();
+    }
+
+    if (not Session::getRoutingGauge()->isVH()) {
+      for ( Net* net : getCell()->getNets() ) {
+        if (net->isSupply()) continue;
+
+        DebugSession::open( net, 145, 150 );
+        cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
+
+        NetData* data = getNetData( net );
+        if (data and data->isFixed()) continue;
+
+        vector<RoutingPad*> rps;
+        for ( RoutingPad* rp : net->getRoutingPads() ) {
+          Box  bb = rp->getBoundingBox();
+          if (rp->isVSmall() or (bb.getWidth() > 3*pitch)) continue;
+          rps.push_back( rp );
+        }
+
+        for ( size_t i=0 ; i<rps.size() ; ++i )
+          postProtectRoutingPadHV( rps[i] );
+
+        DebugSession::close();
+      }
     }
 
     Session::close();
