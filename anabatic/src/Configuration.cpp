@@ -566,6 +566,7 @@ namespace Anabatic {
         }
         cdebug_log(112,0) << "Component not in the right direction." << endl;
         bb = bbViaPp;
+        rp->setFlags( RoutingPad::RotateBottomMetal );
       } else
         bb = bbViaId;
       if (gauge->isVertical()) {

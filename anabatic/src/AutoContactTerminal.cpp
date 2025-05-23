@@ -266,11 +266,13 @@ namespace Anabatic {
               if (xborder < yborder) {
                 cdebug_log(145,0) << "H gauge and (xborder < yborder) -> rotate VIA bot metal." << endl;
                 std::swap( xborder, yborder );
+                base()->setRotatedBottomMetal( true );
               }
             } else {
               if (xborder > yborder) {
                 cdebug_log(145,0) << "V gauge and (xborder > yborder) -> rotate VIA bot metal." << endl;
                 std::swap( xborder, yborder );
+                base()->setRotatedBottomMetal( true );
               }
             }
           }
@@ -281,6 +283,12 @@ namespace Anabatic {
         yMin = bb.getYMin();
         xMax = bb.getXMax();
         yMax = bb.getYMax();
+        if (bb.isEmpty()) {
+          cerr << Error( "AutoContactTerminal::getNativeConstraintBox(): Empty native constraints.\n"
+                         "        On: %s"
+                       , getString(this).c_str()
+                       ) << endl;
+        }
       } else {
         xMin = xMax = component->getPosition().getX();
         yMin = yMax = component->getPosition().getY();

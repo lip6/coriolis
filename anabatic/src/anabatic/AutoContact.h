@@ -100,6 +100,10 @@ namespace Anabatic {
       inline  DbU::Unit        getHeight                  () const;
       inline  DbU::Unit        getHalfHeight              () const;
       inline  Components       getSlaveComponents         () const;
+      inline  bool             isRotatedTopMetal          () const;
+      inline  bool             isRotatedBottomMetal       () const;
+      inline  void             setRotatedTopMetal         ( bool state );
+      inline  void             setRotatedBottomMetal      ( bool state );
     // Wrapped Contact Modifiers.                         
       inline  void             setLayer                   ( const Layer* );
       inline  void             setWidth                   ( DbU::Unit );
@@ -261,6 +265,10 @@ namespace Anabatic {
   inline void           AutoContact::setDx                  ( DbU::Unit dx ) { _contact->setDx(dx); }
   inline void           AutoContact::setDy                  ( DbU::Unit dy ) { _contact->setDy(dy); }
   inline void           AutoContact::setOffset              ( DbU::Unit dx, DbU::Unit dy ) { _contact->setOffset(dx,dy); }
+  inline bool           AutoContact::isRotatedTopMetal      () const { return _contact->isRotatedTopMetal(); }
+  inline bool           AutoContact::isRotatedBottomMetal   () const { return _contact->isRotatedBottomMetal(); }
+  inline void           AutoContact::setRotatedTopMetal     ( bool state ) { _contact->setRotatedTopMetal(state); }
+  inline void           AutoContact::setRotatedBottomMetal  ( bool state ) { _contact->setRotatedBottomMetal(state); }
 // AutoContact Inline Functions.                                        
   inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
   inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
