@@ -43,6 +43,10 @@ namespace Hurricane {
   class Contact : public Component {
     public:
       typedef Component Inherit;
+      const uint64_t  NoFlags           = 0;
+      const uint64_t  RotateTopMetal    = (1 << 0);
+      const uint64_t  RotateBottomMetal = (1 << 1);
+      const uint64_t  AllRotate         = RotateTopMetal|RotateBottomMetal;
     public:
       class AnchorHook : public Hook {
         friend class Contact;
@@ -92,47 +96,52 @@ namespace Hurricane {
                                     ,       DbU::Unit  height=0
                                     );
     public:
-      virtual       Hooks        getHooks       () const;
-      virtual       DbU::Unit    getX           () const;
-      virtual       DbU::Unit    getY           () const;
-      virtual       Point        getPosition    () const;
-      virtual       Box          getBoundingBox () const;
-      virtual const Layer*       getLayer       () const {return _layer;};
-      virtual       Box          getBoundingBox ( const BasicLayer* ) const;
-                    Hook*        getAnchorHook  () { return &_anchorHook; };
-                    Component*   getAnchor      () const;
-                    DbU::Unit    getDx          () const { return _dx; };
-                    DbU::Unit    getDy          () const { return _dy; };
-                    DbU::Unit    getWidth       () const { return _width; };
-                    DbU::Unit    getHalfWidth   () const { return (_width / 2); };
-                    DbU::Unit    getHeight      () const { return _height; };
-                    DbU::Unit    getHalfHeight  () const { return (_height / 2); };
-    public:
-      virtual       void         translate      ( const DbU::Unit& dx, const DbU::Unit& dy );
-                    void         setLayer       ( const Layer* );
-                    void         setWidth       ( DbU::Unit );
-                    void         setHeight      ( DbU::Unit );
-                    void         setSizes       ( DbU::Unit width, DbU::Unit height);
-                    void         setX           ( DbU::Unit );
-                    void         setY           ( DbU::Unit );
-                    void         setPosition    ( DbU::Unit x, DbU::Unit y);
-                    void         setPosition    ( const Point& );
-                    void         setDx          ( DbU::Unit );
-                    void         setDy          ( DbU::Unit );
-                    void         setOffset      ( DbU::Unit dx, DbU::Unit dy);
-    private:                     
-                    bool         _postCheck     ();
-    protected:                   
-      virtual       void         _preDestroy    ();
-    public:
-      virtual       void         _toJson        ( JsonWriter* ) const;
-      virtual       std::string  _getTypeName   () const { return _TName("Contact"); };
-      virtual       std::string  _getString     () const;
-      virtual       Record*      _getRecord     () const;
+      inline        bool         isRotatedTopMetal     () const;
+      inline        bool         isRotatedBottomMetal  () const;
+      virtual       Hooks        getHooks              () const;
+      virtual       DbU::Unit    getX                  () const;
+      virtual       DbU::Unit    getY                  () const;
+      virtual       Point        getPosition           () const;
+      virtual       Box          getBoundingBox        () const;
+      virtual const Layer*       getLayer              () const {return _layer;};
+      virtual       Box          getBoundingBox        ( const BasicLayer* ) const;
+                    Hook*        getAnchorHook         () { return &_anchorHook; };
+                    Component*   getAnchor             () const;
+                    DbU::Unit    getDx                 () const { return _dx; };
+                    DbU::Unit    getDy                 () const { return _dy; };
+                    DbU::Unit    getWidth              () const { return _width; };
+                    DbU::Unit    getHalfWidth          () const { return (_width / 2); };
+                    DbU::Unit    getHeight             () const { return _height; };
+                    DbU::Unit    getHalfHeight         () const { return (_height / 2); };
+    public:                                            
+      virtual       void         translate             ( const DbU::Unit& dx, const DbU::Unit& dy );
+                    void         setLayer              ( const Layer* );
+                    void         setWidth              ( DbU::Unit );
+                    void         setHeight             ( DbU::Unit );
+                    void         setSizes              ( DbU::Unit width, DbU::Unit height);
+                    void         setX                  ( DbU::Unit );
+                    void         setY                  ( DbU::Unit );
+                    void         setPosition           ( DbU::Unit x, DbU::Unit y);
+                    void         setPosition           ( const Point& );
+                    void         setDx                 ( DbU::Unit );
+                    void         setDy                 ( DbU::Unit );
+                    void         setOffset             ( DbU::Unit dx, DbU::Unit dy);
+      inline        void         setRotatedTopMetal    ( bool state );
+      inline        void         setRotatedBottomMetal ( bool state );
+    private:                                          
+                    bool         _postCheck           ();
+    protected:                                        
+      virtual       void         _preDestroy          ();
+    public:                                           
+      virtual       void         _toJson              ( JsonWriter* ) const;
+      virtual       std::string  _getTypeName         () const { return _TName("Contact"); };
+      virtual       std::string  _getString           () const;
+      virtual       Record*      _getRecord           () const;
     private:
       static bool        _checkMinSize;
              AnchorHook  _anchorHook;
       const  Layer*      _layer;
+             uint64_t    _flags;
              DbU::Unit   _dx;
              DbU::Unit   _dy;
     protected:
@@ -141,8 +150,16 @@ namespace Hurricane {
   };
 
   
-  inline void  Contact::enableCheckMinSize  () { _checkMinSize=true; }
-  inline void  Contact::disableCheckMinSize () { _checkMinSize=false; }
+  inline void  Contact::enableCheckMinSize    () { _checkMinSize=true; }
+  inline void  Contact::disableCheckMinSize   () { _checkMinSize=false; }
+  inline bool  Contact::isRotatedTopMetal     () const { return _flags & RotateTopMetal; }
+  inline bool  Contact::isRotatedBottomMetal  () const { return _flags & RotateBottomMetal; }
+
+  inline void  Contact::setRotatedTopMetal ( bool state )
+  { if (state) _flags |= RotateTopMetal; else _flags &= ~RotateTopMetal; }
+
+  inline void  Contact::setRotatedBottomMetal ( bool state )
+  { if (state) _flags |= RotateBottomMetal; else _flags &= ~RotateBottomMetal; }
 
 
 // -------------------------------------------------------------------

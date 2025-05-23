@@ -60,6 +60,7 @@ namespace Hurricane {
       static const uint32_t UserCenter         = (1 << 10); 
       static const uint32_t SizeFlags          = HSmall|VSmall|Punctual|M1Offgrid;
       static const uint32_t SelectedComponent  = (1 << 11); 
+      static const uint32_t RotateBottomMetal  = (1 << 12); 
     public:
       static RoutingPad*   create                ( Net*, Occurrence, uint32_t flags=0 );
       static RoutingPad*   create                ( Pin* );
@@ -71,6 +72,7 @@ namespace Hurricane {
       inline  bool         isVSmall              () const;
       inline  bool         isPunctual            () const;
       inline  bool         isM1Offgrid           () const;
+      inline  bool         rotateBottomMetal     () const;
       inline  bool         hasUserCenter         () const;
       inline  bool         hasSelectedComponent  () const;
       inline  Point        getUserCenter         () const;
@@ -124,6 +126,7 @@ namespace Hurricane {
   inline  bool        RoutingPad::isVSmall             () const { return (_flags & VSmall); }
   inline  bool        RoutingPad::isPunctual           () const { return (_flags & Punctual); }
   inline  bool        RoutingPad::isM1Offgrid          () const { return (_flags & M1Offgrid); }
+  inline  bool        RoutingPad::rotateBottomMetal    () const { return (_flags & RotateBottomMetal); }
   inline  bool        RoutingPad::hasSelectedComponent () const { return (_flags & SelectedComponent); }
   inline  bool        RoutingPad::hasUserCenter        () const { return (_flags & UserCenter); }
   inline  Point       RoutingPad::getUserCenter        () const { return (hasUserCenter()) ? _userCenter : getCenter(); }
