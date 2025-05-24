@@ -763,6 +763,7 @@ class CoreToChip ( object ):
                 self.conf.icorona.setPlacementStatus( Instance.PlacementStatus.FIXED )
             ioPads      = []
             clockIoNets = []
+            trace( 550, '\tpadInstance={}\n'.format( self.conf.chipConf.padInstances ))
             for ioPadConf in self.conf.chipConf.padInstances:
                 trace( 550, ',+', '\tioPadConf={}\n'.format( ioPadConf ))
                 if ioPadConf.isAllPower():

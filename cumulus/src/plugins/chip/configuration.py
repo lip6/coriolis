@@ -87,10 +87,12 @@ class ChipConf ( BlockConf ):
         return v
 
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
-        trace( 550, ',+', 'ChipConf.__init__(): "{}"'.format(cell.getName()) )
+        trace( 550, ',+', 'ChipConf.__init__(): "{}"\n'.format(cell.getName()) )
+        trace( 550, '\tChipConf.ioPads={}\n'.format( ioPads ))
         super(ChipConf,self).__init__( cell, ioPins, ioPads )
         #trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
-        self.validated = True
+        self.validated    = True
+        self.hasInnerRing = True
         # Block Corona parameters (triggers loading from disk).
         self.cfg.chip.padCoreSide          = None
         self.cfg.chip.supplyRailWidth      = None
@@ -101,6 +103,9 @@ class ChipConf ( BlockConf ):
         self.cfg.chip.block.rails.hSpacing = None
         self.cfg.chip.block.rails.vSpacing = None
         self._railsCount = self.cfg.chip.block.rails.count
+        if self._railsCount is None:
+            self.hasInnerRing = False
+            self._railsCount  = 0
         self.cfg.chip.mergeIoGrounds       = None
         self.cfg.chip.iopinRingLayer       = None
         trace( 550, 'iopinRingLayer="{}"'.format( self.cfg.chip.iopinRingLayer ))
@@ -155,6 +160,8 @@ class ChipConf ( BlockConf ):
         return self.cfg.chip.mergeIoGrounds
 
     def computeCoronaBorder ( self ):
+        if not self.hasInnerRing: return
+
         global af
         if self.useClockTree:
             clockNets = []

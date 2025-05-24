@@ -882,9 +882,10 @@ class ChipConf ( object ):
     """
 
     def __init__ ( self, blockConf ):
+        blockConf.cfg.chip.ioPadGauge = None
         self.blockConf    = blockConf
         self.name         = 'chip'
-        self.ioPadGauge   = None
+        self.ioPadGauge   = blockConf.cfg.chip.ioPadGauge
         self.padInstances = []
         self.southPads    = []
         self.northPads    = []
@@ -1420,6 +1421,7 @@ class BlockConf ( GaugeConf ):
     """
     
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
+        trace( 550, '\tBlockConf.ioPads={}\n'.format( ioPads ))
         super(BlockConf,self).__init__()
         self.validated     = True
         self.editor        = None
@@ -1467,7 +1469,7 @@ class BlockConf ( GaugeConf ):
         self.cfg.spares.useFeedTrackAvoid = CfgDefault(False)
         self.cfg.spares.htreeRootOffset   = CfgDefault(3)
         self.cfg.spares.htreeOffset       = CfgDefault(5)
-        self.chipConf = ChipConf( self )
+        self.chipConf   = ChipConf( self )
         self.etesian    = None
         self.katana     = None
         self.tramontana = None
@@ -1495,9 +1497,13 @@ class BlockConf ( GaugeConf ):
                            ]
                     for i in range( 2, len(self.ioPadsArg[line])-1 ):
                         spec.append( self.ioPadsArg[line][i].format( bit ))
+                    trace( 550, '\tcall addIoPad() on {}\n'.format( line ))
                     self.chipConf.addIoPad( spec, line )
             else:
+                trace( 550, '\tcall addIoPad() on {}\n'.format( line ))
                 self.chipConf.addIoPad( self.ioPadsArg[line], line )
+        
+        trace( 550, '\tcall self.padInstances={}\n'.format( self.chipConf.padInstances ))
         trace( 550, ',-' )
 
     @property

@@ -1050,8 +1050,13 @@ class Corona ( object ):
             icore = self.conf.icore
             xcore = icore.getTransformation().getTx()
             stripeSpecs = []
+            trace( 550, '\tcoreAb.getWidth() = {}\n'.format( DbU.getValueString(coreAb.getWidth()) ))
+            trace( 550, '\tcapViaWidth = {}\n'.format( DbU.getValueString(capViaWidth) ))
+            trace( 550, '\tself.supplyRailWidth = {}\n'.format( DbU.getValueString(self.supplyRailWidth) ))
+            trace( 550, '\tself.supplyRailPitch = {}\n'.format( DbU.getValueString(self.supplyRailPitch) ))
             stripesNb = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
                                  // self.supplyRailPitch - 1 )
+            trace( 550, '\tstripesNb = {}\n'.format( stripesNb ))
             offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) // 2
             stripeSpecs.append( [ xcore + capViaWidth//2 , capViaWidth ] )
             stripeSpecs.append( [ xcore + 4*capViaWidth + capViaWidth//2 , capViaWidth ] )
