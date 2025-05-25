@@ -372,16 +372,8 @@ namespace Hurricane {
   {
     _normalPen = pen;
     _linePen   = pen;
-  //_linePen.setStyle( Qt::SolidLine );
-
-#if 0
-  //#if (QT_VERSION == QT_VERSION_CHECK(4,8,5))
-  //cerr << "CellWidget::DrawingPlanes::setPen() Buggy 4.8.5 Qt, diagonal lines may appears..." << endl;
-    _normalPen.setWidth( 2 );
-    _linePen.setWidth( 2 );
-#else
-  //    _linePen.setWidth( 1 );
-#endif
+    _linePen.setStyle( Qt::SolidLine );
+    _linePen.setWidth( 1 );
  
     if (_lineMode) painter().setPen( _linePen );
     else           painter().setPen( _normalPen );
