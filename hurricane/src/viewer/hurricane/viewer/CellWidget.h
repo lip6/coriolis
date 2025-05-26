@@ -104,6 +104,7 @@ namespace Hurricane {
                              , Right   =0x0080
                              , Top     =0x0100
                              , FillBox =0x0200
+                             , PosFlags=Center|Left|Right|Top
                              };
       enum    Flag           { NoFlags        =0x0000
                              , NoResetCommands=0x0001

@@ -726,7 +726,7 @@ namespace Hurricane {
       rectangle = _cellWidget->dbuToScreenRect( bb );
       if ((rectangle.width() < 5) or (rectangle.height() < 5)) 
         return;
-      _cellWidget->drawDisplayText( rectangle, text->getText().c_str(), FillBox|Left );
+      _cellWidget->drawDisplayText( rectangle, text->getText().c_str(), FillBox );
     }
   }
 
@@ -1723,7 +1723,7 @@ namespace Hurricane {
 
   void  CellWidget::drawDisplayText ( const QRect& box, const char* text, unsigned int flags )
   {
-    shared_ptr<QFont> font = shared_ptr<QFont>( new QFont( Graphics::getNormalFont( flags&Bold )));
+    shared_ptr<QFont> font = shared_ptr<QFont>( new QFont( Graphics::getLayoutFont( flags&Bold )));
 
     if (flags & BigFont)
       font->setPointSize( Graphics::isHighDpi() ? 7 : 18 );
@@ -1737,32 +1737,23 @@ namespace Hurricane {
 
     QFontMetrics metrics = QFontMetrics( *font );
     int          width   = metrics.width( text );
-  //int          height  = metrics.height();
     int          angle   = 0;
 
     if ( (width > box.width()) and (box.height() > 2*box.width()) )
       angle = -90;
 
-    QPoint textBL ( box.center() );
-    if (flags & Top) {
-      textBL.ry() += box.height() / 2;
-    }
-    if (flags & Left) {
-      textBL.rx() -= box.width() / 2;
-    }
-
-    drawDisplayText( textBL, text, flags, angle, font );
+    drawDisplayText( box.center(), text, flags, angle, font );
   }
 
 
-  void  CellWidget::drawDisplayText ( const QPoint& point, const char* text, unsigned int flags, int angle, shared_ptr<QFont> font )
+  void  CellWidget::drawDisplayText ( const QPoint& center, const char* text, unsigned int flags, int angle, shared_ptr<QFont> font )
   {
     QPainter&    painter    = _drawingPlanes.painter();
     QPen         pen        = painter.pen();
     QBrush       brush      = painter.brush();
 
     if (not font.get())
-      font = shared_ptr<QFont>( new QFont( Graphics::getNormalFont( flags&Bold )));
+      font = shared_ptr<QFont>( new QFont( Graphics::getLayoutFont( flags&Bold )));
 
     painter.save();
     if (flags & Reverse) painter.setPen( Graphics::getPen("background") );
@@ -1780,23 +1771,19 @@ namespace Hurricane {
     painter.setPen   ( pen );
     painter.setBrush ( brush );
     painter.setFont  ( *font );
-    painter.translate( point );
+    painter.translate( center );
     painter.rotate   ( angle );
 
-    QPoint bottomLeft ( 0, 0);
-    if (flags &  Center) {
-      bottomLeft.rx() -= width /2;
-      bottomLeft.ry() += height/2;
-    } else if (flags & Top) {
-      bottomLeft.ry() += height;
-    } else if (flags & Left) {
-    }
+    QPoint bottomLeft ( -width/2, height/2 );
+    if (flags & Left ) bottomLeft.rx() = 0;
+    if (flags & Right) bottomLeft.rx() = -width;
+    if (flags & Top  ) bottomLeft.ry() =  height;
 
     if (flags & Frame) {
       if (flags & Rounded)
         painter.drawRoundedRect( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height, 8, 8 );
       else
-        painter.drawRect( bottomLeft.x()-1, bottomLeft.y()-height, width+2, height );
+        painter.drawRect( bottomLeft.x()-1, bottomLeft.y()-height-1, width+2, height+2 );
     }
 
     painter.drawText( bottomLeft.x(), bottomLeft.y()-metrics.descent(), text );
@@ -1985,7 +1972,8 @@ namespace Hurricane {
   {
     QFont        font          = Graphics::getNormalFont();
     QFontMetrics metrics       = QFontMetrics(font);
-    int          tickLength    = metrics.width( "+00000u" );
+  //int          tickLength    = metrics.width( "+00000u" );
+    int          tickLength    = 10;
     Point        origin        = ruler->getOrigin    ();
     Point        extremity     = ruler->getExtremity ();
     Point        angle         = ruler->getAngle     ();
@@ -2035,7 +2023,7 @@ namespace Hurricane {
 
         if ( tick % 10 ) {
           _drawingPlanes.painter().drawLine ( pxGrad, pxOrigin.y()
-                                            , pxGrad, pxOrigin.y()+((tick%2)?5:10) );
+                                            , pxGrad, pxOrigin.y()+5 );
         } else {
           // if ( tick == 0 ) {
           //   int delta = (increase) ? 2 : -2;
@@ -2052,9 +2040,9 @@ namespace Hurricane {
                                         , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
-          drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength )
+          drawDisplayText ( QPoint ( pxGrad - 1, pxOrigin.y() + tickLength+2 )
                           , textGrad.c_str()
-                          , Bold
+                          , Bold|Right
                           , -90
                           );
         }
@@ -2062,7 +2050,7 @@ namespace Hurricane {
 
     // The last horizontal tick.
       _drawingPlanes.painter().drawLine ( pxAngle.x(), pxAngle.y()
-                                        , pxAngle.x(), pxAngle.y()+tickLength );
+                                        , pxAngle.x(), pxAngle.y()+tickLength+2 );
 
       textGrad = DbU::getValueString ( abs(angle.getX() - origin.getX())
                                      , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
@@ -2070,7 +2058,7 @@ namespace Hurricane {
 
       drawDisplayText ( QPoint ( pxAngle.x() - 1,pxAngle.y() + tickLength )
                       , textGrad.c_str()
-                      , Bold
+                      , Bold|Right
                       , -90
                       );
     }
@@ -2094,8 +2082,8 @@ namespace Hurricane {
         pyGrad = dbuToScreenY  ( graduation );
 
         if ( tick % 10 ) {
-          _drawingPlanes.painter().drawLine ( pxOrigin.x()                , pyGrad
-                                            , pxOrigin.x()-((tick%2)?5:10), pyGrad );
+          _drawingPlanes.painter().drawLine ( pxOrigin.x()  , pyGrad
+                                            , pxOrigin.x()-5, pyGrad );
         } else {
           // if ( tick == 0 ) {
           //   _drawingPlanes.painter().drawLine ( pxOrigin.x()           , pyGrad-2
@@ -2111,9 +2099,9 @@ namespace Hurricane {
                                          , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
           textGrad.resize ( textGrad.size()-((*textGrad.rbegin()=='m')?2:1) );
 
-          drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pyGrad + 1)
+          drawDisplayText ( QPoint(pxOrigin.x() - tickLength - 2,pyGrad + 1)
                           , textGrad.c_str()
-                          , Bold
+                          , Bold|Right
                           , 0
                           );
         }
@@ -2127,9 +2115,9 @@ namespace Hurricane {
                                     , DbU::SmartTruncate|((symbolicMode())?DbU::Symbolic:DbU::Grid) );
     //textGrad.resize ( textGrad.size()-1 );
 
-      drawDisplayText ( QPoint(pxOrigin.x() - tickLength,pxAngle.y() + 1)
+      drawDisplayText ( QPoint(pxOrigin.x() - tickLength - 2,pxAngle.y() + 1)
                       , textGrad.c_str()
-                      , Bold
+                      , Bold|Right
                       , 0
                       );
     }
