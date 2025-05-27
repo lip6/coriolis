@@ -19,7 +19,7 @@ import collections
 from   operator            import itemgetter
 from   ...                import Cfg
 from   ...Hurricane       import DataBase, Breakpoint, DbU, Box, Transformation, \
-                                 Path, Layer, Occurrence, Net,                   \
+                                 Path, Layer, BasicLayer, Occurrence, Net,       \
                                  NetExternalComponents, RoutingPad, Horizontal,  \
                                  Vertical, Contact, Pin, Plug, Instance
 from   ...CRL             import AllianceFramework, RoutingLayerGauge, Catalog, \
@@ -318,7 +318,15 @@ class GaugeConf ( object ):
             hdepth = self.horizontalDepth
             vdepth = self.verticalDepth
         
-        #hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
+        rpBb         = rp.getBoundingBox()
+        applyOffsets = True
+        hpitch       = self._routingGauge.getLayerGauge(hdepth).getPitch()
+        if self._routingGauge.isHV() and not (startDepth % 2):
+            rgH = self.routingGauge.getLayerGauge( startDepth+1 )
+            if rpBb.getHeight() < 3 * rgH.getPitch():
+                applyOffsets = False
+        trace( 550, '\tapplyOffsets:{}\n'.format( applyOffsets ))
+            
         #hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
         #contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
         #midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
@@ -347,10 +355,11 @@ class GaugeConf ( object ):
             else:
                 if yoffset is None:
                     yoffset = 0
-                    if flags & GaugeConf.OffsetBottom1: yoffset = -1
-                    if flags & GaugeConf.OffsetBottom2: yoffset = -2
-                    if flags & GaugeConf.OffsetTop1:    yoffset =  1
-                    if flags & GaugeConf.OffsetTop2:    yoffset =  2
+                    if applyOffsets:
+                        if flags & GaugeConf.OffsetBottom1: yoffset = -1
+                        if flags & GaugeConf.OffsetBottom2: yoffset = -2
+                        if flags & GaugeConf.OffsetTop1:    yoffset =  1
+                        if flags & GaugeConf.OffsetTop2:    yoffset =  2
                     trace( 550, '\tyoffset (from flags):{}\n'.format( yoffset ))
                 ytrack = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
                 trace( 550, '\tyoffset (from contact):{}\n'.format(yoffset) )
@@ -382,6 +391,19 @@ class GaugeConf ( object ):
                                           , rg.getViaWidth()
                                           , rg.getViaWidth()
                                           )
+                bottomLayer = rp.getLayer()
+                if not isinstance(bottomLayer,BasicLayer):
+                    for basicLayer in bottomLayer.getBasicLayers():
+                        bottomLayer = basicLayer
+                        break;
+                print( bottomLayer )
+                bbMetal1 = contact1.getBoundingBox( bottomLayer )
+                if not rpBb.contains(bbMetal1):
+                    contact1.setRotatedBottomMetal( True )
+                    bbMetal1 = contact1.getBoundingBox( bottomLayer )
+                    if not rpBb.contains(bbMetal1):
+                        raise ErrorMessage( 1, [ 'GaugeConf.rpAccess(): Bottom metal of contact not fully inside RoutingPad.'
+                                               , str(contact1) ] )
                 segment = Vertical.create( rpContact
                                          , contact1
                                          , rpContact.getLayer()
