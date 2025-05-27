@@ -13,7 +13,8 @@ class BadLypFile    ( Exception ): pass
 
 class Klayout ( FlowTask ):
 
-    Verbose = 0x0001
+    Verbose   = 0x0001
+    AlwaysRun = 0x0002
 
     _lypFile = None
 
@@ -43,7 +44,7 @@ class Klayout ( FlowTask ):
         self.arguments = arguments
         self.variable  = variables
         self.env       = env
-        self.command   = [ 'klayout' ] + arguments
+        self.command   = [ 'klayout' ]
         if Klayout._lypFile:
             self.command += [ '-l', Klayout._lypFile.as_posix() ]
         for name, value in variables.items():
@@ -58,6 +59,7 @@ class Klayout ( FlowTask ):
 #       else:
 #           if self.file_target(0):
 #               self.command += [  self.file_target(0).as_posix() ]
+        self.command += arguments
         self.addClean( self.targets )
 
     def __repr__ ( self ):
@@ -78,12 +80,15 @@ class Klayout ( FlowTask ):
         return self.checkTargets( 'Klayout.doTask' )
 
     def asDoitTask ( self ):
-        return { 'basename' : self.basename
-               , 'actions'  : [ self.doTask ]
-               , 'doc'      : 'Run {}.'.format( self )
-               , 'targets'  : self.targets
-               , 'file_dep' : self.file_dep
-               }
+        taskDatas = { 'basename' : self.basename
+                    , 'actions'  : [ self.doTask ]
+                    , 'doc'      : 'Run {}.'.format( self )
+                    , 'targets'  : self.targets
+                    , 'file_dep' : self.file_dep
+                    }
+        if self.flags & Klayout.AlwaysRun:
+            taskDatas[ 'uptodate' ] = [ False ]
+        return taskDatas
 
 
 class DRC ( Klayout ):
@@ -121,4 +126,24 @@ class DRC ( Klayout ):
                     , 'report_file' : targets[0]
                     }
         super().__init__( rule, targets, depends, DRC._drcRules, arguments, variables, env, flags )
+
+
+class ShowDRC ( Klayout ):
+
+    @staticmethod
+    def mkRule ( rule, gds, drc ):
+        return ShowDRC( rule, gds, drc )
+
+    def __init__ ( self, rule, gds, drc ):
+        from ..helpers.io import ErrorMessage
+
+        posixGDS  = gds.as_posix() if isinstance(gds,Path) else gds
+        posixDRC  = drc.as_posix() if isinstance(drc,Path) else drc
+        depends   = [ gds ]
+        arguments = [ posixGDS, '-m', posixDRC ]
+        targets   = []
+        env       = {}
+        variables = {}
+        script    = None
+        super().__init__( rule, targets, depends, script, arguments, variables, env, Klayout.AlwaysRun )
         
