@@ -1830,6 +1830,7 @@ namespace Anabatic {
     if (not isNotAligned()) {
       Interval alignedLength;
       getCanonical( alignedLength );
+      alignedLength.inflate( -getLayer()->getMinimalSpacing() );
       if (alignedLength.getSize() >= getPPitch()) {
         cdebug_log(149,0) << "| Canonical " << DbU::getValueString( alignedLength.getSize() )
                           << " length superior to P-Pitch " << this << endl;
@@ -1871,6 +1872,7 @@ namespace Anabatic {
     if (not isNotAligned()) {
       Interval alignedLength;
       getCanonical( alignedLength );
+      alignedLength.inflate( -getLayer()->getMinimalSpacing() );
       cdebug_log(149,0) << "Aligned length "      << DbU::getValueString(alignedLength.getSize())
                         << " vs. current length " << DbU::getValueString(segMinLength) << endl;
       if (alignedLength.getSize() >= techMinLength) {
