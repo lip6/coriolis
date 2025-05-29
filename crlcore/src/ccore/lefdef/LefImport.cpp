@@ -1098,6 +1098,21 @@ namespace {
             if (v) {
               if (v->getLength() < getMinTerminalWidth())
                 continue;
+
+              DbU::Unit widthAdjust  = v->getWidth () % DbU::twoGrid;
+              DbU::Unit lengthAdjust = v->getLength() % DbU::twoGrid;
+              if (widthAdjust or lengthAdjust) {
+                Vertical::create( v->getNet()
+                                , v->getLayer()
+                                , v->getX()
+                                , v->getWidth()
+                                , v->getSourceY()
+                                , v->getTargetY()
+                                );
+                if (widthAdjust)  v->setWidth(    v->getWidth()    - widthAdjust );
+                if (lengthAdjust) v->setDyTarget( v->getDyTarget() - lengthAdjust);
+              }
+              
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
                                                                 , v->getX()
@@ -1138,6 +1153,20 @@ namespace {
               if (h->getWidth() < getMinTerminalWidth())
                 continue;
 
+              DbU::Unit widthAdjust  = h->getWidth () % DbU::twoGrid;
+              DbU::Unit lengthAdjust = h->getLength() % DbU::twoGrid;
+              if (widthAdjust or lengthAdjust) {
+                Vertical::create( h->getNet()
+                                , h->getLayer()
+                                , h->getY()
+                                , h->getWidth()
+                                , h->getSourceX()
+                                , h->getTargetX()
+                                );
+                if (widthAdjust)  h->setWidth(    h->getWidth()    - widthAdjust );
+                if (lengthAdjust) h->setDxTarget( h->getDxTarget() - lengthAdjust);
+              }
+
               DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
                                                                 , ab.getXMax()
                                                                 , (h->getSourceX() + h->getTargetX()) / 2
@@ -1177,7 +1206,12 @@ namespace {
                                                , _pinFilter.getXThreshold()
                                                , _pinFilter.getYThreshold() );
             Box best;
-            for ( const Box& candidate : boxes ) {
+            for ( Box& candidate : boxes ) {
+              DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
+              DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
+              if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
+              if (heightAdjust) candidate.inflate( 0, 0, 0, -heightAdjust );
+
               if (_pinFilter.match(candidate,best))
                 best = candidate;
             }
