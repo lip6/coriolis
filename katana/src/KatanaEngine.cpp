@@ -957,6 +957,12 @@ namespace Katana {
         _routingPlanes[depth]->destroy();
       }
       _routingPlanes.clear();
+
+      for ( auto lutElement : _getAutoSegmentLut() ) {
+        TrackElement* element = Session::lookup( lutElement.second );
+        if (element)
+          element->destroy();
+      }
       
       while ( not _symmetrics.empty() ) {
         auto element = _symmetrics.begin();

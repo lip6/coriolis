@@ -29,6 +29,7 @@
 #include "katana/TrackMarker.h"
 #include "katana/DataNegociate.h"
 #include "katana/KatanaEngine.h"
+#include "katana/TrackBaseFixedSpan.h"
 
 
 namespace {
@@ -306,14 +307,11 @@ namespace Katana {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
     TrackSet dummy;
-    for ( size_t i=0 ; i<_segments.size() ; i++ )
-      if (_segments[i]) {
-        _segments[i]->detach( dummy );
-        if (not _segments[i]->getTrackCount()) {
-        //cerr << "destroy " << _segments[i] << endl;
-          _segments[i]->destroy();
-        }
+    for ( size_t i=0 ; i<_segments.size() ; i++ ) {
+      if (dynamic_cast<TrackBaseFixedSpan*>(_segments[i])) {
+        _segments[i]->destroy();
       }
+    }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
       if (_markers[i]) _markers[i]->destroy();

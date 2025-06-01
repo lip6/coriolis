@@ -82,7 +82,9 @@ namespace Katana {
 
   void  TrackSegmentNonPref::_preDestroy ()
   {
+    cdebug_log(160,1) << "TrackSegmentNonPref::_preDestroy() " << this << endl;
     Super::_preDestroy();
+    cdebug_tabw(160,-1);
   }
 
 

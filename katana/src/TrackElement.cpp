@@ -20,6 +20,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/Net.h"
 #include "hurricane/Name.h"
+#include "hurricane/DebugSession.h"
 #include "anabatic/AutoContact.h"
 #include "anabatic/GCell.h"
 #include "crlcore/RoutingGauge.h"
@@ -56,6 +57,7 @@ namespace Katana {
   using Hurricane::Bug;
   using Hurricane::Net;
   using Hurricane::Name;
+  using Hurricane::DebugSession;
   using Anabatic::GCell;
 
 
@@ -241,8 +243,17 @@ namespace Katana {
 
   void  TrackElement::destroy ()
   {
+    bool debugging = false;
+    if (base()) {
+      debugging = true;
+      DebugSession::open( base()->getNet(), 159, 160 );
+    }
+
     _preDestroy ();
     delete this;
+
+    if (debugging)
+      DebugSession::close();
   }
 
 

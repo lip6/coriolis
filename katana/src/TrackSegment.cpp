@@ -104,12 +104,15 @@ namespace Katana {
 
   void  TrackSegment::_preDestroy ()
   {
-    cdebug_log(155,0) << "TrackSegment::_preDestroy() - " << (void*)this
+    cdebug_log(160,1) << "TrackSegment::_preDestroy() - " << (void*)this
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
+    cdebug_log(160,0) << "  " << this << endl;
 
-    DbU::Unit length = base()->getLength();
+    DbU::Unit length = base()->getAnchoredLength();
     if ( (length > 0) and (length < getPPitch()) ) {
+      cdebug_log(160,0) << "Length below P-Pitch -> adjusting width ("
+                        << DbU::getValueString(length) << ")" << endl;
       BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
       DbU::Unit   width  = base()->getWidth();
       Contact*    source = base()->getAutoSource()->base();
@@ -121,11 +124,14 @@ namespace Katana {
         width = std::max( width, source->getBoundingBox(layer).getWidth() );
         width = std::max( width, target->getBoundingBox(layer).getWidth() );
       }
+      cdebug_log(160,0) << "Set width to " << DbU::getValueString(width) << endl;
       base()->base()->setWidth( width );
     }
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, NULL );
     TrackElement::_preDestroy();
+
+    cdebug_tabw(160,-1);
   }
 
 
@@ -447,16 +453,6 @@ namespace Katana {
   { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
-  // void  TrackSegment::detach ()
-  // {
-  //   cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
-
-  //   setTrack( NULL );
-  //   setFlags( TElemLocked );
-  //   addTrackCount( -1 );
-  // }
-
-
   void  TrackSegment::detach ( TrackSet& removeds )
   {
     cdebug_log(159,1) << "TrackSegment::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
@@ -466,13 +462,9 @@ namespace Katana {
     for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
       removeds.insert( wtrack );
       cdebug_log(159,0) << "| " << wtrack << endl;
-      
       wtrack = wtrack->getNextTrack();
     }
-  //addTrackCount( -getTrackSpan() );
-    addTrackCount( -1  );
-
-  //detach();
+    addTrackCount( -getTrackSpan()  );
     setTrack( NULL );
     setFlags( TElemLocked );
 
