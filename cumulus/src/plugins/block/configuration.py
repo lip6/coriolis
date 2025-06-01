@@ -698,7 +698,7 @@ class GaugeConf ( object ):
             depth     = self._routingGauge.getLayerDepth( layer )
             minArea   = self._routingGauge.getRoutingLayer( depth ).getMinimalArea()
             extension = 0
-            if minArea:
+            if minArea and depth > 0:
                 minLength = DbU.fromPhysical( minArea / DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
                                             , DbU.UnitPowerMicro )
                 minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior );
