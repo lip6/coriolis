@@ -231,9 +231,11 @@ namespace Katana {
         cdebug_tabw(159,-1);
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
-        parallel->makeDogleg( terminal->getGCell() );
-        nonPrefFounds = true;
-        continue;
+        if (parallel) {
+          parallel->makeDogleg( terminal->getGCell() );
+          nonPrefFounds = true;
+          continue;
+        }
       }
 
       bool dislodgeCaged = false;
