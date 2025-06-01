@@ -1063,13 +1063,14 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
   //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
-    if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
       DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
@@ -1313,13 +1314,14 @@ namespace {
     }
 
     cdebug_tabw(100,-1);
-  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
   //if (_cell->getName() == "NAND2B_XL_GF6T_1P5")
   //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
-    if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
       DebugSession::close();
   }
 
