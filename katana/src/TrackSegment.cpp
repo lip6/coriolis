@@ -426,19 +426,22 @@ namespace Katana {
 
   void  TrackSegment::setTrack ( Track* track )
   {
+    cdebug_log(155,0) << "TrackSegment::setTrack(): " << this << endl;
+    cdebug_log(155,0) << "  To " << track << endl;
+
     if (track) {
       DbU::Unit axis = track->getAxis();
       if (isWide()) {
         DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
         axis += (pitch * (getTrackSpan() - 1)) / 2;
         
-        cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
+        cdebug_log(155,0) << "pitch:" << DbU::getValueString(pitch)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
       if (isNonPref()) {
         axis = getAxis();
         
-        cdebug_log(155,0) << "TrackSegment::setTrack(): Non-preferred, keep @" << DbU::getValueString(axis)
+        cdebug_log(155,0) << "Non-preferred, keep @" << DbU::getValueString(axis)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
       
