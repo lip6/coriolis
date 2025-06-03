@@ -784,8 +784,7 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if      (isNonPref())                  cap = getViaToSameCap  (depth);
-      else if (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
+      if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
       // if (getId() == 473829) {
@@ -796,7 +795,7 @@ namespace Anabatic {
       //                     << " b:" << (getFlags() & SegSourceTop)
       //                     << endl;
       // }
-      if (not (flags & Flags::NoSegExt)) {
+      if (not isNonPref() and not (flags & Flags::NoSegExt)) {
         //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
@@ -805,8 +804,7 @@ namespace Anabatic {
       }
     } else {
       if (flags & Flags::Target) {
-        if      (isNonPref())                  cap = getViaToSameCap  (depth);
-        else if (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
+        if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
         else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
         else                                   cap = getViaToSameCap  (depth);
         // if (getId() == 473829) {
@@ -817,7 +815,7 @@ namespace Anabatic {
         //                     << " b:" << (getFlags() & SegTargetTop)
         //                     << endl;
         // }
-        if (not (flags & Flags::NoSegExt)) {
+        if (not isNonPref() and not (flags & Flags::NoSegExt)) {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
