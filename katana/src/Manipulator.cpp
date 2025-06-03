@@ -207,8 +207,10 @@ namespace Katana {
           cdebug_log(159,0) << "Promote non-pref perpandicular" << endl;
           AutoContact*  terminal = nullptr;
           TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
-          parallel->makeDogleg( terminal->getGCell() );
-          nonPrefFounds = true;
+          if (parallel and (parallel->getBreakLevel() < 2)) {
+            parallel->makeDogleg( terminal->getGCell() );
+            nonPrefFounds = true;
+          }
         } else if (perpandiculars[i]->isFixedAxis()) {
           RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandiculars[i]->getLayer());
           Track*        track = plane->getTrackByPosition( perpandiculars[i]->getAxis() );
@@ -231,7 +233,7 @@ namespace Katana {
         cdebug_tabw(159,-1);
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
-        if (parallel) {
+        if (parallel and (parallel->getBreakLevel() < 2)) {
           parallel->makeDogleg( terminal->getGCell() );
           nonPrefFounds = true;
           continue;
@@ -1505,8 +1507,10 @@ namespace Katana {
       if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
-        parallel->makeDogleg( terminal->getGCell() );
-        return true;
+        if (parallel and (parallel->getBreakLevel() < 2)) {
+          parallel->makeDogleg( terminal->getGCell() );
+          return true;
+        }
       }
 
       cdebug_log(159,0) << "  | Constraints: " << event2->getConstraints() << endl;
