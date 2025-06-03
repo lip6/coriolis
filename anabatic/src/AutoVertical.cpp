@@ -173,6 +173,24 @@ namespace Anabatic {
     }
     return Interval ( getAutoTarget()->getCBXMin(), getAutoTarget()->getCBXMax() );
   }
+ 
+ 
+  DbU::Unit  AutoVertical::getNonPrefSourcePosition () const
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit sourcePos1 = getSourceY() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetY() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    return std::min( sourcePos1, sourcePos2 ) + 1;
+  }
+
+
+  DbU::Unit  AutoVertical::getNonPrefTargetPosition () const
+  {
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit targetPos1 = getTargetY() + targetCap;
+    DbU::Unit targetPos2 = getSourceY() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+    return std::max( targetPos1, targetPos2 ) - 1;
+  }
 
 
   bool  AutoVertical::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax ) const

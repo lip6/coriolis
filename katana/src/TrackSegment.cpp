@@ -477,25 +477,10 @@ namespace Katana {
     DebugSession::open( getNet(), 159, 160 );
 
     unsetFlags( TElemCreated ); 
-    cdebug_log(159,0) << "revalidate() - " << this << endl;
+    cdebug_log(159,0) << "TrackSegment::revalidate() - " << this << endl;
 
-    if (isNonPref()) {
-      Interval perpandicularSpan ( getAxis() );
-      DbU::Unit cap = std::max( base()->getExtensionCap( Anabatic::Flags::Source )
-                              , base()->getExtensionCap( Anabatic::Flags::Target ));
-      cdebug_log(159,0) << "  axis=" << DbU::getValueString(getAxis())
-                        <<   " cap=" << DbU::getValueString(cap)
-                        << endl;
-      perpandicularSpan.inflate( cap );
-
-      _sourceU = perpandicularSpan.getVMin();
-      _targetU = perpandicularSpan.getVMax();
-
-      updateTrackSpan();
-    }
-    else
-      _base->getCanonical( _sourceU, _targetU );
-
+    _base->getCanonical( _sourceU, _targetU );
+    if (isNonPref()) updateTrackSpan();
 
     if (_track) {
       Track* wtrack = getTrack();

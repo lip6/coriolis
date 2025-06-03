@@ -31,36 +31,38 @@ namespace Anabatic {
 
     public:
     // Predicates.                                 
-      virtual bool            _canSlacken             () const;
-      virtual bool            canMoveULeft            ( float reserve=0.0 ) const;
-      virtual bool            canMoveURight           ( float reserve=0.0 ) const;
-    // Accessors.                                     
-      virtual Segment*        base                    ();
-      virtual Segment*        base                    () const;
-      virtual Horizontal*     getHorizontal           ();
-      virtual DbU::Unit       getSourceU              () const;
-      virtual DbU::Unit       getTargetU              () const;
-      virtual DbU::Unit       getDuSource             () const;
-      virtual DbU::Unit       getDuTarget             () const;
-      virtual Interval        getSpanU                () const;
-      virtual bool            getConstraints          ( DbU::Unit& min , DbU::Unit& max ) const;
-      virtual Interval        getSourceConstraints    ( Flags flags=0 ) const;
-      virtual Interval        getTargetConstraints    ( Flags flags=0 ) const;
-      virtual Flags           getDirection            () const;
-      virtual bool            getGCells               ( vector<GCell*>& ) const;
-    // Modifiers.                                     
-      virtual void            setDuSource             ( DbU::Unit );
-      virtual void            setDuTarget             ( DbU::Unit );
-      virtual void            _setAxis                ( DbU::Unit );
-      virtual void            updateOrient            ();
-      virtual void            updateNativeConstraints ();
-      virtual bool            checkConstraints        () const;
-      virtual Flags           _makeDogleg             ( GCell*, Flags );
-      virtual bool            moveULeft               ();
-      virtual bool            moveURight              ();
-      virtual bool            _slacken                ( Flags );
-#if THIS_IS_DISABLED                                  
-      virtual void            desalignate             ( AutoContact* );
+      virtual bool            _canSlacken              () const;
+      virtual bool            canMoveULeft             ( float reserve=0.0 ) const;
+      virtual bool            canMoveURight            ( float reserve=0.0 ) const;
+    // Accessors.                                      
+      virtual Segment*        base                     ();
+      virtual Segment*        base                     () const;
+      virtual Horizontal*     getHorizontal            ();
+      virtual DbU::Unit       getSourceU               () const;
+      virtual DbU::Unit       getTargetU               () const;
+      virtual DbU::Unit       getDuSource              () const;
+      virtual DbU::Unit       getDuTarget              () const;
+      virtual Interval        getSpanU                 () const;
+      virtual bool            getConstraints           ( DbU::Unit& min , DbU::Unit& max ) const;
+      virtual Interval        getSourceConstraints     ( Flags flags=0 ) const;
+      virtual Interval        getTargetConstraints     ( Flags flags=0 ) const;
+      virtual DbU::Unit       getNonPrefSourcePosition () const;
+      virtual DbU::Unit       getNonPrefTargetPosition () const;
+      virtual Flags           getDirection             () const;
+      virtual bool            getGCells                ( vector<GCell*>& ) const;
+    // Modifiers.                                      
+      virtual void            setDuSource              ( DbU::Unit );
+      virtual void            setDuTarget              ( DbU::Unit );
+      virtual void            _setAxis                 ( DbU::Unit );
+      virtual void            updateOrient             ();
+      virtual void            updateNativeConstraints  ();
+      virtual bool            checkConstraints         () const;
+      virtual Flags           _makeDogleg              ( GCell*, Flags );
+      virtual bool            moveULeft                ();
+      virtual bool            moveURight               ();
+      virtual bool            _slacken                 ( Flags );
+#if THIS_IS_DISABLED                                   
+      virtual void            desalignate              ( AutoContact* );
 #endif
     // Inspector Management.                       
       virtual Record*         _getRecord           () const;

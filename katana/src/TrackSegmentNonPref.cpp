@@ -112,10 +112,10 @@ namespace Katana {
   void  TrackSegmentNonPref::updateTrackSpan ()
   {
     DebugSession::open( getNet(), 150, 160 );
-    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackspan() " << /*(void*)this    << ":" <<*/ this << endl;
+    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackSpan() " << /*(void*)this    << ":" <<*/ this << endl;
 
     RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer(_base->getLayer());
-    Interval      newAxisSpan ( _base->getSourcePosition(), _base->getTargetPosition() );
+    Interval      newAxisSpan = _base->getNonPrefSpan();
   //newAxisSpan.inflate( base()->getExtensionCap( Anabatic::Flags::NoFlags ));
     Track*        ntrack      = plane->getTrackByPosition( newAxisSpan.getVMin(), Constant::Superior );
 

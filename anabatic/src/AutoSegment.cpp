@@ -1581,41 +1581,74 @@ namespace Anabatic {
   {
     DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
     DbU::Unit targetCap  = getExtensionCap( Flags::Target );
-    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
-    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
-    DbU::Unit targetPos1 = getTargetU() + targetCap;
-    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
 
     DebugSession::open( getNet(), 145, 146 );
     cdebug_log(145,1) << "updatePositions() " << this << endl;
     cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
     cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
 
-    if (sourcePos2 < sourcePos1) {
-      if (_sourcePosition != sourcePos2) {
-        if (sourcePos2 < _sourcePosition)
-          setFlags( SegBecomeBelowPitch );
-        _sourcePosition = sourcePos2;
-      }
-    } else
-      _sourcePosition = sourcePos1;
-
-    if (targetPos2 > targetPos1) {
-      if (_targetPosition != targetPos2) {
-        if (targetPos2 > _targetPosition)
-          setFlags( SegBecomeBelowPitch );
-        _targetPosition = targetPos2;
-      }
-    } else
-      _targetPosition = targetPos1;
-
     if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
-      _sourcePosition -= halfCap;
-      _targetPosition += halfCap;
+      DbU::Unit ppCap = std::max( sourceCap, targetCap );
+      _sourcePosition = getAxis() - ppCap;
+      _targetPosition = getAxis() + ppCap;
+    } else {
+      DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+      DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+      DbU::Unit targetPos1 = getTargetU() + targetCap;
+      DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+
+      if (sourcePos2 < sourcePos1) {
+        if (_sourcePosition != sourcePos2) {
+          if (sourcePos2 < _sourcePosition)
+            setFlags( SegBecomeBelowPitch );
+          _sourcePosition = sourcePos2;
+        }
+      } else
+        _sourcePosition = sourcePos1;
+
+      if (targetPos2 > targetPos1) {
+        if (_targetPosition != targetPos2) {
+          if (targetPos2 > _targetPosition)
+            setFlags( SegBecomeBelowPitch );
+          _targetPosition = targetPos2;
+        }
+      } else
+        _targetPosition = targetPos1;
     }
+
     cdebug_log(145,-1) << "updated() " << this << endl;
     DebugSession::close();
+  }
+
+
+  Interval  AutoSegment::getNonPrefSpan () const
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "getNonPrefSpan() " << this << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
+    
+    if (not isNonPref()) {
+      cdebug_tabw(145,-1);
+      DebugSession::close();
+      return Interval();
+    }
+    cdebug_log(145,-1) << "updated() " << this << endl;
+
+    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    DbU::Unit targetPos1 = getTargetU() + targetCap;
+    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+    Interval span ( std::min(sourcePos1,sourcePos2)+1, std::max(targetPos1,targetPos2)-1 );
+    cdebug_log(145,0) << "Non-pref span " << span << endl;
+
+    cdebug_tabw(145,-1);
+    DebugSession::close();
+
+    return span;
   }
 
 
@@ -1624,14 +1657,20 @@ namespace Anabatic {
     bool      coherency      = true;
     DbU::Unit sourceU        = getSourceU();
     DbU::Unit targetU        = getTargetU();
-    DbU::Unit sourcePosition = std::min( sourceU - getExtensionCap(Flags::Source)
-                                       , targetU - getExtensionCap(Flags::Target|Flags::NoSegExt) );
-    DbU::Unit targetPosition = std::max( targetU + getExtensionCap(Flags::Target)
-                                       , sourceU + getExtensionCap(Flags::Source|Flags::NoSegExt) );
+    DbU::Unit sourcePosition = 0;
+    DbU::Unit targetPosition = 0;
+
     if (isNonPref()) {
-      DbU::Unit halfCap = getExtensionCap( Flags::NoFlags ) - 1;
-      sourcePosition -= halfCap;
-      targetPosition += halfCap;
+      DbU::Unit sourceCap = getExtensionCap( Flags::Source );
+      DbU::Unit targetCap = getExtensionCap( Flags::Target );
+      DbU::Unit ppCap     = std::max( sourceCap, targetCap );
+      sourcePosition = getAxis() - ppCap;
+      targetPosition = getAxis() + ppCap;
+    } else {
+      sourcePosition = std::min( sourceU - getExtensionCap(Flags::Source)
+                               , targetU - getExtensionCap(Flags::Target|Flags::NoSegExt) );
+      targetPosition = std::max( targetU + getExtensionCap(Flags::Target)
+                               , sourceU + getExtensionCap(Flags::Source|Flags::NoSegExt) );
     }
 
     if ( _sourcePosition != sourcePosition ) {

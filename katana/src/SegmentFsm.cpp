@@ -568,7 +568,8 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
 
     if (segment1->isNonPref()) {
-      Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getSourcePosition(), Constant::Superior );
+      Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getNonPrefSourcePosition()
+                                                         , Constant::Superior );
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
       cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition()) << endl;

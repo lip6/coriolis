@@ -843,8 +843,8 @@ namespace Katana {
         Interval  axisSpan;
 
         if (_segments[i]->isNonPref()) {
-          axisSpan = Interval ( _segments[i]->base()->getSourcePosition()
-                              , _segments[i]->base()->getTargetPosition() );
+          axisSpan = Interval ( _segments[i]->base()->getNonPrefSourcePosition()
+                              , _segments[i]->base()->getNonPrefTargetPosition() );
           axisSpan.inflate( _segments[i]->base()->getExtensionCap( Anabatic::Flags::NoFlags ));
           inTrackRange = axisSpan.contains( _axis );
         } else {
@@ -867,11 +867,10 @@ namespace Katana {
         } else {
           if ( (_segments[i]->getTrack() != this) and not inTrackRange ) {
             cerr << "[CHECK] incoherency at " << i << " "
-                 << _segments[i] << " (span="
-                 << _segments[i]->getTrackSpan() << ") " << axisSpan
-                 << "\n        is in track "
-                 << this                         <<  "\n        instead of "
                  << _segments[i]->getTrack()
+                 << _segments[i] << " (span=" << _segments[i]->getTrackSpan() << ") " << axisSpan
+                 << "\n        is in track " << this
+                 << "\n        instead of "  << _segments[i]->getTrack()
                  << endl;
             coherency = false;
           }

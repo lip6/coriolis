@@ -182,6 +182,8 @@ namespace Anabatic {
       inline         DbU::Unit           getAnchoredLength          () const;
       inline         DbU::Unit           getSourcePosition          () const;
       inline         DbU::Unit           getTargetPosition          () const;
+      virtual        DbU::Unit           getNonPrefSourcePosition   () const = 0;
+      virtual        DbU::Unit           getNonPrefTargetPosition   () const = 0;
       inline         DbU::Unit           getSourceX                 () const;
       inline         DbU::Unit           getSourceY                 () const;
       inline         DbU::Unit           getTargetX                 () const;
@@ -285,6 +287,7 @@ namespace Anabatic {
       inline         DbU::Unit           getExtremity               () const;
              virtual Interval            getSpanU                   () const = 0;
                      Interval            getMinSpanU                () const;
+                     Interval            getNonPrefSpan             () const;
              virtual Interval            getSourceConstraints       ( Flags flags=Flags::NoFlags ) const = 0;
              virtual Interval            getTargetConstraints       ( Flags flags=Flags::NoFlags ) const = 0;
              virtual bool                getConstraints             ( DbU::Unit& min, DbU::Unit& max ) const = 0;

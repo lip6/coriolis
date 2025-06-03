@@ -177,7 +177,8 @@ namespace Katana {
         }
 
         if (not source->canDrag() and not target->canDrag())
-          perpandicular->base()->getCanonical( trackFree );
+          trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
+                              , perpandicular->base()->getNonPrefTargetPosition() ); 
 
         if (Session::getStage() < StagePack) {
           int pitchSlack = 1;
