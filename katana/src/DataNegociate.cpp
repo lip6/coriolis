@@ -139,7 +139,7 @@ namespace Katana {
         continue;
       }
 
-      if (RoutingEvent::getStage() == StageRepair)
+      if (RoutingEvent::getStage() == Anabatic::StageRepair)
         perpandicular->base()->setFlagsOnAligneds( AutoSegment::SegUnbound );
 
     //cerr << "perpandicular:" << perpandicular << endl;
@@ -180,7 +180,7 @@ namespace Katana {
           trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
                               , perpandicular->base()->getNonPrefTargetPosition() ); 
 
-        if (Session::getStage() < StagePack) {
+        if (Session::getStage() < Anabatic::StagePack) {
           int pitchSlack = 1;
           if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
             pitchSlack = 5;

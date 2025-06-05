@@ -119,6 +119,7 @@ namespace Katana {
               uint32_t                     getState              () const;
       inline  const Key&                   getKey                () const;
       inline  TrackElement*                getSegment            () const;
+      inline  DataNegociate*               getDataNegociate      () const;
       inline  const vector<TrackElement*>& getPerpandiculars     () const;
       inline  DbU::Unit                    getAxisHint           () const;
       inline  DbU::Unit                    getAxisHistory        () const;
@@ -212,6 +213,7 @@ namespace Katana {
   inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }
+  inline DataNegociate*                RoutingEvent::getDataNegociate        () const { return _dataNegociate; }
   inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _dataNegociate->getPerpandiculars(); }
 //inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _perpandiculars; }
   inline DbU::Unit                     RoutingEvent::getAxisHistory          () const { return _axisHistory; }

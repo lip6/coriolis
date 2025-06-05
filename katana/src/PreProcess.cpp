@@ -68,23 +68,30 @@ namespace {
 
 
   void  getPerpandiculars ( TrackElement*           startSegment
-                          , Anabatic::AutoContact*  from
+                          , Anabatic::AutoContact*  startFrom
                           , Flags                   direction
                           , int                     maxDepth
                           , vector<TrackElement*>&  perpandiculars
                           )
   {
-    vector< pair<TrackElement*, int> > stack;
-    stack.push_back( make_pair( startSegment, maxDepth ));
+    cdebug_log(159,1) << "getPerpandiculars(): " << startSegment << endl;
+    cdebug_log(159,0) << "  from="      << startFrom << endl;
+    cdebug_log(159,0) << "  direction=" << direction << endl;
+    cdebug_log(159,0) << "  maxDepth="  << maxDepth  << endl;
+
+    vector< tuple<TrackElement*, Anabatic::AutoContact*, int> > stack;
+    stack.push_back( make_tuple( startSegment, startFrom, maxDepth ));
     bool  isSymbolic = Session::getRoutingGauge()->isSymbolic();
     
     while ( not stack.empty() ) {
-      TrackElement* segment = stack.back().first;
-      int           depth   = stack.back().second;
+      TrackElement*          segment = std::get<0>( stack.back() );
+      Anabatic::AutoContact* from    = std::get<1>( stack.back() );
+      int                    depth   = std::get<2>( stack.back() );
       stack.pop_back();
     
-      TrackElement* perpandicular;
-      for( Segment* osegment : segment->base()->getAutoSource()->getSlaveComponents().getSubSet<Segment*>() ) {
+      TrackElement* perpandicular = nullptr;
+      Anabatic::AutoContact* contact = segment->base()->getAutoSource();
+      for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
         perpandicular = Session::lookup ( osegment );
         cdebug_log(159,0) << "S " << perpandicular << endl;
       
@@ -92,7 +99,7 @@ namespace {
         if (not isSymbolic and perpandicular->isGlobal()) continue;
         if (perpandicular->getDirection() == direction) {
           if (depth > 0)
-            stack.push_back( make_pair( perpandicular, depth-1 ));
+            stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
           continue;
         }
         if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
@@ -100,7 +107,8 @@ namespace {
         perpandiculars.push_back( perpandicular );
       }
 
-      for( Segment* osegment : segment->base()->getAutoTarget()->getSlaveComponents().getSubSet<Segment*>() ) {
+      contact = segment->base()->getAutoTarget();
+      for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
         perpandicular = Session::lookup ( osegment );
         cdebug_log(159,0) << "T " << perpandicular << endl;
       
@@ -108,7 +116,7 @@ namespace {
         if (not isSymbolic and perpandicular->isGlobal()) continue;
         if (perpandicular->getDirection() == direction) {
           if (depth > 0)
-            stack.push_back( make_pair( perpandicular, depth-1 ));
+            stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
           continue;
         }
         if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
@@ -116,6 +124,8 @@ namespace {
         perpandiculars.push_back( perpandicular );
       }
     }
+
+    cdebug_tabw(159,-1);
   }
 
 
@@ -149,9 +159,10 @@ namespace {
                                   , set<TrackElement*>& faileds )
   {
     DebugSession::open( segment->getNet(), 150, 160 );
-    cdebug_log(159,0) << "propagateCagedConstraints(): " << segment << endl;
+    cdebug_log(159,1) << "propagateCagedConstraints(): " << segment << endl;
 
     if (not segment->isFixed() or segment->isFixedAxis()) {
+      cdebug_tabw(159,-1);
       DebugSession::close();
       return;
     }
@@ -168,6 +179,7 @@ namespace {
       gcell = katana->getGCellUnder( rp->getCenter() );
     } else {
       if (not segment->base()) {
+        cdebug_tabw(159,-1);
         DebugSession::close();
         return;
       }
@@ -179,6 +191,7 @@ namespace {
         cerr << Bug( "%s is not anchored on a <RoutingPad>\n       (%s)"
                    , getString(source).c_str()
                    , getString(source->getAnchor()).c_str() ) << endl;
+        cdebug_tabw(159,-1);
         DebugSession::close();
         return;
       }
@@ -189,6 +202,7 @@ namespace {
 
     if ( not track ) {
       cerr << Bug( "%s is not inserted in a <Track>", getString(segment).c_str() ) << endl;
+      cdebug_tabw(159,-1);
       DebugSession::close();
       return;
     }
@@ -221,14 +235,15 @@ namespace {
 
     if (minConstraint > maxConstraint) {
       cerr << Bug( "%s have too tight caging constraints.", getString(segment).c_str() ) << endl;
-      cdebug_tabw(159,-1);
+      cdebug_tabw(159,-2);
       DebugSession::close();
       return;
     }
     if ( (minConstraint <= uside.getVMin()) and (maxConstraint >= uside.getVMax()) ) {
       cdebug_log(159,0) << "No constraints [" << DbU::getValueString(minConstraint)
-                  << ":"                << DbU::getValueString(maxConstraint)
-                  << " vs. " << uside << endl;
+                        <<                ":" << DbU::getValueString(maxConstraint)
+                        << " vs. " << uside << endl;
+      cdebug_tabw(159,-2);
       DebugSession::close();
       return;
     }
@@ -242,15 +257,17 @@ namespace {
       cdebug_log(159,0) << "* " << parallel << " depth=" << depth << endl;
       if (parallel->isFixed ()) continue;
       if (parallel->isGlobal()) continue;
-      getPerpandiculars( parallel, parallel->base()->getAutoSource(), direction, depth, perpandiculars );
-      getPerpandiculars( parallel, parallel->base()->getAutoTarget(), direction, depth, perpandiculars );
+      if (parallel->base()->getAutoSource()->isTerminal())
+        getPerpandiculars( parallel, parallel->base()->getAutoSource(), direction, depth, perpandiculars );
+      else
+        getPerpandiculars( parallel, parallel->base()->getAutoTarget(), direction, depth, perpandiculars );
     }
 
   // Apply caging constraints to perpandiculars.
     cdebug_tabw(159,1);
     if (perpandiculars.size() == 0) {
       cdebug_log(159,0) << "No perpandiculars to " << segment << endl;
-      cdebug_tabw(159,-1);
+      cdebug_tabw(159,-2);
       DebugSession::close();
       return;
     }
@@ -265,12 +282,12 @@ namespace {
         findFailedPerpandiculars( rp, direction, faileds );
       }
       if (perpandiculars[ iperpand ]->isHorizontal())
-        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getY() );
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getY(), Flags::ToSameRipupLimit );
       else
-        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX() );
+        perpandiculars[ iperpand ]->setAxis( rp->getPosition().getX(), Flags::ToSameRipupLimit );
     }
 
-    cdebug_tabw(159,-1);
+    cdebug_tabw(159,-2);
     DebugSession::close();
   }
 

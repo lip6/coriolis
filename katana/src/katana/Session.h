@@ -67,7 +67,6 @@ namespace Katana {
       inline static Super*              base                 ();
       inline static bool                isEmpty              ();
       inline static bool                disableStackedVias   ();
-             static uint32_t            getStage             ();
       inline static KatanaEngine*       getKatanaEngine      ();
              static Configuration*      getConfiguration     ();
       inline static Net*                getBlockageNet       ();
@@ -77,7 +76,6 @@ namespace Katana {
       inline static const std::vector<TrackElement*>&        
                                         getIndirectInvalids  ();
              static void                setInterrupt         ( bool );
-             static void                setStage             ( uint32_t );
       inline static Interval&           toAxisInterval       ( Interval&, size_t depth );
       inline static void                addIndirectInvalid   ( TrackElement* );
       inline static void                addInsertEvent       ( TrackMarker*  , Track* );

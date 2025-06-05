@@ -419,7 +419,7 @@ namespace Anabatic {
     : Super(cell)
     , _configuration    (new Configuration())
     , _chipTools        (cell)
-    , _state            (EngineCreation)
+    , _stage            (StageCreation)
     , _matrix           ()
     , _gcells           ()
     , _ovEdges          ()
@@ -494,11 +494,11 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "Anabatic::_preDestroy ()" << endl;
 
-    if (getState() < EngineGutted)
-      setState( EnginePreDestroying );
+    if (getStage() < StageGutted)
+      setStage( StagePreDestroying );
 
     _gutAnabatic();
-    _state = EngineGutted;
+    setStage( StageGutted );
 
     cdebug_log(145,0) << "About to delete base class ToolEngine." << endl;
     Super::_preDestroy();
@@ -519,7 +519,7 @@ namespace Anabatic {
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
 
-    if (_state == EngineDriving) {
+    if (getStage() == StageDriving) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
       size_t fixedSegments    = 0;
@@ -557,9 +557,9 @@ namespace Anabatic {
       cdebug_tabw(145,-1);
     }
 
-    if (_state < EngineGutted ) {
+    if (getStage() < StageGutted ) {
       cdebug_log(145,0) << "Gutting Anabatic." << endl;
-      _state = EngineGutted;
+      setStage( StageGutted );
       _flags |= Flags::DestroyBaseContact;
 
       _destroyAutoSegments();
@@ -765,7 +765,7 @@ namespace Anabatic {
   {
     _gutAnabatic();
     _flags.reset( Flags::DestroyMask );
-    _state = EngineCreation;
+    setStage( StageCreation );
 
     UpdateSession::open();
     GCell::create( this );
@@ -1232,10 +1232,10 @@ namespace Anabatic {
 
   void  AnabaticEngine::loadGlobalRouting ( uint32_t method )
   {
-    if (_state < EngineGlobalLoaded)
+    if (getStage() < StageGlobalRouted)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing not present yet.");
 
-    if (_state > EngineGlobalLoaded)
+    if (getStage() > StageGlobalRouted)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing already loaded.");
 
     antennaProtect();
@@ -1251,7 +1251,7 @@ namespace Anabatic {
         relaxOverConstraineds();
     }
 
-    _state = EngineActive;
+    setStage( StageGlobalLoaded );
   }
 
 
@@ -1509,16 +1509,16 @@ namespace Anabatic {
   void  AnabaticEngine::finalizeLayout ()
   {
     cdebug_log(145,0) << "Anabatic::finalizeLayout()" << endl;
-    if (_state > EngineDriving) return;
+    if (getStage() > StageDriving) return;
 
-    _state = EngineDriving;
+    setStage( StageDriving );
 
     startMeasures();
     _gutAnabatic();
     stopMeasures ();
     printMeasures( "fin" );
 
-    _state = EngineGutted;
+    setStage( StageGutted );
   }
 
 
@@ -1735,14 +1735,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoSegment* autoSegment )
   {
-    if (_state > EngineActive) return;
+    if (getStage() >= StageDriving) return;
     _autoSegmentLut[ autoSegment->base() ] = autoSegment;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoSegment* autoSegment )
   {
-    if (_state > EngineDriving) return;
+    if (getStage() >= StageDriving) return;
 
     AutoSegmentLut::iterator it = _autoSegmentLut.find( autoSegment->base() );
     if (it != _autoSegmentLut.end())
@@ -1762,14 +1762,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoContact* autoContact )
   {
-    if (_state > EngineActive) return;
+    if (getStage() >= StageDriving) return;
     _autoContactLut [ autoContact->base() ] = autoContact;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoContact* autoContact )
   {
-    if ( _state > EngineActive ) return;
+    if (getStage() >= StageDriving) return;
 
     AutoContactLut::iterator it = _autoContactLut.find( autoContact->base() );
     if (it != _autoContactLut.end())
@@ -1786,7 +1786,7 @@ namespace Anabatic {
       expandeds++;
       sasp.second->destroy();
     }
-    if (_state == EngineDriving)
+    if (getStage() == StageDriving)
       cmess2 << "     - Expandeds     := " << expandeds << endl;
 
     _autoSegmentLut.clear();

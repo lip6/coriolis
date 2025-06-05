@@ -498,11 +498,21 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
+  void  TrackSegment::setAxis ( DbU::Unit axis, Flags flags  )
   {
     if (_data) {
-      if (axis == getAxis()) _data->incSameRipup();
-      else _data->resetSameRipup();
+      if (flags & Flags::ToSameRipupLimit) {
+        if (not isNonPref()) {
+          uint32_t  ripupLimit = Session::getKatanaEngine()->getRipupLimit( this );
+        //_data->setSameRipup( (ripupLimit > 2) ? ripupLimit-2 : 0 );
+          _data->setSameRipup( 3 );
+        }
+      } else {
+        if (Session::getStage() >= Anabatic::StageNegociate) {
+          if (axis == getAxis()) _data->incSameRipup();
+          else _data->resetSameRipup();
+        }
+      }
     }
     _base->setAxis( axis, flags );
     invalidate();

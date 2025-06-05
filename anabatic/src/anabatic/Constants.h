@@ -119,6 +119,7 @@ namespace Anabatic {
       static const BaseFlags  ForOffgrid          ;
       static const BaseFlags  AllAbove            ;
       static const BaseFlags  IncBreakLevel       ;
+      static const BaseFlags  ToSameRipupLimit    ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );
@@ -172,13 +173,17 @@ namespace Anabatic {
                        };
 
 
-  enum EngineState     { EngineCreation      = 1
-                       , EngineGlobalLoaded  = 2
-                       , EngineActive        = 3
-                       , EngineDriving       = 4
-                       , EnginePreDestroying = 5
-                       , EngineGutted        = 6
-                       };
+  static const uint32_t  StageCreation      =  0;
+  static const uint32_t  StageGlobalRouted  =  1;
+  static const uint32_t  StageGlobalLoaded  =  2;
+  static const uint32_t  StageDetailInit    =  3;
+  static const uint32_t  StageNegociate     =  4;
+  static const uint32_t  StagePack          =  5;
+  static const uint32_t  StageRepair        =  6;
+  static const uint32_t  StageRealign       =  7;
+  static const uint32_t  StageDriving       =  8;
+  static const uint32_t  StagePreDestroying =  9;
+  static const uint32_t  StageGutted        = 10;
 
   enum EngineAlgorithm { EngineLoadGrByNet            = (1 <<  0)
                        , EngineLoadGrByGCell          = (1 <<  1)

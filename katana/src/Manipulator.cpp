@@ -1825,7 +1825,7 @@ namespace Katana {
       if (not data) continue;
       if (data->getState() >= DataNegociate::RepairFailed) continue;
 
-      if (RoutingEvent::getStage() == StageRepair) {
+      if (RoutingEvent::getStage() == Anabatic::StageRepair) {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 
@@ -1869,7 +1869,7 @@ namespace Katana {
       } else
         continue;
 
-      if (RoutingEvent::getStage() == StageRepair) {
+      if (RoutingEvent::getStage() == Anabatic::StageRepair) {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 

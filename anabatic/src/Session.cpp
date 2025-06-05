@@ -103,7 +103,7 @@ namespace Anabatic {
 
   void  Session::_preDestroy ()
   {
-    if (_anabatic->getState() <= EngineActive) {
+    if (_anabatic->getStage() < StageDriving) {
       _revalidate ();
       _anabatic->updateDensity();
     }
@@ -442,6 +442,15 @@ namespace Anabatic {
 
   void  Session::setAnabaticFlags ( Flags flags )
   { get("setKabaticFlags()")->_anabatic->flags() = flags; }
+
+
+  uint32_t  Session::getStage ()
+  { return get("getStage()")->_anabatic->getStage(); }
+
+
+  void  Session::setStage ( uint32_t stage )
+  { get("setStage()")->_anabatic->setStage(stage); }
+
 
 
   void  Session::link ( AutoContact* autoContact )

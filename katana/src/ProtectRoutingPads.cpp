@@ -151,6 +151,10 @@ namespace {
       cdebug_tabw(145,-1);
       return;
     }
+    // if (not rp->isPunctual()) {
+    //   cdebug_tabw(145,-1);
+    //   return;
+    // }
 
     DbU::Unit     m1spacing      = planeM1->getLayer()->getMinimalSpacing();
     DbU::Unit     m2spacing      = planeM2->getLayer()->getMinimalSpacing();

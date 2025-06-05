@@ -396,7 +396,6 @@ class GaugeConf ( object ):
                     for basicLayer in bottomLayer.getBasicLayers():
                         bottomLayer = basicLayer
                         break;
-                print( bottomLayer )
                 bbMetal1 = contact1.getBoundingBox( bottomLayer )
                 if not rpBb.contains(bbMetal1):
                     contact1.setRotatedBottomMetal( True )

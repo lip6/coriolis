@@ -2085,7 +2085,7 @@ namespace Anabatic {
     if (isFixed()) {
       cdebug_log(159,0) << "isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
       if (length < getPPitch()) {
-        if (Session::getAnabatic()->getState() >= Anabatic::EngineDriving) {
+        if (Session::getAnabatic()->getStage() >= Anabatic::StageDriving) {
           cdebug_log(159,0) << "In EngineDriving mode" << endl;
           return isSpinTopOrBottom();
         }
@@ -3102,7 +3102,7 @@ namespace Anabatic {
     Flags  rflags = Flags::NoFlags;
 
     if (    doglegGCell->isIoPad()
-       and (Session::getAnabatic()->getState() != EngineGlobalLoaded) ) {
+       and (Session::getAnabatic()->getStage() != StageGlobalLoaded) ) {
       cerr << Bug( "Attempt to make a dogleg in a GCell under a Pad\n"
                    "      %s\n"
                    "      %s"

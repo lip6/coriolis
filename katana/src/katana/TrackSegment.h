@@ -140,7 +140,7 @@ namespace Katana {
       virtual void                  updatePPitch           ();
       virtual void                  forcePositions         ( const Interval& freeSpan );
       virtual void                  forcePositions         ( DbU::Unit source, DbU::Unit target );
-      virtual void                  setAxis                ( DbU::Unit, uint32_t flags );
+      virtual void                  setAxis                ( DbU::Unit, Flags flags );
       virtual TrackElement*         promoteToPref          ();
       virtual TrackElement*         makeDogleg             ();
       virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );

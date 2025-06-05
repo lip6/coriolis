@@ -184,7 +184,6 @@ namespace Katana {
   using CRL::MeasuresSet;
   using Anabatic::Edge;
   using Anabatic::EdgeCapacity;
-  using Anabatic::EngineState;
   using Anabatic::GCellsUnder;
   using Anabatic::AutoContact;
   using Anabatic::AutoSegmentLut;
@@ -219,7 +218,6 @@ namespace Katana {
     , _minimumWL      (0.0)
     , _shortDoglegs   ()
     , _symmetrics     ()
-    , _stage          (StageNegociate)
     , _successState   (0)
   { }
 
@@ -269,7 +267,7 @@ namespace Katana {
     }
     setupSpecialNets();
     if (not setupPreRouteds()) {
-      setState( Anabatic::EngineDriving );
+      setStage( Anabatic::StageDriving );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
     }
     cdebug_tabw(155,-1);
@@ -358,8 +356,8 @@ namespace Katana {
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
 
-    if (getState() < EngineState::EngineGutted)
-      setState( EngineState::EnginePreDestroying );
+    if (getStage() < Anabatic::StageGutted)
+      setStage( Anabatic::StagePreDestroying );
 
     _gutKatana();
     Super::_preDestroy();
@@ -926,14 +924,14 @@ namespace Katana {
   void  KatanaEngine::finalizeLayout ()
   {
     cdebug_log(155,0) << "KatanaEngine::finalizeLayout()" << endl;
-    if (getState() > Anabatic::EngineDriving) return;
+    if (getStage() > Anabatic::StageDriving) return;
 
     cdebug_tabw(155,1);
-    setState( Anabatic::EngineDriving );
+    setStage( Anabatic::StageDriving );
     _gutKatana();
 
     Super::finalizeLayout();
-    cdebug_log(155,0) << "State: " << getState() << endl;
+    cdebug_log(155,0) << "Stage: " << getStage() << endl;
 
     getCell()->setFlags( Cell::Flags::Routed );
 
@@ -944,9 +942,9 @@ namespace Katana {
   void  KatanaEngine::_gutKatana ()
   {
     cdebug_log(155,1) << "KatanaEngine::_gutKatana()" << endl;
-    cdebug_log(155,0)   << "State: " << getState() << endl;
+    cdebug_log(155,0)   << "Stage: " << getStage() << endl;
 
-    if (getState() < EngineState::EngineGutted) {
+    if (getStage() < Anabatic::StageGutted) {
       openSession();
 
       for ( Block* block : _blocks ) delete block;
@@ -1003,7 +1001,7 @@ namespace Katana {
       for ( Component* component : removeds ) component->destroy();
     }
 
-    setState( Anabatic::EngineCreation );
+    setStage( Anabatic::StageCreation );
     setGlobalRoutingSuccess  ( false );
     setDetailedRoutingSuccess( false );
     UpdateSession::close();

@@ -204,7 +204,7 @@ namespace Katana {
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::updateTrackSpan      () { }
-  void           TrackElement::setAxis              ( DbU::Unit, uint32_t flags ) { }
+  void           TrackElement::setAxis              ( DbU::Unit, Flags flags ) { }
   TrackElement*  TrackElement::promoteToPref        () { return nullptr; }
   TrackElement*  TrackElement::makeDogleg           () { return nullptr; }
   Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags  ) { return Flags::NoFlags; }

@@ -379,7 +379,6 @@ namespace Katana {
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
   using CRL::Histogram;
-  using Anabatic::EngineState;
   using Anabatic::Dijkstra;
   using Anabatic::NetData;
 
@@ -517,7 +516,7 @@ namespace Katana {
 
   void  KatanaEngine::runGlobalRouter ( Flags flags )
   {
-    if (getState() >= EngineState::EngineGlobalLoaded)
+    if (getStage() >= Anabatic::StageGlobalRouted)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
     if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
@@ -751,7 +750,7 @@ namespace Katana {
       }
     }
 
-    setState( EngineState::EngineGlobalLoaded );
+    setStage( Anabatic::StageGlobalRouted );
     setGlobalRoutingSuccess( ovEdges.empty() );
 
     // for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {

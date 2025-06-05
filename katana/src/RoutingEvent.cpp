@@ -310,7 +310,7 @@ namespace Katana {
 
   void  RoutingEvent::setAxisHintFromParent ()
   {
-    if (Session::getStage() == StageRepair) return;
+    if (Session::getStage() == Anabatic::StageRepair) return;
 
     TrackElement* parent = _segment->getParent();
     if (not parent) return;
@@ -346,7 +346,7 @@ namespace Katana {
       return nullptr;
     }
 
-    if ( (Session::getStage() != StageRepair) and isUnimplemented() ) {
+    if ( (Session::getStage() != Anabatic::StageRepair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
       return nullptr;
     }
@@ -368,7 +368,7 @@ namespace Katana {
     if (fork->_eventLevel < eventLevel)
       fork->_eventLevel = eventLevel;
 
-    if (Session::getStage() == StageRepair) {
+    if (Session::getStage() == Anabatic::StageRepair) {
       if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
         _segment->getDataNegociate()->resetRipupCount();
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
@@ -450,7 +450,7 @@ namespace Katana {
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    if (Session::getStage() != StagePack) history.push( this );
+    if (Session::getStage() != Anabatic::StagePack) history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
@@ -462,10 +462,10 @@ namespace Katana {
         _rescheduleAsPref();
       } else {
         switch ( Session::getStage() ) {
-          case StageNegociate: _processNegociate( queue, history ); break;
-          case StagePack:      _processPack     ( queue, history ); break;
-          case StageRepair:    _processRepair   ( queue, history ); break;
-          case StageRealign:   _processRealign  ( queue, history ); break;
+          case Anabatic::StageNegociate: _processNegociate( queue, history ); break;
+          case Anabatic::StagePack:      _processPack     ( queue, history ); break;
+          case Anabatic::StageRepair:    _processRepair   ( queue, history ); break;
+          case Anabatic::StageRealign:   _processRealign  ( queue, history ); break;
           default:
             cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
             break;
@@ -714,7 +714,7 @@ namespace Katana {
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
-    if (Session::getStage() == StageRepair) {
+    if (Session::getStage() == Anabatic::StageRepair) {
       if (_segment->isStrongTerminal(Flags::Propagate)) {
         cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
       } else if (  _segment->base()->getAutoSource()->isFixed()

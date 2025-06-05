@@ -82,13 +82,14 @@ namespace Katana {
       inline void                         setState              ( uint32_t, Flags flags=Flags::NoFlags );
       inline void                         setRoutingEvent       ( RoutingEvent* );
       inline void                         setChildSegment       ( TrackElement* );
-      inline void                         setRipupCount         ( uint32_t );
+      inline void                         setRipupCount         ( unsigned int );
       inline void                         incRipupCount         ();
       inline void                         decRipupCount         ();
       inline void                         resetRipupCount       ();
       inline void                         resetStateCount       ();
       inline void                         resetSameRipup        ();
       inline void                         incSameRipup          ();
+      inline void                         setSameRipup          ( uint32_t );
              void                         update                ();
       static string                       getStateString        ( uint32_t state, unsigned int stateCount  );
       static string                       getStateString        ( DataNegociate* );
@@ -141,6 +142,7 @@ namespace Katana {
   inline void                         DataNegociate::incRipupCount        () { _ripupCount++; }
   inline void                         DataNegociate::decRipupCount        () { if (_ripupCount) _ripupCount--; }
   inline void                         DataNegociate::resetRipupCount      () { _ripupCount = 0; }
+  inline void                         DataNegociate::setSameRipup         ( unsigned int count ) { _sameRipup = count; }
   inline void                         DataNegociate::incSameRipup         () { _sameRipup++; }
   inline void                         DataNegociate::resetSameRipup       () { _sameRipup = 0; }
   inline string                       DataNegociate::_getTypeName         () const { return "DataNegociate"; }

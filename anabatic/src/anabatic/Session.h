@@ -111,6 +111,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getDContactWidth      ();
       static  inline DbU::Unit                         getDContactPitch      ();
       static  inline RoutingGauge*                     getRoutingGauge       ();
+      static         uint32_t                          getStage              ();
       static  inline bool                              isGLayer              ( const Layer* );
       static  inline bool                              isGMetal              ( const Layer* );
       static  inline bool                              isGContact            ( const Layer* );
@@ -149,6 +150,7 @@ namespace Anabatic {
       static  inline const set<Net*,DBo::CompareById>& getNetsModificateds   (); 
       static         void                              close                 ();
       static         void                              setAnabaticFlags      ( Flags );
+      static         void                              setStage              ( uint32_t );
       static  inline void                              dogleg                ( AutoSegment* );
       static  inline void                              doglegReset           ();
       static  inline void                              revalidateTopology    ();

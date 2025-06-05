@@ -594,8 +594,8 @@ namespace Katana {
 
   void  NegociateWindow::_pack ( size_t& count, bool last )
   {
-    uint64_t limit     = _katana->getEventsLimit();
-    _katana->setStage( StagePack );
+    uint64_t limit = _katana->getEventsLimit();
+    _katana->setStage( Anabatic::StagePack );
 
     RoutingEventQueue  packQueue;
   //for ( size_t i = (count > 600) ? count-600 : 0
@@ -661,7 +661,7 @@ namespace Katana {
     _statistics.setLoadedEventsCount( _eventQueue.size() );
 
     size_t count = 0;
-    _katana->setStage( StageNegociate );
+    _katana->setStage( Anabatic::StageNegociate );
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
@@ -701,6 +701,14 @@ namespace Katana {
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
+
+      // if (RoutingEvent::getProcesseds() == 71065) {
+      //   DebugSession::open( 159, 160 );
+      // }
+
+      // if (RoutingEvent::getProcesseds() == 71923) {
+      //   DebugSession::close();
+      // }
 
       // if (RoutingEvent::getProcesseds() == 41911) {
       //   UpdateSession::close();
@@ -750,7 +758,7 @@ namespace Katana {
       cmess1 << "     o  Realign Stage." << endl;
       
       cdebug_log(159,0) << "Loadind realign queue." << endl;
-      _katana->setStage( StageRealign );
+      _katana->setStage( Anabatic::StageRealign );
       for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
         RoutingEvent* event = _eventHistory.getNth(i);
         if (not event->isCloned() and event->getSegment()->canRealign())
@@ -826,7 +834,7 @@ namespace Katana {
     cmess1 << "     o  Repair Stage." << endl;
     cdebug_log(159,0) << "Loadind Repair queue." << endl;
 
-    _katana->setStage( StageRepair );
+    _katana->setStage( Anabatic::StageRepair );
     for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
       if (not event->isCloned() and (event->getState() >= DataNegociate::Unimplemented)) {

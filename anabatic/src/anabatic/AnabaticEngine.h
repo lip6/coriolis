@@ -222,7 +222,7 @@ namespace Anabatic {
       inline        uint64_t          getDensityMode          () const;
       inline        CellViewer*       getViewer               () const;
       inline        void              setViewer               ( CellViewer* );
-      inline        EngineState       getState                () const;
+      inline        uint32_t          getStage                () const;
       inline  const Matrix*           getMatrix               () const;
       inline  const vector<GCell*>&   getGCells               () const;
       inline  const vector<Edge*>&    getOvEdges              () const;
@@ -237,7 +237,7 @@ namespace Anabatic {
                     size_t            getNetsFromEdge         ( const Edge*, NetSet& );
       inline  const EdgeCapacityLut&  getEdgeCapacities       () const;
       virtual       void              openSession             ();
-      inline        void              setState                ( EngineState state );
+      inline        void              setStage                ( uint32_t stage );
       inline        void              setDensityMode          ( uint64_t );
       inline        void              disableCanonize         ();
       inline        void              enableCanonize          ();
@@ -362,7 +362,7 @@ namespace Anabatic {
              Configuration*      _configuration;
     private:
              ChipTools           _chipTools;
-             EngineState         _state;
+             uint32_t            _stage;
              Matrix              _matrix;
              vector<GCell*>      _gcells;
              vector<Edge*>       _ovEdges;
@@ -388,8 +388,8 @@ namespace Anabatic {
   inline       bool              AnabaticEngine::isHybridStyle            () const { return (_configuration->getRoutingStyle() & StyleFlags::Hybrid); };
   inline       void              AnabaticEngine::setRoutingMode           ( uint32_t mode ) { _routingMode |=  mode;  };
   inline       void              AnabaticEngine::resetRoutingMode         ( uint32_t mode ) { _routingMode &= ~mode;  };
-  inline       EngineState       AnabaticEngine::getState                 () const { return _state; }
-  inline       void              AnabaticEngine::setState                 ( EngineState state ) { _state = state; }
+  inline       uint32_t          AnabaticEngine::getStage                 () const { return _stage; }
+  inline       void              AnabaticEngine::setStage                 ( uint32_t stage ) { _stage = stage; }
   inline       CellViewer*       AnabaticEngine::getViewer                () const { return _viewer; }
   inline       void              AnabaticEngine::setViewer                ( CellViewer* viewer ) { _viewer=viewer; }
   inline const Matrix*           AnabaticEngine::getMatrix                () const { return &_matrix; }
@@ -411,7 +411,7 @@ namespace Anabatic {
   inline       Flags&            AnabaticEngine::flags                    () { return _flags; }
   inline       bool              AnabaticEngine::doDestroyBaseContact     () const { return _flags & Flags::DestroyBaseContact; }
   inline       bool              AnabaticEngine::doDestroyBaseSegment     () const { return _flags & Flags::DestroyBaseSegment; }
-  inline       bool              AnabaticEngine::doDestroyTool            () const { return _state >= EngineGutted; }
+  inline       bool              AnabaticEngine::doDestroyTool            () const { return _stage >= StageGutted; }
   inline       bool              AnabaticEngine::doWarnOnGCellOverload    () const { return _flags & Flags::WarnOnGCellOverload; }
   inline       bool              AnabaticEngine::isCanonizeDisabled       () const { return _flags & Flags::DisableCanonize; }
   inline       bool              AnabaticEngine::isInDemoMode             () const { return _flags & Flags::DemoMode; }

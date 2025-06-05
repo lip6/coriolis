@@ -20,12 +20,6 @@
 namespace Katana {
 
   
-  static const uint32_t  StageNegociate = 1;
-  static const uint32_t  StagePack      = 2;
-  static const uint32_t  StageRepair    = 3;
-  static const uint32_t  StageRealign   = 4;
-
-
   class Flags : public Anabatic::Flags {
     public:
       typedef  Anabatic::Flags  Super;

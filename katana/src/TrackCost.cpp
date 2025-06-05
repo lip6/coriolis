@@ -64,7 +64,7 @@ namespace Katana {
     , _selectFlags     (NoFlags)
     , _selectIndex     (0)
   {
-    if (Session::getStage() == StageRealign) _flags |= IgnoreShort;
+    if (Session::getStage() == Anabatic::StageRealign) _flags |= IgnoreShort;
     
     if (refSegment->isNonPref()) {
       DbU::Unit axisShift = getRefCandidateAxis() - refSegment->getAxis();

@@ -148,10 +148,6 @@ namespace Katana {
   { return Session::getKatanaEngine()->getConfiguration(); }
 
 
-  uint32_t  Session::getStage ()
-  { return get("getStage()")->_getKatanaEngine()->getStage(); }
-
-
   AutoContact* Session::lookup ( Contact* contact )
   { return Super::lookup(contact); }
 
@@ -433,8 +429,8 @@ namespace Katana {
 
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
   {
-    cdebug_log(159,0) <<  "addInsertEvent() " << segment
-                      << "\n               @" << DbU::getValueString(axis)
+    cdebug_log(159,0) <<   "addInsertEvent() " << segment
+                      << "\n                 @" << DbU::getValueString(axis)
                       << " " << track << endl;
 
     if (segment->getTrack()) {
@@ -509,10 +505,6 @@ namespace Katana {
     for ( Track* elem : _sortEvents ) if (elem == track) return;
     _sortEvents.push_back( track );
   }
-
-
-  void  Session::setStage ( uint32_t stage )
-  { get("setStage()")->_getKatanaEngine()->setStage(stage); }
 
 
   string  Session::_getTypeName () const
