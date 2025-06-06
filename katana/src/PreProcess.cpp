@@ -82,6 +82,13 @@ namespace {
     vector< tuple<TrackElement*, Anabatic::AutoContact*, int> > stack;
     stack.push_back( make_tuple( startSegment, startFrom, maxDepth ));
     bool  isSymbolic = Session::getRoutingGauge()->isSymbolic();
+
+    size_t nonPrefCount = 1;
+    if (startSegment->isNonPref()) {
+      perpandiculars.push_back( startSegment );
+      if (startSegment->isForOffgrid())
+        nonPrefCount = 0;
+    }
     
     while ( not stack.empty() ) {
       TrackElement*          segment = std::get<0>( stack.back() );
@@ -91,37 +98,41 @@ namespace {
     
       TrackElement* perpandicular = nullptr;
       Anabatic::AutoContact* contact = segment->base()->getAutoSource();
-      for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
-        perpandicular = Session::lookup ( osegment );
-        cdebug_log(159,0) << "S " << perpandicular << endl;
+      if (contact != from) {
+        for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
+          perpandicular = Session::lookup ( osegment );
+          cdebug_log(159,0) << "S " << perpandicular << endl;
       
-        if (not perpandicular) continue;
-        if (not isSymbolic and perpandicular->isGlobal()) continue;
-        if (perpandicular->getDirection() == direction) {
-          if (depth > 0)
-            stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
-          continue;
+          if (not perpandicular) continue;
+          if (not isSymbolic and perpandicular->isGlobal()) continue;
+          if (perpandicular->getDirection() == direction) {
+            if (depth > 0)
+              stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
+            continue;
+          }
+          if ((nonPrefCount > 0) and perpandicular->isNonPref())
+            continue;
+          perpandiculars.push_back( perpandicular );
         }
-        if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
-          continue;
-        perpandiculars.push_back( perpandicular );
       }
 
       contact = segment->base()->getAutoTarget();
-      for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
-        perpandicular = Session::lookup ( osegment );
-        cdebug_log(159,0) << "T " << perpandicular << endl;
+      if (contact != from) {
+        for( Segment* osegment : contact->getSlaveComponents().getSubSet<Segment*>() ) {
+          perpandicular = Session::lookup ( osegment );
+          cdebug_log(159,0) << "T " << perpandicular << endl;
       
-        if (not perpandicular) continue;
-        if (not isSymbolic and perpandicular->isGlobal()) continue;
-        if (perpandicular->getDirection() == direction) {
-          if (depth > 0)
-            stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
-          continue;
+          if (not perpandicular) continue;
+          if (not isSymbolic and perpandicular->isGlobal()) continue;
+          if (perpandicular->getDirection() == direction) {
+            if (depth > 0)
+              stack.push_back( make_tuple( perpandicular, contact, depth-1 ));
+            continue;
+          }
+          if ((nonPrefCount > 0) and perpandicular->isNonPref())
+            continue;
+          perpandiculars.push_back( perpandicular );
         }
-        if ((maxDepth - depth >= 1) and perpandicular->isNonPref())
-          continue;
-        perpandiculars.push_back( perpandicular );
       }
     }
 
