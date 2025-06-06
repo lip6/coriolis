@@ -115,6 +115,8 @@ namespace Katana {
 
     cdebug_log(159,0) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
+      cdebug_log(159,0) << "Perpandicular Free (before): " << _perpandicularFree << endl;
+
       Interval      interval;
       AutoSegment*  basePerpand = std::get<0>( perpandiculars[i] );
       TrackElement* perpandicular;
@@ -176,15 +178,19 @@ namespace Katana {
           cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
         }
 
-        if (not source->canDrag() and not target->canDrag())
+        if (not source->canDrag() and not target->canDrag()) {
           trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
                               , perpandicular->base()->getNonPrefTargetPosition() ); 
+          trackFree.inflate( pitch );
+          cdebug_log(159,0) << "trackFree (no drag): " << trackFree << endl;
+        }
 
         if (Session::getStage() < Anabatic::StagePack) {
           int pitchSlack = 1;
           if (Session::getConfiguration()->isVH() and (_trackSegment->getDepth() == 1))
             pitchSlack = 5;
           trackFree.inflate( pitchSlack*pitch, pitchSlack*pitch );
+          cdebug_log(159,0) << "One pitch expand: " << trackFree << endl;
         }
         cdebug_log(159,0) << "Non-Pref Track Perpandicular Free: " << trackFree << endl;
 
@@ -329,7 +335,7 @@ namespace Katana {
     }
     s << "]";
     cdebug_log(159,0) << s.str() << endl;
-    cdebug_log(159,0) << "Perpandicular Free: " << _perpandicularFree << endl;
+    cdebug_log(159,0) << "Final Perpandicular Free: " << _perpandicularFree << endl;
 
     cdebug_log(159,0) << "Perpandiculars: " << endl;
     for ( TrackElement* perpand : _perpandiculars ) {
