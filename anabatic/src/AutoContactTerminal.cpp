@@ -346,7 +346,6 @@ namespace Anabatic {
 
     order( xMin, xMax );
     order( yMin, yMax );
-
     Box bb ( xMin, yMin, xMax, yMax );
 
     if (_segment and _segment->isWide()) {

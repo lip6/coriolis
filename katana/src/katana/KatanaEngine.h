@@ -139,6 +139,7 @@ namespace Katana {
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();
               void                     _gutKatana                 ();
+              void                     _postProcessRoutingPads    ();
               void                     _buildBloatProfile         ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;

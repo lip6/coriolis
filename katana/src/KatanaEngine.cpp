@@ -927,6 +927,7 @@ namespace Katana {
     if (getStage() > Anabatic::StageDriving) return;
 
     cdebug_tabw(155,1);
+    _postProcessRoutingPads();
     setStage( Anabatic::StageDriving );
     _gutKatana();
 

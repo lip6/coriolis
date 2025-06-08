@@ -17,6 +17,7 @@
 #include <map>
 #include <list>
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -32,7 +33,7 @@
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
 #include "crlcore/Catalog.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
@@ -49,6 +50,7 @@ namespace {
 
   using namespace std;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
@@ -73,6 +75,7 @@ namespace {
   using Hurricane::NetRoutingState;
   using CRL::CatalogExtension;
   using Anabatic::AutoContact;
+  using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
   using namespace Katana;
 
@@ -436,6 +439,114 @@ namespace {
     cdebug_tabw(145,-1);
   }
 
+  
+
+  void  postProcessRoutingPad ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "Post-process " << rp << endl;
+
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+
+    vector<AutoContactTerminal*> vias;
+    for ( Contact* contact : rp->getSlaveComponents().getSubSet<Contact*>() ) {
+      AutoContact* via = Session::lookup( contact );
+      if (via)
+        vias.push_back( dynamic_cast<AutoContactTerminal*>( via ));
+    }
+    if (vias.size() < 2) {
+      cdebug_log(145,0) << "Less than 2 VIAs attached, skipping." << endl;
+      cdebug_tabw(145,-1);
+      return;
+    }
+    if (vias.size() > 3) {
+      cerr << Warning( "postProcessRoutingPads(): More than three VIAs on %s."
+                     , getString(rp).c_str() ) << endl;
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    vector< vector<AutoContactTerminal*> >  overlappings;
+    for ( AutoContactTerminal* via : vias ) {
+      bool sorted = false;
+      for ( auto& overlapping : overlappings ) {
+        for ( AutoContactTerminal* sortedVia : overlapping ) {
+          DbU::Unit dx = std::abs( sortedVia->getX() - via->getX() );
+          DbU::Unit dy = std::abs( sortedVia->getY() - via->getY() );
+          if ((dx < pitch) and (dy < pitch)) {
+            cdebug_log(145,0) << "Overlapping: " << via << endl;
+            overlapping.push_back( via );
+            sorted = true;
+            break;
+          }
+        }
+        if (sorted) break;
+      }
+      if (sorted) continue;
+
+      cdebug_log(145,0) << "Isolated: " << via << endl;
+      overlappings.push_back( vector<AutoContactTerminal*>() );
+      overlappings.back().push_back( via );
+    }
+
+    for ( auto overlapping : overlappings ) {
+      if (overlapping.size() < 2) {
+        cdebug_log(145,0) << "Less than 2 VIAs in the overlapping set, skipping." << endl;
+        continue;
+      }
+      
+      set<DbU::Unit> xs;
+      set<DbU::Unit> ys;
+      
+      for ( AutoContactTerminal* via : overlapping ) {
+        if (via->getSegment()->isHorizontal()) ys.insert( via->getY() );
+        else xs.insert( via->getX() );
+      }
+      if (xs.size() > 1) {
+        if (ys.empty()) {
+          cdebug_log(145,0) << "Adjust by shitfing Verticals" << endl;
+          for ( AutoContactTerminal* via : overlapping ) {
+            via->getSegment()->setAxis( *(xs.begin()) );
+            cdebug_log(145,0) << "Aligned: " << via << endl;
+          }
+        } else {
+          cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (X), cannot merge them.\n"
+                           "           On %s"
+                         , getString(rp).c_str() ) << endl;
+        }
+        continue;
+      }
+      if (ys.size() > 1) {
+        if (xs.empty()) {
+          cdebug_log(145,0) << "Adjust by shitfing Horizontals" << endl;
+          for ( AutoContactTerminal* via : overlapping ) {
+            via->getSegment()->setAxis( *(ys.begin()) );
+            cdebug_log(145,0) << "Aligned: " << via << endl;
+          }
+        } else {
+          cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (Y), cannot merge them.\n"
+                           "           On %s"
+                         , getString(rp).c_str() ) << endl;
+        }
+        continue;
+      }
+
+      if (xs.empty()) xs.insert( overlapping[0]->getX() );
+      if (ys.empty()) ys.insert( overlapping[0]->getY() );
+
+      cdebug_log(145,0) << "Adjust position to (" << DbU::getValueString(*(xs.begin()))
+                        <<                    "," << DbU::getValueString(*(ys.begin()))
+                        <<                    ")" << endl;
+      for ( AutoContactTerminal* via : overlapping ) {
+        via->setPosition( *(xs.begin()), *(ys.begin()) );
+        via->unsetFlags( Anabatic::CntDrag );
+        via->invalidate();
+        cdebug_log(145,0) << "Aligned: " << via << endl;
+        
+      }
+    }
+  }
+  
 
 } // End of anonymous namespace.
 
@@ -505,6 +616,39 @@ namespace Katana {
     Session::close();
     cerr.flush();
     cout.flush();
+  }
+
+
+  void  KatanaEngine::_postProcessRoutingPads ()
+  {
+    cmess1 << "  o  Post-process RoutingPads." << endl;
+
+    openSession();
+
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+
+    for ( Net* net : getCell()->getNets() ) {
+      if (net->isSupply()) continue;
+
+      DebugSession::open( net, 145, 150 );
+      cdebug_log(145,0) << "Post-process RoutingPads of " << net << endl;
+
+      NetData* data = getNetData( net );
+      if (data and data->isFixed()) continue;
+
+      vector<RoutingPad*> rps;
+      for ( RoutingPad* rp : net->getRoutingPads() )
+        rps.push_back( rp );
+
+      for ( size_t i=0 ; i<rps.size() ; ++i )
+        postProcessRoutingPad( rps[i] );
+
+      DebugSession::close();
+    }
+
+    Session::close();
   }
 
 
