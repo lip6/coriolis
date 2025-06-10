@@ -517,7 +517,7 @@ namespace Katana {
     _constraint = _event1->getConstraints();
     cdebug_log(159,0) << "* Constraints:    "  << _constraint    << " (" << _constraint.getVMin() << " " << _constraint.getVMax() << ")" << endl;
 
-    _optimal    = _event1->getOptimal();
+    _optimal = _event1->getOptimal();
     if (_event2) {
       if (_sameAxis) {
         _constraint  .intersection( _event2->getConstraints() );
@@ -568,11 +568,15 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
 
     if (segment1->isNonPref()) {
-      Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getNonPrefSourcePosition()
-                                                         , Constant::Superior );
+      DbU::Unit     baseAxis  = segment1->base()->getNonPrefSourcePosition()
+                                - (segment1->getLayer()->getMinimalSpacing()
+                                  + Session::getWireWidth(segment1->getLayer())) / 2;
+      Track*        baseTrack = plane->getTrackByPosition( baseAxis, Constant::Superior );
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
-      cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition()) << endl;
+      cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition())
+                        << "baseAxis:        " << DbU::getValueString(baseAxis)
+                        << endl;
       cdebug_log(155,0) << "  -> baseTrack:" << baseTrack << endl;
 
       for ( Track* ptrack : Tracks_Range::get(perpPlane,_constraint) ) {

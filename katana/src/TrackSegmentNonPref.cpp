@@ -114,16 +114,19 @@ namespace Katana {
     DebugSession::open( getNet(), 150, 160 );
     cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackSpan() " << /*(void*)this    << ":" <<*/ this << endl;
 
-    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer(_base->getLayer());
+    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer( getLayer() );
     Interval      newAxisSpan = _base->getNonPrefSpan();
   //newAxisSpan.inflate( base()->getExtensionCap( Anabatic::Flags::NoFlags ));
+    newAxisSpan.inflate( (getLayer()->getMinimalSpacing() + Session::getWireWidth(getLayer()))/2 );
     Track*        ntrack      = plane->getTrackByPosition( newAxisSpan.getVMin(), Constant::Superior );
 
+    cdebug_log(159,0) << "new Axis span:       " << newAxisSpan << endl;
     cdebug_log(159,0) << "getSourceU():        " << DbU::getValueString( _base->getSourceU() ) << endl;
     cdebug_log(159,0) << "getTargetU():        " << DbU::getValueString( _base->getTargetU() ) << endl;
     cdebug_log(159,0) << "getSourcePosition(): " << DbU::getValueString( _base->getSourcePosition() ) << endl;
     cdebug_log(159,0) << "getTargetPosition(): " << DbU::getValueString( _base->getTargetPosition() ) << endl;
-    cdebug_log(159,0) << "new Axis span: " << newAxisSpan << endl;
+    cdebug_log(159,0) << "minimalSpacing:      " << DbU::getValueString( getLayer()->getMinimalSpacing() ) << endl;
+    cdebug_log(159,0) << "Routing wire width:  " << DbU::getValueString( Session::getWireWidth(getLayer()) ) << endl;
     
     if (ntrack) {
       cdebug_log(159,0) << "+ " << ntrack << endl;
