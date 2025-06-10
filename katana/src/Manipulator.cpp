@@ -1909,7 +1909,12 @@ namespace Katana {
     }
 
     if (_segment->isNonPref()) {
-      _segment->promoteToPref();
+      if (_segment->canPromoteToPref(Flags::NoFlags)) {
+        _segment->promoteToPref();
+      } else {
+        cdebug_tabw(159,-1);
+        return false;
+      }
     } else {
       _fsm.addAction ( _segment     , SegmentAction::SelfRipup|SegmentAction::EventLevel1 );
       _fsm.addAction ( perpandicular, SegmentAction::Perpandicular

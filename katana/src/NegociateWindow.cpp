@@ -710,9 +710,9 @@ namespace Katana {
       //   DebugSession::close();
       // }
 
-      // if (RoutingEvent::getProcesseds() == 41911) {
+      // if (RoutingEvent::getProcesseds() == 1) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After processing RoutingEvent 41910." );
+      //   Breakpoint::stop( 0, "After processing RoutingEvent 0." );
       //   UpdateSession::open();
       // }
 
