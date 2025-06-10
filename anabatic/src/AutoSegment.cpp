@@ -446,7 +446,7 @@ namespace Anabatic {
   bool                           AutoSegment::_analogMode    = false;
   bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
-  vector< array<DbU::Unit*,4> >  AutoSegment::_extensionCaps;
+  vector< array<DbU::Unit*,7> >  AutoSegment::_extensionCaps;
 
 
   void  AutoSegment::setAnalogMode   ( bool state ) { _analogMode = state; }
@@ -461,33 +461,42 @@ namespace Anabatic {
     _initialized = true;
     DbU::Unit twoGrid = DbU::fromGrid( 2 );
     for ( size_t depth=0 ; depth<Session::getDepth() ; ++depth ) {
-      DbU::Unit* viaToTopCap    = new DbU::Unit ( 0 );
-      DbU::Unit* viaToBottomCap = new DbU::Unit ( 0 );
-      DbU::Unit* viaToSameCap   = new DbU::Unit ( 0 );
-      DbU::Unit* minimalLength  = new DbU::Unit ( 0 );
-      bool       isVertical     = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
-      uint32_t   flags          = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
+      const Layer* routingLayer     = Session::getRoutingLayer( depth );
+      DbU::Unit*   viaToTopCap      = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToTopCapNp    = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToBottomCap   = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToBottomCapNp = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToSameCap     = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToSameCapNp   = new DbU::Unit ( 0 );
+      DbU::Unit*   minimalLength    = new DbU::Unit ( 0 );
+      bool         isVertical       = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
+      uint32_t     flags            = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
+      uint32_t     flagsNp          = (isVertical) ? Layer::EnclosureH : Layer::EnclosureV ;
 
       // cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
       //      << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
       // cerr << "  minimalSpacing: "
       //      << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
 
-      *viaToSameCap = Session::getPWireWidth(depth)/2;
+      *viaToSameCap   = Session::getPWireWidth(depth) / 2;
+      *viaToSameCapNp = routingLayer->getMinimalSpacing() / 2;
 
     // Bottom metal of the VIA going *up*.
       const Layer* viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth) );
-      if (viaLayer)
-        *viaToTopCap = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flags );
+      if (viaLayer) {
+        *viaToTopCap   = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flags );
+        *viaToTopCapNp = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flagsNp );
+      }
 
     // Top metal of the VIA going *down*.
       if (depth > 0) {
         viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth-1) );
-        if (viaLayer)
-          *viaToBottomCap = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
+        if (viaLayer) {
+          *viaToBottomCap   = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
+          *viaToBottomCapNp = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flagsNp );
+        }
       }
 
-      const Layer* routingLayer = Session::getRoutingLayer( depth );
       double minimalArea = routingLayer->getMinimalArea();
       if (minimalArea != 0.0) {
         *minimalLength = DbU::fromMicrons( minimalArea / DbU::toMicrons( Session::getWireWidth(depth) ) );
@@ -503,9 +512,12 @@ namespace Anabatic {
       // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
       // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
  
-      _extensionCaps.push_back( std::array<DbU::Unit*,4>( {{ viaToTopCap
+      _extensionCaps.push_back( std::array<DbU::Unit*,7>( {{ viaToTopCap
+                                                           , viaToTopCapNp
                                                            , viaToBottomCap
+                                                           , viaToBottomCapNp
                                                            , viaToSameCap
+                                                           , viaToSameCapNp
                                                            , minimalLength }} ) );
     }
   }
@@ -784,17 +796,23 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
-      else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
-      else                                   cap = getViaToSameCap  (depth);
-      // if (getId() == 473829) {
-      //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-      //                     << " (source) flags:" << getFlags()
-      //                     << " VIA cap:" << DbU::getValueString(cap)
-      //                     << " t:" << (getFlags() & SegSourceBottom)
-      //                     << " b:" << (getFlags() & SegSourceTop)
-      //                     << endl;
-      // }
+      if (isNonPref()) {
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
+        else                                   cap = getViaToSameCapNp  ( depth );
+      } else {
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
+        else                                   cap = getViaToSameCap  ( depth );
+      }
+      if (getId() == 523304) {
+        cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+                          << " (source) flags:" << getFlags()
+                          << " VIA cap:" << DbU::getValueString(cap)
+                          << " t:" << (getFlags() & SegSourceBottom)
+                          << " b:" << (getFlags() & SegSourceTop)
+                          << endl;
+      }
       if (not isNonPref() and not (flags & Flags::NoSegExt)) {
         //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
@@ -804,17 +822,23 @@ namespace Anabatic {
       }
     } else {
       if (flags & Flags::Target) {
-        if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
-        else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
-        else                                   cap = getViaToSameCap  (depth);
-        // if (getId() == 473829) {
-        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-        //                     << " (target) flags:" << getFlags()
-        //                     << " VIA cap:" << DbU::getValueString(cap)
-        //                     << " t:" << (getFlags() & SegTargetBottom)
-        //                     << " b:" << (getFlags() & SegTargetTop)
-        //                     << endl;
-        // }
+        if (isNonPref()) {
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
+          else                                   cap = getViaToSameCapNp  ( depth );
+        } else {
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
+          else                                   cap = getViaToSameCap  ( depth );
+        }
+        if (getId() == 523304) {
+          cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+                            << " (target) flags:" << getFlags()
+                            << " VIA cap:" << DbU::getValueString(cap)
+                            << " t:" << (getFlags() & SegTargetBottom)
+                            << " b:" << (getFlags() & SegTargetTop)
+                            << endl;
+        }
         if (not isNonPref() and not (flags & Flags::NoSegExt)) {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
