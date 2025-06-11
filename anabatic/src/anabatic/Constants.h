@@ -120,6 +120,7 @@ namespace Anabatic {
       static const BaseFlags  AllAbove            ;
       static const BaseFlags  IncBreakLevel       ;
       static const BaseFlags  ToSameRipupLimit    ;
+      static const BaseFlags  CapInNonPrefDir     ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

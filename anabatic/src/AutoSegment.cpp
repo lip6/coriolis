@@ -796,7 +796,7 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if (isNonPref()) {
+      if (flags & Flags::CapInNonPrefDir) {
         if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
         else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
         else                                   cap = getViaToSameCapNp  ( depth );
@@ -822,7 +822,7 @@ namespace Anabatic {
       }
     } else {
       if (flags & Flags::Target) {
-        if (isNonPref()) {
+        if (flags & Flags::CapInNonPrefDir) {
           if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
           else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
           else                                   cap = getViaToSameCapNp  ( depth );
@@ -1645,8 +1645,8 @@ namespace Anabatic {
 
   Interval  AutoSegment::getNonPrefSpan () const
   {
-    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
-    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source|Flags::CapInNonPrefDir );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target|Flags::CapInNonPrefDir );
 
     DebugSession::open( getNet(), 145, 146 );
     cdebug_log(145,1) << "getNonPrefSpan() " << this << endl;
@@ -1661,9 +1661,9 @@ namespace Anabatic {
     cdebug_log(145,-1) << "updated() " << this << endl;
 
     DbU::Unit sourcePos1 = getSourceU() - sourceCap;
-    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::CapInNonPrefDir|Flags::NoSegExt );
     DbU::Unit targetPos1 = getTargetU() + targetCap;
-    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::CapInNonPrefDir|Flags::NoSegExt );
     Interval span ( std::min(sourcePos1,sourcePos2)+1, std::max(targetPos1,targetPos2)-1 );
     cdebug_log(145,0) << "Non-pref span " << span << endl;
 

@@ -177,18 +177,18 @@ namespace Anabatic {
  
   DbU::Unit  AutoVertical::getNonPrefSourcePosition () const
   {
-    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source|Flags::CapInNonPrefDir );
     DbU::Unit sourcePos1 = getSourceY() - sourceCap;
-    DbU::Unit sourcePos2 = getTargetY() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+    DbU::Unit sourcePos2 = getTargetY() - getExtensionCap( Flags::Target|Flags::CapInNonPrefDir|Flags::NoSegExt );
     return std::min( sourcePos1, sourcePos2 ) + 1;
   }
 
 
   DbU::Unit  AutoVertical::getNonPrefTargetPosition () const
   {
-    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target|Flags::CapInNonPrefDir );
     DbU::Unit targetPos1 = getTargetY() + targetCap;
-    DbU::Unit targetPos2 = getSourceY() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+    DbU::Unit targetPos2 = getSourceY() + getExtensionCap( Flags::Source|Flags::CapInNonPrefDir|Flags::NoSegExt );
     return std::max( targetPos1, targetPos2 ) - 1;
   }
 
