@@ -1862,11 +1862,11 @@ namespace Anabatic {
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
-    cerr << "AutoSegment::isUTurn():" << endl;
+    cdebug_log(159,0) << "AutoSegment::isUTurn():" << endl;
 
     if (not source->isTurn() or not target->isTurn()) return false;
 
-    cerr << "  Turn connected" << endl;
+    cdebug_log(159,0) << "  Turn connected" << endl;
 
     AutoSegment* perpandicular = source->getPerpandicular( this );
     bool onPSourceSource = (perpandicular->getAutoSource() == source);
@@ -1874,7 +1874,7 @@ namespace Anabatic {
     perpandicular = target->getPerpandicular( this );
     bool onPTargetSource = (perpandicular->getAutoSource() == target);
 
-    cerr << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
+    cdebug_log(159,0) << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
 
     return not (onPSourceSource xor onPTargetSource);
   }
@@ -2677,6 +2677,45 @@ namespace Anabatic {
       target->setSizes( hside, vside );
       setDuSource( 0 );
       setDuTarget( 0 );
+
+      if (source->isTurn() and target->isTurn()) {
+
+        AutoSegment* sourcePp = source->getPerpandicular( this );
+        bool onPSourceSource = (sourcePp->getAutoSource() == source);
+
+        AutoSegment* targetPp = target->getPerpandicular( this );
+        bool onPTargetSource = (targetPp->getAutoSource() == target);
+
+        cdebug_log(159,0) << "Turn connected PSourceSource=" << onPSourceSource
+                          <<               " PTargetSource=" << onPTargetSource
+                          << endl;
+
+        if (not (onPSourceSource xor onPTargetSource)) {
+          cdebug_log(159,0) << "UTurn" << endl;
+          DbU::Unit axis = 0;
+          if (isHorizontal()) {
+            if (onPSourceSource)
+              axis = std::min( sourcePp->getAutoTarget()->getY(), targetPp->getAutoTarget()->getY() );
+            else
+              axis = std::max( sourcePp->getAutoSource()->getY(), targetPp->getAutoSource()->getY() );
+
+            setAxis( axis );
+            source->setY( axis );
+            target->setY( axis );
+            cdebug_log(159,0) << "UTurn (H) compact on axis " << DbU::getValueString(axis) << endl;
+          } else {
+            if (onPSourceSource)
+              axis = std::min( sourcePp->getAutoTarget()->getX(), targetPp->getAutoTarget()->getX() );
+            else
+              axis = std::max( sourcePp->getAutoSource()->getX(), targetPp->getAutoSource()->getX() );
+
+            setAxis( axis );
+            source->setX( axis );
+            target->setX( axis );
+            cdebug_log(159,0) << "UTurn (V) compact on axis " << DbU::getValueString(axis) << endl;
+          }
+        }
+      }
 
       success = true;
     }
