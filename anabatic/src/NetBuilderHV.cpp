@@ -2140,6 +2140,9 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "singleGCell " << gcell1 << endl;
 
+    RoutingLayerGauge* lg = Session::getLayerGauge( 2 );
+    DbU::Unit ppitch = lg->getPitch();
+
     AutoContact* turn1  = NULL;
     AutoContact* turn2  = NULL;
     AutoContact* source = NULL;
@@ -2154,8 +2157,14 @@ namespace Anabatic {
       target = doRp_Access( gcell1, rpM1s[irp  ], rpFlags );
 
       if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical))) {
-        uint64_t flags = checkRoutingPadSize( rpM1s[irp-1] );
-        if (flags & VSmall) {
+        uint64_t flagsRp0 = checkRoutingPadSize( rpM1s[irp-1] );
+        uint64_t flagsRp1 = checkRoutingPadSize( rpM1s[irp] );
+
+        bool shortNet = (rpM1s[irp]->getX() - rpM1s[irp-1]->getX() < 4*ppitch)
+                        and not ((flagsRp0 & VSmall) and (flagsRp1 & VSmall)) ;
+
+        cdebug_log(145,0) << "shortNet=" << shortNet << endl;
+        if (not shortNet and (flagsRp0 & VSmall)) {
           turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
           AutoSegment::create( source, turn1, Flags::Horizontal   );
           source = turn1;
@@ -2163,8 +2172,7 @@ namespace Anabatic {
           AutoSegment::create( source, turn1 , Flags::Vertical   );
           source = turn1;
         }
-        flags = checkRoutingPadSize( rpM1s[irp] );
-        if (flags & VSmall) {
+        if (not shortNet and (flagsRp1 & VSmall)) {
           turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
           AutoSegment::create( target, turn1, Flags::Horizontal   );
           target = turn1;
