@@ -538,6 +538,8 @@ namespace Anabatic {
           chain.propagate();
           sameLayerDoglegs += chain.reduce();
         } else {
+          if (isegment.second->canReduce())
+            isegment.second->setFlags( AutoSegment::SegIsReduced );
           if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
         }
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
