@@ -362,7 +362,7 @@ namespace Anabatic {
                      bool                reduceDoglegLayer          ();
                      bool                bloatStackedStrap          ();
                      bool                reduce                     ( Flags flags=Flags::WithPerpands );
-                     bool                raise                      ();
+                     bool                raise                      ( std::vector<AutoSegment*>& );
                      bool                expandToMinLength          ( Interval );
                      bool                unexpandToMinLength        ();
     // Canonical Modifiers.                                            

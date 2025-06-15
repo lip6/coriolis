@@ -323,68 +323,50 @@ namespace Katana {
     _sortEvents.clear();
 
   // Looking for reduced/raised segments.
+    std::vector<AutoSegment*>  canReduces;
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
       DebugSession::open( revalidateds[i]->getNet(), 159,160 );
       if (revalidateds[i]->mustRaise()) {
         cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
-        revalidateds[i]->raise();
+        revalidateds[i]->raise( canReduces );
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment) trackSegment->reschedule( 0 );
       }
-      // if (revalidateds[i]->isUnderMinLength()) {
-      //   cdebug_log(159,0) << "Session: under min length:" << revalidateds[i] << endl;
-      //   revalidateds[i]->expandToMinLength();
-      //   TrackElement* trackSegment = lookup( revalidateds[i] );
-      //   if (trackSegment) {
-      //     trackSegment->invalidate();
-      //     trackSegment->reschedule( 0 );
-      //   }
-      // } else {
-      //   if (revalidateds[i]->isAtMinArea()) {
-      //     if (revalidateds[i]->unexpandToMinLength()) {
-      //       TrackElement* trackSegment = lookup( revalidateds[i] );
-      //       if (trackSegment) {
-      //         trackSegment->invalidate();
-      //         trackSegment->reschedule( 0 );
-      //       }
-      //     }
-      //   }
-      // }
+      DebugSession::close();
+    }
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
       if (revalidateds[i]->canReduce()) {
         revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
         cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
-      } else {
-        if (revalidateds[i]->hasBecomeBelowPitch()) {
-          cdebug_log(159,0) << "Session: below pitch:" << revalidateds[i] << endl;
-          revalidateds[i]->resetBecomeBelowPitch();
-          TrackElement* trackSegment = lookup( revalidateds[i] );
-          if (trackSegment) {
-            trackSegment->invalidate();
-            trackSegment->reschedule( 0 );
-            cdebug_log(159,0) << "Has a TrackSegment" << endl;
-          }
+      }
+      DebugSession::close();
+    }
+    for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
+      DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      if (revalidateds[i]->hasBecomeBelowPitch()) {
+        cdebug_log(159,0) << "Session: below pitch:" << revalidateds[i] << endl;
+        revalidateds[i]->resetBecomeBelowPitch();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment) {
+          trackSegment->invalidate();
+          trackSegment->reschedule( 0 );
+          cdebug_log(159,0) << "Has a TrackSegment" << endl;
         }
       }
       DebugSession::close();
     }
-    
-    // for ( TrackElement* trackSegment : _indirectInvalids ) {
-    //   cdebug_log(159,0) << "Indirect reschedule:" << trackSegment << endl;
-    //   trackSegment->reschedule( 0 );
-    //   // addRemoveEvent( trackSegment );
 
-    //   // if (trackSegment->getDataNegociate() and trackSegment->getDataNegociate()->hasRoutingEvent()) {
-    //   //   RoutingEvent* event = trackSegment->getDataNegociate()->getRoutingEvent();
-    //   //   if (   not event->isDisabled()
-    //   //      and not event->isUnimplemented()
-    //   //      and     event->isProcessed()) {
-    //   //     trackSegment->reschedule( 0 );
-    //   //   }
-    //   // }
+    // for ( size_t i=0 ; i<canReduces.size() ; ++i ) {
+    //   DebugSession::open( canReduces[i]->getNet(), 159,160 );
+    //   canReduces[i]->reduce();
+    //   TrackElement* trackSegment = lookup( canReduces[i] );
+    //   if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+    //   cdebug_log(159,0) << "Session: reduce:" << canReduces[i] << endl;
+    //   DebugSession::close();
     // }
-    _indirectInvalids.clear();
 
     _doRemovalEvents();
     for ( Track* track : _sortEvents ) track->doReorder();

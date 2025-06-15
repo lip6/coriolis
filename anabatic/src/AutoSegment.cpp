@@ -740,6 +740,8 @@ namespace Anabatic {
 
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
     updatePositions();
+    oldSpan.inflate( _sourcePosition );
+    oldSpan.inflate( _targetPosition );
     if (_flags & SegCreated) oldSpan.makeEmpty();
     if (expandToMinLength(oldSpan)) updatePositions();
     if (_flags & SegAtMinArea) {
@@ -1501,32 +1503,43 @@ namespace Anabatic {
           attractors.addAttractor( terminalMax );
       }
   
-      for ( AutoSegment* autoSegment : getPerpandiculars(flags) ) {
-        cdebug_log(145,1) << "| Perpandicular " << autoSegment << endl;
-        if (autoSegment->isGlobal()) {
+      for ( AutoSegment* perpandicular : getPerpandiculars(flags) ) {
+        cdebug_log(145,1) << "| Perpandicular " << perpandicular << endl;
+        if (perpandicular->isGlobal()) {
           cdebug_log(145,0) << "Used as global." << endl;
 
-          const Interval& side = sideStack.getSideAt( autoSegment->getAxis() );
-          cdebug_log(145,0) << "Side @" << DbU::getValueString(autoSegment->getAxis())
+          const Interval& side = sideStack.getSideAt( perpandicular->getAxis() );
+          cdebug_log(145,0) << "Side @" << DbU::getValueString(perpandicular->getAxis())
                             << " " << side << endl;
 
-          if (autoSegment->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
-          if (autoSegment->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
+          if (perpandicular->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
+          if (perpandicular->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
 
         // // Sloppy implentation.
-        //   DbU::Unit perpandMin = autoSegment->getSourceU();
-        //   DbU::Unit perpandMax = autoSegment->getTargetU();
+        //   DbU::Unit perpandMin = perpandicular->getSourceU();
+        //   DbU::Unit perpandMax = perpandicular->getTargetU();
 
         //   if (perpandMin < minGCell) attractors.addAttractor( minGCell );
         //   if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
-        } else if (autoSegment->isLocal()) {
-          if (autoSegment->isStrongTerminal()) {
+        } else if (perpandicular->isLocal()) {
+          AutoSegment* parallel = nullptr;
+          if (  (perpandicular->getAutoSource() == source) 
+             or (perpandicular->getAutoSource() == target)) {
+            parallel = perpandicular->getAutoTarget()->getPerpandicular( perpandicular );
+          } else if (  (perpandicular->getAutoTarget() == source) 
+                    or (perpandicular->getAutoTarget() == target)) {
+            parallel = perpandicular->getAutoSource()->getPerpandicular( perpandicular );
+          }
+          if (parallel and parallel->isNonPref()) {
+            cdebug_log(145,0) << "Perpandicular with non-pref paralle -> use NP axis." << endl;
+            attractors.addAttractor( parallel->getAxis() );
+          } else if (perpandicular->isStrongTerminal()) {
             cdebug_log(145,0) << "Used as strong terminal." << endl;
 
             DbU::Unit  terminalMin;
             DbU::Unit  terminalMax;
   
-            if (getTerminalInterval( autoSegment
+            if (getTerminalInterval( perpandicular
                                    , NULL
                                    , isHorizontal()
                                    , terminalMin
@@ -1535,11 +1548,11 @@ namespace Anabatic {
               if (terminalMin != terminalMax)
                 attractors.addAttractor( terminalMax );
             }
-          } else if (autoSegment->isLongLocal() or (autoSegment->getAnchoredLength() > getPPitch()*20)) {
+          } else if (perpandicular->isLongLocal() or (perpandicular->getAnchoredLength() > getPPitch()*20)) {
             cdebug_log(145,0) << "Used as long global attractor." << endl;
 
-            DbU::Unit perpandMin = autoSegment->getSourceU();
-            DbU::Unit perpandMax = autoSegment->getTargetU();
+            DbU::Unit perpandMin = perpandicular->getSourceU();
+            DbU::Unit perpandMax = perpandicular->getTargetU();
 
             if (perpandMin != perpandMax) {
               if (perpandMin == getAxis()) attractors.addAttractor( perpandMax ); 
@@ -1966,7 +1979,7 @@ namespace Anabatic {
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
     cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
-                      << " before shift targetExpand=" << DbU::getValueString(targetExpand) << endl;
+                      <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (targetExpand % oneGrid)
       targetExpand += oneGrid - targetExpand % oneGrid;
     if (sourceExpand % oneGrid)
@@ -2097,6 +2110,7 @@ namespace Anabatic {
 
     DbU::Unit length = getAnchoredLength();
     if (length > getPPitch()) {
+      cdebug_log(159,0) << "  Length > PPitch (" << DbU::getValueString(getPPitch()) << ")" << endl;
       if (isGlobal() or isFixed()) return false;
     }
 
@@ -2107,10 +2121,10 @@ namespace Anabatic {
     AutoContact* target = getAutoTarget();
 
     if (isFixed()) {
-      cdebug_log(159,0) << "isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
+      cdebug_log(159,0) << "  isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
       if (length < getPPitch()) {
         if (Session::getAnabatic()->getStage() >= Anabatic::StageDriving) {
-          cdebug_log(159,0) << "In EngineDriving mode" << endl;
+          cdebug_log(159,0) << "  In EngineDriving mode" << endl;
           return isSpinTopOrBottom();
         }
       }
@@ -2123,7 +2137,10 @@ namespace Anabatic {
 
     if (not Session::getAnabatic()->isChannelStyle()
        and (getDepth() == 1) and isSpinBottom()) return false;
-    if ((flags & Flags::WithPerpands) and _reduceds) return false;
+    if ((flags & Flags::WithPerpands) and _reduceds) {
+      cdebug_log(159,0) << "  Flags::WithPerpands and (_reduceds > 0)" << endl;
+      return false;
+    }
 
     cdebug_log(159,0) << "  source:" << source->isHTee() << "+" << source->isVTee() << endl;
     cdebug_log(159,0) << "  target:" << target->isHTee() << "+" << target->isVTee() << endl;
@@ -2153,16 +2170,16 @@ namespace Anabatic {
     cdebug_log(159,0) << "  ppitch*2:" << DbU::getValueString(Session::getPitch(perpandicularDepth)*2) << endl;
     if (length >= Session::getPitch(perpandicularDepth) * 2) return false;
 
-    cdebug_log(159,0) << "Can be reduced" << endl;
+    cdebug_log(159,0) << "  -> Can be reduced" << endl;
     return true;
   }
 
 
   bool  AutoSegment::reduce ( Flags flags )
   {
+    cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
     if (isReduced()) return false;
     if (not canReduce(flags)) return false;
-    cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -2183,8 +2200,8 @@ namespace Anabatic {
 
   uint32_t  AutoSegment::getNonReduceds ( Flags flags ) const
   {
-    if (not canReduce(flags)) return false;
     cdebug_log(159,0) << "AutoSegment::getNonReduceds():" << this << endl;
+    if (not canReduce(flags)) return false;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -2216,7 +2233,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::raise ()
+  bool  AutoSegment::raise ( vector<AutoSegment*>& canReduces )
   {
     if (not (_flags & SegIsReduced)) return false;
     cdebug_log(159,0) << "AutoSegment::raise():" << this << endl;
@@ -2227,13 +2244,19 @@ namespace Anabatic {
     _flags &= ~SegIsReduced;
     for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
       if (perpandicular == this) continue;
-      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
+      cdebug_log(159,0) << "  dec PP reduceds=" << perpandicular->getReduceds()
+                        << " " << perpandicular << endl;
+      if (not perpandicular->getReduceds() and perpandicular->canReduce())
+        canReduces.push_back( perpandicular );
     }
     for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
       if (perpandicular == this) continue;
-      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
+      cdebug_log(159,0) << "  dec PP reduceds=" << perpandicular->getReduceds()
+                        << " " << perpandicular << endl;
+      if (not perpandicular->getReduceds() and perpandicular->canReduce())
+        canReduces.push_back( perpandicular );
     }
 
     return true;
