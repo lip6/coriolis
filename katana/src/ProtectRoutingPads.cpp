@@ -494,56 +494,63 @@ namespace {
         cdebug_log(145,0) << "Less than 2 VIAs in the overlapping set, skipping." << endl;
         continue;
       }
-      
-      set<DbU::Unit> xs;
-      set<DbU::Unit> ys;
-      
-      for ( AutoContactTerminal* via : overlapping ) {
-        if (via->getSegment()->isHorizontal()) ys.insert( via->getY() );
-        else xs.insert( via->getX() );
-      }
-      if (xs.size() > 1) {
-        if (ys.empty()) {
-          cdebug_log(145,0) << "Adjust by shitfing Verticals" << endl;
-          for ( AutoContactTerminal* via : overlapping ) {
-            via->getSegment()->setAxis( *(xs.begin()) );
-            cdebug_log(145,0) << "Aligned: " << via << endl;
-          }
-        } else {
-          cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (X), cannot merge them.\n"
-                           "           On %s"
-                         , getString(rp).c_str() ) << endl;
-        }
-        continue;
-      }
-      if (ys.size() > 1) {
-        if (xs.empty()) {
-          cdebug_log(145,0) << "Adjust by shitfing Horizontals" << endl;
-          for ( AutoContactTerminal* via : overlapping ) {
-            via->getSegment()->setAxis( *(ys.begin()) );
-            cdebug_log(145,0) << "Aligned: " << via << endl;
-          }
-        } else {
-          cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (Y), cannot merge them.\n"
-                           "           On %s"
-                         , getString(rp).c_str() ) << endl;
-        }
-        continue;
-      }
 
-      if (xs.empty()) xs.insert( overlapping[0]->getX() );
-      if (ys.empty()) ys.insert( overlapping[0]->getY() );
-
-      cdebug_log(145,0) << "Adjust position to (" << DbU::getValueString(*(xs.begin()))
-                        <<                    "," << DbU::getValueString(*(ys.begin()))
-                        <<                    ")" << endl;
-      for ( AutoContactTerminal* via : overlapping ) {
-        via->setPosition( *(xs.begin()), *(ys.begin()) );
-        via->unsetFlags( Anabatic::CntDrag );
-        via->invalidate();
-        cdebug_log(145,0) << "Aligned: " << via << endl;
-        
+      for ( size_t i=1 ; i<overlapping.size() ; ++i ) {
+        BasicLayer* layer = overlapping[i]->getSegment()->getLayer()->getBasicLayers().getFirst();
+        Box         viaBb = Box( overlapping[i]->base()->getBoundingBox( layer ));
+        overlapping[i]->setLayer( overlapping[i]->getSegment()->getLayer() );
+        overlapping[i]->setSizes( viaBb.getWidth(), viaBb.getHeight() );
       }
+      
+      // set<DbU::Unit> xs;
+      // set<DbU::Unit> ys;
+      
+      // for ( AutoContactTerminal* via : overlapping ) {
+      //   if (via->getSegment()->isHorizontal()) ys.insert( via->getY() );
+      //   else xs.insert( via->getX() );
+      // }
+      // if (xs.size() > 1) {
+      //   if (ys.empty()) {
+      //     cdebug_log(145,0) << "Adjust by shitfing Verticals" << endl;
+      //     for ( AutoContactTerminal* via : overlapping ) {
+      //       via->getSegment()->setAxis( *(xs.begin()) );
+      //       cdebug_log(145,0) << "Aligned: " << via << endl;
+      //     }
+      //   } else {
+      //     cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (X), cannot merge them.\n"
+      //                      "           On %s"
+      //                    , getString(rp).c_str() ) << endl;
+      //   }
+      //   continue;
+      // }
+      // if (ys.size() > 1) {
+      //   if (xs.empty()) {
+      //     cdebug_log(145,0) << "Adjust by shitfing Horizontals" << endl;
+      //     for ( AutoContactTerminal* via : overlapping ) {
+      //       via->getSegment()->setAxis( *(ys.begin()) );
+      //       cdebug_log(145,0) << "Aligned: " << via << endl;
+      //     }
+      //   } else {
+      //     cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (Y), cannot merge them.\n"
+      //                      "           On %s"
+      //                    , getString(rp).c_str() ) << endl;
+      //   }
+      //   continue;
+      // }
+
+      // if (xs.empty()) xs.insert( overlapping[0]->getX() );
+      // if (ys.empty()) ys.insert( overlapping[0]->getY() );
+
+      // cdebug_log(145,0) << "Adjust position to (" << DbU::getValueString(*(xs.begin()))
+      //                   <<                    "," << DbU::getValueString(*(ys.begin()))
+      //                   <<                    ")" << endl;
+      // for ( AutoContactTerminal* via : overlapping ) {
+      //   via->setPosition( *(xs.begin()), *(ys.begin()) );
+      //   via->unsetFlags( Anabatic::CntDrag );
+      //   via->invalidate();
+      //   cdebug_log(145,0) << "Aligned: " << via << endl;
+      //
+      // }
     }
   }
   
