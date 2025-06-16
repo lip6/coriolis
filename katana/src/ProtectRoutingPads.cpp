@@ -103,6 +103,33 @@ namespace {
   };
 
 
+  void  checkForLoopHV ( const vector<AutoContactTerminal*>& terminals )
+  {
+    AutoContactTerminal* prefTerm    = nullptr;
+    AutoContactTerminal* nonprefTerm = nullptr;
+    AutoSegment*         pref        = nullptr;
+    AutoSegment*         nonpref     = nullptr;
+    for ( AutoContactTerminal* terminal : terminals ) {
+      if (terminal->getSegment()->isHorizontal()) {
+        prefTerm = terminal;
+        pref     = terminal->getSegment();
+      } else {
+        nonprefTerm = terminal;
+        nonpref     = terminal->getSegment();
+      }
+    }
+    if (not pref or not nonpref) return;
+    
+    AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
+    AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
+    if (not ppPref or not ppNonpref) return;
+
+    if (ppPref->isReduced()) {
+      cdebug_log(145,0) << "Loop suppresion on " << ppPref << endl;
+      ppPref->setAxis( nonpref->getAxis() );
+    }
+  }
+
 
   void  postProtectRoutingPadHV ( RoutingPad* rp )
   {
@@ -501,7 +528,8 @@ namespace {
         overlapping[i]->setLayer( overlapping[i]->getSegment()->getLayer() );
         overlapping[i]->setSizes( viaBb.getWidth(), viaBb.getHeight() );
       }
-      
+
+      checkForLoopHV( overlapping );
       // set<DbU::Unit> xs;
       // set<DbU::Unit> ys;
       
