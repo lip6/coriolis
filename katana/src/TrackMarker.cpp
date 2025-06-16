@@ -87,14 +87,20 @@ namespace Katana {
     } else {
       Box bb = rp->getBoundingBox();
       cdebug_log(159,0) << "bb=" << bb << endl;
+      RoutingLayerGauge* rlg1         = Session::getLayerGauge( (size_t)0 );
+      const Layer*       viaLayer1    = Session::getBuildContactLayer( 0 );
+      DbU::Unit          viaEnclosure = rlg1->getHalfViaWidth()
+                                      + viaLayer1->getBottomEnclosure( Layer::EnclosureV );
       if (planeDirection == Constant::Horizontal) {
         _sourcePosition = bb.getXMin();
         _targetPosition = bb.getXMax();
         trackSpan = Interval( bb.getYMin(), bb.getYMax() );
+        trackSpan.inflate( 0, -viaEnclosure );
       } else {
         _sourcePosition = bb.getYMin();
         _targetPosition = bb.getYMax();
         trackSpan = Interval( bb.getXMin(), bb.getXMax() );
+        trackSpan.inflate( -viaEnclosure, 0 );
       }
     }
     
@@ -110,8 +116,18 @@ namespace Katana {
 
     Track* track = plane->getTrackByPosition ( trackSpan.getVMin() );
     cdebug_log(159,0) << "Nearest: " << track << endl;
-    while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
-      cdebug_log(159,0) << "| weight=" << _weight << " " << track << endl;
+    if (trackSpan.contains(track->getAxis())
+       or (track->getNextTrack() and trackSpan.contains(track->getNextTrack()->getAxis()))) {
+      if (track->getAxis() < trackSpan.getVMin())
+        track = track->getNextTrack();
+      while ( track && (track->getAxis() <= trackSpan.getVMax()) ) {
+        cdebug_log(159,0) << "| weight=" << _weight << " " << track << endl;
+        Session::addInsertEvent ( this, track );
+        track = track->getNextTrack();
+        _refcount++;
+      }
+    } else {
+      cdebug_log(159,0) << "| offgrid weight=" << _weight << " " << track << endl;
       Session::addInsertEvent ( this, track );
       track = track->getNextTrack();
       _refcount++;
