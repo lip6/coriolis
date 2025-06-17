@@ -70,6 +70,7 @@ namespace Etesian {
       inline string           getSpareBufferName        () const;
       inline string           getHFNSBufferName         () const;
       inline string           getBloat                  () const;
+      inline bool             putTiesInEmptyArea        () const;
       inline DbU::Unit        getLatchUpDistance        () const;
       inline DbU::Unit        getAntennaGateMaxWL       () const;
       inline DbU::Unit        getAntennaDiodeMaxWL      () const;
@@ -87,6 +88,7 @@ namespace Etesian {
       Effort         _placeEffort;
       GraphicUpdate  _updateConf;
       bool           _routingDriven;
+      bool           _tiesInEmptyArea;
       double         _spaceMargin;
       double         _densityVariation;
       double         _aspectRatio;
@@ -119,6 +121,7 @@ namespace Etesian {
   inline string        Configuration::getSpareBufferName        () const { return _spareBufferName; }
   inline string        Configuration::getHFNSBufferName         () const { return _hfnsBufferName; }
   inline string        Configuration::getBloat                  () const { return _bloat; }
+  inline bool          Configuration::putTiesInEmptyArea        () const { return _tiesInEmptyArea; }
   inline DbU::Unit     Configuration::getLatchUpDistance        () const { return _latchUpDistance; }
   inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
   inline DbU::Unit     Configuration::getAntennaDiodeMaxWL      () const { return _antennaDiodeMaxWL; }

@@ -251,10 +251,10 @@ namespace Etesian {
                         , size_t yspin )
   {
     cdebug_log(147,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
-                      << "hole=[" << DbU::getValueString(xmin)
-                      << " "      << DbU::getValueString(xmax)
+                      << " hole=[" << DbU::getValueString(xmin)
+                      << " "       << DbU::getValueString(xmax)
                       << "]" << endl;
-    cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
+  //cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed == NULL) {
       cerr << Error("Slice::fillHole(): No feed has been registered, ignoring.") << endl;
@@ -265,6 +265,7 @@ namespace Etesian {
     bool      addEndTie = false;
     DbU::Unit xtie      = xmin;
     DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceHStep();
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
     if (modulo) {
       xtie += getEtesian()->getSliceHStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
@@ -277,7 +278,10 @@ namespace Etesian {
     modulo = (xmax - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) xmax -= modulo;
 
-    Cell*     tie       = getEtesian()->getFeedCells().getTie();
+    Cell* tie = nullptr;
+    if (getEtesian()->putTiesInEmptyArea())
+      tie = getEtesian()->getFeedCells().getTie();
+
     DbU::Unit feedWidth = 0;
     if (tie) {
       feedWidth = tie->getAbutmentBox().getWidth();
@@ -309,10 +313,17 @@ namespace Etesian {
       }
     }
 
+    DbU::Unit feedLength = 0;
     feedWidth = feed->getAbutmentBox().getWidth();
     while ( true ) {
       if (xtie >= xmax) break;
-      if (xtie+feedWidth >  xmax) {
+
+      if (tie and (feedLength >= getEtesian()->getLatchUpMax())) {
+        feed = tie;
+        feedWidth = tie->getAbutmentBox().getWidth();
+      }
+      
+      if (xtie+feedWidth > xmax) {
       // Feed is too big, try to find a smaller one.
         feed = NULL;
         int pitch = (int)((xmax-xtie) / getEtesian()->getSliceHStep());
@@ -344,7 +355,14 @@ namespace Etesian {
                          , feed->getAbutmentBox().getWidth()
                          , getEtesian()->toCell( Occurrence(instance) )));
       cdebug_log(147,0) << "  " << instance << " @" << instance->getTransformation() << endl;
+
       xtie += feedWidth;
+      if (feed == tie) {
+        feedLength = 0;
+        feed       = getEtesian()->getFeedCells().getBiggestFeed();
+        feedWidth  = feed->getAbutmentBox().getWidth();
+      } else
+        feedLength += feedWidth;
     }
 
     if (addEndTie) {
@@ -632,8 +650,10 @@ namespace Etesian {
   }
 
 
-  void  Area::insertTies ( DbU::Unit latchUpMax )
+  void  Area::insertTies ()
   {
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
+    if (latchUpMax == 0) return;
     for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
       _slices[islice]->insertTies( latchUpMax, islice );
     }
@@ -997,7 +1017,7 @@ namespace Etesian {
   //Breakpoint::stop( 100, "Before adding feeds." );
     cmess2 << "  o  Adding feed cells." << endl;
 
-  //DebugSession::open( 145, 150 );
+  //DebugSession::open( 120, 150 );
     UpdateSession::open();
 
     if (_area) delete _area;
@@ -1074,13 +1094,7 @@ namespace Etesian {
 
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
-    if (getConfiguration()->getLatchUpDistance()) {
-      Cell* tie = getFeedCells().getTie();
-      if (tie) {
-        DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
-        _area->insertTies( tieSpacing );
-      }
-    }
+    _area->insertTies();
     _area->addFeeds();
 
     UpdateSession::close();

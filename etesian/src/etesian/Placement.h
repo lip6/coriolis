@@ -302,7 +302,7 @@ namespace Etesian {
              void           buildSubSlices   ();
              void           showSubSlices    ();
              void           trackAvoid       ( const Box& trackAvoid );
-             void           insertTies       ( DbU::Unit latchUpMax );
+             void           insertTies       ();
              Instance*      createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
       inline std::string    _getString       () const;
              Record*        _getRecord       () const;

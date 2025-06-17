@@ -317,6 +317,7 @@ namespace Etesian {
     , _sliceHeight  (0)
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
+    , _latchUpMax   (0)
     , _diodeCount   (0)
     , _bufferCount  (0)
     , _excludedNets ()
@@ -388,9 +389,11 @@ namespace Etesian {
       Cell*  tie     = DataBase::getDB()->getCell( tieName );
       if (not tie)
         tie = AllianceFramework::get()->getCell( tieName, Catalog::State::Views|Catalog::State::Foreign );
-      if (tie)
+      if (tie) {
         _feedCells.useTie( tie );
-      else
+        if (getConfiguration()->getLatchUpDistance())
+          _latchUpMax = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
+      } else
         cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" tie cell."
                        , tieName.c_str()
                        ) << endl;

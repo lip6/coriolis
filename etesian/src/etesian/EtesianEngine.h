@@ -99,6 +99,8 @@ namespace Etesian {
       inline  DbU::Unit               getAntennaGateMaxWL       () const;
       inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
       inline  DbU::Unit               getLatchUpDistance        () const;
+      inline  bool                    putTiesInEmptyArea        () const;
+      inline  DbU::Unit               getLatchUpMax             () const;
       inline  const FeedCells&        getFeedCells              () const;
       inline  const BufferCells&      getBufferCells            () const;
       inline  Cell*                   getDiodeCell              () const;
@@ -174,6 +176,7 @@ namespace Etesian {
              DbU::Unit                            _sliceHeight;
              DbU::Unit                            _fixedAbHeight;
              DbU::Unit                            _fixedAbWidth;
+             DbU::Unit                            _latchUpMax;
              uint32_t                             _diodeCount;
              uint32_t                             _bufferCount;
              NetNameSet                           _excludedNets;
@@ -219,7 +222,9 @@ namespace Etesian {
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
   inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
+  inline  bool                   EtesianEngine::putTiesInEmptyArea        () const { return getConfiguration()->putTiesInEmptyArea(); }
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
+  inline  DbU::Unit              EtesianEngine::getLatchUpMax             () const { return _latchUpMax; }
   inline  void                   EtesianEngine::useFeed                   ( Cell* cell ) { _feedCells.useFeed(cell); }
   inline  const FeedCells&       EtesianEngine::getFeedCells              () const { return _feedCells; }
   inline  const BufferCells&     EtesianEngine::getBufferCells            () const { return _bufferCells; }
