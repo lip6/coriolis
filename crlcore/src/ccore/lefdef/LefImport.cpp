@@ -77,33 +77,43 @@ namespace {
     public:
                         PinRectilinearFilter ( DbU::Unit xThreshold=0
                                              , DbU::Unit yThreshold=0
+                                             , DbU::Unit pitch=0
                                              , uint32_t  flags=LefImport::PinFilter_NOFLAGS );
              bool       match                ( const Box& candidate, const Box& best );
       inline DbU::Unit  getXThreshold        () const;
       inline DbU::Unit  getYThreshold        () const;
+      inline DbU::Unit  getPitch             () const;
       inline uint32_t   getFlags             () const;
       inline void       setXThreshold        ( DbU::Unit );
       inline void       setYThreshold        ( DbU::Unit );
+      inline void       setPitch             ( DbU::Unit );
       inline void       setFlags             ( uint32_t );
     private:
       DbU::Unit  _xThreshold;
       DbU::Unit  _yThreshold;
+      DbU::Unit  _pitch;
       uint32_t   _flags;
   };
 
   
-  PinRectilinearFilter::PinRectilinearFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+  PinRectilinearFilter::PinRectilinearFilter ( DbU::Unit xThreshold
+                                             , DbU::Unit yThreshold
+                                             , DbU::Unit pitch
+                                             , uint32_t  flags )
     : _xThreshold(xThreshold)
     , _yThreshold(yThreshold)
+    , _pitch     (pitch)
     , _flags     (flags)
   { }
 
 
   inline DbU::Unit  PinRectilinearFilter::getXThreshold () const                 { return _xThreshold; }
   inline DbU::Unit  PinRectilinearFilter::getYThreshold () const                 { return _yThreshold; }
+  inline DbU::Unit  PinRectilinearFilter::getPitch      () const                 { return _pitch; }
   inline uint32_t   PinRectilinearFilter::getFlags      () const                 { return _flags; }
   inline void       PinRectilinearFilter::setXThreshold ( DbU::Unit xThreshold ) { _xThreshold=xThreshold; }
   inline void       PinRectilinearFilter::setYThreshold ( DbU::Unit yThreshold ) { _yThreshold=yThreshold; }
+  inline void       PinRectilinearFilter::setPitch      ( DbU::Unit pitch )      { _pitch=pitch; }
   inline void       PinRectilinearFilter::setFlags      ( uint32_t flags )       { _flags=flags; }
 
 
@@ -111,14 +121,49 @@ namespace {
   {
     if (candidate.getWidth () < _xThreshold) return false;
     if (candidate.getHeight() < _yThreshold) return false;
-    if (_flags & LefImport::PinFilter_TALLEST) return (candidate.getHeight() > best.getHeight());
-    if (_flags & LefImport::PinFilter_WIDEST ) return (candidate.getWidth () > best.getWidth ());
-    if (_flags & LefImport::PinFilter_LARGEST) {
-      float candidateArea = (float)candidate.getWidth() * (float)candidate.getHeight();
-      float bestArea      = (float)best     .getWidth() * (float)best     .getHeight();
-      return (candidateArea > bestArea);
+    if (_pitch) {
+      DbU::Unit candidateHeight = candidate.getHeight() - candidate.getHeight() % _pitch;
+      DbU::Unit candidateWidth  = candidate.getWidth () - candidate.getWidth () % _pitch;
+      DbU::Unit bestHeight      = best.getHeight()      - best.getHeight()      % _pitch;
+      DbU::Unit bestWidth       = best.getWidth ()      - best.getWidth ()      % _pitch;
+
+      cdebug_log(100,0) << "|   candidate pitched size: " << DbU::getValueString(candidateWidth)
+                        <<                          " x " << DbU::getValueString(candidateHeight) << endl;
+      cdebug_log(100,0) << "|   best pitched size: " << DbU::getValueString(bestWidth)
+                        <<                     " x " << DbU::getValueString(bestHeight) << endl;
+
+      if (_flags & LefImport::PinFilter_TALLEST) {
+        if (candidateHeight != bestHeight) return (candidateHeight > bestHeight);
+        if (candidateWidth  != bestWidth ) return (candidateWidth  > bestWidth);
+      }
+      if (_flags & LefImport::PinFilter_WIDEST) {
+        if (candidateWidth  != bestWidth ) return (candidateWidth  > bestWidth);
+        if (candidateHeight != bestHeight) return (candidateHeight > bestHeight);
+      }
+      if (_flags & LefImport::PinFilter_LARGEST) {
+        if (  (candidateHeight != bestHeight)
+           or (candidateWidth  != bestWidth )) {
+          float candidateArea = (float)candidateWidth * (float)candidateHeight;
+          float bestArea      = (float)bestWidth      * (float)bestHeight;
+          return (candidateArea > bestArea);
+        }
+      }
     }
-    return false;
+
+    if (_flags & LefImport::PinFilter_TALLEST) {
+      if (candidate.getHeight() != best.getHeight()) return (candidate.getHeight() > best.getHeight());
+      if (candidate.getWidth()  != best.getWidth ()) return (candidate.getWidth () > best.getWidth ());
+    }
+    if (_flags & LefImport::PinFilter_WIDEST) {
+      if (candidate.getWidth()  != best.getWidth ()) return (candidate.getWidth () > best.getWidth ());
+      if (candidate.getHeight() != best.getHeight()) return (candidate.getHeight() > best.getHeight());
+    }
+    if (   (candidate.getWidth()  == best.getWidth ())
+       and (candidate.getHeight() == best.getHeight())) return false;
+
+    float candidateArea = (float)candidate.getWidth() * (float)candidate.getHeight();
+    float bestArea      = (float)best     .getWidth() * (float)best     .getHeight();
+    return (candidateArea > bestArea);
   }
 
 
@@ -165,7 +210,8 @@ namespace {
       static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
       static       DbU::Unit          getCoreSiteX             ();
       static       DbU::Unit          getCoreSiteY             ();
-      inline       DbU::Unit          getMinTerminalWidth      () const;
+      inline       DbU::Unit          getXMinTerminalSize      () const;
+      inline       DbU::Unit          getYMinTerminalSize      () const;
       inline       double             getUnitsMicrons          () const;
       inline       DbU::Unit          fromUnitsMicrons         ( double ) const;
       inline       void               setUnitsMicrons          ( double );
@@ -220,14 +266,16 @@ namespace {
                    int                   _nthRouting;
                    RoutingGauge*         _routingGauge;
                    CellGauge*            _cellGauge;
-                   DbU::Unit             _minTerminalWidth;
+                   DbU::Unit             _xminTerminalSize;
+                   DbU::Unit             _yminTerminalSize;
       static       DbU::Unit             _coreSiteX;
       static       DbU::Unit             _coreSiteY;
   };
 
 
   inline       bool              LefParser::isVH                     () const { return _routingGauge->isVH(); }
-  inline       DbU::Unit         LefParser::getMinTerminalWidth      () const { return _minTerminalWidth; }
+  inline       DbU::Unit         LefParser::getXMinTerminalSize      () const { return _xminTerminalSize; }
+  inline       DbU::Unit         LefParser::getYMinTerminalSize      () const { return _yminTerminalSize; }
   inline       string            LefParser::getLibraryName           () const { return _libraryName; }
   inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*             LefParser::getCell                  () const { return _cell; }
@@ -305,10 +353,13 @@ namespace {
   { return _gdsForeignLibrary; }
 
 
-  void  LefParser::setPinFilter ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags )
+  void  LefParser::setPinFilter ( DbU::Unit xThreshold
+                                , DbU::Unit yThreshold
+                                , uint32_t flags )
   {
     _pinFilter.setXThreshold( xThreshold );
     _pinFilter.setYThreshold( yThreshold );
+    _pinFilter.setPitch     ( 0 );
     _pinFilter.setFlags     ( flags );
   }
 
@@ -373,7 +424,8 @@ namespace {
     , _nthRouting      (0)
     , _routingGauge    (nullptr)
     , _cellGauge       (nullptr)
-    , _minTerminalWidth(DbU::fromMicrons( Cfg::getParamDouble("lefImport.minTerminalWidth",0)->asDouble() ))
+    , _xminTerminalSize(DbU::fromMicrons( Cfg::getParamDouble("lefImport.xminTerminalSize",0)->asDouble() ))
+    , _yminTerminalSize(DbU::fromMicrons( Cfg::getParamDouble("lefImport.yminTerminalSize",0)->asDouble() ))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -972,7 +1024,7 @@ namespace {
                             << endl;
           cdebug_log(100,0) << "formFactor=" << formFactor
                             << " h=" << DbU::getValueString(h)
-                            << " (> " << DbU::getValueString(parser->getMinTerminalWidth()) << ")"
+                            << " (> " << DbU::getValueString(parser->getYMinTerminalSize()) << ")"
                             << endl;
           if (formFactor > 1.0) {
             if ((yl % DbU::twoGrid) xor (yh % DbU::twoGrid)) {
@@ -1062,7 +1114,7 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal1 = _routingGauge->getLayerGauge( (size_t)0 );
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
-
+    const Layer*              viaLayer1   = _routingGauge->getContactLayer(_routingGauge->getFirstRoutingLayer());
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
@@ -1070,8 +1122,11 @@ namespace {
   //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
   //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
-      DebugSession::open( 100, 110 );
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
+  //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -1086,10 +1141,15 @@ namespace {
           break;
         }
 
+        size_t depth = _routingGauge->getLayerDepth( component->getLayer() );
+        if (depth == 0) depth++;
+        const RoutingLayerGauge* rlg = _routingGauge->getLayerGauge( depth );
+        if (rlg) _pinFilter.setPitch( rlg->getPitch() );
+
         Segment* segment = dynamic_cast<Segment*>( component );
         if (segment) {
-          bool isWide = (segment->getWidth () >= getMinTerminalWidth())
-                    and (segment->getLength() >= getMinTerminalWidth());
+          bool isWide = (segment->getWidth () >= getXMinTerminalSize())
+                    and (segment->getLength() >= getYMinTerminalSize());
 
           cdebug_log(100,0) << "> " << segment << endl;
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
@@ -1097,7 +1157,7 @@ namespace {
             DbU::Unit metal1Width = _routingGauge->getLayerGauge((size_t)0)->getWireWidth() / 2;
             Vertical* v           = dynamic_cast<Vertical*>( segment );
             if (v) {
-              if (v->getLength() < getMinTerminalWidth())
+              if (v->getLength() < getYMinTerminalSize())
                 continue;
 
               DbU::Unit widthAdjust  = v->getWidth () % DbU::twoGrid;
@@ -1151,7 +1211,7 @@ namespace {
             } else {
               Horizontal* h = dynamic_cast<Horizontal*>( segment );
               if (not h) continue;
-              if (h->getWidth() < getMinTerminalWidth())
+              if (h->getWidth() < getYMinTerminalSize())
                 continue;
 
               DbU::Unit widthAdjust  = h->getWidth () % DbU::twoGrid;
@@ -1213,6 +1273,7 @@ namespace {
               if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
               if (heightAdjust) candidate.inflate( 0, 0, 0, -heightAdjust );
 
+              cdebug_log(100,0) << "| " << candidate << endl;
               if (_pinFilter.match(candidate,best))
                 best = candidate;
             }
@@ -1321,8 +1382,11 @@ namespace {
   //if (_cell->getName() == "MXI2_X1_GF6T_1P5")
   //if (_cell->getName() == "AOI222_X2_GF6T_1P5")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__inv_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
-      DebugSession::close();
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__nand3_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
+  //  DebugSession::close();
   }
 
 
