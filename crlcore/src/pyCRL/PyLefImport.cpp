@@ -161,7 +161,7 @@ extern "C" {
       PyObject*     pyYThreshold = NULL;
       unsigned int  flags        = 0;
       if (PyArg_ParseTuple( args, "OOI:LefImport.setPinFilter", &pyXThreshold, &pyYThreshold, &flags )) {
-        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyXThreshold), flags );
+        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyYThreshold), flags );
       } else {
         PyErr_SetString ( ConstructorError, "LefImport.setPinFilter(): Bad type or bad number of parameters." );
         return NULL;
