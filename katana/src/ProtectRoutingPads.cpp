@@ -119,13 +119,14 @@ namespace {
       }
     }
     if (not pref or not nonpref) return;
+    if (pref->isGlobal()) return;
     
     AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
     AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
     if (not ppPref or not ppNonpref) return;
 
     if (ppPref->isReduced()) {
-      cdebug_log(145,0) << "Loop suppresion on " << ppPref << endl;
+      cdebug_log(145,0) << "Loop suppression on " << ppPref << endl;
       ppPref->setAxis( nonpref->getAxis() );
     }
   }
