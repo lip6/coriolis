@@ -174,6 +174,7 @@ namespace {
       static       void               setGdsForeignLibrary     ( Library* );
       static       Library*           getGdsForeignLibrary     ();
       static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
+      static       Segment*           createBestSegment        ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, uint32_t flags );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -325,6 +326,53 @@ namespace {
            << endl;
     }
     return u;
+  }
+
+
+  Segment* LefParser::createBestSegment ( Rectilinear* rectilinear
+                                        , DbU::Unit    minWidth
+                                        , DbU::Unit    minHeight
+                                        , uint32_t     flags )
+  {
+    PinRectilinearFilter  pinFilter ( minWidth, minHeight, flags );
+
+    Segment*    segment = nullptr;
+    vector<Box> boxes;
+    rectilinear->getAsBiggestRectangles( boxes
+                                       , pinFilter.getXThreshold()
+                                       , pinFilter.getYThreshold() );
+    Box best;
+    for ( Box& candidate : boxes ) {
+      DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
+      DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
+      if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
+      if (heightAdjust) candidate.inflate( 0, 0, 0, -heightAdjust );
+
+      cdebug_log(100,0) << "| " << candidate << endl;
+      if (pinFilter.match(candidate,best))
+        best = candidate;
+    }
+    if (not best.isEmpty()) {
+      if (best.getWidth() < best.getHeight()) {
+        segment = Vertical::create( rectilinear->getNet()
+                                  , rectilinear->getLayer()
+                                  , best.getXCenter()
+                                  , best.getWidth()
+                                  , best.getYMin() 
+                                  , best.getYMax()
+                                  );
+      } else {
+        segment = Horizontal::create( rectilinear->getNet()
+                                    , rectilinear->getLayer()
+                                    , best.getYCenter()
+                                    , best.getHeight()
+                                    , best.getXMin() 
+                                    , best.getXMax()
+                                    );
+      }
+    }
+    cdebug_log(100,0) << "| -> " << segment << endl;
+    return segment;
   }
 
 
@@ -1110,11 +1158,23 @@ namespace {
 
   void  LefParser::_pinStdPostProcess ()
   {
-    const Layer*              metal1      = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
-    const RoutingLayerGauge*  gaugeMetal1 = _routingGauge->getLayerGauge( (size_t)0 );
-    const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
-          Box                 ab          = _cell->getAbutmentBox();
-    const Layer*              viaLayer1   = _routingGauge->getContactLayer(_routingGauge->getFirstRoutingLayer());
+    const Layer*              metal1          = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
+    const RoutingLayerGauge*  gaugeMetal1     = _routingGauge->getLayerGauge( (size_t)0 );
+    const RoutingLayerGauge*  gaugeMetal2     = _routingGauge->getLayerGauge( 1 );
+          Box                 ab              = _cell->getAbutmentBox();
+    const Layer*              viaLayer1       = _routingGauge->getContactLayer(_routingGauge->getFirstRoutingLayer());
+          DbU::Unit           minMetal1Width  = viaLayer1->getMinimalSize()
+                                              + viaLayer1->getBottomEnclosure( Layer::EnclosureH )*2;
+          DbU::Unit           minMetal1Height = viaLayer1->getMinimalSize()
+                                              + viaLayer1->getBottomEnclosure( Layer::EnclosureV )*2;
+          uint32_t            normalFlags     = LefImport::PinFilter_TALLEST;
+          uint32_t            rotatedFlags    = LefImport::PinFilter_WIDEST;
+
+    if (gaugeMetal1->isHorizontal()) {
+      std::swap( minMetal1Width, minMetal1Height );
+      std::swap( normalFlags, rotatedFlags );
+    }
+
   //if (_cell->getName() == "ENDCAPTIE16_GF6T_1P5")
   //if (_cell->getName() == "NAND4_XL_GF6T_1P5")
   //if (_cell->getName() == "AND3_X12_GF6T_1P5")
@@ -1126,7 +1186,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
-  //  DebugSession::open( 100, 110 );
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+      DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -1251,8 +1312,8 @@ namespace {
           if (rectilinear->getLayer()->getMask() != metal1->getMask())
             continue;
 
-          vector<Box> boxes;
           if (component->getNet()->isSupply()) {
+            vector<Box> boxes;
             rectilinear->getAsRectangles( boxes );
             ongrids.push_back( Horizontal::create( rectilinear->getNet()
                                                  , rectilinear->getLayer()
@@ -1263,109 +1324,23 @@ namespace {
                                                  )
                                  );
           } else {
-            rectilinear->getAsBiggestRectangles( boxes
-                                               , _pinFilter.getXThreshold()
-                                               , _pinFilter.getYThreshold() );
-            Box best;
-            for ( Box& candidate : boxes ) {
-              DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
-              DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
-              if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
-              if (heightAdjust) candidate.inflate( 0, 0, 0, -heightAdjust );
-
-              cdebug_log(100,0) << "| " << candidate << endl;
-              if (_pinFilter.match(candidate,best))
-                best = candidate;
+            Segment* segment = createBestSegment( rectilinear, minMetal1Width, minMetal1Height, normalFlags );
+            if (segment) ongrids.push_back( segment );
+            else {
+              segment = createBestSegment( rectilinear, minMetal1Height, minMetal1Width, rotatedFlags );
+              if (segment) ongrids.push_back( segment );
             }
-            if (not best.isEmpty()) {
-#if EXTENDED_COVERAGE
-              DbU::Unit ymin = gaugeMetal2->getTrackPosition( ab.getYMin()
-                                                            , ab.getXMax()
-                                                            , best.getYMin() + gaugeMetal2->getViaWidth()/2
-                                                            , Constant::Superior );
-              DbU::Unit ymax = gaugeMetal2->getTrackPosition( ab.getYMin()
-                                                            , ab.getXMax()
-                                                            , best.getYMax() - gaugeMetal2->getViaWidth()/2
-                                                            , Constant::Inferior );
-              ongrids.push_back( Vertical::create( rectilinear->getNet()
-                                                 , rectilinear->getLayer()
-                                                 , best.getXCenter()
-                                                 , best.getWidth()
-                                                 , ymin - gaugeMetal2->getViaWidth()/2
-                                                 , ymax + gaugeMetal2->getViaWidth()/2
-                                                 )
-                                 );
-              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
-#endif
-            //if (gaugeMetal2->isHorizontal()) {
-              if (best.getWidth() < best.getHeight()) {
-                ongrids.push_back( Vertical::create( rectilinear->getNet()
-                                                   , rectilinear->getLayer()
-                                                   , best.getXCenter()
-                                                   , best.getWidth()
-                                                   , best.getYMin() 
-                                                   , best.getYMax()
-                                                   )
-                                 );
-              } else {
-                ongrids.push_back( Horizontal::create( rectilinear->getNet()
-                                                     , rectilinear->getLayer()
-                                                     , best.getYCenter()
-                                                     , best.getHeight()
-                                                     , best.getXMin() 
-                                                     , best.getXMax()
-                                                     )
-                                 );
-              }
-              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
-            }
-#if THIS_IS_DISABLED
-            for ( const Box& box : boxes ) {
-              cdebug_log(100,0) << "| " << box << endl;
-            // Assume M2 is horizontal.
-              DbU::Unit ymin = gaugeMetal2->getTrackPosition( ab.getYMin()
-                                                            , ab.getXMax()
-                                                            , box.getYMin() + gaugeMetal2->getViaWidth()/2
-                                                            , Constant::Superior );
-              DbU::Unit ymax = gaugeMetal2->getTrackPosition( ab.getYMin()
-                                                            , ab.getXMax()
-                                                            , box.getYMax() - gaugeMetal2->getViaWidth()/2
-                                                            , Constant::Inferior );
-              ongrids.push_back( Vertical::create( rectilinear->getNet()
-                                                 , rectilinear->getLayer()
-                                                 , box.getXCenter()
-                                                 , box.getWidth()
-                                                 , ymin - gaugeMetal2->getViaWidth()/2
-                                                 , ymax + gaugeMetal2->getViaWidth()/2
-                                                 )
-                                 );
-              cdebug_log(100,0) << "| -> " << ongrids.back() << endl;
-              // DbU::Unit neighbor = nearestY
-              //   + ((nearestY > box.getYCenter()) ? 1 : -1) * gaugeMetal2->getPitch();
-              
-              // if (  (box.getYMin() > neighbor)
-              //    or (box.getYMax() < neighbor) ) {
-              //   ongrids.push_back( Vertical::create( rectilinear->getNet()
-              //                                      , rectilinear->getLayer()
-              //                                      , box.getXCenter()
-              //                                      , box.getWidth()
-              //                                      , box.getYMin()
-              //                                      , box.getYMax()
-              //                                      )
-              //                    );
-              // }
-            }
-#endif
           }
         }
       }
 
       if (ongrids.empty()) {
-        if (not isSupply)
+        if (not isSupply) 
           cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
                          , pinName.c_str() ) << endl;
         for ( Component* component : components ) {
           NetExternalComponents::setExternal( component );
+          cdebug_log(100,0) << "| -> " << component << endl;
         }
       } else {
         for ( Segment* segment : ongrids ) {
@@ -1386,7 +1361,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
-  //  DebugSession::close();
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+      DebugSession::close();
   }
 
 
