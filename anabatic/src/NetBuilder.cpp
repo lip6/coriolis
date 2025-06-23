@@ -232,6 +232,7 @@ namespace Anabatic {
   {
     uint32_t rpFlags = rp->getFlags();
     uint32_t flags   = 0;
+    flags |= (rpFlags & RoutingPad::VLarge   ) ? VLarge    : 0;
     flags |= (rpFlags & RoutingPad::VSmall   ) ? VSmall    : 0;
     flags |= (rpFlags & RoutingPad::HSmall   ) ? HSmall    : 0;
     flags |= (rpFlags & RoutingPad::Punctual ) ? Punctual  : 0;

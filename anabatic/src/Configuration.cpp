@@ -91,6 +91,7 @@ namespace Anabatic {
     , _globalThreshold  (0)
     , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hsmallThreshold" , 3   )->asInt())
     , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vsmallThreshold" , 3   )->asInt())
+    , _vlargeThreshold  (Cfg::getParamInt       ("anabatic.vlargeThreshold" , 0   )->asInt())
     , _allowedDepth     (0)
     , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
@@ -204,6 +205,7 @@ namespace Anabatic {
     , _globalThreshold  (other._globalThreshold)
     , _hsmallThreshold  (other._hsmallThreshold)
     , _vsmallThreshold  (other._vsmallThreshold)
+    , _vlargeThreshold  (other._vlargeThreshold)
     , _allowedDepth     (other._allowedDepth)
     , _edgeCostH        (other._edgeCostH)
     , _edgeCostK        (other._edgeCostK)
@@ -683,30 +685,34 @@ namespace Anabatic {
     size_t    rpDepth        = getLayerDepth( rp->getLayer() );
     DbU::Unit punctualLength = 0;
     if (rpDepth == 0) ++rpDepth;
+    DbU::Unit pitch = getPitch( rpDepth );
     if (not isSymbolic()) punctualLength += getLayerGauge( rpDepth )->getWireWidth();
-    punctualLength += getPitch( rpDepth );
+    punctualLength += pitch;
 
     getPositions( rp, source, target );
 
     DbU::Unit width  = abs( target.getX() - source.getX() );
     DbU::Unit height = abs( target.getY() - source.getY() );
-    cdebug_log(145,0) << "pitch="  << DbU::getValueString(getPitch(rpDepth))
+    cdebug_log(145,0) << "pitch="  << DbU::getValueString(pitch)
                       << " hsmallTHreshold=" << _hsmallThreshold
                       << " vsmallTHreshold=" << _vsmallThreshold
+                      << " vlargeTHreshold=" << _vlargeThreshold
                       << endl;
     cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
     cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;
     uint64_t  flags  = 0;
-    flags |= (width  < _hsmallThreshold*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
-    flags |= (height < _vsmallThreshold*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
+    flags |= (width  <  _hsmallThreshold*pitch) ? RoutingPad::HSmall : 0;
+    flags |= (height <  _vsmallThreshold*pitch) ? RoutingPad::VSmall : 0;
+    flags |= (height >= _vlargeThreshold*pitch) ? RoutingPad::VLarge : 0;
     flags |= ((width < punctualLength) and (height < punctualLength)) ? RoutingPad::Punctual : 0;
 
     rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
     rp->setFlags  ( flags );
     cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << rpDepth << "]:"
-               << DbU::getValueString(getPitch(rpDepth)) << " "
+               << DbU::getValueString(pitch) << " "
                << ((flags & RoutingPad::HSmall  ) ? "HSmall "   : " ")
                << ((flags & RoutingPad::VSmall  ) ? "VSmall "   : " ")
+               << ((flags & RoutingPad::VLarge  ) ? "VLarge "   : " ")
                << ((flags & RoutingPad::Punctual) ? "Punctual " : " ")
                << endl;
 

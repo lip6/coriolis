@@ -1288,10 +1288,13 @@ namespace Anabatic {
     cdebug_log(145,0) << "west:      " << west () << endl;
 
     const Layer* viaLayer1 = Session::getBuildContactLayer(1);
+    uint64_t     flagsRp   = checkRoutingPadSize( getRoutingPads()[0] );
 
     if (getConnexity().fields.globals == 2) {
       if (north() and south()) {
-        AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
+        AutoContact* contact1 = doRp_Access( getGCell()
+                                           , getRoutingPads()[0]
+                                           , HAccess | ((flagsRp & VLarge) ? 0 : UseNonPref) );
         AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal );
         contact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
