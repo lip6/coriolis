@@ -131,10 +131,10 @@ namespace {
       if ( !terminalContact->isTerminal() ) {
         AutoSegment* segment      = NULL;
         size_t       segmentCount = 0;
-        forEach ( Component*, icomponent, terminalContact->getSlaveComponents() ) {
-          if ( *icomponent == autoSegment->base() ) continue;
+        for ( Component* component : terminalContact->getSlaveComponents() ) {
+          if ( component == autoSegment->base() ) continue;
 
-          Segment* connex = dynamic_cast<Segment*>(*icomponent);
+          Segment* connex = dynamic_cast<Segment*>(component);
           if ( !connex ) continue;
 
           segment = Session::lookup ( connex );
@@ -1748,20 +1748,20 @@ namespace Anabatic {
     bool                  hasGlobal    = isGlobal();
 
     if (not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds(flags) ) {
-        if (isegment->isFixed()) continue;
+      for ( AutoSegment* segment : getAligneds(flags) ) {
+        if (segment->isFixed()) continue;
 
-        hasGlobal = hasGlobal or isegment->isGlobal();
-        segments.push_back( *isegment );
+        hasGlobal = hasGlobal or segment->isGlobal();
+        segments.push_back( segment );
 
         if (not hasCanonical) {
-          if (isegment->isCanonical()) {
-            cdebug_log(149,0) << "* " << *isegment << " canonical already set" << endl;
-            canonical    = *isegment;
+          if (segment->isCanonical()) {
+            cdebug_log(149,0) << "* " << segment << " canonical already set" << endl;
+            canonical    = segment;
             hasCanonical = true;
           }
 
-          if (CompareId()(*isegment,canonical)) canonical = *isegment;
+          if (CompareId()(segment,canonical)) canonical = segment;
         }
       }
 
@@ -1800,14 +1800,14 @@ namespace Anabatic {
     innerContacts.insert( make_pair(getAutoTarget(),0x4) );
 
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        if ( (icontact = innerContacts.find(isegment->getAutoSource())) != innerContacts.end() ) {
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if ( (icontact = innerContacts.find(segment->getAutoSource())) != innerContacts.end() ) {
           if (icontact->second & 0x1) icontact->second |= 0x2;
           else                        icontact->second |= 0x1;
         } else
           innerContacts.insert( make_pair(getAutoSource(),0x1) );
         
-        if ( (icontact = innerContacts.find(isegment->getAutoTarget())) != innerContacts.end() ) {
+        if ( (icontact = innerContacts.find(segment->getAutoTarget())) != innerContacts.end() ) {
           if (icontact->second & 0x4) icontact->second |= 0x8;
           else                        icontact->second |= 0x4;
         } else
@@ -1854,8 +1854,8 @@ namespace Anabatic {
 
     for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
       if ( (icontact->second == 0x1) or (icontact->second == 0x4) ) {
-        forEach ( Segment*, isegment, icontact->first->getSlaveComponents().getSubSet<Segment*>() ) {
-          AutoSegment* autoSegment = Session::lookup ( *isegment );
+        for ( Segment* segment : icontact->first->getSlaveComponents().getSubSet<Segment*>() ) {
+          AutoSegment* autoSegment = Session::lookup ( segment );
           if (not autoSegment) continue;
           if (autoSegment->getDirection() == getDirection()) continue;
 
@@ -2397,8 +2397,8 @@ namespace Anabatic {
     }
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, getAligneds() ) {
-        isegment->getGCells( gcells );
+      for ( AutoSegment* segment : getAligneds() ) {
+        segment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; ++i ) {
           maxDensity = std::max( maxDensity, gcells[i]->getFeedthroughs(depth) );
         }
@@ -2491,13 +2491,13 @@ namespace Anabatic {
     }
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        isegment->getGCells( gcells );
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        segment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
           if (not gcells[i]->hasFreeTrack(depth-2,reserve)) return false;
         }
-        if (isegment->getAutoSource()->getMaxDepth() < depth) return false;
-        if (isegment->getAutoTarget()->getMaxDepth() < depth) return false;
+        if (segment->getAutoSource()->getMaxDepth() < depth) return false;
+        if (segment->getAutoTarget()->getMaxDepth() < depth) return false;
       }
     }
 
@@ -3120,9 +3120,9 @@ namespace Anabatic {
     if (getSpanU().contains(interval.getVMax())) { rightCandidate = this; rightDoglegCount++; }
 
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, getAligneds(flags) ) {
-        if (isegment->getSpanU().contains(interval.getVMin())) { leftCandidate  = *isegment; leftDoglegCount++; }
-        if (isegment->getSpanU().contains(interval.getVMax())) { rightCandidate = *isegment; rightDoglegCount++; }
+      for ( AutoSegment* segment : getAligneds(flags) ) {
+        if (segment->getSpanU().contains(interval.getVMin())) { leftCandidate  = segment; leftDoglegCount++; }
+        if (segment->getSpanU().contains(interval.getVMax())) { rightCandidate = segment; rightDoglegCount++; }
       }
     }
 
@@ -3653,8 +3653,8 @@ namespace Anabatic {
 
       if (currentContact->getAnchor()) { cdebug_tabw(145,-1); return true; }
 
-      forEach ( Component*, component, currentContact->getSlaveComponents() ) {
-        Segment* segment = dynamic_cast<Segment*>( *component );
+      for ( Component* component : currentContact->getSlaveComponents() ) {
+        Segment* segment = dynamic_cast<Segment*>( component );
         if (not segment) continue;
 
         AutoSegment* autoSegment = Session::lookup( segment );

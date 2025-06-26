@@ -147,14 +147,14 @@ namespace Anabatic {
 
         bool isWeakGlobal = seedSegment->isGlobal();
         if (not seedSegment->isNotAligned()) {
-          forEach ( AutoSegment*, aligned, seedSegment->getAligneds() ) {
-            cdebug_log(145,0) << "Aligned: " << *aligned << endl;
-            aligneds.push_back ( *aligned );
+          for ( AutoSegment* aligned : seedSegment->getAligneds() ) {
+            cdebug_log(145,0) << "Aligned: " << aligned << endl;
+            aligneds.push_back ( aligned );
             exploredSegments.insert ( aligned->base() );
 
             isWeakGlobal = isWeakGlobal or aligned->isGlobal();
-            if (AutoSegment::CompareId()( *aligned, canonical ))
-              canonical = *aligned;
+            if (AutoSegment::CompareId()( aligned, canonical ))
+              canonical = aligned;
           }
         }
 
