@@ -1023,7 +1023,7 @@ namespace Katana {
 
     TrackElement* dogleg   = nullptr;
     TrackElement* parallel = nullptr;
-    makeDogleg( gcell, dogleg, parallel );
+    makeDogleg( gcell, dogleg, parallel, Flags::NoFlags );
 
     if (dogleg) {
       if (source->isTerminal() xor target->isTerminal()) {
@@ -1043,14 +1043,17 @@ namespace Katana {
   TrackElement* TrackSegment::makeDogleg ( Anabatic::GCell* dogLegGCell
                                          , TrackElement*&   perpandicular
                                          , TrackElement*&   parallel
+                                         , Flags            flags
                                          )
   {
-    cdebug_log(159,0) << "TrackSegment::makeDogleg(GCell*)" << endl;
+    cdebug_log(159,1) << "TrackSegment::makeDogleg(GCell*)" << endl;
     cdebug_log(159,0) << "Break in: " << dogLegGCell << endl;
+    cdebug_log(159,0) << "Flags: " << flags << endl;
 
-    base()->makeDogleg( dogLegGCell, Flags::IncBreakLevel );
+    base()->makeDogleg( dogLegGCell, flags|Flags::IncBreakLevel );
     _postDoglegs( perpandicular, parallel );
 
+    cdebug_tabw(159,-1);
     return perpandicular;
   }
 

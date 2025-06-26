@@ -207,8 +207,8 @@ namespace Katana {
   void           TrackElement::setAxis              ( DbU::Unit, Flags flags ) { }
   TrackElement*  TrackElement::promoteToPref        () { return nullptr; }
   TrackElement*  TrackElement::makeDogleg           () { return nullptr; }
-  Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags  ) { return Flags::NoFlags; }
-  TrackElement*  TrackElement::makeDogleg           ( Anabatic::GCell*, TrackElement*&, TrackElement*& ) { return NULL; }
+  Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags )         { return Flags::NoFlags; }
+  TrackElement*  TrackElement::makeDogleg           ( Anabatic::GCell*, TrackElement*&, TrackElement*&, Flags ) { return nullptr; }
   void           TrackElement::_postDoglegs         ( TrackElement*&, TrackElement*& ) { }
   bool           TrackElement::moveAside            ( Flags ) { return false; }
   bool           TrackElement::slacken              ( Flags ) { return false; }

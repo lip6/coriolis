@@ -901,7 +901,7 @@ namespace Katana {
         Anabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
         if (dogLegGCell) {
           if (segment->canDogleg(dogLegGCell))
-            success = segment->makeDogleg(dogLegGCell);
+            success = segment->makeDogleg(dogLegGCell,Flags::NoFlags);
         } else {
           cerr << Bug( "No GCell under source %s for:\n      %s."
                      , getString(breakPoint).c_str(), getString(segment).c_str() ) << endl;
@@ -920,7 +920,7 @@ namespace Katana {
         Anabatic::GCell* dogLegGCell = Session::getGCellUnder( breakPoint.getX(), breakPoint.getY() );
         if (dogLegGCell) {
           if (segment->canDogleg(dogLegGCell)) {
-            success = segment->makeDogleg(dogLegGCell);
+            success = segment->makeDogleg(dogLegGCell,Flags::NoFlags);
           }
         } else {
           cerr << Bug( "No GCell under target %s for:\n      %s."

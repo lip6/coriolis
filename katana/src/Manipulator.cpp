@@ -208,7 +208,7 @@ namespace Katana {
           AutoContact*  terminal = nullptr;
           TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
           if (parallel and (parallel->getBreakLevel() < 2)) {
-            parallel->makeDogleg( terminal->getGCell() );
+            parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
             nonPrefFounds = true;
           }
         } else if (perpandiculars[i]->isFixedAxis()) {
@@ -234,7 +234,7 @@ namespace Katana {
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
         if (parallel and (parallel->getBreakLevel() < 2)) {
-          parallel->makeDogleg( terminal->getGCell() );
+          parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           nonPrefFounds = true;
           continue;
         }
@@ -555,7 +555,7 @@ namespace Katana {
         cdebug_tabw(159,-1);
         return false;
       }
-      if (not _segment->makeDogleg( dogLegGCell, dogleg, segment1 )) {
+      if (not _segment->makeDogleg( dogLegGCell, dogleg, segment1, Flags::NoFlags )) {
         cdebug_log(159,0) << "FIRST makeDogleg() call failed (BUG)." << endl;
         cdebug_tabw(159,-1);
         return false;
@@ -616,7 +616,7 @@ namespace Katana {
           cdebug_tabw(159,-1);
           return false;
         }
-        if (not segment1->makeDogleg( dogLegGCell, dogleg, segment2 )) {
+        if (not segment1->makeDogleg( dogLegGCell, dogleg, segment2, Flags::NoFlags )) {
           cdebug_log(159,0) << "SECOND makeDogleg() call failed (BUG)." << endl;
           cdebug_tabw(159,-1);
           return false;
@@ -733,7 +733,7 @@ namespace Katana {
         cdebug_tabw(159,-1);
         return false;
       }
-      if (not _segment->makeDogleg( candidate, dogleg, parallel )) {
+      if (not _segment->makeDogleg( candidate, dogleg, parallel, Flags::NoFlags )) {
         cdebug_log(159,0) << "makeDogleg() call failed (BUG)." << endl;
         cerr << "makeDogleg() call failed (BUG)." << endl;
         cdebug_tabw(159,-1);
@@ -1441,7 +1441,7 @@ namespace Katana {
 
     TrackElement* dogleg   = NULL;
     TrackElement* parallel = NULL;
-    _segment->makeDogleg( gcells[igcell], dogleg, parallel );
+    _segment->makeDogleg( gcells[igcell], dogleg, parallel, Flags::NoFlags );
     return (dogleg != NULL);
   }
 
@@ -1508,7 +1508,7 @@ namespace Katana {
         AutoContact*  terminal = nullptr;
         TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
         if (parallel and (parallel->getBreakLevel() < 2)) {
-          parallel->makeDogleg( terminal->getGCell() );
+          parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           return true;
         }
       }

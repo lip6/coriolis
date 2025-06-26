@@ -218,9 +218,9 @@ namespace Katana {
       virtual void                    setAxis                ( DbU::Unit, Flags flags=Anabatic::AutoSegment::SegAxisSet );
       virtual TrackElement*           promoteToPref          ();
       virtual TrackElement*           makeDogleg             ();
-      inline  bool                    makeDogleg             ( Anabatic::GCell* );
-      virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual Flags                   makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags );
+      inline  bool                    makeDogleg             ( Anabatic::GCell*, Flags );
+      virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
+      virtual Flags                   makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
       virtual void                    _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
       virtual bool                    moveAside              ( Flags flags );
       virtual bool                    slacken                ( Flags flags=Flags::NoFlags );
@@ -291,14 +291,14 @@ namespace Katana {
     return Box( getAxis()-DbU::lambda(1.0), getSourceU(), getAxis()+DbU::lambda(1.0), getTargetU() );
   }
 
-  inline  bool  TrackElement::makeDogleg ( Anabatic::GCell* gcell )
+  inline  bool  TrackElement::makeDogleg ( Anabatic::GCell* gcell, Flags flags )
   {
-    TrackElement* perpandicular = NULL;
-    TrackElement* parallel      = NULL;
+    TrackElement* perpandicular = nullptr;
+    TrackElement* parallel      = nullptr;
 
-    makeDogleg( gcell, perpandicular, parallel );
+    makeDogleg( gcell, perpandicular, parallel, flags );
 
-    return (perpandicular != NULL);
+    return (perpandicular != nullptr);
   }
 
 

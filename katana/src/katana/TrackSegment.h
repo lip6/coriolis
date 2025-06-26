@@ -143,8 +143,8 @@ namespace Katana {
       virtual void                  setAxis                ( DbU::Unit, Flags flags );
       virtual TrackElement*         promoteToPref          ();
       virtual TrackElement*         makeDogleg             ();
-      virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual Flags                 makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags );
+      virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
+      virtual Flags                 makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags );
       virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
       virtual bool                  moveAside              ( Flags );
       virtual bool                  slacken                ( Flags flags=Flags::NoFlags );
