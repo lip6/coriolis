@@ -224,6 +224,7 @@ namespace Anabatic {
     s += (_flags & (uint64_t)DestroyGCell ) ? 'D' : '-';
     s += (_flags & (uint64_t)AboveLayer   ) ? 'A' : '-';
     s += (_flags & (uint64_t)BelowLayer   ) ? 'B' : '-';
+    s += (_flags & (uint64_t)IncBreakLevel) ? 'I' : '-';
 
     return s;
   }
