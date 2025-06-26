@@ -886,6 +886,7 @@ namespace Anabatic {
     DebugSession::open( getNet(), 145, 150 );
     cdebug_log(149,0) << "AutoHorizontal::_makeDogleg(GCell*) in " << doglegGCell << endl;
     cdebug_tabw(149,1);
+    cdebug_log(149,0) << "Flags=" << flags << endl;
 
     if (isNonPref()) {
       cdebug_tabw(149,-1);
@@ -906,8 +907,10 @@ namespace Anabatic {
     if (not autoSource->canDrag()) unsetFlags( SegDrag );
 
     DbU::Unit doglegAxis = (doglegGCell->getXMax() + doglegGCell->getXMin()) / 2;
-    if (isLocal())
-      doglegAxis = (getSourceX() + getTargetX()) / 2;
+    if      (flags & Flags::Source) doglegAxis = getSourceX();
+    else if (flags & Flags::Target) doglegAxis = getTargetX();
+    else if (isLocal())             doglegAxis = (getSourceX() + getTargetX()) / 2;
+    cdebug_log(149,0) << "Axis of the dogleg: " << DbU::getValueString(doglegAxis) << "." << endl;
 
     cdebug_log(149,0) << "Detaching from Target AutoContact " << autoTarget << "." << endl;
 
@@ -1022,8 +1025,8 @@ namespace Anabatic {
     dlContact2->updateCache();
   //autoTarget->updateCache();
 
-    segment2->canonize( flags );
-    if (not isCanonical()) canonize( flags );
+    segment2->canonize( flags|Flags::Source|Flags::Target );
+    if (not isCanonical()) canonize( flags|Flags::Source|Flags::Target );
 
     updateNativeConstraints();
     segment2->updateNativeConstraints();
