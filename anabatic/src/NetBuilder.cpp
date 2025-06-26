@@ -2492,8 +2492,11 @@ namespace Anabatic {
 
     setDegree( degree );
 
+    Box bbNet;
     cdebug_log(145,0) << "Start RoutingPad Ring" << endl;
     for ( RoutingPad* startRp : routingPads ) {
+      bbNet.merge( startRp->getBoundingBox() );
+      
       bool segmentFound = false;
 
       cdebug_log(145,0) << "startRp  : " << startRp << endl;
@@ -2560,6 +2563,15 @@ namespace Anabatic {
       cdebug_log(145,0) << "Popping (from)  " << sourceHook << endl;
       cdebug_log(145,0) << "Popping (to)    " << sourceContact << endl;
       cdebug_log(145,0) << "Popping (flags) " << sourceFlags << endl;
+    }
+
+    if (   (bbNet.getWidth () < Session::getSmallNetWidth ())
+       and (bbNet.getHeight() < Session::getSmallNetHeight())) {
+      for ( Segment* segment : net->getComponents().getSubSet<Segment*>() ) {
+        AutoSegment* autoSegment = Session::lookup( segment );
+        if (autoSegment)
+          autoSegment->setFlags( AutoSegment::SegUnbreakable );
+      }
     }
 
     Session::revalidate();

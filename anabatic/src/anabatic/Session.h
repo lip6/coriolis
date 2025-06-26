@@ -85,6 +85,8 @@ namespace Anabatic {
       static  inline const Configuration*              getConfiguration      ();
       static         float                             getSaturateRatio      ();
       static         size_t                            getSaturateRp         ();
+      static  inline DbU::Unit                         getSmallNetWidth      ();
+      static  inline DbU::Unit                         getSmallNetHeight     ();
       static  inline size_t                            getAllowedDepth       ();
       static         DbU::Unit                         getExtensionCap       ();
       static  inline CellGauge*                        getCellGauge          ();
@@ -241,8 +243,9 @@ namespace Anabatic {
   inline void                              Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
   inline void                              Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
                                            
-  inline size_t                            Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
-                                           
+  inline DbU::Unit                         Session::getSmallNetWidth     ()                     { return getConfiguration()->getSmallNetWidth(); }
+  inline DbU::Unit                         Session::getSmallNetHeight    ()                     { return getConfiguration()->getSmallNetHeight(); }
+  inline size_t                            Session::getAllowedDepth      ()                     { return getConfiguration()->getAllowedDepth(); }
   inline DbU::Unit                         Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                         Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline size_t                            Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }

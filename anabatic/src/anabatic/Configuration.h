@@ -131,6 +131,8 @@ namespace Anabatic {
       inline  int                getHsmallThreshold   () const;
       inline  int                getVsmallThreshold   () const;
       inline  int                getVlargeThreshold   () const;
+      inline  DbU::Unit          getSmallNetWidth     () const;
+      inline  DbU::Unit          getSmallNetHeight    () const;
               void               setAllowedDepth      ( size_t );
               void               setSaturateRatio     ( float );
               void               setSaturateRp        ( size_t );
@@ -185,6 +187,8 @@ namespace Anabatic {
       std::string             _diodeName;
       DbU::Unit               _antennaGateMaxWL;
       DbU::Unit               _antennaDiodeMaxWL;
+      DbU::Unit               _smallNetWidth;
+      DbU::Unit               _smallNetHeight;
     private:
       Configuration& operator=           ( const Configuration& ) = delete;
       void           _setTopRoutingLayer ( Name name );
@@ -224,6 +228,8 @@ namespace Anabatic {
   inline  int          Configuration::getVsmallThreshold   () const { return _vsmallThreshold; }
   inline  int          Configuration::getVlargeThreshold   () const { return _vlargeThreshold; }
   inline  int          Configuration::getHsmallThreshold   () const { return _hsmallThreshold; }
+  inline  DbU::Unit    Configuration::getSmallNetWidth     () const { return _smallNetWidth; }
+  inline  DbU::Unit    Configuration::getSmallNetHeight    () const { return _smallNetHeight; }
   inline  void         Configuration::setRoutingStyle      ( StyleFlags flags ) { _routingStyle  =  flags; }
   inline  void         Configuration::resetRoutingStyle    ( StyleFlags flags ) { _routingStyle &= ~flags; }
 

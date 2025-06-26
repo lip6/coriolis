@@ -103,6 +103,8 @@ namespace Anabatic {
     , _diodeName        (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
     , _antennaGateMaxWL (Cfg::getParamInt   ("etesian.antennaGateMaxWL" ,      0  )->asInt())
     , _antennaDiodeMaxWL(Cfg::getParamInt   ("etesian.antennaDiodeMaxWL",      0  )->asInt())
+    , _smallNetWidth    (Cfg::getParamInt   ("anabatic.smallNetWidth"   ,      0  )->asInt())
+    , _smallNetHeight   (Cfg::getParamInt   ("anabatic.smallNetHeight"  ,      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -215,6 +217,8 @@ namespace Anabatic {
     , _diodeName        (other._diodeName)
     , _antennaGateMaxWL (other._antennaGateMaxWL)
     , _antennaDiodeMaxWL(other._antennaDiodeMaxWL)
+    , _smallNetWidth    (other._smallNetWidth)
+    , _smallNetHeight   (other._smallNetHeight)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
