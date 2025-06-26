@@ -178,7 +178,7 @@ namespace {
       inline size_t     getAttractorsCount () const;
              DbU::Unit  getLowerMedian     () const;
              DbU::Unit  getUpperMedian     () const;
-             void       addAttractor       ( DbU::Unit position );
+             void       addAttractor       ( DbU::Unit position, size_t weight=1 );
     protected:
       map<DbU::Unit,size_t>  _attractors;
       size_t                 _attractorsCount;
@@ -196,9 +196,12 @@ namespace {
   }
 
 
-  void  AttractorsMap::addAttractor ( DbU::Unit position )
+  void  AttractorsMap::addAttractor ( DbU::Unit position, size_t weight )
   {
-    _attractors[position]++;
+    if (_attractors.find(position) == _attractors.end())
+      _attractors[position] = weight;
+    else
+      _attractors[position] += weight;
     _attractorsCount++;
 
     cdebug_log(145,0) << "add Attractor @" << DbU::getValueString(position)
@@ -1532,7 +1535,7 @@ namespace Anabatic {
           }
           if (parallel and parallel->isNonPref()) {
             cdebug_log(145,0) << "Perpandicular with non-pref paralle -> use NP axis." << endl;
-            attractors.addAttractor( parallel->getAxis() );
+            attractors.addAttractor( parallel->getAxis(), 2 );
           } else if (perpandicular->isStrongTerminal()) {
             cdebug_log(145,0) << "Used as strong terminal." << endl;
 
@@ -1734,8 +1737,11 @@ namespace Anabatic {
 
   AutoSegment* AutoSegment::canonize ( Flags flags )
   {
-    cdebug_log(149,0) << "canonize() - " << this << endl;
-    if (Session::getAnabatic()->isCanonizeDisabled()) return this;
+    cdebug_log(149,1) << "canonize() - " << this << endl;
+    if (Session::getAnabatic()->isCanonizeDisabled()) {
+      cdebug_tabw(149,-1);
+      return this;
+    }
 
     // if (isCanonical() and isGlobal()) {
     //   cdebug_log(149,0) << "* " << this << " canonical" << endl;
@@ -1787,6 +1793,7 @@ namespace Anabatic {
       unsetFlags( SegWeakGlobal );
     }
 
+    cdebug_tabw(149,-1);
     return canonical;
   }
 
