@@ -39,33 +39,34 @@ namespace Katana {
  
   class TrackCost {
     public:
-      enum Flags { NoFlags            =  0
-                 , IgnoreAxisWeight   = (1 <<  0)
-                 , DiscardGlobals     = (1 <<  1)
-                 , IgnoreSharedLength = (1 <<  2)
-                 , LocalAndTopDepth   = (1 <<  3)
-                 , ZeroCost           = (1 <<  4)
-                 , Analog             = (1 <<  5)
-                 , ShortNet           = (1 <<  6)
-                 , Symmetric          = (1 <<  7)
-                 , ForGlobal          = (1 <<  8)
-                 , Blockage           = (1 <<  9)
-                 , Fixed              = (1 << 10)
-                 , Infinite           = (1 << 11)
-                 , HardOverlap        = (1 << 12)
-                 , Overlap            = (1 << 13)
-                 , LeftOverlap        = (1 << 14)
-                 , RightOverlap       = (1 << 15)
-                 , OverlapGlobal      = (1 << 16)
-                 , GlobalEnclosed     = (1 << 17)
-                 , AtRipupLimit       = (1 << 18)
-                 , IgnoreTerminals    = (1 << 19)
-                 , IgnoreShort        = (1 << 20)
-                 , Blacklisted        = (1 << 21)
-                 , ForcedAxisChange   = (1 << 22)
-                 , MergeMask          = ForGlobal     |Blockage|Fixed       |Infinite
-                                       |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
-                                       |GlobalEnclosed         |AtRipupLimit
+      enum Flags { NoFlags              =  0
+                 , IgnoreAxisWeight     = (1 <<  0)
+                 , PrioritizeAxisWeight = (1 <<  1)
+                 , DiscardGlobals       = (1 <<  2)
+                 , IgnoreSharedLength   = (1 <<  3)
+                 , LocalAndTopDepth     = (1 <<  4)
+                 , ZeroCost             = (1 <<  5)
+                 , Analog               = (1 <<  6)
+                 , ShortNet             = (1 <<  7)
+                 , Symmetric            = (1 <<  8)
+                 , ForGlobal            = (1 <<  9)
+                 , Blockage             = (1 << 10)
+                 , Fixed                = (1 << 11)
+                 , Infinite             = (1 << 12)
+                 , HardOverlap          = (1 << 13)
+                 , Overlap              = (1 << 14)
+                 , LeftOverlap          = (1 << 15)
+                 , RightOverlap         = (1 << 16)
+                 , OverlapGlobal        = (1 << 17)
+                 , GlobalEnclosed       = (1 << 18)
+                 , AtRipupLimit         = (1 << 19)
+                 , IgnoreTerminals      = (1 << 20)
+                 , IgnoreShort          = (1 << 21)
+                 , Blacklisted          = (1 << 22)
+                 , ForcedAxisChange     = (1 << 23)
+                 , MergeMask            = ForGlobal     |Blockage|Fixed       |Infinite
+                                         |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
+                                         |GlobalEnclosed         |AtRipupLimit
                  };
 
     public:
@@ -83,98 +84,100 @@ namespace Katana {
       };
 
     public:
-                                 TrackCost           ( TrackElement* refSegment
-                                                     , TrackElement* symSegment
-                                                     , Track*        refTrack
-                                                     , Track*        symTrack
-                                                     , DbU::Unit     refCandidateAxis
-                                                     , DbU::Unit     symCandidateAxis
-                                                     );
-                                ~TrackCost           ();
-      inline       bool          isForGlobal         () const;
-      inline       bool          isBlockage          () const;
-      inline       bool          isAnalog            () const;
-      inline       bool          isShortNet          () const;
-      inline       bool          isFixed             () const;
-      inline       bool          isInfinite          () const;
-      inline       bool          isOverlap           () const;
-      inline       bool          isLeftOverlap       () const;
-      inline       bool          isRightOverlap      () const;
-      inline       bool          isHardOverlap       () const;
-      inline       bool          isOverlapGlobal     () const;
-      inline       bool          isGlobalEnclosed    () const;
-      inline       bool          isAtRipupLimit      () const;
-      inline       bool          isForcedAxisChange  () const;
-      inline       bool          isBlacklisted       () const;
-                   bool          isFree              () const;
-      inline       bool          isSymmetric         () const;
-      inline       bool          isWide              () const;
-      inline       bool          doIgnoreShort       () const;
-      inline       uint32_t      getFlags            () const;
-      inline       size_t        getSpan             () const;
-      inline       Net*          getNet              () const;
-                   Net*          getNet1             () const;
-                   Net*          getNet2             () const;
-      inline       TrackElement* getRefElement       () const;
-      inline       TrackElement* getSymElement       () const;
-      inline       DbU::Unit     getRefCandidateAxis () const;
-      inline       DbU::Unit     getSymCandidateAxis () const;
-      inline       Track*        getTrack            () const;
-      inline       size_t        getBegin            () const;
-      inline       size_t        getEnd              () const;
-      inline       Track*        getTrack            ( size_t i ) const;
-      inline       size_t        getBegin            ( size_t i ) const;
-      inline       size_t        getEnd              ( size_t i ) const;
-      inline       Track*        getTrack            ( size_t i, uint32_t flags ) const;
-                   size_t        getBegin            ( size_t i, uint32_t flags ) const;
-                   size_t        getEnd              ( size_t i, uint32_t flags ) const;
-      inline const Interval&     getInterval         () const;
-      inline const Interval&     getInterval1        () const;
-      inline const Interval&     getInterval2        () const;
-      inline const Interval&     getRefTrackFree     () const;
-      inline       uint32_t      getTerminals        () const;
-      inline       DbU::Unit     getDelta            () const;
-      inline       DbU::Unit     getDeltaPerpand     () const;
-      inline       DbU::Unit     getLongestOverlap   () const;
-      inline       DbU::Unit     getAxisWeight       () const;
-      inline       DbU::Unit     getFreeLength       () const;
-      inline       int           getRipupCount       () const;
-      inline       uint32_t      getDataState        () const;
-      inline       uint32_t      setFlags            ( uint32_t );
-      inline       void          setTrack            ( Track*, size_t begin, size_t end );
-      inline       void          setForGlobal        ();
-      inline       void          setBlockage         ();
-      inline       void          setFixed            ();
-      inline       void          setInfinite         ();
-      inline       void          setOverlap          ();
-      inline       void          setLeftOverlap      ();
-      inline       void          setRightOverlap     ();
-      inline       void          setHardOverlap      ();
-      inline       void          setOverlapGlobal    ();
-      inline       void          setGlobalEnclosed   ();
-      inline       void          setAtRipupLimit     ();
-      inline       void          setForcedAxisChange ();
-      inline       void          setBlacklisted      ();
-      inline       void          incTerminals        ( uint32_t );
-      inline       void          incDelta            ( DbU::Unit );
-      inline       void          incDeltaPerpand     ( DbU::Unit );
-      inline       void          incDeltaShared      ( DbU::Unit );
-      inline       void          incAxisWeight       ( DbU::Unit );
-      inline       void          setLonguestOverlap  ( DbU::Unit );
-      inline       void          setFreeLength       ( DbU::Unit );
-      inline       void          setRefTrackFree     ( const Interval& );
-      inline       void          mergeRipupCount     ( int );
-      inline       void          mergeDataState      ( uint32_t );
-      inline       bool          selectNextTrack     ();
-      inline       bool          select              ( size_t index, uint32_t flags );
-                   void          consolidate         ();
-                   void          setDistanceToFixed  ();
-                   Record*       _getRecord          () const;
-                   string        _getString          () const;
-      inline       string        _getTypeName        () const;
-    private:                                         
-                                 TrackCost           ( const TrackCost& ) = delete;
-                   TrackCost&    operator=           ( const TrackCost& ) = delete;
+                                 TrackCost               ( TrackElement* refSegment
+                                                         , TrackElement* symSegment
+                                                         , Track*        refTrack
+                                                         , Track*        symTrack
+                                                         , DbU::Unit     refCandidateAxis
+                                                         , DbU::Unit     symCandidateAxis
+                                                         );
+                                ~TrackCost               ();
+      inline       bool          isForGlobal             () const;
+      inline       bool          isBlockage              () const;
+      inline       bool          isAnalog                () const;
+      inline       bool          isShortNet              () const;
+      inline       bool          isFixed                 () const;
+      inline       bool          isInfinite              () const;
+      inline       bool          isOverlap               () const;
+      inline       bool          isLeftOverlap           () const;
+      inline       bool          isRightOverlap          () const;
+      inline       bool          isHardOverlap           () const;
+      inline       bool          isOverlapGlobal         () const;
+      inline       bool          isGlobalEnclosed        () const;
+      inline       bool          isAtRipupLimit          () const;
+      inline       bool          isForcedAxisChange      () const;
+      inline       bool          isBlacklisted           () const;
+                   bool          isFree                  () const;
+      inline       bool          isSymmetric             () const;
+      inline       bool          isWide                  () const;
+      inline       bool          prioritizeAxisWeight    () const;
+      inline       bool          doIgnoreShort           () const;
+      inline       uint32_t      getFlags                () const;
+      inline       size_t        getSpan                 () const;
+      inline       Net*          getNet                  () const;
+                   Net*          getNet1                 () const;
+                   Net*          getNet2                 () const;
+      inline       TrackElement* getRefElement           () const;
+      inline       TrackElement* getSymElement           () const;
+      inline       DbU::Unit     getRefCandidateAxis     () const;
+      inline       DbU::Unit     getSymCandidateAxis     () const;
+      inline       Track*        getTrack                () const;
+      inline       size_t        getBegin                () const;
+      inline       size_t        getEnd                  () const;
+      inline       Track*        getTrack                ( size_t i ) const;
+      inline       size_t        getBegin                ( size_t i ) const;
+      inline       size_t        getEnd                  ( size_t i ) const;
+      inline       Track*        getTrack                ( size_t i, uint32_t flags ) const;
+                   size_t        getBegin                ( size_t i, uint32_t flags ) const;
+                   size_t        getEnd                  ( size_t i, uint32_t flags ) const;
+      inline const Interval&     getInterval             () const;
+      inline const Interval&     getInterval1            () const;
+      inline const Interval&     getInterval2            () const;
+      inline const Interval&     getRefTrackFree         () const;
+      inline       uint32_t      getTerminals            () const;
+      inline       DbU::Unit     getDelta                () const;
+      inline       DbU::Unit     getDeltaPerpand         () const;
+      inline       DbU::Unit     getLongestOverlap       () const;
+      inline       DbU::Unit     getAxisWeight           () const;
+      inline       DbU::Unit     getFreeLength           () const;
+      inline       int           getRipupCount           () const;
+      inline       uint32_t      getDataState            () const;
+      inline       uint32_t      setFlags                ( uint32_t );
+      inline       void          setTrack                ( Track*, size_t begin, size_t end );
+      inline       void          setForGlobal            ();
+      inline       void          setBlockage             ();
+      inline       void          setFixed                ();
+      inline       void          setInfinite             ();
+      inline       void          setOverlap              ();
+      inline       void          setLeftOverlap          ();
+      inline       void          setRightOverlap         ();
+      inline       void          setHardOverlap          ();
+      inline       void          setOverlapGlobal        ();
+      inline       void          setGlobalEnclosed       ();
+      inline       void          setAtRipupLimit         ();
+      inline       void          setForcedAxisChange     ();
+      inline       void          setBlacklisted          ();
+      inline       void          setPrioritizeAxisWeight ();
+      inline       void          incTerminals            ( uint32_t );
+      inline       void          incDelta                ( DbU::Unit );
+      inline       void          incDeltaPerpand         ( DbU::Unit );
+      inline       void          incDeltaShared          ( DbU::Unit );
+      inline       void          incAxisWeight           ( DbU::Unit );
+      inline       void          setLonguestOverlap      ( DbU::Unit );
+      inline       void          setFreeLength           ( DbU::Unit );
+      inline       void          setRefTrackFree         ( const Interval& );
+      inline       void          mergeRipupCount         ( int );
+      inline       void          mergeDataState          ( uint32_t );
+      inline       bool          selectNextTrack         ();
+      inline       bool          select                  ( size_t index, uint32_t flags );
+                   void          consolidate             ();
+                   void          setDistanceToFixed      ();
+                   Record*       _getRecord              () const;
+                   string        _getString              () const;
+      inline       string        _getTypeName            () const;
+    private:                                             
+                                 TrackCost               ( const TrackCost& ) = delete;
+                   TrackCost&    operator=               ( const TrackCost& ) = delete;
     // Attributes.
     private:
       uint32_t      _flags;
@@ -204,72 +207,74 @@ namespace Katana {
 
 
 // Inline Functions.
-  inline       bool          TrackCost::isForGlobal         () const { return _flags & ForGlobal; }
-  inline       bool          TrackCost::isBlockage          () const { return _flags & Blockage; }
-  inline       bool          TrackCost::isAnalog            () const { return _flags & Analog; }
-  inline       bool          TrackCost::isShortNet          () const { return _flags & ShortNet; }
-  inline       bool          TrackCost::isFixed             () const { return _flags & Fixed; }
-  inline       bool          TrackCost::isInfinite          () const { return _flags & Infinite; }
-  inline       bool          TrackCost::isOverlap           () const { return _flags & Overlap; }
-  inline       bool          TrackCost::isLeftOverlap       () const { return _flags & LeftOverlap; }
-  inline       bool          TrackCost::isRightOverlap      () const { return _flags & RightOverlap; }
-  inline       bool          TrackCost::isHardOverlap       () const { return _flags & HardOverlap; }
-  inline       bool          TrackCost::isOverlapGlobal     () const { return _flags & OverlapGlobal; }
-  inline       bool          TrackCost::isGlobalEnclosed    () const { return _flags & GlobalEnclosed; }
-  inline       bool          TrackCost::isAtRipupLimit      () const { return _flags & AtRipupLimit; }
-  inline       bool          TrackCost::isForcedAxisChange  () const { return _flags & ForcedAxisChange; }
-  inline       bool          TrackCost::isBlacklisted       () const { return _flags & Blacklisted; }
-  inline       bool          TrackCost::isSymmetric         () const { return _flags & Symmetric; }
-  inline       bool          TrackCost::isWide              () const { return (_span > 1); }
-  inline       bool          TrackCost::doIgnoreShort       () const { return _flags & IgnoreShort; }
-  inline       uint32_t      TrackCost::getFlags            () const { return _flags; }
-  inline       size_t        TrackCost::getSpan             () const { return _span; }
-  inline       Net*          TrackCost::getNet              () const { return (_selectFlags & Symmetric) ? getNet2() : getNet1(); }
-  inline       TrackElement* TrackCost::getRefElement       () const { return _segment1; }
-  inline       TrackElement* TrackCost::getSymElement       () const { return _segment2; }
-  inline       DbU::Unit     TrackCost::getRefCandidateAxis () const { return _refCandidateAxis; }
-  inline       DbU::Unit     TrackCost::getSymCandidateAxis () const { return _symCandidateAxis; }
-  inline       Track*        TrackCost::getTrack            ( size_t i ) const { return getTrack(i,NoFlags); }
-  inline       size_t        TrackCost::getBegin            () const { return getBegin(_selectIndex,_selectFlags); }
-  inline       size_t        TrackCost::getBegin            ( size_t i ) const { return getBegin(i,NoFlags); }
-  inline       size_t        TrackCost::getEnd              () const { return getEnd  (_selectIndex,_selectFlags); }
-  inline       size_t        TrackCost::getEnd              ( size_t i ) const { return getEnd  (i,NoFlags); }
-  inline const Interval&     TrackCost::getInterval         () const { return (_selectFlags & Symmetric) ? getInterval2() : getInterval1(); }
-  inline const Interval&     TrackCost::getInterval1        () const { return _interval1; }
-  inline const Interval&     TrackCost::getInterval2        () const { return _interval2; }
-  inline const Interval&     TrackCost::getRefTrackFree     () const { return _refTrackFree; }
-  inline       uint32_t      TrackCost::getTerminals        () const { return _terminals; }
-  inline       DbU::Unit     TrackCost::getLongestOverlap   () const { return _longuestOverlap; }
-  inline       DbU::Unit     TrackCost::getFreeLength       () const { return _freeLength; }
-  inline       DbU::Unit     TrackCost::getDelta            () const { return _delta; }
-  inline       DbU::Unit     TrackCost::getAxisWeight       () const { return _axisWeight; }
-  inline       int           TrackCost::getRipupCount       () const { return _ripupCount; }
-  inline       uint32_t      TrackCost::getDataState        () const { return _dataState; }
-  inline       uint32_t      TrackCost::setFlags            ( uint32_t mask ) { _flags |= mask; return _flags; }
-  inline       void          TrackCost::setForGlobal        () { _flags |= ForGlobal; }
-  inline       void          TrackCost::setBlockage         () { _flags |= Blockage; }
-  inline       void          TrackCost::setFixed            () { _flags |= Fixed; }
-  inline       void          TrackCost::setInfinite         () { _flags |= Infinite; }
-  inline       void          TrackCost::setOverlap          () { _flags |= Overlap; }
-  inline       void          TrackCost::setLeftOverlap      () { _flags |= LeftOverlap; }
-  inline       void          TrackCost::setRightOverlap     () { _flags |= RightOverlap; }
-  inline       void          TrackCost::setHardOverlap      () { _flags |= HardOverlap; }
-  inline       void          TrackCost::setOverlapGlobal    () { _flags |= OverlapGlobal; }
-  inline       void          TrackCost::setGlobalEnclosed   () { _flags |= GlobalEnclosed; }
-  inline       void          TrackCost::setAtRipupLimit     () { _flags |= AtRipupLimit; }
-  inline       void          TrackCost::setForcedAxisChange () { _flags |= ForcedAxisChange; }
-  inline       void          TrackCost::setBlacklisted      () { _flags |= Blacklisted; }
-  inline       void          TrackCost::incTerminals        ( uint32_t terminals    )   { _terminals    += terminals; }
-  inline       void          TrackCost::incDelta            ( DbU::Unit delta )         { _delta        += delta; }
-  inline       void          TrackCost::incDeltaPerpand     ( DbU::Unit delta )         { _deltaPerpand += delta; }
-  inline       void          TrackCost::incDeltaShared      ( DbU::Unit delta )         { _deltaShared  += delta; }
-  inline       void          TrackCost::incAxisWeight       ( DbU::Unit weight )        { _axisWeight   += weight; }
-  inline       void          TrackCost::setLonguestOverlap  ( DbU::Unit overlap )       { _longuestOverlap = std::max( overlap, _longuestOverlap ); }
-  inline       void          TrackCost::setFreeLength       ( DbU::Unit length )        { _freeLength      = std::min( length , _freeLength      ); }
-  inline       void          TrackCost::setRefTrackFree     ( const Interval& refFree ) { _refTrackFree    = refFree; }
-  inline       void          TrackCost::mergeRipupCount     ( int count )               { _ripupCount      = std::max( count  , _ripupCount      ); }
-  inline       void          TrackCost::mergeDataState      ( uint32_t state )          { _dataState       = std::max( state  , _dataState       ); }
-  inline       string        TrackCost::_getTypeName        () const { return "TrackCost"; }
+  inline       bool          TrackCost::isForGlobal             () const { return _flags & ForGlobal; }
+  inline       bool          TrackCost::isBlockage              () const { return _flags & Blockage; }
+  inline       bool          TrackCost::isAnalog                () const { return _flags & Analog; }
+  inline       bool          TrackCost::isShortNet              () const { return _flags & ShortNet; }
+  inline       bool          TrackCost::isFixed                 () const { return _flags & Fixed; }
+  inline       bool          TrackCost::isInfinite              () const { return _flags & Infinite; }
+  inline       bool          TrackCost::isOverlap               () const { return _flags & Overlap; }
+  inline       bool          TrackCost::isLeftOverlap           () const { return _flags & LeftOverlap; }
+  inline       bool          TrackCost::isRightOverlap          () const { return _flags & RightOverlap; }
+  inline       bool          TrackCost::isHardOverlap           () const { return _flags & HardOverlap; }
+  inline       bool          TrackCost::isOverlapGlobal         () const { return _flags & OverlapGlobal; }
+  inline       bool          TrackCost::isGlobalEnclosed        () const { return _flags & GlobalEnclosed; }
+  inline       bool          TrackCost::isAtRipupLimit          () const { return _flags & AtRipupLimit; }
+  inline       bool          TrackCost::isForcedAxisChange      () const { return _flags & ForcedAxisChange; }
+  inline       bool          TrackCost::isBlacklisted           () const { return _flags & Blacklisted; }
+  inline       bool          TrackCost::isSymmetric             () const { return _flags & Symmetric; }
+  inline       bool          TrackCost::isWide                  () const { return (_span > 1); }
+  inline       bool          TrackCost::prioritizeAxisWeight    () const { return _flags & PrioritizeAxisWeight; }
+  inline       bool          TrackCost::doIgnoreShort           () const { return _flags & IgnoreShort; }
+  inline       uint32_t      TrackCost::getFlags                () const { return _flags; }
+  inline       size_t        TrackCost::getSpan                 () const { return _span; }
+  inline       Net*          TrackCost::getNet                  () const { return (_selectFlags & Symmetric) ? getNet2() : getNet1(); }
+  inline       TrackElement* TrackCost::getRefElement           () const { return _segment1; }
+  inline       TrackElement* TrackCost::getSymElement           () const { return _segment2; }
+  inline       DbU::Unit     TrackCost::getRefCandidateAxis     () const { return _refCandidateAxis; }
+  inline       DbU::Unit     TrackCost::getSymCandidateAxis     () const { return _symCandidateAxis; }
+  inline       Track*        TrackCost::getTrack                ( size_t i ) const { return getTrack(i,NoFlags); }
+  inline       size_t        TrackCost::getBegin                () const { return getBegin(_selectIndex,_selectFlags); }
+  inline       size_t        TrackCost::getBegin                ( size_t i ) const { return getBegin(i,NoFlags); }
+  inline       size_t        TrackCost::getEnd                  () const { return getEnd  (_selectIndex,_selectFlags); }
+  inline       size_t        TrackCost::getEnd                  ( size_t i ) const { return getEnd  (i,NoFlags); }
+  inline const Interval&     TrackCost::getInterval             () const { return (_selectFlags & Symmetric) ? getInterval2() : getInterval1(); }
+  inline const Interval&     TrackCost::getInterval1            () const { return _interval1; }
+  inline const Interval&     TrackCost::getInterval2            () const { return _interval2; }
+  inline const Interval&     TrackCost::getRefTrackFree         () const { return _refTrackFree; }
+  inline       uint32_t      TrackCost::getTerminals            () const { return _terminals; }
+  inline       DbU::Unit     TrackCost::getLongestOverlap       () const { return _longuestOverlap; }
+  inline       DbU::Unit     TrackCost::getFreeLength           () const { return _freeLength; }
+  inline       DbU::Unit     TrackCost::getDelta                () const { return _delta; }
+  inline       DbU::Unit     TrackCost::getAxisWeight           () const { return _axisWeight; }
+  inline       int           TrackCost::getRipupCount           () const { return _ripupCount; }
+  inline       uint32_t      TrackCost::getDataState            () const { return _dataState; }
+  inline       uint32_t      TrackCost::setFlags                ( uint32_t mask ) { _flags |= mask; return _flags; }
+  inline       void          TrackCost::setForGlobal            () { _flags |= ForGlobal; }
+  inline       void          TrackCost::setBlockage             () { _flags |= Blockage; }
+  inline       void          TrackCost::setFixed                () { _flags |= Fixed; }
+  inline       void          TrackCost::setInfinite             () { _flags |= Infinite; }
+  inline       void          TrackCost::setOverlap              () { _flags |= Overlap; }
+  inline       void          TrackCost::setLeftOverlap          () { _flags |= LeftOverlap; }
+  inline       void          TrackCost::setRightOverlap         () { _flags |= RightOverlap; }
+  inline       void          TrackCost::setHardOverlap          () { _flags |= HardOverlap; }
+  inline       void          TrackCost::setOverlapGlobal        () { _flags |= OverlapGlobal; }
+  inline       void          TrackCost::setGlobalEnclosed       () { _flags |= GlobalEnclosed; }
+  inline       void          TrackCost::setAtRipupLimit         () { _flags |= AtRipupLimit; }
+  inline       void          TrackCost::setForcedAxisChange     () { _flags |= ForcedAxisChange; }
+  inline       void          TrackCost::setBlacklisted          () { _flags |= Blacklisted; }
+  inline       void          TrackCost::setPrioritizeAxisWeight () { _flags |= PrioritizeAxisWeight; }
+  inline       void          TrackCost::incTerminals            ( uint32_t terminals    )   { _terminals    += terminals; }
+  inline       void          TrackCost::incDelta                ( DbU::Unit delta )         { _delta        += delta; }
+  inline       void          TrackCost::incDeltaPerpand         ( DbU::Unit delta )         { _deltaPerpand += delta; }
+  inline       void          TrackCost::incDeltaShared          ( DbU::Unit delta )         { _deltaShared  += delta; }
+  inline       void          TrackCost::incAxisWeight           ( DbU::Unit weight )        { _axisWeight   += weight; }
+  inline       void          TrackCost::setLonguestOverlap      ( DbU::Unit overlap )       { _longuestOverlap = std::max( overlap, _longuestOverlap ); }
+  inline       void          TrackCost::setFreeLength           ( DbU::Unit length )        { _freeLength      = std::min( length , _freeLength      ); }
+  inline       void          TrackCost::setRefTrackFree         ( const Interval& refFree ) { _refTrackFree    = refFree; }
+  inline       void          TrackCost::mergeRipupCount         ( int count )               { _ripupCount      = std::max( count  , _ripupCount      ); }
+  inline       void          TrackCost::mergeDataState          ( uint32_t state )          { _dataState       = std::max( state  , _dataState       ); }
+  inline       string        TrackCost::_getTypeName            () const { return "TrackCost"; }
 
 
   inline  TrackCost::Compare::Compare ( uint32_t flags ) : _flags(flags) { }

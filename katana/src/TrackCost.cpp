@@ -142,6 +142,11 @@ namespace Katana {
       if ( lhs->_terminals > rhs->_terminals ) return false;
     }
 
+    if (_flags & TrackCost::PrioritizeAxisWeight) {
+      if (lhs->_axisWeight < rhs->_axisWeight) return true;
+      if (lhs->_axisWeight > rhs->_axisWeight) return false;
+    }
+
     if (lhs->_delta != rhs->_delta) {
     //cdebug_log(155,0) << "TrackCost::Compare() lhs->_delta:" << lhs->_delta << " rhs->_delta:" << rhs->_delta << endl;
     //if ( not (_flags & TrackCost::IgnoreSharedLength) or (lhs->_delta > 0) or (rhs->_delta > 0) ) {
@@ -209,13 +214,10 @@ namespace Katana {
 
   void  TrackCost::consolidate ()
   {
-    if ( not isInfinite() and not isHardOverlap() ) {
+    if ( not isInfinite() and not isHardOverlap() and not prioritizeAxisWeight()) {
       cdebug_log(159,0) << "TrackCost::consolidate() " << DbU::getValueString(_delta)
                         << " - " << DbU::getValueString(_deltaShared) << endl;
-    //_deltaPerpand += - (_deltaShared << 1);
       _delta -= _deltaShared;
-    //if (_delta > 0) _delta -= _deltaShared;
-    //else            _delta += _deltaShared;
     }
   }
 
@@ -267,22 +269,23 @@ namespace Katana {
     s += " "    + getString(_dataState);
     s += "+"    + getString(_ripupCount);
     s += ":"    + getString((_dataState<<2)+_ripupCount);
-    s += " "    + string ( (isInfinite()        )?"I":"-" );
-    s +=          string ( (isBlockage()        )?"b":"-" );
-    s +=          string ( (isFixed()           )?"f":"-" );
-    s +=          string ( (isHardOverlap()     )?"h":"-" );
-    s +=          string ( (isOverlap()         )?"o":"-" );
-    s +=          string ( (isOverlapGlobal   ())?"g":"-" );
-    s +=          string ( (isGlobalEnclosed  ())?"e":"-" );
-    s +=          string ( (isAtRipupLimit    ())?"R":"-" );
-    s +=          string ( (isAnalog          ())?"a":"-" );
-    s +=          string ( (isShortNet        ())?"N":"-" );
-    s +=          string ( (isForcedAxisChange())?"f":"-" );
-    s +=          string ( (isAtRipupLimit    ())?"R":"-" );
-    s +=          string ( (isBlacklisted     ())?"B":"-" );
+    s += " "    + string ( (isInfinite()          )?"I":"-" );
+    s +=          string ( (isBlockage()          )?"b":"-" );
+    s +=          string ( (isFixed()             )?"f":"-" );
+    s +=          string ( (isHardOverlap()       )?"h":"-" );
+    s +=          string ( (isOverlap()           )?"o":"-" );
+    s +=          string ( (isOverlapGlobal     ())?"g":"-" );
+    s +=          string ( (isGlobalEnclosed    ())?"e":"-" );
+    s +=          string ( (isAtRipupLimit      ())?"R":"-" );
+    s +=          string ( (isAnalog            ())?"a":"-" );
+    s +=          string ( (isShortNet          ())?"N":"-" );
+    s +=          string ( (isForcedAxisChange  ())?"f":"-" );
+    s +=          string ( (prioritizeAxisWeight())?"w":"-" );
+    s +=          string ( (isAtRipupLimit      ())?"R":"-" );
+    s +=          string ( (isBlacklisted       ())?"B":"-" );
     s += " t:"  + getString(_terminals);
-    s += "/d:"  + /*DbU::getValueString(_delta)*/       DbU::getValueString(_delta);
-    s += "-"    + /*DbU::getValueString(_deltaShared)*/ DbU::getValueString(_deltaShared);
+    s += "/d:"  + DbU::getValueString(_delta);
+    s += "-"    + DbU::getValueString(_deltaShared);
     s += "/aw:" + DbU::getValueString(_axisWeight);
     s += "/dp:" + DbU::getValueString(_deltaPerpand);
     s += "/df:" + DbU::getValueString(_distanceToFixed);
