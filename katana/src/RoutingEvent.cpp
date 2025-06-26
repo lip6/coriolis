@@ -257,8 +257,8 @@ namespace Katana {
     clone->_disabled   = false;
     clone->_eventLevel = 0;
 
-    cdebug_log(159,0) << "RoutingEvent::clone() " << clone
-                << " (from: " << ")" <<  endl;
+    cdebug_log(159,0) << "RoutingEvent::clone() " << clone << endl;
+    cdebug_log(159,0) << "  (from: " << this << ")" <<  endl;
 
     return clone;
   }
@@ -471,6 +471,7 @@ namespace Katana {
             break;
         }
       }
+      _forceToHint = false;
     }
     cdebug_tabw(159,-1);
 
@@ -607,10 +608,10 @@ namespace Katana {
       cdebug_log(159,0) << "* Cancel: already in Track." << endl;
       return;
     }
-    if (_segment->isNonPref()) {
-      cdebug_log(159,0) << "* Cancel: cannot repair non-prefs." << endl;
-      return;
-    }
+    // if (_segment->isNonPref()) {
+    //   cdebug_log(159,0) << "* Cancel: cannot repair non-prefs." << endl;
+    //   return;
+    // }
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
@@ -627,43 +628,50 @@ namespace Katana {
       cdebug_log(159,0) << "Insert in free space." << endl;
       fsm.bindToTrack( 0 );
 
-      cdebug_log(159,0) << "Re-try perpandiculars:" << endl;
-      for ( TrackElement* perpandicular : getPerpandiculars() ) {
-        if (not perpandicular->getTrack() ) {
-          cdebug_log(159,0) << "| " << perpandicular << endl;
-          fsm.addAction( perpandicular, SegmentAction::SelfInsert );
-          DataNegociate* data = perpandicular->getDataNegociate();
-          if (data and (data->getState() < DataNegociate::Repair)) {
-            data->setState( DataNegociate::Repair );
-            if (not perpandicular->isNonPref())
-              data->resetRipupCount();
+      if (not _segment->isNonPref()) {
+        cdebug_log(159,0) << "Re-try perpandiculars:" << endl;
+        for ( TrackElement* perpandicular : getPerpandiculars() ) {
+          if (not perpandicular->getTrack() ) {
+            cdebug_log(159,0) << "| " << perpandicular << endl;
+            fsm.addAction( perpandicular, SegmentAction::SelfInsert );
+            DataNegociate* data = perpandicular->getDataNegociate();
+            if (data and (data->getState() < DataNegociate::Repair)) {
+              data->setState( DataNegociate::Repair );
+              if (not perpandicular->isNonPref())
+                data->resetRipupCount();
+            }
           }
         }
       }
       fsm.doActions();
       queue.commit();
     } else {
-      switch ( fsm.getData()->getStateCount() ) {
-        case 1:
-        // First try: minimize or replace perpandiculars first.
-          if (Manipulator(_segment,fsm).minimize())
-            fsm.addAction( _segment, SegmentAction::SelfInsert );
-          else
-            Manipulator(_segment,fsm).repackPerpandiculars( Manipulator::PerpandicularsFirst );
-          fsm.doActions();
-          queue.commit();
-          break;
-        case 2:
-        // Second try: failed re-inserted first.
-          Manipulator(_segment,fsm).repackPerpandiculars( 0 );
-        //fsm.addAction( _segment, SegmentAction::SelfInsert );
-          fsm.doActions();
-          queue.commit();
-          break;
-        default:
-          cdebug_log(159,0) << "Repair failed." << endl;
-          setState( DataNegociate::RepairFailed );
-          break;
+      if (not _segment->isNonPref()) {
+        switch ( fsm.getData()->getStateCount() ) {
+          case 1:
+          // First try: minimize or replace perpandiculars first.
+            if (Manipulator(_segment,fsm).minimize())
+              fsm.addAction( _segment, SegmentAction::SelfInsert );
+            else
+              Manipulator(_segment,fsm).repackPerpandiculars( Manipulator::PerpandicularsFirst );
+            fsm.doActions();
+            queue.commit();
+            break;
+          case 2:
+          // Second try: failed re-inserted first.
+            Manipulator(_segment,fsm).repackPerpandiculars( 0 );
+          //fsm.addAction( _segment, SegmentAction::SelfInsert );
+            fsm.doActions();
+            queue.commit();
+            break;
+          default:
+            cdebug_log(159,0) << "Repair failed." << endl;
+            setState( DataNegociate::RepairFailed );
+            break;
+        }
+      } else {
+        cdebug_log(159,0) << "Repair failed." << endl;
+        setState( DataNegociate::RepairFailed );
       }
     }
   }
@@ -870,6 +878,7 @@ namespace Katana {
     s += " "  + getString(_segment->getDataNegociate()->getRipupCount());
     s += " ";
     s +=        (isCloned       ()?"C":"-");
+    s +=        (isForcedToHint ()?"H":"-");
     s +=        (isDisabled     ()?"d":"-");
     s +=        (isUnimplemented()?"u":"-");
     s += ">";
