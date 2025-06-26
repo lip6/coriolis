@@ -326,8 +326,8 @@ namespace Katana {
     std::vector<AutoSegment*>  canReduces;
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
       DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for raise:" << revalidateds[i] << endl;
       if (revalidateds[i]->mustRaise()) {
-        cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
         revalidateds[i]->raise( canReduces );
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment) trackSegment->reschedule( 0 );
@@ -336,11 +336,21 @@ namespace Katana {
     }
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
       DebugSession::open( revalidateds[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for reduce:" << revalidateds[i] << endl;
       if (revalidateds[i]->canReduce()) {
         revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
-        cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
+      }
+      DebugSession::close();
+    }
+    for ( size_t i=0 ; i<canReduces.size() ; ++i ) {
+      DebugSession::open( canReduces[i]->getNet(), 159,160 );
+      cdebug_log(159,0) << "Session: check for cascading reduce:" << canReduces[i] << endl;
+      if (canReduces[i]->canReduce()) {
+        canReduces[i]->reduce();
+        TrackElement* trackSegment = lookup( canReduces[i] );
+        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
       }
       DebugSession::close();
     }
