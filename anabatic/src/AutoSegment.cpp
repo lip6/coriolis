@@ -2117,7 +2117,9 @@ namespace Anabatic {
 
     DbU::Unit length = getAnchoredLength();
     if (length > getPPitch()) {
-      cdebug_log(159,0) << "  Length > PPitch (" << DbU::getValueString(getPPitch()) << ")" << endl;
+      cdebug_log(159,0) << "  Length > PPitch ("
+                        << DbU::getValueString(length) << " > "
+                        << DbU::getValueString(getPPitch()) << ")" << endl;
       if (isGlobal() or isFixed()) return false;
     }
 
@@ -2644,10 +2646,15 @@ namespace Anabatic {
 
   bool  AutoSegment::reduceDoglegLayer ()
   {
-    if (not isReduced()) return false;
-
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(159,1) << "AutoSegment::reduceDoglegLayer(): " << this << endl;
+
+    if (not isReduced()) {
+      cdebug_log(159,0) << "Segment is *not* reduced, doing nothing." << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return false;
+    }
 
     bool         success = false;
     AutoContact* source  = getAutoSource();
@@ -2902,18 +2909,20 @@ namespace Anabatic {
 #endif
 
 
-  AutoSegment* AutoSegment::getNonPrefPerpand ( AutoContact*& terminal ) const
+  AutoSegment* AutoSegment::getNonPrefPerpand ( AutoContact*& terminal, Flags& flags ) const
   {
     if (not isNonPref()) return nullptr;
-    AutoContact* autoSource       = getAutoSource();
-    AutoContact* autoTarget       = getAutoTarget();
-    AutoContact* turn             = nullptr;
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    AutoContact* turn       = nullptr;
 
     if (autoSource->isTerminal()) { turn = autoTarget; terminal = autoSource; }
     if (autoTarget->isTerminal()) { turn = autoSource; terminal = autoTarget; }
     if (not turn) return nullptr;
 
-    return turn->getPerpandicular( this );
+    AutoSegment* perpandicular = turn->getPerpandicular( this );
+    flags |= (perpandicular->getAutoSource() == turn) ? Flags::Source : Flags::Target;
+    return perpandicular;
   }
 
 

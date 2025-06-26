@@ -205,10 +205,11 @@ namespace Katana {
       // The perpandicular is not placed yet.
         if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
           cdebug_log(159,0) << "Promote non-pref perpandicular" << endl;
+          Flags         flags    = Flags::NoFlags;
           AutoContact*  terminal = nullptr;
-          TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+          TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
           if (parallel and (parallel->getBreakLevel() < 2)) {
-            parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
+            parallel->makeDogleg( terminal->getGCell(), flags );
             nonPrefFounds = true;
           }
         } else if (perpandiculars[i]->isFixedAxis()) {
@@ -231,8 +232,9 @@ namespace Katana {
       if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
         cdebug_log(159,0) << "One perpandicular is non-pref, promote to pref." << endl;
         cdebug_tabw(159,-1);
+        Flags         flags    = Flags::NoFlags;
         AutoContact*  terminal = nullptr;
-        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
         if (parallel and (parallel->getBreakLevel() < 2)) {
           parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           nonPrefFounds = true;
@@ -1505,8 +1507,9 @@ namespace Katana {
       if (not event2) continue;
 
       if (perpandiculars[i]->canPromoteToPref(Flags::IgnoreRipupState)) {
+        Flags         flags    = Flags::NoFlags;
         AutoContact*  terminal = nullptr;
-        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal ));
+        TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
         if (parallel and (parallel->getBreakLevel() < 2)) {
           parallel->makeDogleg( terminal->getGCell(), Flags::NoFlags );
           return true;

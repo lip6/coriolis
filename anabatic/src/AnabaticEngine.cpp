@@ -174,6 +174,7 @@ namespace {
 
   void  ReducedChain::propagate ()
   {
+    cdebug_log(159,1) << "ReducedChain::propagate() from " << _reduceds.back() << endl;
     AutoContact* contact = _reduceds.front()->getAutoSource();
     while ( contact and contact->isTurn() ) {
       AutoSegment* perpandicular = contact->getPerpandicular( _reduceds.front() );
@@ -191,17 +192,19 @@ namespace {
       _reduceds.push_back( perpandicular );
       perpandicular->setReducedDone();
     }
+    cdebug_tabw(159,-1);
   }
 
 
   size_t  ReducedChain::reduce ()
   {
-    cdebug_log(159,0) << "ReducedChain::reduce()" << endl;
+    cdebug_log(159,1) << "ReducedChain::reduce()" << endl;
     size_t count = 0;
     for ( AutoSegment* segment : _reduceds ) {
       cdebug_log(159,0) << "| " << segment << endl;
       if (segment->reduceDoglegLayer()) ++count;
     }
+    cdebug_tabw(159,-1);
     return count;
   }
   
@@ -534,9 +537,11 @@ namespace Anabatic {
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->canReduce( Flags::NullLength )) {
           if (isegment.second->isFixed()) isegment.second->reduce();
+          cdebug_log(159,1) << "ReducedChain on " << isegment.second << endl;
           ReducedChain  chain ( isegment.second );
           chain.propagate();
           sameLayerDoglegs += chain.reduce();
+          cdebug_tabw(159,-1);
         } else {
           if (isegment.second->canReduce())
             isegment.second->setFlags( AutoSegment::SegIsReduced );
