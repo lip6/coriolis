@@ -15,7 +15,9 @@
 
 
 #include <cmath>
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/DataBase.h"
@@ -336,6 +338,9 @@ namespace {
 
 namespace Anabatic {
 
+  using Hurricane::Breakpoint;
+  using Hurricane::UpdateSession;
+
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoSegment::CompareByDepthLength".
@@ -508,12 +513,15 @@ namespace Anabatic {
           *minimalLength += twoGrid - modulo;
       }
 
-      // cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
-      // cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
-      // if (depth > 0)                                                                          
-      //   cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-      // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-      // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+    // cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
+    // cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
+    // if (depth > 0)                                                                          
+    //   cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
+    // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
+    // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+    // cerr << "  minimal Area:     " << minimalArea << endl;
+    // cerr << "  wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
+    // cerr << "  minimal length:   " << DbU::getValueString(*minimalLength) << endl;
  
       _extensionCaps.push_back( std::array<DbU::Unit*,7>( {{ viaToTopCap
                                                            , viaToTopCapNp
@@ -1903,18 +1911,25 @@ namespace Anabatic {
   bool  AutoSegment::isNearMinArea () const
   {
     cdebug_log(149,0) << "AutoSegment::isNearMinArea() - " << this << endl;
+
+    DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
     if (isNonPref()) return false;
     if (isGlobal()) {
-      if (getLength() > getPPitch()) return false;
+      if (getLength() > techMinLength) return false;
       cdebug_log(149,0) << "| Considering this global anyway because it is too short. " << endl;
     }
     if (not isNotAligned()) {
       Interval alignedLength;
       getCanonical( alignedLength );
+      cdebug_log(149,0) << "alignedLength=" << alignedLength
+                        << " minimalSpacing=" << DbU::getValueString(getLayer()->getMinimalSpacing()) << endl;
       alignedLength.inflate( -getLayer()->getMinimalSpacing() );
-      if (alignedLength.getSize() >= getPPitch()) {
-        cdebug_log(149,0) << "| Canonical " << DbU::getValueString( alignedLength.getSize() )
-                          << " length superior to P-Pitch " << this << endl;
+      if (alignedLength.getSize() >= techMinLength) {
+        cdebug_log(149,0) << "| Canonical " << alignedLength
+                          << " " << DbU::getValueString( alignedLength.getSize() )
+                          << " length superior to tech min length "
+                          << DbU::getValueString(techMinLength) << " "
+                          << this << endl;
         return false;
       }
     }
@@ -2646,6 +2661,12 @@ namespace Anabatic {
 
   bool  AutoSegment::reduceDoglegLayer ()
   {
+    // if (getId() == 562712) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 0, "Before reducing 562712." );
+    //   UpdateSession::open();
+    // }
+
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(159,1) << "AutoSegment::reduceDoglegLayer(): " << this << endl;
 
@@ -2751,6 +2772,7 @@ namespace Anabatic {
             target->setX( axis );
             cdebug_log(159,0) << "UTurn (V) compact on axis " << DbU::getValueString(axis) << endl;
           }
+          sourcePp->revalidate();
         }
       }
 
@@ -2759,6 +2781,12 @@ namespace Anabatic {
 
     cdebug_tabw(159,-1);
     DebugSession::close();
+
+    // if (getId() == 562712) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 0, "After reducing 562712." );
+    //   UpdateSession::open();
+    // }
     return success;
 
     
