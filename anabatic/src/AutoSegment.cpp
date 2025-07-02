@@ -2694,7 +2694,7 @@ namespace Anabatic {
     } else {
       for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
         if (perpandicular == this) continue;
-        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
+        cdebug_log(151,0) << "  S connected:" << perpandicular << endl;
         minSourceDepth = std::min( minSourceDepth, perpandicular->getDepth() );
         maxSourceDepth = std::max( maxSourceDepth, perpandicular->getDepth() );
       }
@@ -2707,7 +2707,7 @@ namespace Anabatic {
     } else {
       for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
         if (perpandicular == this) continue;
-        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
+        cdebug_log(151,0) << "  T connected:" << perpandicular << endl;
         minTargetDepth = std::min( minTargetDepth, perpandicular->getDepth() );
         maxTargetDepth = std::max( maxTargetDepth, perpandicular->getDepth() );
       }

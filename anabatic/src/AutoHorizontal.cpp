@@ -377,14 +377,16 @@ namespace Anabatic {
       isMetal2Target = (target->getLayer() == metal2);
       slackenTarget  = true;
     }
-    if (source->isTurn() and (source->getPerpandicular(this)->getLayer() == getLayer())) {
+    AutoSegment* sourcePp = source->getPerpandicular( this );
+    if (source->isTurn() and (sourcePp->getLayer() == getLayer())) {
       isNonPrefSource = true;
       slackenSource   = true;
     }
 
+    AutoSegment* targetPp = target->getPerpandicular( this );
     cdebug_log(149,0) << "target:" << target << endl;
-    cdebug_log(149,0) << "target->getPerpandicular(this):" << target->getPerpandicular(this) << endl;
-    if (target->isTurn() and (target->getPerpandicular(this)->getLayer() == getLayer())) {
+    cdebug_log(149,0) << "target->getPerpandicular(this):" << targetPp << endl;
+    if (target->isTurn() and (targetPp->getLayer() == getLayer())) {
       isNonPrefTarget = true;
       slackenTarget   = true;
     }
@@ -437,9 +439,14 @@ namespace Anabatic {
 
         if (isMetal2Source) {
           cdebug_log(149,0) << "Fixing on source terminal contact."
-                      << doglegs[doglegs.size()-2]->getAutoSource() << endl;
-        //doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntFixed );
+                            << doglegs[doglegs.size()-2]->getAutoSource() << endl;
           doglegs[doglegs.size()-2]->getAutoSource()->setConstraintBox( source->getConstraintBox() );
+          doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntUserNativeConstraints );
+        } else {
+          Box slackenedConstraints = source->getConstraintBox();
+          slackenedConstraints.inflate( 3*getPitch() );
+          cdebug_log(149,0) << "Limited slack around source terminal " << slackenedConstraints << endl;
+          doglegs[doglegs.size()-2]->getAutoSource()->setConstraintBox( slackenedConstraints );
           doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntUserNativeConstraints );
         }
 
@@ -457,8 +464,8 @@ namespace Anabatic {
 
     // Ugly: GCell's track number is hardwired.
       cdebug_log(149,0) << "Target constraint: " << constraints
-                  << " slack:"        << slack
-                  << " native slack:" << nativeSlack << endl;
+                        << " slack:"        << slack
+                        << " native slack:" << nativeSlack << endl;
       if (isNonPrefTarget or (nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
         cdebug_log(149,0) << "Slackening from Target: " << target << endl;
         parallel->_makeDogleg( target->getGCell(), Flags::DoglegDown );
@@ -485,8 +492,13 @@ namespace Anabatic {
         if (isMetal2Target) {
           cdebug_log(149,0) << "Fixing on target terminal contact: "
                       << doglegs[doglegs.size()-2]->getAutoTarget() << endl;
-        //doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntFixed );
           doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( constraintBox );
+          doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntUserNativeConstraints );
+        } else {
+          Box slackenedConstraints = target->getConstraintBox();
+          slackenedConstraints.inflate( 3*getPitch() );
+          cdebug_log(149,0) << "Limited slack around target terminal " << slackenedConstraints << endl;
+          doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( slackenedConstraints );
           doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntUserNativeConstraints );
         }
       }
