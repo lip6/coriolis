@@ -872,6 +872,15 @@ namespace Katana {
 
       count++;
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+
+      // if (   (RoutingEvent::getProcesseds() > 143848+1)
+      //    and (RoutingEvent::getProcesseds() < 143858+1)) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing repair RoutingEvent " << (RoutingEvent::getProcesseds()-1) << ".";
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
     }
 
     cdebug_tabw(159,-1);

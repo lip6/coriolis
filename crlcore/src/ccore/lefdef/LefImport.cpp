@@ -174,7 +174,6 @@ namespace {
       static       void               setGdsForeignLibrary     ( Library* );
       static       Library*           getGdsForeignLibrary     ();
       static       void               setPinFilter             ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
-      static       Segment*           createBestSegment        ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, uint32_t flags );
       static       DbU::Unit          fromLefUnits             ( int );
       static       Layer*             getLayer                 ( string );
       static       void               addLayer                 ( string, Layer* );
@@ -241,6 +240,7 @@ namespace {
       static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*         , lefiUserData );
                    void               _pinStdPostProcess       ();
                    void               _pinPadPostProcess       ();
+                   Segment*           _createBestSegment       ( Rectilinear*, DbU::Unit minWidth, DbU::Unit minHeight, const RoutingLayerGauge*, uint32_t flags );
     private:                                               
       static       string                _gdsForeignDirectory;
       static       Library*              _mergeLibrary;
@@ -329,10 +329,11 @@ namespace {
   }
 
 
-  Segment* LefParser::createBestSegment ( Rectilinear* rectilinear
-                                        , DbU::Unit    minWidth
-                                        , DbU::Unit    minHeight
-                                        , uint32_t     flags )
+  Segment* LefParser::_createBestSegment ( Rectilinear*             rectilinear
+                                         , DbU::Unit                minWidth
+                                         , DbU::Unit                minHeight
+                                         , const RoutingLayerGauge* rlg
+                                         , uint32_t                 flags )
   {
     PinRectilinearFilter  pinFilter ( minWidth, minHeight, flags );
 
@@ -345,8 +346,36 @@ namespace {
     for ( Box& candidate : boxes ) {
       DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
       DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
+
+      if (heightAdjust) {
+      //candidate.inflate( 0, 0, 0, -heightAdjust );
+        if (rlg->isHorizontal()) {
+          DbU::Unit trackMin = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getYMin() + minHeight/2
+                                                    , Constant::Superior );
+          DbU::Unit deltaMin = trackMin - candidate.getYMin() - minHeight/2; 
+          DbU::Unit trackMax = rlg->getTrackPosition( getCell()->getAbutmentBox()
+                                                    , candidate.getYMax() - minHeight/2
+                                                    , Constant::Inferior );
+          DbU::Unit deltaMax = candidate.getYMax() - minHeight/2 - trackMax;
+          cdebug_log(100,0) << "  raw candidate " << candidate << endl;
+          cdebug_log(100,0) << "  min height (pin)=" << DbU::getValueString(minHeight) << endl;
+          cdebug_log(100,0) << "  min LZ=" << DbU::getValueString(candidate.getYMin() + minHeight/2)
+                            <<  " track min=" << DbU::getValueString(trackMin) << endl;
+          cdebug_log(100,0) << "  max LZ=" << DbU::getValueString(candidate.getYMax() - minHeight/2)
+                            <<  " track max=" << DbU::getValueString(trackMax) << endl;
+          cdebug_log(100,0) << "  deltaMin=" << DbU::getValueString(deltaMin)
+                            <<  " deltaMax=" << DbU::getValueString(deltaMax)
+                            << endl;
+          if (trackMin > trackMax) continue;
+          if (deltaMin < deltaMax) candidate.inflate( 0, 0, 0, -heightAdjust );
+          else                     candidate.inflate( 0, -heightAdjust, 0, 0 );
+        } else {
+          candidate.inflate( 0, 0, 0, -heightAdjust );
+        }
+      }
+      
       if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
-      if (heightAdjust) candidate.inflate( 0, 0, 0, -heightAdjust );
 
       cdebug_log(100,0) << "| " << candidate << endl;
       if (pinFilter.match(candidate,best))
@@ -1186,7 +1215,9 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
       DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
@@ -1324,10 +1355,18 @@ namespace {
                                                  )
                                  );
           } else {
-            Segment* segment = createBestSegment( rectilinear, minMetal1Width, minMetal1Height, normalFlags );
+            Segment* segment = _createBestSegment( rectilinear
+                                                 , minMetal1Width
+                                                 , minMetal1Height
+                                                 , gaugeMetal2
+                                                 , normalFlags );
             if (segment) ongrids.push_back( segment );
             else {
-              segment = createBestSegment( rectilinear, minMetal1Height, minMetal1Width, rotatedFlags );
+              segment = _createBestSegment( rectilinear
+                                          , minMetal1Height
+                                          , minMetal1Width
+                                          , gaugeMetal2
+                                          , rotatedFlags );
               if (segment) ongrids.push_back( segment );
             }
           }
@@ -1361,7 +1400,9 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi21_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__oai31_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
+    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
       DebugSession::close();
   }
 

@@ -19,6 +19,7 @@
 #include "hurricane/Commons.h"
 #include "hurricane/Error.h"
 #include "hurricane/DbU.h"
+#include "hurricane/Box.h"
 #include "hurricane/Collection.h"
 #include "hurricane/Slot.h"
 #include "crlcore/Utilities.h"
@@ -66,6 +67,7 @@ namespace CRL {
   using Hurricane::GenericFilter;
   using Hurricane::Record;
   using Hurricane::DbU;
+  using Hurricane::Box;
   using Hurricane::Layer;
 
 
@@ -114,8 +116,9 @@ namespace CRL {
               void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
               unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
               long                      getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
+      inline  DbU::Unit                 getTrackPosition ( const Box&, DbU::Unit position, unsigned mode ) const;
       inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
-              DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
+      inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
       inline  void                      setRoutingGauge  ( RoutingGauge* );
       inline  void                      setPWireWidth    ( DbU::Unit );
       inline  void                      setType          ( uint32_t );
@@ -197,12 +200,20 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return _viaWidth; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return _viaWidth>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return _obstacleDw; }
+  inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, long index ) const
+                                                                        { return index * _pitch + _offset + start; }
   inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
                                                                         { return getTrackPosition( start, getTrackIndex(start,stop,position,mode) ); }
   inline  void                      RoutingLayerGauge::setPWireWidth    ( DbU::Unit pwidth ) { _pwireWidth = pwidth; }
   inline  void                      RoutingLayerGauge::setType          ( uint32_t type ) { _type = (Constant::LayerGaugeType)type; }
   inline  void                      RoutingLayerGauge::setRoutingGauge  ( RoutingGauge* rg ) { _routingGauge = rg; }
 
+
+  inline  DbU::Unit  RoutingLayerGauge::getTrackPosition ( const Box& ab, DbU::Unit position, unsigned mode ) const
+  {
+    if (isHorizontal()) return getTrackPosition( ab.getYMin(), ab.getYMax(), position, mode );
+    return getTrackPosition( ab.getXMin(), ab.getXMax(), position, mode );
+  }
 
 // -------------------------------------------------------------------
 // Class  :  "JsonRoutingLayerGauge".
