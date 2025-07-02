@@ -192,13 +192,14 @@ namespace {
     Track*        track          = planeM2->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
     DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
     DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
-    Box           metal2bb       = Box( bb.getXMin(), bb.getYCenter(), bb.getXMax(), bb.getYCenter() );
+    Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
 
-    if (bb.getWidth() < pitch)
-    //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
-      metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
-    else
-      metal2bb.inflate( - m2spacing / 2, 0 );
+    // if (bb.getWidth() < pitch)
+    // //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+    //   metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
+    // else
+    //   metal2bb.inflate( - m2spacing / 2, 0 );
+    metal2bb.inflate( (m2spacing + halfViaTopSide) / 2, 0 );
 
     // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
     //                                   , bb.getYCenter()

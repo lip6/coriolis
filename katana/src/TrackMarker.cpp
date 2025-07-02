@@ -65,6 +65,7 @@ namespace Katana {
     , _refcount      (0)
   {
     DebugSession::open( rp->getNet(), 159, 160 );
+    cdebug_log(159,1) << "TrackMarker::TrackMarker() depth=" << depth << " " << rp << endl;
 
     RoutingGauge* rg             = Session::getRoutingGauge();
     RoutingPlane* plane          = Session::getKatanaEngine()->getRoutingPlaneByIndex( depth );
@@ -95,14 +96,14 @@ namespace Katana {
         _sourcePosition = bb.getXMin();
         _targetPosition = bb.getXMax();
         trackSpan = Interval( bb.getYMin(), bb.getYMax() );
-        trackSpan.inflate( 0, -viaEnclosure );
       } else {
         _sourcePosition = bb.getYMin();
         _targetPosition = bb.getYMax();
         trackSpan = Interval( bb.getXMin(), bb.getXMax() );
-        trackSpan.inflate( -viaEnclosure, 0 );
       }
+      trackSpan.inflate( -viaEnclosure );
     }
+    cdebug_log(159,0) << "trackSpan=" << trackSpan << endl;
     
     if (planeDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(rp->getLayer()))) {
       if (not rg->isSymbolic())
@@ -110,9 +111,6 @@ namespace Katana {
     } else {
       _weight = (uint32_t)( (1.0 + trackSpan.getSize()/pitch) * 20.0 );
     }
-
-    cdebug_log(159,1) << "TrackMarker::TrackMarker() depth=" << depth << " " << rp << endl;
-    cdebug_log(159,0) << "trackSpan=" << trackSpan << endl;
 
     Track* track = plane->getTrackByPosition ( trackSpan.getVMin() );
     cdebug_log(159,0) << "Nearest: " << track << endl;
