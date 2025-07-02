@@ -207,10 +207,10 @@ namespace Anabatic {
       inline  NetData*                      getNetData             () const;
       inline  GCell*                        getGCell               () const;
       inline  AutoContact*                  getSourceContact       () const;
-      inline  AutoContact*                  getSouthWestContact    () const;
-      inline  AutoContact*&                 getSouthWestContact    ();
-      inline  AutoContact*                  getNorthEastContact    () const;
-      inline  AutoContact*&                 getNorthEastContact    ();
+      inline  AutoContact*                  getWestContact         () const;
+      inline  AutoContact*                  getEastContact         () const;
+      inline  AutoContact*                  getNorthContact        () const;
+      inline  AutoContact*                  getSouthContact        () const;
       inline  Hook*                         getFromHook            () const;
       inline  uint64_t                      getSourceFlags         () const;
       inline  uint64_t                      getFlags               () const;
@@ -234,6 +234,10 @@ namespace Anabatic {
       inline  void                          clearWests             ();
       inline  void                          setFlags               ( uint64_t );
       inline  void                          setFromHook            ( Hook* );
+      inline  void                          setEastContact         ( AutoContact* );
+      inline  void                          setWestContact         ( AutoContact* );
+      inline  void                          setNorthContact        ( AutoContact* );
+      inline  void                          setSouthContact        ( AutoContact* );
       inline  void                          setSouthWestContact    ( AutoContact* );
       inline  void                          setNorthEastContact    ( AutoContact* );
       inline  void                          setBothCornerContacts  ( AutoContact* );
@@ -400,6 +404,16 @@ namespace Anabatic {
       static constexpr uint64_t  Conn_3G_1M1_1PinM3 = connexConfig( 3, 1, 0, 1, 0, 0, 0,  0,  1 );
       static constexpr uint64_t  Conn_3G_2M1_1PinM3 = connexConfig( 3, 2, 0, 1, 0, 0, 0,  0,  1 );
       static constexpr uint64_t  Conn_3G_3M1_1PinM3 = connexConfig( 3, 3, 0, 1, 0, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1PinM4     = connexConfig( 1, 0, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1PinM4     = connexConfig( 2, 0, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_3G_1PinM4     = connexConfig( 3, 0, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_1M1_1PinM4 = connexConfig( 1, 1, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_2M1_1PinM4 = connexConfig( 1, 2, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_3M1_1PinM4 = connexConfig( 1, 3, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_4M1_1PinM4 = connexConfig( 1, 4, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_1G_5M1_1PinM4 = connexConfig( 1, 5, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_1M1_1PinM4 = connexConfig( 2, 1, 0, 0, 1, 0, 0,  0,  1 );
+      static constexpr uint64_t  Conn_2G_2M1_1PinM4 = connexConfig( 2, 2, 0, 0, 1, 0, 0,  0,  1 );
 
     // Attributes.
     private:
@@ -412,8 +426,10 @@ namespace Anabatic {
              NetData*                     _netData;
              GCell*                       _gcell;
              AutoContact*                 _sourceContact;
-             AutoContact*                 _southWestContact;
-             AutoContact*                 _northEastContact;
+             AutoContact*                 _eastContact;
+             AutoContact*                 _westContact;
+             AutoContact*                 _northContact;
+             AutoContact*                 _southContact;
              Hook*                        _fromHook;
              vector<Hook*>                _easts;
              vector<Hook*>                _wests;
@@ -441,10 +457,10 @@ namespace Anabatic {
   inline Net*                          NetBuilder::getNet                 () const { return _net; }
   inline NetData*                      NetBuilder::getNetData             () const { return _netData; }
   inline AutoContact*                  NetBuilder::getSourceContact       () const { return _sourceContact; }
-  inline AutoContact*                  NetBuilder::getSouthWestContact    () const { return _southWestContact; }
-  inline AutoContact*&                 NetBuilder::getSouthWestContact    ()       { return _southWestContact; }
-  inline AutoContact*                  NetBuilder::getNorthEastContact    () const { return _northEastContact; }
-  inline AutoContact*&                 NetBuilder::getNorthEastContact    ()       { return _northEastContact; }
+  inline AutoContact*                  NetBuilder::getEastContact         () const { return _eastContact; }
+  inline AutoContact*                  NetBuilder::getWestContact         () const { return _westContact; }
+  inline AutoContact*                  NetBuilder::getNorthContact        () const { return _northContact; }
+  inline AutoContact*                  NetBuilder::getSouthContact        () const { return _southContact; }
   inline Hook*                         NetBuilder::getFromHook            () const { return _fromHook; }
   inline uint64_t                      NetBuilder::getSourceFlags         () const { return _sourceFlags; }
   inline uint64_t                      NetBuilder::getFlags               () const { return _flags; }
@@ -460,10 +476,14 @@ namespace Anabatic {
   inline void                          NetBuilder::setFlags               ( uint64_t flags ) { _flags |= flags; }
   inline void                          NetBuilder::setDegree              ( unsigned int degree ) { _degree = degree; }
   inline void                          NetBuilder::setFromHook            ( Hook* hook ) { _fromHook = hook; }
-  inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }
-  inline void                          NetBuilder::setSouthWestContact    ( AutoContact* ac ) { _southWestContact = ac; }
-  inline void                          NetBuilder::setNorthEastContact    ( AutoContact* ac ) { _northEastContact = ac; }
-  inline void                          NetBuilder::swapCornerContacts     () { std::swap( _southWestContact, _northEastContact ); }
+  inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _eastContact = _westContact = _northContact = _southContact = ac; }
+  inline void                          NetBuilder::setSouthWestContact    ( AutoContact* ac ) { _westContact = _southContact = ac; }
+  inline void                          NetBuilder::setNorthEastContact    ( AutoContact* ac ) { _eastContact = _northContact = ac; }
+  inline void                          NetBuilder::setEastContact         ( AutoContact* ac ) { _eastContact = ac; if (not _northContact) _northContact = ac; }
+  inline void                          NetBuilder::setWestContact         ( AutoContact* ac ) { _westContact = ac; if (not _southContact) _southContact = ac; }
+  inline void                          NetBuilder::setNorthContact        ( AutoContact* ac ) { _northContact = ac; if (not _eastContact) _eastContact = ac; }
+  inline void                          NetBuilder::setSouthContact        ( AutoContact* ac ) { _southContact = ac; if (not _westContact) _westContact = ac; }
+  inline void                          NetBuilder::swapCornerContacts     () { std::swap( _southContact, _northContact ); std::swap( _westContact, _eastContact );  }
   inline void                          NetBuilder::addToFixSegments       ( AutoSegment* as ) { _toFixSegments.push_back(as); }
   inline void                          NetBuilder::addToNorths            ( Hook* hook ) { _norths.push_back(hook); }
   inline void                          NetBuilder::addToSouths            ( Hook* hook ) { _souths.push_back(hook); }

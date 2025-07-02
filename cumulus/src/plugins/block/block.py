@@ -197,7 +197,10 @@ class Side ( object ):
                 self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         else:
-            gauge = self.conf.hDeepRG
+            if self.conf.cfg.block.upperEastWestPins:
+                gauge =self.conf._routingGauge.getLayerGauge( self.conf.horizontalDeepDepth+2 )
+            else:
+                gauge = self.conf.hDeepRG
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)

@@ -296,18 +296,20 @@ namespace Anabatic {
 
 
   NetBuilder::NetBuilder ()
-    : _anabatic              (NULL)
+    : _anabatic              (nullptr)
     , _routingStyle          (StyleFlags::NoStyle)
     , _forks                 ()
     , _connexity             ()
     , _topology              (0)
-    , _net                   (NULL)
-    , _netData               (NULL)
-    , _gcell                 (NULL)
-    , _sourceContact         (NULL)
-    , _southWestContact      (NULL)
-    , _northEastContact      (NULL)
-    , _fromHook              (NULL)
+    , _net                   (nullptr)
+    , _netData               (nullptr)
+    , _gcell                 (nullptr)
+    , _sourceContact         (nullptr)
+    , _eastContact           (nullptr)
+    , _westContact           (nullptr)
+    , _northContact          (nullptr)
+    , _southContact          (nullptr)
+    , _fromHook              (nullptr)
     , _easts                 ()
     , _wests                 ()
     , _norths                ()
@@ -332,13 +334,16 @@ namespace Anabatic {
     _sourceFlags         = 0;
     _flags               = 0;
     _topology            = 0;
-    _net                 = NULL;
-    _netData             = NULL;
-    _gcell               = NULL;
-    _sourceContact       = NULL;
-    _southWestContact    = NULL;
-    _northEastContact    = NULL;
-    _fromHook            = NULL;
+    _net                 = nullptr;
+    _netData             = nullptr;
+    _gcell               = nullptr;
+    _sourceContact       = nullptr;
+    _eastContact         = nullptr;
+    _westContact         = nullptr;
+    _northContact        = nullptr;
+    _southContact        = nullptr;
+    _southContact        = nullptr;
+    _fromHook            = nullptr;
     _easts                 .clear();
     _wests                 .clear();
     _norths                .clear();
@@ -545,13 +550,21 @@ namespace Anabatic {
 
     if (not toHook or (toHook == _fromHook)) {
       if (contact) {
-        if ( (flags & SouthWest) and not _southWestContact ) {
-          cdebug_log(145,0) << "Setting _southWestContact:" << contact << endl;
-          _southWestContact = contact;
+        if ( (flags & EastBound) and not _eastContact ) {
+          cdebug_log(145,0) << "Setting _eastContact:" << contact << endl;
+          _eastContact = contact;
         }
-        if ( (flags & NorthEast) and not _northEastContact ) {
-          cdebug_log(145,0) << "Setting _northEastContact:" << contact << endl;
-          _northEastContact = contact;
+        if ( (flags & WestBound) and not _westContact ) {
+          cdebug_log(145,0) << "Setting _westContact:" << contact << endl;
+          _westContact = contact;
+        }
+        if ( (flags & SouthBound) and not _southContact ) {
+          cdebug_log(145,0) << "Setting _southContact:" << contact << endl;
+          _southContact = contact;
+        }
+        if ( (flags & NorthBound) and not _northContact ) {
+          cdebug_log(145,0) << "Setting _northContact:" << contact << endl;
+          _northContact = contact;
         }
       }
       return false;
@@ -633,8 +646,10 @@ namespace Anabatic {
                       << " getFlags():" << getFlags() << endl;
 
     if (not isStrictChannel()) {
-      _southWestContact = NULL;
-      _northEastContact = NULL;
+      _eastContact  = nullptr;
+      _westContact  = nullptr;
+      _northContact = nullptr;
+      _southContact = nullptr;
     }
 
     if (not _gcell->isAnalog()) {
@@ -733,9 +748,12 @@ namespace Anabatic {
         // Optimized specific cases.
         case Conn_1G_1PinM1:      _do_1G_1PinM1    (); break;
         case Conn_2G_1PinM1:      _do_2G_1PinM1    (); break;
+        case Conn_1G_1PinM4:
         case Conn_1G_1PinM2:      _do_1G_1PinM2    (); break;
         case Conn_2G_1PinM2:                       
-        case Conn_3G_1PinM2:      _do_xG_1PinM2    (); break;
+        case Conn_3G_1PinM2:
+        case Conn_2G_1PinM4:                       
+        case Conn_3G_1PinM4:      _do_xG_1PinM2    (); break;
         case Conn_1G_1PinM3:      _do_1G_1PinM3    (); break;
         case Conn_2G_1PinM3:                       
         case Conn_3G_1PinM3:      _do_xG_1PinM3    (); break;
@@ -745,9 +763,16 @@ namespace Anabatic {
         case Conn_1G_2M1_1PinM2:
         case Conn_1G_3M1_1PinM2:
         case Conn_1G_4M1_1PinM2:
-        case Conn_1G_5M1_1PinM2:  _do_1G_xM1_1PinM2(); break;
+        case Conn_1G_5M1_1PinM2:
+        case Conn_1G_1M1_1PinM4:
+        case Conn_1G_2M1_1PinM4:
+        case Conn_1G_3M1_1PinM4:
+        case Conn_1G_4M1_1PinM4:
+        case Conn_1G_5M1_1PinM4:  _do_1G_xM1_1PinM2(); break;
         case Conn_2G_1M1_1PinM2:
-        case Conn_2G_2M1_1PinM2:  _do_2G_xM1_1PinM2(); break;
+        case Conn_2G_2M1_1PinM2:
+        case Conn_2G_1M1_1PinM4:
+        case Conn_2G_2M1_1PinM4:  _do_2G_xM1_1PinM2(); break;
         case Conn_2G_1M1_1PinM3:
         case Conn_1G_2M1_1PinM3:
         case Conn_2G_2M1_1PinM3:
@@ -760,13 +785,14 @@ namespace Anabatic {
         case Conn_2G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
         default:
         //if (not isStrictChannel())
-            throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
+            throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d+%d,%d+%d] %s in %s\n"
                      "      The global routing seems to be defective."
                      , _connexity.connexity
                      , _connexity.fields.globals
                      , _connexity.fields.M1     
                      , _connexity.fields.M2     
                      , _connexity.fields.M3
+                     , _connexity.fields.M4
                      , _connexity.fields.Pin
                      , _connexity.fields.Pad
                      , _net->_getString().c_str()
@@ -775,8 +801,10 @@ namespace Anabatic {
           _do_xG();
       }
 
-      cdebug_log(145,0) << "SouthWest: " << _southWestContact << endl;
-      cdebug_log(145,0) << "NorthEast: " << _northEastContact << endl;
+      cdebug_log(145,0) << "East:  " << _eastContact << endl;
+      cdebug_log(145,0) << "West:  " << _westContact << endl;
+      cdebug_log(145,0) << "South: " << _southContact << endl;
+      cdebug_log(145,0) << "North: " << _northContact << endl;
 
       if (not _do_globalSegment()) {
         cdebug_log(145,0) << "No global generated, finish." << endl;
@@ -1446,9 +1474,10 @@ namespace Anabatic {
     cdebug_log(145,0) << "West    : " << west()    << endl;
     cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
 
-    RoutingPad*  rpNE = NULL;
-    RoutingPad*  rpSW = NULL;
-    _southWestContact = NULL;
+    RoutingPad* rpNE = nullptr;
+    RoutingPad* rpSW = nullptr;
+    _southContact = nullptr;
+    _westContact  = nullptr;
 
     if (_routingPads.size() > 1) {
       cdebug_log(145,0) << "Case _routingPads.size() > 1 "<< endl;
@@ -1482,28 +1511,28 @@ namespace Anabatic {
       if (east()) {
         cdebug_log(145,0) << "East"  << endl;
         AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-        push( east(), ac, SouthWest );
+        push( east(), ac, EastBound );
       } 
       if (west()) {
         cdebug_log(145,0) << "West"  << endl;
         AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
-        push( west(), ac, SouthWest );
+        push( west(), ac, WestBound );
       }
       if (south()) {
         cdebug_log(145,0) << "South"  << endl;
         AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
-        push( south(), ac, SouthWest );
+        push( south(), ac, SouthBound );
       }
       if (north()){
         cdebug_log(145,0) << "North"  << endl;
         AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-        push( north(), ac, SouthWest );
+        push( north(), ac, NorthBound );
       }
     }
     cdebug_log(145,0) << "doDevice done" << endl;
     cdebug_tabw(145,-1);
 
-    return _southWestContact;
+    return _westContact;
   }
 
 
@@ -1936,7 +1965,8 @@ namespace Anabatic {
 
     RoutingPad*  rpNE = NULL;
     RoutingPad*  rpSW = NULL;
-    _southWestContact = NULL;
+    _southContact = nullptr;
+    _westContact  = nullptr;
     if (_routingPads.size() == 1){
       rpNE = rpSW = _routingPads[0];
     } else {
@@ -1949,25 +1979,25 @@ namespace Anabatic {
     AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
     if (east()) {
       cdebug_log(145,0) << "East"  << endl;
-      push( east(), ac, SouthWest );
+      push( east(), ac, EastBound );
     } 
     if (west()) {
       cdebug_log(145,0) << "West"  << endl;
-      push( west(), ac, SouthWest );
+      push( west(), ac, WestBound );
     }
     if (south()) {
       cdebug_log(145,0) << "South"  << endl;
-      push( south(), ac, SouthWest );
+      push( south(), ac, SouthBound );
     }
     if (north()){
       cdebug_log(145,0) << "North"  << endl;
-      push( north(), ac, SouthWest );
+      push( north(), ac, NorthBound );
     }
     
     cdebug_log(145,0) << "doHRail done" << endl;
     cdebug_tabw(145,-1);
     
-    return _southWestContact;
+    return _westContact;
   }
 
   
@@ -1983,7 +2013,8 @@ namespace Anabatic {
 
     RoutingPad*  rpNE = NULL;
     RoutingPad*  rpSW = NULL;
-    _southWestContact = NULL;
+    _southContact = nullptr;
+    _westContact  = nullptr;
     if (_routingPads.size() == 1){
       rpNE = rpSW = _routingPads[0];
     } else {
@@ -1996,25 +2027,25 @@ namespace Anabatic {
     AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
     if (east()) {
       cdebug_log(145,0) << "East"  << endl;
-      push( east(), ac, SouthWest );
+      push( east(), ac, EastBound );
     } 
     if (west()) {
       cdebug_log(145,0) << "West"  << endl;
-      push( west(), ac, SouthWest );
+      push( west(), ac, WestBound );
     }
     if (south()) {
       cdebug_log(145,0) << "South"  << endl;
-      push( south(), ac, SouthWest );
+      push( south(), ac, SouthBound );
     }
     if (north()){
       cdebug_log(145,0) << "North"  << endl;
-      push( north(), ac, SouthWest );
+      push( north(), ac, NorthBound );
     }
 
     cdebug_log(145,0) << "doVRail done" << endl;
     cdebug_tabw(145,-1);
     
-    return _southWestContact;
+    return _westContact;
   }
 
 

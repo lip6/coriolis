@@ -572,13 +572,13 @@ namespace Anabatic {
       leftContact = doRp_Access( getGCell(), getRoutingPads()[0], HAccessEW|VSmall );
       if (south() and west()) {
         setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), Session::getDContactLayer() ) );
-        AutoSegment::create( getSouthWestContact(), leftContact, Flags::Horizontal );
+        AutoSegment::create( getWestContact(), leftContact, Flags::Horizontal );
       } else {
         if (west())
           setSouthWestContact( leftContact );
         else {
           setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() ) );
-          AutoSegment::create( leftContact, getSouthWestContact(), Flags::Horizontal );
+          AutoSegment::create( leftContact, getWestContact(), Flags::Horizontal );
         }
       }
     } else {
@@ -602,13 +602,13 @@ namespace Anabatic {
 
       if (north() and east()) {
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), Session::getDContactLayer() ) );
-        AutoSegment::create( rightContact, getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( rightContact, getEastContact(), Flags::Horizontal );
       } else {
         if (east())
           setNorthEastContact( rightContact );
         else {
           setNorthEastContact( AutoContactTurn::create( getGCell(), getNet(), Session::getDContactLayer() ) );
-          AutoSegment::create( rightContact, getNorthEastContact(), Flags::Horizontal );
+          AutoSegment::create( rightContact, getEastContact(), Flags::Horizontal );
         }
       }
     } else {
@@ -702,20 +702,20 @@ namespace Anabatic {
         setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
         if (south()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Vertical );
+        AutoSegment::create( getSouthContact(), getNorthContact(), Flags::Vertical );
       } else {
         setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
         if (west()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( getWestContact(), getEastContact(), Flags::Horizontal );
       }
     } else { // fields.globals == 4.
       AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
       setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
       setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( getSouthWestContact(), turn, Flags::Horizontal );
-      AutoSegment::create( turn, getNorthEastContact(), Flags::Vertical   );
+      AutoSegment::create( getWestContact(), turn, Flags::Horizontal );
+      AutoSegment::create( turn, getNorthContact(), Flags::Vertical   );
     } 
     cdebug_tabw(145,-1);
     return true;
@@ -727,9 +727,13 @@ namespace Anabatic {
     cdebug_log(145,1) << getTypeName() << "::_do_globalSegment()" << endl;
 
     if (getSourceContact()) {
-      AutoContact* targetContact
-        = ( getSegmentHookType(getFromHook()) & (NorthBound|EastBound) )
-        ? getNorthEastContact() : getSouthWestContact() ;
+      AutoContact* targetContact = nullptr;
+      switch ( getSegmentHookType(getFromHook()) ) {
+        case EastBound:  targetContact = getEastContact (); break;
+        case WestBound:  targetContact = getWestContact (); break;
+        case NorthBound: targetContact = getNorthContact(); break;
+        case SouthBound: targetContact = getSouthContact(); break;
+      }
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
                                                       , targetContact
                                                       , static_cast<Segment*>( getFromHook()->getComponent() )
@@ -748,10 +752,10 @@ namespace Anabatic {
     } else
       setFromHook( NULL );
     
-    push( east (), getNorthEastContact() );
-    push( west (), getSouthWestContact() );
-    push( north(), getNorthEastContact() );
-    push( south(), getSouthWestContact() );
+    push( east (), getEastContact () );
+    push( west (), getWestContact () );
+    push( north(), getNorthContact() );
+    push( south(), getSouthContact() );
 
     cdebug_tabw(145,-1);
     return true;

@@ -1483,6 +1483,7 @@ class BlockConf ( GaugeConf ):
         self.cfg.etesian.aspectRatio      = None
         self.cfg.etesian.spaceMargin      = None
         self.cfg.etesian.latchUpDistance  = None
+        self.cfg.block.upperEastWestPins  = None
         self.cfg.block.spareSide          = None
         self.cfg.block.vRailsPeriod       = None
         self.cfg.katana.dumpMeasures      = None

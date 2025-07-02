@@ -316,7 +316,7 @@ namespace Anabatic {
 
     if (getSourceContact()) {
       Segment*     segment       = static_cast <Segment*> ( getFromHook()->getComponent() );
-      AutoSegment* globalSegment = AutoSegment::create( getSourceContact(), getSouthWestContact(), segment );
+      AutoSegment* globalSegment = AutoSegment::create( getSourceContact(), getWestContact(), segment );
 
       globalSegment->setFlags( (getDegree() == 2) ? AutoSegment::SegBipoint : 0 );
       cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
