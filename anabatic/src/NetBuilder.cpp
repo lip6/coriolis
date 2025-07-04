@@ -227,6 +227,35 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "NetBuilder".
 
+
+  string  NetBuilder::functionFlagsToStr ( uint32_t flags ) 
+  {
+    string s;
+    s += ((flags & SortDecreasing  ) ? 'd' : '-');
+    s += ((flags & HAccess         ) ? 'h' : '-');
+    s += ((flags & HAccessEW       ) ? 'H' : '-');
+    s += ((flags & VLarge          ) ? 'V' : '-');
+    s += ((flags & VSmall          ) ? 'v' : '-');
+    s += ((flags & HSmall          ) ? 'h' : '-');
+    s += ((flags & Punctual        ) ? 'p' : '-');
+    s += ((flags & M1Offgrid       ) ? 'o' : '-');
+    s += ((flags & HCollapse       ) ? 'h' : '-');
+    s += ((flags & VCollapse       ) ? 'v' : '-');
+    s += ((flags & Terminal        ) ? 't' : '-');
+    s += ((flags & DoSourceContact ) ? 'S' : '-');
+    s += ((flags & DoTargetContact ) ? 'T' : '-');
+    s += ((flags & SouthBound      ) ? 'S' : '-');
+    s += ((flags & NorthBound      ) ? 'N' : '-');
+    s += ((flags & WestBound       ) ? 'W' : '-');
+    s += ((flags & EastBound       ) ? 'E' : '-');
+    s += ((flags & Middle          ) ? 'm' : '-');
+    s += ((flags & UseNonPref      ) ? 'n' : '-');
+    s += ((flags & NoProtect       ) ? 'p' : '-');
+    s += ((flags & ToUpperRouting  ) ? 'u' : '-');
+    s += ((flags & AddHNonPref     ) ? 'h' : '-');
+    return s;
+  }
+
   
   uint64_t  NetBuilder::checkRoutingPadSize ( RoutingPad* rp )
   {

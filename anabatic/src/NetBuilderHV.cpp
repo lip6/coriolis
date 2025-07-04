@@ -1402,96 +1402,81 @@ namespace Anabatic {
     cdebug_log(145,0) << "east:      " << east() << endl;
     cdebug_log(145,0) << "west:      " << west() << endl;
 
-    const uint32_t  NorthEastLeftMost  = (1 << 0);
-    const uint32_t  NorthEastMiddle    = (1 << 1);
-    const uint32_t  NorthEastRightMost = (1 << 2);
-
     sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
 
-    const Layer* viaLayer1      = Session::getBuildContactLayer(1);
-    AutoContact* southWestLocal = nullptr;
-    AutoContact* northEastLocal = nullptr;
-    RoutingPad*  southWestRp    = nullptr;
-    RoutingPad*  northEastRp    = nullptr;
-    uint32_t     northEastState = 0;
+    const Layer* viaLayer1       = Session::getBuildContactLayer(1);
+    RoutingPad*  northSouthRp    = nullptr;
+    bool         northSouthRight = false;
 
-    if (west() or south()) {
-      southWestRp = getRoutingPads()[0];
+    if (north() or south()) {
+      northSouthRp = getRoutingPads()[ 0 ];
+      cdebug_log(145,0) << "| Initial N-S Global RP: " << northSouthRp << endl;
+      for ( size_t i=1 ; i<getRoutingPads().size(); ++i ) {
+        if (northSouthRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
+        if (getRoutingPads()[i]->getBoundingBox().getHeight() > northSouthRp->getBoundingBox().getHeight()) {
+          cdebug_log(145,0) << "| Better N-S RP: " << northSouthRp << endl;
+          northSouthRp    = getRoutingPads()[i];
+          northSouthRight = (i == getRoutingPads().size()-1);
+        }
+      } 
     }
-    if (east() or north()) {
-      northEastRp    = getRoutingPads()[getRoutingPads().size()-1];
-      northEastState = NorthEastRightMost;
-      if (getRoutingPads().size() > 1) {
-        for ( size_t i=getRoutingPads().size()-1; i != 0 ; ) {
-          i -= 1;
-          if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
-          if (getRoutingPads()[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
-            cdebug_log(145,0) << "| Better RP: " << northEastRp << endl;
-            northEastRp    = getRoutingPads()[i];
-            northEastState = (i) ? NorthEastMiddle : NorthEastRightMost;
-          }
-        } 
+
+    AutoContact* rpContact    = nullptr;
+    AutoContact* hteeContact1 = nullptr;
+    AutoContact* hteeContact2 = nullptr;
+    for ( size_t i=0 ; i<getRoutingPads().size(); ++i ) {
+      rpContact = doRp_Access( getGCell(), getRoutingPads()[i], NoFlags );
+      if (i == 0) {
+        if (west()) {
+          hteeContact1 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+          setWestContact( hteeContact1 );
+        } else {
+          hteeContact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        }
+        AutoSegment::create( rpContact, hteeContact1, Flags::Vertical );
+      } else {
+        if (northSouthRight or east() or (i < getRoutingPads().size()-1))
+          hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+        else
+          hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( rpContact   , hteeContact2, Flags::Vertical );
+        AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+        hteeContact1 = hteeContact2;
+
+        if ((i == getRoutingPads().size()-1) and not northSouthRight and east())
+          setEastContact( hteeContact2 );
       }
-    }
-    
 
-    if (west() or south()) {
-      AutoContact* southWest = nullptr;
-      cdebug_log(145,0) << "| Initial S-W Global RP: " << southWestRp << endl;
-      southWest = doRp_Access( getGCell(), southWestRp, NoFlags );
-      southWestLocal = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-      AutoSegment::create( southWest, southWestLocal, Flags::Vertical );
-
-      if (west() and not south()) {
-        southWest = southWestLocal;
-      } else if (not west() and south()) {
-        southWest = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
-        AutoSegment::create( southWestLocal, southWest, Flags::Horizontal );
-      } else if (west() and south()) {
-        southWest = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-        AutoSegment::create( southWestLocal, southWest, Flags::Horizontal );
+      if (getRoutingPads()[i] == northSouthRp) {
+        if (north()) {
+          if (northSouthRight and not south() and not east())
+            hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          else
+            hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+          setNorthContact( hteeContact2 );
+          if (not south() and east())
+            setEastContact( hteeContact2 );
+          hteeContact1 = hteeContact2;
+        }
+        if (south()) {
+          if (northSouthRight and not east())
+            hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          else
+            hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( hteeContact1, hteeContact2, Flags::Horizontal );
+          setSouthContact( hteeContact2 );
+          if (east())
+            setEastContact( hteeContact2 );
+          hteeContact1 = hteeContact2;
+        }
       }
-      setSouthWestContact( southWest );
-    }
-
-    if (east() or north()) {
-      AutoContact* northEast   = nullptr;
-      cdebug_log(145,0) << "| Initial N-E Global RP: " << northEastRp << endl;
-
-
-      northEast = doRp_Access( getGCell(), northEastRp, NoFlags );
-      northEastLocal = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-      AutoSegment::create( northEast, northEastLocal, Flags::Vertical );
-
-      if (east() and not north()) {
-        northEast = northEastLocal;
-      } else if (not east() and north()) {
-        northEast = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
-        AutoSegment::create( northEastLocal, northEast, Flags::Horizontal );
-      } else if (east() and north()) {
-        northEast = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-        AutoSegment::create( northEastLocal, northEast, Flags::Horizontal );
-      }
-      setNorthEastContact( northEast );
-    }
-
-    AutoContact* leftContact  = nullptr;
-    AutoContact* rightContact = nullptr;
-    for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
-      if ((i == 1) and southWestLocal)
-        leftContact = southWestLocal;
-      else
-        leftContact = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
-      if ((i == getRoutingPads().size() - 1) and northEastLocal)
-        rightContact = northEastLocal;
-      else
-        rightContact = doRp_Access( getGCell(), getRoutingPads()[i], HAccess );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
     cdebug_tabw(145,-1);
     return true;
   }
+
 
   bool  NetBuilderHV::_do_xG_1M1_1M2 ()
   {
@@ -1571,10 +1556,10 @@ namespace Anabatic {
     cdebug_log(145,0) << "east:      " << east() << endl;
     cdebug_log(145,0) << "west:      " << west() << endl;
 
-    // if (not getConnexity().fields.M3) {
-    //   cdebug_tabw(145,-1);
-    //   return _do_xG_xM1();
-    // }
+    if (not getConnexity().fields.M3) {
+      cdebug_tabw(145,-1);
+      return _do_xG_xM1();
+    }
 
     RoutingPad* rpM3 = NULL;
     if (getRoutingPads()[0]->getLayer() == Session::getBuildRoutingLayer(2))
@@ -2161,6 +2146,9 @@ namespace Anabatic {
     cdebug_log(145,1) << getTypeName() << "::_do_globalSegment()" << endl;
     cdebug_log(145,0) << "getSourceFlags():" << getSourceFlags()
                       << " getFlags():" << getFlags() << endl;
+    cdebug_log(145,0) << "globals=" << getConnexity().fields.globals << endl;
+    cdebug_log(145,0) << "getFromHook() " << getFromHook() << endl;
+    cdebug_log(145,0) << "hookType=" << functionFlagsToStr(getSegmentHookType(getFromHook())) << endl;
 
     if (getSourceContact()) {
       AutoContact* targetContact = nullptr;
@@ -2171,6 +2159,13 @@ namespace Anabatic {
         case SouthBound: targetContact = getSouthContact(); break;
       }
       if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
+      if (not targetContact) {
+        throw Error( "NetBuilderHV::_do_globalSegment(): NULL target contact while building\n"
+                     "        %s\n"
+                     "        in %s"
+                   , getString(getNet()).c_str()
+                   , getString(getGCell()).c_str() );
+      }
 
       Segment* baseSegment = static_cast<Segment*>( getFromHook()->getComponent() );
       if ( (getSourceFlags() | getFlags()) & ToUpperRouting) {

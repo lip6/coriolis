@@ -184,6 +184,7 @@ namespace Anabatic {
       static  void                          sortHookByY            ( vector<Hook*>&       , uint64_t flags=NoFlags );
       static  void                          sortRpByX              ( vector<RoutingPad*>& , uint64_t flags=NoFlags );
       static  void                          sortRpByY              ( vector<RoutingPad*>& , uint64_t flags=NoFlags );
+      static  std::string                   functionFlagsToStr     ( uint32_t );
     public:
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
