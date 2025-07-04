@@ -190,7 +190,7 @@ class Side ( object ):
                                 , pinPos.getX()
                                 , pinPos.getY()
                                 , gauge.getWireWidth()
-                                , gauge.getWireWidth() # // 2
+                                , gauge.getWireWidth() * 2 # // 2
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
@@ -226,7 +226,7 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth() # // 2
+                                , gauge.getWireWidth() * 2
                                 , gauge.getWireWidth()
                                 )
                 NetExternalComponents.setExternal( pin )
