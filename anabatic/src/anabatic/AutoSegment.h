@@ -113,6 +113,7 @@ namespace Anabatic {
       static const uint64_t  SegIsReducedDone     = (1L<<42);
       static const uint64_t  SegIsBelowPitch      = (1L<<43);
       static const uint64_t  SegBecomeBelowPitch  = (1L<<44);
+      static const uint64_t  SegGapFiller         = (1L<<45);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -238,6 +239,7 @@ namespace Anabatic {
       inline         bool                isUnsetAxis                () const;
       inline         bool                isSlackened                () const;
       inline         bool                isUserDefined              () const;
+      inline         bool                isGapFiller                () const;
                      bool                isNearMinArea              () const;
                      bool                isReduceCandidate          () const;
       inline         bool                isBelowPitch               () const;
@@ -576,6 +578,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isTargetTerminal       () const { return _flags & SegTargetTerminal; }
   inline  bool            AutoSegment::isTerminal             () const { return (_rpDistance == 0); }
   inline  bool            AutoSegment::isDrag                 () const { return _flags & SegDrag; }
+  inline  bool            AutoSegment::isGapFiller            () const { return _flags & SegGapFiller; }
   inline  bool            AutoSegment::isAtMinArea            () const { return _flags & SegAtMinArea; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned     () const { return _flags & SegNotTargetAligned; }

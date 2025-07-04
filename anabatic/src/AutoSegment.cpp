@@ -750,13 +750,16 @@ namespace Anabatic {
     }
 
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
+    cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
-    oldSpan.inflate( _sourcePosition );
-    oldSpan.inflate( _targetPosition );
-    if (_flags & SegCreated) oldSpan.makeEmpty();
-    if (expandToMinLength(oldSpan)) updatePositions();
-    if (_flags & SegAtMinArea) {
-      if (unexpandToMinLength()) updatePositions();
+    if (not isGapFiller()) {
+      oldSpan.merge( _sourcePosition );
+      oldSpan.merge( _targetPosition );
+      if (_flags & SegCreated) oldSpan.makeEmpty();
+      if (expandToMinLength(oldSpan)) updatePositions();
+      if (_flags & SegAtMinArea) {
+        if (unexpandToMinLength()) updatePositions();
+      }
     }
 
     unsigned int observerFlags = Revalidate;
@@ -3046,6 +3049,7 @@ namespace Anabatic {
     dlContact1->updateCache();
     updateNativeConstraints();
     mergeUserConstraints( cagedConstraints );
+    updatePositions();
 
     return true;
   }
@@ -3408,6 +3412,16 @@ namespace Anabatic {
 
     cdebug_log(149,0) << "Source:" << source << endl;
     cdebug_log(149,0) << "Target:" << target << endl;
+    if (source == target) {
+      throw Error( "AutoSegment::create(Hurricane::Segment*): Source and target contact are the same.\n"
+                   "        Source: %s\n"
+                   "        Target: %s\n"
+                   "        Segment: %s\n"
+                 , getString(source).c_str()
+                 , getString(target).c_str()
+                 , getString(segment).c_str()
+                 );
+    }
 
     if (source->isFixed() and target->isFixed()) {
       if ( (horizontal) and (source->getY() != target->getY()))
@@ -3516,6 +3530,14 @@ namespace Anabatic {
                                    , size_t       depth
                                    )
   {
+    if (source == target) {
+      throw Error( "AutoSegment::create(): Source and target contact are the same.\n"
+                   "        Source: %s\n"
+                   "        Target: %s\n"
+                 , getString(source).c_str()
+                 , getString(target).c_str()
+                 );
+    }
   // Hardcoded: make the assumption that,
   //    depth=0 is terminal reserved  |  METAL1
   //    depth=1 is horizontal         |  METAL2
