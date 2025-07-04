@@ -1089,7 +1089,7 @@ namespace Katana {
   {
     if (getLayerGauge()->getType() != Constant::LayerGaugeType::Default) return 0;
 
-  //if ((getIndex() == 354) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 849) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
@@ -1184,11 +1184,17 @@ namespace Katana {
                     if (segment->getSourcePosition() < first->getSourcePosition())
                       first = segment;
                   }
-                  spacing += first->getSourceU() - gapsetCurr.sourceU(j+1);
-                  cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
-                  cdebug_log(159,0) << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
-                //first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
-                  first->setDuSource( first->getDuSource() - spacing );
+                  cdebug_log(159,0) << "stretching source of " << first << endl;
+                  DbU::Unit sourceAxis = 0;
+                  DbU::Unit targetAxis = 0;
+                  first->getEndAxes( sourceAxis, targetAxis );
+                  DbU::Unit duSource = gapsetCurr.targetU(j) - sourceAxis;
+                  cdebug_log(159,0) << "old duSource:" << DbU::getValueString(first->getDuSource()) << endl;
+                  cdebug_log(159,0) << "new duSource:" << DbU::getValueString(duSource) << endl;
+                  first->setDuSource( duSource );
+                  cdebug_log(159,0) << "duSource (fill gap):" << DbU::getValueString(first->getDuSource())
+                                    << " " << first << endl;
+                  first->setFlags( AutoSegment::SegGapFiller );
                   element->invalidate();
 	            }
                 ++gaps;
@@ -1223,7 +1229,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 354) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 849) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
