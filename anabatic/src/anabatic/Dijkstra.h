@@ -22,6 +22,7 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Observer.h"
 namespace Hurricane {
   class Net;
@@ -35,6 +36,7 @@ namespace Anabatic {
   using std::set;
   using std::multiset;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::Observer;
   using Hurricane::Net;
   using Hurricane::RoutingPad;
@@ -684,19 +686,26 @@ namespace Anabatic {
                    bool       _updateIntervals         ( bool&, Vertex*, bool&, int&, Edge* );
                    void       _updateRealOccupancy     ( Vertex* );
     private:
-      AnabaticEngine*  _anabatic;
-      vector<Vertex*>  _vertexes;
-      distance_t       _distanceCb;
-      Mode             _mode;
-      Net*             _net;
-      int              _stamp;
-      VertexSet        _sources;
-      VertexSet        _targets;
-      Box              _searchArea;
-      DbU::Unit        _searchAreaHalo;
-      int              _connectedsId;
-      PriorityQueue    _queue;
-      Flags            _flags;
+      inline       void       _pushError               ( const Error& );
+      inline       void       _pushWarning             ( const Warning& );
+                   void       _showErrors              () const;
+                   void       _showWarnings            () const;
+    private:
+      AnabaticEngine*      _anabatic;
+      vector<Vertex*>      _vertexes;
+      distance_t           _distanceCb;
+      Mode                 _mode;
+      Net*                 _net;
+      int                  _stamp;
+      VertexSet            _sources;
+      VertexSet            _targets;
+      Box                  _searchArea;
+      DbU::Unit            _searchAreaHalo;
+      int                  _connectedsId;
+      PriorityQueue        _queue;
+      Flags                _flags;
+      vector<Error>        _errors;
+      vector<Warning>      _warnings;
   };
 
 
@@ -717,6 +726,9 @@ namespace Anabatic {
   inline bool       Dijkstra::needAxisTarget () const { return (_flags & Mode::AxisTarget); }
   inline void       Dijkstra::unsetFlags     ( Flags mask ) { _flags &= ~mask; }
   inline const VertexSet& Dijkstra::getSources     () const { return _sources; }
+
+  inline void       Dijkstra::_pushError     ( const Error&   error   ) { _errors.push_back( error ); }
+  inline void       Dijkstra::_pushWarning   ( const Warning& warning ) { _warnings.push_back( warning ); }
 
 }  // Anabatic namespace.
 
