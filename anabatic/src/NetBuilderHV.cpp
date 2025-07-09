@@ -449,18 +449,9 @@ namespace Anabatic {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_" << (int)getConnexity().fields.M1 << "M1() [Managed Configuration]" << endl;
 
     sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
-    for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess|UseNonPref );
-      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess|UseNonPref );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
-    }
 
-    RoutingPad* globalRp = NULL;
-    if      (east()) globalRp = getRoutingPads()[getRoutingPads().size()-1];
-    else if (west()) globalRp = getRoutingPads()[0];
-    else {
-      globalRp = getRoutingPads()[0];
-
+    RoutingPad* globalRp = getRoutingPads()[0];
+    if (north() or south()) {
       cdebug_log(145,0) << "| Initial N/S Global RP: " << globalRp << endl;
       for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
         if (getRoutingPads()[i]->getBoundingBox().getHeight() > globalRp->getBoundingBox().getHeight()) {
@@ -468,7 +459,21 @@ namespace Anabatic {
           globalRp = getRoutingPads()[i];
         }
       }
+
+      if (globalRp->getBoundingBox().getHeight() < 7*Session::getDHorizontalPitch()) {
+        cdebug_tabw(145,-1);
+        return _do_xG_xM1();
+      }
     }
+
+    for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
+      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess|UseNonPref );
+      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess|UseNonPref );
+      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
+    }
+
+    if      (east()) globalRp = getRoutingPads()[getRoutingPads().size()-1];
+    else if (west()) globalRp = getRoutingPads()[0];
     
     AutoContact* globalContact = doRp_Access( getGCell(), globalRp, HAccess );
 
