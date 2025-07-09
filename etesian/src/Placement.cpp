@@ -204,11 +204,14 @@ namespace Etesian {
   }
   
 
-  void  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
+  uint32_t  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
   {
     cdebug_log(121,1) << "Slice::insertTies() @" << DbU::getValueString(_ybottom) << endl;
-    for ( SubSlice& subSlice : _subSlices ) subSlice.insertTies( latchUpMax, islice%2 );
+    uint32_t status = EtesianEngine::NoFlags;
+    for ( SubSlice& subSlice : _subSlices )
+      status |= subSlice.insertTies( latchUpMax, islice%2 );
     cdebug_tabw(121,-1);
+    return status;
   }
 
 
@@ -650,14 +653,16 @@ namespace Etesian {
   }
 
 
-  void  Area::insertTies ()
+  uint32_t  Area::insertTies ()
   {
     DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
-    if (latchUpMax == 0) return;
+    if (latchUpMax == 0) return EtesianEngine::NoFlags;
+    uint32_t status = EtesianEngine::NoFlags;
     for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
-      _slices[islice]->insertTies( latchUpMax, islice );
+      status |= _slices[islice]->insertTies( latchUpMax, islice );
     }
     validate( latchUpMax );
+    return status;
   }
 
 
@@ -842,8 +847,9 @@ namespace Etesian {
   }
   
 
-  void  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
+  uint32_t  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
   {
+    uint32_t  status       = EtesianEngine::NoFlags;
     size_t    count        = 0;
     DbU::Unit averageChunk = getAverageChunk( count );
     if (averageChunk > latchUpMax) {
@@ -852,13 +858,13 @@ namespace Etesian {
                    , getString(DbU::getValueString(getYBottom())).c_str()
                    , getString((*_beginTile).getOccurrence()).c_str()
                    ) << endl;
-      return;
+      return EtesianEngine::FailedPolarizationTies;
     }
     
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
       cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
-      return;
+      return EtesianEngine::NoFlags;
     }
     DbU::Unit  feedWidth = feed->getAbutmentBox().getWidth();
 
@@ -970,6 +976,7 @@ namespace Etesian {
         tileLength   += (*iTile).getWidth();
 
         if (iTile == _beginTile) {
+          status |= EtesianEngine::FailedPolarizationTies;
           cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties.\n"
                          "        @Y=%s, begin=%s"
                        , getString(DbU::getValueString(getYBottom())).c_str()
@@ -980,7 +987,9 @@ namespace Etesian {
         --iTile;
       } 
     }
+
     cdebug_tabw(121,-2);
+    return status;
   }
 
   
@@ -1094,13 +1103,20 @@ namespace Etesian {
 
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
-    _area->insertTies();
+    _status |= _area->insertTies();
     _area->addFeeds();
 
     UpdateSession::close();
   //DebugSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
+
+    if (_status & FailedPolarizationTies) {
+      throw Error( "EtesianEngine::toHurricane(): Not enough space to insert all the polarization ties.\n"
+                   "        You should increase free space on %s."
+                 , getString(getCell()).c_str()
+                 );
+    }
 
     Breakpoint::stop( 101, "EtesianEngine::toHurricane() finished." );
   }

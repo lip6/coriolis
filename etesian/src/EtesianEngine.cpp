@@ -295,6 +295,7 @@ namespace Etesian {
 
   EtesianEngine::EtesianEngine ( Cell* cell )
     : Super         (cell)
+    , _status       (NoFlags)
     , _configuration(new Configuration())
     , _block        (NULL)
     , _ySpinSet     (false)

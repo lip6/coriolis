@@ -222,7 +222,7 @@ namespace Etesian {
                    size_t                     getUsedVTracks  ( const Tile& , std::set<DbU::Unit>& vtracks );
                    DbU::Unit                  getAverageChunk ( size_t& ) const;
                    void                       trackAvoid      ( DbU::Unit xTrack );
-                   void                       insertTies      ( DbU::Unit latchUpMax, size_t yspin );
+                   uint32_t                   insertTies      ( DbU::Unit latchUpMax, size_t yspin );
     private:
       Slice*                    _slice;
       std::list<Tile>::iterator _beginTile;
@@ -261,7 +261,7 @@ namespace Etesian {
              void             buildSubSlices   ();
              void             showSubSlices    ();
              void             trackAvoid       ( DbU::Unit xTrack );
-             void             insertTies       ( DbU::Unit latchUpMax, size_t yspin );
+             uint32_t         insertTies       ( DbU::Unit latchUpMax, size_t yspin );
              Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint, size_t yspin );
       inline std::string      _getString       () const;
              Record*          _getRecord       () const;
@@ -302,7 +302,7 @@ namespace Etesian {
              void           buildSubSlices   ();
              void           showSubSlices    ();
              void           trackAvoid       ( const Box& trackAvoid );
-             void           insertTies       ();
+             uint32_t       insertTies       ();
              Instance*      createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
       inline std::string    _getString       () const;
              Record*        _getRecord       () const;
