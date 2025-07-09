@@ -214,7 +214,7 @@ class GaugeConf ( object ):
         Look through the routing layer gauges to assing the layers used for
         I/O pins for blocks in east/west and north/south direction.
         """
-        upperEastWestPins = Cfg.getParamString('block.upperEastWestPins').asBool()
+        upperEastWestPins = Cfg.getParamBool('block.upperEastWestPins').asBool()
         eastWestCount     = 2 if upperEastWestPins else 1
         self._eastWestPinsIndex   = None
         self._northSouthPinsIndex = None
@@ -266,7 +266,7 @@ class GaugeConf ( object ):
         Compute the size of the core from a side (in DbU) and an aspect ratio.
         The size are adjusted so they fit an exact number of GCells.
         """
-        gcellAR    = Cfg.getParamString('anabatic.gcellAspectRatio').asDouble()
+        gcellAR    = Cfg.getParamDouble('anabatic.gcellAspectRatio').asDouble()
         gcellWidth = int( self.sliceHeight * gcellAR )
         if gcellWidth % self.sliceStep:
             gcellWidth += self.sliceStep - gcellWidth % self.sliceStep
