@@ -25,7 +25,7 @@ from   ...Hurricane       import DataBase, Breakpoint, DbU, Box, Transformation,
 from   ...CRL             import AllianceFramework, RoutingLayerGauge, Catalog, \
                                  Gds, Spice
 from   ...helpers         import trace, l, u, n
-from   ...helpers.io      import ErrorMessage, WarningMessage, catch
+from   ...helpers.io      import ErrorMessage, WarningMessage, catch, vprint
 from   ...helpers.overlay import CfgCache, CfgDefault, UpdateSession
 from   ..                 import getParameter
 from   ..rsave            import rsave
@@ -76,14 +76,16 @@ class GaugeConf ( object ):
     SourceExtend    = 0x0800
 
     def __init__ ( self ):
-        self._cellGauge      = None
-        self._ioPadGauge     = None
-        self._routingGauge   = None
-        self._topLayerDepth  = 0
-        self._plugToRp       = { }
-        self._rpToAccess     = { }
+        self._cellGauge           = None
+        self._ioPadGauge          = None
+        self._routingGauge        = None
+        self._topLayerDepth       = 0
+        self._plugToRp            = { }
+        self._rpToAccess          = { }
+        self._eastWestPinsIndex   = None
+        self._northSouthPinsIndex = None
         self._loadRoutingGauge()
-        self._routingBb       = Box()
+        self._routingBb           = Box()
         return
 
     @property
@@ -207,6 +209,45 @@ class GaugeConf ( object ):
             print( WarningMessage( 'IO pad gauge "{}" not found.'.format(ioPadGaugeName) ))
         trace( 550, '-' )
 
+    def _setIoPinsLayerIndexes ( self ):
+        """
+        Look through the routing layer gauges to assing the layers used for
+        I/O pins for blocks in east/west and north/south direction.
+        """
+        upperEastWestPins = Cfg.getParamString('block.upperEastWestPins').asBool()
+        eastWestCount     = 2 if upperEastWestPins else 1
+        self._eastWestPinsIndex   = None
+        self._northSouthPinsIndex = None
+        for depth in range(0,self.topLayerDepth+1):
+            layerGauge = self._routingGauge.getLayerGauge( depth )
+            if layerGauge.getType() in [ RoutingLayerGauge.PinOnly
+                                       , RoutingLayerGauge.Unusable
+                                       , RoutingLayerGauge.BottomPowerSupply ]:
+                continue
+            if     (self._eastWestPinsIndex is None) \
+               and layerGauge.getDirection() == RoutingLayerGauge.Horizontal:
+                eastWestCount -= 1
+                if not eastWestCount:
+                    self._eastWestPinsIndex = depth
+            if     (self._northSouthPinsIndex is None) \
+               and layerGauge.getDirection() == RoutingLayerGauge.Vertical:
+                self._northSouthPinsIndex = depth
+
+    def getIoPinTrack ( self, flags, index ):
+        if (flags & (IoPin.NORTH|IoPin.SOUTH)):
+            layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
+        else:
+            layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
+        return layerGauge.getOffset() + index * layerGauge.getPitch()
+
+    def getIoPinPitch ( self, flags ):
+        if (flags & (IoPin.NORTH|IoPin.SOUTH)):
+            layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
+        else:
+            layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
+        return layerGauge.getPitch()
+            
+
     def isHorizontal ( self, layer ):
         mask = layer.getMask()
         for lg in self._routingGauge.getLayerGauges():
@@ -219,6 +260,27 @@ class GaugeConf ( object ):
         return False
 
     def isVertical ( self, layer ): return not self.isHorizontal( layer )
+
+    def computeCoreSize ( self, side, blockAR=1.0 ):
+        """
+        Compute the size of the core from a side (in DbU) and an aspect ratio.
+        The size are adjusted so they fit an exact number of GCells.
+        """
+        gcellAR    = Cfg.getParamString('anabatic.gcellAspectRatio').asDouble()
+        gcellWidth = int( self.sliceHeight * gcellAR )
+        if gcellWidth % self.sliceStep:
+            gcellWidth += self.sliceStep - gcellWidth % self.sliceStep
+        width      = int( side - side % gcellWidth )
+        height     = side / blockAR
+        height     = int( height - height % self.sliceHeight)
+        vprint( 1, '  o  Computing core size from a side of {} and aspect ratio of {}.' \
+                   .format( DbU.getValueString(side), blockAR ))
+        vprint( 1, '     - Block is {} x {} ({} x {} GCells).' \
+                   .format( DbU.getValueString(width)          \
+                          , DbU.getValueString(height)         \
+                          , width / gcellWidth                 \
+                          , height / self.sliceHeight ))
+        return width, height
 
     def createContact ( self, net, x, y, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
@@ -1475,6 +1537,7 @@ class BlockConf ( GaugeConf ):
         self.trackAvoids   = []
         self.isBuilt       = False
         self.useHarness    = False
+        self.ioPinsInTracks = False
         self.ioPins        = []
         self.ioPinsCounts  = {}
         self.ioPinsArg     = ioPins
@@ -1496,6 +1559,11 @@ class BlockConf ( GaugeConf ):
         self.katana     = None
         self.tramontana = None
 
+    def _toIoPinSpec ( self, flags, stem, uindex, ustep, count ):
+        trackPos  = self.getIoPinTrack( flags, uindex )
+        trackStep = ustep * self.getIoPinPitch( flags )
+        return (flags, stem, trackPos, trackStep, count)
+
     def _postInit ( self ):
         trace( 550, ',+', '\tblock.configuration._postInit()\n' )
         self.cfg.apply()
@@ -1503,8 +1571,11 @@ class BlockConf ( GaugeConf ):
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
         self.feedsConf     = FeedsConf( self.framework, self.cfg )
         self.powersConf    = PowersConf( self.framework, self.cfg )
+        self._setIoPinsLayerIndexes()
         for ioPinSpec in self.ioPinsArg:
-            self.ioPins.append( IoPin( *ioPinSpec ) )
+            if self.ioPinsInTracks:
+                ioPinSpec = self._toIoPinSpec( *ioPinSpec )
+            self.ioPins.append( IoPin( *ioPinSpec ))
         for line in range(len(self.ioPadsArg)):
             bits = []
             if not isinstance(self.ioPadsArg[line][-1],str) \
