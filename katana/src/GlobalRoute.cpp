@@ -759,6 +759,20 @@ namespace Katana {
     //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;
     //   }
     // }
+
+    uint32_t maxFlatEdgeOverflow = getConfiguration()->getMaxFlatEdgeOverflow();
+    if (hoverflow + voverflow > maxFlatEdgeOverflow) {
+      throw Error( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u above maximum threshold %u.\n"
+                   "        On %s."
+                 , (hoverflow + voverflow)
+                 , maxFlatEdgeOverflow
+                 , getString(getCell()).c_str()
+                 );
+    } else {
+      if (hoverflow + voverflow > 0)
+        cerr << Warning( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u below maximum threshold %u, continuing."
+                       , (hoverflow + voverflow), maxFlatEdgeOverflow ) << endl;
+    }
   }
 
 
