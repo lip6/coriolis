@@ -69,6 +69,25 @@ namespace {
   }
 
 
+  bool  closelyAlignedRp ( RoutingPad* rp1, RoutingPad* rp2 )
+  {
+    if (rp1->getLayer() != rp2->getLayer()) return false;
+
+    size_t rpDepth = Session::getLayerDepth( rp1->getLayer() );
+    if (rpDepth > 0) return false;
+
+    Box bb1 = rp1->getBoundingBox();
+    Box bb2 = rp2->getBoundingBox();
+    if (bb1.getXMin() > bb2.getXMin()) std::swap( bb1, bb2 );
+
+    cdebug_log(145,0) << "bb1=" << bb1 << endl;
+    cdebug_log(145,0) << "bb2=" << bb2 << endl;
+    if (bb2.getXMin() - bb1.getXMax() > 2*Session::getDVerticalPitch()) return false;
+    if (not bb2.getVerticalSide().intersect(bb1.getVerticalSide())) return false;
+    return true;
+  }
+
+
 }  // Anoymous namespace.
 
 
@@ -1426,20 +1445,35 @@ namespace Anabatic {
       } 
     }
 
-    AutoContact* rpContact    = nullptr;
-    AutoContact* hteeContact1 = nullptr;
-    AutoContact* hteeContact2 = nullptr;
+    AutoContact* rpContact      = nullptr;
+    AutoContact* hteeContact1   = nullptr;
+    AutoContact* hteeContact2   = nullptr;
+    bool         closeTerminals = false;
     for ( size_t i=0 ; i<getRoutingPads().size(); ++i ) {
-      rpContact = doRp_Access( getGCell(), getRoutingPads()[i], NoFlags );
+      if ((i+1 < getRoutingPads().size()) and not ((i == 0) and west())) {
+        closeTerminals = closelyAlignedRp( getRoutingPads()[i], getRoutingPads()[i+1] );
+      }
+      cdebug_log(145,0) << "closeTerminals=" << closeTerminals << endl;
+
+      rpContact = doRp_Access( getGCell(), getRoutingPads()[i], HAccess );
       if (i == 0) {
-        if (west()) {
-          hteeContact1 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
-          setWestContact( hteeContact1 );
-        } else {
+        if (closeTerminals) hteeContact1 = rpContact;
+        else {
           hteeContact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          AutoSegment::create( rpContact, hteeContact1, Flags::Horizontal );
+          rpContact = hteeContact1;
+          if (west()) {
+            hteeContact1 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
+            setWestContact( hteeContact1 );
+          } else {
+            hteeContact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+          }
+          AutoSegment::create( rpContact, hteeContact1, Flags::Vertical );
         }
-        AutoSegment::create( rpContact, hteeContact1, Flags::Vertical );
       } else {
+        hteeContact2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( rpContact, hteeContact2, Flags::Horizontal );
+        rpContact = hteeContact2;
         if (northSouthRight or east() or (i < getRoutingPads().size()-1))
           hteeContact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
         else
@@ -2222,8 +2256,10 @@ namespace Anabatic {
         cdebug_tabw(145,-1);
         return false;
       }
-    } else
+    } else {
       setFromHook( NULL );
+      cdebug_log(145,0) << "No source contact, should be the first built GCell" << endl;
+    }
     
     push( east (), getEastContact() );
     push( west (), getWestContact() );
