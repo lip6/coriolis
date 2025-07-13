@@ -77,6 +77,7 @@ namespace Katana {
       inline        uint32_t                   getRipupCost            () const;
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
       inline        uint32_t                   getSearchHalo           () const;
+      inline        uint32_t                   getMaxFlatEdgeOverflow  () const;
       inline        uint32_t                   getBloatOverloadAdd     () const;
       inline        uint32_t                   getLongWireUpThreshold1 () const;
       inline        double                     getLongWireUpReserve1   () const;
@@ -109,6 +110,7 @@ namespace Katana {
              PostEventCb_t  _postEventCb;
              std::string    _bloat;
              uint32_t       _searchHalo;
+             uint32_t       _maxFlatEdgeOverflow;
              uint32_t       _longWireUpThreshold1;
              double         _longWireUpReserve1;
              uint32_t       _hTracksReservedLocal;
@@ -139,6 +141,7 @@ namespace Katana {
   inline       std::string                   Configuration::getBloat                () const { return _bloat; }
   inline       uint64_t                      Configuration::getEventsLimit          () const { return _eventsLimit; }
   inline       uint32_t                      Configuration::getSearchHalo           () const { return _searchHalo; }
+  inline       uint32_t                      Configuration::getMaxFlatEdgeOverflow  () const { return _maxFlatEdgeOverflow; }
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
   inline       uint32_t                      Configuration::getBloatOverloadAdd     () const { return _bloatOverloadAdd; }
   inline       uint32_t                      Configuration::getLongWireUpThreshold1 () const { return _longWireUpThreshold1; }
