@@ -766,7 +766,7 @@ namespace Anabatic {
     if ( (_flags & SegCreated) or (oldSpinFlags != (_flags & SegDepthSpin)) )
       observerFlags |= RevalidatePPitch;
 
-    if (_flags & SegCreated) updateNativeConstraints();
+    if ((_flags & SegCreated) and not (_flags & SegToMinimize)) updateNativeConstraints();
 
     unsetFlags( SegInvalidated
               | SegInvalidatedSource

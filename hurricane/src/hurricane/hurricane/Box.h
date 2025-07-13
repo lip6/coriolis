@@ -19,6 +19,7 @@
 
 #pragma  once
 #include "hurricane/Point.h"
+#include "hurricane/Interval.h"
 
 namespace Hurricane {
 
@@ -77,6 +78,8 @@ class Box {
     public: DbU::Unit getHalfWidth() const {return (getWidth() / 2);};
     public: DbU::Unit getHeight() const {return (_yMax - _yMin);};
     public: DbU::Unit getHalfHeight() const {return (getHeight() / 2);};
+    public: Interval getVerticalSide() const { return Interval(_yMin,_yMax); }
+    public: Interval getHorizontalSide() const { return Interval(_xMin,_xMax); }
 
     public: Box getUnion(const Box& box) const;
 

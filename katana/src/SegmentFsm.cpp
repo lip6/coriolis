@@ -1270,6 +1270,7 @@ namespace Katana {
       success = manipulator.avoidBlockage();
     }
 
+    Flags slackenFlags = Flags::NoFlags;
     if (not success) {
       switch ( data->getState() ) {
         case DataNegociate::RipupPerpandiculars:
@@ -1277,6 +1278,7 @@ namespace Katana {
           success = manipulator.ripupPerpandiculars();
           if (success) break;
         case DataNegociate::Minimize:
+          slackenFlags |= Flags::ToMinimize;
           if (data->getStateCount() >= 2) {
             nextState = DataNegociate::Slacken;
           }
@@ -1284,7 +1286,7 @@ namespace Katana {
           if (success) break;
         case DataNegociate::Dogleg:
         case DataNegociate::Slacken:
-          if ((success = manipulator.slacken(Flags::HalfSlacken))) {
+          if ((success = manipulator.slacken(slackenFlags|Flags::HalfSlacken))) {
             nextState = DataNegociate::LocalVsGlobal;
             break;
           }

@@ -409,6 +409,7 @@ namespace Anabatic {
     bool         targetSlackened = false;
     bool         halfSlackened   = false;
     DbU::Unit    targetPosition  = getTargetPosition();
+    DbU::Unit    sourcePosition  = getSourcePosition();
     AutoSegment* parallel        = this;
 
     if (slackenSource) {
@@ -448,6 +449,14 @@ namespace Anabatic {
           cdebug_log(149,0) << "Limited slack around source terminal " << slackenedConstraints << endl;
           doglegs[doglegs.size()-2]->getAutoSource()->setConstraintBox( slackenedConstraints );
           doglegs[doglegs.size()-2]->getAutoSource()->setFlags( CntUserNativeConstraints );
+
+          if (flags & Flags::ToMinimize) {
+            Interval minimizeConstraints ( sourcePosition );
+            minimizeConstraints.inflate( 2*getPitch() );
+            doglegs[doglegs.size()-2]->setFlags( SegToMinimize );
+            doglegs[doglegs.size()-2]->mergeUserConstraints( minimizeConstraints );
+            cdebug_log(149,0) << "For minimize, restrict " << minimizeConstraints << endl;
+          }
         }
 
         parallel = doglegs[ doglegs.size()-1 ];
@@ -500,6 +509,14 @@ namespace Anabatic {
           cdebug_log(149,0) << "Limited slack around target terminal " << slackenedConstraints << endl;
           doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( slackenedConstraints );
           doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntUserNativeConstraints );
+
+          if (flags & Flags::ToMinimize) {
+            Interval minimizeConstraints ( targetPosition );
+            minimizeConstraints.inflate( 2*getPitch() );
+            doglegs[doglegs.size()-2]->setFlags( SegToMinimize );
+            doglegs[doglegs.size()-2]->mergeUserConstraints( minimizeConstraints );
+            cdebug_log(149,0) << "For minimize, restrict " << minimizeConstraints << endl;
+          }
         }
       }
     }
