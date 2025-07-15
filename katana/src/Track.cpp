@@ -127,7 +127,7 @@ namespace {
     DbU::Unit     segTargetU = element->getTargetU()-_halfSpacing;
 
     if (_spans.empty()) {
-      cdebug_log(159,0) << "GapSet::merge() new range ["
+      cdebug_log(159,0) << "GapSet::merge() empty set -> new range ["
                         << DbU::getValueString(segSourceU) << " "
                         << DbU::getValueString(segTargetU) << "] "
                         << i
@@ -154,7 +154,7 @@ namespace {
     }
     if (ispan == _spans.size()) {
       _spans.push_back( make_pair(i,i) );
-      cdebug_log(159,0) << "GapSet::merge() new range" << endl;
+      cdebug_log(159,0) << "GapSet::merge() gap -> new range" << endl;
       return;
     }
     while ( ispan+1 < _spans.size() ) {
@@ -1089,7 +1089,7 @@ namespace Katana {
   {
     if (getLayerGauge()->getType() != Constant::LayerGaugeType::Default) return 0;
 
-  //if ((getIndex() == 849) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 428) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
@@ -1174,7 +1174,7 @@ namespace Katana {
                 AutoSegment*  first   = element->base();
                 
                 cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
-	            if (first == NULL) {
+	            if (not first) {
 		          cerr << Bug("Track::repair(): Base of first element is NULL, *unable* to correct gap.\n"
                               "      On %s."
                              , getString(element).c_str()
@@ -1196,9 +1196,42 @@ namespace Katana {
                                     << " " << first << endl;
                   first->setFlags( AutoSegment::SegGapFiller );
                   element->invalidate();
-	            }
+	            } else {
+                  TrackElement* element = _segments[gapsetCurr.span(j).second];
+                  AutoSegment*  last    = element->base();
+                  if (not last) {
+                    cerr << Bug("Track::repair(): Base of last element is NULL, *unable* to correct gap.\n"
+                               "      On %s."
+                               , getString(element).c_str()
+                               ) << endl;
+                  } else if (not last->isNonPref()) {
+                    for ( AutoSegment* segment : last->getAligneds() ) {
+                      cdebug_log(159,0) << "| aligned: " << segment << endl;
+                      if (segment->getTargetPosition() > last->getTargetPosition())
+                        last = segment;
+                    }
+                    cdebug_log(159,0) << "stretching target of " << last << endl;
+                    DbU::Unit sourceAxis = 0;
+                    DbU::Unit targetAxis = 0;
+                    last->getEndAxes( sourceAxis, targetAxis );
+                    DbU::Unit duTarget = gapsetCurr.sourceU(j+1) - targetAxis;
+                    cdebug_log(159,0) << "old duTarget:" << DbU::getValueString(last->getDuTarget()) << endl;
+                    cdebug_log(159,0) << "new duTarget:" << DbU::getValueString(duTarget) << endl;
+                    last->setDuTarget( duTarget );
+                    cdebug_log(159,0) << "duTarget (fill gap):" << DbU::getValueString(first->getDuTarget())
+                                      << " " << last << endl;
+                    first->setFlags( AutoSegment::SegGapFiller );
+                    element->invalidate();
+                  } else {
+                    cerr << Warning( "Track::repair(): Unable to close same net gap in %s near (first is non-pref):\n"
+                                     "          %s"
+                                   , getString(this).c_str()
+                                   , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
+                  }
+                }
                 ++gaps;
-                cerr << Warning( "Track::repair(): Closing same net gap in %s near:\n          %s"
+                cerr << Warning( "Track::repair(): Closing same net gap in %s near:\n"
+                                 "          %s"
                                , getString(this).c_str()
                                , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
                 cdebug_log(159,0) << first << endl;
@@ -1229,7 +1262,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 849) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 428) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
