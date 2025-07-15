@@ -1313,24 +1313,56 @@ namespace Katana {
   {
     if (_segments.empty()) return 0;
 
-    uint32_t  nonMinArea    = 0;
-    DbU::Unit techMinLength = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
+  //if ((getIndex() == 185) and isHorizontal()) DebugSession::open( 150, 160 );
+    cdebug_log(159,0) << "Track::checkMinArea() " << this << endl;
+
+    DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
+    Interval  span;
+    bool      discard        = false;
+    uint32_t  nonMinArea     = 0;
+    DbU::Unit techMinLength  = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
     for ( size_t j=0 ; j<_segments.size() ; ++j ) {
+      cdebug_log(159,0) << "| [" << j << "] " << _segments[j] << endl;
       if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
-        ++j;
+        cdebug_log(159,0) << "  Discarded" << endl;
+        discard = true;
         continue;
       }
-      if ((j   > 0)                and (_segments[j-1]->getNet() == _segments[j]->getNet())) continue;
-      if ((j+1 < _segments.size()) and (_segments[j+1]->getNet() == _segments[j]->getNet())) continue;
-      if (not _segments[j]->base()->isNearMinArea()) continue;
-      if (_segments[j]->base()->getSpanLength() < techMinLength) {
+      if ((j == 0) or ((j > 0) and (_segments[j-1]->getNet() == _segments[j]->getNet()))) {
+        Interval segSpan;
+        _segments[j]->getCanonical( segSpan );
+        span.merge( segSpan );
+        discard = false;
+        cdebug_log(159,0) << "  Merge with current span " << span << endl;
+        continue;
+      }
+
+      span.inflate( -halfMinSpacing );
+      if (not discard and (span.getSize() < techMinLength)) {
         cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
-                     , getString(_segments[j]).c_str()
-                     , DbU::getValueString(_segments[j]->base()->getSpanLength()).c_str()
+                     , getString(_segments[j-1]).c_str()
+                     , DbU::getValueString(span.getSize()).c_str()
                      , DbU::getValueString(techMinLength).c_str() ) << endl;
         ++nonMinArea;
       }
+
+      Interval segSpan;
+      _segments[j]->getCanonical( segSpan );
+      span.merge( segSpan );
+      discard = false;
+      cdebug_log(159,0) << "  Reset span " << span << endl;
     }
+
+    if (not discard and not span.isEmpty() and (span.getSize() < techMinLength)) {
+      cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
+                   , getString(_segments[_segments.size()-1]).c_str()
+                   , DbU::getValueString(span.getSize()).c_str()
+                   , DbU::getValueString(techMinLength).c_str() ) << endl;
+      ++nonMinArea;
+    }
+
+    cdebug_log(159,0) << "  Track done." << endl;
+  //if ((getIndex() == 185) and isHorizontal()) DebugSession::close();
     return nonMinArea;
   }
 
