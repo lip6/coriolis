@@ -414,6 +414,7 @@ namespace Anabatic {
       static bool                          _shortNetMode;
       static bool                          _initialized;
       static vector< array<DbU::Unit*,7> > _extensionCaps;
+      static vector< bool >                _canReduceUp;
     // Internal: Attributes.      
       const  unsigned long                 _id;
              GCell*                        _gcell;
@@ -509,6 +510,7 @@ namespace Anabatic {
       static inline size_t        getAllocateds              ();
       static inline size_t        getMovedUp                 ();
       static inline unsigned long getMaxId                   ();
+      static inline bool          canReduceUp                ( size_t depth );
   };
 
 
@@ -607,6 +609,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isShortNet             () const { return _flags & SegShortNet; }
   inline  bool            AutoSegment::isNoMoveUp             () const { return _flags & SegNoMoveUp; }
   inline  bool            AutoSegment::isBelowPitch           () const { return _flags & SegIsBelowPitch; }
+  inline  bool            AutoSegment::canReduceUp            ( size_t depth ) { return (depth < _canReduceUp.size()) ? _canReduceUp[depth] : false; }
   inline  bool            AutoSegment::hasBecomeBelowPitch    () const { return _flags & SegBecomeBelowPitch; }
   inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }

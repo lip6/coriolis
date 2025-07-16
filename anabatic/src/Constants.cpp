@@ -226,6 +226,7 @@ namespace Anabatic {
     s += (_flags & (uint64_t)AboveLayer   ) ? 'A' : '-';
     s += (_flags & (uint64_t)BelowLayer   ) ? 'B' : '-';
     s += (_flags & (uint64_t)IncBreakLevel) ? 'I' : '-';
+    s += (_flags & (uint64_t)UseNonPref   ) ? 'p' : '-';
 
     return s;
   }

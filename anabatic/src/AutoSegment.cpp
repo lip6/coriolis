@@ -455,6 +455,7 @@ namespace Anabatic {
   bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
   vector< array<DbU::Unit*,7> >  AutoSegment::_extensionCaps;
+  vector< bool >                 AutoSegment::_canReduceUp;
 
 
   void  AutoSegment::setAnalogMode   ( bool state ) { _analogMode = state; }
@@ -530,6 +531,12 @@ namespace Anabatic {
                                                            , viaToSameCap
                                                            , viaToSameCapNp
                                                            , minimalLength }} ) );
+
+      if (depth > 0) {
+        _canReduceUp.push_back(  Session::getLayerGauge(depth-1)->getPitch()
+                              >= Session::getLayerGauge(depth  )->getPitch() );
+      } else
+        _canReduceUp.push_back( true );
     }
   }
 
@@ -2132,6 +2139,11 @@ namespace Anabatic {
   {
     cdebug_log(159,0) << "AutoSegment::canReduce():" << this << endl;
     cdebug_log(159,0) << "  _reduceds:" << _reduceds << endl;
+
+    if (isSpinTop() and not canReduceUp(getDepth())) {
+      cdebug_log(159,0) << "  Cannot reduce up (increasing pitch)" << endl;
+      return false;
+    }
 
     DbU::Unit length = getAnchoredLength();
     if (length > getPPitch()) {
