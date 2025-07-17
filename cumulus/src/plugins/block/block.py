@@ -197,11 +197,12 @@ class Side ( object ):
                 self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         else:
+            pinDepth = self.conf.horizontalDeepDepth
             if self.conf.cfg.block.upperEastWestPins:
-                gauge =self.conf._routingGauge.getLayerGauge( self.conf.horizontalDeepDepth+2 )
-            else:
-                gauge = self.conf.hDeepRG
-            upos  = ioPin.upos
+                pinDepth += 2
+            gauge  = self.conf.routingGauge.getLayerGauge( pinDepth )
+            ppitch = self.conf.routingGauge.getLayerPitch( pinDepth )
+            upos   = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)
                 net      = self.conf.cell.getNet( pinName )
@@ -226,7 +227,7 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth() * 2
+                                , ppitch * 2
                                 , gauge.getWireWidth()
                                 )
                 NetExternalComponents.setExternal( pin )
