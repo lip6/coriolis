@@ -657,6 +657,12 @@ namespace Etesian {
   {
     DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
     if (latchUpMax == 0) return EtesianEngine::NoFlags;
+
+    if (not getEtesian()->getFeedCells().getTie()) {
+      cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
+      return EtesianEngine::NoFlags;
+    }
+
     uint32_t status = EtesianEngine::NoFlags;
     for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
       status |= _slices[islice]->insertTies( latchUpMax, islice );
@@ -752,7 +758,7 @@ namespace Etesian {
     count = 0;
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
-      cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
+    //cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
       return -1;
     }
     DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
