@@ -266,7 +266,7 @@ class GaugeConf ( object ):
         Compute the size of the core from a side (in DbU) and an aspect ratio.
         The size are adjusted so they fit an exact number of GCells.
         """
-        gcellAR    = Cfg.getParamDouble('anabatic.gcellAspectRatio').asDouble()
+        gcellAR    = Cfg.getParamDouble('anabatic.gcellAspectRatio',1.0).asDouble()
         gcellWidth = int( self.sliceHeight * gcellAR )
         if gcellWidth % self.sliceStep:
             gcellWidth += self.sliceStep - gcellWidth % self.sliceStep
