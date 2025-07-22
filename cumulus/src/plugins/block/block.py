@@ -248,10 +248,18 @@ class Side ( object ):
                 for lg in rg.getLayerGauges():
                     if lg.getLayer().getMask() == pin.getLayer().getMask():
                         offset = lg.getPitch()
-                        if   self.side & IoPin.WEST:  pin.setX( pin.getDx()-offset )
-                        elif self.side & IoPin.EAST:  pin.setX( pin.getDx()+offset )
-                        elif self.side & IoPin.SOUTH: pin.setY( pin.getDy()-offset )
-                        elif self.side & IoPin.NORTH: pin.setY( pin.getDy()+offset )
+                        if   self.side & IoPin.WEST:
+                            pin.setX    ( pin.getDx()-offset )
+                            pin.setWidth( pin.getWidth() + offset*2 )
+                        elif self.side & IoPin.EAST:
+                            pin.setX    ( pin.getDx()+offset )
+                            pin.setWidth( pin.getWidth() + offset*2 )
+                        elif self.side & IoPin.SOUTH:
+                            pin.setY     ( pin.getDy()-offset )
+                            pin.setHeight( pin.getHeight() + offset*2 )
+                        elif self.side & IoPin.NORTH:
+                            pin.setY     ( pin.getDy()+offset )
+                            pin.setHeight( pin.getHeight() + offset*2 )
 
     def checkOverlaps ( self ):
         """
