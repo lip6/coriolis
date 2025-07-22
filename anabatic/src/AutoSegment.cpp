@@ -760,8 +760,10 @@ namespace Anabatic {
     cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
     if (not isGapFiller()) {
-      oldSpan.merge( _sourcePosition );
-      oldSpan.merge( _targetPosition );
+      for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
+        oldSpan.merge( segment->getSourcePosition() );
+        oldSpan.merge( segment->getTargetPosition() );
+      }
       if (_flags & SegCreated) oldSpan.makeEmpty();
       if (expandToMinLength(oldSpan)) updatePositions();
       if (_flags & SegAtMinArea) {
