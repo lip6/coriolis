@@ -20,10 +20,19 @@
 #include  <cstring>
 #include  <iomanip>
 
+#include  <boost/version.hpp>
 #include  <boost/program_options.hpp>
-#include  <boost/process.hpp>
 namespace boptions = boost::program_options;
+#if (BOOST_VERSION / 100000 > 1) || (((BOOST_VERSION / 100 ) % 1000) >= 88)
+#include <boost/process/v1/child.hpp>
+#include <boost/process/v1/io.hpp>
+#include <boost/process/v1/pipe.hpp>
+#include <boost/process/v1/system.hpp>
+namespace bprocess = boost::process::v1;
+#else
+#include  <boost/process.hpp>
 namespace bprocess = boost::process;
+#endif
 
 #include  "hurricane/utilities/Path.h"
 #include  "hurricane/configuration/Configuration.h"
