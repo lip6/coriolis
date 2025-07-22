@@ -43,6 +43,7 @@ BuildRequires:  graphviz-gd
 
 #opensuse_Tumbleweed
 %if 0%{?suse_version} > 1600 && 0%{?is_opensuse}
+BuildRequires:  python311-devel
 BuildRequires:  python311-watchfiles
 BuildRequires:  python311-pyproject-metadata
 BuildRequires:  libboost_system-devel
