@@ -890,6 +890,9 @@ namespace Anabatic {
     if (cmess1.enabled()) {
       const vector<RoutingLayerGauge*>& layerGauges
         = getAnabatic()->getConfiguration()->getRoutingGauge()->getLayerGauges();
+      cout << Dots::asDouble( "     - GCell aspect ratio", _anabatic->getConfiguration()->getGCellAspectRatio()) << endl;
+      cout << Dots::asString( "     - GCell width"       , DbU::getValueString(getMatrixHSide())) << endl;
+      cout << Dots::asString( "     - GCell height"      , DbU::getValueString(getMatrixVSide())) << endl;
       const Edge* edge = getEastEdge();
       if (edge and edge->getCapacities()) {
         cout << "     o  East capacities of south west GCell (Horizontal)." << endl;
