@@ -2,4 +2,5 @@
 addFilter("script-without-shebang .*tcl")
 addFilter("env-script-interpreter .*tcl")
 addFilter("files-duplicated-waste .*")
+addFilter("file-contains-current-date .*/doc/coriolis/.*")
 addFilter("executable-docs .*")

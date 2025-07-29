@@ -43,6 +43,8 @@ BuildRequires:  graphviz-gd
 
 #opensuse_Tumbleweed
 %if 0%{?suse_version} > 1600 && 0%{?is_opensuse}
+%global python3_sitearch /usr/lib64/python3.11/site-packages
+
 BuildRequires:  python311-devel
 BuildRequires:  python311-watchfiles
 BuildRequires:  python311-pyproject-metadata
