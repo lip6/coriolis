@@ -16,6 +16,8 @@ designflow = files([
   'flatph.py',
   'genpat.py',
   'graal.py',
+  'gtkwave.py',
+  'iverilog.py',
   'klayout.py',
   'loon.py',
   'lvx.py',
