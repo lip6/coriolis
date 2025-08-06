@@ -72,6 +72,7 @@ class Klayout ( FlowTask ):
         for variable, value in self.env.items():
             shellEnv[ variable ] = value
         shellEnv.export()
+        print( '   -> Run "{}"'.format( ' '.join(self.command) ))
         state = subprocess.run( self.command )
         if state.returncode:
             e = ErrorMessage( 1, 'Klayout.doTask(): UNIX command failed ({}).' \
