@@ -30,7 +30,7 @@ namespace Katana {
   using Hurricane::Layer;
   using CRL::RoutingLayerGauge;
 
-  class TrackMarker;
+  class TrackMarkerBase;
   class RoutingPlane;
   class KatanaEngine;
 
@@ -110,7 +110,7 @@ namespace Katana {
      inline   void               setLocalAssigned    ( bool );
               void               invalidate          ();
               void               insert              ( TrackElement* );
-              void               insert              ( TrackMarker* );
+              void               insert              ( TrackMarkerBase* );
       inline  void               updateInvalidBounds ( TrackElement* );
               void               setSegment          ( TrackElement*, size_t );
               size_t             doRemoval           ();
@@ -121,18 +121,18 @@ namespace Katana {
 
     protected:
     // Attributes.
-      RoutingPlane*               _routingPlane;
-      size_t                      _index;
-      DbU::Unit                   _axis;
-      DbU::Unit                   _min;
-      DbU::Unit                   _max;
-      std::vector<TrackElement*>  _segments;
-      std::vector<TrackMarker*>   _markers;
-      bool                        _localAssigned;
-      bool                        _segmentsValid;
-      bool                        _markersValid;
-      DbU::Unit                   _minInvalid;
-      DbU::Unit                   _maxInvalid;
+      RoutingPlane*                 _routingPlane;
+      size_t                        _index;
+      DbU::Unit                     _axis;
+      DbU::Unit                     _min;
+      DbU::Unit                     _max;
+      std::vector<TrackElement*>    _segments;
+      std::vector<TrackMarkerBase*> _markers;
+      bool                          _localAssigned;
+      bool                          _segmentsValid;
+      bool                          _markersValid;
+      DbU::Unit                     _minInvalid;
+      DbU::Unit                     _maxInvalid;
 
     protected:
     // Constructors & Destructors.

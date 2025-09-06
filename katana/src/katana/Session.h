@@ -50,7 +50,7 @@ namespace Katana {
 
   class Track;
   class TrackElement;
-  class TrackMarker;
+  class TrackMarkerBase;
   class NegociateWindow;
   class Configuration;
   class KatanaEngine;
@@ -78,7 +78,7 @@ namespace Katana {
              static void                setInterrupt         ( bool );
       inline static Interval&           toAxisInterval       ( Interval&, size_t depth );
       inline static void                addIndirectInvalid   ( TrackElement* );
-      inline static void                addInsertEvent       ( TrackMarker*  , Track* );
+      inline static void                addInsertEvent       ( TrackMarkerBase*  , Track* );
       inline static void                addInsertEvent       ( TrackElement* , Track*, DbU::Unit axis, bool check=true );
       inline static void                addRemoveEvent       ( TrackElement* );
       inline static void                addMoveEvent         ( TrackElement* , Track*, DbU::Unit axis );
@@ -106,7 +106,7 @@ namespace Katana {
       inline        const std::vector<TrackElement*>&
                                         _getIndirectInvalids ();
       inline        void                _addIndirectInvalid  ( TrackElement* );
-                    void                _addInsertEvent      ( TrackMarker*  , Track* );
+                    void                _addInsertEvent      ( TrackMarkerBase*  , Track* );
                     void                _addInsertEvent      ( TrackElement* , Track*, DbU::Unit axis, bool check );
                     void                _addRemoveEvent      ( TrackElement* );
                     void                _addMoveEvent        ( TrackElement* , Track*, DbU::Unit axis );
@@ -118,13 +118,13 @@ namespace Katana {
     // Internal Classes.
       class Event {
         public:
-          inline Event ( TrackElement*, Track*, DbU::Unit );
-          inline Event ( TrackMarker* , Track* );
+          inline Event ( TrackElement*    , Track*, DbU::Unit );
+          inline Event ( TrackMarkerBase* , Track* );
         public:
-          TrackElement* _segment;
-          TrackMarker*  _marker;
-          Track*        _track;
-          DbU::Unit     _axis;
+          TrackElement*    _segment;
+          TrackMarkerBase* _marker;
+          Track*           _track;
+          DbU::Unit        _axis;
       };
     protected:
     // Attributes.
@@ -153,7 +153,7 @@ namespace Katana {
     , _axis   (axis)
   { }
 
-  inline Session::Event::Event ( TrackMarker* marker , Track* track )
+  inline Session::Event::Event ( TrackMarkerBase* marker , Track* track )
     : _segment(NULL)
     , _marker (marker)
     , _track  (track)
@@ -188,8 +188,8 @@ namespace Katana {
   inline void  Session::addIndirectInvalid  ( TrackElement* element )
   { get("addIndirectInvalid(TrackElement*)")->_addIndirectInvalid(element); }
 
-  inline void  Session::addInsertEvent ( TrackMarker* marker, Track* track )
-  { get("addInsertEvent(TrackMarker*)")->_addInsertEvent(marker,track); }
+  inline void  Session::addInsertEvent ( TrackMarkerBase* marker, Track* track )
+  { get("addInsertEvent(TrackMarkerBase*)")->_addInsertEvent(marker,track); }
 
   inline void  Session::addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
   { get("addInsertEvent(TrackElement*)")->_addInsertEvent(segment,track,axis,check); }

@@ -50,19 +50,10 @@ namespace Katana {
   }
 
 
-  void  TrackMarker::destroy ()
-  {
-    if ( !--_refcount ) delete this;
-  }
-
-
   TrackMarker::TrackMarker ( RoutingPad* rp, size_t depth )
-    : _routingPad    (rp)
-    , _sourcePosition(0)
-    , _targetPosition(0)
-    , _track         (NULL)
+    : TrackMarkerBase()
+    , _routingPad    (rp)
     , _weight        (0)
-    , _refcount      (0)
   {
     DebugSession::open( rp->getNet(), 159, 160 );
     cdebug_log(159,1) << "TrackMarker::TrackMarker() depth=" << depth << " " << rp << endl;
@@ -77,13 +68,13 @@ namespace Katana {
       Point sourcePoint = rp->getSourcePosition();
       Point targetPoint = rp->getTargetPosition();
       if ( planeDirection == Constant::Horizontal ) {
-        _sourcePosition = sourcePoint.getX();
-        _targetPosition = targetPoint.getX();
-        trackSpan       = Interval ( sourcePoint.getY(), targetPoint.getY() );
+        setSourceU( sourcePoint.getX() );
+        setTargetU( targetPoint.getX() );
+        trackSpan = Interval( sourcePoint.getY(), targetPoint.getY() );
       } else {
-        _sourcePosition = sourcePoint.getY();
-        _targetPosition = targetPoint.getY();
-        trackSpan       = Interval ( sourcePoint.getX(), targetPoint.getX() );
+        setSourceU( sourcePoint.getY() );
+        setTargetU( targetPoint.getY() );
+        trackSpan = Interval( sourcePoint.getX(), targetPoint.getX() );
       }
     } else {
       Box bb = rp->getBoundingBox();
@@ -93,12 +84,12 @@ namespace Katana {
       DbU::Unit          viaEnclosure = rlg1->getHalfViaWidth()
                                       + viaLayer1->getBottomEnclosure( Layer::EnclosureV );
       if (planeDirection == Constant::Horizontal) {
-        _sourcePosition = bb.getXMin();
-        _targetPosition = bb.getXMax();
+        setSourceU( bb.getXMin() );
+        setTargetU( bb.getXMax() );
         trackSpan = Interval( bb.getYMin(), bb.getYMax() );
       } else {
-        _sourcePosition = bb.getYMin();
-        _targetPosition = bb.getYMax();
+        setSourceU( bb.getYMin() );
+        setTargetU( bb.getYMax() );
         trackSpan = Interval( bb.getXMin(), bb.getXMax() );
       }
       trackSpan.inflate( -viaEnclosure );
@@ -122,13 +113,13 @@ namespace Katana {
         cdebug_log(159,0) << "| weight=" << _weight << " " << track << endl;
         Session::addInsertEvent ( this, track );
         track = track->getNextTrack();
-        _refcount++;
+        incRefcount();
       }
     } else {
       cdebug_log(159,0) << "| offgrid weight=" << _weight << " " << track << endl;
       Session::addInsertEvent ( this, track );
       track = track->getNextTrack();
-      _refcount++;
+      incRefcount();
     }
 
     cdebug_tabw(159,-1);
@@ -140,32 +131,29 @@ namespace Katana {
   { return _routingPad->getNet(); }
 
 
+  uint32_t  TrackMarker::getWeight ( const Track* track ) const
+  { return _weight; }
+
+
   string  TrackMarker::_getTypeName () const
   { return "TrackMarker"; }
 
 
   string  TrackMarker::_getString () const
   {
-    ostringstream s;
-    s << "<"   << _getTypeName()
-      << " "   << getNet()->getName()
-      << " ["  << DbU::getValueString(_sourcePosition)
-      << ":"   << DbU::getValueString(_targetPosition)
-      << "] "   << setprecision(3) << ((double)_weight)/100.0
-      << ">";
-    return s.str();
+    ostringstream os;
+    os << " " << setprecision(3) << ((double)_weight)/100.0;
+    string s = Super::_getString();
+    s.insert( s.size()-1, os.str() );
+    return s;
   }
 
 
   Record* TrackMarker::_getRecord () const
   {
-    Record* record = new Record ( _getString() );
+    Record* record = Super::_getRecord();
     record->add ( getSlot ( "_routingPad"    ,  _routingPad     ) );
-    record->add ( getSlot ( "_sourcePosition",  _sourcePosition ) );
-    record->add ( getSlot ( "_targetPosition",  _targetPosition ) );
-    record->add ( getSlot ( "_track"         ,  _track          ) );
     record->add ( getSlot ( "_weight"        ,  _weight         ) );
-
     return record;
   }
 

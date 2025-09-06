@@ -423,8 +423,8 @@ namespace Katana {
 
   bool  Track::hasViaMarker ( Net* net, Interval span )
   {
-    vector<TrackMarker*>::const_iterator lowerBound
-      = lower_bound( _markers.begin(), _markers.end(), span.getVMin(), TrackMarker::Compare() );
+    vector<TrackMarkerBase*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), span.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
     for ( ;     (mbegin < _markers.size())
@@ -570,8 +570,8 @@ namespace Katana {
                       << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
 
-    vector<TrackMarker*>::const_iterator lowerBound
-      = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarker::Compare() );
+    vector<TrackMarkerBase*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
     for ( ;     (mbegin < _markers.size())
@@ -659,8 +659,8 @@ namespace Katana {
   //count  = 0;
   //weight = 0;
 
-    vector<TrackMarker*>::const_iterator lowerBound
-      = lower_bound ( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarker::Compare() );
+    vector<TrackMarkerBase*>::const_iterator lowerBound
+      = lower_bound ( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
     for ( ;    (mbegin < _markers.size())
@@ -778,7 +778,7 @@ namespace Katana {
   { _segmentsValid = false; }
 
 
-  void  Track::insert ( TrackMarker* marker )
+  void  Track::insert ( TrackMarkerBase* marker )
   {
     _markers.push_back ( marker );
     _markersValid = false;
@@ -1079,7 +1079,7 @@ namespace Katana {
     _maxInvalid = _routingPlane->getTrackMax();
 
     if (not _markersValid) {
-      std::sort( _markers.begin(), _markers.end(), TrackMarker::Compare() );
+      std::sort( _markers.begin(), _markers.end(), TrackMarkerBase::Compare() );
       _markersValid = true;
     }
   }

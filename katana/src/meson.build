@@ -32,6 +32,7 @@ katana = shared_library(
   'TrackBaseFixedSpan.cpp',
   'TrackFixedSpan.cpp',
   'TrackFixedSpanRp.cpp',
+  'TrackMarkerBase.cpp',
   'TrackMarker.cpp',
   'Track.cpp',
   'Tracks.cpp',
