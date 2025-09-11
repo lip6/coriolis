@@ -44,7 +44,7 @@ namespace Katana {
       static  TrackMarker* create       ( RoutingPad*, size_t depth );
     public:
       virtual Net*         getNet       () const;
-      virtual uint32_t     getWeight    ( const Track* ) const;
+              uint32_t     getWeight    ( const Track* ) const;
               Record*      _getRecord   () const;
               std::string  _getString   () const;
               std::string  _getTypeName () const;

@@ -45,8 +45,8 @@ namespace Katana {
 
   TrackMarker* TrackMarker::create ( RoutingPad* rp, size_t depth )
   {
-    TrackMarker* segment = new TrackMarker ( rp, depth );
-    return segment;
+    TrackMarker* marker = new TrackMarker ( rp, depth );
+    return marker;
   }
 
 

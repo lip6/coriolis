@@ -173,6 +173,7 @@ namespace Katana {
       inline  DbU::Unit               getSymmetricAxis       ( DbU::Unit ) const;
       inline  DbU::Unit               getSourceU             () const;
       inline  DbU::Unit               getTargetU             () const;
+      inline  DbU::Unit               getCenterU             () const;
       virtual DbU::Unit               getSourceAxis          () const = 0;
       virtual DbU::Unit               getTargetAxis          () const = 0;
       inline  DbU::Unit               getLength              () const;
@@ -271,7 +272,8 @@ namespace Katana {
   inline bool                    TrackElement::hasTargetDogleg      () const { return _flags & TElemTargetDogleg; }
   inline bool                    TrackElement::canRipple            () const { return _flags & TElemRipple; }
   inline Track*                  TrackElement::getTrack             () const { return _track; }
-  inline DbU::Unit               TrackElement::getLength            () const { return getTargetU() - getSourceU(); }
+  inline DbU::Unit               TrackElement::getLength            () const { return  getTargetU() - getSourceU(); }
+  inline DbU::Unit               TrackElement::getCenterU           () const { return (getTargetU() + getSourceU()) / 2; }
   inline DbU::Unit               TrackElement::getSourceU           () const { return _sourceU; }
   inline DbU::Unit               TrackElement::getTargetU           () const { return _targetU; }
   inline TrackElement*           TrackElement::getCanonical         ( Interval& i ) { i=Interval(getSourceU(),getTargetU()); return this; }

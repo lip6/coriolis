@@ -264,7 +264,8 @@ namespace Katana {
            or not event._segment->isReduced())
           event._track->insert( event._segment );
       }
-      if (event._marker) event._track->insert( event._marker );
+      if (event._marker)        event._track->insert( event._marker );
+      if (event._markerSpacing) event._track->insert( event._markerSpacing );
     }
     _insertEvents.clear();
     cdebug_log(159,-1) << "Insert events processeds" << endl;
@@ -412,7 +413,14 @@ namespace Katana {
   { return _getKatanaEngine()->getConfiguration()->disableStackedVias(); }
 
 
-  void  Session::_addInsertEvent ( TrackMarkerBase* marker, Track* track )
+  void  Session::_addInsertEvent ( TrackMarker* marker, Track* track )
+  {
+    _insertEvents.push_back( Event(marker,track) );
+    _addSortEvent( track, true );
+  }
+
+
+  void  Session::_addInsertEvent ( TrackMarkerSpacing* marker, Track* track )
   {
     _insertEvents.push_back( Event(marker,track) );
     _addSortEvent( track, true );

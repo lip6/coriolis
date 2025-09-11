@@ -296,7 +296,7 @@ namespace Katana {
       return Interval(false);
     }
 
-    return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
+    return _track->expandFreeInterval( getCenterU(), begin, end, Track::InsideElement, getNet() );
   }
 
 

@@ -277,7 +277,7 @@ namespace Katana {
 
     size_t  begin = _track->find( this );
     size_t  end   = begin;
-    return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
+    return _track->expandFreeInterval( getCenterU(), begin, end, Track::InsideElement, getNet() );
   }
 
 

@@ -27,6 +27,7 @@
 #include "katana/RoutingPlane.h"
 #include "katana/Track.h"
 #include "katana/TrackMarker.h"
+#include "katana/TrackMarkerSpacing.h"
 #include "katana/DataNegociate.h"
 #include "katana/KatanaEngine.h"
 #include "katana/TrackBaseFixedSpan.h"
@@ -279,18 +280,20 @@ namespace Katana {
 
 
   Track::Track ( RoutingPlane* routingPlane, unsigned int index )
-    : _routingPlane (routingPlane)
-    , _index        (index)
-    , _axis         (routingPlane->getTrackPosition(index))
-    , _min          (routingPlane->getTrackMin())
-    , _max          (routingPlane->getTrackMax())
-    , _segments     ()
-    , _markers      ()
-    , _localAssigned(false)
-    , _segmentsValid(false)
-    , _markersValid (false)
-    , _minInvalid   (routingPlane->getTrackMin())
-    , _maxInvalid   (routingPlane->getTrackMax())
+    : _routingPlane       (routingPlane)
+    , _index              (index)
+    , _axis               (routingPlane->getTrackPosition(index))
+    , _min                (routingPlane->getTrackMin())
+    , _max                (routingPlane->getTrackMax())
+    , _segments           ()
+    , _markers            ()
+    , _markersSpacing     ()
+    , _localAssigned      (false)
+    , _segmentsValid      (false)
+    , _markersValid       (false)
+    , _markersSpacingValid(false)
+    , _minInvalid         (routingPlane->getTrackMin())
+    , _maxInvalid         (routingPlane->getTrackMax())
   { }
 
 
@@ -423,7 +426,7 @@ namespace Katana {
 
   bool  Track::hasViaMarker ( Net* net, Interval span )
   {
-    vector<TrackMarkerBase*>::const_iterator lowerBound
+    vector<TrackMarker*>::const_iterator lowerBound
       = lower_bound( _markers.begin(), _markers.end(), span.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
@@ -570,10 +573,11 @@ namespace Katana {
                       << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
 
-    vector<TrackMarkerBase*>::const_iterator lowerBound
+    vector<TrackMarker*>::const_iterator lowerBound
       = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
+    cdebug_log(155,0) << "Markers mbegin=" << mbegin << endl;
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
       cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
@@ -586,11 +590,31 @@ namespace Katana {
       if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
-
+        
         if ( (_markers[mbegin]->getRefCount() == 1) and (interval.contains(_markers[mbegin]->getSpan())) ) {
           cdebug_log(155,0) << "  Total overlap of a one track terminal: infinite cost." << endl;
           cost.setInfinite();
         }
+      }
+    }
+
+    vector<TrackMarkerSpacing*>::const_iterator lowerBoundSpacing
+      = lower_bound( _markersSpacing.begin(), _markersSpacing.end(), interval.getVMin(), TrackMarkerBase::Compare() );
+    mbegin = lowerBoundSpacing - _markersSpacing.begin();
+    if (not _markersSpacing.empty()) {
+      if (mbegin > 0) {
+        if (_markersSpacing[mbegin-1]->getTargetU() > interval.getVMin()) --mbegin;
+      }
+    }
+
+    cdebug_log(155,0) << "MarkersSpacing mbegin=" << mbegin << " size=" << _markersSpacing.size() << endl;
+    for ( ;     (mbegin < _markersSpacing.size())
+            and (_markersSpacing[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
+      cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << " " << _markersSpacing[mbegin] << endl;
+      if (not _markersSpacing[mbegin]->isValidSpacing(interval,getAxis())) {
+        cost.setInfinite();
+        cdebug_tabw(155,-1);
+        return cost;
       }
     }
 
@@ -659,8 +683,8 @@ namespace Katana {
   //count  = 0;
   //weight = 0;
 
-    vector<TrackMarkerBase*>::const_iterator lowerBound
-      = lower_bound ( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
+    vector<TrackMarker*>::const_iterator lowerBound
+      = lower_bound( _markers.begin(), _markers.end(), interval.getVMin(), TrackMarkerBase::Compare() );
     size_t mbegin = lowerBound - _markers.begin();
 
     for ( ;    (mbegin < _markers.size())
@@ -718,11 +742,11 @@ namespace Katana {
     }
 
     end = begin;
-    return expandFreeInterval( begin, end, state, net );
+    return expandFreeInterval( position, begin, end, state, net );
   }
 
 
-  Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, uint32_t state, Net* net ) const
+  Interval  Track::expandFreeInterval ( DbU::Unit position, size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
     cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end
                       << " state:" << state << " " << net << endl;
@@ -770,7 +794,58 @@ namespace Katana {
 
     cdebug_tabw(155,-1);
 
-    return Interval( minFree, getMaximalPosition(end,state) );
+    Interval freeInterval ( minFree, getMaximalPosition(end,state) );
+    if (_markersSpacing.empty()) return freeInterval;
+
+    bool insideLeft = false;
+    vector<TrackMarkerSpacing*>::const_iterator spacingBefore = _markersSpacing.end();
+    vector<TrackMarkerSpacing*>::const_iterator spacingAfter
+      = lower_bound( _markersSpacing.begin(), _markersSpacing.end(), position, TrackMarkerBase::Compare() );
+
+    if (spacingAfter != _markersSpacing.begin()) {
+      spacingBefore = spacingAfter;
+      spacingBefore--;
+      if ((*spacingBefore)->getTargetU() < freeInterval.getVMin())
+        spacingBefore = _markersSpacing.end();
+    }
+
+    if (spacingBefore != _markersSpacing.end()) {
+      cdebug_log(155,0) << "spacingBefore=" << *spacingBefore << endl;
+    } else {
+      cdebug_log(155,0) << "spacingBefore=end()" << endl;
+    }
+    if (spacingAfter != _markersSpacing.end()) {
+      cdebug_log(155,0) << "spacingAfter=" << *spacingAfter << endl;
+    } else {
+      cdebug_log(155,0) << "spacingAfter=end()" << endl;
+    }
+
+    if (spacingBefore != _markersSpacing.end()) {
+      DbU::Unit parallelLength = (*spacingBefore)->getMaxParallelLength( getAxis() );
+      if (parallelLength > 0) {
+        if (position + parallelLength < (*spacingBefore)->getTargetU()) {
+          freeInterval.intersection( position - parallelLength/2
+                                   , position + parallelLength/2);
+          insideLeft = true;
+        } else
+          freeInterval.intersection( (*spacingBefore)->getTargetU() - parallelLength
+                                   , freeInterval.getVMax() );
+      }
+    }
+
+    if (not insideLeft and (spacingAfter != _markersSpacing.end())) {
+      DbU::Unit parallelLength = (*spacingAfter)->getMaxParallelLength( getAxis() );
+      if (parallelLength > 0) {
+        if (position - parallelLength < (*spacingAfter)->getSourceU()) {
+          freeInterval.intersection( position - parallelLength/2
+                                   , position + parallelLength/2);
+        } else
+          freeInterval.intersection( freeInterval.getVMin()
+                                   , (*spacingAfter)->getSourceU() + parallelLength );
+      }
+    }
+
+    return freeInterval;
   }
 
 
@@ -778,10 +853,17 @@ namespace Katana {
   { _segmentsValid = false; }
 
 
-  void  Track::insert ( TrackMarkerBase* marker )
+  void  Track::insert ( TrackMarker* marker )
   {
-    _markers.push_back ( marker );
+    _markers.push_back( marker );
     _markersValid = false;
+  }
+
+
+  void  Track::insert ( TrackMarkerSpacing* marker )
+  {
+    _markersSpacing.push_back( marker );
+    _markersSpacingValid = false;
   }
 
 
@@ -1081,6 +1163,11 @@ namespace Katana {
     if (not _markersValid) {
       std::sort( _markers.begin(), _markers.end(), TrackMarkerBase::Compare() );
       _markersValid = true;
+    }
+    if (not _markersSpacingValid) {
+      for ( size_t i=0 ; i<_markersSpacing.size() ; ++i )
+      std::sort( _markersSpacing.begin(), _markersSpacing.end(), TrackMarkerBase::Compare() );
+      _markersSpacingValid = true;
     }
   }
 
@@ -1469,11 +1556,12 @@ namespace Katana {
   Record* Track::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot           ( "_routingPlane",  _routingPlane ) );
-    record->add ( getSlot           ( "_index"       , &_index        ) );
-    record->add ( DbU::getValueSlot ( "_axis"        , &_axis         ) );
-    record->add ( getSlot           ( "_markers"     , &_markers      ) );
-    record->add ( getSlot           ( "_segments"    , &_segments     ) );
+    record->add( getSlot          ( "_routingPlane"  ,  _routingPlane   ));
+    record->add( getSlot          ( "_index"         , &_index          ));
+    record->add( DbU::getValueSlot( "_axis"          , &_axis           ));
+    record->add( getSlot          ( "_markers"       , &_markers        ));
+    record->add( getSlot          ( "_markersSpacing", &_markersSpacing ));
+    record->add( getSlot          ( "_segments"      , &_segments       ));
                                      
     return record;
   }
