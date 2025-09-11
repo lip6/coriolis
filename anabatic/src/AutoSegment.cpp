@@ -1970,6 +1970,8 @@ namespace Anabatic {
     cdebug_log(149,0) << "Before: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
                       << " "         << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
                       << "]" << endl;
+    cdebug_log(149,0) << "Source " << getAutoSource() << endl;
+    cdebug_log(149,0) << "Target " << getAutoTarget() << endl;
 
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
     DbU::Unit sourceCap      = getExtensionCap( Flags::Source|Flags::LayerCapOnly );
@@ -2754,7 +2756,6 @@ namespace Anabatic {
       setDuTarget( 0 );
 
       if (source->isTurn() and target->isTurn()) {
-
         AutoSegment* sourcePp = source->getPerpandicular( this );
         bool onPSourceSource = (sourcePp->getAutoSource() == source);
 
@@ -2789,7 +2790,10 @@ namespace Anabatic {
             target->setX( axis );
             cdebug_log(159,0) << "UTurn (V) compact on axis " << DbU::getValueString(axis) << endl;
           }
+          sourcePp->setFlags( (onPSourceSource) ? SegInvalidatedSource : SegInvalidatedTarget );
+          targetPp->setFlags( (onPTargetSource) ? SegInvalidatedSource : SegInvalidatedTarget );
           sourcePp->revalidate();
+          targetPp->revalidate();
         }
       }
 
