@@ -35,6 +35,7 @@
 #include "hurricane/DBo.h"
 #include "hurricane/Layers.h"
 #include "hurricane/DbU.h"
+#include "hurricane/Box.h"
 #include "hurricane/BasicLayers.h"
 
 
@@ -45,12 +46,81 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Hurricane::ParallelSpacings".
+
+
+  class ParallelSpacings {
+    public:
+      inline            ParallelSpacings  ();
+      inline size_t     size              () const;
+      inline DbU::Unit  spacing           ( size_t i ) const;
+      inline DbU::Unit  parallelLength    ( size_t i ) const;
+      inline DbU::Unit  maxSpacing        () const;
+      inline DbU::Unit  maxParallelLength () const;
+      inline void       push_back         ( DbU::Unit spacing, DbU::Unit parallelLength );
+    private:
+      std::vector< std::pair<DbU::Unit,DbU::Unit> >  _spacings;
+  };
+
+  
+  inline ParallelSpacings::ParallelSpacings ()
+    : _spacings()
+  { }
+  
+  inline size_t     ParallelSpacings::size              () const { return _spacings.size(); }
+  inline DbU::Unit  ParallelSpacings::spacing           ( size_t i ) const { return (i < size()) ? _spacings[i].first  : 0; }
+  inline DbU::Unit  ParallelSpacings::parallelLength    ( size_t i ) const { return (i < size()) ? _spacings[i].second : 0; }
+  inline DbU::Unit  ParallelSpacings::maxSpacing        () const { return _spacings.back().first ; }
+  inline DbU::Unit  ParallelSpacings::maxParallelLength () const { return _spacings.back().second; }
+  inline void       ParallelSpacings::push_back         ( DbU::Unit spacing, DbU::Unit parallelLength )
+                                                        { _spacings.push_back( make_pair( spacing, parallelLength )); }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SpacingRule".
+
+
+  class SpacingRules {
+      friend class ParallelSpacings;
+    public:
+      inline                               SpacingRules     ( const Layer* );
+      inline       size_t                  parallelsSize    () const;
+      inline       size_t                  widthsSize       () const;
+      inline const std::vector<DbU::Unit>& parallelLengths  () const;
+             const std::vector<DbU::Unit>& widthsRow        ( DbU::Unit width ) const;
+      inline       DbU::Unit               minimalSpacing   () const;
+                   void                    print            ( std::ostream& ) const;
+                   void                    addSpacingRule   ( DbU::Unit minimalSpacing, DbU::Unit width, DbU::Unit parallelLength );
+                   void                    _onDbuChange     ( float scale );
+                   ParallelSpacings        parallelSpacings ( const Box&, bool isHorizontal ) const;
+    private:
+      SpacingRules ( const SpacingRules& ) = delete;
+    private:
+      const Layer* _layer;
+      std::map< DbU::Unit, std::vector<DbU::Unit> > _table;
+  };
+
+  
+  inline  SpacingRules::SpacingRules ( const Layer* layer )
+    : _layer(layer)
+    , _table()
+  {
+    _table.emplace( -1, std::vector<DbU::Unit>() );
+  }
+
+  inline const std::vector<DbU::Unit>& SpacingRules::parallelLengths () const { return _table.begin()->second; }
+  inline       size_t                  SpacingRules::parallelsSize   () const { return parallelLengths().size(); } 
+  inline       size_t                  SpacingRules::widthsSize      () const { return _table.size() - 1; } 
+  inline       DbU::Unit               SpacingRules::minimalSpacing  () const { return (_table.size() < 2) ? 0 : (++_table.begin())->second[0]; }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Hurricane::Layer".
 
   class Layer : public DBo {
     public:
       typedef  DBo  Super;
-      typedef  Hurricane::Mask<boost::multiprecision::uint128_t> Mask;
+      typedef  Hurricane::Mask<boost::multiprecision::uint128_t>  Mask;
     public:
       static   const uint32_t   NoFlags        =  0;
       static   const uint32_t   EnclosureH     = (1 << 0);
@@ -61,12 +131,14 @@ namespace Hurricane {
 
     public:
     // Accessors.
+      inline  void              printSpacingTable            () const;
       inline  Technology*       getTechnology                () const;
       inline  const Name&       getName                      () const;
       inline  const Mask&       getMask                      () const;
       inline  const Mask&       getExtractMask               () const;
-      inline  const DbU::Unit&  getMinimalSize               () const;
-      inline  const DbU::Unit&  getMinimalSpacing            () const;
+      inline  DbU::Unit         getMinimalSize               () const;
+              DbU::Unit         getMinimalSpacing            () const;
+      inline  ParallelSpacings  getParallelSpacings          ( const Box&, bool isHorizontal ) const;
       virtual BasicLayers       getBasicLayers               () const = 0;
       virtual const Layer*      getBlockageLayer             () const;
       virtual const Layer*      getRoutingLayer              () const;
@@ -98,8 +170,8 @@ namespace Hurricane {
               void              setName                      ( const Name& name );
       inline  void              setSymbolic                  ( bool );
       inline  void              setBlockage                  ( bool );
-              void              setMinimalSize               ( const DbU::Unit& minimalSize );
-              void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
+              void              setMinimalSize               ( DbU::Unit minimalSize );
+              void              setMinimalSpacing            ( DbU::Unit minimalSpacing, DbU::Unit width, DbU::Unit parallelLength );
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit, uint32_t flags );
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
@@ -122,7 +194,7 @@ namespace Hurricane {
               Mask              _mask;
               Mask              _extractMask;
               DbU::Unit         _minimalSize;
-              DbU::Unit         _minimalSpacing;
+              SpacingRules      _spacingRules;
               Layer*            _nextOfTechnologyLayerMap;
               bool              _symbolic;
               bool              _blockage;
@@ -147,6 +219,8 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline  void                Layer::printSpacingTable            () const { return _spacingRules.print( std::cout ); }
+  inline  ParallelSpacings    Layer::getParallelSpacings          ( const Box& bb, bool isHorizontal ) const { return _spacingRules.parallelSpacings(bb,isHorizontal); }
   inline  bool                Layer::isSymbolic                   () const { return _symbolic; }
   inline  bool                Layer::isBlockage                   () const { return _blockage; }
   inline  bool                Layer::above                        ( const Layer* layer ) const { return _mask > layer->getMask(); }
@@ -155,8 +229,7 @@ namespace Hurricane {
   inline  const Name&         Layer::getName                      () const { return _name; }
   inline  const Layer::Mask&  Layer::getMask                      () const { return _mask; }
   inline  const Layer::Mask&  Layer::getExtractMask               () const { return _extractMask; }
-  inline  const DbU::Unit&    Layer::getMinimalSize               () const { return _minimalSize; }
-  inline  const DbU::Unit&    Layer::getMinimalSpacing            () const { return _minimalSpacing; }
+  inline  DbU::Unit           Layer::getMinimalSize               () const { return _minimalSize; }
   inline  void                Layer::setSymbolic                  ( bool state ) { _symbolic = state; }
   inline  void                Layer::setBlockage                  ( bool state ) { _blockage = state; }
   inline  Layer*              Layer::_getNextOfTechnologyLayerMap () const { return _nextOfTechnologyLayerMap; }

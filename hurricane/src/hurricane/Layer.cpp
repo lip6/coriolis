@@ -38,6 +38,138 @@
 
 
 namespace Hurricane {
+  
+
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::SpacingRule".
+
+
+  void  SpacingRules::addSpacingRule ( DbU::Unit minimalSpacing, DbU::Unit width, DbU::Unit parallelLength )
+  {
+    if (width == 0) {
+      if (_table.find(0) != _table.end()) {
+        cerr << Warning( "SpacingRules::addSpacingRule(): Redefinition of default minimal spacing for layer \"%s\" (ignored)."
+                       , getString(_layer->getName()).c_str()) << endl;
+        return;
+      }
+    }
+    if (_table.find(width) != _table.end()) {
+      cerr << Warning( "SpacingRules::addSpacingRule(): Redefinition of minimal spacing for layer \"%s\" and width %s (ignored)."
+                     , getString(_layer->getName()).c_str()
+                     , DbU::getValueString(width).c_str()) << endl;
+      return;
+    }
+
+    if (_table.size() == 1) {
+      _table[ -1 ].push_back( parallelLength );
+      _table.emplace( width, std::vector<DbU::Unit>() );
+      _table[ width ].emplace( _table[width].begin(), minimalSpacing );
+      return;
+    }
+
+    size_t newLength = 0;
+    for ( ; newLength<_table[-1].size() ; ++newLength ) {
+      if (parallelLength <  _table[-1][newLength]) break;
+      if (parallelLength == _table[-1][newLength]) {
+        newLength = _table[-1].size() + 1;
+      }
+    }
+    if (newLength != _table[-1].size() + 1) {
+      for ( auto& iwidth : _table ) {
+        if (iwidth.first == -1) {
+          iwidth.second.emplace( iwidth.second.begin()+newLength, parallelLength );
+          continue;
+        }
+        if (newLength < iwidth.second.size()) {
+          iwidth.second.emplace( iwidth.second.begin()+newLength, iwidth.second[newLength] );
+          continue;
+        }
+        iwidth.second.emplace( iwidth.second.end(), iwidth.second.back() );
+      }
+    }
+
+    auto newWidth = _table.emplace( width, std::vector<DbU::Unit>() ).first;
+    auto dupWidth = newWidth;
+    dupWidth--;
+    if (dupWidth->first == -1) {
+      dupWidth = newWidth;
+      dupWidth++;
+    }
+    for ( DbU::Unit spacing : dupWidth->second )
+      newWidth->second.push_back( spacing );
+    
+    for ( auto& iwidth : _table ) {
+      if (iwidth.first < width) continue;
+      for ( size_t i=newLength ; i<iwidth.second.size() ; ++i ) {
+        if (iwidth.second[i] < minimalSpacing)
+          iwidth.second[i] = minimalSpacing;
+      }
+    }
+  }
+
+
+  const std::vector<DbU::Unit>& SpacingRules::widthsRow ( DbU::Unit width ) const
+  {
+    static std::vector<DbU::Unit> notFound;
+    auto iwidth = _table.lower_bound( width );
+    if (iwidth != ++(_table.begin())) --iwidth;
+    return (iwidth == _table.end()) ? notFound : iwidth->second;
+  }
+
+  
+  ParallelSpacings  SpacingRules::parallelSpacings ( const Box& box, bool isHorizontal ) const
+  {
+    DbU::Unit width  = box.getHeight();
+    DbU::Unit length = box.getWidth ();
+    if (not isHorizontal) std::swap( width, length );
+
+    const vector<DbU::Unit>& row = widthsRow( width );
+    ParallelSpacings  spacings;
+    for ( size_t i=0 ; i<parallelLengths().size() ; ++i ) {
+      if (parallelLengths()[i] > length) break;
+      spacings.push_back( row[i], parallelLengths()[i] );
+    }
+
+    return spacings;
+  }
+
+
+  void  SpacingRules::_onDbuChange ( float scale )
+  {
+    std::map< DbU::Unit, std::vector<DbU::Unit> > scaledTable;
+
+    for ( auto iwidth : _table ) {
+      if (iwidth.first == -1) scaledTable.emplace( -1, std::vector<DbU::Unit>() ); 
+      else {
+        DbU::Unit scaled = (DbU::Unit)( (float)iwidth.first * scale );
+        scaledTable.emplace( scaled, std::vector<DbU::Unit>() ); 
+      }
+      std::vector<DbU::Unit>& scaledWidth = scaledTable.rbegin()->second;
+
+      for ( size_t i=0 ; i<iwidth.second.size() ; ++i ) {
+        DbU::Unit scaled = (DbU::Unit)( (float)iwidth.second[i] * scale );
+        scaledWidth.push_back( scaled );
+      }
+    }
+
+    std::swap( _table, scaledTable );
+  }
+
+
+  void  SpacingRules::print ( ostream& o ) const
+  {
+    o << "Spacing rules for \"" << _layer->getName() << "\" :" << endl;
+    o << "==========" << endl;
+    for ( auto iwidth : _table ) {
+      if (iwidth.first == -1) o << setw(10) << "Parallel";
+      else                    o << setw(10) << DbU::getValueString( iwidth.first );
+      for ( size_t i=0 ; i<iwidth.second.size() ; ++i ) {
+        o << setw(10) << DbU::getValueString( iwidth.second[i] );
+      }
+      o << endl;
+    }
+    o << "==========" << endl;
+  }
 
 
 // -------------------------------------------------------------------
@@ -55,7 +187,7 @@ namespace Hurricane {
                  , _mask(0)
                  , _extractMask(0)
                  , _minimalSize(minimalSize)
-                 , _minimalSpacing(minimalSpacing)
+                 , _spacingRules(this)
                  , _nextOfTechnologyLayerMap(NULL)
                  , _symbolic(false)
                  , _blockage(false)
@@ -110,6 +242,39 @@ namespace Hurricane {
 
   Layer* Layer::getCutBelow ( bool useSymbolic ) const
   { return _technology->getCutBelow(this,useSymbolic); }
+
+
+  DbU::Unit  Layer::getMinimalSpacing () const
+  {
+    if (_spacingRules.widthsSize() < 1) {
+      cerr << Warning( "Layer::getMinimalSpacing(): No minimal spacing defined for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
+      return 0;
+    }
+    return _spacingRules.minimalSpacing();
+  }
+
+
+#ifdef DISABLED
+  DbU::Unit  Layer::getMinimalSpacing ( const Box& bigWire, bool horizontal ) const
+  {
+    if (_spacingRules.empty()) {
+      cerr << Warning( "Layer::getMinimalSpacing(): No minimal spacing defined for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
+      return 0;
+    }
+    if (_spacingRules.size() == 1)
+      return _spacingRules[0].spacing();
+
+    DbU::Unit wireLength = bigWire.getLength();
+    DbU::Unit wireWidth  = bigWire.getHeigth();
+    if (not horizontal) std::swap( wireLength, wireWidth );
+
+    for ( size_t irule = _spacingRules.size() - 1 ; irule > 0 ; irule-- ) {
+      if (_spacingRules[irule-1].width() 
+    }
+  }
+#endif
 
 
   DbU::Unit  Layer::getEnclosure ( uint32_t ) const
@@ -176,7 +341,7 @@ namespace Hurricane {
   }
 
 
-  void Layer::setMinimalSize ( const DbU::Unit& minimalSize )
+  void Layer::setMinimalSize ( DbU::Unit minimalSize )
   {
     if (minimalSize == 0)
       cerr << Warning( "Layer::setMinimalSize(): Suspicious zero size for layer \"%s\"."
@@ -185,12 +350,13 @@ namespace Hurricane {
   }
 
 
-  void Layer::setMinimalSpacing ( const DbU::Unit& minimalSpacing )
+  void Layer::setMinimalSpacing ( DbU::Unit minimalSpacing, DbU::Unit width, DbU::Unit parallelLength )
   {
     if (minimalSpacing == 0)
       cerr << Warning( "Layer::setMinimalSpacing(): Suspicious zero size for layer \"%s\"."
                      , getString(getName()).c_str()) << endl;
-    _minimalSpacing = minimalSpacing;
+    
+    _spacingRules.addSpacingRule( minimalSpacing, width, parallelLength );
   }
 
 
@@ -239,8 +405,8 @@ namespace Hurricane {
 
   void  Layer::_onDbuChange ( float scale )
   {
-    _minimalSize    = (DbU::Unit)( (float)_minimalSize    * scale );
-    _minimalSpacing = (DbU::Unit)( (float)_minimalSpacing * scale );
+    _minimalSize = (DbU::Unit)( (float)_minimalSize    * scale );
+    _spacingRules._onDbuChange( scale );
   }
 
 
@@ -261,7 +427,7 @@ namespace Hurricane {
       record->add(getSlot("Mask"          , &_mask          ));
       record->add(getSlot("ExtractMask"   , &_extractMask   ));
       record->add(DbU::getValueSlot("MinimalSize"   , &_minimalSize   ));
-      record->add(DbU::getValueSlot("MinimalSpacing", &_minimalSpacing));
+      record->add(getSlot("MinimalSpacing", &_spacingRules  ));
     }
     return record;
   }
@@ -279,7 +445,7 @@ namespace Hurricane {
     jsonWrite( writer, "_mask"          , getString(_mask)        );
     jsonWrite( writer, "_extractMask"   , getString(_extractMask) );
     jsonWrite( writer, "_minimalSize"   , _minimalSize            );
-    jsonWrite( writer, "_minimalSpacing", _minimalSpacing         );
+  //jsonWrite( writer, "_minimalSpacing", _minimalSpacing         );
     jsonWrite( writer, "_symbolic"      , _symbolic               );
   }
 
