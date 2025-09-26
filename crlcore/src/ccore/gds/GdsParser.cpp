@@ -968,6 +968,7 @@ namespace {
         if (isLefForeign()) cellName += "_lef_foreign";
         _cell = getCell( cellName, true );
         _stream >> _record;
+        cdebug_log(101,0) << "LEF name " << cellName << endl;
       }
     }
 
@@ -1434,6 +1435,7 @@ namespace {
     if (_record.isSNAME()) {
       masterName = _record.getName();
       cdebug_log(101,0) << "SNAME " << masterName << endl;
+      if (isLefForeign()) masterName += "_lef_foreign";
       _stream >> _record;
     } else {
       _validSyntax = false;
@@ -1742,24 +1744,6 @@ namespace {
         offgrids.push_back( i/2 );
       }
     }
-    if (not offgrids.empty()) {
-      size_t offgrid = 0;
-      ostringstream m;
-      for ( size_t i=0 ; i<points.size() ; ++i ) {
-        if (i) m << "\n";
-        m << "        | " << points[i];
-        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
-          m << " offgrid";
-          ++offgrid;
-        }
-      }
-      cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s).\n"
-                     "%s"
-                   , offgrids.size()
-                   , getString(layer->getName()).c_str()
-                   , DbU::getValueString(oneGrid).c_str()
-                   , m.str().c_str() ) << endl;
-    } 
 
     _stream >> _record;
     while ( _record.getType() == GdsRecord::PROPATTR) {
@@ -1806,6 +1790,28 @@ namespace {
     }
 
     if (not net) net = fusedNet();
+
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrids[offgrid])) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): %u offgrid points on layer \"%s\" (foundry grid: %s),\n"
+                     "        In net \"%s\" of cell \"%s\".\n"
+                     "%s"
+                   , offgrids.size()
+                   , getString(layer->getName()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   , getString(net->getName()).c_str()
+                   , getString(net->getCell()->getName()).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
     
     if (points.size() > 2) {
       bool isRectilinear = true;
