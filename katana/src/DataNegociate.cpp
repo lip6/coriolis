@@ -204,13 +204,17 @@ namespace Katana {
 
         DbU::Unit sourceCap = basePerpand->getExtensionCap( Flags::Source );
         DbU::Unit targetCap = basePerpand->getExtensionCap( Flags::Target );
+        cdebug_log(159,0) <<  "Real source cap:" << DbU::getValueString(sourceCap)
+                          << " Real target cap:" << DbU::getValueString(targetCap)
+                          << endl;
         if (std::get<1>(perpandiculars[i]) & Flags::Source)
           targetCap = std::max( targetCap, sourceCap );
         else
           sourceCap = std::max( targetCap, sourceCap );
         _perpandicularFree.intersection( trackFree.inflate ( -sourceCap, -targetCap ) );
-        cdebug_log(159,0) << "Source cap:"
-                          << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
+        cdebug_log(159,0) <<  "Source cap:" << DbU::getValueString(sourceCap)
+                          << " Target cap:" << DbU::getValueString(targetCap)
+                          << endl;
       } else if (       perpandicular->isFixedAxis()
                 and not perpandicular->isReduced()
                 /*or _trackSegment->isDogleg()*/) {

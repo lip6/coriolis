@@ -180,6 +180,7 @@ namespace Katana {
     uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
 
     if (flags & Manipulator::PerpandicularsFirst) {
+      cdebug_log(159,0) << "Ripup perpandicular first flag." << endl;
       parallelActionFlags      &= ~SegmentAction::EventLevel4;
       perpandicularActionFlags |=  SegmentAction::EventLevel4;
       if (flags & Manipulator::ToRipupLimit)
@@ -310,6 +311,7 @@ namespace Katana {
       for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
         _fsm.addAction( perpandiculars[i], perpandicularActionFlags|SegmentAction::EventLevel4 );
       }
+      parallelActionFlags &= ~SegmentAction::EventLevel4;
       _fsm.addAction( _segment, parallelActionFlags );
       cdebug_tabw(159,-1);
       return true;
