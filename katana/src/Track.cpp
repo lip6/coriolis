@@ -406,7 +406,10 @@ namespace Katana {
     do {
       --index;
       cdebug_log(155,0) << "| " << index << ":" << _segments[index] << endl;
-      if (_segments[index]->getNet() != net) return _segments[index];
+      if (_segments[index]->getNet() != net) {
+        if ((Session::getStage() < Anabatic::StageRepair) or not _segments[index]->isFixedSpanRp())
+          return _segments[index];
+      }
     } while ( index != 0 );
     index = npos;
     return NULL;
@@ -1097,7 +1100,10 @@ namespace Katana {
 
     i = seed;
     while ( ++i < _segments.size() ) {
-      if (_segments[i]->getNet() != owner) break;
+      if (_segments[i]->getNet() != owner) { 
+        if ((Session::getStage() < Anabatic::StageRepair) or not _segments[i]->isFixedSpanRp())
+          break;
+      }
 
       _segments[i]->getCanonical( segmentInterval );
       if (segmentInterval.getVMin() > mergedInterval.getVMax()) break;
@@ -1366,6 +1372,8 @@ namespace Katana {
                      , getString(_segments[i]).c_str() ) << endl;
       }
 
+      if (_segments[i]->isFixedSpanRp()) continue;
+
       if ( _segments[i]->getNet() == _segments[i+1]->getNet() ) {
         if ( _segments[i]->getSourceU() == _segments[i+1]->getSourceU() ) {
           if ( _segments[i]->getTargetU() < _segments[i+1]->getTargetU() ) {
@@ -1375,10 +1383,12 @@ namespace Katana {
                          ,getString(_segments[i+1]).c_str()) << endl;
           }
         }
-        for ( j=i+1 ; (j<_segments.size()) && (_segments[i]->getNet() == _segments[j]->getNet()) ; j++ );
-      } else {
-        j = i+1;
       }
+      for ( j=i+1
+          ; (j<_segments.size())
+            and (  (_segments[i]->getNet() == _segments[j]->getNet())
+                or  _segments[j]->isFixedSpanRp())
+          ; j++ );
 
       if (    (j<_segments.size())
           and (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
