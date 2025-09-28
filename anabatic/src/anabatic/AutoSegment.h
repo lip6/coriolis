@@ -83,38 +83,39 @@ namespace Anabatic {
       static const uint64_t  SegTargetBottom      = (1L<<13);
       static const uint64_t  SegIsReduced         = (1L<<14);
       static const uint64_t  SegDrag              = (1L<<15);
-      static const uint64_t  SegLayerChange       = (1L<<16);
-      static const uint64_t  SegSourceTerminal    = (1L<<17);  // Replace Terminal.
-      static const uint64_t  SegTargetTerminal    = (1L<<18);  // Replace Terminal.
+      static const uint64_t  SegDragSameLayer     = (1L<<16);
+      static const uint64_t  SegLayerChange       = (1L<<17);
+      static const uint64_t  SegSourceTerminal    = (1L<<18);  // Replace Terminal.
+      static const uint64_t  SegTargetTerminal    = (1L<<19);  // Replace Terminal.
       static const uint64_t  SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal;
-      static const uint64_t  SegWeakTerminal1     = (1L<<19);  // Replace TopologicalEnd.
-      static const uint64_t  SegWeakTerminal2     = (1L<<20);  // Replace TopologicalEnd.
-      static const uint64_t  SegNotSourceAligned  = (1L<<21);
-      static const uint64_t  SegNotTargetAligned  = (1L<<22);
-      static const uint64_t  SegUnbound           = (1L<<23);
-      static const uint64_t  SegHalfSlackened     = (1L<<24);
-      static const uint64_t  SegSlackened         = (1L<<25);
-      static const uint64_t  SegAxisSet           = (1L<<26);
-      static const uint64_t  SegInvalidated       = (1L<<27);
-      static const uint64_t  SegInvalidatedSource = (1L<<28);
-      static const uint64_t  SegInvalidatedTarget = (1L<<29);
-      static const uint64_t  SegInvalidatedLayer  = (1L<<30);
-      static const uint64_t  SegCreated           = (1L<<31);
-      static const uint64_t  SegUserDefined       = (1L<<32);
-      static const uint64_t  SegAnalog            = (1L<<33);
-      static const uint64_t  SegWide              = (1L<<34);
-      static const uint64_t  SegShortNet          = (1L<<35);
-      static const uint64_t  SegUnbreakable       = (1L<<36);
-      static const uint64_t  SegNonPref           = (1L<<37);
-      static const uint64_t  SegAtMinArea         = (1L<<38);
-      static const uint64_t  SegNoMoveUp          = (1L<<39);
-      static const uint64_t  SegOnVSmall          = (1L<<40);
-      static const uint64_t  SegForOffgrid        = (1L<<41);
-      static const uint64_t  SegIsReducedDone     = (1L<<42);
-      static const uint64_t  SegIsBelowPitch      = (1L<<43);
-      static const uint64_t  SegBecomeBelowPitch  = (1L<<44);
-      static const uint64_t  SegGapFiller         = (1L<<45);
-      static const uint64_t  SegToMinimize        = (1L<<46);
+      static const uint64_t  SegWeakTerminal1     = (1L<<20);  // Replace TopologicalEnd.
+      static const uint64_t  SegWeakTerminal2     = (1L<<21);  // Replace TopologicalEnd.
+      static const uint64_t  SegNotSourceAligned  = (1L<<22);
+      static const uint64_t  SegNotTargetAligned  = (1L<<23);
+      static const uint64_t  SegUnbound           = (1L<<24);
+      static const uint64_t  SegHalfSlackened     = (1L<<25);
+      static const uint64_t  SegSlackened         = (1L<<26);
+      static const uint64_t  SegAxisSet           = (1L<<27);
+      static const uint64_t  SegInvalidated       = (1L<<28);
+      static const uint64_t  SegInvalidatedSource = (1L<<29);
+      static const uint64_t  SegInvalidatedTarget = (1L<<30);
+      static const uint64_t  SegInvalidatedLayer  = (1L<<31);
+      static const uint64_t  SegCreated           = (1L<<32);
+      static const uint64_t  SegUserDefined       = (1L<<33);
+      static const uint64_t  SegAnalog            = (1L<<34);
+      static const uint64_t  SegWide              = (1L<<35);
+      static const uint64_t  SegShortNet          = (1L<<36);
+      static const uint64_t  SegUnbreakable       = (1L<<37);
+      static const uint64_t  SegNonPref           = (1L<<38);
+      static const uint64_t  SegAtMinArea         = (1L<<39);
+      static const uint64_t  SegNoMoveUp          = (1L<<40);
+      static const uint64_t  SegOnVSmall          = (1L<<41);
+      static const uint64_t  SegForOffgrid        = (1L<<42);
+      static const uint64_t  SegIsReducedDone     = (1L<<43);
+      static const uint64_t  SegIsBelowPitch      = (1L<<44);
+      static const uint64_t  SegBecomeBelowPitch  = (1L<<45);
+      static const uint64_t  SegGapFiller         = (1L<<46);
+      static const uint64_t  SegToMinimize        = (1L<<47);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -216,6 +217,7 @@ namespace Anabatic {
       inline         bool                isNonPrefOnVSmall          () const;
       inline         bool                isForOffgrid               () const;
       inline         bool                isDrag                     () const;
+      inline         bool                isDragSameLayer            () const;
       inline         bool                isAtMinArea                () const;
       inline         bool                isNotSourceAligned         () const;
       inline         bool                isNotTargetAligned         () const;
@@ -582,6 +584,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isTargetTerminal       () const { return _flags & SegTargetTerminal; }
   inline  bool            AutoSegment::isTerminal             () const { return (_rpDistance == 0); }
   inline  bool            AutoSegment::isDrag                 () const { return _flags & SegDrag; }
+  inline  bool            AutoSegment::isDragSameLayer        () const { return _flags & SegDragSameLayer; }
   inline  bool            AutoSegment::isGapFiller            () const { return _flags & SegGapFiller; }
   inline  bool            AutoSegment::isAtMinArea            () const { return _flags & SegAtMinArea; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }

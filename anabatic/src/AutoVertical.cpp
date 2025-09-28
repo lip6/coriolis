@@ -732,7 +732,7 @@ namespace Anabatic {
     GCell*        begin      = autoSource->getGCell();
     GCell*        end        = autoTarget->getGCell();
 
-    if (not autoSource->canDrag()) unsetFlags( SegDrag );
+    if (not autoSource->canDrag()) unsetFlags( SegDrag|SegDragSameLayer );
 
     DbU::Unit doglegAxis = (doglegGCell->getYMax() + doglegGCell->getYMin()) / 2;
     if (isLocal())

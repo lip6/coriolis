@@ -403,6 +403,8 @@ namespace Anabatic {
     if (  (dynamic_cast<AutoHorizontal*>(_segment) and (landingZone.getWidth () > 0))
        or (dynamic_cast<AutoVertical*>  (_segment) and (landingZone.getHeight() > 0)) ) {
       _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegAxisSet );
+      if (getRoutingPad()->getLayer() == _segment->getLayer())
+        _segment->setFlags( AutoSegment::SegDragSameLayer );
       setFlags( CntDrag );
 
       cdebug_log(145,0) << "Drag Contact/Segment set" << endl;
@@ -443,12 +445,16 @@ namespace Anabatic {
       if (getFlags() & (CntOnHorizontal|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
+        if (getRoutingPad()->getLayer() == _segment->getLayer())
+          _segment->setFlags( AutoSegment::SegDragSameLayer );
       }
     } else {
       _segment = Session::lookup( verticals[0] );
       if (getFlags() & (CntOnVertical|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
+        if (getRoutingPad()->getLayer() == _segment->getLayer())
+          _segment->setFlags( AutoSegment::SegDragSameLayer );
       }
     }
     if (_segment == NULL) {

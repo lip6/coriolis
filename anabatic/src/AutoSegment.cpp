@@ -759,7 +759,7 @@ namespace Anabatic {
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
     cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
-    if (not isGapFiller()) {
+    if (not isGapFiller() and not isDragSameLayer()) {
       for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
         oldSpan.merge( segment->getSourcePosition() );
         oldSpan.merge( segment->getTargetPosition() );
@@ -830,7 +830,7 @@ namespace Anabatic {
         else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
         else                                   cap = getViaToSameCap  ( depth );
       }
-      if (getId() == 523304) {
+      if (getId() == 1520229) {
         cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
                           << " (source) flags:" << getFlags()
                           << " VIA cap:" << DbU::getValueString(cap)
@@ -842,7 +842,9 @@ namespace Anabatic {
         //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          //cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          if (getId() == 1520229) {
+            cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          }
         }
       }
     } else {
@@ -856,7 +858,7 @@ namespace Anabatic {
           else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
           else                                   cap = getViaToSameCap  ( depth );
         }
-        if (getId() == 523304) {
+        if (getId() == 1520229) {
           cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
                             << " (target) flags:" << getFlags()
                             << " VIA cap:" << DbU::getValueString(cap)
@@ -868,7 +870,9 @@ namespace Anabatic {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
-            // cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+            if (getId() == 1520229) {
+              cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+            }
           }
         }
       } else {
@@ -3057,7 +3061,7 @@ namespace Anabatic {
 
     if (isAnalog  ()) segment1->setFlags( SegAnalog );
     if (isNoMoveUp()) segment1->setFlags( SegNoMoveUp );
-    unsetFlags( AutoSegment::SegDrag );
+    unsetFlags( AutoSegment::SegDrag|SegDragSameLayer );
 
     cdebug_log(149,0) << "terminal: " << terminal << endl;
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
