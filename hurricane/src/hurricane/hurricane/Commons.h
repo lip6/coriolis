@@ -148,6 +148,69 @@ namespace Hurricane {
 
   string& split ( std::string& );
 
+  
+// -------------------------------------------------------------------
+// Function : Fowler-Noll-Vo hash.
+//
+// Reference:
+//     https://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function
+
+  inline unsigned int  hashFNV ( unsigned int id )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( unsigned int idBytes = id ; idBytes ; idBytes >>= 8 ) {
+      hash = hash * FNVPrime;
+      hash = hash xor (idBytes & 0xFF);
+    }
+    return hash;
+  }
+
+  inline unsigned int  iterFNV ( unsigned int hash, unsigned int id )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVPrime = 0x01000193;
+
+    for ( unsigned int idBytes = id ; idBytes ; idBytes >>= 8 ) {
+      hash = hash * FNVPrime;
+      hash = hash xor (idBytes & 0xFF);
+    }
+    return hash;
+  }
+
+
+  inline unsigned int  hashFNV ( std::string s )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( size_t i=0 ; i<s.size() ; ++i ) {
+      hash = hash * FNVPrime;
+      hash = hash xor s[i];
+    }
+    return hash;
+  }
+
+
+  inline unsigned int  hashFNV ( const char* s )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( ; (int)(*s) != 0 ; ++s ) { 
+      hash = hash * FNVPrime;
+      hash = hash xor *s;
+    }
+    return hash;
+  }
+
 
 } // End of Hurricane namespace.
 

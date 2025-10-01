@@ -696,7 +696,7 @@ const Net* Instance::PlugMap::_getKey(Plug* plug) const
 unsigned Instance::PlugMap::_getHashValue(const Net* masterNet) const
 // ******************************************************************
 {
-  return masterNet->getId() / 8;
+  return hashFNV( masterNet->getId() );
 }
 
 Plug* Instance::PlugMap::_getNextElement(Plug* plug) const
@@ -732,7 +732,7 @@ const SharedPath* Instance::SharedPathMap::_getKey(SharedPath* sharedPath) const
 unsigned Instance::SharedPathMap::_getHashValue(const SharedPath* tailSharedPath) const
 // ************************************************************************************
 {
-  return (tailSharedPath) ? (tailSharedPath->getHash()/8) : 0;
+  return (tailSharedPath) ? tailSharedPath->getHash() : 0;
 }
 
 SharedPath* Instance::SharedPathMap::_getNextElement(SharedPath* sharedPath) const

@@ -1660,16 +1660,16 @@ Cell::InstanceMap::InstanceMap()
 {
 }
 
-Name Cell::InstanceMap::_getKey(Instance* instance) const
-// ******************************************************
+const SharedName* Cell::InstanceMap::_getKey(Instance* instance) const
+// *************************************************************
 {
-    return instance->getName();
+  return instance->getName()._getSharedName();
 }
 
-unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
-// *******************************************************
+unsigned int  Cell::InstanceMap::_getHashValue(const SharedName* sharedName) const
+// *************************************************************************
 {
-  return name._getSharedName()->getHash() / 8;
+  return sharedName->getHash();
 }
 
 Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
@@ -1699,7 +1699,7 @@ Cell::SlaveInstanceSet::SlaveInstanceSet()
 unsigned Cell::SlaveInstanceSet::_getHashValue(Instance* slaveInstance) const
 // **************************************************************************
 {
-  return slaveInstance->getId() / 8;
+  return hashFNV( slaveInstance->getId() );
 }
 
 Instance* Cell::SlaveInstanceSet::_getNextElement(Instance* slaveInstance) const
@@ -1735,21 +1735,7 @@ const Name& Cell::NetMap::_getKey(Net* net) const
 unsigned Cell::NetMap::_getHashValue(const Name& name) const
 // *********************************************************
 {
-  unsigned long hash = 0;
-  unsigned long sum4 = 0;
-  const string& s = name._getSharedName()->_getSString();
-  for ( size_t i=0 ; i<s.size() ; ++i ) {
-    sum4 |= ((unsigned long)s[i]) << ((i%4) * 8);
-    if (i%4 == 3) {
-      hash += sum4;
-      sum4  = 0;
-    }
-  }
-  hash += sum4;
-
-  return hash;
-  
-//return (unsigned int)name._getSharedName()->getId() / 8;
+  return hashFNV( name._getSharedName()->_getSString() );
 }
 
 Net* Cell::NetMap::_getNextElement(Net* net) const
@@ -1784,7 +1770,7 @@ Name Cell::PinMap::_getKey(Pin* pin) const
 unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-  return (unsigned int)name._getSharedName()->getHash() / 8;
+  return (unsigned int)name._getSharedName()->getHash();
 }
 
 Pin* Cell::PinMap::_getNextElement(Pin* pin) const
@@ -1849,7 +1835,7 @@ Cell::MarkerSet::MarkerSet()
 unsigned Cell::MarkerSet::_getHashValue(Marker* marker) const
 // **********************************************************
 {
-  return (unsigned int)marker->getId() / 8;
+  return hashFNV( marker->getId() );
 }
 
 Marker* Cell::MarkerSet::_getNextElement(Marker* marker) const

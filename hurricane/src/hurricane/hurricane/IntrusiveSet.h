@@ -21,6 +21,7 @@
 #include <cstring>
 #include <algorithm>
 
+#include "hurricane/Warning.h"
 #include "hurricane/Collection.h"
 #include "hurricane/Error.h" // AD
 
@@ -34,6 +35,11 @@ namespace Hurricane {
 
 template<class Element> class IntrusiveSet {
 // *****************************************
+
+// Constants
+// *********
+
+  public: const unsigned int MaxBuckets = (1 << 22);
 
 // Types
 // *****
@@ -370,7 +376,7 @@ template<class Element> class IntrusiveSet {
     public: bool _contains(Element* element) const
     // *******************************************
     {
-        unsigned index = (_getHashValue(element) / 8) % _length;
+        unsigned index = _getHashValue(element) % _length;
         Element* currentElement = _array[index];
         while (currentElement && (currentElement != element))
             currentElement = _getNextElement(currentElement);
@@ -381,7 +387,7 @@ template<class Element> class IntrusiveSet {
     // ***********************************
     {
         if (!_contains(element)) {
-            unsigned index = (_getHashValue(element) / 8) % _length;
+            unsigned index = _getHashValue(element) % _length;
             _setNextElement(element, _array[index]);
             _array[index] = element;
               _size++;
@@ -393,7 +399,7 @@ template<class Element> class IntrusiveSet {
     // ***********************************
     {
         if (_contains(element)) {
-            unsigned index = (_getHashValue(element) / 8) % _length;
+            unsigned index = _getHashValue(element) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
                 if (currentElement == element) {
@@ -419,12 +425,16 @@ template<class Element> class IntrusiveSet {
     {
         unsigned newLength = _length;
         double ratio = (double)_size / (double)_length;
-        if (ratio < 3)
-            newLength = max(_size / 8, (unsigned)1);
-        else if (10 < ratio)
-            newLength = min(_size / 5, (unsigned)512);
+        if      (ratio <  3.0) newLength = max(_size / 8, (unsigned)1);
+        else if (ratio > 10.0) newLength = min(_size / 5, MaxBuckets);
 
         if (newLength != _length) {
+            if (newLength == MaxBuckets) {
+              cerr << Warning( "IntrusiveSet<> has reached maximum bucket size %d, slowdow may occurs."
+                             , MaxBuckets
+                             ) << endl;
+            }
+
             unsigned oldLength = _length;
             Element** oldArray = _array;
             _length = newLength;
@@ -439,7 +449,7 @@ template<class Element> class IntrusiveSet {
 
                 while (element) {
                     Element* nextElement = _getNextElement(element);
-                    unsigned newIndex = (_getHashValue(element) / 8) % _length;
+                    unsigned newIndex = _getHashValue(element) % _length;
                     _setNextElement(element, _array[newIndex]);
                     _array[newIndex] = element;
 
@@ -473,6 +483,32 @@ template<class Element> class IntrusiveSet {
         _array = new Element*[1];
         _array[0] = NULL;
     };
+
+  public: void Stats ()
+  // ******************
+    {
+      std::cerr << "IntrusiveSet<>::Stats() size=" << _size << " buckets=" << _length << std::endl;
+      std::map<size_t,size_t> histogram;
+      for ( unsigned int index = 0; index < _length; ++index ) {
+        size_t bucketSize = 0;
+        for ( Element* element=_array[index]
+            ; element
+            ; element=_getNextElement(element), ++bucketSize );
+        if (histogram.find(bucketSize) != histogram.end())
+          histogram[ bucketSize ]++;
+        else
+          histogram[ bucketSize ] = 1;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+      std::cerr << "  buckets size  count" << std::endl;
+      std::cerr << "  ============  =====" << std::endl;
+      for ( auto entry : histogram ) {
+        std::cerr << "  " << std::setw(12) << entry.first
+                  << "  " << std::setw( 5) << entry.second << std::endl;
+      }
+      std::cerr << "  ============  =====" << std::endl;
+      
+    }
 
 };
 

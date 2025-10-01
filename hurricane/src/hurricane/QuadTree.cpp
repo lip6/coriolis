@@ -541,7 +541,7 @@ QuadTree::GoSet::GoSet()
 unsigned QuadTree::GoSet::_getHashValue(Go* go) const
 // **************************************************
 {
-  return go->getId() / 8;
+  return hashFNV( go->getId() );
 }
 
 Go* QuadTree::GoSet::_getNextElement(Go* go) const

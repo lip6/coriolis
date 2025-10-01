@@ -127,7 +127,13 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
                    , getString(_tailSharedPath->getOwnerCell ()).c_str()
                    );
 
-    _hash = (_headInstance->getId() << 1) + ((_tailSharedPath) ? _tailSharedPath->getHash() << 1: 0);
+    if (_tailSharedPath) {
+      _hash = _tailSharedPath->getHash();
+      _hash = iterFNV( _hash, _headInstance->getId() );
+    } else {
+      _hash = hashFNV( _headInstance->getId() );
+    }
+    
     _headInstance->_getSharedPathMap()._insert(this);
 
     cdebug_log(0,0) << "SharedPath::SharedPath() pathHash:" << getHash() << " \"" << this << "\"" << endl;
@@ -295,7 +301,7 @@ const Entity* SharedPath::QuarkMap::_getKey(Quark* quark) const
 unsigned SharedPath::QuarkMap::_getHashValue(const Entity* entity) const
 // *********************************************************************
 {
-  return entity->getId() / 8;
+  return hashFNV( entity->getId() );
 }
 
 Quark* SharedPath::QuarkMap::_getNextElement(Quark* quark) const

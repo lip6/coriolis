@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <cstdio>
+#include "hurricane/Timer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -23,6 +24,7 @@
 #include "hurricane/Plug.h"
 using namespace Hurricane;
 
+#include "crlcore/Utilities.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/NetExtension.h"
 #include "crlcore/ToolBox.h"
@@ -35,10 +37,14 @@ using namespace Hurricane;
 namespace CRL {
 
   using namespace std;
+  using Hurricane::Timer;
 
 
   void  vstDriver ( const string cellPath, Cell *cell, unsigned int& saveState )
   {
+    // Timer timer;
+    // timer.start();
+
     NamingScheme ns (NamingScheme::FromVerilog);
     unsigned int entityFlags = Vhdl::Entity::EntityMode /* | Vhdl::Entity::IeeeMode */;
     if (saveState & Catalog::State::VstUseConcat        ) entityFlags |= Vhdl::Entity::VstUseConcat;
@@ -49,7 +55,7 @@ namespace CRL {
       ns.setUniquifyUpperCase( true );
     }
     
-  //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
+    // NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, entityFlags );
 
     string celltest = cellPath;
@@ -76,8 +82,14 @@ namespace CRL {
     cellStream << endl;
     cellStream.close();
 
-  //Vhdl::EntityExtension::destroy( cell );
+    // Vhdl::EntityExtension::destroy( cell );
     Vhdl::EntityExtension::destroyAll();
+    // timer.stop();
+    // ostringstream result;
+
+    // result <<  Timer::getStringTime(timer.getCombTime()) 
+    //        << ", " << Timer::getStringMemory(timer.getIncrease());
+    // cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
   }
 
 

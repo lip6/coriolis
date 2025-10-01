@@ -983,7 +983,7 @@ Net::ComponentSet::ComponentSet()
 unsigned Net::ComponentSet::_getHashValue(Component* component) const
 // ******************************************************************
 {
-  return component->getId() / 8;
+  return hashFNV( component->getId() );
 }
 
 Component* Net::ComponentSet::_getNextElement(Component* component) const
@@ -1013,7 +1013,7 @@ Net::RubberSet::RubberSet()
 unsigned Net::RubberSet::_getHashValue(Rubber* rubber) const
 // *********************************************************
 {
-  return rubber->getId() / 8;
+  return hashFNV( rubber->getId() );
 }
 
 Rubber* Net::RubberSet::_getNextElement(Rubber* rubber) const

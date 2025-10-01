@@ -40,7 +40,7 @@ namespace Hurricane {
     if (!_SHARED_NAME_MAP) _SHARED_NAME_MAP = new SharedNameMap();
     (*_SHARED_NAME_MAP)[&_string] = this;
 
-    for ( char c : _string ) _hash = 131 * _hash + int(c);
+    _hash = hashFNV( _string );
 
     // if (_idCounter == std::numeric_limits<unsigned long>::max()) {
     //   throw Error( "SharedName::SharedName(): Identifier counter has reached it's limit (%d bits)."

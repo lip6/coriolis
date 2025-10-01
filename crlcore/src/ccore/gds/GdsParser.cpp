@@ -2185,6 +2185,15 @@ namespace CRL {
     // if (library->getName() == "working")
     //   DebugSession::close();
 
+    Cell* sram = library->getCell( "RM_IHPSG13_1P_256x64_c2_bm_bist_lef_foreign" );
+    if (sram) {
+      Net* gdsMerged = sram->getNet( "all_nets_merged_in_gds" );
+      if (gdsMerged) {
+        cerr << "ComponentSet hash table of " << sram << endl;
+        gdsMerged->_getComponentSet().Stats();
+      }
+    }
+
     return true;
   }
 
