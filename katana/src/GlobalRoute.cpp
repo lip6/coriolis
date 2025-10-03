@@ -16,6 +16,7 @@
 
 #include "flute.h"
 #include "hurricane/utilities/Dots.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"
@@ -41,6 +42,7 @@ namespace {
   using std::left;
   using std::right;
   using std::set;
+  using Hurricane::DebugSession;
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::DBo;
@@ -558,6 +560,11 @@ namespace Katana {
     else
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
 
+    // cerr << "Net ordering:" << endl;
+    // for ( NetData* netData : getNetOrdering() ) {
+    //   cerr << netData << endl;
+    // }
+
     bool     globalEstimated = false;
     size_t   iteration       = 0;
     size_t   netCount        = 0;
@@ -567,6 +574,8 @@ namespace Katana {
 
       long   wireLength = 0;
       long   viaCount   = 0;
+
+    //if (iteration == 1) DebugSession::open( 112, 120 );
 
       netCount = 0;
       for ( NetData* netData : getNetOrdering() ) {
@@ -651,6 +660,8 @@ namespace Katana {
       cmess2 << " " << setw(7) << Timer::getStringMemory(getTimer().getIncrease())
              << " " << setw(6) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
+
+    //if (iteration == 1) DebugSession::close();
 
       ++iteration;
     } while ( (netCount > 0) and (iteration < globalIterations) );

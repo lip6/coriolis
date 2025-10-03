@@ -124,6 +124,7 @@ namespace Anabatic {
       inline       void             setExcluded        ( bool );
       inline       void             setRpCount         ( size_t );
       inline       void             setNoMoveUp        ( Segment* );
+      inline       string           _getString         () const;
     private:                                     
                               NetData            ( const NetData& );
              NetData&         operator=          ( const NetData& );
@@ -181,6 +182,18 @@ namespace Anabatic {
         return lhs->getNet()->getId() < rhs->getNet()->getId();
       }
   };
+
+
+  inline string  NetData::_getString () const
+  {
+    string s = "<NetData id=" + getString(_net->getId())
+             + " \""          + getString(_net->getName()) + "\""
+             + " rpCount="    + getString(_rpCount)
+             + " flags="      + (isMixedPreRoute() ? "M" : "-")
+             + " sparsity="   + getString(_sparsity)
+             + ">";
+    return s;
+  }
 
 
 // -------------------------------------------------------------------
@@ -476,3 +489,5 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AnabaticEngine);
+GETSTRING_POINTER_SUPPORT(Anabatic::NetData);
+IOSTREAM_POINTER_SUPPORT(Anabatic::NetData);
