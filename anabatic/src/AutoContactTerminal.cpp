@@ -206,7 +206,7 @@ namespace Anabatic {
           if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
             yborder -= DbU::fromLambda( 1.0 );
           else
-            yborder -= DbU::fromLambda( 0.5 );
+            yborder -= DbU::fromLambda( (lg->getDepth() == 0) ? 0.5 : 0.0 );
         }
       }
     }
@@ -250,6 +250,16 @@ namespace Anabatic {
         if (vertical)   { bb = vertical  ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnVertical ); }
         if (pin)        { bb = pin       ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnPin ); }
 
+        if (Session::getRoutingGauge()->isSymbolic() and (lg->getDepth() == 0)) {
+          if (vertical and (vertical->getWidth() == DbU::fromLambda(1.0))) {
+            cerr << Error( "AutoContactTerminal::getNativeConstraintBox(): Anchored on narrow METAL1 vertical.\n"
+                         "        On: %s"
+                         , getString(this).c_str()
+                         ) << endl;
+            bb.inflate( DbU::fromLambda(0.5), 0 );
+          }
+        }
+        
         transformation.applyOn( bb );
         cdebug_log(145,0) << "Shrink border x:" << DbU::getValueString(xborder)
                           <<              " y:" << DbU::getValueString(yborder)
