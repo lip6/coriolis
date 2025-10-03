@@ -1671,6 +1671,9 @@ namespace Anabatic {
 
         ++_connectedsId;
         for ( Vertex* vertex : connecteds ) {
+          if (not vertex->hasValidStamp()) {
+            vertex->setDriver( false );
+          }
           vertex->getGCell()->flags().reset( Flags::GoStraight );
           vertex->setDistance     ( Vertex::unreached );
           vertex->setStamp        ( _stamp );
@@ -1679,8 +1682,10 @@ namespace Anabatic {
           vertex->setDegree       ( 0 );
           vertex->setRpCount      ( 0 );
           vertex->setFrom         ( NULL );
-          if (isDriver)
+          if (isDriver) {
             vertex->setDriver( true );
+            cdebug_log(112,0) << "| Set as driver: " << vertex << endl;
+          }
 
           vertex->setFrom2        ( NULL);
           vertex->unsetFlags      ( Vertex::UseFromFrom2 );
@@ -1697,6 +1702,11 @@ namespace Anabatic {
           }
           vertex->setDegree( degree );
           cdebug_log(112,0) << "| Add: " << vertex << endl;
+        }
+      } else {
+        if (isDriver) {
+          cdebug_log(112,0) << "| Set as driver: " << seed << endl;
+          seed->setDriver( true );
         }
       }
 
@@ -1895,9 +1905,13 @@ namespace Anabatic {
     VertexSet  drivers;
 
     for (  Vertex* vertex : _targets ) {
-      if (vertex->isDriver()) drivers.insert( vertex );
+      if (vertex->isDriver()) {
+        drivers.insert( vertex );
+        cdebug_log(112,0) << "Found driver " << vertex << endl;
+      }
     }
-    if (drivers.empty()) drivers = _targets;
+  //if (drivers.empty()) drivers = _targets;
+    drivers = _targets;
 
 #if THIS_IS_DISABLED
     if (_mode & Mode::Monotonic) {
@@ -1927,18 +1941,33 @@ namespace Anabatic {
 
       Point areaCenter;
       if (hasDevice) areaCenter = _getPonderedPoint();
-      else           areaCenter = _searchArea.getCenter();
+      else {
+        areaCenter = _searchArea.getCenter();
+        DbU::Unit barycenterX = 0;
+        DbU::Unit barycenterY = 0;
+        for (  Vertex* vertex : _targets ) {
+          barycenterX += vertex->getGCell()->getXCenter();
+          barycenterY += vertex->getGCell()->getYCenter();
+        }
+        areaCenter = Point( barycenterX / _targets.size()
+                          , barycenterY / _targets.size() );
+      }
 
       auto ivertex = drivers.begin();
 
       firstSource = *ivertex++;
       DbU::Unit  minDistance = areaCenter.manhattanDistance( firstSource->getCenter() );
+      cdebug_log(112,0) << "Initial source "
+                        << firstSource << " " << DbU::getValueString(minDistance) << endl;
 
       for ( ; ivertex != drivers.end() ; ++ivertex ) {
         DbU::Unit distance = areaCenter.manhattanDistance( (*ivertex)->getCenter() );
+        cdebug_log(112,0) << "Looking for "
+                          << *ivertex << " " << DbU::getValueString(distance) << endl;
         if (distance < minDistance) {
           minDistance = distance;
           firstSource = *ivertex;
+        } else if (distance == minDistance) {
         }
       }
     }
