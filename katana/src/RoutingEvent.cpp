@@ -211,6 +211,7 @@ namespace Katana {
     , _eventLevel          (0)
     , _key                 (this)
   {
+  //cerr << "RoutingEvent::RoutingEvent() " << (void*)this << endl;
     if (_idCounter == std::numeric_limits<uint32_t>::max()) {
       throw Error( "RoutingEvent::RoutingEvent(): Identifier counter has reached it's limit (%d bits)."
                  , std::numeric_limits<uint32_t>::digits );
@@ -266,6 +267,7 @@ namespace Katana {
 
   RoutingEvent::~RoutingEvent ()
   {
+  //cerr << "RoutingEvent::~RoutingEvent() " << (void*)this << endl;
     cdebug_log(159,0) << "~RoutingEvent() " << endl;
 
     DataNegociate* data = _segment->getDataNegociate();
@@ -450,7 +452,7 @@ namespace Katana {
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    if (Session::getStage() != Anabatic::StagePack) history.push( this );
+    history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
@@ -578,7 +580,7 @@ namespace Katana {
   {
     cdebug_log(159,0) << "* Mode:Pack." << endl;
 
-    if (not _segment->isUTurn()) return;
+  //if (not _segment->isUTurn()) return;
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
@@ -589,14 +591,14 @@ namespace Katana {
       cdebug_log(159,0) << "| " << fsm.getCost(i) << endl;
     cdebug_tabw(159,-1);
 
-    if (    _segment->getTrack()
-       and  fsm.getCosts().size()
-       and  fsm.getCost(0)->isFree()
-       and (fsm.getTrack1(0) != _segment->getTrack()) ) {
-
-      cerr << "_processPack(): move to " << fsm.getTrack1(0) << endl;
-      fsm.moveToTrack( 0 );
+    if (fsm.getCosts().size() and fsm.getCost(0)->isFree()) {
+      setInsertState( 0 );
+      if (_segment->getTrack()) fsm.moveToTrack( 0 );
+      else                      fsm.bindToTrack( 0 );
     }
+
+    fsm.doActions();
+    queue.commit();
   }
 
 

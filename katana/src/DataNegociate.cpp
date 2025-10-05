@@ -154,6 +154,31 @@ namespace Katana {
 
       _perpandiculars.push_back( perpandicular );
 
+      if ((Session::getStage() == Anabatic::StagePack) and perpandicular->isReduced()) {
+        Interval  trackFree;
+        DbU::Unit ppSourceAxis = 0;
+        DbU::Unit ppTargetAxis = 0;
+        perpandicular->base()->getEndAxes( ppSourceAxis, ppTargetAxis );
+
+        if (ppSourceAxis == ppTargetAxis) {
+          trackFree = Interval( ppSourceAxis - _trackSegment->getPitch()
+                              , ppSourceAxis + _trackSegment->getPitch() );
+          cdebug_log(159,0) << "trackFree (pack, reduced -> center): " << trackFree << endl;
+        } else {
+          if (_trackSegment->getAxis() == ppSourceAxis) {
+            trackFree = Interval( ppSourceAxis
+                                , ppSourceAxis + 2*_trackSegment->getPitch() );
+          cdebug_log(159,0) << "trackFree (pack, reduced -> source): " << trackFree << endl;
+          } else {
+            trackFree = Interval( ppTargetAxis - 2*_trackSegment->getPitch()
+                                , ppTargetAxis );
+          cdebug_log(159,0) << "trackFree (pack, reduced -> target): " << trackFree << endl;
+          }
+        }
+        _perpandicularFree.intersection( trackFree );
+        continue;
+      }
+
       if (perpandicular->isNonPref()) {
         AutoContact* source    = perpandicular->base()->getAutoSource();
         AutoContact* target    = perpandicular->base()->getAutoTarget();

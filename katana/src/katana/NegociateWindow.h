@@ -129,7 +129,7 @@ namespace Katana {
              void                          _createRouting       ( Anabatic::GCell* );
              void                          _computePriorities   ();
              void                          _associateSymmetrics ();
-             void                          _pack                ( size_t& count, bool last );
+             void                          _negociatePack       ( size_t& count, bool last );
              size_t                        _negociate           ();
              void                          _negociateRepair     ();
              Hurricane::Record*            _getRecord           () const;

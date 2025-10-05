@@ -592,55 +592,6 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::_pack ( size_t& count, bool last )
-  {
-    uint64_t limit = _katana->getEventsLimit();
-    _katana->setStage( Anabatic::StagePack );
-
-    RoutingEventQueue  packQueue;
-  //for ( size_t i = (count > 600) ? count-600 : 0
-  //    ; (i<_eventHistory.size()-(last ? 0 : 100)) and not isInterrupted() ; i++ ) {
-    for ( size_t i=0 ; i<_eventHistory.size() ; ++i ) {
-      RoutingEvent* event = _eventHistory.getNth(i);
-
-      if ( event and not event->isCloned() ) {
-        cerr << "Cloned:" << event->isCloned()
-             << " UTurn:" << event->getSegment()->isUTurn() << " " << event->getSegment() << endl;
-      }
-          
-      if ( event and not event->isCloned() and event->getSegment()->isUTurn() ) {
-        event->reschedule( packQueue, 0 );
-      }
-    }
-    packQueue.commit();
-
-    while ( not packQueue.empty() and not isInterrupted() ) {
-      RoutingEvent* event = packQueue.pop();
-
-      if (tty::enabled()) {
-        cmess2 << "        <pack.event:" << tty::bold << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << tty::reset
-               << " remains:" << right << setw(8) << setfill('0')
-               << packQueue.size() << ">"
-               << setfill(' ') << tty::reset << tty::cr;
-        cmess2.flush();
-      } else {
-        cmess2 << "        <pack.event:" << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
-               << event->getSegment()
-               << endl;
-        cmess2.flush();
-      }
-
-      event->process( packQueue, _eventHistory, _eventLoop );
-
-      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
-    }
-  // Count will be wrong!
-  }
-
-
   size_t  NegociateWindow::_negociate ()
   {
     cdebug_log(9000,0) << "Deter| NegociateWindow::_negociate()" << endl;
@@ -738,7 +689,7 @@ namespace Katana {
       // }
          
       // if (count and not (count % 500)) {
-      //   _pack( count, false );
+      //   _negociatePack( count, false );
       // } 
          
       // if (RoutingEvent::getProcesseds() == 65092) {
@@ -754,7 +705,6 @@ namespace Katana {
       }
     }
     _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );
-  //_pack( count, true );
     _negociateRepair();
 
     if (_katana->getConfiguration()->runRealignStage()) {
@@ -807,6 +757,8 @@ namespace Katana {
       _negociateRepair();
     }
 
+    _negociatePack( count, true );
+
     if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
     size_t eventsCount = _eventHistory.size();
@@ -823,6 +775,64 @@ namespace Katana {
     cdebug_tabw(159,-1);
 
     return eventsCount;
+  }
+
+
+  void  NegociateWindow::_negociatePack ( size_t& count, bool last )
+  {
+    // UpdateSession::close();
+    // Breakpoint::stop( 0, "NegociateWindow::_negoiatePack()" );
+    // UpdateSession::open();
+
+    cmess1 << "     o  Pack Stage." << endl;
+
+    uint64_t limit = _katana->getEventsLimit();
+    _katana->setStage( Anabatic::StagePack );
+
+  //for ( size_t i = (count > 600) ? count-600 : 0
+  //    ; (i<_eventHistory.size()-(last ? 0 : 100)) and not isInterrupted() ; i++ ) {
+    size_t historySize = _eventHistory.size();
+    for ( size_t i=0 ; i<historySize ; ++i ) {
+      RoutingEvent* event = _eventHistory.getNth(i);
+          
+      DebugSession::open( event->getSegment()->getNet(), 159, 160 );
+
+      if ( event and not event->isCloned()
+         and not event->getSegment()->isReduced()
+         and     event->getSegment()->isUTurn() ) {
+      //if (event->getSegment()->getId() != 566821) continue;
+
+        event->reschedule( _eventQueue, 0 );
+        _eventQueue.commit();
+
+        while ( not _eventQueue.empty() and not isInterrupted() ) {
+          RoutingEvent* packEvent = _eventQueue.pop();
+          if (not packEvent) continue;
+
+          if (tty::enabled()) {
+            cmess2 << "        <pack.event:" << tty::bold << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << tty::reset
+                   << " remains:" << right << setw(8) << setfill('0')
+                   << _eventQueue.size() << ">"
+                   << setfill(' ') << tty::reset << tty::cr;
+            cmess2.flush();
+          } else {
+            cmess2 << "        <pack.event:" << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                   << packEvent->getEventLevel() << ":" << event->getPriority() << "> "
+                   << _eventQueue.size() << " "
+                   << packEvent->getSegment()
+                   << endl;
+            cmess2.flush();
+          }
+
+          packEvent->process( _eventQueue, _eventHistory, _eventLoop );
+          if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+        }
+      }
+
+      DebugSession::close();
+    }
   }
 
 
