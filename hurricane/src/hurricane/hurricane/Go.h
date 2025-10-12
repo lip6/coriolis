@@ -33,6 +33,11 @@ class QuadTree;
 
 class Go : public Entity {
 // *********************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Friends
 // *******
@@ -92,6 +97,9 @@ class Go : public Entity {
     public: void _setNextOfQuadTreeGoSet(Go* go) {_nextOfQuadTreeGoSet = go;};
 
 };
+
+  
+  inline const FastRTTI& Go::fastRTTI        () { return _fastRTTI; }
 
 
 } // End of Hurricane namespace.

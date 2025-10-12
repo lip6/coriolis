@@ -35,6 +35,11 @@ namespace Hurricane {
 
 class Vertical : public Segment {
 // ****************************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -112,6 +117,9 @@ class Vertical : public Segment {
     public: virtual Record* _getRecord() const;
 
 };
+
+  
+inline const FastRTTI& Vertical::fastRTTI () { return _fastRTTI; }
 
 
 class JsonVertical : public JsonSegment {

@@ -64,6 +64,12 @@ typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 class Cell : public Entity {
 // *************************
 
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
+
 // Types
 // *****
 
@@ -530,6 +536,9 @@ class Cell : public Entity {
     public: void notify(unsigned flags);  
     public: void destroyPhysical();
 };
+
+  
+inline const FastRTTI& Cell::fastRTTI () { return _fastRTTI; }
 
 
 inline  Cell::ClonedSet::Locator::Locator ( const Locator& other )

@@ -1206,3 +1206,104 @@ extern tstream  cdebug;
 #include "hurricane/Initializer.h"
 #include "hurricane/JsonWriter.h"
 #include "hurricane/JsonObject.h"
+
+  
+namespace Hurricane {
+  
+// -------------------------------------------------------------------
+// Class :  FastRTTI
+//
+// Reference:
+//     https://tinodidriksen.com/2010/04/cpp-dynamic-cast-performance/
+
+
+  class FastRTTI {
+    private:
+      static uint64_t                        _classBit;
+      static std::map<uint64_t,std::string>  _classNames;
+             std::string                     _className;
+      const  FastRTTI*                       _baseRTTI;
+             uint64_t                        _baseIds;
+             uint64_t                        _classId;
+    public:
+      inline              FastRTTI     ( std::string className, const FastRTTI* baseRTTI );
+    public:               
+      inline uint64_t     classId      () const;
+      inline bool         hasBaseClass ( uint64_t ) const;
+      inline void         initialize   ();
+      inline std::string  _getString   () const;
+      inline Record*      _getRecord   () const;
+  };
+
+
+  FastRTTI::FastRTTI ( std::string className, const FastRTTI* baseRTTI )
+    : _className("<"+className+">")
+    , _baseRTTI(baseRTTI)
+    , _baseIds(0)
+  {
+    if (baseRTTI) const_cast<FastRTTI*>( baseRTTI )->initialize();
+    initialize();
+  }
+
+  inline uint64_t  FastRTTI::classId     () const { return _classId; }
+
+  inline bool  FastRTTI::hasBaseClass ( uint64_t baseClassId ) const
+  { return (_baseIds bitand baseClassId); }
+
+  inline void  FastRTTI::initialize ()
+  {
+    if (classId()) return;
+    _classId = (1 << _classBit++);
+
+    _classNames[ _classId ] = _className;
+    if (_baseRTTI) _baseIds = _baseRTTI->_baseIds;
+    _baseIds |= _classId;
+  }
+
+
+  template<typename Derived>
+  class derived_cast {
+    private:
+      Derived* _derivedPointer;
+    public:
+      template<typename Base>
+      inline  derived_cast ( Base* basePointer )
+        : _derivedPointer(nullptr)
+      {
+        if (not basePointer) return;
+        if (basePointer->vfastRTTI().hasBaseClass( Derived::fastRTTI().classId() ))
+          _derivedPointer = static_cast<Derived*>( basePointer );
+      }
+      inline  operator Derived* () const;
+  };
+
+  template<typename Derived>
+  inline derived_cast<Derived>::operator Derived* () const { return _derivedPointer; }
+
+
+}  // Hurricane namespace.
+
+
+INSPECTOR_P_SUPPORT(Hurricane::FastRTTI);
+
+
+namespace Hurricane {
+
+
+  inline std::string FastRTTI::_getString  () const { return _className + ":" + getString(_baseIds);  }
+
+  inline Record* FastRTTI::_getRecord () const
+  {
+    Record* record = new Record ( getString(this) );
+    for ( size_t bit=0 ; bit<64 ; ++bit ) {
+      uint64_t classMask = (((uint64_t)1) << bit);
+      if (_baseIds & classMask) {
+        std::string baseName = getString( classMask ) + " -> " + _classNames[ classMask ];
+        record->add( getSlot( getString(bit), baseName ));
+      }
+    }
+    return record;
+  }
+
+
+}  // Hurricane namespace.

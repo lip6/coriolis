@@ -978,12 +978,15 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Rectilinear".
 
+  FastRTTI  Rectilinear::_fastRTTI ( demangle(typeid(Rectilinear).name()), &Rectilinear::Super::fastRTTI() );
+
   Rectilinear::Rectilinear ( Net* net, const Layer* layer, const vector<Point>& points )
     :  Super (net)
     , _layer (layer)
     , _points(points)
     , _flags (IsRectilinear)
-  { }
+  {
+  }
 
 
   Rectilinear* Rectilinear::create ( Net* net, const Layer* layer, const vector<Point>& points )
@@ -1047,11 +1050,11 @@ namespace Hurricane {
 
 
 
-
-  bool         Rectilinear::isNonRectangle () const { return true; }
-  const Layer* Rectilinear::getLayer       () const { return _layer; }
-  DbU::Unit    Rectilinear::getX           () const { return getBoundingBox().getCenter().getX(); }
-  DbU::Unit    Rectilinear::getY           () const { return getBoundingBox().getCenter().getY(); }
+  const FastRTTI& Rectilinear::vfastRTTI      () const { return _fastRTTI; }
+  bool            Rectilinear::isNonRectangle () const { return true; }
+  const Layer*    Rectilinear::getLayer       () const { return _layer; }
+  DbU::Unit       Rectilinear::getX           () const { return getBoundingBox().getCenter().getX(); }
+  DbU::Unit       Rectilinear::getY           () const { return getBoundingBox().getCenter().getY(); }
 
 
   Box  Rectilinear::getBoundingBox() const
@@ -1188,8 +1191,9 @@ namespace Hurricane {
   {
     Record* record = Super::_getRecord();
     if (record) {
-      record->add( getSlot("_layer" ,  _layer ) );
-      record->add( getSlot("_points", &_points) );
+      record->add( getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
+      record->add( getSlot("_layer"   ,  _layer    ));
+      record->add( getSlot("_points"  , &_points   ));
     }
     return record;
   }

@@ -195,13 +195,16 @@ namespace Hurricane {
 // -------------------------------------------------------------------
 // Class  :  "Polygon".
 
+  FastRTTI  Polygon::_fastRTTI ( demangle(typeid(Polygon).name()), &Polygon::Super::fastRTTI() );
+
   Polygon::Polygon ( Net* net, const Layer* layer, const vector<Point>& points )
     : Super  (net)
     , _flags (Convex)
     , _layer (layer)
     , _points(points)
     , _edges ()
-  { }
+  { 
+  }
 
 
   Polygon* Polygon::create ( Net* net, const Layer* layer, const vector<Point>& points )
@@ -267,6 +270,10 @@ namespace Hurricane {
   {
     for ( Edge* edge : _edges ) delete edge;
   }
+
+
+  const FastRTTI& Polygon::vfastRTTI () const
+  { return _fastRTTI; }
 
 
   bool  Polygon::isConvex () const
@@ -672,9 +679,10 @@ namespace Hurricane {
   {
     Record* record = Inherit::_getRecord();
     if (record) {
-      record->add( getSlot("_layer" ,  _layer ) );
-      record->add( getSlot("_points", &_points) );
-      record->add( getSlot("_edges" , &_edges ) );
+      record->add( getSlot( "_fastRTTI", &_fastRTTI ), Record::Overload );
+      record->add( getSlot( "_layer"   ,  _layer    ));
+      record->add( getSlot( "_points"  , &_points   ));
+      record->add( getSlot( "_edges"   , &_edges    ));
     }
     return record;
   }

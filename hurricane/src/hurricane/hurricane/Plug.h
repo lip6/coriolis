@@ -36,6 +36,11 @@ class Instance;
 
 class Plug : public Component {
 // **************************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -113,6 +118,9 @@ class Plug : public Component {
     public: void _setNextOfInstancePlugMap(Plug* plug) {_nextOfInstancePlugMap = plug;};
 
 };
+
+  
+  inline const FastRTTI& Plug::fastRTTI () { return _fastRTTI; }
 
 
 class JsonPlug : public JsonComponent {

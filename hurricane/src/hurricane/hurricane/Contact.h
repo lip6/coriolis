@@ -41,6 +41,11 @@ namespace Hurricane {
 // Class  :  "Hurricane::Contact".
 
   class Contact : public Component {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       typedef Component Inherit;
       const uint64_t  NoFlags           = 0;
@@ -149,6 +154,8 @@ namespace Hurricane {
              DbU::Unit   _height;
   };
 
+  
+  inline const FastRTTI& Contact::fastRTTI () { return _fastRTTI; }
   
   inline void  Contact::enableCheckMinSize    () { _checkMinSize=true; }
   inline void  Contact::disableCheckMinSize   () { _checkMinSize=false; }

@@ -103,7 +103,8 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
-bool  Contact::_checkMinSize = true;
+FastRTTI  Contact::_fastRTTI     ( demangle(typeid(Contact).name()), &Contact::Inherit::fastRTTI() );
+bool      Contact::_checkMinSize = true;
 
 
 Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
@@ -233,6 +234,11 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
     return rvalue;
   }
   
+
+const FastRTTI& Contact::vfastRTTI () const
+// ****************************************
+{ return _fastRTTI; }
+
 Hooks Contact::getHooks() const
 // ****************************
 {
@@ -439,6 +445,7 @@ Record* Contact::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(getSlot("AnchorHook", &_anchorHook));
         record->add(getSlot("Anchor", getAnchor()));
         record->add(getSlot("Layer", _layer));

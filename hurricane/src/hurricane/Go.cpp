@@ -29,6 +29,7 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 static bool AUTO_MATERIALIZATION_IS_ENABLED = true;
+FastRTTI  Go::_fastRTTI ( demangle(typeid(Go).name()), &Go::Inherit::fastRTTI() );
 
 Go::Go()
 // *****
@@ -69,7 +70,6 @@ void Go::_postCreate()
     } // materialized after entire post creation
 }
 
-
 void Go::_preDestroy()
 {
 //ltrace(10) << "Go::_preDestroy() - " << (void*)this << endl;
@@ -83,6 +83,10 @@ void Go::_preDestroy()
 //ltrace(10) << "Go::_preDestroy() - exit" << endl;
 //ltraceout(10);
 }
+
+const FastRTTI& Go::vfastRTTI () const
+// ***********************************
+{ return _fastRTTI; }
 
 void Go::translate(const Point& p )
 { translate( p.getX(), p.getY() ); }
@@ -98,7 +102,8 @@ Record* Go::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("QuadTree", _quadTree));
+        record->add( getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
+        record->add( getSlot("QuadTree" ,  _quadTree ));
     }
     return record;
 }

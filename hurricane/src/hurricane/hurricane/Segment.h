@@ -32,6 +32,11 @@ namespace Hurricane {
 
 class Segment : public Component {
 // *****************************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -133,6 +138,9 @@ class Segment : public Component {
     public: virtual Record* _getRecord() const;
 
 };
+
+  
+  inline const FastRTTI& Segment::fastRTTI () { return _fastRTTI; }
 
 
 // ****************************************************************************************************

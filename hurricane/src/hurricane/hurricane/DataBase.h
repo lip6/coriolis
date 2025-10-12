@@ -39,6 +39,11 @@ class Technology;
 
 class DataBase : public DBo {
 // ************************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -91,6 +96,9 @@ class DataBase : public DBo {
     public: static DataBase* getDB();
 
 };
+
+  
+  inline const FastRTTI& DataBase::fastRTTI        () { return _fastRTTI; }
 
 
 

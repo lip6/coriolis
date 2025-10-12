@@ -34,6 +34,8 @@ namespace Hurricane {
 // Vertical implementation
 // ****************************************************************************************************
 
+FastRTTI  Vertical::_fastRTTI ( demangle(typeid(Vertical).name()), &Vertical::Inherit::fastRTTI() );
+
 Vertical::Vertical(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& x, const DbU::Unit& width, const DbU::Unit& dySource, const DbU::Unit& dyTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
@@ -72,6 +74,10 @@ Vertical* Vertical::create(Component* source, Component* target, const Layer* la
 
     return vertical;
 }
+
+const FastRTTI& Vertical::vfastRTTI () const
+// *****************************************
+{ return _fastRTTI; }
 
 Box Vertical::getBoundingBox() const
 // *********************************
@@ -199,6 +205,7 @@ Record* Vertical::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(DbU::getValueSlot("X", &_x));
         record->add(DbU::getValueSlot("DySource", &_dySource));
         record->add(DbU::getValueSlot("DyTarget", &_dyTarget));

@@ -527,6 +527,8 @@ namespace Hurricane {
 // Cell implementation
 // ****************************************************************************************************
 
+FastRTTI  Cell::_fastRTTI ( demangle(typeid(Cell).name()), &Cell::Inherit::fastRTTI() );
+
 
 Cell::Cell(Library* library, const Name& name)
 // *******************************************
@@ -569,6 +571,11 @@ Cell* Cell::create(Library* library, const Name& name)
 
     return cell;
 }
+
+
+const FastRTTI& Cell::vfastRTTI () const
+// *************************************
+{ return _fastRTTI; }
 
 Cell* Cell::fromJson(const string& filename)
 // *****************************************
@@ -1375,6 +1382,7 @@ Record* Cell::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add( getSlot("_fastRTTI"       , &_fastRTTI        ), Record::Overload );
         record->add( getSlot("_library"        , _library          ) );
         record->add( getSlot("_name"           , &_name            ) );
         record->add( getSlot("_instances"      , &_instanceMap     ) );

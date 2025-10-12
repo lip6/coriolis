@@ -33,6 +33,8 @@ namespace Hurricane {
 // Pad implementation
 // ****************************************************************************************************
 
+FastRTTI  Pad::_fastRTTI ( demangle(typeid(Pad).name()), &Pad::Inherit::fastRTTI() );
+
 Pad::Pad(Net* net, const Layer* layer, const Box& boundingBox)
 // ***********************************************************
 :  Inherit(net),
@@ -55,6 +57,10 @@ Pad* Pad::create(Net* net, const Layer* layer, const Box& boundingBox)
 
     return pad;
 }
+
+const FastRTTI& Pad::vfastRTTI () const
+// ************************************
+{ return _fastRTTI; }
 
 DbU::Unit Pad::getX() const
 // *******************
@@ -142,6 +148,7 @@ Record* Pad::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(getSlot("Layer", _layer));
         record->add(getSlot("BoundingBox", &_boundingBox));
     }

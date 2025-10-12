@@ -43,6 +43,11 @@ namespace Hurricane {
 // Class  :  "Hurricane::DBo".
 
   class DBo {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       enum DBoFlags { ForcedIdMode  = (1<<0)
                     , NextIdSet     = (1<<1)
@@ -105,10 +110,11 @@ namespace Hurricane {
 
 
 // Inline Functions.
+  inline const FastRTTI& DBo::fastRTTI        () { return _fastRTTI; }
   inline set<Property*>& DBo::_getPropertySet () { return _propertySet; }
   inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
   inline unsigned int    DBo::getId           () const { return _id; }
-
+  
   template<typename Key>
   inline bool  DBo::CompareById::operator() ( const Key* lhs, const Key* rhs ) const
   { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }

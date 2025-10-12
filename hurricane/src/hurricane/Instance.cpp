@@ -184,6 +184,8 @@ class Instance_PruneMasterFilter : public Filter<Instance*>
 // Instance implementation
 // ****************************************************************************************************
 
+FastRTTI  Instance::_fastRTTI ( demangle(typeid(Instance).name()), &Instance::Inherit::fastRTTI() );
+
 Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transformation& transformation, const PlacementStatus& placementstatus, bool secureFlag)
 // ****************************************************************************************************
 :    Inherit(),
@@ -256,6 +258,10 @@ Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, const
   instance->_postCreate();
   return instance;
 }
+
+const FastRTTI& Instance::vfastRTTI () const
+// *****************************************
+{ return _fastRTTI; }
 
 Box Instance::getBoundingBox() const
 // *********************************
@@ -646,6 +652,7 @@ Record* Instance::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
         record->add(getSlot("Cell", _cell));
         record->add(getSlot("Name", &_name));
         record->add(getSlot("MasterCell", _masterCell));

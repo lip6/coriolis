@@ -44,6 +44,11 @@ namespace Hurricane {
 // Class  :  "RoutingPad".
 
   class RoutingPad : public Component {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       typedef Component Inherit;
       static const uint32_t BiggestArea        = (1 << 0); 
@@ -121,6 +126,9 @@ namespace Hurricane {
       uint32_t    _flags;
       Point       _userCenter;
   };
+
+  
+  inline const FastRTTI& RoutingPad::fastRTTI        () { return _fastRTTI; }
 
   
   inline  bool        RoutingPad::isAtTopLevel         () const { return _occurrence.getPath().isEmpty(); }

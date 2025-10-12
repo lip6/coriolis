@@ -42,6 +42,11 @@ namespace Hurricane {
   class Polygon : public Component {
     public:
       typedef       Component  Super;
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       static const  uint32_t Above      = (1<<0);
       static const  uint32_t YSteps     = (1<<1);
@@ -144,6 +149,8 @@ namespace Hurricane {
                     std::vector<Edge*>  _edges;
   };
 
+  
+  inline const FastRTTI& Polygon::fastRTTI        () { return _fastRTTI; }
 
   inline  const vector<Polygon::Edge*>& Polygon::getEdges        () const { return _edges; }
   inline  const vector<Point>&          Polygon::getPoints       () const { return _points; }

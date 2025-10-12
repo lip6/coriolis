@@ -336,6 +336,8 @@ class Component_SlaveComponents : public Collection<Component*> {
 // Component implementation
 // ****************************************************************************************************
 
+FastRTTI  Component::_fastRTTI ( demangle(typeid(Component).name()), &Component::Inherit::fastRTTI() );
+
 Component::Component(Net* net, bool inPlugCreate)
 // **********************************************
 :    Inherit(),
@@ -347,6 +349,10 @@ Component::Component(Net* net, bool inPlugCreate)
     if (!inPlugCreate && !_net)
         throw Error("Can't create " + _TName("Component") + " : null net");
 }
+
+const FastRTTI& Component::vfastRTTI () const
+// ******************************************
+{ return _fastRTTI; }
 
 Cell* Component::getCell() const
 // *****************************
@@ -581,6 +587,7 @@ Record* Component::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
         record->add(getSlot("Net", _net));
         record->add(getSlot("Rubber", _rubber));
         record->add(getSlot("BodyHook", &_bodyHook));

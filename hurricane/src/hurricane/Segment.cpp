@@ -164,6 +164,8 @@ class Segment_Anchors : public Collection<Component*> {
 // Segment implementation
 // ****************************************************************************************************
 
+FastRTTI  Segment::_fastRTTI ( demangle(typeid(Segment).name()), &Segment::Inherit::fastRTTI() );
+
 Segment::Segment(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& width)
 // **********************************************************************************************
 :  Inherit(net),
@@ -196,6 +198,10 @@ Segment::Segment(Net* net, Component* source, Component* target, const Layer* la
     if (source) _sourceHook.attach(source->getBodyHook());
     if (target) _targetHook.attach(target->getBodyHook());
 }
+
+const FastRTTI& Segment::vfastRTTI () const
+// ****************************************
+{ return _fastRTTI; }
 
 Hooks Segment::getHooks() const
 // ****************************
@@ -332,6 +338,7 @@ Record* Segment::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(getSlot("SourceHook", &_sourceHook));
         record->add(getSlot("Source", getSource()));
         record->add(getSlot("TargetHook", &_targetHook));

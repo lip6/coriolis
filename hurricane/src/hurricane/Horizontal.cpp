@@ -35,6 +35,8 @@ namespace Hurricane {
 // Horizontal implementation
 // ****************************************************************************************************
 
+FastRTTI  Horizontal::_fastRTTI ( demangle(typeid(Horizontal).name()), &Horizontal::Inherit::fastRTTI() );
+
 Horizontal::Horizontal(Net* net, Component* source, Component* target, const Layer* layer, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& dxSource, const DbU::Unit& dxTarget)
 // ****************************************************************************************************
 :  Inherit(net, source, target, layer, width),
@@ -73,6 +75,10 @@ Horizontal* Horizontal::create(Component* source, Component* target, const Layer
 
     return horizontal;
 }
+
+const FastRTTI& Horizontal::vfastRTTI () const
+// *******************************************
+{ return _fastRTTI; }
 
 Box Horizontal::getBoundingBox() const
 // ***********************************
@@ -196,6 +202,7 @@ Record* Horizontal::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
         record->add(DbU::getValueSlot("Y", &_y));
         record->add(DbU::getValueSlot("DxSource", &_dxSource));
         record->add(DbU::getValueSlot("DxTarget", &_dxTarget));
