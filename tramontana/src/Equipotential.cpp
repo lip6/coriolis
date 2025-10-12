@@ -62,6 +62,7 @@ namespace Tramontana {
   using std::vector;
   using std::set;
   using std::make_pair;
+  using Hurricane::demangle;
   using Hurricane::dbo_ptr;
   using Hurricane::UpdateSession;
   using Hurricane::DebugSession;
@@ -110,6 +111,9 @@ namespace Tramontana {
 
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::Equipotential".
+
+  FastRTTI          Equipotential::_fastRTTI ( demangle(typeid(Equipotential).name()), &Equipotential::Super::fastRTTI() );
+  map<Net*,size_t>  Equipotential::_netSizes;
 
 
   Equipotential* Equipotential::get ( Component* component )
@@ -174,8 +178,38 @@ namespace Tramontana {
   }
 
 
+  size_t  Equipotential::getNetSize ( TramontanaEngine* tramontana, Net* net )
+  {
+    auto inetSize = _netSizes.find( net );
+    if (inetSize != _netSizes.end()) return inetSize->second;
+
+    size_t compCount = 0;
+    for ( Component* component : net->getComponents() ) {
+      // Plug* plug = dynamic_cast<Plug*>( component );
+      // Plug* fastPlug = derived_cast<Plug>( component );
+      // if ((plug == nullptr) xor (fastPlug == nullptr)) {
+      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
+      //   cerr << "plug=" << plug << endl;
+      //   cerr << "fastPlug=" << fastPlug << endl;
+      // }
+    //if (dynamic_cast<Plug*>(component)) continue;
+      if (derived_cast<Plug>(component)) continue;
+    //if (component->isPlug()) continue;
+      if (not tramontana->isExtractable(component->getLayer())) continue;
+      ++compCount;
+    }
+    _netSizes[ net ] = compCount;
+    return compCount;
+  }
+
+
+  void  Equipotential::clearNetSizes ()
+  { _netSizes.clear(); }
+  
+
   Equipotential::Equipotential ( Cell* owner )
-    : _owner        (owner)
+    : Super         ()
+    , _owner        (owner)
     , _boundingBox  ()
     , _components   ()
     , _childs       ()
@@ -225,6 +259,10 @@ namespace Tramontana {
   }
 
 
+  const FastRTTI& Equipotential::vfastRTTI () const
+  { return _fastRTTI; }
+
+
   Cell* Equipotential::getCell () const
   { return _owner; }
 
@@ -239,16 +277,32 @@ namespace Tramontana {
   
   bool  Equipotential::add ( Occurrence occ, const Box& boundingBox )
   {
+    static map<Net*,size_t> netSizes;
     cdebug_log(160,0) << "Equipotential::add(): " << this << endl;
     cdebug_log(160,0) << "  " << occ << endl;
     if (occ.getPath().isEmpty()) {
-      Contact* contact = dynamic_cast<Contact*>( occ.getEntity() );
+      // Contact* contact = dynamic_cast<Contact*>( occ.getEntity() );
+      // Contact* fastContact = derived_cast<Contact>( occ.getEntity() );
+      // if ((contact == nullptr) xor (fastContact == nullptr)) {
+      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
+      //   cerr << "contact=" << contact << endl;
+      //   cerr << "fastContact=" << fastContact << endl;
+      // }
+      Contact* contact = derived_cast<Contact>( occ.getEntity() );
+      
       if ((_components.find(occ) != _components.end())) {
         if (not contact)
           cdebug_log(160,0) << "Equipotential::add(): Duplicated " << occ.getCompactString() << endl;
         return false;
       }
-      Component* comp = dynamic_cast<Component*>( occ.getEntity() );
+      // Component* comp = dynamic_cast<Component*>( occ.getEntity() );
+      // Component* fastComp = derived_cast<Component>( occ.getEntity() );
+      // if ((comp == nullptr) xor (fastComp == nullptr)) {
+      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
+      //   cerr << "comp=" << comp << endl;
+      //   cerr << "fastComp=" << fastComp << endl;
+      // }
+      Component* comp = derived_cast<Component>( occ.getEntity() );
       if (not comp) {
         cerr << Error( "Equipotential::add(): Occurrences with null Path must be Components.\n"
                      "        (on:%s)"
@@ -271,12 +325,7 @@ namespace Tramontana {
         return false;
       }
       TramontanaEngine* tramontana = TramontanaEngine::get( _owner );
-      uint32_t compCount = 0;
-      for ( Component* component : comp->getNet()->getComponents() ) {
-        if (dynamic_cast<Plug*>(component)) continue;
-        if (not tramontana->isExtractable(component->getLayer())) continue;
-        ++compCount;
-      }
+      uint32_t          compCount  = getNetSize( tramontana, comp->getNet() );
       _nets.insert( make_pair( comp->getNet(), make_pair(1,compCount) ));
       if (comp->getNet()->isPower ()) _flags |= Power;
       if (comp->getNet()->isGround()) _flags |= Ground;
@@ -287,7 +336,14 @@ namespace Tramontana {
 
       return (_nets.size() > 1 + ((hasFused()) ? 1 : 0));
     } else {
-      Equipotential* equi = dynamic_cast<Equipotential*>( occ.getEntity() );
+      // Equipotential* equi = dynamic_cast<Equipotential*>( occ.getEntity() );
+      // Equipotential* fastEqui = derived_cast<Equipotential>( occ.getEntity() );
+      // if ((equi == nullptr) xor (fastEqui == nullptr)) {
+      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
+      //   cerr << "equi=" << equi << endl;
+      //   cerr << "fastEqui=" << fastEqui << endl;
+      // }
+      Equipotential* equi = derived_cast<Equipotential>( occ.getEntity() );
       if (not equi) {
         cerr << Error( "Equipotential::add(): Occurrence is not an Equipotential.\n"
                      "        (on:%s)"
@@ -479,6 +535,7 @@ namespace Tramontana {
   {
     Record* record = Super::_getRecord();
     if (record) {
+      record->add( getSlot("_fastRTTI"    , &_fastRTTI    ), Record::Overload );
       record->add( getSlot( "_name"       , &_name        ) );
       record->add( getSlot( "_boundingBox", &_boundingBox ) );
     //record->add( getSlot( "_nets"       , &_nets        ) );
