@@ -283,6 +283,7 @@ namespace Tramontana {
       printSummary();
       stopMeasures();
       printMeasures();
+      Equipotential::clearNetSizes();
     }
   }
 

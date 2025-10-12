@@ -109,6 +109,10 @@ namespace Tramontana {
 
   void  SweepLine::run ( bool isTopLevel )
   {
+    if (cmess2.enabled()) {
+      cmess1 << "     o  Extracting " << getCell() << endl;
+    }
+
     UpdateSession::open();
     // if (getCell()->getName() == "a2_x2")
     //   DebugSession::open( 160, 169 );
@@ -198,8 +202,15 @@ namespace Tramontana {
       processeds = 0;
       loadNextWindow();
     } while ( processeds < _tiles.size() );
+
+    if (tty::enabled()) {
+      cmess2 << "        <SweepLine @" << tty::bold
+             << right << setw(12) << DbU::getValueString(sweepSpan.getVMax(),DbU::Physical) << " | 100%"
+             << tty::reset
+             << setfill(' ') << tty::reset << ">" << tty::cr;
+      cmess2 << endl;
+    }
     
-    if (tty::enabled()) cmess2 << endl;
     cdebug_tabw(160,-1);
     mergeEquipotentials( Tile::MakeLeafEqui );
     if (isTopLevel) printSummary();
