@@ -185,16 +185,8 @@ namespace Tramontana {
 
     size_t compCount = 0;
     for ( Component* component : net->getComponents() ) {
-      // Plug* plug = dynamic_cast<Plug*>( component );
-      // Plug* fastPlug = derived_cast<Plug>( component );
-      // if ((plug == nullptr) xor (fastPlug == nullptr)) {
-      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
-      //   cerr << "plug=" << plug << endl;
-      //   cerr << "fastPlug=" << fastPlug << endl;
-      // }
     //if (dynamic_cast<Plug*>(component)) continue;
       if (derived_cast<Plug>(component)) continue;
-    //if (component->isPlug()) continue;
       if (not tramontana->isExtractable(component->getLayer())) continue;
       ++compCount;
     }
@@ -282,12 +274,6 @@ namespace Tramontana {
     cdebug_log(160,0) << "  " << occ << endl;
     if (occ.getPath().isEmpty()) {
       // Contact* contact = dynamic_cast<Contact*>( occ.getEntity() );
-      // Contact* fastContact = derived_cast<Contact>( occ.getEntity() );
-      // if ((contact == nullptr) xor (fastContact == nullptr)) {
-      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
-      //   cerr << "contact=" << contact << endl;
-      //   cerr << "fastContact=" << fastContact << endl;
-      // }
       Contact* contact = derived_cast<Contact>( occ.getEntity() );
       
       if ((_components.find(occ) != _components.end())) {
@@ -296,12 +282,6 @@ namespace Tramontana {
         return false;
       }
       // Component* comp = dynamic_cast<Component*>( occ.getEntity() );
-      // Component* fastComp = derived_cast<Component>( occ.getEntity() );
-      // if ((comp == nullptr) xor (fastComp == nullptr)) {
-      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
-      //   cerr << "comp=" << comp << endl;
-      //   cerr << "fastComp=" << fastComp << endl;
-      // }
       Component* comp = derived_cast<Component>( occ.getEntity() );
       if (not comp) {
         cerr << Error( "Equipotential::add(): Occurrences with null Path must be Components.\n"
@@ -337,12 +317,6 @@ namespace Tramontana {
       return (_nets.size() > 1 + ((hasFused()) ? 1 : 0));
     } else {
       // Equipotential* equi = dynamic_cast<Equipotential*>( occ.getEntity() );
-      // Equipotential* fastEqui = derived_cast<Equipotential>( occ.getEntity() );
-      // if ((equi == nullptr) xor (fastEqui == nullptr)) {
-      //   cerr << "dynamic_cast & derived_cast disagree!" << endl;
-      //   cerr << "equi=" << equi << endl;
-      //   cerr << "fastEqui=" << fastEqui << endl;
-      // }
       Equipotential* equi = derived_cast<Equipotential>( occ.getEntity() );
       if (not equi) {
         cerr << Error( "Equipotential::add(): Occurrence is not an Equipotential.\n"
