@@ -399,8 +399,9 @@ class Stripe ( object ):
                 del bigViaBbs[i+1]
                 continue
             i += 1
-        oneGrid = DbU.fromGrid( 1.0 )
-        twoGrid = DbU.fromGrid( 2.0 )
+        oneGrid  = DbU.fromGrid( 1.0 )
+        twoGrid  = DbU.fromGrid( 2.0 )
+            
         for viaBb in bigViaBbs:
             via = BigVia( self.getNet()
                         , plane.getLayerDepth(self.getLayer())
@@ -411,6 +412,7 @@ class Stripe ( object ):
                         , BigVia.FitToVias|BigVia.AllowVerticalExpand
                         )
             via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
+            via.setMaxRows( 2 )
             via.doLayout()
         trace( 550, '-' )
 

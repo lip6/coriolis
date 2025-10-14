@@ -63,6 +63,8 @@ class BigVia ( object ):
         self.vias        = {}
         self.widths [depth] = width
         self.heights[depth] = height
+        self.maxRows     = 0
+        self.maxCols     = 0
 
     def __str__ ( self ):
         global rg
@@ -96,13 +98,20 @@ class BigVia ( object ):
         bb = Box( self.x, self.y )
         bb.inflate( self.widths[depth] // 2, self.heights[depth] // 2 )
         return bb
-        
 
     def getPlate ( self, metal ):
         if not self.hasLayout: return None
         for plate in self.plates.values():
             if plate.getLayer().contains(metal): return plate
         return None
+
+    def setMaxRows ( self, maxRows ):
+        self.maxRows = maxRows
+        self.flags  |= BigVia.FitToVias
+
+    def setMaxCols ( self, maxCols ):
+        self.maxCols = maxCols
+        self.flags  |= BigVia.FitToVias
 
     def mergeDepth ( self, depth ):
         if self.hasLayout:
@@ -221,9 +230,12 @@ class BigVia ( object ):
                                          .format( cutLayer.getName(), self )
                                        , 'Height is too small to fit a single VIA cut.' 
                                        ] )
+        if self.maxRows: botYCutNb = min( botYCutNb, self.maxRows )
         minVSide = 2*botVEnclosure + botYCutNb*cutSide + (botYCutNb-1)*cutVSpacing
         if self.flags & BigVia.FitToVias:
-            if (depth == self.bottomDepth) or (botPlate.getHeight() < minVSide):
+           #if (depth == self.bottomDepth) or (botPlate.getHeight() < minVSide):
+            if (depth == self.bottomDepth):
+                trace( 550, '\tForcing bot plate height to {}\n'.format(DbU.getValueString(minVSide) ))
                 botPlate.setHeight( minVSide )
 
         topPlate      = self.plates[ depth+1 ]
@@ -251,6 +263,7 @@ class BigVia ( object ):
                                          .format( cutLayer.getName(), self )
                                        , 'Height is too small to fit a single VIA cut.' 
                                        ] )
+        if self.maxRows: topYCutNb = min( topYCutNb, self.maxRows )
         minVSide = 2*topVEnclosure + topYCutNb*cutSide + (topYCutNb-1)*cutVSpacing
         if self.flags & BigVia.FitToVias:
             topPlate.setHeight( minVSide )
