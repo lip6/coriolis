@@ -1069,6 +1069,7 @@ namespace Anabatic {
         cdebug_log(147,0) << "Sum WL " << DbU::getValueString(clustersWL) << " below gate threshold "
                           << DbU::getValueString(antennaGateMaxWL) << ", no need of a diode." << endl;
         cdebug_tabw(147,-2);
+        DebugSession::close();
         return;
       }
       
