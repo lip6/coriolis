@@ -90,8 +90,8 @@ namespace Katana {
 
 #if 0
     size_t               reduceCandidates = 0;
-    DbU::Unit            pitch            = _trackSegment->getPitch();
 #endif
+    DbU::Unit            pitch            = _trackSegment->getPitch();
     vector<AutoSegment*> collapseds;
     vector< tuple<AutoSegment*,Anabatic::Flags> > perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
@@ -182,7 +182,7 @@ namespace Katana {
       if (perpandicular->isNonPref()) {
         AutoContact* source    = perpandicular->base()->getAutoSource();
         AutoContact* target    = perpandicular->base()->getAutoTarget();
-        DbU::Unit    pitch     = Session::getPitch    ( perpandicular->getLayer() );
+      //DbU::Unit    pitch     = Session::getPitch    ( perpandicular->getLayer() );
         Flags        direction = Session::getDirection( perpandicular->getLayer() );
         Interval     trackFree ( false );
 
@@ -263,10 +263,11 @@ namespace Katana {
         }
       } else {
         DataNegociate* perpandData = perpandicular->getDataNegociate();
-        DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
+      //DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
         if (perpandData and perpandicular->isLocal()) {
           uint32_t limit = Session::getKatanaEngine()->getRipupLimit( _trackSegment );
-          if ((perpandData->getRipupCount() > 8) and (perpandData->getRipupCount() < 14)) {
+          if ((getRipupCount() + 4 < limit)
+             and (perpandData->getRipupCount() > 8) and (perpandData->getRipupCount() < 14)) {
             cdebug_log(159,0) << "Highly riped-up local perpandicular" << endl;
             RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
             Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
@@ -347,6 +348,7 @@ namespace Katana {
 
       cdebug_tabw(159,-1);
     }
+
     if ( not _trackSegment->isTerminal() and (_perpandiculars.size()+reducedPerpands < 2) )
       cerr << Bug( "Less than two perpandiculars on %s.", getString(_trackSegment).c_str() ) << endl;
 
