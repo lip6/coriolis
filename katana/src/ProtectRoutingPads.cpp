@@ -19,6 +19,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
@@ -120,6 +121,7 @@ namespace {
     }
     if (not pref or not nonpref) return;
     if (pref->isGlobal()) return;
+    if (pref->getAnchoredLength() > pref->getPitch()) return;
     
     AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
     AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
@@ -592,6 +594,7 @@ namespace {
 
 namespace Katana {
 
+  using Hurricane::Breakpoint;
   using Hurricane::DataBase;
   using Hurricane::Technology;
   using Hurricane::BasicLayer;
@@ -660,6 +663,7 @@ namespace Katana {
 
   void  KatanaEngine::_postProcessRoutingPads ()
   {
+    // Breakpoint::stop( 0, "KatanaEngine::_postProcessRoutingPads()" );
     cmess1 << "  o  Post-process RoutingPads." << endl;
 
     openSession();
