@@ -575,9 +575,14 @@ namespace Katana {
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
       cdebug_log(155,0) << "sourcePosition():" << DbU::getValueString(segment1->base()->getSourcePosition())
-                        << "baseAxis:        " << DbU::getValueString(baseAxis)
+                        <<        " baseAxis:" << DbU::getValueString(baseAxis)
                         << endl;
       cdebug_log(155,0) << "  -> baseTrack:" << baseTrack << endl;
+
+      if (Session::getStage() == Anabatic::StagePack) {
+        cdebug_log(155,0) << "Cost at initial position in pack mode: " << endl;
+        _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,segment1->getAxis(),0) );
+      }
 
       for ( Track* ptrack : Tracks_Range::get(perpPlane,_constraint) ) {
         cdebug_log(155,0) << "Align on (top) preferred: " << ptrack << endl;

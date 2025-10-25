@@ -529,14 +529,15 @@ namespace Anabatic {
             cdebug_log(145,0) << "Draging H interval ["
                               << DbU::getValueString(getCBXMin()) << " "
                               << DbU::getValueString(getCBXMax()) << "]" << endl;
-            Point onGrid = Session::getNearestGridPoint( Point(perpandicular->getAxis(),getY())
-                                                       , getConstraintBox() );
-            DbU::Unit x = onGrid.getX();
+            // Point onGrid = Session::getNearestGridPoint( Point(perpandicular->getAxis(),getY())
+            //                                            , getConstraintBox() );
+            // DbU::Unit x = onGrid.getX();
+            DbU::Unit x = perpandicular->getAxis();
             x = std::min( x, getCBXMax() );
             x = std::max( x, getCBXMin() );
             setX( x );
             cdebug_log(145,0) << "Dragging to X @" << DbU::getValueString(x)
-                              << " pitched:" << DbU::getValueString(onGrid.getX())
+            //<< " pitched:" << DbU::getValueString(onGrid.getX())
                               << " " << getConstraintBox() << endl;
           }
         }
