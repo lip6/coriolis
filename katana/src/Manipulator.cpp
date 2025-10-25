@@ -1329,7 +1329,7 @@ namespace Katana {
           if (not (flags & AllowShortPivotUp)) return false;
           if (not _segment->canPivotUp(1.0,(kflags))) return false;
         }
-        if (not _segment->canMoveUp(reserve,kflags)) return false;
+        if (not _segment->canMoveUp(reserve,kflags|Flags::CheckLowDensity)) return false;
       }
     } else {
       if (not _segment->canMoveUp(1.0,kflags)) return false;

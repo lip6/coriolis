@@ -940,20 +940,20 @@ namespace Katana {
         
         if (i) {
           if (_segments[i-1] == _segments[i]) {
-            cerr << "[CHECK] incoherency at " << i << " "
+            cerr << "[CHECK] Incoherency at " << i << " "
                  << _segments[i] << " is duplicated. " << endl;
             coherency = false;
           }
         }
         if (not _segments[i]->getTrack()) {
-          cerr << "[CHECK] incoherency at " << i << " "
+          cerr << "[CHECK] Incoherency at " << i << " "
                << _segments[i] << " is detached." << endl;
           coherency = false;
         } else {
           if ( (_segments[i]->getTrack() != this) and not inTrackRange ) {
-            cerr << "[CHECK] incoherency at " << i << " "
+            cerr << "[CHECK] Incoherency at " << i << " "
                  << _segments[i]->getTrack()
-                 << _segments[i] << " (span=" << _segments[i]->getTrackSpan() << ") " << axisSpan
+                 << "\n        " << _segments[i] << " (span=" << _segments[i]->getTrackSpan() << ") " << axisSpan
                  << "\n        is in track " << this
                  << "\n        instead of "  << _segments[i]->getTrack()
                  << endl;
@@ -961,7 +961,7 @@ namespace Katana {
           }
         }
         if ( (_segments[i]->getAxis() != getAxis()) and not inTrackRange ) {
-          cerr << "[CHECK] incoherency at " << i << " "
+          cerr << "[CHECK] Incoherency at " << i << " "
                << _segments[i] << " is not on Track axis "
                << DbU::getValueString(getAxis()) << "." << endl;
           coherency = false;
@@ -1126,6 +1126,9 @@ namespace Katana {
     vector<TrackElement*>::iterator  beginRemove
       = remove_if( _segments.begin(), _segments.end(), isDetachedSegment() );
 
+    for ( auto removed = beginRemove ; removed != _segments.end() ; ++removed ) {
+      cdebug_log(155,0) << "| removed: " << *removed << endl;
+    }
     _segments.erase( beginRemove, _segments.end() );
 
     cdebug_log(155,0) << "After doRemoval " << this << endl;
@@ -1217,23 +1220,27 @@ namespace Katana {
             TrackElement* element = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ];
             AutoSegment*  prev    = element->base();
             if (prev and not prev->isNonPref() and (prev->getDuTarget() >= spacing)) {
-              prev->setDuSource( prev->getDuSource() - spacing );
-              prev->setDuTarget( prev->getDuTarget() - spacing );
+              prev->addDuSource( -spacing );
+              prev->addDuTarget( -spacing );
+              prev->updatePositions();
               element->invalidate();
-              cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left):\n"
+              cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left of %s):\n"
                                "          %s"
                              , getString(this).c_str()
+                             , DbU::getValueString(spacing).c_str()
                              , getString(prev).c_str() ) << endl;
             } else {
               TrackElement* element = _segments[ gapsetCurr.span(0).first ];
               AutoSegment*  curr    = element->base();
               if (curr and not curr->isNonPref() and (-curr->getDuSource() >= spacing)) {
-                curr->setDuSource( curr->getDuSource() + spacing );
-                curr->setDuTarget( curr->getDuTarget() + spacing );
+                curr->addDuSource( spacing );
+                curr->addDuTarget( spacing );
+                curr->updatePositions();
                 element->invalidate();
-                cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right):\n"
+                cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right of %s):\n"
                                  "          %s"
                                , getString(this).c_str()
+                               , DbU::getValueString(spacing).c_str()
                                , getString(curr).c_str() ) << endl;
               }
             }

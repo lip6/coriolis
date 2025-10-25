@@ -523,7 +523,7 @@ namespace Anabatic {
     // cerr << "  minimal Area:     " << minimalArea << endl;
     // cerr << "  wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
     // cerr << "  minimal length:   " << DbU::getValueString(*minimalLength) << endl;
- 
+
       _extensionCaps.push_back( std::array<DbU::Unit*,7>( {{ viaToTopCap
                                                            , viaToTopCapNp
                                                            , viaToBottomCap
@@ -830,19 +830,19 @@ namespace Anabatic {
         else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
         else                                   cap = getViaToSameCap  ( depth );
       }
-      if (getId() == 1520229) {
-        cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-                          << " (source) flags:" << getFlags()
-                          << " VIA cap:" << DbU::getValueString(cap)
-                          << " t:" << (getFlags() & SegSourceBottom)
-                          << " b:" << (getFlags() & SegSourceTop)
-                          << endl;
-      }
+      // if (getId() == 2721666) {
+      //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+      //                     << " (source) flags:" << getFlags()
+      //                     << " VIA cap:" << DbU::getValueString(cap)
+      //                     << " t:" << (getFlags() & SegSourceBottom)
+      //                     << " b:" << (getFlags() & SegSourceTop)
+      //                     << endl;
+      // }
       if (not isNonPref() and not (flags & Flags::NoSegExt)) {
         //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          if (getId() == 1520229) {
+          if (getId() == 2721666) {
             cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
           }
         }
@@ -858,19 +858,19 @@ namespace Anabatic {
           else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
           else                                   cap = getViaToSameCap  ( depth );
         }
-        if (getId() == 1520229) {
-          cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
-                            << " (target) flags:" << getFlags()
-                            << " VIA cap:" << DbU::getValueString(cap)
-                            << " t:" << (getFlags() & SegTargetBottom)
-                            << " b:" << (getFlags() & SegTargetTop)
-                            << endl;
-        }
+        // if (getId() == 2721666) {
+        //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
+        //                     << " (target) flags:" << getFlags()
+        //                     << " VIA cap:" << DbU::getValueString(cap)
+        //                     << " t:" << (getFlags() & SegTargetBottom)
+        //                     << " b:" << (getFlags() & SegTargetTop)
+        //                     << endl;
+        // }
         if (not isNonPref() and not (flags & Flags::NoSegExt)) {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
-            if (getId() == 1520229) {
+            if (getId() == 2721666) {
               cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
             }
           }
@@ -1085,6 +1085,28 @@ namespace Anabatic {
       for( AutoSegment* segment : getAligneds() )
         segment->setFlags( flags );
     }
+  }
+
+
+  void  AutoSegment::addDuSource ( DbU::Unit du )
+  {
+    DbU::Unit sourceCap = -getExtensionCap( Flags::Source|Flags::LayerCapOnly );
+    DbU::Unit duSource  =  getDuSource();
+    if (not duSource) duSource = sourceCap;
+    duSource += du;
+    if (duSource > sourceCap) duSource = 0;
+    setDuSource( duSource );
+  }
+
+
+  void  AutoSegment::addDuTarget ( DbU::Unit du )
+  {
+    DbU::Unit targetCap = -getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+    DbU::Unit duTarget  =  getDuTarget();
+    if (not duTarget) duTarget = targetCap;
+    duTarget += du;
+    if (duTarget < targetCap) duTarget = 0;
+    setDuTarget( duTarget );
   }
 
 
@@ -1980,7 +2002,8 @@ namespace Anabatic {
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
     DbU::Unit sourceCap      = getExtensionCap( Flags::Source|Flags::LayerCapOnly );
     DbU::Unit targetCap      = getExtensionCap( Flags::Target|Flags::LayerCapOnly );
-    DbU::Unit segMinLength   = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit anchoredLength = getAnchoredLength();
+    DbU::Unit segMinLength   = anchoredLength + sourceCap + targetCap;
     DbU::Unit techMinLength  = getMinimalLength( Session::getLayerDepth( getLayer() ));
 
     if (not isNotAligned()) {
@@ -2007,9 +2030,9 @@ namespace Anabatic {
     }
     sourceCap    = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     targetCap    = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
-    segMinLength = getAnchoredLength() + sourceCap + targetCap;
+    segMinLength = anchoredLength + sourceCap + targetCap;
 
-    cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
+    cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(anchoredLength) << endl;
     cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
     cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
     cdebug_log(149,0) << "* duSource "        << DbU::getValueString(getDuSource()) << endl;
@@ -2020,12 +2043,12 @@ namespace Anabatic {
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
     cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
                       <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
-    if (targetExpand % oneGrid)
-      targetExpand += oneGrid - targetExpand % oneGrid;
-    if (sourceExpand % oneGrid)
-      sourceExpand -= oneGrid + sourceExpand % oneGrid;
+    if (targetExpand % oneGrid) targetExpand += oneGrid - targetExpand % oneGrid;
+    if (sourceExpand % oneGrid) sourceExpand -= oneGrid + sourceExpand % oneGrid;
+    if (targetExpand - sourceExpand + anchoredLength > techMinLength) targetExpand -= oneGrid;
     if (not span.isEmpty()) {
       DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand + halfMinSpacing);
+      cdebug_log(149,0) <<  "shift left=" << DbU::getValueString(shiftLeft) << endl;
       if (shiftLeft < 0) {
         if (targetExpand + shiftLeft < targetCap)
           shiftLeft = targetCap - targetExpand;
@@ -2033,6 +2056,7 @@ namespace Anabatic {
         sourceExpand += shiftLeft;
       }
       DbU::Unit shiftRight = span.getVMin() - (getSourceU() + sourceExpand - halfMinSpacing);
+      cdebug_log(149,0) <<  "shift right=" << DbU::getValueString(shiftRight) << endl;
       if (shiftRight > 0) {
         if (sourceExpand + shiftRight < sourceCap)
           shiftRight = - sourceExpand - sourceCap;
@@ -2042,8 +2066,8 @@ namespace Anabatic {
     }
     setDuSource( sourceExpand );
     setDuTarget( targetExpand );
-    cdebug_log(149,0) <<  "sourceExpand=" << DbU::getValueString(sourceExpand)
-                      << " targetExpand=" << DbU::getValueString(targetExpand) << endl;
+    cdebug_log(149,0) <<  "after shift sourceExpand=" << DbU::getValueString(sourceExpand)
+                      <<             " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     cdebug_log(149,0) << "After: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
                       << " "        << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
                       << "] expand:" << DbU::getValueString(techMinLength - segMinLength)<< endl;
@@ -2105,23 +2129,35 @@ namespace Anabatic {
                      ) << endl;
       return false;
     }
-    
-    DbU::Unit margin = -duSource - sourceCap;
-    if (shrink <= margin) {
-      cdebug_log(149,0) << "Shrink source of " << DbU::getValueString(shrink) << endl;
-      duSource += shrink;
-      setDuSource( duSource );
-      return true;
-    }
-    if (margin < 0) setDuSource( 0 );
 
-    cdebug_log(149,0) << "Shrink target of " << DbU::getValueString(shrink) << endl;
-    margin = duTarget - targetCap;
-    if (margin > shrink)
-      setDuTarget( duTarget - shrink );
-    else {
-      cdebug_log(149,0) << "Target reset" << endl;
-      if (margin < 0) setDuTarget( 0 );
+    if (duSource) {
+      if (-duSource < sourceCap) setDuSource( 0 );
+      else {
+        DbU::Unit sourceMargin = -duSource - sourceCap;
+        if (shrink < sourceMargin) {
+          cdebug_log(149,0) << "Shrink (full) source of " << DbU::getValueString(shrink) << endl;
+          duSource += shrink;
+          shrink = 0;
+        } else {
+          cdebug_log(149,0) << "Shrink (partial) source of " << DbU::getValueString(shrink) << endl;
+          shrink -= sourceMargin;
+          duSource = 0;
+        }
+        setDuSource( duSource );
+      }
+    }
+
+    if (shrink and duTarget) {
+      if (duTarget < targetCap) setDuTarget( 0 );
+      else {
+        DbU::Unit targetMargin = duTarget - targetCap;
+        if (targetMargin < shrink) duTarget = 0;
+        else {
+          cdebug_log(149,0) << "Shrink target of " << DbU::getValueString(shrink) << endl;
+          duTarget -= shrink;
+        }
+        setDuTarget( duTarget );
+      }
     }
 
     return true;
@@ -2579,8 +2615,18 @@ namespace Anabatic {
     getGCells( gcells );
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.5) ) nLowDensity   = false;
-      if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) nLowUpDensity = false;
+      cdebug_log(159,0) << "lowDensity in " << gcells[i]
+                        << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      if ( nLowDensity and (gcells[i]->getWDensity(depth-2) > 0.6) ) {
+        nLowDensity = false;
+        cdebug_log(159,0) << "lowDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      }
+      if ( nLowUpDensity and (gcells[i]->getWDensity(depth) > 0.2) ) {
+        nLowUpDensity = false;
+        cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth) << endl;
+      }
       if (not gcells[i]->hasFreeTrack(depth,reserve,Flags::AllAbove)) {
         cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
         return false;
@@ -2619,12 +2665,15 @@ namespace Anabatic {
         segment->getGCells( gcells );
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.6) )
+          if ( nLowDensity and (gcells[i]->getWDensity(depth-2) > 0.6) ) {
             nLowDensity = false;
+            cdebug_log(159,0) << "lowDensity false in " << gcells[i]
+                              << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+          }
           if ( nLowUpDensity and (gcells[i]->getWDensity(depth,Flags::AllAbove) > 0.2) ) {
-            cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
-                              << "d:" << gcells[i]->getWDensity(depth) << endl;
             nLowUpDensity = false;
+            cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
+                              << " d:" << gcells[i]->getWDensity(depth) << endl;
           }
           if (not gcells[i]->hasFreeTrack(depth,reserve)) {
             cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;

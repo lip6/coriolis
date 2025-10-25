@@ -227,8 +227,8 @@ namespace Katana {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        DbU::Unit sourceCap = basePerpand->getExtensionCap( Flags::Source );
-        DbU::Unit targetCap = basePerpand->getExtensionCap( Flags::Target );
+        DbU::Unit sourceCap = basePerpand->getExtensionCap( Flags::Source|Flags::NoSegExt );
+        DbU::Unit targetCap = basePerpand->getExtensionCap( Flags::Target|Flags::NoSegExt );
         cdebug_log(159,0) <<  "Real source cap:" << DbU::getValueString(sourceCap)
                           << " Real target cap:" << DbU::getValueString(targetCap)
                           << endl;

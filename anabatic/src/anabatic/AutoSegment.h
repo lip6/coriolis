@@ -329,6 +329,8 @@ namespace Anabatic {
       inline         void                setReducedDone             ();
              virtual void                setDuSource                ( DbU::Unit du ) = 0;
              virtual void                setDuTarget                ( DbU::Unit du ) = 0;
+             virtual void                addDuSource                ( DbU::Unit du );
+             virtual void                addDuTarget                ( DbU::Unit du );
                      void                computeTerminal            ();
              virtual void                updateOrient               () = 0;
              virtual void                updatePositions            ();
