@@ -889,8 +889,17 @@ class QuadTree ( object ):
             angle = math.atan2( dy, dx )
             plugOccsByAngle.append( [ angle, plugOcc ] )
         plugOccsByAngle.sort( key=itemgetter(0) )
+        trace( 540, '\tPlugs sorted by angle\n' )
+        for i in range(len(plugOccsByAngle)):
+            angle, plugOcc = plugOccsByAngle[i]
+            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
+            plugOcc.getPath().getTransformation().applyOn( instCenter )
+            dx = instCenter.getX()
+            dy = instCenter.getY()
+            trace( 540, '\t {:-2} | {:-5.2} : dx:{} dy:{} {}\n' \
+                        .format(i,angle,DbU.getValueString(dx),DbU.getValueString(dy),plugOcc) )
         splitIndexes = []
-        if (len(plugOccsByAngle) > maxSinks) and (len(self.buffers) > 1):
+        if len(self.buffers) > 1 and len(plugOccsByAngle) > 8:
             partSize = len(plugOccsByAngle) // len(self.buffers)
             trace( 540, '\tpartSize: {}\n'.format(partSize) )
             for isplit in range(1,len(self.buffers)):
@@ -904,15 +913,7 @@ class QuadTree ( object ):
                         maxisplit = i
                 splitIndexes.append( maxisplit )
         splitIndexes.append( len(plugOccsByAngle) )
-        for i in range(len(plugOccsByAngle)):
-            angle, plugOcc = plugOccsByAngle[i]
-            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
-            plugOcc.getPath().getTransformation().applyOn( instCenter )
-            dx = instCenter.getX()
-            dy = instCenter.getY()
-            trace( 540, '\t {:-2} | {:-5.2} : dx:{} dy:{} {}\n' \
-                        .format(i,angle,DbU.getValueString(dx),DbU.getValueString(dy),plugOcc) )
-        trace( 540, '\tspitIndexes = {}\n'.format(splitIndexes) )
+        trace( 540, '\tsplitIndexes = {}\n'.format(splitIndexes) )
         minIndex = 0
         for i in range(len(splitIndexes)):
             sinks    = splitIndexes[i] - minIndex
