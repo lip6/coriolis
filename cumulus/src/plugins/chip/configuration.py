@@ -21,12 +21,13 @@ from   ...Hurricane          import Breakpoint, DbU, Box, Transformation, Box, \
                                     Instance
 from   ...CRL                import AllianceFramework, RoutingLayerGauge
 from   ...helpers            import trace
-from   ...helpers.overlay    import UpdateSession
+from   ...helpers.overlay    import UpdateSession, CfgDefault
 from   ...helpers.io         import ErrorMessage, WarningMessage, \
                                     vprint, catch
 from   .                     import chip
 from   ..block.configuration import BlockConf
 from   .constants            import importConstants
+from   .pads                 import PadPosition
 
 __all__ = [ 'ChipConf' ]
 
@@ -121,6 +122,7 @@ class ChipConf ( BlockConf ):
         self.minHCorona       = 0
         self.minVCorona       = 0
         self.coreToChip       = None
+        self.PadPosition      = PadPosition
         trace( 550, '-' )
 
     @property

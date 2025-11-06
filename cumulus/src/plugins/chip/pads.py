@@ -27,7 +27,7 @@ from   ...CRL             import AllianceFramework, RoutingGauge, RoutingLayerGa
                                  Gds
 from   ...helpers         import trace, l, u, n, onFGrid
 from   ...helpers.io      import ErrorMessage, WarningMessage
-from   ...helpers.overlay import UpdateSession
+from   ...helpers.overlay import UpdateSession, CfgDefault
 from   .                  import CoreWire
 from   ..block.block      import Block
 from   ..block.bigvia     import BigVia
@@ -159,6 +159,28 @@ class Corner ( object ):
 
 
 # --------------------------------------------------------------------
+# Class  :  "pads.PadPosition"
+
+class PadPosition ( object ):
+
+    def __init__ ( self, side ):
+        self.side = side
+        if self.side.type in (North,South):
+            self.cornerWidth = self.side.corona.padCornerWidth
+        else:
+            self.cornerWidth = self.side.corona.padCornerHeight
+        self.padSpacing = (self.side.sideLength - 2*self.cornerWidth - self.side.padLength) \
+                          // (len(self.side.pads) + 1)
+
+    def __call__ ( self, padIndex ):
+        position = self.cornerWidth + self.padSpacing
+        for i in range( len(self.side.pads) ):
+            if i >= padIndex: break;
+            position += self.padSpacing + self.side.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
+        return position
+
+
+# --------------------------------------------------------------------
 # Class  :  "pads.Side"
 
 class Side ( object ):
@@ -172,24 +194,40 @@ class Side ( object ):
         self.gap           = 0
         self.coreWires     = []
         if self.type == North:
-            self.pads       = self.corona.northPads
-            self.sideName   = 'north'
-            self.sideLength = self.conf.chipAb.getWidth()
+            self.pads        = self.corona.northPads
+            self.sideName    = 'north'
+            self.sideLength  = self.conf.chipAb.getWidth()
+            self.cornerWidth = self.corona.padCornerWidth
         elif self.type == South:
-            self.pads       = self.corona.southPads
-            self.sideName   = 'south'
-            self.sideLength = self.conf.chipAb.getWidth()
+            self.pads        = self.corona.southPads
+            self.sideName    = 'south'
+            self.cornerWidth = self.corona.padCornerWidth
+            self.sideLength  = self.conf.chipAb.getWidth()
         elif self.type == East:
-            self.pads       = self.corona.eastPads
-            self.sideName   = 'east'
-            self.sideLength = self.conf.chipAb.getHeight()
+            self.pads        = self.corona.eastPads
+            self.sideName    = 'east'
+            self.sideLength  = self.conf.chipAb.getHeight()
+            self.cornerWidth = self.corona.padCornerHeight
         elif self.type == West:
-            self.pads       = self.corona.westPads
-            self.sideName   = 'west'
-            self.sideLength = self.conf.chipAb.getHeight()
+            self.pads        = self.corona.westPads
+            self.sideName    = 'west'
+            self.sideLength  = self.conf.chipAb.getHeight()
+            self.cornerWidth = self.corona.padCornerHeight
         else:
             raise ErrorMessage( 1, 'Pads.Side.__init__(): Invalid value for sideType ({})'.format(sideType))
         self.spacerNames = 'padspacer_' + self.sideName + '_%d'
+        self.uniformPads = True
+        self.padLength   = 0
+        refPadWidth = 0
+        for pad in self.pads:
+            padWidth = pad[1].getMasterCell().getAbutmentBox().getWidth() 
+            self.padLength += padWidth
+            if self.uniformPads:
+                if not refPadWidth:
+                    refPadWidth = padWidth
+                else:
+                    if refPadWidth != padWidth:
+                        self.uniformPads = False
 
     @property
     def conf ( self ): return self.corona.conf
@@ -407,17 +445,20 @@ class Side ( object ):
                 pad[0] = self.toGrid( pad[0] )
                 position = pad[0] + pad[1].getMasterCell().getAbutmentBox().getWidth()  
         else:
-            spacing    = 0
-            minSpacing = self.corona.minPadSpacing
-            position   = self.u
-            for i in range(len(self.pads)):
-                spacing     += padSpacing
-                nextPosition = self.toGrid( position + spacing )
-                if nextPosition - position >= minSpacing:
-                    position += spacing
-                    spacing   = 0
-                self.pads[i][0] = self.toGrid( position )
-                position += self.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
+            padPosition = self.conf.PadPosition( self )
+            for i in range( len(self.pads) ):
+                self.pads[i][0] = self.toGrid( padPosition( i ))
+           #spacing    = 0
+           #minSpacing = self.corona.minPadSpacing
+           #position   = self.u
+           #for i in range(len(self.pads)):
+           #    spacing += padSpacing
+           #    nextPosition = self.toGrid( position + spacing )
+           #    if nextPosition - position >= minSpacing:
+           #        position += spacing
+           #        spacing   = 0
+           #    self.pads[i][0] = self.toGrid( position )
+           #    position += self.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
         for pad in self.pads:
             self._fillPadSpacing( pad[0] - self.u )
             self._placePad( pad[1] )
@@ -559,6 +600,8 @@ class Corona ( object ):
         
         self.chip             = chip
         self.conf.validated   = False
+        self.padCornerWidth   = self.conf.ioPadHeight
+        self.padCornerHeight  = self.conf.ioPadHeight
         self.northPads        = _dupPads( self.conf.chipConf.northPads )
         self.southPads        = _dupPads( self.conf.chipConf.southPads )
         self.eastPads         = _dupPads( self.conf.chipConf.eastPads )
@@ -578,8 +621,6 @@ class Corona ( object ):
         self.padCorner        = []
         self.padRails         = []  # [ , [net, layer, axis, width] ]
         self.powerCount       = 0
-        self.padCornerWidth   = self.conf.ioPadHeight
-        self.padCornerHeight  = self.conf.ioPadHeight
         self.conf.cfg.chip.padCoreSide = None
         if self.conf.cfg.chip.padCoreSide.lower() == 'south':
             self.padOrient = Transformation.Orientation.MY
