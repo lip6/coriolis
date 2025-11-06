@@ -676,27 +676,27 @@ class CoreToChip ( object ):
 
     def _buildCoreGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to core ground signals."""
-        raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip._buildCoreGroundPads(): This method must be overloaded.' )
 
     def _buildIoGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to pad internal ground signals."""
-        raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip._buildIoGroundPads(): This method must be overloaded.' )
 
     def _buildAllGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to ground signals for core and pads."""
-        raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip._buildAllGroundPads(): This method must be overloaded.' )
 
     def _buildCorePowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to core power signals."""
-        raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip._buildCorePowerPads(): This method must be overloaded.' )
 
     def _buildIoPowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to pad internal power signals."""
-        raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip._buildIoPowerPads(): This method must be overloaded.' )
 
     def _buildAllPowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to power signals for core and pads."""
-        raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded, on {}' \
+        raise NotImplementedError( 'coreToChip._buildAllPowerPads(): This method must be overloaded, on {}' \
                                    .format(ioPadConf) )
 
     def _buildClockPads ( self, ioPadConf ):
