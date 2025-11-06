@@ -102,7 +102,7 @@ class CfgDefault ( object ):
     It is used as a very last ditch to get a value for a parameter.
     """
 
-    def __init__ ( self, v ):
+    def __init__ ( self, v=None ):
         self.vDefault = v
 
     def __str__ ( self ):
