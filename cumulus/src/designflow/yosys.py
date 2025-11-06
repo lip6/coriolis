@@ -21,6 +21,7 @@ class Yosys ( FlowTask ):
     FlagLog           = 0x00000001
     FlagQuiet         = 0x00000002
     FlagSystemVerilog = 0x00000004
+    FlagSLang         = 0x00000008
     _liberty          = None
 
     @staticmethod
@@ -121,7 +122,7 @@ class Yosys ( FlowTask ):
             self.success = TaskFailed( e )
             return
 
-    def _loadSVDesign ( self ):
+    def _loadWidthSystemVerilog ( self ):
         from ..helpers.io import ErrorMessage
         if self.success is not True: return
         self.script.append( 'plugin -i systemverilog' )
@@ -151,6 +152,24 @@ class Yosys ( FlowTask ):
                      , 'top'      : self.top }
         self.script.append( 'read_systemverilog {options} -top {top} {defines} {includes} {libraries} {svFiles}' \
                             .format( **scriptArgs ))
+
+    def _loadWithSLang ( self ):
+        from ..helpers.io import ErrorMessage
+        if self.success is not True: return
+        self.script.append( 'plugin -i slang' )
+        svFiles = ''
+        for designFile in self.depends:
+            if not isinstance(designFile,Path):
+                designFile = Path( designFile )
+            if not designFile.is_file():
+                print( '[WARNING] Can\'t find design file "{}".'.format( designFile.as_posix() ))
+                continue
+            svFiles += ' -F {}'.format( designFile.as_posix() )
+        options    = ' '.join( self.svOptions )
+        scriptArgs = { 'options' : options
+                     , 'svFiles' : svFiles
+                     , 'top'     : self.top }
+        self.script.append( 'read_slang -top {top} {svFiles} {options}'.format( **scriptArgs ))
         
 
     def _loadBlackboxes ( self ):
@@ -200,7 +219,9 @@ class Yosys ( FlowTask ):
         #print( 'Yosys.doTask() on "{}"'.format( self.main ))
         self._loadBlackboxes()
         if self.flags & Yosys.FlagSystemVerilog:
-            self._loadSVDesign()
+            self._loadWithSystemVerilog()
+        elif self.flags & Yosys.FlagSLang:
+            self._loadWithSLang()
         else:
             self._loadDesign( self.main )
         self.script.append( 'hierarchy -check -top {}'.format( self.top ))
