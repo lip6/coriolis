@@ -35,7 +35,7 @@ class Copy ( FlowTask ):
         return self.checkTargets( 'Copy.doTask' )
 
     def asDoitTask ( self ):
-        return { 'basename' : 'copy_' + self.basename
+        return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )
                , 'targets'  : self.targets
