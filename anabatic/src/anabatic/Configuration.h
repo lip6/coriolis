@@ -101,6 +101,9 @@ namespace Anabatic {
       inline  DbU::Unit          getDContactPitch     () const;
               size_t             getDepth             () const;
               size_t             getAllowedDepth      () const;
+      inline  float              getLowDensity        () const;
+      inline  float              getMoveUpReserve     () const;
+      inline  float              getLowUpDensity      () const;
               size_t             getLayerDepth        ( const Layer* ) const;
               CellGauge*         getCellGauge         () const;
               RoutingGauge*      getRoutingGauge      () const;
@@ -177,6 +180,9 @@ namespace Anabatic {
       int                     _vsmallThreshold;
       int                     _vlargeThreshold;
       size_t                  _allowedDepth;
+      float                   _lowDensity;
+      float                   _lowUpDensity;
+      float                   _moveUpReserve;
       DbU::Unit               _edgeLength;
       DbU::Unit               _edgeWidth;
       float                   _edgeCostH;
@@ -218,6 +224,9 @@ namespace Anabatic {
   inline  const Layer* Configuration::getDContactLayer     () const { return getContactLayer( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
+  inline  float        Configuration::getLowDensity        () const { return _lowDensity; }
+  inline  float        Configuration::getLowUpDensity      () const { return _lowUpDensity; }
+  inline  float        Configuration::getMoveUpReserve     () const { return _moveUpReserve; }
   inline  float        Configuration::getGCellAspectRatio  () const { return _gcellAspectRatio; }
   inline  float        Configuration::getSaturateRatio     () const { return _saturateRatio; }
   inline  size_t       Configuration::getSaturateRp        () const { return _saturateRp; }

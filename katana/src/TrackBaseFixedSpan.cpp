@@ -117,20 +117,52 @@ namespace Katana {
 
   AutoSegment*   TrackBaseFixedSpan::base             () const { return nullptr; }
   Segment*       TrackBaseFixedSpan::getSegment       () const { return nullptr; }
-  DbU::Unit      TrackBaseFixedSpan::getAxis          () const { return getTrack()->getAxis(); }
-  bool           TrackBaseFixedSpan::isHorizontal     () const { return getTrack()->isHorizontal(); }
-  bool           TrackBaseFixedSpan::isVertical       () const { return getTrack()->isVertical(); }
+  bool           TrackBaseFixedSpan::isVertical       () const { return not isHorizontal(); }
   bool           TrackBaseFixedSpan::isFixed          () const { return true; }
   bool           TrackBaseFixedSpan::isPriorityLocked () const { return false; }
   bool           TrackBaseFixedSpan::isFixedSpan      () const { return true; }
   bool           TrackBaseFixedSpan::isFixedSpanRp    () const { return false; }
-  Flags          TrackBaseFixedSpan::getDirection     () const { return getTrack()->getDirection(); }
+  bool           TrackBaseFixedSpan::canReduce        () const { return false; }
   DbU::Unit      TrackBaseFixedSpan::getWidth         () const { return _boundingBox.getWidth(); }
   const Layer*   TrackBaseFixedSpan::getLayer         () const { return getTrack()->getLayer(); }
   RoutingPad*    TrackBaseFixedSpan::getRoutingPad    () const { return nullptr; }
   unsigned int   TrackBaseFixedSpan::getDepth         () const { return Session::getLayerDepth(getLayer()); }
   Interval       TrackBaseFixedSpan::getFreeInterval  () const { return Interval(); }
   size_t         TrackBaseFixedSpan::getTrackSpan     () const { return 1; }
+
+  
+  bool  TrackBaseFixedSpan::isHorizontal () const
+  {
+    if (getTrack()) return getTrack()->isHorizontal();
+    return getBoundingBox().getWidth() >= getBoundingBox().getHeight();
+  }
+
+  
+  Flags  TrackBaseFixedSpan::getDirection () const
+  {
+    if (getTrack()) return getTrack()->getDirection();
+    return (isHorizontal()) ? Flags::Horizontal : Flags::Vertical;
+  }
+
+  
+  DbU::Unit  TrackBaseFixedSpan::getAxis () const
+  {
+    if (getTrack()) return getTrack()->getAxis();
+    if (isHorizontal()) return getBoundingBox().getYCenter();
+    return getBoundingBox().getXCenter();
+  }
+
+
+  void  TrackBaseFixedSpan::setAxis ( DbU::Unit axis, Flags flags )
+  {
+    if (isVertical()) {
+      DbU::Unit deltaY = axis - _boundingBox.getYCenter();
+      _boundingBox.translate( 0, deltaY );
+    } else {
+      DbU::Unit deltaX = axis - _boundingBox.getXCenter();
+      _boundingBox.translate( deltaX, 0 );
+    }
+  }
 
 
   DbU::Unit  TrackBaseFixedSpan::getSourceAxis () const
@@ -141,9 +173,13 @@ namespace Katana {
   { return (isHorizontal()) ? _boundingBox.getXMax() : _boundingBox.getYMax(); }
 
 
+  Box  TrackBaseFixedSpan::getBoundingBox () const
+  { return _boundingBox; }
+
+
   unsigned long  TrackBaseFixedSpan::getId () const
   {
-    cerr << Error("TrackBaseFixedSpan::getId() called on %s.",_getString().c_str()) << endl;
+  //cerr << Error("TrackBaseFixedSpan::getId() called on %s.",_getString().c_str()) << endl;
     return 0;
   }
 
@@ -184,13 +220,6 @@ namespace Katana {
 
   void  TrackBaseFixedSpan::computeAlignedPriority ()
   { }
-
-
-  void  TrackBaseFixedSpan::detach ( TrackSet& removeds )
-  {
-    // cerr << Error( "TrackBaseFixedSpan::detach(): Must never be called on %s."
-    //              , getString(this).c_str()) << endl;
-  }
 
 
   string  TrackBaseFixedSpan::_getTypeName () const

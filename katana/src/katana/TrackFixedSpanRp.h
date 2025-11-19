@@ -38,10 +38,14 @@ namespace Katana {
     public:
       typedef TrackBaseFixedSpan  Super;
     public:
+      static std::map<RoutingPad*,TrackFixedSpanRp*>  _rpLookup;
+    public:
       static  TrackFixedSpanRp* create        ( RoutingPad*, const Box&, Track* );
+      static  TrackFixedSpanRp* lookup        ( RoutingPad* );
     public:                                
       virtual bool              isFixedSpanRp () const;
       virtual RoutingPad*       getRoutingPad () const;
+      virtual const Layer*      getLayer      () const;
       virtual Net*              getNet        () const;
       virtual void              setNet        ( Net* );
       virtual Record*           _getRecord    () const;

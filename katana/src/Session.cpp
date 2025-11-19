@@ -23,6 +23,7 @@
 #include "katana/Session.h"
 #include "katana/Track.h"
 #include "katana/TrackElement.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/KatanaEngine.h"
 #include "katana/RoutingPlane.h"
 #include "katana/NegociateWindow.h"
@@ -217,6 +218,7 @@ namespace Katana {
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
       cdebug_log(159,0) << "Remove event for:" << _removeEvents[i]._segment << endl;
+      cdebug_log(159,0) << "  from: " << _removeEvents[i]._segment->getTrack() << endl;
 
       if (not _removeEvents[i]._segment->getTrack()) continue;
       _removeEvents[i]._segment->detach( packTracks );
@@ -339,9 +341,11 @@ namespace Katana {
       DebugSession::open( revalidateds[i]->getNet(), 159,160 );
       cdebug_log(159,0) << "Session: check for reduce:" << revalidateds[i] << endl;
       if (revalidateds[i]->canReduce()) {
-        revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );
-        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        if (trackSegment) {
+          trackSegment->reduce();
+          if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        }
       }
       DebugSession::close();
     }
@@ -349,9 +353,11 @@ namespace Katana {
       DebugSession::open( canReduces[i]->getNet(), 159,160 );
       cdebug_log(159,0) << "Session: check for cascading reduce:" << canReduces[i] << endl;
       if (canReduces[i]->canReduce()) {
-        canReduces[i]->reduce();
         TrackElement* trackSegment = lookup( canReduces[i] );
-        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        if (trackSegment) {
+          trackSegment->reduce();
+          if (trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        }
       }
       DebugSession::close();
     }
@@ -429,7 +435,7 @@ namespace Katana {
 
   void  Session::_addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
   {
-    cdebug_log(159,0) <<   "addInsertEvent() " << segment
+    cdebug_log(159,0) <<   "_addInsertEvent() " << segment
                       << "\n                 @" << DbU::getValueString(axis)
                       << " " << track << endl;
 
@@ -462,7 +468,7 @@ namespace Katana {
       return;
     }
 
-    cdebug_log(159,0) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
+    cdebug_log(159,0) << "_addRemoveEvent() ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
     _removeEvents.push_back( Event(segment,segment->getTrack(),segment->getAxis()) );
     _addSortEvent( segment->getTrack(), true );
   }

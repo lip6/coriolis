@@ -596,12 +596,19 @@ namespace Katana {
 
         for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
           if (edge->getReservedCapacity() < vReservedMin) {
-            edge->reserveCapacity( vReservedMin - edge->getReservedCapacity() );
+            uint32_t reservedCapacity = edge->getReservedCapacity();
+            if (edge->getRawCapacity() <= vReservedMin)
+              reservedCapacity += vReservedMin - edge->getRawCapacity() + 2;
+            edge->reserveCapacity( vReservedMin - reservedCapacity );
           }
         }
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
-          if (edge->getReservedCapacity() < hReservedMin)
-            edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
+          if (edge->getReservedCapacity() < hReservedMin) {
+            uint32_t reservedCapacity = edge->getReservedCapacity();
+            if (edge->getRawCapacity() <= vReservedMin)
+              reservedCapacity += hReservedMin - edge->getRawCapacity() + 2;
+            edge->reserveCapacity( hReservedMin - reservedCapacity );
+          }
         }
         gcell->postGlobalAnnotate();
       }
@@ -1014,7 +1021,12 @@ namespace Katana {
   TrackElement* KatanaEngine::_lookup ( Segment* segment ) const
   {
     AutoSegment* autoSegment = Super::_lookup( segment );
-    if (not autoSegment or not autoSegment->isCanonical()) return NULL;
+    if (not autoSegment) return nullptr;
+    if (not autoSegment->isCanonical()) {
+      DbU::Unit dummyMin = 0;
+      DbU::Unit dummyMax = 0;
+      autoSegment = autoSegment->getCanonical( dummyMin, dummyMax );
+    }
 
     return _lookup( autoSegment );
   }

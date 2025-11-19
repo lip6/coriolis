@@ -75,6 +75,7 @@ namespace {
   using Hurricane::NetRoutingExtension;
   using Hurricane::NetRoutingState;
   using CRL::CatalogExtension;
+  using Anabatic::GCell;
   using Anabatic::AutoContact;
   using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
@@ -104,7 +105,7 @@ namespace {
   };
 
 
-  void  checkForLoopHV ( const vector<AutoContactTerminal*>& terminals )
+  bool  checkForLoopHV ( const vector<AutoContactTerminal*>& terminals )
   {
     AutoContactTerminal* prefTerm    = nullptr;
     AutoContactTerminal* nonprefTerm = nullptr;
@@ -119,18 +120,21 @@ namespace {
         nonpref     = terminal->getSegment();
       }
     }
-    if (not pref or not nonpref) return;
-    if (pref->isGlobal()) return;
-    if (pref->getAnchoredLength() > pref->getPitch()) return;
+    if (not pref or not nonpref) return false;
+    if (pref->isGlobal()) return false;
+    if (pref->getAnchoredLength() > pref->getPitch()) return false;
     
     AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
     AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
-    if (not ppPref or not ppNonpref) return;
+    if (not ppPref or not ppNonpref) return false;
 
     if (ppPref->isReduced()) {
       cdebug_log(145,0) << "Loop suppression on " << ppPref << endl;
       ppPref->setAxis( nonpref->getAxis() );
+      return true;
     }
+
+    return false;
   }
 
 
@@ -174,6 +178,10 @@ namespace {
 
   void  protectRoutingPadHV ( RoutingPad* rp )
   {
+#define FEATURE_SPAN_CENTER       0
+#define FEATURE_SPAN_GCELL_CENTER 1
+#define FEATURE_SPAN_ANCHOR       0
+    
     cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
 
     RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
@@ -191,10 +199,42 @@ namespace {
 
     DbU::Unit     m1spacing      = planeM1->getLayer()->getMinimalSpacing();
     DbU::Unit     m2spacing      = planeM2->getLayer()->getMinimalSpacing();
-    Track*        track          = planeM2->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
     DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
     DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
+#if FEATURE_SPAN_CENTER
     Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
+#endif
+
+#if FEATURE_SPAN_GCELL_CENTER
+    Box trackBb = bb;
+    trackBb.inflate( 0, -halfViaBotSide );
+
+    DbU::Unit y     = trackBb.getYCenter();
+    GCell*    gcell = Session::getGCellUnder( bb.getXCenter(), bb.getYCenter() );
+    if (gcell) {
+      if      (trackBb.getYMax() <= gcell->getYCenter()) y = trackBb.getYMax();
+      else if (trackBb.getYMin() >= gcell->getYCenter()) y = trackBb.getYMin();
+      else    y = gcell->getYCenter();
+    }
+    Track* track = planeM2->getTrackByPosition( y, Constant::Nearest );
+    if (track->getAxis() > trackBb.getYMax()) {
+      y = track->getPreviousTrack()->getAxis();
+    }
+    if (track->getAxis() < trackBb.getYMin()) {
+      y = track->getNextTrack()->getAxis();
+    }
+    Box metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+#endif
+
+#if FEATURE_SPAN_ANCHOR
+    Contact* anchor = nullptr;
+    for ( Component* slave : rp->getSlaveComponents() ) {
+      anchor = dynamic_cast<Contact*>( slave );
+      if (anchor) break;
+    }
+    DbU::Unit y        = (anchor) ? anchor->getY() : bb.getYCenter();
+    Box       metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+#endif
 
     // if (bb.getWidth() < pitch)
     // //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
@@ -210,7 +250,8 @@ namespace {
     //                                   );
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
-    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, track );
+    Track*            ntrack   = planeM2->getTrackByPosition( metal2bb.getYCenter(), Constant::Nearest );
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, ntrack );
     cdebug_log(145,0) << "halfViaTopSide=" << DbU::getValueString(halfViaTopSide) << endl;
     cdebug_log(145,0) << "halfViaBotSide=" << DbU::getValueString(halfViaBotSide) << endl;
     cdebug_log(145,0) << "| " << element << endl;
@@ -533,7 +574,20 @@ namespace {
         overlapping[i]->setSizes( viaBb.getWidth(), viaBb.getHeight() );
       }
 
-      checkForLoopHV( overlapping );
+      bool loopRemoved = checkForLoopHV( overlapping );
+
+      if (not loopRemoved) {
+        BasicLayer* layer  = overlapping[0]->getSegment()->getLayer()->getBasicLayers().getFirst();
+        Box         viaBb1 = Box( overlapping[0]->base()->getBoundingBox( layer ));
+        Horizontal* strap  = Horizontal::create( overlapping[0]->getNet()
+                                               , layer
+                                               , overlapping[0]->getY()
+                                               , viaBb1.getHeight()
+                                               , overlapping[0]->getX()
+                                               , overlapping[1]->getX()
+                                               );
+        cdebug_log(145,0) << "Added strap " << strap << endl;
+      }
       // set<DbU::Unit> xs;
       // set<DbU::Unit> ys;
       

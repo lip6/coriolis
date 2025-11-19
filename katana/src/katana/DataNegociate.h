@@ -94,7 +94,7 @@ namespace Katana {
       inline void                         resetPerpandicularFree ();
              void                         update                 ();
       static string                       getStateString         ( uint32_t state, unsigned int stateCount  );
-      static string                       getStateString         ( DataNegociate* );
+      static string                       getStateString         ( const DataNegociate* );
              Record*                      _getRecord             () const;
              string                       _getString             () const;
       inline string                       _getTypeName           () const;
@@ -165,7 +165,7 @@ namespace Katana {
     // }
     if ( (_state != state) or (flags & Flags::ResetCount) ) {
     //std::cerr << "Changing state to:" << state << std::endl;
-      _state      = state;
+      _state = state;
       _stateCount = 1;
     } else
       _stateCount++;

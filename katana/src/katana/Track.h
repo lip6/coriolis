@@ -87,6 +87,7 @@ namespace Katana {
               TrackElement*      getNext             ( size_t& index, Net* ) const;
               TrackElement*      getPrevious         ( size_t& index, Net* ) const;
               TrackElement*      getNextFixed        ( size_t& index ) const;
+              size_t             getSpanRpUnder      ( const Interval&, std::vector<TrackElement*>& ) const;
               size_t             find                ( const TrackElement* ) const;
               DbU::Unit          getSourcePosition   ( std::vector<TrackElement*>::iterator ) const;
               DbU::Unit          getMinimalPosition  ( size_t index, uint32_t state ) const;

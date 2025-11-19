@@ -199,8 +199,6 @@ namespace Katana {
   void           TrackElement::reschedule           ( uint32_t ) { }
   void           TrackElement::forcePositions       ( const Interval& ) { }
   void           TrackElement::forcePositions       ( DbU::Unit, DbU::Unit ) { }
-//void           TrackElement::detach               () { }
-//void           TrackElement::detach               ( TrackSet& ) { }
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::updateTrackSpan      () { }
@@ -214,6 +212,7 @@ namespace Katana {
   bool           TrackElement::slacken              ( Flags ) { return false; }
   bool           TrackElement::moveUp               ( Flags ) { return false; }
   bool           TrackElement::moveDown             ( Flags ) { return false; }
+  void           TrackElement::reduce               () { }
 #if THIS_IS_DISABLED
   void           TrackElement::desalignate          () { }
 #endif
@@ -254,6 +253,14 @@ namespace Katana {
 
     if (debugging)
       DebugSession::close();
+  }
+
+
+  Box  TrackElement::getBoundingBox () const
+  {
+    if (getDirection() & Flags::Horizontal)
+      return Box( getSourceU(), getAxis()-DbU::lambda(1.0), getTargetU(), getAxis()+DbU::lambda(1.0) );
+    return Box( getAxis()-DbU::lambda(1.0), getSourceU(), getAxis()+DbU::lambda(1.0), getTargetU() );
   }
 
 
@@ -300,6 +307,25 @@ namespace Katana {
     cdebug_log(155,0) << "TrackElement::setTrack(): " << this << endl;
     cdebug_log(155,0) << "  -> " << track << endl;
     _track = track;
+  }
+
+
+  void  TrackElement::detach ( TrackSet& removeds )
+  {
+    cdebug_log(159,1) << "TrackElement::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
+                      << getTrackSpan() << endl;
+
+    Track* wtrack = getTrack();
+    for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+      removeds.insert( wtrack );
+      cdebug_log(159,0) << "| " << wtrack << endl;
+      wtrack = wtrack->getNextTrack();
+    }
+    addTrackCount( -getTrackSpan()  );
+    setTrack( NULL );
+    setFlags( TElemLocked );
+
+    cdebug_tabw(159,-1);
   }
 
 

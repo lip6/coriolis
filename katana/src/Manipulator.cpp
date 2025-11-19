@@ -209,6 +209,7 @@ namespace Katana {
           Flags         flags    = Flags::NoFlags;
           AutoContact*  terminal = nullptr;
           TrackElement* parallel = Session::lookup( perpandiculars[i]->base()->getNonPrefPerpand( terminal, flags ));
+          cdebug_log(159,0) << "parallel " << parallel << endl;
           if (parallel and (parallel->getBreakLevel() < 2)) {
             parallel->makeDogleg( terminal->getGCell(), flags );
             nonPrefFounds = true;
@@ -1159,7 +1160,7 @@ namespace Katana {
 
       if (  costs[itrack]->isFixed()
          or costs[itrack]->isBlockage()
-         or costs[itrack]->isInfinite()
+         or costs[itrack]->isInfiniteOrSpanRp()
          or costs[itrack]->isOverlapGlobal() )
         continue;
 
@@ -1307,13 +1308,12 @@ namespace Katana {
   {
     cdebug_log(159,0) << "Manipulator::moveUp() " << _segment << endl; 
 
-    Flags kflags = Flags::WithNeighbors|Flags::AllAbove;
+    Flags kflags = Flags::WithPerpands|Flags::WithNeighbors|Flags::AllAbove;
     kflags |= (flags & AllowLocalMoveUp   ) ? Flags::AllowLocal     : Flags::NoFlags;
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
 
-    float reserve = 1.0;
-  //float reserve = 0.5;
+    float reserve = Session::getMoveUpReserve();
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
     if (_segment->getLength() > getLongWireUpThreshold1()*getPitch()) reserve = getLongWireUpReserve1();
     if (Session::getConfiguration()->isVH() and (_segment->getDepth() < 3)) reserve = 1.5;
@@ -1323,13 +1323,13 @@ namespace Katana {
       if (_segment->isLocal()) {
         if (not _segment->canPivotUp(1.0,kflags)) return false;
       } else {
-        if (_segment->getLength() < 20*getPitch()) {
+        if (_segment->getLength() < 30*getPitch()) {
           if (Session::getConfiguration()->isVH()) kflags |=  Flags::IgnoreContacts;
           else                                     kflags &= ~Flags::IgnoreContacts;
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0,(kflags))) return false;
-        }
-        if (not _segment->canMoveUp(reserve,kflags|Flags::CheckLowDensity)) return false;
+          if (not _segment->canPivotUp(1.0,kflags|Flags::CheckLowDensity)) return false;
+        } else
+          if (not _segment->canMoveUp(reserve,kflags|Flags::CheckLowDensity)) return false;
       }
     } else {
       if (not _segment->canMoveUp(1.0,kflags)) return false;
@@ -1834,8 +1834,7 @@ namespace Katana {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 
-        data->setState( DataNegociate::Repair );
-        if (data->getStateCount() > 1) data->resetStateCount();
+        data->setState( DataNegociate::Repair, Flags::ResetCount );
       }
 
       cdebug_log(159,0) << "Perpandicular ripup: " << perpandicular << endl;
@@ -1878,8 +1877,7 @@ namespace Katana {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 
-        data->setState( DataNegociate::Repair );
-        if (data->getStateCount() > 1) data->resetStateCount();
+        data->setState( DataNegociate::Repair, Flags::ResetCount );
       }
 
       cdebug_log(159,0) << "Stacked VIA ripup: " << perpandicular << endl;

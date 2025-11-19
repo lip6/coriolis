@@ -105,15 +105,15 @@ namespace Katana {
 
   bool  TrackCost::isFree () const
   {
-    return /*(not _terminals) and*/ (not isOverlap()) and (not isInfinite());
+    return /*(not _terminals) and*/ (not isOverlap()) and (not isInfiniteOrSpanRp());
   }
 
 
   bool  TrackCost::Compare::operator() ( const TrackCost* lhs, const TrackCost* rhs )
   {
-    if (lhs->isInfinite    () xor rhs->isInfinite    ()) return rhs->isInfinite();
-    if (lhs->isAtRipupLimit() xor rhs->isAtRipupLimit()) return rhs->isAtRipupLimit();
-    if (lhs->isBlacklisted () xor rhs->isBlacklisted ()) return rhs->isBlacklisted();
+    if (lhs->isInfiniteOrSpanRp() xor rhs->isInfiniteOrSpanRp()) return rhs->isInfiniteOrSpanRp();
+    if (lhs->isAtRipupLimit()     xor rhs->isAtRipupLimit())     return rhs->isAtRipupLimit();
+    if (lhs->isBlacklisted ()     xor rhs->isBlacklisted ())     return rhs->isBlacklisted();
     if (Session::getStage() < Anabatic::StageRepair)
       if (lhs->isForcedAxisChange() xor rhs->isForcedAxisChange()) return rhs->isForcedAxisChange();
 
@@ -215,7 +215,7 @@ namespace Katana {
 
   void  TrackCost::consolidate ()
   {
-    if ( not isInfinite() and not isHardOverlap() and not prioritizeAxisWeight()) {
+    if ( not isInfiniteOrSpanRp() and not isHardOverlap() and not prioritizeAxisWeight()) {
       cdebug_log(159,0) << "TrackCost::consolidate() " << DbU::getValueString(_delta)
                         << " - " << DbU::getValueString(_deltaShared) << endl;
       _delta -= _deltaShared;
@@ -265,7 +265,8 @@ namespace Katana {
   {
     string s = "<" + _getTypeName();
 
-    s += " @"   + DbU::getValueString(getRefCandidateAxis());
+    s += " ["   + getString(getTrack(0)->getIndex());
+    s += "] @"  + DbU::getValueString(getRefCandidateAxis());
     s += " "    + getString(getTrack(0)->getLayer()->getName());
     s += " "    + getString(_dataState);
     s += "+"    + getString(_ripupCount);
@@ -275,6 +276,7 @@ namespace Katana {
     s +=          string ( (isFixed()             )?"f":"-" );
     s +=          string ( (isHardOverlap()       )?"h":"-" );
     s +=          string ( (isOverlap()           )?"o":"-" );
+    s +=          string ( (isOverlapSpanRp     ())?"S":"-" );
     s +=          string ( (isOverlapGlobal     ())?"g":"-" );
     s +=          string ( (isGlobalEnclosed    ())?"e":"-" );
     s +=          string ( (isAtRipupLimit      ())?"R":"-" );

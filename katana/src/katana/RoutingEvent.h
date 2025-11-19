@@ -141,7 +141,7 @@ namespace Katana {
                                                                  );
               void                         setSegment            ( TrackElement* );
               RoutingEvent*                reschedule            ( RoutingEventQueue&, uint32_t eventLevel );
-              void                         setState              ( uint32_t );
+              void                         setState              ( uint32_t, Flags flags=Flags::NoFlags );
       inline  void                         setTimeStamp          ( uint32_t );
       inline  void                         setProcessed          ( bool state=true );
       inline  void                         setDisabled           ( bool state=true );

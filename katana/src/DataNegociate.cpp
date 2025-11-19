@@ -113,6 +113,7 @@ namespace Katana {
     _perpandiculars.clear();
     _perpandicularFree = Interval(false);
 
+    cdebug_log(159,0) << "Using parallel pitch " << DbU::getValueString(pitch) << endl;
     cdebug_log(159,0) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       cdebug_log(159,0) << "Perpandicular Free (before): " << _perpandicularFree << endl;
@@ -186,24 +187,28 @@ namespace Katana {
         Flags        direction = Session::getDirection( perpandicular->getLayer() );
         Interval     trackFree ( false );
 
-        if (source->canDrag()) {
-          DbU::Unit slack = (source->isMetalOnly()) ? pitch : 0;
-          if (direction & Flags::Horizontal)
-            trackFree.intersection( source->getCBYMin()-slack, source->getCBYMax()+slack );
-          else
-            trackFree.intersection( source->getCBXMin()-slack, source->getCBXMax()+slack );
-          cdebug_log(159,0) << "trackFree (source drag): " << trackFree << endl;
-        }
-        if (target->canDrag()) {
-          DbU::Unit slack = (target->isMetalOnly()) ? pitch : 0;
-          if (direction & Flags::Horizontal)
-            trackFree.intersection( target->getCBYMin()-slack, target->getCBYMax()+slack );
-          else
-            trackFree.intersection( target->getCBXMin()-slack, target->getCBXMax()+slack );
-          cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
+        if (Session::getStage() < Anabatic::StagePack) {
+          if (source->canDrag()) {
+            cdebug_log(159,0) << "Source drag, constraint box " << source->getConstraintBox() << endl;
+            DbU::Unit slack = (source->isMetalOnly()) ? pitch : 0;
+            if (direction & Flags::Horizontal)
+              trackFree.intersection( source->getCBYMin()-slack, source->getCBYMax()+slack );
+            else
+              trackFree.intersection( source->getCBXMin()-slack, source->getCBXMax()+slack );
+            cdebug_log(159,0) << "trackFree (source drag): " << trackFree << endl;
+          }
+          if (target->canDrag()) {
+            cdebug_log(159,0) << "Target drag, constraint box " << target->getConstraintBox() << endl;
+            DbU::Unit slack = (target->isMetalOnly()) ? pitch : 0;
+            if (direction & Flags::Horizontal)
+              trackFree.intersection( target->getCBYMin()-slack, target->getCBYMax()+slack );
+            else
+              trackFree.intersection( target->getCBXMin()-slack, target->getCBXMax()+slack );
+            cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
+          }
         }
 
-        if (not source->canDrag() and not target->canDrag()) {
+        if (trackFree.isFull()) {
           trackFree = Interval( perpandicular->base()->getNonPrefSourcePosition()
                               , perpandicular->base()->getNonPrefTargetPosition() ); 
           trackFree.inflate( pitch );
@@ -263,6 +268,11 @@ namespace Katana {
         }
       } else {
         DataNegociate* perpandData = perpandicular->getDataNegociate();
+        if (perpandData)
+          cdebug_log(159,0) << "State: " << getStateString(perpandData)
+                            << " isOneTrack=" << perpandicular->isOneTrack()
+                            << " isStrap="    << perpandicular->isStrap() 
+                            << endl;
       //DbU::Unit      pitch       = Session::getPitch( perpandicular->getLayer() );
         if (perpandData and perpandicular->isLocal()) {
           uint32_t limit = Session::getKatanaEngine()->getRipupLimit( _trackSegment );
@@ -292,6 +302,23 @@ namespace Katana {
             } else {
               cdebug_log(159,0) << "Track Perpandicular Free empty, ignoring." << endl;
             }
+          }
+          else if (   perpandicular->isOneTrack()
+                  and (perpandData->getState() >= MaximumSlack)) {
+            cdebug_log(159,0) << "One track local perpandicular" << endl;
+            Flags         isSource  = std::get<1>( perpandiculars[i] );
+            RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
+            Track*        track     = plane->getTrackByPosition( perpandicular->getAxis() );
+            Interval      trackFree;
+            if (_trackSegment->getAxis() == perpandicular->getSourceAxis()) {
+              trackFree = track->getFreeInterval( perpandicular->getTargetU(), _trackSegment->getNet() );
+              cdebug_log(159,0) << "Track Perpandicular Free (one track): " << trackFree << endl;
+            } else {
+              trackFree = track->getFreeInterval( perpandicular->getSourceU(), _trackSegment->getNet() );
+              cdebug_log(159,0) << "Track Perpandicular Free (one track): " << trackFree << endl;
+            }
+            _perpandicularFree.intersection( trackFree.inflate( -perpandicular->getExtensionCap( isSource )
+                                                              , -perpandicular->getExtensionCap( isSource ) ));
           }
         } else {
           cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
@@ -385,7 +412,8 @@ namespace Katana {
                + getString(_terminals)
                + " [" + DbU::getValueString(_leftMinExtend)
                +  ":" + DbU::getValueString(_rightMinExtend)
-               + "]>";
+               + "] "
+               + getStateString(this) + ">";
   }
 
 
@@ -429,7 +457,7 @@ namespace Katana {
   }
 
 
-  string  DataNegociate::getStateString ( DataNegociate* data )
+  string  DataNegociate::getStateString ( const DataNegociate* data )
   {
     return getStateString( data->_state, data->_stateCount );
   }

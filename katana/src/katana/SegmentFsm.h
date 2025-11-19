@@ -160,6 +160,7 @@ namespace Katana {
              bool                   insertInTrack          ( size_t );
              void                   bindToTrack            ( size_t );
              void                   moveToTrack            ( size_t );
+             void                   clearSpanRpFromTrack   ( size_t );
              void                   ripupPerpandiculars    ();
              bool                   canRipup               ( uint32_t flags=0 );
              bool                   conflictSolveByHistory ();

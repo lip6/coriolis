@@ -156,6 +156,7 @@ namespace Katana {
   bool           TrackFixedSegment::isVertical       () const { return getTrack()->isVertical(); }
   bool           TrackFixedSegment::isFixed          () const { return true; }
   bool           TrackFixedSegment::isPriorityLocked () const { return false; }
+  bool           TrackFixedSegment::canReduce        () const { return false; }
   Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
   DbU::Unit      TrackFixedSegment::getWidth         () const { return _segment->getWidth(); }
   const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }

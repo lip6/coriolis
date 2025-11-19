@@ -777,7 +777,7 @@ namespace Anabatic {
     cdebug_log(149,0) << segment1 << endl;
     segment1->setLayer( doglegDepth );
     segment1->_setAxis( doglegAxis );
-    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
+    segment1->setFlags( SegDogleg|SegCanonical|SegNotAligned );
     cdebug_log(149,0) << "New " << dlContact1->base() << "." << endl;
     cdebug_log(149,0) << "New " << dlContact2->base() << "." << endl;
     Session::dogleg( segment1 );

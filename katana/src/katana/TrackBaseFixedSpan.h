@@ -45,11 +45,13 @@ namespace Katana {
       virtual bool                isPriorityLocked       () const;
       virtual bool                isFixedSpan            () const;
       virtual bool                isFixedSpanRp          () const;
+      virtual bool                canReduce              () const;
       virtual unsigned long       getId                  () const;
       virtual Net*                getNet                 () const = 0;
       virtual Flags               getDirection           () const;
       virtual DbU::Unit           getWidth               () const;
       virtual unsigned int        getDepth               () const;
+      virtual Box                 getBoundingBox         () const;
       virtual RoutingPad*         getRoutingPad          () const;
       virtual const Layer*        getLayer               () const;
       virtual size_t              getTrackSpan           () const;
@@ -66,7 +68,7 @@ namespace Katana {
       virtual void                computePriority        ();
       virtual void                computeAlignedPriority ();
       virtual void                setNet                 ( Net* ) = 0;
-      virtual void                detach                 ( TrackSet& );
+      virtual  void               setAxis                ( DbU::Unit, Flags flags );
       virtual Record*             _getRecord             () const;
       virtual string              _getString             () const;
       virtual string              _getTypeName           () const;

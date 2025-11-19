@@ -68,17 +68,18 @@ namespace Katana {
   const uint32_t  TElemBlockage        = (1 <<  2);
   const uint32_t  TElemFixed           = (1 <<  3);
   const uint32_t  TElemLocked          = (1 <<  4);
-  const uint32_t  TElemRouted          = (1 <<  5);
-  const uint32_t  TElemUseBlockageNet  = (1 <<  6);
-  const uint32_t  TElemShortDogleg     = (1 <<  7);
-  const uint32_t  TElemSourceDogleg    = (1 <<  8);
-  const uint32_t  TElemTargetDogleg    = (1 <<  9);
-  const uint32_t  TElemAlignBottom     = (1 << 10);
-  const uint32_t  TElemAlignCenter     = (1 << 11);
-  const uint32_t  TElemAlignTop        = (1 << 12);
-  const uint32_t  TElemRipple          = (1 << 13);
-  const uint32_t  TElemInvalidated     = (1 << 14);
-  const uint32_t  TElemForwardSetTrack = (1 << 15);
+  const uint32_t  TElemOneTrack        = (1 <<  5);
+  const uint32_t  TElemRouted          = (1 <<  6);
+  const uint32_t  TElemUseBlockageNet  = (1 <<  7);
+  const uint32_t  TElemShortDogleg     = (1 <<  8);
+  const uint32_t  TElemSourceDogleg    = (1 <<  9);
+  const uint32_t  TElemTargetDogleg    = (1 << 10);
+  const uint32_t  TElemAlignBottom     = (1 << 11);
+  const uint32_t  TElemAlignCenter     = (1 << 12);
+  const uint32_t  TElemAlignTop        = (1 << 13);
+  const uint32_t  TElemRipple          = (1 << 14);
+  const uint32_t  TElemInvalidated     = (1 << 15);
+  const uint32_t  TElemForwardSetTrack = (1 << 16);
 
 
   struct Compare {
@@ -132,6 +133,7 @@ namespace Katana {
       inline  bool                    isInvalidated          () const;
       inline  bool                    isBlockage             () const;
       inline  bool                    isLocked               () const;
+      inline  bool                    isOneTrack             () const;
       inline  bool                    isRouted               () const;
       virtual bool                    isFixedSpan            () const;
       virtual bool                    isFixedSpanRp          () const;
@@ -149,6 +151,7 @@ namespace Katana {
       virtual bool                    canDogleg              ( Anabatic::GCell*, Flags flags=0 );
       virtual bool                    canRealign             () const;
       virtual bool                    canPromoteToPref       ( Flags ) const;
+      virtual bool                    canReduce              () const = 0;
     // Accessors                                             
       inline  Observer<TrackElement>* getObserver            ();
       virtual unsigned long           getId                  () const;
@@ -165,7 +168,7 @@ namespace Katana {
       virtual float                   getPriority            () const = 0;
       virtual unsigned long           getFreedomDegree       () const;
       virtual float                   getMaxUnderDensity     ( Flags flags=Flags::NoFlags ) const;
-      inline  Box                     getBoundingBox         () const;
+      virtual Box                     getBoundingBox         () const;
       virtual TrackElement*           getNext                () const;
       virtual TrackElement*           getPrevious            () const;
       virtual DbU::Unit               getExtensionCap        ( Flags ) const;
@@ -206,8 +209,7 @@ namespace Katana {
       virtual void                    setDoglegLevel         ( uint32_t );
       virtual void                    swapTrack              ( TrackElement* );
       virtual void                    reschedule             ( uint32_t level );
-    //virtual void                    detach                 ();
-      virtual void                    detach                 ( TrackSet& ) = 0;
+      virtual void                    detach                 ( TrackSet& );
       virtual void                    invalidate             ();
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();
@@ -227,6 +229,7 @@ namespace Katana {
       virtual bool                    slacken                ( Flags flags=Flags::NoFlags );
       virtual bool                    moveUp                 ( Flags flags );
       virtual bool                    moveDown               ( Flags flags );
+      virtual void                    reduce                 ();
 #if THIS_IS_DISABLED                                         
       virtual void                    desalignate            ();
 #endif                                                       
@@ -266,6 +269,7 @@ namespace Katana {
   inline bool                    TrackElement::isInvalidated        () const { return _flags & TElemInvalidated; }
   inline bool                    TrackElement::isBlockage           () const { return _flags & TElemBlockage; }
   inline bool                    TrackElement::isLocked             () const { return _flags & TElemLocked; }
+  inline bool                    TrackElement::isOneTrack           () const { return _flags & TElemOneTrack; }
   inline bool                    TrackElement::isRouted             () const { return _flags & TElemRouted; }
   inline bool                    TrackElement::isForwardSetTrack    () const { return _flags & TElemForwardSetTrack; }
   inline bool                    TrackElement::hasSourceDogleg      () const { return _flags & TElemSourceDogleg; }
@@ -284,13 +288,6 @@ namespace Katana {
   {
     _flags |= TElemRouted;
     if (base()) base()->setFlags( Anabatic::AutoSegment::SegFixed );
-  }
-
-  inline Box  TrackElement::getBoundingBox () const
-  {
-    if (getDirection() & Flags::Horizontal)
-      return Box( getSourceU(), getAxis()-DbU::lambda(1.0), getTargetU(), getAxis()+DbU::lambda(1.0) );
-    return Box( getAxis()-DbU::lambda(1.0), getSourceU(), getAxis()+DbU::lambda(1.0), getTargetU() );
   }
 
   inline  bool  TrackElement::makeDogleg ( Anabatic::GCell* gcell, Flags flags )

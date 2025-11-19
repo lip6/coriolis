@@ -58,15 +58,18 @@ namespace Katana {
                  , LeftOverlap          = (1 << 15)
                  , RightOverlap         = (1 << 16)
                  , OverlapGlobal        = (1 << 17)
-                 , GlobalEnclosed       = (1 << 18)
-                 , AtRipupLimit         = (1 << 19)
-                 , IgnoreTerminals      = (1 << 20)
-                 , IgnoreShort          = (1 << 21)
-                 , Blacklisted          = (1 << 22)
-                 , ForcedAxisChange     = (1 << 23)
+                 , OverlapSpanRp        = (1 << 18)
+                 , GlobalEnclosed       = (1 << 19)
+                 , AtRipupLimit         = (1 << 20)
+                 , IgnoreTerminals      = (1 << 21)
+                 , IgnoreShort          = (1 << 22)
+                 , Blacklisted          = (1 << 23)
+                 , ForcedAxisChange     = (1 << 24)
                  , MergeMask            = ForGlobal     |Blockage|Fixed       |Infinite
                                          |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
                                          |GlobalEnclosed         |AtRipupLimit
+                 , NonSpanRpOverlap     = HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
+                                         |Infinite 
                  };
 
     public:
@@ -98,11 +101,14 @@ namespace Katana {
       inline       bool          isShortNet              () const;
       inline       bool          isFixed                 () const;
       inline       bool          isInfinite              () const;
+      inline       bool          isInfiniteOrSpanRp      () const;
       inline       bool          isOverlap               () const;
       inline       bool          isLeftOverlap           () const;
       inline       bool          isRightOverlap          () const;
       inline       bool          isHardOverlap           () const;
       inline       bool          isOverlapGlobal         () const;
+      inline       bool          isOverlapSpanRp         () const;
+      inline       bool          isOverlapSpanRpOnly     () const;
       inline       bool          isGlobalEnclosed        () const;
       inline       bool          isAtRipupLimit          () const;
       inline       bool          isForcedAxisChange      () const;
@@ -153,6 +159,7 @@ namespace Katana {
       inline       void          setRightOverlap         ();
       inline       void          setHardOverlap          ();
       inline       void          setOverlapGlobal        ();
+      inline       void          setOverlapSpanRp        ();
       inline       void          setGlobalEnclosed       ();
       inline       void          setAtRipupLimit         ();
       inline       void          setForcedAxisChange     ();
@@ -213,11 +220,14 @@ namespace Katana {
   inline       bool          TrackCost::isShortNet              () const { return _flags & ShortNet; }
   inline       bool          TrackCost::isFixed                 () const { return _flags & Fixed; }
   inline       bool          TrackCost::isInfinite              () const { return _flags & Infinite; }
+  inline       bool          TrackCost::isInfiniteOrSpanRp      () const { return _flags & (Infinite|OverlapSpanRp); }
   inline       bool          TrackCost::isOverlap               () const { return _flags & Overlap; }
   inline       bool          TrackCost::isLeftOverlap           () const { return _flags & LeftOverlap; }
   inline       bool          TrackCost::isRightOverlap          () const { return _flags & RightOverlap; }
   inline       bool          TrackCost::isHardOverlap           () const { return _flags & HardOverlap; }
   inline       bool          TrackCost::isOverlapGlobal         () const { return _flags & OverlapGlobal; }
+  inline       bool          TrackCost::isOverlapSpanRp         () const { return _flags & OverlapSpanRp; }
+  inline       bool          TrackCost::isOverlapSpanRpOnly     () const { return (_flags & OverlapSpanRp) and not (_flags & NonSpanRpOverlap); }
   inline       bool          TrackCost::isGlobalEnclosed        () const { return _flags & GlobalEnclosed; }
   inline       bool          TrackCost::isAtRipupLimit          () const { return _flags & AtRipupLimit; }
   inline       bool          TrackCost::isForcedAxisChange      () const { return _flags & ForcedAxisChange; }
@@ -259,6 +269,7 @@ namespace Katana {
   inline       void          TrackCost::setRightOverlap         () { _flags |= RightOverlap; }
   inline       void          TrackCost::setHardOverlap          () { _flags |= HardOverlap; }
   inline       void          TrackCost::setOverlapGlobal        () { _flags |= OverlapGlobal; }
+  inline       void          TrackCost::setOverlapSpanRp        () { _flags |= OverlapSpanRp; }
   inline       void          TrackCost::setGlobalEnclosed       () { _flags |= GlobalEnclosed; }
   inline       void          TrackCost::setAtRipupLimit         () { _flags |= AtRipupLimit; }
   inline       void          TrackCost::setForcedAxisChange     () { _flags |= ForcedAxisChange; }

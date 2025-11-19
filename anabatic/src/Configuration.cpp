@@ -85,26 +85,29 @@ namespace Anabatic {
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    ()
-    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",100.0)->asDouble())
-    , _saturateRatio    (Cfg::getParamDouble    ("anabatic.saturateRatio"   ,  0.8)->asDouble())
-    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      , 8   )->asInt())
-    , _globalThreshold  (0)
-    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hsmallThreshold" , 3   )->asInt())
-    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vsmallThreshold" , 3   )->asInt())
-    , _vlargeThreshold  (Cfg::getParamInt       ("anabatic.vlargeThreshold" , 0   )->asInt())
-    , _allowedDepth     (0)
-    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
-    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH        (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
-    , _edgeCostK        (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
-    , _edgeHInc         (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
-    , _edgeHScaling     (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
-    , _globalIterations (Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
-    , _diodeName        (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
-    , _antennaGateMaxWL (Cfg::getParamInt   ("etesian.antennaGateMaxWL" ,      0  )->asInt())
-    , _antennaDiodeMaxWL(Cfg::getParamInt   ("etesian.antennaDiodeMaxWL",      0  )->asInt())
-    , _smallNetWidth    (Cfg::getParamInt   ("anabatic.smallNetWidth"   ,      0  )->asInt())
-    , _smallNetHeight   (Cfg::getParamInt   ("anabatic.smallNetHeight"  ,      0  )->asInt())
+    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",    100.0)->asDouble())
+    , _saturateRatio    (Cfg::getParamDouble    ("anabatic.saturateRatio"   ,      0.8)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      ,      8  )->asInt())
+    , _globalThreshold  (0)                                                      
+    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hsmallThreshold" ,      3  )->asInt())
+    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vsmallThreshold" ,      3  )->asInt())
+    , _vlargeThreshold  (Cfg::getParamInt       ("anabatic.vlargeThreshold" ,      0  )->asInt())
+    , _allowedDepth     (0)                                                      
+    , _lowDensity       (Cfg::getParamDouble    ("anabatic.lowDensity"      ,      0.6)->asDouble())
+    , _lowUpDensity     (Cfg::getParamDouble    ("anabatic.lowUpDensity"    ,      0.2)->asDouble())
+    , _moveUpReserve    (Cfg::getParamDouble    ("anabatic.moveUpReserve"   ,      1.5)->asDouble())
+    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",  24  )->asInt()))
+    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" ,   4  )->asInt()))
+    , _edgeCostH        (Cfg::getParamDouble    ("anabatic.edgeCostH"       ,      9.0)->asDouble())
+    , _edgeCostK        (Cfg::getParamDouble    ("anabatic.edgeCostK"       ,    -10.0)->asDouble())
+    , _edgeHInc         (Cfg::getParamDouble    ("anabatic.edgeHInc"        ,      1.5)->asDouble())
+    , _edgeHScaling     (Cfg::getParamDouble    ("anabatic.edgeHScaling"    ,      1.0)->asDouble())
+    , _globalIterations (Cfg::getParamInt       ("anabatic.globalIterations",     10  )->asInt())
+    , _diodeName        (Cfg::getParamString    ("etesian.diodeName"        , "dio_x0")->asString() )
+    , _antennaGateMaxWL (Cfg::getParamInt       ("etesian.antennaGateMaxWL" ,      0  )->asInt())
+    , _antennaDiodeMaxWL(Cfg::getParamInt       ("etesian.antennaDiodeMaxWL",      0  )->asInt())
+    , _smallNetWidth    (Cfg::getParamInt       ("anabatic.smallNetWidth"   ,      0  )->asInt())
+    , _smallNetHeight   (Cfg::getParamInt       ("anabatic.smallNetHeight"  ,      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -209,6 +212,9 @@ namespace Anabatic {
     , _vsmallThreshold  (other._vsmallThreshold)
     , _vlargeThreshold  (other._vlargeThreshold)
     , _allowedDepth     (other._allowedDepth)
+    , _lowDensity       (other._lowDensity)
+    , _lowUpDensity     (other._lowUpDensity)
+    , _moveUpReserve    (other._moveUpReserve)
     , _edgeCostH        (other._edgeCostH)
     , _edgeCostK        (other._edgeCostK)
     , _edgeHInc         (other._edgeHInc)
@@ -735,9 +741,12 @@ namespace Anabatic {
 
     cout << "  o  Configuration of ToolEngine<Anabatic> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
-    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
+    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName     ) << endl;
     cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
-    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"  ,_saturateRatio) << endl;
+    cout << Dots::asDouble    ("     - Low density threshold"       ,_lowDensity      ) << endl;
+    cout << Dots::asDouble    ("     - Low up density threshold"    ,_lowUpDensity    ) << endl;
+    cout << Dots::asDouble    ("     - Move up reserve"             ,_moveUpReserve   ) << endl;
+    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"  ,_saturateRatio   ) << endl;
   }
 
 
@@ -770,6 +779,9 @@ namespace Anabatic {
     record->add( getSlot( "_gmetalv"         , _gmetalv          ) );
     record->add( getSlot( "_gcontact"        , _gcontact         ) );
     record->add( getSlot( "_allowedDepth"    , _allowedDepth     ) );
+    record->add( getSlot( "_lowDensity"      , _lowDensity       ) );
+    record->add( getSlot( "_lowUpDensity"    , _lowUpDensity     ) );
+    record->add( getSlot( "_moveUpReserve"   , _moveUpReserve    ) );
     record->add( getSlot( "_edgeCostH"       , _edgeCostH        ) );
     record->add( getSlot( "_edgeCostK"       , _edgeCostK        ) );
     record->add( getSlot( "_edgeHInc"        , _edgeHInc         ) );

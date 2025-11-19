@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "hurricane/Bug.h"
 #include "hurricane/DebugSession.h"
-#include "katana/TrackElement.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Tracks.h"
 #include "katana/RoutingPlane.h"
 #include "katana/DataNegociate.h"
@@ -673,6 +673,12 @@ namespace Katana {
   //flags |= TrackCost::IgnoreSharedLength;
     sort( _costs.begin(), _costs.end(), TrackCost::Compare(flags) );
 
+    if ((_costs.size() == 1) and (segment1->base()->getRpDistance() == 0)) {
+      segment1->setFlags( TElemOneTrack );
+    } else {
+      segment1->unsetFlags( TElemOneTrack );
+    }
+
     size_t i=0;
     for ( ; (i<_costs.size()) and _costs[i]->isFree() ; i++ );
     _event1->setTracksFree( i );
@@ -798,6 +804,18 @@ namespace Katana {
       Manipulator( _event1->getSegment(), useEvent1() ).avoidStackedVias( getCandidateAxis1(i) );
 
     return success;
+  }
+
+
+  void  SegmentFsm::clearSpanRpFromTrack ( size_t i )
+  {
+    cdebug_log(159,0) << "SegmentFsm::clearSpanRpFromTrack() track:" << i << endl;
+    Track*        track     = _costs[i]->getTrack();
+    Interval      canonical = _costs[i]->getInterval1();
+    vector<TrackElement*> spanRps;
+    track->getSpanRpUnder( canonical, spanRps );
+    for ( TrackElement* fixedSpan : spanRps )
+      Session::addRemoveEvent( fixedSpan );
   }
 
 
@@ -1333,10 +1351,9 @@ namespace Katana {
     uint32_t    nextState   = data->getState();
     Manipulator manipulator ( segment, *this );
 
-
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
-        if (segment->isDrag() and getCost(0)->isInfinite()) {
+        if (segment->isDrag() and getCost(0)->isInfiniteOrSpanRp()) {
           nextState = DataNegociate::Slacken;
           success   = manipulator.dragMinimize();
           if (success) _minimizeDrag = true;
@@ -1485,6 +1502,12 @@ namespace Katana {
             nextState = DataNegociate::RipupPerpandiculars;
             cdebug_log(159,0) << "Next state: RipupPerpandiculars (half-slacken succeeded)." << endl;
             break;
+          } else {
+            if (isFullBlocked() and (_costs.size() < 4)) {
+              cdebug_log(159,0) << "Fully blocked and less than 4 tracks" << endl;
+              success = manipulator.makeDogleg( segment->getCanonicalInterval().getCenter() );
+              if (success) break;
+            }
           }
         }
       case DataNegociate::MoveUp:

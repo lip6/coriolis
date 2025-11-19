@@ -68,8 +68,13 @@ namespace {
       if (   segment->isBlockage()
          or (segment->isFixed()
             and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
-        cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
-        cost.setInfinite   ();
+        if (segment->isFixedSpanRp()) {
+          cdebug_log(159,0) << "FixedSpan cost from: " << segment << endl;
+          cost.setOverlapSpanRp();
+        } else {
+          cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
+          cost.setInfinite();
+        }
         cost.setOverlap    ();
         cost.setHardOverlap();
         cost.setBlockage   ();
@@ -661,8 +666,8 @@ namespace Katana {
       //   DebugSession::close();
       // }
 
-      // if (   (RoutingEvent::getProcesseds() > 27638)
-      //    and (RoutingEvent::getProcesseds() < 27659)) {
+      // if (   (RoutingEvent::getProcesseds() > 152474)
+      //    and (RoutingEvent::getProcesseds() < 152490)) {
       //   UpdateSession::close();
       //   ostringstream message;
       //   message << "After processing RoutingEvent " << (count-1) << ".";
@@ -680,7 +685,7 @@ namespace Katana {
       //   UpdateSession::open();
       // }
 
-      // if (event->getSegment()->getNet()->getId() == 239546) {
+      // if (event->getSegment()->getNet()->getId() == 239546 178313) {
       //   UpdateSession::close();
       //   ostringstream message;
       //   message << "After processing an event from Net id:239546\n" << event;
@@ -692,9 +697,9 @@ namespace Katana {
       //   _negociatePack( count, false );
       // } 
          
-      // if (RoutingEvent::getProcesseds() == 65092) {
+      // if (RoutingEvent::getProcesseds() == 146128) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "Overlap has happened" );
+      //   Breakpoint::stop( 0, "After event 146127" );
       //   UpdateSession::open();
       // }
       if (RoutingEvent::getProcesseds() >= limit) {
@@ -781,7 +786,7 @@ namespace Katana {
   void  NegociateWindow::_negociatePack ( size_t& count, bool last )
   {
     // UpdateSession::close();
-    // Breakpoint::stop( 0, "NegociateWindow::_negoiatePack()" );
+    // Breakpoint::stop( 0, "NegociateWindow::_negociatePack()" );
     // UpdateSession::open();
 
     cmess1 << "     o  Pack Stage." << endl;
@@ -828,6 +833,12 @@ namespace Katana {
 
           packEvent->process( _eventQueue, _eventHistory, _eventLoop );
           if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+
+          // if (RoutingEvent::getProcesseds() == 161770) {
+          //   UpdateSession::close();
+          //   Breakpoint::stop( 0, "Stoping after event 161769 (pack stage)" );
+          //   UpdateSession::open();
+          // }
         }
       }
 
@@ -838,6 +849,9 @@ namespace Katana {
 
   void  NegociateWindow::_negociateRepair ()
   {
+    UpdateSession::close();
+    Breakpoint::stop( 99, "NegociateWindow::_negociateRepair()" );
+    UpdateSession::open();
     cdebug_log(159,1) << "NegociateWindow::_negociateRepair() - " << _segments.size() << endl;
 
     uint64_t limit = _katana->getEventsLimit();
@@ -851,7 +865,6 @@ namespace Katana {
     for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
       if (not event->isCloned() and (event->getState() >= DataNegociate::Unimplemented)) {
-        event->setState( DataNegociate::Repair );
         event->reschedule( _eventQueue, 0 );
       }
     }

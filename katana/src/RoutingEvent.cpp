@@ -296,10 +296,10 @@ namespace Katana {
   }
 
 
-  void  RoutingEvent::setState ( uint32_t state )
+  void  RoutingEvent::setState ( uint32_t state, Flags flags )
   {
     DataNegociate* data = _segment->getDataNegociate();
-    if (data) data->setState( state );
+    if (data) data->setState( state, flags );
   }
 
 
@@ -532,7 +532,7 @@ namespace Katana {
           if (fsm.canRipup(Manipulator::NotOnLastRipup)) {
             for ( itrack=0 ; itrack<fsm.getCosts().size() ; itrack++ ) {
               cdebug_log(159,0) << "Trying Track: " << itrack << endl;
-              if (fsm.getCost(itrack)->isInfinite()) break;
+              if (fsm.getCost(itrack)->isInfiniteOrSpanRp()) break;
               if (fsm.insertInTrack(itrack)) break;
               resetInsertState();
             } // Next ripup is possible.
@@ -550,16 +550,15 @@ namespace Katana {
         fsm.setDataState( DataNegociate::Slacken );
       }
       if (not fsm.slackenTopology()) {
-        fsm.setState( SegmentFsm::SelfMaximumSlack );
+        if (fsm.getCosts().empty() or fsm.getCost(0)->isOverlapSpanRpOnly()) {
+          fsm.setState( SegmentFsm::SelfMaximumSlack );
+        } else {
+          fsm.clearSpanRpFromTrack( 0 );
+        }
       }
     }
 
     fsm.doActions();
-
-    if (itrack < fsm.getCosts().size()) {
-      cdebug_log(159,0) << "Placed: @" << DbU::getValueString(fsm.getTrack1(itrack)->getAxis())
-                  << " " << this << endl;
-    }
 
     cdebug_tabw(159,-1);
   }
@@ -620,6 +619,10 @@ namespace Katana {
     if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
     if (fsm.isSymmetric()) return;
 
+    // DataNegociate* dataSelf = getDataNegociate();
+    // if (dataSelf and (dataSelf->getState() < DataNegociate::Repair)) {
+    //   dataSelf->setState( DataNegociate::Repair, Flags::ResetCount );
+    // }
 
     cdebug_log(159,0) << "| Candidate Tracks:" << endl;
     size_t itrack = 0;
@@ -648,6 +651,8 @@ namespace Katana {
       fsm.doActions();
       queue.commit();
     } else {
+      cdebug_log(159,0) << "State: " << fsm.getData()->getState()
+                        << " State count: " << fsm.getData()->getStateCount() << endl;
       if (not _segment->isNonPref()) {
         switch ( fsm.getData()->getStateCount() ) {
           case 1:

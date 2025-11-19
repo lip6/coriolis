@@ -1438,6 +1438,10 @@ namespace Anabatic {
   void  AnabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Building detailed routing from global. " << endl;
+  //DebugSession::addToTrace( getCell()->getNet( "core.abc_161789_new_n23199_hfns_2" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3408_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "CLK_I_root_bl_bl_br_br_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3986_hfns_0" ));
 
     size_t shortNets = 0;
 

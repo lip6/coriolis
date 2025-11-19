@@ -30,7 +30,7 @@
 #include "katana/TrackMarkerSpacing.h"
 #include "katana/DataNegociate.h"
 #include "katana/KatanaEngine.h"
-#include "katana/TrackBaseFixedSpan.h"
+#include "katana/TrackFixedSpanRp.h"
 
 
 namespace {
@@ -427,6 +427,22 @@ namespace Katana {
   }
 
 
+  size_t  Track::getSpanRpUnder ( const Interval& span, std::vector<TrackElement*>& spanRps ) const
+  {
+    size_t begin = Track::npos;
+    size_t end   = Track::npos;
+
+    getOverlapBounds( span, begin, end );
+    if (begin == npos) return 0;
+    for ( ; begin < end ; begin++ ) {
+      TrackFixedSpanRp* fixedSpan = dynamic_cast<TrackFixedSpanRp*>( _segments[begin] );
+      if (not fixedSpan) continue;
+      spanRps.push_back( fixedSpan );
+    }
+    return spanRps.size();
+  }
+
+
   bool  Track::hasViaMarker ( Net* net, Interval span )
   {
     vector<TrackMarker*>::const_iterator lowerBound
@@ -651,7 +667,7 @@ namespace Katana {
              or not _segments[begin]->isNonPref() ) ) {
         if (  (_segments[begin] == cost.getRefElement())
            or (_segments[begin] == cost.getSymElement())) {
-          cdebug_log(155,0) << "Segment istself in track, skip." << endl;
+          cdebug_log(155,0) << "Segment itself in track, skip." << endl;
           continue;
         }
         if (     cost.doIgnoreShort()
@@ -669,7 +685,7 @@ namespace Katana {
       cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
       cdebug_log(155,0) << "| current cost:" << &cost << endl;
 
-      if (cost.isInfinite()) break;
+      if (cost.isInfiniteOrSpanRp()) break;
     }
 
     cdebug_tabw(155,-1);

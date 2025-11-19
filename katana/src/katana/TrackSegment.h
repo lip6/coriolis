@@ -94,6 +94,7 @@ namespace Katana {
       virtual bool                  canMoveUp              ( float reserve, Flags ) const;
       virtual bool                  canSlacken             () const;
       virtual bool                  canRealign             () const;
+      virtual bool                  canReduce              () const;
       virtual float                 getMaxUnderDensity     ( Flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
@@ -133,8 +134,6 @@ namespace Katana {
       virtual void                  updateFreedomDegree    ();
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
-    //virtual void                  detach                 ();
-      virtual void                  detach                 ( TrackSet& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();
@@ -150,6 +149,7 @@ namespace Katana {
       virtual bool                  slacken                ( Flags flags=Flags::NoFlags );
       virtual bool                  moveUp                 ( Flags );
       virtual bool                  moveDown               ( Flags );
+      virtual void                  reduce                 ();
 #if THIS_IS_DISABLED
       virtual void                  desalignate            ();
 #endif

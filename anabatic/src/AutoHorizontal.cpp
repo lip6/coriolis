@@ -350,7 +350,7 @@ namespace Anabatic {
   {
     cdebug_log(149,0) << "AutoHorizontal::_slacken() " << this << endl;
 
-    if (not isStrongTerminal()) return false;
+    if (getRpDistance() > 0) return false;
 
     const Configuration* configuration = Session::getConfiguration();
     const Layer*         metal2        = configuration->getRoutingLayer( 1 );
@@ -390,6 +390,8 @@ namespace Anabatic {
       isNonPrefTarget = true;
       slackenTarget   = true;
     }
+
+    if (not (slackenSource or slackenTarget)) return false;
 
     cdebug_tabw(149,1);
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
@@ -981,7 +983,7 @@ namespace Anabatic {
     AutoSegment* segment1   = AutoSegment::create( dlContact1 , dlContact2, Flags::Vertical );
     segment1->setLayer( doglegDepth );
     segment1->_setAxis( doglegAxis );
-    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
+    segment1->setFlags( SegDogleg|SegCanonical|SegNotAligned );
 
     cdebug_log(149,0) << "New " << dlContact1 << endl;
     cdebug_log(149,0) << "New " << dlContact2 << endl;

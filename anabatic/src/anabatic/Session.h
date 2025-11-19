@@ -88,6 +88,9 @@ namespace Anabatic {
       static  inline DbU::Unit                         getSmallNetWidth      ();
       static  inline DbU::Unit                         getSmallNetHeight     ();
       static  inline size_t                            getAllowedDepth       ();
+      static  inline float                             getLowDensity         ();
+      static  inline float                             getLowUpDensity       ();
+      static  inline float                             getMoveUpReserve      ();
       static         DbU::Unit                         getExtensionCap       ();
       static  inline CellGauge*                        getCellGauge          ();
       static  inline DbU::Unit                         getSliceHeight        ();
@@ -246,6 +249,9 @@ namespace Anabatic {
   inline DbU::Unit                         Session::getSmallNetWidth     ()                     { return getConfiguration()->getSmallNetWidth(); }
   inline DbU::Unit                         Session::getSmallNetHeight    ()                     { return getConfiguration()->getSmallNetHeight(); }
   inline size_t                            Session::getAllowedDepth      ()                     { return getConfiguration()->getAllowedDepth(); }
+  inline float                             Session::getLowDensity        ()                     { return getConfiguration()->getLowDensity(); }
+  inline float                             Session::getLowUpDensity      ()                     { return getConfiguration()->getLowUpDensity(); }
+  inline float                             Session::getMoveUpReserve     ()                     { return getConfiguration()->getMoveUpReserve(); }
   inline DbU::Unit                         Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                         Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline size_t                            Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }
