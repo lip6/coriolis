@@ -1476,7 +1476,8 @@ namespace Katana {
     DbU::Unit techMinLength  = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
     for ( size_t j=0 ; j<_segments.size() ; ++j ) {
       cdebug_log(159,0) << "| [" << j << "] " << _segments[j] << endl;
-      if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
+      if (    not dynamic_cast<TrackFixedSpanRp*>(_segments[j])
+         and (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection()))) {
         cdebug_log(159,0) << "  Discarded" << endl;
         discard = true;
         continue;
