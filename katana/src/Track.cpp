@@ -1240,11 +1240,11 @@ namespace Katana {
               prev->addDuTarget( -spacing );
               prev->updatePositions();
               element->invalidate();
-              cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left of %s):\n"
-                               "          %s"
-                             , getString(this).c_str()
-                             , DbU::getValueString(spacing).c_str()
-                             , getString(prev).c_str() ) << endl;
+              cparanoid << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left of %s):\n"
+                                    "          %s"
+                                  , getString(this).c_str()
+                                  , DbU::getValueString(spacing).c_str()
+                                  , getString(prev).c_str() ) << endl;
             } else {
               TrackElement* element = _segments[ gapsetCurr.span(0).first ];
               AutoSegment*  curr    = element->base();
@@ -1253,11 +1253,11 @@ namespace Katana {
                 curr->addDuTarget( spacing );
                 curr->updatePositions();
                 element->invalidate();
-                cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right of %s):\n"
-                                 "          %s"
-                               , getString(this).c_str()
-                               , DbU::getValueString(spacing).c_str()
-                               , getString(curr).c_str() ) << endl;
+                cparanoid << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right of %s):\n"
+                                      "          %s"
+                                    , getString(this).c_str()
+                                    , DbU::getValueString(spacing).c_str()
+                                    , getString(curr).c_str() ) << endl;
               }
             }
           } else if (spacing > 10*getLayerGauge()->getPitch())
@@ -1346,10 +1346,10 @@ namespace Katana {
                   }
                 }
                 ++gaps;
-                cerr << Warning( "Track::repair(): Closing same net gap in %s near:\n"
-                                 "          %s"
-                               , getString(this).c_str()
-                               , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
+                cparanoid << Warning( "Track::repair(): Closing same net gap in %s near:\n"
+                                      "          %s"
+                                    , getString(this).c_str()
+                                    , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
                 cdebug_log(159,0) << first << endl;
               }
             } else if (spacing > 10*getLayerGauge()->getPitch())
