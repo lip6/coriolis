@@ -306,10 +306,10 @@ namespace Anabatic {
       return;
     }
 
-    if (  (source.getX() >  gcellsArea.getXMax())
-       or (source.getY() >  gcellsArea.getYMax())
-       or (target.getX() <= gcellsArea.getXMin())
-       or (target.getY() <= gcellsArea.getYMin()) ) {
+    if (  (source.getX() > gcellsArea.getXMax())
+       or (source.getY() > gcellsArea.getYMax())
+       or (target.getX() < gcellsArea.getXMin())
+       or (target.getY() < gcellsArea.getYMin()) ) {
       cerr << Warning( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored).\n"
                        "          * GCells area: %s\n" 
                        "          * Obstacle area: [%s %s %s %s]" 
