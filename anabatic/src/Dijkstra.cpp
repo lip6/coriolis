@@ -2890,6 +2890,8 @@ namespace Anabatic {
 
   bool Dijkstra::_attachSymContactsHook( RoutingPad* rp )
   {
+    cdebug_log(112,1) << "Dijkstra::_attachSymContactHook() " << rp << endl;
+
     NetRoutingState* state = NetRoutingExtension::get( _net );
     if (state){
       if (state->isSelfSym()){
@@ -2902,10 +2904,14 @@ namespace Anabatic {
           Contact* vcontact = seed->getGContact( _net );
           rp->getBodyHook()->detach();
           rp->getBodyHook()->attach( vcontact->getBodyHook() );
+          cdebug_tabw(112,-1);
+          cdebug_log(112,0) << "return -> true" << rp << endl;
           return true;
         }
       }
     }
+    cdebug_log(112,0) << "return -> false" << rp << endl;
+    cdebug_tabw(112,-1);
     return false;
   }
 

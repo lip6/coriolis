@@ -2190,15 +2190,15 @@ namespace Anabatic {
     cdebug_log(145,0) << "hookType=" << functionFlagsToStr(getSegmentHookType(getFromHook())) << endl;
 
     if (getSourceContact()) {
-      AutoContact* targetContact = nullptr;
+      AutoContact* toContact = nullptr;
       switch ( getSegmentHookType(getFromHook()) ) {
-        case EastBound:  targetContact = getEastContact (); break;
-        case WestBound:  targetContact = getWestContact (); break;
-        case NorthBound: targetContact = getNorthContact(); break;
-        case SouthBound: targetContact = getSouthContact(); break;
+        case EastBound:  toContact = getEastContact (); break;
+        case WestBound:  toContact = getWestContact (); break;
+        case NorthBound: toContact = getNorthContact(); break;
+        case SouthBound: toContact = getSouthContact(); break;
       }
       if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
-      if (not targetContact) {
+      if (not toContact) {
         throw Error( "NetBuilderHV::_do_globalSegment(): NULL target contact while building\n"
                      "        %s\n"
                      "        in %s"
@@ -2215,12 +2215,12 @@ namespace Anabatic {
           gdepth = Session::getGVerticalDepth();
           GCell::getVGCellsUnder( gcells
                                 , getSourceContact()->getGCell()
-                                , targetContact->getGCell()
+                                , toContact->getGCell()
                                 , baseSegment->getX() );
         } else {
           GCell::getHGCellsUnder( gcells
                                 , getSourceContact()->getGCell()
-                                , targetContact->getGCell()
+                                , toContact->getGCell()
                                 , baseSegment->getY() );
         }
         bool canMoveUp = true;
@@ -2239,7 +2239,7 @@ namespace Anabatic {
       }
 
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
-                                                      , targetContact
+                                                      , toContact
                                                       , baseSegment
                                                       );
       globalSegment->setFlags( (getDegree() == 2) ? AutoSegment::SegBipoint : 0 );
