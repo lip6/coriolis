@@ -409,6 +409,8 @@ namespace Anabatic {
       else
         strError << "        ?: " << horizontals[i] << "\n"; 
     }
+    if (not horizontals[0]) strError << "        No horizontal connecteds\n";
+    if (not verticals  [0]) strError << "        No verticals connecteds\n";
 
     for ( size_t i=0 ; (i<10) and (verticals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( verticals[i] );

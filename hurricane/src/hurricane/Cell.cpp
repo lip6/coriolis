@@ -895,10 +895,14 @@ void Cell::flattenNets ( const Instance* instance, const std::set<string>& exclu
     DebugSession::open( net, 18, 19 ); 
     cdebug_log(18,1) << "Flattening top net: " << net << endl;
 
+    cdebug_log(18,0) << "Looking for terminal Plug occurrences" << endl;
     vector<Occurrence>  plugOccurrences;
-    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() )
+    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() ) {
+      cdebug_log(18,0) << "| " << plugOccurrence << endl;
       plugOccurrences.push_back( plugOccurrence );
+    }
 
+    cdebug_log(18,0) << "Creating RoutingPads" << endl;
     for ( Occurrence plugOccurrence : plugOccurrences ) {
       RoutingPad* rp = RoutingPad::create( net, plugOccurrence, rpFlags );
       rp->materialize();

@@ -79,6 +79,16 @@ namespace Anabatic {
     cdebug_log(145,0) << "  + " << from << endl;
     cdebug_log(145,0) << "  + " << contact << endl;
     cdebug_log(145,0) << "  + " << flags << endl;
+
+#define CHECK_FORK_STACK 0
+#if CHECK_FORK_STACK
+    for ( const Element& element : _stack ) {
+      if (element._from == from) {
+        throw Hurricane::Error( "ForkStack::push(): Re-stacking from %s."
+                              , getString(from).c_str() );
+      }
+    }
+#endif
     _stack.push_back( Element(from,contact,flags) );
   }
 
@@ -219,6 +229,8 @@ namespace Anabatic {
       inline  vector<RoutingPad*>&          getRoutingPads         ();
       inline  map<Component*,AutoSegment*>& getRpLookup            ();
       inline  unsigned int                  getTopology            () const;
+      inline  vector<Hook*>&                getEasts               ();
+      inline  vector<Hook*>&                getWests               ();
       inline  vector<Hook*>&                getNorths              ();
       inline  vector<Hook*>&                getSouths              ();
       inline  Hook*                         north                  ( size_t i=0 ) const;
@@ -284,12 +296,13 @@ namespace Anabatic {
       virtual bool                          _do_3G_xM1_1PinM3      ();
       virtual bool                          _do_globalSegment      ();
       virtual void                          singleGCell            ( AnabaticEngine*, Net* );
-              AutoContact*                  _doHChannel            ();
-              AutoContact*                  _doVChannel            ();
-              AutoContact*                  _doStrut               ();
-              AutoContact*                  _doDevice              ();
-              AutoContact*                  _doHRail               ();
-              AutoContact*                  _doVRail               ();
+              void                          _do_2G_Analog          ();
+              void                          _doHChannel            ();
+              void                          _doVChannel            ();
+              void                          _doStrut               ();
+              void                          _doDevice              ();
+              void                          _doHRail               ();
+              void                          _doVRail               ();
               void                          _doIoPad               ();
               unsigned int                  getNumberGlobals       ();
               unsigned int                  getDeviceNeighbourBound();
@@ -468,6 +481,8 @@ namespace Anabatic {
   inline unsigned int                  NetBuilder::getTopology            () const { return _topology; }
   inline vector<RoutingPad*>&          NetBuilder::getRoutingPads         () { return _routingPads; }
   inline map<Component*,AutoSegment*>& NetBuilder::getRpLookup            () { return _routingPadAutoSegments; }
+  inline vector<Hook*>&                NetBuilder::getWests               () { return _wests; }
+  inline vector<Hook*>&                NetBuilder::getEasts               () { return _easts; }
   inline vector<Hook*>&                NetBuilder::getNorths              () { return _norths; }
   inline vector<Hook*>&                NetBuilder::getSouths              () { return _souths; }
   inline Hook*                         NetBuilder::north                  ( size_t i ) const { return (i<_norths.size()) ? _norths[i] : NULL; }

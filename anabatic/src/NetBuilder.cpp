@@ -284,6 +284,8 @@ namespace Anabatic {
 
   uint64_t  NetBuilder::getSegmentHookType ( Hook* hook )
   {
+    if (not hook) return 0;
+    
     Horizontal* horizontal = dynamic_cast<Horizontal*>( hook->getComponent() );
     if (horizontal) {
       if (horizontal->getSourceX() > horizontal->getTargetX())
@@ -483,6 +485,9 @@ namespace Anabatic {
               const Layer* layer = anchor->getLayer();
               cdebug_log(145,0) << "rp: " << rp << endl;
 
+              if (not rp)
+                throw Error ( "NetBuilder::setStartHook(): Null RP" );
+
               if (not layer) {
                 cerr << Error( "RoutingPad is still on it's Plug, routing will be incomplete.\n"
                                "        %s"
@@ -576,6 +581,7 @@ namespace Anabatic {
     cdebug_log(145,0) << "* toHook:   " << toHook << endl;
     cdebug_log(145,0) << "* _fromHook:" << _fromHook << endl;
     cdebug_log(145,0) << "* flags:" << flags << endl;
+
 
     if (not toHook or (toHook == _fromHook)) {
       if (contact) {
@@ -842,16 +848,16 @@ namespace Anabatic {
       }
       cdebug_log(145,0) << "Proceed to next GCell." << endl;
     } else {
-      AutoContact* targetContact = NULL;
-      if (not _sourceContact) _fromHook = NULL;
+      cdebug_log(145,0) << "Analog mode" << endl;
+      if (not _sourceContact) _fromHook = nullptr;
 
-      if      (_gcell->isDevice ())  targetContact = _doDevice  ();
-      else if (_gcell->isHChannel()) targetContact = _doHChannel();
-      else if (_gcell->isVChannel()) targetContact = _doVChannel();
-      else if (_gcell->isHRail   ()) targetContact = _doHRail();
-      else if (_gcell->isVRail   ()) targetContact = _doVRail();
-      else if (_gcell->isStrut  ())  targetContact = _doStrut   ();
-      else if (_gcell->isIoPad  ())  _doIoPad();
+      if      (_gcell->isDevice  ()) _doDevice  ();
+      else if (_gcell->isHChannel()) _doHChannel();
+      else if (_gcell->isVChannel()) _doVChannel();
+      else if (_gcell->isHRail   ()) _doHRail   ();
+      else if (_gcell->isVRail   ()) _doVRail   ();
+      else if (_gcell->isStrut   ()) _doStrut   ();
+      else if (_gcell->isIoPad   ()) _doIoPad   ();
       else
         throw Bug( "Unmanaged GCell type: %s in %s\n"
                    "      The global routing seems to be defective."
@@ -859,17 +865,40 @@ namespace Anabatic {
                  , getString(_net).c_str()
                  );
 
-      if ( (_sourceContact) and (targetContact) ){
-        Segment*     baseSegment   = static_cast<Segment*>( _fromHook->getComponent() );
-        AutoSegment* globalSegment = AutoSegment::create( _sourceContact
-                                                        , targetContact
+
+      cdebug_log(145,0) << "* East:  " << _eastContact << endl;
+      cdebug_log(145,0) << "* West:  " << _westContact << endl;
+      cdebug_log(145,0) << "* South: " << _southContact << endl;
+      cdebug_log(145,0) << "* North: " << _northContact << endl;
+      cdebug_log(145,0) << "Making global segment from the previous GCell" << endl;
+      cdebug_log(145,0) << "* getSourceContact(): " << getSourceContact() << endl;
+      cdebug_log(145,0) << "hookType=" << functionFlagsToStr(getSegmentHookType(getFromHook())) << endl;
+
+      if (getSourceContact()) {
+        AutoContact* toContact = nullptr;
+        switch ( getSegmentHookType(getFromHook()) ) {
+          case EastBound:  toContact = getEastContact (); break;
+          case WestBound:  toContact = getWestContact (); break;
+          case NorthBound: toContact = getNorthContact(); break;
+          case SouthBound: toContact = getSouthContact(); break;
+        }
+        if (not toContact) {
+          throw Error( "NetBuilderHV::construct(): NULL *from* contact while building\n"
+                       "        %s\n"
+                       "        in %s"
+                     , getString(getNet()).c_str()
+                     , getString(getGCell()).c_str() );
+        }
+        cdebug_log(145,0) << "* toContact: " << toContact << endl;
+
+        Segment*     baseSegment   = static_cast<Segment*>( getFromHook()->getComponent() );
+        AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
+                                                        , toContact
                                                         , baseSegment
                                                         );
-        if (_netData and _netData->isNoMoveUp(baseSegment)) {
-          globalSegment->setFlags( AutoSegment::SegNoMoveUp );
-        }
-        cdebug_log(145,0) << "[Create global segment (1)]: " << globalSegment << endl;
-      }     
+        globalSegment->setFlags( AutoSegment::SegNoMoveUp );
+        cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
+      }
     }
 
     cdebug_log(145,0) << endl;
@@ -1484,9 +1513,9 @@ namespace Anabatic {
   }
   
 
-  AutoContact* NetBuilder::_doDevice ()
+  void  NetBuilder::_doDevice ()
   {
-    cdebug_log(145,1) << "void  NetBuilder::_doDevice ()" << _gcell << endl;
+    cdebug_log(145,1) << "NetBuilder::_doDevice()" << _gcell << endl;
 
     for ( size_t i=0; i<_routingPads.size() ; i++ ) {
       if (   (_routingPads[i]->getSourcePosition().getX() == _routingPads[i]->getTargetPosition().getX())
@@ -1536,545 +1565,218 @@ namespace Anabatic {
     cdebug_log(145,0) << "rp NE: " << rpNE << endl;
     cdebug_log(145,0) << "rp SW: " << rpSW << endl;
 
+    AutoContact* acRp = nullptr;
     if (rpNE and rpSW) {
       if (east()) {
-        cdebug_log(145,0) << "East"  << endl;
-        AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-        push( east(), ac, EastBound );
+        cdebug_log(145,0) << "East access" << endl;
+        acRp = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
+        push( east(), acRp, EastBound );
       } 
       if (west()) {
-        cdebug_log(145,0) << "West"  << endl;
-        AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
-        push( west(), ac, WestBound );
+        cdebug_log(145,0) << "West access" << endl;
+        acRp = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
+        push( west(), acRp, WestBound );
       }
       if (south()) {
-        cdebug_log(145,0) << "South"  << endl;
-        AutoContact* ac = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
-        push( south(), ac, SouthBound );
+        cdebug_log(145,0) << "South access" << endl;
+        acRp = doRp_AccessAnalog( _gcell, rpSW, NoFlags );
+        push( south(), acRp, SouthBound );
       }
       if (north()){
-        cdebug_log(145,0) << "North"  << endl;
-        AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-        push( north(), ac, NorthBound );
+        cdebug_log(145,0) << "North access" << endl;
+        acRp = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
+        push( north(), acRp, NorthBound );
       }
     }
     cdebug_log(145,0) << "doDevice done" << endl;
     cdebug_tabw(145,-1);
 
-    return _westContact;
+  //return acRp;
   }
 
 
-  AutoContact*  NetBuilder::_doHChannel ()
+  void  NetBuilder::_do_2G_Analog ()
   {
-    cdebug_log(145,1) << "void  NetBuilder::_doHChannel() " << _gcell << endl;
-    
-    vector<Hook*>  hooks;
-    Hook*          firsthhook = NULL;
-    Hook*          lasthhook  = NULL;
-    AutoContact*   targetContact = NULL;
-    
-  // Save segments only
-    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
-    for ( Hook* toHook : _fromHook->getHooks() ) {
-      cdebug_log(145,0) << "toHook: "  << toHook << endl;
-
-      Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
-      if (s) {
-        Horizontal* h = dynamic_cast<Horizontal*>(s);
-        if (h) {
-          if      (h->getSource()->getX() <= _gcell->getXMin()) firsthhook = toHook;
-          else if (h->getTarget()->getX() >= _gcell->getXMax()) lasthhook  = toHook;
-          else    cdebug_log(145,0) << "Error(AutoContact*  NetBuilder::_doHChannel ( ForkStack& forks )): This case should not happen " << endl;
-        } else hooks.push_back(toHook);
-      }
-    }
-
-    cdebug_log(145,0) << "Sorted hooks:" << endl;
-    sortHookByX( hooks, NoFlags );
-    
-    if (firsthhook) hooks.insert   (hooks.begin(), firsthhook);
-    if (lasthhook ) hooks.push_back(lasthhook                );
-
-    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      cdebug_log(145,0) << "toHook: "  << (*it) << endl;
-    }
-    size_t i = 0;
-
-  // More than 2 AutoContacts to create
-    cdebug_log(145,0) << "Number of hooks: " <<  hooks.size() << endl;
-    if ( hooks.size() > 2 ){
-      cdebug_log(145,0) << "Number of hooks > 2 : " <<  hooks.size() << endl;
-      vector<AutoContact*> autoContacts;
-      bool                 firstH      = false; 
-
-      for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      
-        Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
-        Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
-        AutoContact* ac = NULL;
-        cdebug_log(145,0) << "index: " << i << endl;
-        cdebug_log(145,0) << "h    : " << h << endl;
-        cdebug_log(145,0) << "v    : " << v << endl;
-
-        if (i == 0){
-          if        (h){
-            cdebug_log(145,0) << "case i=0, h" <<  endl;
-            ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-            ac->setX(_gcell->getXMin());
-            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-            firstH = true;
-          } else if (v){
-            cdebug_log(145,0) << "case i=0, v" <<  endl;
-            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(v->getX());
-            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-          }
-        } else if (i == hooks.size()-1){
-          if        (h){
-            cdebug_log(145,0) << "case i=last, h" <<  endl;
-            ac = autoContacts[i-1];
-          } else if (v){
-            cdebug_log(145,0) << "case i=last, v" <<  endl;
-            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(v->getX());
-            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-          }
-        } else {
-          if ((i == 1)&&(firstH)){
-            cdebug_log(145,0) << "case i=1, first was H" <<  endl;
-            ac = autoContacts[i-1];
-            if (v) ac->setX(v->getX());
-            else {
-              cerr << Warning( "Something is wrong with the number of globals in this HChannel."
-                             , getString(_gcell).c_str() )
-                   << endl;
-            }
-          } else {
-            cdebug_log(145,0) << "case i=1, first was V" <<  endl;
-            ac = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-            ac->setX(v->getX());
-            ac->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-          }
-        } 
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
-        autoContacts.push_back(ac);
-      
-        cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
-        if (_fromHook->getComponent() == (*it)->getComponent()){
-          cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
-          targetContact = ac;
-        } else {
-          push( (*it), ac );
-        }
-        i++;
-      }   
-      cdebug_log(145,0) << "Chain contacts: "  << endl;
-      for (size_t j=1; j < autoContacts.size(); j++){
-        if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Horizontal );
-          cdebug_log(145,0) << "[Create global segment (2)]: " << segment << endl;
-        }
-      }
-    // There are only 2 AutoContacts to create
-    } else if (hooks.size() == 2){
-      cdebug_log(145,0) << "Number of hooks == 2 : " <<  hooks.size() << endl;
-      Horizontal*  h0  = dynamic_cast<Horizontal*>(hooks[0]->getComponent());
-      Vertical*    v0  = dynamic_cast<Vertical*>  (hooks[0]->getComponent());
-      Horizontal*  h1  = dynamic_cast<Horizontal*>(hooks[1]->getComponent());
-      Vertical*    v1  = dynamic_cast<Vertical*>  (hooks[1]->getComponent());
-      AutoContact* source = NULL;
-      AutoContact* target = NULL;
-      cdebug_log(145,0) << "h0: " << h0 << endl;
-      cdebug_log(145,0) << "v0: " << v0 << endl;
-      cdebug_log(145,0) << "h1: " << h1 << endl;
-      cdebug_log(145,0) << "v1: " << v1 << endl;
-        
-      if ((v0 != NULL) && (v1 != NULL)){
-        cdebug_log(145,0) << "case 2V" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(v0->getX());
-        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        target->setX(v1->getX());
-        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-
-        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
-        cdebug_log(145,0) << "[Create global segment (3)]: " << globalSegment << endl;
-        
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          targetContact = source;
-          push( hooks[1], target );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          targetContact = target;
-          push( hooks[0], source );
-        }
-
-      } else if (((h0 != NULL) && (v1 != NULL)) || ((v0 != NULL) && (h1 != NULL))){
-        cdebug_log(145,0) << "case 1V and 1H" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
-        if (h0 && v1){
-          source->setX(v1->getX());
-        } else {
-          source->setX(v0->getX());
-        }
-        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        targetContact = source;
-
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          push( hooks[1], source );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          push( hooks[0], source );
-        }
-      } else if ((h0 != NULL) && (h1 != NULL)){
-        cdebug_log(145,0) << "case 2H" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-
-        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
-        cdebug_log(145,0) << "[Create global segment (4)]: " << globalSegment << endl;
-
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          targetContact = source;
-          push( hooks[1], target );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          targetContact = target;
-          push( hooks[0], source );
-        }
-      }
-    }
-    cdebug_log(145,0) << "doHChannel done" << endl;
-    cdebug_tabw(145,-1);
-
-    return targetContact;
-  }
-
-
-  AutoContact*  NetBuilder::_doVChannel ()
-  {
-    cdebug_log(145,1) << "void  NetBuilder::_doVChannel ()" << _gcell << endl;
-    
-  
-    vector<Hook*>  hooks;
-    Hook*          firstvhook = NULL;
-    Hook*          lastvhook  = NULL;
-    AutoContact*   targetContact   = NULL;
-    
-  // Save segments only
-    cdebug_log(145,0) << "fromHook: "  << _fromHook << endl;
-
-    
-    for ( Hook* toHook : _fromHook->getHooks() ) {
-      cdebug_log(145,0) << "toHook: "  << toHook << endl;
-
-      Segment* s = dynamic_cast<Segment*>( toHook->getComponent() );
-      if (s) {
-        Vertical* v = dynamic_cast<Vertical*>(s);
-        if (v) {
-          if      (v->getSource()->getY() <= _gcell->getYMin()) firstvhook = toHook;
-          else if (v->getTarget()->getY() >= _gcell->getYMax()) lastvhook  = toHook;
-          else    cdebug_log(145,0) << "Error(AutoContact*  NetBuilder::_doVChannel()): This case should not happen " << endl;
-        } else hooks.push_back(toHook);
-      }
-    }
-    
-    cdebug_log(145,0) << "Sorted hooks:" << endl;
-    sortHookByY( hooks, NoFlags );
-
-    if (firstvhook) hooks.insert   (hooks.begin(), firstvhook);
-    if (lastvhook ) hooks.push_back(lastvhook                );
-
-    for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      cdebug_log(145,0) << "toHook: "  << (*it) << endl;
-    }
-    size_t i = 0;
-
-  // More than 2 AutoContacts to create
-    cdebug_log(145,0) << "Number of hooks: " <<  hooks.size() << endl;
-    if ( hooks.size() > 2 ){
-      cdebug_log(145,0) << "Number of hooks > 2 : " <<  hooks.size() << endl;
-      vector<AutoContact*> autoContacts;
-      bool                 firstV      = false; 
-
-      for (vector<Hook*>::iterator it = hooks.begin(); it != hooks.end(); it++){
-      
-        Horizontal* h = dynamic_cast<Horizontal*>((*it)->getComponent());
-        Vertical*   v = dynamic_cast<Vertical*>  ((*it)->getComponent());
-        AutoContact* ac = NULL;
-        cdebug_log(145,0) << "index: " << i << endl;
-        cdebug_log(145,0) << "h    : " << h << endl;
-        cdebug_log(145,0) << "v    : " << v << endl;
-
-        if (i == 0){
-          if        (v){
-            cdebug_log(145,0) << "case i=0, v"<< endl;
-            ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-            ac->setY(_gcell->getYMin());
-            firstV = true;
-          } else if (h){
-            cdebug_log(145,0) << "case i=0, h"<< endl;
-            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-            ac->setY(h->getY());
-          }
-        } else if (i == hooks.size()-1){
-          if        (v){
-            cdebug_log(145,0) << "case i=last, v"<< endl;
-            ac = autoContacts[i-1];
-          } else if (h){
-            cdebug_log(145,0) << "case i=last, h"<< endl;
-            ac = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-            ac->setY(h->getY());
-          }
-        } else {
-          if ((i == 1)&&(firstV)){
-            cdebug_log(145,0) << "case i=X, first was V"<< endl;
-            ac = autoContacts[i-1];
-            if (h) ac->setY(h->getY());
-            else {
-              cerr << Warning( "Something is wrong with the number of globals in this VChannel."
-                             , getString(_gcell).c_str() )
-                   << endl;
-            }
-          } else {
-            cdebug_log(145,0) << "case i=X, first was H"<< endl;
-            ac = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
-            ac->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-            ac->setY(h->getY());
-          }
-        } 
-        cdebug_log(145,0) << "[Create AutoContact]: " << ac << endl;
-        autoContacts.push_back(ac);
-      
-        cdebug_log(145,0) << "FromHook: " << _fromHook << endl << endl;
-        if (_fromHook->getComponent() == (*it)->getComponent()){
-          cdebug_log(145,0) << "Found from:" << (*it)->getComponent() << endl;
-          targetContact = ac;
-        } else {
-          push( (*it), ac );
-        }
-        i++;
-      }   
-      cdebug_log(145,0) << "Chain contacts: "  << endl;
-      for (size_t j=1; j < autoContacts.size(); j++){
-        if (autoContacts[j-1] != autoContacts[j]){
-          AutoSegment* segment = AutoSegment::create( autoContacts[j-1] , autoContacts[j], Flags::Vertical );
-          if (not segment->isGlobal()) segment->setFlags( AutoSegment::SegLongLocal );
-          cdebug_log(145,0) << "[Create global segment (5)]: " << segment << endl;
-        }
-      }
-    // There are only 2 AutoContacts to create
-    } else if (hooks.size() == 2){
-      cdebug_log(145,0) << "Number of hooks == 2 : " <<  hooks.size() << endl;
-      Horizontal*  h0  = dynamic_cast<Horizontal*>(hooks[0]->getComponent());
-      Vertical*    v0  = dynamic_cast<Vertical*>  (hooks[0]->getComponent());
-      Horizontal*  h1  = dynamic_cast<Horizontal*>(hooks[1]->getComponent());
-      Vertical*    v1  = dynamic_cast<Vertical*>  (hooks[1]->getComponent());
-      AutoContact* source = NULL;
-      AutoContact* target = NULL;
-      cdebug_log(145,0) << "h0: " << h0 << endl;
-      cdebug_log(145,0) << "v0: " << v0 << endl;
-      cdebug_log(145,0) << "h1: " << h1 << endl;
-      cdebug_log(145,0) << "v1: " << v1 << endl;
-          
-      if ((h0 != NULL) && (h1 != NULL)){
-        cdebug_log(145,0) << "case 2H" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        source->setY(h0->getY());
-
-        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        target->setY(h1->getY());
-
-        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (6)]: " << globalSegment << endl;
-
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          targetContact = source;
-          push( hooks[1], target );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          targetContact = target;
-          push( hooks[0], source );
-        }
-
-      } else if (((v0 != NULL) && (h1 != NULL)) || ((h0 != NULL) && (v1 != NULL))){
-        cdebug_log(145,0) << "case 1V and 1H" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        if (v0 && h1){
-          source->setY(h1->getY());
-        } else {
-          source->setY(h0->getY());
-        }
-        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        targetContact = source;
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
-
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          push( hooks[1], source );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          push( hooks[0], source );
-        }
-      } else if ((v0 != NULL) && (v1 != NULL)){
-        cdebug_log(145,0) << "case 2V" << endl;
-        source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-
-        cdebug_log(145,0) << "[Create AutoContact Source]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact Target]: " << target << endl;
-
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (7)]: " << globalSegment << endl;
-
-        if        (_fromHook->getComponent() == hooks[0]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[0]->getComponent() << endl;
-          targetContact = source;
-          push( hooks[1], target );
-          
-        } else if (_fromHook->getComponent() == hooks[1]->getComponent()){
-          cdebug_log(145,0) << "Found from:" << hooks[1]->getComponent() << endl;
-          targetContact = target;
-          push( hooks[0], source );
-        }
-      }
-    }
-    cdebug_log(145,0) << "doVChannel done" << endl;
-    cdebug_tabw(145,-1);
-
-    return targetContact;
-  }
-
-  
-  AutoContact* NetBuilder::_doHRail ()
-  {
-    cdebug_log(145,1) << "void  NetBuilder::_doHRail ()" << _gcell << endl;
-    cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
-    cdebug_log(145,0) << "North   : " << north()   << endl;
-    cdebug_log(145,0) << "East    : " << east()    << endl;
-    cdebug_log(145,0) << "South   : " << south()   << endl;
-    cdebug_log(145,0) << "West    : " << west()    << endl;
-    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
-
-    RoutingPad*  rpNE = NULL;
-    RoutingPad*  rpSW = NULL;
-    _southContact = nullptr;
-    _westContact  = nullptr;
-    if (_routingPads.size() == 1){
-      rpNE = rpSW = _routingPads[0];
+    cdebug_log(145,1) << "NetBuilder::_do_2G_Analog()" << _gcell << endl;
+    if (getEasts().size() + getWests().size() == 0) {
+      cdebug_log(145,0) << "Any combination of North + South case" << endl;
+      AutoContact* turns [2] = { nullptr, nullptr };
+      turns[0] = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      turns[1] = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* h = AutoSegment::create( turns[0], turns[1], Flags::Horizontal );
+      size_t iturn = 0;
+      if (north(0)) push( north(0), turns[iturn++], NorthBound );
+      if (north(1)) push( north(1), turns[iturn++], NorthBound );
+      if (south(0)) push( south(0), turns[iturn++], SouthBound );
+      if (south(1)) push( south(1), turns[iturn++], SouthBound );
+    } else if (getNorths().size() + getSouths().size() == 0) {
+      cdebug_log(145,0) << "Any combination of East + West case" << endl;
+      AutoContact* turns [2] = { nullptr, nullptr };
+      turns[0] = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      turns[1] = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* v = AutoSegment::create( turns[0], turns[1], Flags::Vertical );
+      size_t iturn = 0;
+      if (west(0)) push( west(0), turns[iturn++], WestBound );
+      if (west(1)) push( west(1), turns[iturn++], WestBound );
+      if (east(0)) push( east(0), turns[iturn++], EastBound );
+      if (east(1)) push( east(1), turns[iturn++], EastBound );
     } else {
-      cdebug_log(145,0) << "Case _routingPads.size() != 1 "<< endl;
-      throw Error( "NetBuilder::_doHRail() Unexpected case.\n"
-                   "        On: %s."
-                 , getString(_gcell).c_str() );
+      cdebug_log(145,0) << "Turning case" << endl;
+      AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      if (east ()) push( east (), turn1,  EastBound );
+      if (west ()) push( west (), turn1,  WestBound );
+      if (north()) push( north(), turn1, NorthBound );
+      if (south()) push( south(), turn1, SouthBound );
     }
-    cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
-    AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-    if (east()) {
-      cdebug_log(145,0) << "East"  << endl;
-      push( east(), ac, EastBound );
-    } 
-    if (west()) {
-      cdebug_log(145,0) << "West"  << endl;
-      push( west(), ac, WestBound );
-    }
-    if (south()) {
-      cdebug_log(145,0) << "South"  << endl;
-      push( south(), ac, SouthBound );
-    }
-    if (north()){
-      cdebug_log(145,0) << "North"  << endl;
-      push( north(), ac, NorthBound );
-    }
-    
-    cdebug_log(145,0) << "doHRail done" << endl;
     cdebug_tabw(145,-1);
+  }
+
+
+  void  NetBuilder::_doHChannel ()
+  {
+    cdebug_log(145,1) << "NetBuilder::_doHChannel()" << _gcell << endl;
+
+    if (getConnexity().fields.globals < 2) {
+      cdebug_tabw(145,-1);
+      throw Error( "NetBuilder::_doHChannel(): Less than two connecting wires in %s."
+                 , getString( getGCell() ).c_str() );
+    }
+
+    if (getConnexity().fields.globals == 2) {
+      _do_2G_Analog();
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    cdebug_log(145,0) << "General case." << endl;
+    vector<Hook*> verticalHooks ( getNorths() );
+    verticalHooks.insert( verticalHooks.end(), getSouths().begin(), getSouths().end() );
+    sortHookByY( verticalHooks, NoFlags );
+
+    AutoContact* htee1 = nullptr;
+    AutoContact* htee2 = nullptr;
+    AutoSegment* h     = nullptr;
+    if (west()) {
+      htee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      push( west(), htee1, WestBound );
+    } else
+      htee1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    switch ( getSegmentHookType(verticalHooks[0]) ) {
+      case SouthBound: push( verticalHooks[0], htee1, SouthBound ); break;
+      case NorthBound: push( verticalHooks[0], htee1, NorthBound ); break;
+    }
+
+    if (verticalHooks.size() < 2) {
+      push( east(), htee1, EastBound );
+    } else {
+      for ( size_t i=1 ; i < verticalHooks.size() ; ++i ) {
+        if (east() or (i+1 < verticalHooks.size())) {
+          htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+          push( east(), htee2, EastBound );
+        } else
+          htee2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        h = AutoSegment::create( htee1, htee2, Flags::Horizontal );
+        switch ( getSegmentHookType(verticalHooks[i]) ) {
+          case SouthBound: push( verticalHooks[i], htee2, SouthBound ); break;
+          case NorthBound: push( verticalHooks[i], htee2, NorthBound ); break;
+        }
+        htee1 = htee2;
+      }
+    }
     
-    return _westContact;
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  NetBuilder::_doVChannel ()
+  {
+    cdebug_log(145,1) << "NetBuilder::_doVChannel()" << _gcell << endl;
+
+    if (getConnexity().fields.globals < 2) {
+      cdebug_tabw(145,-1);
+      throw Error( "NetBuilder::_doVChannel(): Less than two connecting wires in %s."
+                 , getString( getGCell() ).c_str() );
+    }
+
+    if (getConnexity().fields.globals == 2) {
+      _do_2G_Analog();
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    cdebug_log(145,0) << "General case." << endl;
+    vector<Hook*> horizontalHooks ( getEasts() );
+    horizontalHooks.insert( horizontalHooks.end(), getWests().begin(), getWests().end() );
+    sortHookByY( horizontalHooks, NoFlags );
+
+    for ( size_t i=0 ; i<horizontalHooks.size() ; ++i ) {
+      cdebug_log(145,0) << "[" << i << "] " << horizontalHooks[i] << endl;
+    }
+
+    AutoContact* vtee1 = nullptr;
+    AutoContact* vtee2 = nullptr;
+    AutoSegment* v     = nullptr;
+    if (south()) {
+      vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      push( south(), vtee1, SouthBound );
+    } else
+      vtee1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    cdebug_log(145,0) << "[" << 0 << "] " << horizontalHooks[0] << endl;
+    switch ( getSegmentHookType(horizontalHooks[0]) ) {
+      case WestBound: push( horizontalHooks[0], vtee1, WestBound ); break;
+      case EastBound: push( horizontalHooks[0], vtee1, EastBound ); break;
+    }
+    cdebug_log(145,0) << "First E/W done" << endl;
+
+    if (horizontalHooks.size() < 2) {
+      if (north()) push( north(), vtee1, NorthBound );
+    } else {
+      for ( size_t i=1 ; i < horizontalHooks.size() ; ++i ) {
+        if (north() or (i+1 < horizontalHooks.size())) {
+          vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+          push( north(), vtee2, NorthBound );
+        } else
+          vtee2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        v = AutoSegment::create( vtee1, vtee2, Flags::Vertical );
+        switch ( getSegmentHookType(horizontalHooks[i]) ) {
+          case WestBound: push( horizontalHooks[i], vtee2, WestBound ); break;
+          case EastBound: push( horizontalHooks[i], vtee2, EastBound ); break;
+        }
+        vtee1 = vtee2;
+      }
+    }
+    
+    cdebug_tabw(145,-1);
   }
 
   
-  AutoContact* NetBuilder::_doVRail ()
+  void  NetBuilder::_doHRail ()
   {
-    cdebug_log(145,1) << "void  NetBuilder::_doVRail ()" << _gcell << endl;
-    cdebug_log(145,0) << "FromHook: " << _fromHook << endl;
-    cdebug_log(145,0) << "North   : " << north()   << endl;
-    cdebug_log(145,0) << "East    : " << east()    << endl;
-    cdebug_log(145,0) << "South   : " << south()   << endl;
-    cdebug_log(145,0) << "West    : " << west()    << endl;
-    cdebug_log(145,0) << "_routingPads.size(): " << _routingPads.size() << endl;
+    cdebug_log(145,1) << "NetBuilder::_doHRail() " << _gcell << endl;
 
-    RoutingPad*  rpNE = NULL;
-    RoutingPad*  rpSW = NULL;
-    _southContact = nullptr;
-    _westContact  = nullptr;
-    if (_routingPads.size() == 1){
-      rpNE = rpSW = _routingPads[0];
-    } else {
-      cdebug_log(145,0) << "Case _routingPads.size() != 1 "<< endl;
-      throw Error( "NetBuilder::_doVRail() Unexpected case.\n"
-                   "        On: %s."
-                 , getString(_gcell).c_str() );
-    }
     cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
-    AutoContact* ac = doRp_AccessAnalog( _gcell, rpNE, NoFlags );
-    if (east()) {
-      cdebug_log(145,0) << "East"  << endl;
-      push( east(), ac, EastBound );
-    } 
-    if (west()) {
-      cdebug_log(145,0) << "West"  << endl;
-      push( west(), ac, WestBound );
-    }
-    if (south()) {
-      cdebug_log(145,0) << "South"  << endl;
-      push( south(), ac, SouthBound );
-    }
-    if (north()){
-      cdebug_log(145,0) << "North"  << endl;
-      push( north(), ac, NorthBound );
-    }
+    AutoContact* ac = doRp_AccessAnalog( _gcell, _routingPads[0], NoFlags );
+    push( east (), ac,  EastBound );
+    push( west (), ac,  WestBound );
+    push( north(), ac, NorthBound );
+    push( south(), ac, SouthBound );
 
-    cdebug_log(145,0) << "doVRail done" << endl;
     cdebug_tabw(145,-1);
-    
-    return _westContact;
+  }
+
+  
+  void  NetBuilder::_doVRail ()
+  {
+    cdebug_log(145,1) << "NetBuilder::_doVRail() " << _gcell << endl;
+
+    cdebug_log(145,0) << "rp: " << _routingPads[0] << endl;
+    AutoContact* ac = doRp_AccessAnalog( _gcell, _routingPads[0], NoFlags );
+    push( east (), ac,  WestBound );
+    push( west (), ac,  EastBound );
+    push( north(), ac, SouthBound );
+    push( south(), ac, NorthBound );
+
+    cdebug_tabw(145,-1);
   }
 
 
@@ -2105,405 +1807,65 @@ namespace Anabatic {
   }
 
 
-  AutoContact*  NetBuilder::_doStrut ()
+  void  NetBuilder::_doStrut ()
   {
-    cdebug_log(145,1) << "void  NetBuilder::_doStrut ()" << _gcell << endl;
+    cdebug_log(145,1) << "NetBuilder::_doStrut() " << _gcell << endl;
 
-    AutoContact* targetContact   = NULL; // Contact for fromHook segment
-    cdebug_log(145,0) << "FromHook: " << _fromHook  << endl;
-    cdebug_log(145,0) << "North   : " << north()     << endl;
-    cdebug_log(145,0) << "East    : " << east()      << endl;
-    cdebug_log(145,0) << "South   : " << south()     << endl;
-    cdebug_log(145,0) << "West    : " << west()      << endl;
-
-  // Determine NE and SW contacts
-    if ( getNumberGlobals() == 2 ){
-      cdebug_log(145,0) << "Case 2 globals: " <<  getNumberGlobals() << endl;
-
-      AutoContact* source = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-      targetContact = source;
-      if (  ((north() != NULL) && (west() != NULL)) 
-         || ((north() != NULL) && (east() != NULL))
-         || ((south() != NULL) && (west() != NULL))
-         || ((south() != NULL) && (east() != NULL))
-         ){
-        if        ((north() != NULL) && (west() != NULL)) {
-          cdebug_log(145,0) << "North: " << north() << endl;
-          cdebug_log(145,0) << "West : " << west() << endl;
-          source->setX(north()->getComponent()->getX());
-          source->setY(west()->getComponent ()->getY());
-        } else if ((north() != NULL) && (east() != NULL)) {
-          cdebug_log(145,0) << "North: " << north() << endl;
-          cdebug_log(145,0) << "East : " << east() << endl;
-          source->setX(north()->getComponent()->getX());
-          source->setY(east()->getComponent ()->getY());
-        } else if ((south() != NULL) && (west() != NULL)) {
-          cdebug_log(145,0) << "South: " << south() << endl;
-          cdebug_log(145,0) << "West : " << west() << endl;
-          source->setX(south()->getComponent()->getX());
-          source->setY(west()->getComponent ()->getY());
-        } else if ((south() != NULL) && (east() != NULL)) {
-          cdebug_log(145,0) << "South: " << south() << endl;
-          cdebug_log(145,0) << "East: "  << east() << endl;
-          source->setX(south()->getComponent()->getX());
-          source->setY(east()->getComponent ()->getY());
-        }
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
-        push( east() , source );
-        push( west() , source );
-        push( north(), source );
-        push( south(), source );
-
-      } else if ((north() != NULL) && (south() != NULL)) {
-        cdebug_log(145,0) << "Case NS" <<  endl;
-        AutoContact* target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(north()->getComponent()->getX());
-        source->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-        target->setX(south()->getComponent()->getX());
-        target->setY(_gcell->getYMin() + _gcell->getHeight()/2);
-
-        if (north()->getComponent()->getX() > south()->getComponent()->getX()) {
-          swap( source, target );
-          if ( north() and (_fromHook != north()) ){
-            push( north(), target );
-          } else if ( south() and (_fromHook != south()) ){
-            push( south(), source );
-            targetContact = target;
-          } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut 1."
-                           , getString(_gcell).c_str() )
-                 << endl;
-          }
-        } else {
-          if ( north() and (_fromHook != north()) ){ 
-            push( north(), source );
-            targetContact = target;
-          } else if ( south() and (_fromHook != south()) ){
-            push( south(), target );
-          } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut 2."
-                           , getString(_gcell).c_str() )
-                 << endl;
-          }
-        }
-        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
-
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Horizontal );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (8)]: " << globalSegment << endl;
-      
-      } else if ((east() != NULL) && (west() != NULL) ) {
-        cdebug_log(145,0) << "Case EW" <<  endl;
-        AutoContact* target = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        source->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        source->setY(east()->getComponent()->getY());
-        target->setX(_gcell->getXMin() + _gcell->getWidth()/2);
-        target->setY(west()->getComponent()->getY());
-        cdebug_log(145,0) << "1" <<  endl;
-        
-        if (east()->getComponent()->getY() > west()->getComponent()->getY()){
-          cdebug_log(145,0) << "2.1" <<  endl;
-          swap( source, target );
-
-          cdebug_log(145,0) << "3.1" <<  endl;
-          if ( east() and (_fromHook != east()) ){
-            push( east(), target );
-          } else if ( west() and (_fromHook != west()) ){
-            push( west(), source );
-            targetContact = target;
-          } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut. 3"
-                           , getString(_gcell).c_str() )
-                 << endl;
-          }
-        } else {
-          cdebug_log(145,0) << "2.2" <<  endl;
-          if ( east() and (_fromHook != east()) ){ 
-            push( east(), source );
-            targetContact = target;
-          } else if ( west() and (_fromHook != west()) ){
-            push( west(), target );
-          } else {
-            cerr << Warning( "Something is wrong with the globals and the fromHook in this Strut. 4"
-                           , getString(_gcell).c_str() )
-                 << endl;
-          }
-        }
-        cdebug_log(145,0) << "[Create AutoContact]: " << source << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << target << endl;
-
-        AutoSegment* globalSegment = AutoSegment::create( source, target, Flags::Vertical );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (9)]: " << globalSegment << endl;
-
-      } else {
-        cerr << Warning( "Something is wrong with the globals in this Strut. 5 "
-                       , getString(_gcell).c_str() )
-             << endl;
-      }
-    } else if ( getNumberGlobals() == 3 ){
-      cdebug_log(145,0) << "Case 3 globals: " <<  getNumberGlobals() << endl;
-
-      AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-      AutoContact* xtee = NULL;
-    //xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-
-      if        ((north() != NULL) && (south() != NULL) && (east() != NULL)){ 
-        cdebug_log(145,0) << "Case NSE " << endl;
-        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
-        if (north()->getComponent()->getX() < south()->getComponent()->getX()){
-          turn->setX(north()->getComponent()->getX());
-          xtee->setX(south()->getComponent()->getX());
-          if ( north() and (_fromHook != north()) ) push( north(), turn );
-          else                                      targetContact = turn;
-          if ( south() and (_fromHook != south()) ) push( south(), xtee );
-          else                                      targetContact = xtee;
-
-        } else {
-          turn->setX(south()->getComponent()->getX());
-          xtee->setX(north()->getComponent()->getX());
-          if ( north() and (_fromHook != north()) ) push( north(), xtee );
-          else                                      targetContact = xtee;
-          if ( south() and (_fromHook != south()) ) push( south(), turn );
-          else                                      targetContact = turn;
-        }
-        turn->setY(east()->getComponent()->getY());
-        xtee->setY(east()->getComponent()->getY());
-        if ( east() and (_fromHook != east()) ) push( east(), xtee );
-        else                                    targetContact = xtee;
-     
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Horizontal );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (10)]: " << globalSegment << endl;
-
-      } else if ((north() != NULL) && (south() != NULL) && (west() != NULL)){ 
-        cdebug_log(145,0) << "Case NSW " << endl;
-        xtee = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(1) );
-
-        if (north()->getComponent()->getX() < south()->getComponent()->getX()){
-          xtee->setX(north()->getComponent()->getX());
-          turn->setX(south()->getComponent()->getX());
-          if ( north() and (_fromHook != north()) ) push( north(), xtee );
-          else                                      targetContact = xtee;
-          if ( south() and (_fromHook != south()) ) push( south(), turn );
-          else                                      targetContact = turn;
-
-        } else {
-          xtee->setX(south()->getComponent()->getX());
-          turn->setX(north()->getComponent()->getX());
-          if ( north() and (_fromHook != north()) ) push( north(), turn );
-          else                                      targetContact = turn;
-          if ( south() and (_fromHook != south()) ) push( south(), xtee );
-          else                                      targetContact = xtee;
-        }
-        turn->setY(west()->getComponent()->getY());
-        xtee->setY(west()->getComponent()->getY());
-        if ( west() and (_fromHook != west()) ) push( west(), xtee );
-        else                                    targetContact = xtee;
-     
-        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Horizontal );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (11)]: " << globalSegment << endl;
-
-
-      } else if ((east() != NULL)  && (north() != NULL) && (west() != NULL)){
-        cdebug_log(145,0) << "Case EWN " << endl;
-        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(2) );
-
-        if (east()->getComponent()->getY() < west()->getComponent()->getY()){
-          turn->setY(east()->getComponent()->getY());
-          xtee->setY(west()->getComponent()->getY());
-          if ( east() and (_fromHook != east()) ) push( east(), turn );
-          else                                    targetContact = turn;
-          if ( west() and (_fromHook != west()) ) push( west(), xtee );
-          else                                    targetContact = xtee;
-
-        } else {
-          turn->setY(west()->getComponent()->getY());
-          xtee->setY(east()->getComponent()->getY());
-          if ( east() and (_fromHook != east()) ) push( east(), xtee );
-          else                                    targetContact = xtee;
-          if ( west() and (_fromHook != west()) ) push( west(), turn );
-          else                                    targetContact = turn;
-        }
-        turn->setX(north()->getComponent()->getX());
-        xtee->setX(north()->getComponent()->getX());
-        if ( north() and (_fromHook != north()) ) push( north(), xtee );
-        else                                      targetContact = xtee;
-     
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        AutoSegment* globalSegment = AutoSegment::create( turn, xtee, Flags::Vertical );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (12)]: " << globalSegment << endl;
-
-      } else if ((east() != NULL) && (south() != NULL) && (west() != NULL)){
-        cdebug_log(145,0) << "Case EWS " << endl;
-        xtee = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(2) );
-
-        if (east()->getComponent()->getY() < west()->getComponent()->getY()){
-          xtee->setY(east()->getComponent()->getY());
-          turn->setY(west()->getComponent()->getY());
-          if ( east() and (_fromHook != east()) ) push( east(), xtee );
-          else                                    targetContact = xtee;
-          if ( west() and (_fromHook != west()) ) push( west(), turn );
-          else                                    targetContact = turn;
-
-        } else {
-          xtee->setY(west()->getComponent()->getY());
-          turn->setY(east()->getComponent()->getY());
-          if ( east() and (_fromHook != east()) ) push( east(), turn );
-          else                                    targetContact = turn;
-          if ( west() and (_fromHook != west()) ) push( west(), xtee );
-          else                                    targetContact = xtee;
-        }
-        turn->setX(south()->getComponent()->getX());
-        xtee->setX(south()->getComponent()->getX());
-        if ( south() and (_fromHook != south()) ) push( south(), xtee );
-        else                                      targetContact = xtee;
-     
-        cdebug_log(145,0) << "[Create AutoContact]: " << xtee << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment = AutoSegment::create( xtee, turn, Flags::Vertical );
-        if (not globalSegment->isGlobal()) globalSegment->setFlags( AutoSegment::SegLongLocal );
-        cdebug_log(145,0) << "[Create global segment (13)]: " << globalSegment << endl;
-
-      } else {
-        cerr << Warning( "Something is wrong with the globals in this Strut. 6"
-                       , getString(_gcell).c_str() )
-             << endl;
-      }
-    } else if ( getNumberGlobals() == 4 ){
-      cdebug_log(145,0) << "Case 4 globals: " <<  getNumberGlobals() << endl;
-      AutoContact* turn  = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-      AutoContact* hteeh = AutoContactHTee::create( _gcell, _net, Session::getContactLayer(2) );
-      AutoContact* vteev = AutoContactVTee::create( _gcell, _net, Session::getContactLayer(1) );
-
-      if (  (north()->getComponent()->getX() < south()->getComponent()->getX() )
-         && (east()->getComponent ()->getY() < west()->getComponent ()->getY() )
-         ) { 
-        cdebug_log(145,0) << "(N.X < S.X) & (E.Y < W.Y)" <<  endl;
-        turn->setX (north()->getComponent()->getX());
-        turn->setY (east()->getComponent ()->getY());
-        hteeh->setX(south()->getComponent()->getX());
-        hteeh->setY(east()->getComponent ()->getY());
-        vteev->setX(north()->getComponent()->getX());
-        vteev->setY(west()->getComponent ()->getY());
-
-        if ( east() and (_fromHook != east()) ) push( east(), hteeh );
-        else targetContact = hteeh;
-        if ( west() and (_fromHook != west()) ) push( west(), vteev );
-        else targetContact = vteev;
-        if ( north() and (_fromHook != north()) ) push( north(), vteev );
-        else targetContact = vteev;
-        if ( south() and (_fromHook != south()) ) push( south(), hteeh );
-        else targetContact = hteeh;
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
-        AutoSegment* globalSegment2 = AutoSegment::create( turn, hteeh, Flags::Vertical );
-        cdebug_log(145,0) << "[Create global segment (14.1)]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment (14.2)]: " << globalSegment2 << endl;
-
-      } else if (  (north()->getComponent()->getX() > south()->getComponent()->getX() )
-                && (east()->getComponent ()->getY() < west()->getComponent ()->getY() )
-                ) {
-        cdebug_log(145,0) << "(N.X > S.X) & (E.Y < W.Y)" <<  endl;
-        turn->setX (south()->getComponent()->getX());
-        turn->setY (west()->getComponent ()->getY());
-        hteeh->setX(north()->getComponent()->getX());
-        hteeh->setY(east()->getComponent ()->getY());
-        vteev->setX(south()->getComponent()->getX());
-        vteev->setY(east()->getComponent ()->getY());
-
-        if ( east() and (_fromHook != east()) ) push( east(), hteeh );
-        else targetContact = hteeh;
-        if ( west() and (_fromHook != west()) ) push( west(), turn );
-        else targetContact = turn;
-        if ( north() and (_fromHook != north()) ) push( north(), hteeh );
-        else targetContact = hteeh;
-        if ( south() and (_fromHook != south()) ) push( south(), vteev );
-        else targetContact = vteev;
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = AutoSegment::create( vteev, hteeh, Flags::Horizontal );
-        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
-        cdebug_log(145,0) << "[Create global segment (15.1)]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment (15.2)]: " << globalSegment2 << endl;
-
-      } else if (  (north()->getComponent()->getX() < south()->getComponent()->getX() )
-                && (east()->getComponent ()->getY() > west()->getComponent ()->getY() )
-                ) {
-        cdebug_log(145,0) << "(N.X < S.X) & (E.Y > W.Y)" <<  endl;
-        turn->setX (north()->getComponent()->getX());
-        turn->setY (east()->getComponent ()->getY());
-        hteeh->setX(south()->getComponent()->getX());
-        hteeh->setY(east()->getComponent ()->getY());
-        vteev->setX(south()->getComponent()->getX());
-        vteev->setY(west()->getComponent ()->getY());
-
-        if ( east() and (_fromHook != east()) ) push( east(), hteeh );
-        else targetContact = hteeh;
-        if ( west() and (_fromHook != west()) ) push( west(), vteev );
-        else targetContact = vteev;
-        if ( north() and (_fromHook != north()) ) push( north(), turn );
-        else targetContact = turn;
-        if ( south() and (_fromHook != south()) ) push( south(), vteev );
-        else targetContact = vteev;
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
-        AutoSegment* globalSegment2 = AutoSegment::create( vteev, hteeh, Flags::Vertical );
-        cdebug_log(145,0) << "[Create global segment (16.1)]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment (16.2)]: " << globalSegment2 << endl;
-
-      } else {
-        cdebug_log(145,0) << "(N.X > S.X) & (E.Y > W.Y)" <<  endl;
-        turn->setX (south()->getComponent()->getX());
-        turn->setY (east()->getComponent ()->getY());
-        hteeh->setX(north()->getComponent()->getX());
-        hteeh->setY(east()->getComponent ()->getY());
-        vteev->setX(south()->getComponent()->getX());
-        vteev->setY(west()->getComponent ()->getY());
-
-        if ( east() and (_fromHook != east()) ) push( east(), hteeh );
-        else targetContact = hteeh;
-        if ( west() and (_fromHook != west()) ) push( west(), vteev );
-        else targetContact = vteev;
-        if ( north() and (_fromHook != north()) ) push( north(), hteeh );
-        else targetContact = hteeh;
-        if ( south() and (_fromHook != south()) ) push( south(), vteev );
-        else targetContact = vteev;
-
-        cdebug_log(145,0) << "[Create AutoContact]: " << hteeh << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << vteev << endl;
-        cdebug_log(145,0) << "[Create AutoContact]: " << turn << endl;
-        AutoSegment* globalSegment1 = AutoSegment::create( turn, hteeh, Flags::Horizontal );
-        AutoSegment* globalSegment2 = AutoSegment::create( vteev, turn, Flags::Vertical );
-        cdebug_log(145,0) << "[Create global segment (17.1)]: " << globalSegment1 << endl;
-        cdebug_log(145,0) << "[Create global segment (17.2)]: " << globalSegment2 << endl;
-      }
-    } else { 
-      cerr << Warning( "Something is wrong with the number of globals in this Strut. 7"
-                     , getString(_gcell).c_str() )
-           << endl;
+    if (getConnexity().fields.globals < 2) {
+      cdebug_tabw(145,-1);
+      throw Error( "NetBuilder::_doStrut(): Less than two connecting wires in %s."
+                 , getString( getGCell() ).c_str() );
     }
-    cdebug_log(145,0) << "doStrut done" << endl;
-    cdebug_tabw(145,-1);
 
-    return targetContact;
+    if (getConnexity().fields.globals == 2) {
+      _do_2G_Analog();
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    if (getConnexity().fields.globals == 3) {
+      cdebug_log(145,0) << "Three hooks (globals)" << endl;
+      if (not east() or not west()) {
+        cdebug_log(145,0) << "No east or west case" << endl;
+        AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        AutoContact* htee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( turn1, htee1, Flags::Horizontal );
+        if (east()) push( east (), htee1,  EastBound );
+        if (west()) push( west (), htee1,  WestBound );
+        push( north(), turn1, NorthBound );
+        push( south(), htee1, SouthBound );
+      } else {
+        cdebug_log(145,0) << "No north or south case" << endl;
+        AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( turn1, vtee1, Flags::Vertical );
+        push( east (), turn1,  EastBound );
+        push( west (), vtee1,  WestBound );
+        if (north()) push( north(), vtee1, NorthBound );
+        if (south()) push( south(), vtee1, SouthBound );
+      }
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    cdebug_log(145,0) << "Four hooks (globals)" << endl;
+    AutoContact* tee1 = nullptr;
+    AutoContact* tee2 = nullptr;
+    if (getGCell()->getWidth() >= getGCell()->getHeight()) {
+      tee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      tee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( tee1, tee2, Flags::Horizontal );
+    } else {
+      tee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      tee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( tee1, tee2, Flags::Vertical );
+    }
+    push( east (), tee2,  EastBound );
+    push( west (), tee1,  WestBound );
+    push( north(), tee2, NorthBound );
+    push( south(), tee1, SouthBound );
+    
+    cdebug_tabw(145,-1);
   }
 
 
