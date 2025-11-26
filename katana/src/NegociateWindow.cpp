@@ -604,8 +604,9 @@ namespace Katana {
 
     cmess1 << "     o  Negociation Stage." << endl;
 
-    unsigned long limit     = _katana->getEventsLimit();
-    bool          profiling = _katana->profileEventCosts();
+    bool          printLineFeed = false;
+    bool          profiling     = _katana->profileEventCosts();
+    unsigned long limit         = _katana->getEventsLimit();
     ofstream      ofprofile;
 
     if (profiling) ofprofile.open( "katana.profile.txt" );
@@ -645,6 +646,7 @@ namespace Katana {
                << _eventQueue.size()
                << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
+        printLineFeed = true;
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
@@ -709,6 +711,8 @@ namespace Katana {
                      , limit ) << endl;
       }
     }
+    if (printLineFeed) cmess2 << endl;
+    
     _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );
     _negociateRepair();
 
@@ -764,8 +768,6 @@ namespace Katana {
 
     _negociatePack( count, true );
 
-    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
-
     size_t eventsCount = _eventHistory.size();
 
     _eventHistory.clear();
@@ -791,7 +793,8 @@ namespace Katana {
 
     cmess1 << "     o  Pack Stage." << endl;
 
-    uint64_t limit = _katana->getEventsLimit();
+    bool     printLineFeed = false;
+    uint64_t limit         = _katana->getEventsLimit();
     _katana->setStage( Anabatic::StagePack );
 
   //for ( size_t i = (count > 600) ? count-600 : 0
@@ -821,6 +824,7 @@ namespace Katana {
                    << _eventQueue.size() << ">"
                    << setfill(' ') << tty::reset << tty::cr;
             cmess2.flush();
+            printLineFeed = true;
           } else {
             cmess2 << "        <pack.event:" << setw(8) << setfill('0')
                    << RoutingEvent::getProcesseds() << setfill(' ') << " "
@@ -844,6 +848,7 @@ namespace Katana {
 
       DebugSession::close();
     }
+    if (printLineFeed) cmess2 << endl;
   }
 
 
@@ -872,6 +877,7 @@ namespace Katana {
     cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
            << _eventQueue.size() << ">" << setfill(' ') << endl;
 
+    bool printLineFeed = false;
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
@@ -882,6 +888,7 @@ namespace Katana {
                << _eventQueue.size() << ">"
                << setfill(' ') << tty::reset << tty::cr;
         cmess2.flush();
+        printLineFeed = true;
       } else {
         cmess2 << "        <repair.event:" << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
@@ -905,6 +912,7 @@ namespace Katana {
       //   UpdateSession::open();
       // }
     }
+    if (printLineFeed) cmess2 << endl;
 
     cdebug_tabw(159,-1);
   }
