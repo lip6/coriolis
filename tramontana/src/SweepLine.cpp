@@ -93,7 +93,10 @@ namespace Tramontana {
     , _slidingWindow()
     , _lastLeftEdge (nullptr)
     , _splitCount   (0)
+    , _windowNb     (0)
     , _flags        (0)
+    , _xSweepLine   (0)
+    , _progress     (0)
   {
     for ( const BasicLayer* layer : getExtracteds() ) {
       _intervalTrees.insert( make_pair( layer->getMask(), TileIntvTree() ));
@@ -120,7 +123,7 @@ namespace Tramontana {
     Box       ab         = getCell()->getBoundingBox();
     Interval  sweepSpan  = Interval( ab.getXMin(), ab.getXMax() );
     size_t    processeds = 0;
-    DbU::Unit xSweepLine = sweepSpan.getVMin();
+    _xSweepLine = sweepSpan.getVMin();
     
     loadNextWindow();
     do {
@@ -135,13 +138,14 @@ namespace Tramontana {
             break;
           }
           
-          if (tile->getLeftEdge() != xSweepLine) {
-            xSweepLine = tile->getLeftEdge();
+          if (tile->getLeftEdge() != _xSweepLine) {
+            _xSweepLine = tile->getLeftEdge();
             if (tty::enabled()) {
-              DbU::Unit progress = ((xSweepLine - sweepSpan.getVMin()) * 100) / sweepSpan.getSize();
+              _progress = ((_xSweepLine - sweepSpan.getVMin()) * 100) / sweepSpan.getSize();
               cmess2 << "        <SweepLine @" << tty::bold
-                     << right << setw(12) << DbU::getValueString(xSweepLine,DbU::Physical) << " | "
-                     << right << setw( 3) << progress << "%"
+                     << right << setw(12) << DbU::getValueString(_xSweepLine,DbU::Physical) << " | "
+                     << right << setw( 3) << _windowNb << "  | "
+                     << right << setw( 3) << _progress << "%"
                      << tty::reset
                      << setfill(' ') << tty::reset << ">" << tty::cr;
               cmess2.flush ();
@@ -189,7 +193,7 @@ namespace Tramontana {
         cdebug_tabw(160,-1);
       }
 
-      cdebug_log(160,0) << "Flushing window, reached @" << DbU::getValueString(xSweepLine) << endl;
+      cdebug_log(160,0) << "Flushing window, reached @" << DbU::getValueString(_xSweepLine) << endl;
       Tile::timeTick();
       for ( size_t i=0 ; i<processeds ; ++i ) {
         Tile* tile = _tiles[i].getTile();
@@ -205,7 +209,8 @@ namespace Tramontana {
 
     if (tty::enabled()) {
       cmess2 << "        <SweepLine @" << tty::bold
-             << right << setw(12) << DbU::getValueString(sweepSpan.getVMax(),DbU::Physical) << " | 100%"
+             << right << setw(12) << DbU::getValueString(sweepSpan.getVMax(),DbU::Physical) << " | "
+             << right << setw( 3) << _windowNb << "  | 100%"
              << tty::reset
              << setfill(' ') << tty::reset << ">" << tty::cr;
       cmess2 << endl;
@@ -229,6 +234,17 @@ namespace Tramontana {
     Box       bb         = getCell()->getBoundingBox();
     DbU::Unit sliceWidth = bb.getWidth() / (_splitCount + 1);
     _lastLeftEdge = nullptr;
+
+    if (tty::enabled()) {
+      cmess2 << "        <SweepLine @" << tty::bold
+             << right << setw(12) << DbU::getValueString(_xSweepLine,DbU::Physical) << " | "
+             << right << setw( 3) << _windowNb << "L | "
+             << right << setw( 3) << _progress << "%"
+             << tty::reset
+             << setfill(' ') << tty::reset << ">" << tty::cr;
+      cmess2.flush ();
+    }
+
     if (_slidingWindow.isEmpty()) {
       _flags |= IsLeftMostWindow;
       _slidingWindow = Box( bb.getXMin(), bb.getYMin(), bb.getXMin()+sliceWidth, bb.getYMax() );
@@ -241,6 +257,7 @@ namespace Tramontana {
     }
 
     cdebug_log(160,0) << "Area window: " << _slidingWindow << endl;
+    size_t beforeTiles = _tiles.size();
     QueryTiles::doAreaQuery( this, _slidingWindow );
     sort( _tiles.begin(), _tiles.end() );
     if (_tiles.size() > 1) {
@@ -254,6 +271,7 @@ namespace Tramontana {
         }
       }
     }
+    if (_tiles.size() > beforeTiles) _windowNb++;
 
     cdebug_tabw(160,-1);
     return true;
