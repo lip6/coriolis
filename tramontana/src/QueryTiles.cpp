@@ -96,9 +96,11 @@ namespace Tramontana {
       return;
     }
     if (not isRightMostWindow() and (bb.getXMin() >= getArea().getXMax())) {
-      cerr << "Outside, on the right, of area window " << bb << " vs. " << getArea() << endl;
-      cerr << "  getPath() " << getPath() << endl;
-      cerr << "  go " << go << endl;
+      if (bb.getXMin() > getArea().getXMax()) {
+        cerr << "Outside, on the right, of area window " << getArea() << ", tile " << bb << endl;
+        cerr << "  getPath() " << getPath() << endl;
+        cerr << "  go " << go << endl;
+      }
       return;
     }
     

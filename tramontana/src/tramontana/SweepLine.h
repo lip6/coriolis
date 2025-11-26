@@ -94,7 +94,10 @@ namespace Tramontana {
       Box                             _slidingWindow;
       Tile*                           _lastLeftEdge;
       uint32_t                        _splitCount;
+      uint32_t                        _windowNb;
       uint32_t                        _flags;
+      DbU::Unit                       _xSweepLine;
+      DbU::Unit                       _progress;
   };
 
 
