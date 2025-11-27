@@ -122,6 +122,7 @@ namespace Katana {
   bool           TrackBaseFixedSpan::isPriorityLocked () const { return false; }
   bool           TrackBaseFixedSpan::isFixedSpan      () const { return true; }
   bool           TrackBaseFixedSpan::isFixedSpanRp    () const { return false; }
+  bool           TrackBaseFixedSpan::isOnPin          () const { return false; }
   bool           TrackBaseFixedSpan::canReduce        () const { return false; }
   DbU::Unit      TrackBaseFixedSpan::getWidth         () const { return _boundingBox.getWidth(); }
   const Layer*   TrackBaseFixedSpan::getLayer         () const { return getTrack()->getLayer(); }

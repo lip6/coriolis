@@ -44,6 +44,7 @@ namespace Katana {
       static  TrackFixedSpanRp* lookup        ( RoutingPad* );
     public:                                
       virtual bool              isFixedSpanRp () const;
+      virtual bool              isOnPin       () const;
       virtual RoutingPad*       getRoutingPad () const;
       virtual const Layer*      getLayer      () const;
       virtual Net*              getNet        () const;
