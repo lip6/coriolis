@@ -1466,14 +1466,15 @@ namespace Katana {
   {
     if (_segments.empty()) return 0;
 
-  //if ((getIndex() == 185) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 432) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::checkMinArea() " << this << endl;
 
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
     Interval  span;
-    bool      discard        = false;
-    uint32_t  nonMinArea     = 0;
-    DbU::Unit techMinLength  = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
+    bool      discard         = false;
+    bool      onlyFixedSpanRp = true;
+    uint32_t  nonMinArea      = 0;
+    DbU::Unit techMinLength   = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
     for ( size_t j=0 ; j<_segments.size() ; ++j ) {
       cdebug_log(159,0) << "| [" << j << "] " << _segments[j] << endl;
       if (    not dynamic_cast<TrackFixedSpanRp*>(_segments[j])
@@ -1487,10 +1488,24 @@ namespace Katana {
         _segments[j]->getCanonical( segSpan );
         span.merge( segSpan );
         discard = false;
-        cdebug_log(159,0) << "  Merge with current span " << span << endl;
+        TrackFixedSpanRp* fixedSpanRp = dynamic_cast<TrackFixedSpanRp*>(_segments[j]);
+        if (fixedSpanRp) {
+          discard = discard or fixedSpanRp->isOnPin();
+        } else {
+          onlyFixedSpanRp = false;
+        }
+        cdebug_log(159,0) << "  Merge with current span " << span
+                          << " discard=" << discard
+                          << " onlyFixedSpanRp=" << onlyFixedSpanRp 
+                          << endl;
         continue;
       }
 
+      cdebug_log(159,0) << "  Checking/flushing current span " << span
+                        << " discard=" << discard
+                        << " onlyFixedSpanRp=" << onlyFixedSpanRp 
+                        << endl;
+      discard = discard or onlyFixedSpanRp;
       span.inflate( -halfMinSpacing );
       if (not discard and (span.getSize() < techMinLength)) {
         cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
@@ -1504,9 +1519,15 @@ namespace Katana {
       _segments[j]->getCanonical( segSpan );
       span.merge( segSpan );
       discard = false;
+      onlyFixedSpanRp = (dynamic_cast<TrackFixedSpanRp*>(_segments[j]));
       cdebug_log(159,0) << "  Reset span " << span << endl;
     }
 
+    cdebug_log(159,0) << "  Checking/flushing *last* span " << span
+                      << " discard=" << discard
+                      << " onlyFixedSpanRp=" << onlyFixedSpanRp 
+                      << endl;
+    discard = discard or onlyFixedSpanRp;
     if (not discard and not span.isEmpty() and (span.getSize() < techMinLength)) {
       cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
                    , getString(_segments[_segments.size()-1]).c_str()
@@ -1516,7 +1537,7 @@ namespace Katana {
     }
 
     cdebug_log(159,0) << "  Track done." << endl;
-  //if ((getIndex() == 185) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 432) and isHorizontal()) DebugSession::close();
     return nonMinArea;
   }
 

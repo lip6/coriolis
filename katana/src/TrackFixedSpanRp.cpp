@@ -22,6 +22,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
@@ -49,6 +50,7 @@ namespace Katana {
   using Hurricane::RegularLayer;
   using Hurricane::Technology;
   using Hurricane::DataBase;
+  using Hurricane::Pin;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Anabatic::GCellsUnder;
@@ -98,6 +100,10 @@ namespace Katana {
 
   bool         TrackFixedSpanRp::isFixedSpanRp () const { return true; }
   RoutingPad*  TrackFixedSpanRp::getRoutingPad () const { return _routingPad; }
+
+
+  bool  TrackFixedSpanRp::isOnPin () const
+  { return dynamic_cast<Pin*>( _routingPad->getOccurrence().getEntity() ); }
 
   
   void  TrackFixedSpanRp::setNet ( Net* )
