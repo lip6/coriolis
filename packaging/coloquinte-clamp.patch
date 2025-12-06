@@ -1,5 +1,22 @@
---- coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp.orig	2024-09-29 02:12:24.575122522 +0200
-+++ coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp	2024-09-29 02:12:44.007738713 +0200
+--- coriolis/subprojects/coloquinte/meson.build
++++ coriolis/subprojects/coloquinte/meson.build
+@@ -12,7 +12,13 @@ if build_machine.system() == 'darwin'
+ endif
+ 
+ coloquinte_includes = include_directories('src')
+-boost_dep = dependency('boost', required: true, modules: ['system', 'filesystem', 'iostreams', 'program_options', 'unit_test_framework'])
++boost_base_dep = dependency('boost', required: true)
++if boost_base_dep.version().split('.')[1].to_int() < 89
++  boost_modules = ['system', 'filesystem', 'iostreams', 'program_options', 'unit_test_framework']
++else
++  boost_modules = ['filesystem', 'iostreams', 'program_options', 'unit_test_framework']
++endif
++boost_dep = dependency('boost', required: true, modules: boost_modules)
+ eigen_dep = dependency('eigen3', required: true)
+ thread_dep = dependency('threads', required: true)
+ 
+--- coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp
++++ coriolis/subprojects/coloquinte/src/place_detailed/tetris_legalizer.cpp
 @@ -2,6 +2,7 @@
  #include "place_detailed/tetris_legalizer.hpp"
  

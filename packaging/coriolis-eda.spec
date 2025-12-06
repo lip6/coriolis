@@ -41,13 +41,25 @@ BuildRequires:  rapidjson-devel
 BuildRequires:  graphviz
 BuildRequires:  graphviz-gd
 
-#opensuse_Tumbleweed
-%if 0%{?suse_version} > 1600 && 0%{?is_opensuse}
-%global python3_sitearch /usr/lib64/python3.11/site-packages
+# openSUSE Tumbleweed
+%if 0%{?suse_version} >= 1699 && 0%{?is_opensuse}
+BuildRequires:  python3-watchfiles
+BuildRequires:  python3-pyproject-metadata
+BuildRequires:  libboost_headers1_89_0-devel
+BuildRequires:  libboost_program_options1_89_0
+BuildRequires:  libboost_filesystem1_89_0
+BuildRequires:  libboost_iostreams1_89_0
+BuildRequires:  libboost_test1_89_0
+BuildRequires:  graphviz-gnome
+BuildRequires:  texlive-l3kernel
+BuildRequires:  texlive-cmap
+BuildRequires:  texlive-metafont
+%endif
 
-BuildRequires:  python311-devel
-BuildRequires:  python311-watchfiles
-BuildRequires:  python311-pyproject-metadata
+# openSUSE Leap 16.0
+%if 0%{?suse_version} == 1600 && 0%{?is_opensuse}
+BuildRequires:  python3-watchfiles
+BuildRequires:  python3-pyproject-metadata
 BuildRequires:  libboost_system-devel
 BuildRequires:  libboost_program_options-devel
 BuildRequires:  libboost_filesystem-devel
@@ -59,7 +71,7 @@ BuildRequires:  texlive-cmap
 BuildRequires:  texlive-metafont
 %endif
 
-#opensuse_leap-15.6
+# openSUSE Leap 15.6
 %if 0%{?sle_version} == 150600 && 0%{?is_opensuse}
 %global python3_sitearch /usr/lib64/python3.11/site-packages
 
@@ -72,7 +84,6 @@ BuildRequires:  libboost_iostreams-devel
 BuildRequires:  libboost_test-devel
 BuildRequires:  python311
 BuildRequires:  python311-devel
-#BuildRequires:  python311-watchfiles
 BuildRequires:  graphviz-gnome
 BuildRequires:  %{python_module devel}
 BuildRequires:  %{python_module setuptools}
@@ -101,16 +112,18 @@ BuildRequires:  texlive-texlive-scripts
 BuildRequires:  texlive-metafont
 %endif
 
+# Fedora >= 39
 %if 0%{?fedora} >= 39
 BuildRequires:  python3-watchfiles
 %endif
 
-#opensuse
+# openSUSE > 14.0
 %if 0%{?suse_version} > 1400 && 0%{?is_opensuse}
 Requires(post): glibc
 %else
 Requires(post): ldconfig
 %endif
+
 Requires:       boost >= 1.53.0
 
 
