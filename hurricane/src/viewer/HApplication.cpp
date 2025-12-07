@@ -19,6 +19,7 @@
 #include  <QSettings>
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
+#include  "hurricane/utilities/Path.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/ExceptionWidget.h"
 #include  "hurricane/viewer/HApplication.h"
@@ -94,6 +95,8 @@ namespace Hurricane {
 
   void  HApplication::sharedCtor ()
   {
+    Utilities::Path cwd = Utilities::Path::cwd() / "coriolis2";
+    QSettings::setPath( QSettings::NativeFormat, QSettings::UserScope, cwd.c_str() );
     QCoreApplication::setOrganizationName  ( "SU-LIP6" );
     QCoreApplication::setOrganizationDomain( "lip6.fr" );
     QCoreApplication::setApplicationName   ( "Coriolis" );
