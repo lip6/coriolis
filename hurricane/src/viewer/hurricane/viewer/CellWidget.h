@@ -945,7 +945,8 @@ namespace Hurricane {
     , _ihistory           (0)
     , _historyEnable      (false)
   {
-    _scaleHistory.push_back ( ScaleEntry(1.0,Point(0,0)) );
+    DbU::getStringMode( _dbuMode, _unitPower );
+    _scaleHistory.push_back( ScaleEntry(1.0,Point(0,0)) );
     if (_cell) _hierarchicalName = Name( _cell->getHierarchicalName() );
   }
 
