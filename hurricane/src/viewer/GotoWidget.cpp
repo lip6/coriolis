@@ -73,13 +73,29 @@ namespace Hurricane {
     hLayout1->addWidget ( label );
     hLayout1->addWidget ( _apertureEdit );
 
-    _dbuMode->addItem ( "DataBase"  , DbU::Db       /*0x01*/ );
-    _dbuMode->addItem ( "Grid"      , DbU::Grid     /*0x02*/ );
-    _dbuMode->addItem ( "Symbolic"  , DbU::Symbolic /*0x04*/ );
-    _dbuMode->addItem ( "Micrometer", DbU::Physical /*0x08*/ );
-    _dbuMode->addItem ( "Nanometer" , 0x10 );
-    _dbuMode->setCurrentIndex ( 2 );
+    _dbuMode->addItem ( "DataBase"  , Db         );
+    _dbuMode->addItem ( "Grid"      , Grid       );
+    _dbuMode->addItem ( "Symbolic"  , Symbolic   );
+    _dbuMode->addItem ( "Micrometer", Micrometer );
+    _dbuMode->addItem ( "Nanometer" , Nanometer  );
+    unsigned int    dbuStringMode = DbU::Symbolic;
+    DbU::UnitPower  unitPower     = DbU::Nano;
+    DbU::getStringMode( dbuStringMode, unitPower );
+    switch ( dbuStringMode ) {
+      default:
+      case DbU::Db:       _dbuMode->setCurrentIndex( 0 ); break;
+      case DbU::Grid:     _dbuMode->setCurrentIndex( 1 ); break;
+      case DbU::Symbolic: _dbuMode->setCurrentIndex( 2 ); break;
+      case DbU::Physical: 
+        switch ( unitPower ) {
+          default:
+          case DbU::Micro: _dbuMode->setCurrentIndex( 3 ); break;
+          case DbU::Nano:  _dbuMode->setCurrentIndex( 4 ); break;
+        }
+        break;
+    }
     hLayout1->addWidget ( _dbuMode );
+    _dbuMode->setCurrentIndex ( 0 );
 
     QPushButton* cancelButton = new QPushButton ();
     cancelButton->setSizePolicy ( QSizePolicy::Fixed, QSizePolicy::Fixed );
