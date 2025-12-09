@@ -30,6 +30,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QFileDialog>
+#include <QCloseEvent>
 
 #include "hurricane/utilities/Path.h"
 #include "hurricane/configuration/Configuration.h"
@@ -191,6 +192,13 @@ namespace Hurricane {
         break;
       }
     }
+  }
+
+
+  void  CellViewer::closeEvent ( QCloseEvent* event )
+  {
+    _controller->setInDeletion ();
+    event->accept();
   }
 
 

@@ -57,6 +57,15 @@ namespace Hurricane {
     _cellWidget = cellWidget;
   }
 
+  
+  bool  ControllerTab::isInDeletion () const
+  {
+    const QObject* cw = parent();
+    for ( ; cw and cw->objectName() != "controller" ; cw = cw->parent() );
+    if (not cw) return false;
+    return static_cast<const ControllerWidget*>( cw )->isInDeletion();
+  }
+
 
   void  ControllerTab::setCell ( Cell* )
   { }
@@ -213,6 +222,7 @@ namespace Hurricane {
     , _syncNetlist          (new QCheckBox())
     , _showSelection        (new QCheckBox())
     , _cwCumulativeSelection(false)
+    , _selfSelectionChange  (false)
   {
     _netlistBrowser->setObjectName ( "controller.tabNetlist.netlistBrowser" );
 
@@ -228,7 +238,7 @@ namespace Hurricane {
     _showSelection->setText    ( tr("Show Selection") );
     _showSelection->setChecked ( false );
     _showSelection->setFont    ( Graphics::getFixedFont(QFont::Bold,false,false) );
-    connect ( _showSelection, SIGNAL(toggled(bool)), this, SLOT(setShowSelection(bool)) );
+    connect ( _showSelection, SIGNAL(toggled(bool)), this, SLOT(selfSetShowSelection(bool)) );
 
     QHBoxLayout* commands = new QHBoxLayout ();
     commands->setContentsMargins ( 0, 0, 0, 0 );
@@ -259,6 +269,14 @@ namespace Hurricane {
   }
 
 
+  void  TabNetlist::selfSetShowSelection ( bool state )
+  {
+    _selfSelectionChange = true;
+    setShowSelection( state );
+    _selfSelectionChange = false;
+  }
+  
+
   void  TabNetlist::setShowSelection ( bool state )
   {
     if (not getCellWidget()) return;
@@ -270,7 +288,8 @@ namespace Hurricane {
       getCellWidget()->setShowSelection( true );
       connect( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
       connect( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
-    //_netlistBrowser->updateSelecteds();
+      if (_selfSelectionChange)
+        _netlistBrowser->updateSelecteds();
     } else {
       getCellWidget()->setShowSelection( false );
       getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
@@ -616,6 +635,7 @@ namespace Hurricane {
     , _tabSelection    (new TabSelection())
     , _tabInspector    (new TabInspector())
     , _tabSettings     (new TabSettings())
+    , _inDeletion      (false)
   {
     setObjectName ( "controller" );
     setAttribute  ( Qt::WA_QuitOnClose, false );

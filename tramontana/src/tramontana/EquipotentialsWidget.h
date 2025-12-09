@@ -24,6 +24,7 @@
 #include <QItemDelegate>
 #include <QSortFilterProxyModel>
 #include "hurricane/Commons.h"
+#include "hurricane/Observer.h"
 #include "hurricane/Bug.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/CellWidget.h"
@@ -44,6 +45,7 @@ namespace Tramontana {
 
   using std::string;
   using std::set;
+  using Hurricane::Observer;
   using Hurricane::Cell;
   using Hurricane::CellWidget;
   using Hurricane::OccurrenceSet;
@@ -155,6 +157,8 @@ namespace Tramontana {
       static const uint32_t  InternalReceive = (1 << 2);
       static const uint32_t  ClearEmits      = InternalEmit|ExternalEmit|InternalReceive;
     public:
+      static  void         notify                ( EquipotentialsWidget*, unsigned int flags );
+    public:
                            EquipotentialsWidget  ( QWidget* parent=nullptr );
       inline  Cell*        getCell               ();
       inline  bool         isInternalEmit        () const;
@@ -184,20 +188,21 @@ namespace Tramontana {
               void         updateSelectedsOpen   ( const QItemSelection& , const QItemSelection& );
               void         fitToEqui             ();
     private:
-              CellWidget*             _cellWidget;
-              Cell*                   _cell;
-              EquipotentialsModel*    _baseModel;
-              QSortFilterProxyModel*  _sortModel;
-              EquiFilterProxyModel*   _filterModel;
-              OpenCircuitModel*       _openModel;
-              QTableView*             _view;
-              QTreeView*              _openCircuits;
-              QLineEdit*              _filterPatternLineEdit;
-              EquipotentialWidget*    _equiDisplay;
-              int                     _rowHeight;
-              SelectedEquiSet         _selecteds;
-              bool                    _forceReselect;
-              uint32_t                _flags;
+              Observer<EquipotentialsWidget>  _observer;
+              CellWidget*                     _cellWidget;
+              Cell*                           _cell;
+              EquipotentialsModel*            _baseModel;
+              QSortFilterProxyModel*          _sortModel;
+              EquiFilterProxyModel*           _filterModel;
+              OpenCircuitModel*               _openModel;
+              QTableView*                     _view;
+              QTreeView*                      _openCircuits;
+              QLineEdit*                      _filterPatternLineEdit;
+              EquipotentialWidget*            _equiDisplay;
+              int                             _rowHeight;
+              SelectedEquiSet                 _selecteds;
+              bool                            _forceReselect;
+              uint32_t                        _flags;
   };
 
 

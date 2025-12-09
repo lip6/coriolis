@@ -169,6 +169,7 @@ namespace Tramontana {
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << _cell->getName() << ">" << endl;
     _flags |= DestroyStage;
+    notify( AboutToDestroy );
 
     ShortCircuit::removeShortingEquis( getCell() );
     for ( Equipotential* equi : _equipotentials )
