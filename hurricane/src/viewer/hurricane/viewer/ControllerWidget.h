@@ -56,6 +56,7 @@ namespace Hurricane {
       inline CellWidget* getCellWidget      ();
       virtual void       saveQtSettings     ( size_t viewerId ) const;
       virtual void       readQtSettings     ( size_t viewerId );
+              bool       isInDeletion       () const;
     public slots:           
       virtual void       setCellWidget      ( CellWidget* );
       virtual void       setCell            ( Cell* );
@@ -163,6 +164,7 @@ namespace Hurricane {
       virtual void           setCell              ( Cell* );
       virtual void           setCellWidget        ( CellWidget* );
       virtual void           setSyncNetlist       ( bool );
+      virtual void           selfSetShowSelection ( bool );
       virtual void           setShowSelection     ( bool );
       virtual void           selectionModeChanged ();
 
@@ -171,6 +173,7 @@ namespace Hurricane {
       QCheckBox*     _syncNetlist;
       QCheckBox*     _showSelection;
       bool           _cwCumulativeSelection;
+      bool           _selfSelectionChange;
   };
 
 
@@ -309,6 +312,7 @@ namespace Hurricane {
       static void                 notify              ( ControllerWidget*, unsigned int flags );
     public:
                                   ControllerWidget    ( QWidget* parent=NULL );
+      inline bool                 isInDeletion        () const;
       inline CellWidget*          getCellWidget       ();
       inline GraphicsWidget*      getGraphics         ();
       inline PaletteWidget*       getPalette          ();
@@ -318,6 +322,7 @@ namespace Hurricane {
       inline SelectionWidget*     getSelection        ();
       inline InspectorWidget*     getInspectorWidget  ();
       inline TabSettings*         getSettings         ();
+      inline void                 setInDeletion       ();
              void                 setCellWidget       ( CellWidget* );
     //inline int                  addSetting          ( QWidget* page, const QString& label );
              void                 insertTabAfter      ( const QString& ref, QWidget*, const QString& label );
@@ -342,6 +347,7 @@ namespace Hurricane {
       TabSelection*               _tabSelection;
       TabInspector*               _tabInspector;
       TabSettings*                _tabSettings;
+      bool                        _inDeletion;
   };
 
 
@@ -355,6 +361,8 @@ namespace Hurricane {
   inline InspectorWidget*     ControllerWidget::getInspectorWidget  () { return _tabInspector->getInspectorWidget(); }
   inline TabSettings*         ControllerWidget::getSettings         () { return _tabSettings; }
 //inline int                  ControllerWidget::addSetting          ( QWidget* page, const QString& label ) { return _tabSettings->addSetting(page,label); }
+  inline void                 ControllerWidget::setInDeletion       () { _inDeletion = true; }
+  inline bool                 ControllerWidget::isInDeletion        () const { return _inDeletion; }
 
 
 }  // Hurricane namespace.

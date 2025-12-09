@@ -18,6 +18,7 @@
 #include <string>
 #include "hurricane/Commons.h"
 #include "hurricane/Timer.h"
+#include "hurricane/Observer.h"
 #include "hurricane/DBo.h"
 #include "hurricane/Slot.h"
 
@@ -32,6 +33,8 @@ namespace Hurricane {
 
 namespace CRL {
 
+  using Hurricane::BaseObserver;
+  using Hurricane::Observable;
   using Hurricane::Timer;
   using Hurricane::Record;
   using Hurricane::Name;
@@ -43,6 +46,8 @@ namespace CRL {
 // Class  :  "CRL::ToolEngine".
 
   class ToolEngine : public DBo {
+    public:
+      static const unsigned int AboutToDestroy = (1 << 0);
     public:
       typedef  DBo  Super;
     public:
@@ -73,6 +78,9 @@ namespace CRL {
       inline        void         addMeasure                          ( std::string, Data* ) const;
       template<typename Data>
       inline        const Data*  getMeasure                          ( std::string ) const;
+                    void         addObserver                         ( BaseObserver* );
+                    void         removeObserver                      ( BaseObserver* );
+                    void         notify                              ( unsigned int flags );  
       virtual       std::string  _getTypeName                        () const;
       virtual       std::string  _getString                          () const;
       virtual       Record*      _getRecord                          () const;
@@ -81,12 +89,13 @@ namespace CRL {
     protected:
                     Cell*        _cell;
     private:
-                    bool         _verbose;
+                    Observable   _observers;
                     unsigned int _placementModificationFlag;
                     unsigned int _routingModificationFlag;
                     bool         _inRelationDestroy;
                     Timer        _timer;
                     uint32_t     _passNumber;
+                    bool         _verbose;
     protected:
                                  ToolEngine                          ( Cell* cell, bool verbose=true );
       virtual       void         _postCreate                         ();

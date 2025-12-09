@@ -88,7 +88,7 @@ namespace Tramontana {
 
   void  TabEquipotentials::setSyncEquipotentials ( bool state )
   {
-    if (state and getCellWidget()) {
+    if (state and getCellWidget() and not isInDeletion()) {
       _browser->setCell( getCellWidget()->getCell() );
     } else {
       _browser->setCell( nullptr );
