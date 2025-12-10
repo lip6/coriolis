@@ -33,6 +33,7 @@
 #define HURRICANE_COMMONS_H
 
 #include <cstdio>
+#include <cstdint>
 #include <cassert>
 #include <cmath>
 #include <memory>
