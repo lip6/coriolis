@@ -1,15 +1,23 @@
-FROM quay.io/pypa/manylinux2014_x86_64:2023-07-14-55e4124
+FROM quay.io/pypa/manylinux_2_28
 
-#RUN yum -y install epel-release
-
-ADD https://ftp.lip6.fr/lip6/softs/coriolis/etc/epel-7/epel.repo          /etc/yum.repo.d/
-ADD https://ftp.lip6.fr/lip6/softs/coriolis/etc/epel-7/RPM-GPG-KEY-EPEL-7 /etc/pki/rpm-gpg/
+RUN yum -y install epel-release
+#ADD https://ftp.lip6.fr/lip6/softs/coriolis/etc/epel-7/epel.repo          /etc/yum.repo.d/
+#ADD https://ftp.lip6.fr/lip6/softs/coriolis/etc/epel-7/RPM-GPG-KEY-EPEL-7 /etc/pki/rpm-gpg/
 RUN yum repolist
 
 RUN yum install -y \
- qt5-qtbase-devel qt5-qtsvg-devel \
- rapidjson-devel bison flex doxygen bzip2-devel flex-devel \
- boost169-devel boost169-system libxml2-devel  qwt-devel eigen3-devel \
- ccache \
+ ccache            \
+ bison             \
+ flex              \
+ flex-devel        \
+ boost-devel       \
+ bzip2-devel       \
+ libxml2-devel     \
+ rapidjson-devel   \
+ eigen3-devel      \
+ qt5-qtbase-devel  \
+ qt5-qtsvg-devel   \
+ qwt-devel         \
+ doxygen           \
  wget
 
