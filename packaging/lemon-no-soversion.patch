@@ -1,0 +1,12 @@
+index 4e6567e..d58db3c 100644
+--- coriolis/subprojects/coloquinte/subprojects/lemon/lemon/CMakeLists.txt
++++ coriolis/subprojects/coloquinte/subprojects/lemon/lemon/CMakeLists.txt
+@@ -61,7 +61,7 @@ TARGET_LINK_LIBRARIES(lemon
+   )
+ 
+ IF(UNIX)
+-  SET_TARGET_PROPERTIES(lemon PROPERTIES OUTPUT_NAME emon VERSION ${LEMON_VERSION} SOVERSION ${LEMON_VERSION})
++  SET_TARGET_PROPERTIES(lemon PROPERTIES OUTPUT_NAME emon)
+ ENDIF()
+ 
+ INSTALL(
