@@ -17,7 +17,6 @@ RUN yum install -y \
  eigen3-devel      \
  qt5-qtbase-devel  \
  qt5-qtsvg-devel   \
- qwt-devel         \
+ qwt-qt5-devel     \
  doxygen           \
  wget
-
