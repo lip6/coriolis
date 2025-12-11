@@ -77,6 +77,7 @@
                     packaging/patchvenv.sh                    \
                     packaging/find_files.sh                   \
                     packaging/coloquinte-clamp.patch          \
+                    packaging/lemon-no-soversion.patch        \
                     coriolis-eda-${version}.tar.gz            \
                     venv-al9-${version}.tar.gz                \
                     coriolis-docs-${docGithash}.tar.gz        \

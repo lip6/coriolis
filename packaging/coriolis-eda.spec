@@ -15,6 +15,7 @@ Source2:        patchvenv.sh
 Source3:        find_files.sh
 Source10:       coriolis-docs-%{docGithash}.tar.gz
 Patch0:         coloquinte-clamp.patch 
+Patch1:         lemon-no-soversion.patch 
 Requires:       python3-doit
 
 
@@ -166,6 +167,7 @@ Warning: This package is only a stub for now.
 %prep
 %setup -q -n %{name}-%{version} -a 1
 %patch -P 0 -p1 -b .clamp 
+%patch -P 1 -p1 -b .no-soversion 
 
 
 %build
