@@ -175,6 +175,26 @@ install_alliance:
 	 $(ALLIANCE_SRC)/configure --prefix=$(PREFIX) --enable-alc-shared; \
 	 make -j1 install
 
+install_tasyagle:
+	cd ../tas-yagle && ./build.sh --LIP6
+
+install_ihpsg13g2:
+	cd ../coriolis-pdk-ihpsg13g2 && ./build-LIP6.sh
+
+install_ihpsg13g2_c4m:
+	cd ../coriolis-pdk-ihpsg13g2-c4m && ./build-LIP6.sh
+
+install_gf180mcu:
+	cd ../coriolis-pdk-gf180mcu && ./build-LIP6.sh
+
+install_g180mcu_c4m:
+	cd ../coriolis-pdk-gf180mcu-c4m && ./build-LIP6.sh
+
+install_all_pdks: install_ihpsg13g2     \
+                  install_ihpsg13g2_c4m \
+                  install_gf180mcu      \
+                  install_g180mcu_c4m
+
 
 clean_build: check_dir
 	@echo "Removing the build tree only."; \
