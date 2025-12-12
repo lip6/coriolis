@@ -85,7 +85,7 @@ jobs:
         # Github Actions doesn't support pairing matrix values together, let's improvise
         # https://github.com/github/feedback/discussions/7835#discussioncomment-1769026
         buildplat:
-          - [ubuntu-24.04, manylinux_2_28]
+          - [ubuntu-24.04, manylinux_x86_64]
           -  [macos-15, macosx_x86_64]
           #- [ubuntu-20.04, musllinux_x86_64]
           #- [windows-2019, win_amd64]
