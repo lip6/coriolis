@@ -11,6 +11,7 @@ block = files([
   'iospecs.py',
   'matrix.py',
   'meson.build',
+  'pinPlacer.py',
   'rsmt.py',
   'spares.py',
   'timing.py',

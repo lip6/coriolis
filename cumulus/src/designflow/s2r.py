@@ -16,6 +16,8 @@ class S2R ( FlowTask ):
     DoBlackboxes        = 0x0004
     NoReplaceBlackboxes = 0x0008
     Verbose             = 0x0010
+    PinLayer            = 0x0020
+    DeleteSubConnectors = 0x0030
 
     @staticmethod
     def mkRule ( rule, targets, depends=[], flags=0 ):
@@ -32,6 +34,8 @@ class S2R ( FlowTask ):
         if flags & S2R.DoBlackboxes:        self.command.append( '-1' )
         if flags & S2R.NoReplaceBlackboxes: self.command.append( '-r' )
         if flags & S2R.Verbose:             self.command.append( '-v' )
+        if flags & S2R.PinLayer:            self.command.append( '-P' )
+        if flags & S2R.DeleteSubConnectors: self.command.append( '-C' )
         self.command   += [ self.inputFile.stem, self.outputFile.stem ]
         self.addClean( self.targets )
 
