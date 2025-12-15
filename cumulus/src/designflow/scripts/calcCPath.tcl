@@ -34,7 +34,7 @@ while {$idx < $argc} {
   -OsdiDll -
   -o  {
      if {$idx < $argc} {
-     set odsidll [lindex $argv $idx]
+     set osdidll [lindex $argv $idx]
      incr idx
    } }
   -SpiceModel -
@@ -107,7 +107,7 @@ avt_config simPowerSupply $vddvolt
 # Files of transistor model of the technology, that may require modifications
 #
 # nfet_01v8
-foreach i $odsidll {
+foreach i $osdidll {
 	avt_LoadFile $i osdi
 }
 foreach i $spimodel {
@@ -160,7 +160,7 @@ set_input_delay -max 3000 -clock ck -clock_fall [all_inputs]
 #inf_DefinePathDelayMargin any "*" 1 1e-9 datapath
 
 set fig [ttv_LoadSpecifiedTimingFigure $target]
-set clist [ttv_GetPaths $fig * * uu 5 critic path max]
+set clist [ttv_GetPaths $fig * * ?? 5 critic path max]
 
 ttv_DisplayPathListDetail [fopen $target.cpath.rep w]  $clist
 

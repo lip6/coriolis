@@ -158,8 +158,8 @@ class AvtShell ( TasYagle ):
         
 
 class STA ( AvtShell ):
-
     scriptSTA = Path(__file__).parent / 'scripts' / 'calcCPath.tcl'
+    print('scriptSTA',scriptSTA)
 
     @staticmethod
     def mkRule ( rule, depends, flags=0 ):
@@ -178,9 +178,9 @@ class STA ( AvtShell ):
                        , Path(self.file_depend(0).stem + '.stat')
                        , Path(self.file_depend(0).stem + '.stm')
                        , Path(self.file_depend(0).stem + '.sto')
-                       , Path(self.file_depend(0).stem + '.str')
-                       , Path(self.file_depend(0).stem + '.loop') ]
+                       , Path(self.file_depend(0).stem + '.str') ]
         self.addClean( self.targets )
+        self.addClean( [ Path(self.file_depend(0).stem + '.loop') ] )
 
 
 class XTas ( TasYagle ):

@@ -44,6 +44,7 @@ class ShellEnv ( object ):
     Show              = 0x0001
     CHECK_TOOLKIT     = None
     ALLIANCE_TOP      = None
+    MBK_SPI_MODEL     = 'MBK_SPI_MODEL_not_set'
     RDS_TECHNO_NAME   = None
     GRAAL_TECHNO_NAME = None
     DREAL_TECHNO_NAME = None
@@ -82,7 +83,6 @@ class ShellEnv ( object ):
         self.shellEnv[ 'MBK_IN_PH'      ] = env.getIN_PH()
         self.shellEnv[ 'MBK_OUT_PH'     ] = env.getOUT_PH()
         self.shellEnv[ 'MBK_CATAL_NAME' ] = env.getCATALOG()
-        self.shellEnv[ 'MBK_SPI_MODEL'  ] = 'MBK_SPI_MODEL_not_set'
         self.shellEnv[ 'RDS_IN'         ] = 'gds'
         self.shellEnv[ 'RDS_OUT'        ] = 'gds'
         if ShellEnv.ALLIANCE_TOP:
@@ -109,6 +109,10 @@ class ShellEnv ( object ):
             os.environ[ variable ] = value
             if flags & ShellEnv.Show:
                 print( '    {}: {}'.format( variable, value ))
+        if ShellEnv.MBK_SPI_MODEL is not None:
+            if isinstance(ShellEnv.MBK_SPI_MODEL,Path): value = ShellEnv.MBK_SPI_MODEL.as_posix()
+            else:                                       value = ShellEnv.MBK_SPI_MODEL
+            os.environ[ 'MBK_SPI_MODEL' ] = value
         if ShellEnv.RDS_TECHNO_NAME is not None:
             os.environ[ 'RDS_TECHNO_NAME' ] = ShellEnv.RDS_TECHNO_NAME
         if ShellEnv.GRAAL_TECHNO_NAME is not None:

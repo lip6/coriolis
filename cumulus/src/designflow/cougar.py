@@ -49,6 +49,10 @@ class Cougar ( FlowTask ):
         shellEnv = ShellEnv()
         shellEnv[ 'MBK_OUT_LO' ] = self.outputFile.suffix[1:]
         shellEnv[ 'MBK_IN_PH'  ] = self.inputFile .suffix[1:]
+        if self.flags & (Cougar.Transistor|Cougar.GroundCap|Cougar.WireRC) \
+           and ShellEnv.MBK_SPI_MODEL == 'MBK_SPI_MODEL_not_set':
+            e = ErrorMessage( 1, 'Cougar.doTask(): MBK_SPI_MODEL has not been set.'.format( 1 ))
+            return TaskFailed( e )
         shellEnv.export()
         state = subprocess.run( self.command )
         if state.returncode:
