@@ -33,6 +33,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
+#include "hurricane/RegularLayer.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 
@@ -247,6 +248,9 @@ namespace Hurricane {
   DbU::Unit  Layer::getMinimalSpacing () const
   {
     if (_spacingRules.widthsSize() < 1) {
+      const RegularLayer* regular = dynamic_cast<const RegularLayer*>( this );
+      if (regular) return regular->getBasicLayer()->getMinimalSpacing();
+
       cerr << Warning( "Layer::getMinimalSpacing(): No minimal spacing defined for layer \"%s\"."
                      , getString(getName()).c_str()) << endl;
       return 0;
