@@ -488,7 +488,8 @@ namespace Anabatic {
       //      << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
 
       *viaToSameCap   = Session::getPWireWidth(depth) / 2;
-      *viaToSameCapNp = routingLayer->getMinimalSpacing() / 2;
+      *viaToSameCapNp = Session::getWireWidth(depth) / 2;
+      //*viaToSameCapNp = routingLayer->getMinimalSpacing() / 2;
 
     // Bottom metal of the VIA going *up*.
       const Layer* viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth) );
