@@ -70,6 +70,8 @@
    tar --exclude=*.pyc -zcf venv-al9-${version}.tar.gz .venv .pdm-plugins
  fi
 
+#		    packaging/debian.series                   \
+
  echo "* Update files in OBS project directory."
  echo "  OBS package directory: \"${obsDir}\"."
  for distribFile in packaging/coriolis-eda.spec               \
@@ -84,7 +86,6 @@
 		    packaging/coriolis-eda.dsc                \
 		    packaging/debian.copyright                \
 		    packaging/debian.changelog                \
-		    packaging/debian.series                   \
 		    packaging/debian.control                  \
 		    packaging/debian.rules                    \
 		    packaging/debian.coriolis-eda.install     \

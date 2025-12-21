@@ -22,7 +22,7 @@ binary:
 	dh_testroot
 	dh_installchangelogs
 	dh_prep
-	patch -p1 -b -z .no-soversion < /usr/src/packages/SOURCES/lemon-no-soversion.patch
+#	patch -p1 -b -z .no-soversion < /usr/src/packages/SOURCES/lemon-no-soversion.patch
 	tar zxvf /usr/src/packages/SOURCES/venv-al9-2.5.5.tar.gz
 	cp /usr/src/packages/SOURCES/patchvenv.sh .
 	chmod u+x patchvenv.sh .
