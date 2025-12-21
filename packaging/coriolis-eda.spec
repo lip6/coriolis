@@ -46,11 +46,10 @@ BuildRequires:  graphviz-gd
 %if 0%{?suse_version} >= 1699 && 0%{?is_opensuse}
 BuildRequires:  python3-watchfiles
 BuildRequires:  python3-pyproject-metadata
-BuildRequires:  libboost_headers1_89_0-devel
-BuildRequires:  libboost_program_options1_89_0
-BuildRequires:  libboost_filesystem1_89_0
-BuildRequires:  libboost_iostreams1_89_0
-BuildRequires:  libboost_test1_89_0
+BuildRequires:  libboost_program_options-devel
+BuildRequires:  libboost_filesystem-devel
+BuildRequires:  libboost_iostreams-devel
+BuildRequires:  libboost_test-devel
 BuildRequires:  graphviz-gnome
 BuildRequires:  texlive-l3kernel
 BuildRequires:  texlive-cmap
@@ -166,8 +165,8 @@ Warning: This package is only a stub for now.
 
 %prep
 %setup -q -n %{name}-%{version} -a 1
-%patch -P 0 -p1 -b .clamp 
-%patch -P 1 -p1 -b .no-soversion 
+#patch -P 0 -p1 -b .clamp 
+#patch -P 1 -p1 -b .no-soversion 
 
 
 %build
