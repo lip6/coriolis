@@ -42,25 +42,12 @@ jobs:
         uses: pdm-project/setup-pdm@v4
 
       - name: Build website
-        run: >
+        run: |
           sudo apt update
-
-          sudo apt install -y libxml2
-                              texlive-fonts-extra
-                              graphviz
-                              doxygen
-                              doxygen-latex
-                              python3-docutils
-                              qtbase5-dev
-                              libqt5svg5-dev
-
+          sudo apt upgrade
+          sudo apt install -y texlive-fonts-extra graphviz doxygen doxygen-latex python3-docutils qtbase5-dev libqt5svg5-dev
           pdm sync -d --no-self
-
-          pdm run meson setup --prefix=/home/runner/work/install
-                              -D docs=true
-                              -D only-docs=true
-                              -D docs-siteurl=$BASE_URL builddir
-
+          pdm run meson setup --prefix=/home/runner/work/install -D docs=true -D only-docs=true -D docs-siteurl=$BASE_URL builddir
           pdm run meson install -C builddir
 
       - name: Deploy if this is the `main` branch
