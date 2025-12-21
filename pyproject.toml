@@ -6,7 +6,7 @@ authors = [ { name = "Coriolis EDA Contributers" } ]
 readme = "README.rst"
 homepage = "https://github.com/lip6/coriolis"
 repository = "https://github.com/lip6/coriolis"
-requires-python = ">= 3.9"
+requires-python = ">= 3.8.1"
 packages = [
   { include = "coriolis"},
 ]
