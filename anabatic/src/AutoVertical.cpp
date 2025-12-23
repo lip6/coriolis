@@ -727,10 +727,10 @@ namespace Anabatic {
 
   //Session::doglegReset();
 
-    AutoContact*  autoSource = getAutoSource();
-    AutoContact*  autoTarget = getAutoTarget();
-    GCell*        begin      = autoSource->getGCell();
-    GCell*        end        = autoTarget->getGCell();
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    GCell*       begin      = autoSource->getGCell();
+    GCell*       end        = autoTarget->getGCell();
 
     if (not autoSource->canDrag()) unsetFlags( SegDrag|SegDragSameLayer );
 
@@ -748,8 +748,8 @@ namespace Anabatic {
       } while ( gcell and (gcell != end) );
     }
 
-    size_t  depth   = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
-    bool    upLayer = true;
+    size_t depth   = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
+    bool   upLayer = true;
 
     if (Session::getRoutingGauge()->isTwoMetals()) {
       upLayer = (Session::getRoutingGauge()->isVH());

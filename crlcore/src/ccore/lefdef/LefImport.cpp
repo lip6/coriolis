@@ -988,8 +988,8 @@ namespace {
     cmess2 << "     o " << cellName
            << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
            << " " << gaugeName; 
-    if (isPad) cerr << " (PAD)";
-    cerr << endl; 
+    if (isPad) cmess2 << " (PAD)";
+    cmess2 << endl; 
 
     Catalog::State* state = af->getCatalog()->getState( cellName );
     if (not state) state = af->getCatalog()->getState ( cellName, true );
@@ -1217,8 +1217,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-      DebugSession::open( 100, 110 );
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //  DebugSession::open( 100, 110 );
     cdebug_log(100,1) << "LefParser::_pinStdPostProcess" << endl;
 
     for ( auto element : _pinComponents ) {
@@ -1402,8 +1402,8 @@ namespace {
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi222_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__dffsnq_1")
   //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__aoi22_1")
-    if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
-      DebugSession::close();
+  //if (_cell->getName() == "gf180mcu_fd_sc_mcu9t5v0__clkbuf_2")
+  //  DebugSession::close();
   }
 
 
