@@ -107,33 +107,44 @@ namespace {
 
   bool  checkForLoopHV ( const vector<AutoContactTerminal*>& terminals )
   {
-    AutoContactTerminal* prefTerm    = nullptr;
-    AutoContactTerminal* nonprefTerm = nullptr;
-    AutoSegment*         pref        = nullptr;
-    AutoSegment*         nonpref     = nullptr;
+    vector< pair<AutoContactTerminal*,AutoSegment*> >  prefs;
+    vector< pair<AutoContactTerminal*,AutoSegment*> >  nonprefs;
+
     for ( AutoContactTerminal* terminal : terminals ) {
       if (terminal->getSegment()->isHorizontal()) {
-        prefTerm = terminal;
-        pref     = terminal->getSegment();
+        prefs.push_back( make_pair( terminal, terminal->getSegment() ));
       } else {
-        nonprefTerm = terminal;
-        nonpref     = terminal->getSegment();
+        nonprefs.push_back( make_pair( terminal, terminal->getSegment() ));
       }
     }
-    if (not pref or not nonpref) return false;
-    if (pref->isGlobal()) return false;
-    if (pref->getAnchoredLength() > pref->getPitch()) return false;
-    
-    AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
-    AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
-    if (not ppPref or not ppNonpref) return false;
 
-    if (ppPref->isReduced()) {
-      cdebug_log(145,0) << "Loop suppression on " << ppPref << endl;
-      ppPref->setAxis( nonpref->getAxis() );
+    if ((prefs.size() == 1) and (nonprefs.size() == 1)) {
+      if (prefs[0].second->isGlobal()) return false;
+      if (prefs[0].second->getAnchoredLength() > prefs[0].second->getPitch()) return false;
+
+      AutoSegment* ppPref    =    prefs[0].second->getOppositeAnchor(    prefs[0].first )->getPerpandicular(    prefs[0].second ); 
+      AutoSegment* ppNonpref = nonprefs[0].second->getOppositeAnchor( nonprefs[0].first )->getPerpandicular( nonprefs[0].second ); 
+      if (not ppPref or not ppNonpref) return false;
+      if (not ppPref->isReduced()) return false;
+
+      cdebug_log(145,0) << "P+NP Loop suppression on " << ppPref << endl;
+      ppPref->setAxis( nonprefs[0].second->getAxis() );
       return true;
     }
 
+    if (nonprefs.size() == 2) {
+      bool isSource0 = (nonprefs[0].first == nonprefs[0].second->getAutoSource());
+      bool isSource1 = (nonprefs[1].first == nonprefs[1].second->getAutoSource());
+      if (isSource0 xor isSource1) return false;
+
+      bool shorter0 = (nonprefs[0].second->getLength() < nonprefs[1].second->getLength());
+      if (shorter0)
+        nonprefs[0].second->setAxis( nonprefs[1].second->getAxis() );
+      else
+        nonprefs[1].second->setAxis( nonprefs[0].second->getAxis() );
+      return true;
+    }
+    
     return false;
   }
 
@@ -192,6 +203,9 @@ namespace {
       cdebug_tabw(145,-1);
       return;
     }
+    RoutingPlane* planeM3 = nullptr;
+    if (Session::getAllowedDepth())
+      planeM3 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
     // if (not rp->isPunctual()) {
     //   cdebug_tabw(145,-1);
     //   return;
@@ -204,12 +218,15 @@ namespace {
 #if FEATURE_SPAN_CENTER
     Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
 #endif
+    cdebug_log(145,0) << "m1spacing=" << DbU::getValueString(m1spacing) << endl;
+    cdebug_log(145,0) << "m2spacing=" << DbU::getValueString(m2spacing) << endl;
 
 #if FEATURE_SPAN_GCELL_CENTER
     Box trackBb = bb;
     trackBb.inflate( 0, -halfViaBotSide );
 
     DbU::Unit y     = trackBb.getYCenter();
+    DbU::Unit x     = trackBb.getXCenter();
     GCell*    gcell = Session::getGCellUnder( bb.getXCenter(), bb.getYCenter() );
     if (gcell) {
       if      (trackBb.getYMax() <= gcell->getYCenter()) y = trackBb.getYMax();
@@ -223,7 +240,18 @@ namespace {
     if (track->getAxis() < trackBb.getYMin()) {
       y = track->getNextTrack()->getAxis();
     }
-    Box metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+    if (planeM3) {
+      trackBb.inflate( -halfViaBotSide, 0 );
+      if (not trackBb.isEmpty()) {
+        Track* track = planeM3->getTrackByPosition( x, Constant::Superior );
+        if (track->getAxis() <= trackBb.getXMax()) {
+          x = track->getAxis();
+        }
+      }
+    }
+
+
+    Box metal2bb = Box( x, y );
 #endif
 
 #if FEATURE_SPAN_ANCHOR
@@ -241,7 +269,9 @@ namespace {
     //   metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
     // else
     //   metal2bb.inflate( - m2spacing / 2, 0 );
-    metal2bb.inflate( (m2spacing + halfViaTopSide) / 2, 0 );
+    cdebug_log(145,0) << "metal2bb=" << metal2bb << endl;
+  //metal2bb.inflate( m2spacing/2 + halfViaTopSide, 0 );
+    metal2bb.inflate( halfViaTopSide, 0 );
 
     // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
     //                                   , bb.getYCenter()
