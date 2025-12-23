@@ -94,7 +94,14 @@ namespace Anabatic {
   AutoSegment* AutoContactHTee::getPerpandicular ( const AutoSegment* from ) const
   {
     if ( (from == _horizontal1) or (from == _horizontal2) ) return _vertical1;
-    return NULL;
+    if (from == _vertical1) {
+      if (_horizontal1->isCanonical()) return _horizontal1;
+      if (_horizontal2->isCanonical()) return _horizontal2;
+      for ( AutoSegment* segment : _horizontal1->getAligneds() ) {
+        if (segment->isCanonical()) return segment;
+      }
+    }
+    return nullptr;
   }
 
 
