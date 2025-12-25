@@ -17,6 +17,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <array>
 #include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
@@ -49,6 +50,7 @@ namespace Anabatic {
   using  std::setprecision;
   using  std::ostringstream;
   using  std::vector;
+  using  std::array;
   using  Hurricane::tab;
   using  Hurricane::Warning;
   using  Hurricane::Error;
@@ -563,71 +565,68 @@ namespace Anabatic {
       }
 
       Box        bb       = transformation.getBox( candidate->getBoundingBox() );
-      Box        bbViaId  = bb;
-      Box        bbViaPp  = bb;
       DbU::Unit  trackPos = 0;
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
-      
-      bbViaId.inflate( -viaHShrink, -viaVShrink );
-      bbViaPp.inflate( -viaVShrink, -viaHShrink );
-      if (bbViaId.isEmpty()) {
-        if (bbViaPp.isEmpty()) {
-          cdebug_log(112,0) << "Component too small to host a VIA12, fully discard." << endl;
-          continue;
+
+      array<Box,2> bbs = { bb, bb };
+      bbs[0].inflate( -viaHShrink, -viaVShrink );
+      bbs[1].inflate( -viaVShrink, -viaHShrink );
+
+      for ( size_t i=0 ; i<bbs.size() ; ++i ) {
+        if (bbs[i].isEmpty()) continue;
+        cdebug_log(112,0) << "Trying component BB [" << i << "] " << bbs[i] << endl;
+
+        if (gauge->isVertical()) {
+          trackPos = gauge->getTrackPosition( ab.getXMin()
+                                            , ab.getXMax()
+                                            , bb.getCenter().getX()
+                                            , Constant::Nearest );
+          minPos = bb.getXMin();
+          maxPos = bb.getXMax();
+
+          cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
+          cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
+          cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
+        } else {
+          trackPos = gauge->getTrackPosition( ab.getYMin()
+                                            , ab.getYMax()
+                                            , bb.getCenter().getY()
+                                            , Constant::Nearest );
+          minPos = bb.getYMin();
+          maxPos = bb.getYMax();
+
+          cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
+          cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
+          cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
         }
-        cdebug_log(112,0) << "Component not in the right direction." << endl;
-        bb = bbViaPp;
-        rp->setFlags( RoutingPad::RotateBottomMetal );
-      } else
-        bb = bbViaId;
-      if (gauge->isVertical()) {
-        trackPos = gauge->getTrackPosition( ab.getXMin()
-                                          , ab.getXMax()
-                                          , bb.getCenter().getX()
-                                          , Constant::Nearest );
-        minPos = bb.getXMin();
-        maxPos = bb.getXMax();
 
-        cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
-        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
-        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
-      } else {
-        trackPos = gauge->getTrackPosition( ab.getYMin()
-                                          , ab.getYMax()
-                                          , bb.getCenter().getY()
-                                          , Constant::Nearest );
-        minPos = bb.getYMin();
-        maxPos = bb.getYMax();
-
-        cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
-        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
-        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
-      }
-
-      cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
-      cdebug_log(112,0) << "| " << transformation << endl;
-      cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
-      cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
-      cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
-                        <<         DbU::getValueString(maxPos) << endl;
+        cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
+        cdebug_log(112,0) << "| " << transformation << endl;
+        cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
+        cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
+        cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
+                          <<         DbU::getValueString(maxPos) << endl;
         
-      if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        DbU::Unit span = (maxPos - minPos) / gauge->getPitch();
-        if (not ongridComponent or (bestSpan < span)) {
-          cdebug_log(112,0) << "Best span=" << (maxPos-minPos) << " " << component << endl;
-          ongridComponent = component;
-          bestSpan        = span;
-          if (gauge->isVertical())
-            ongridCenter = Point( trackPos, bb.getCenter().getY() );
-          else
-            ongridCenter = Point( bb.getCenter().getX(), trackPos );
+        if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
+          DbU::Unit span = (maxPos - minPos) / gauge->getPitch();
+          if (not ongridComponent or (bestSpan < span)) {
+            cdebug_log(112,0) << "Best span=" << (maxPos-minPos) << " " << component << endl;
+            ongridComponent = component;
+            bestSpan        = span;
+            if (gauge->isVertical())
+              ongridCenter = Point( trackPos, bb.getCenter().getY() );
+            else
+              ongridCenter = Point( bb.getCenter().getX(), trackPos );
+            if (i == 1) rp->setFlags  ( RoutingPad::RotateBottomMetal );
+            else        rp->unsetFlags( RoutingPad::RotateBottomMetal );
+          }
+        } else {
+          cdebug_log(112,0) << "Component is offgrid." << endl;
+          offgridComponent = candidate;
         }
-      } else {
-        cdebug_log(112,0) << "Component is offgrid." << endl;
-        offgridComponent = candidate;
       }
     }
 
