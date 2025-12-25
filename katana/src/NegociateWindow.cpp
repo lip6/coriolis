@@ -719,7 +719,7 @@ namespace Katana {
     if (_katana->getConfiguration()->runRealignStage()) {
       cmess1 << "     o  Realign Stage." << endl;
       
-      cdebug_log(159,0) << "Loadind realign queue." << endl;
+      cdebug_log(159,0) << "Loading realign queue." << endl;
       _katana->setStage( Anabatic::StageRealign );
       for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
         RoutingEvent* event = _eventHistory.getNth(i);

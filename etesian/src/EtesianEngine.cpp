@@ -880,6 +880,7 @@ namespace Etesian {
     // Translate the placeable instances
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
+    //cerr << occurrence << endl;
       if (instanceId >= (int) instancesNb) {
         // This will be an error
         ++instanceId;
