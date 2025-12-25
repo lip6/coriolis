@@ -687,6 +687,7 @@ namespace Katana {
   void  RoutingEvent::_processRealign ( RoutingEventQueue& queue, RoutingEventHistory& history )
   {
     cdebug_log(159,0) << "* Mode:Realign." << endl;
+    if (getSegment()->isReduced()) return;
 
     SegmentFsm fsm ( this, queue, history );
     if (fsm.getState() == SegmentFsm::MissingData   ) return;
