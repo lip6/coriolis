@@ -522,7 +522,7 @@ namespace Anabatic {
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
 
-    if (getStage() == StageDriving) {
+    if (getStage() == StageChainReduce) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
       size_t fixedSegments    = 0;
@@ -550,6 +550,9 @@ namespace Anabatic {
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
         DebugSession::close();
       }
+
+      setStage( StagePostProcessRoutingPads );
+      _postProcessRoutingPads();
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
       cmess1 << Dots::asSizet("     - Active AutoSegments"       ,AutoSegment::getAllocateds()-fixedSegments) << endl;
@@ -1520,9 +1523,9 @@ namespace Anabatic {
   void  AnabaticEngine::finalizeLayout ()
   {
     cdebug_log(145,0) << "Anabatic::finalizeLayout()" << endl;
-    if (getStage() > StageDriving) return;
+    if (getStage() > StagePostProcessRoutingPads) return;
 
-    setStage( StageDriving );
+    setStage( StageChainReduce );
 
     startMeasures();
     _gutAnabatic();
@@ -1746,14 +1749,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoSegment* autoSegment )
   {
-    if (getStage() >= StageDriving) return;
+    if (getStage() >= StageChainReduce) return;
     _autoSegmentLut[ autoSegment->base() ] = autoSegment;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoSegment* autoSegment )
   {
-    if (getStage() >= StageDriving) return;
+    if (getStage() >= StageChainReduce) return;
 
     AutoSegmentLut::iterator it = _autoSegmentLut.find( autoSegment->base() );
     if (it != _autoSegmentLut.end())
@@ -1773,14 +1776,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoContact* autoContact )
   {
-    if (getStage() >= StageDriving) return;
+    if (getStage() >= StageChainReduce) return;
     _autoContactLut [ autoContact->base() ] = autoContact;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoContact* autoContact )
   {
-    if (getStage() >= StageDriving) return;
+    if (getStage() >= StageChainReduce) return;
 
     AutoContactLut::iterator it = _autoContactLut.find( autoContact->base() );
     if (it != _autoContactLut.end())
@@ -1797,7 +1800,7 @@ namespace Anabatic {
       expandeds++;
       sasp.second->destroy();
     }
-    if (getStage() == StageDriving)
+    if (getStage() == StageChainReduce)
       cmess2 << "     - Expandeds     := " << expandeds << endl;
 
     _autoSegmentLut.clear();

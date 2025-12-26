@@ -760,7 +760,7 @@ namespace Anabatic {
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
     cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
-    if (not isGapFiller() and not isDragSameLayer()) {
+    if (not isGapFiller() and not isDragSameLayer() and (Session::getStage() < StagePostProcessRoutingPads)) {
       for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
         oldSpan.merge( segment->getSourcePosition() );
         oldSpan.merge( segment->getTargetPosition() );
@@ -2207,8 +2207,8 @@ namespace Anabatic {
     if (isFixed()) {
       cdebug_log(159,0) << "  isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
       if (length < getPPitch()) {
-        if (Session::getAnabatic()->getStage() >= Anabatic::StageDriving) {
-          cdebug_log(159,0) << "  In EngineDriving mode" << endl;
+        if (Session::getAnabatic()->getStage() >= Anabatic::StageChainReduce) {
+          cdebug_log(159,0) << "  In EngineChainReduce mode" << endl;
           return isSpinTopOrBottom();
         }
       }

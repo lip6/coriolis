@@ -175,17 +175,18 @@ namespace Anabatic {
                        };
 
 
-  static const uint32_t  StageCreation      =  0;
-  static const uint32_t  StageGlobalRouted  =  1;
-  static const uint32_t  StageGlobalLoaded  =  2;
-  static const uint32_t  StageDetailInit    =  3;
-  static const uint32_t  StageNegociate     =  4;
-  static const uint32_t  StagePack          =  5;
-  static const uint32_t  StageRepair        =  6;
-  static const uint32_t  StageRealign       =  7;
-  static const uint32_t  StageDriving       =  8;
-  static const uint32_t  StagePreDestroying =  9;
-  static const uint32_t  StageGutted        = 10;
+  static const uint32_t  StageCreation               =  0;
+  static const uint32_t  StageGlobalRouted           =  1;
+  static const uint32_t  StageGlobalLoaded           =  2;
+  static const uint32_t  StageDetailInit             =  3;
+  static const uint32_t  StageNegociate              =  4;
+  static const uint32_t  StagePack                   =  5;
+  static const uint32_t  StageRepair                 =  6;
+  static const uint32_t  StageRealign                =  7;
+  static const uint32_t  StageChainReduce            =  8;
+  static const uint32_t  StagePostProcessRoutingPads =  9;
+  static const uint32_t  StagePreDestroying          = 10;
+  static const uint32_t  StageGutted                 = 11;
 
   enum EngineAlgorithm { EngineLoadGrByNet            = (1 <<  0)
                        , EngineLoadGrByGCell          = (1 <<  1)
