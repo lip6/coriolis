@@ -267,7 +267,7 @@ namespace Katana {
     }
     setupSpecialNets();
     if (not setupPreRouteds()) {
-      setStage( Anabatic::StageDriving );
+      setStage( Anabatic::StageChainReduce );
       throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
     }
     cdebug_tabw(155,-1);
@@ -931,11 +931,10 @@ namespace Katana {
   void  KatanaEngine::finalizeLayout ()
   {
     cdebug_log(155,0) << "KatanaEngine::finalizeLayout()" << endl;
-    if (getStage() > Anabatic::StageDriving) return;
+    if (getStage() > Anabatic::StageChainReduce) return;
 
     cdebug_tabw(155,1);
-    _postProcessRoutingPads();
-    setStage( Anabatic::StageDriving );
+    setStage( Anabatic::StageChainReduce );
     _gutKatana();
 
     Super::finalizeLayout();
