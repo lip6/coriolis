@@ -727,6 +727,7 @@ namespace Anabatic {
 
   //Session::doglegReset();
 
+    DbU::Unit    oneGrid    = DbU::fromGrid( 1 );
     AutoContact* autoSource = getAutoSource();
     AutoContact* autoTarget = getAutoTarget();
     GCell*       begin      = autoSource->getGCell();
@@ -735,8 +736,8 @@ namespace Anabatic {
     if (not autoSource->canDrag()) unsetFlags( SegDrag|SegDragSameLayer );
 
     DbU::Unit doglegAxis = (doglegGCell->getYMax() + doglegGCell->getYMin()) / 2;
-    if (isLocal())
-      doglegAxis = (getSourceY() + getTargetY()) / 2;
+    if (isLocal()) doglegAxis = (getSourceY() + getTargetY()) / 2;
+    if (doglegAxis % oneGrid) doglegAxis += oneGrid - doglegAxis % oneGrid;
 
     if (doglegGCell == begin) unsetFlags( SegGlobal );
     if (doglegGCell != end) {

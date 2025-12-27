@@ -465,7 +465,10 @@ namespace Anabatic {
 
   void  AutoSegment::initialize ()
   {
-    // cerr << "AutoSegment::initialize()" << endl;
+#define SHOW_WIRE_CAP_TABLE 0
+#if SHOW_WIRE_CAP_TABLE
+    cerr << "AutoSegment::initialize()" << endl;
+#endif
 
     _initialized = true;
     DbU::Unit twoGrid = DbU::fromGrid( 2 );
@@ -482,10 +485,12 @@ namespace Anabatic {
       uint32_t     flags            = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
       uint32_t     flagsNp          = (isVertical) ? Layer::EnclosureH : Layer::EnclosureV ;
 
-      // cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
-      //      << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
-      // cerr << "  minimalSpacing: "
-      //      << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
+#if SHOW_WIRE_CAP_TABLE
+      cerr << "  " << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
+           << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
+      cerr << "    minimalSpacing: "
+           << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
+#endif
 
       *viaToSameCap   = Session::getPWireWidth(depth) / 2;
       *viaToSameCapNp = Session::getWireWidth(depth) / 2;
@@ -515,15 +520,17 @@ namespace Anabatic {
           *minimalLength += twoGrid - modulo;
       }
 
-    // cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
-    // cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
-    // if (depth > 0)                                                                          
-    //   cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-    // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-    // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
-    // cerr << "  minimal Area:     " << minimalArea << endl;
-    // cerr << "  wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
-    // cerr << "  minimal length:   " << DbU::getValueString(*minimalLength) << endl;
+#if SHOW_WIRE_CAP_TABLE
+      cerr << "    viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
+      cerr << "    viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
+      if (depth > 0)                                                                          
+        cerr << "    viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
+      cerr << "    viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
+      cerr << "    viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+      cerr << "    minimal Area:     " << minimalArea << endl;
+      cerr << "    wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
+      cerr << "    minimal length:   " << DbU::getValueString(*minimalLength) << endl;
+#endif
 
       _extensionCaps.push_back( std::array<DbU::Unit*,7>( {{ viaToTopCap
                                                            , viaToTopCapNp
@@ -1669,8 +1676,8 @@ namespace Anabatic {
 
     DebugSession::open( getNet(), 145, 146 );
     cdebug_log(145,1) << "updatePositions() " << this << endl;
-    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
-    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << " duSource " << DbU::getValueString(getDuSource()) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << " duTarget " << DbU::getValueString(getDuTarget()) << endl;
 
     if (isNonPref()) {
       DbU::Unit ppCap = std::max( sourceCap, targetCap );
@@ -2042,11 +2049,11 @@ namespace Anabatic {
     DbU::Unit oneGrid      = DbU::fromGrid( 1 );
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
-    cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
-                      <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (targetExpand % oneGrid) targetExpand += oneGrid - targetExpand % oneGrid;
     if (sourceExpand % oneGrid) sourceExpand -= oneGrid + sourceExpand % oneGrid;
     if (targetExpand - sourceExpand + anchoredLength > techMinLength) targetExpand -= oneGrid;
+    cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
+                      <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (not span.isEmpty()) {
       DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand + halfMinSpacing);
       cdebug_log(149,0) <<  "shift left=" << DbU::getValueString(shiftLeft) << endl;
