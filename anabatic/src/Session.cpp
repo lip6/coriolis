@@ -103,7 +103,7 @@ namespace Anabatic {
 
   void  Session::_preDestroy ()
   {
-    if (_anabatic->getStage() < StageDriving) {
+    if (_anabatic->getStage() < StageChainReduce) {
       _revalidate ();
       _anabatic->updateDensity();
     }

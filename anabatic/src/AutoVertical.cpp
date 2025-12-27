@@ -727,16 +727,17 @@ namespace Anabatic {
 
   //Session::doglegReset();
 
-    AutoContact*  autoSource = getAutoSource();
-    AutoContact*  autoTarget = getAutoTarget();
-    GCell*        begin      = autoSource->getGCell();
-    GCell*        end        = autoTarget->getGCell();
+    DbU::Unit    oneGrid    = DbU::fromGrid( 1 );
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    GCell*       begin      = autoSource->getGCell();
+    GCell*       end        = autoTarget->getGCell();
 
     if (not autoSource->canDrag()) unsetFlags( SegDrag|SegDragSameLayer );
 
     DbU::Unit doglegAxis = (doglegGCell->getYMax() + doglegGCell->getYMin()) / 2;
-    if (isLocal())
-      doglegAxis = (getSourceY() + getTargetY()) / 2;
+    if (isLocal()) doglegAxis = (getSourceY() + getTargetY()) / 2;
+    if (doglegAxis % oneGrid) doglegAxis += oneGrid - doglegAxis % oneGrid;
 
     if (doglegGCell == begin) unsetFlags( SegGlobal );
     if (doglegGCell != end) {
@@ -748,8 +749,8 @@ namespace Anabatic {
       } while ( gcell and (gcell != end) );
     }
 
-    size_t  depth   = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
-    bool    upLayer = true;
+    size_t depth   = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
+    bool   upLayer = true;
 
     if (Session::getRoutingGauge()->isTwoMetals()) {
       upLayer = (Session::getRoutingGauge()->isVH());

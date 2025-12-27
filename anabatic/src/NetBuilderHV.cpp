@@ -359,6 +359,7 @@ namespace Anabatic {
       rpSourceContact = subContact1;
     }
 
+    cdebug_log(145,0) << "::doRp_AccessOffgrid() - finished" << endl;
     cdebug_tabw(145,-1);
 
     return rpSourceContact;

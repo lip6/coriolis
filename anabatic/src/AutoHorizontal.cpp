@@ -133,6 +133,8 @@ namespace Anabatic {
 
   void  AutoHorizontal::setDuSource ( DbU::Unit du )
   {
+    cdebug_log(145,0) << "AutoHorizontal::setDuSource() du=" << DbU::getValueString(du)
+                      << " " << this << endl;
     _horizontal->setDxSource(du);
     if (du > 0)
       cerr << Warning( "AutoHorizontal::setDuSource(): Positive du=%s (should always be negative)\n"
@@ -150,6 +152,8 @@ namespace Anabatic {
   
   void  AutoHorizontal::setDuTarget ( DbU::Unit du )
   {
+    cdebug_log(145,0) << "AutoHorizontal::setDuTarget() du=" << DbU::getValueString(du)
+                      << " " << this << endl;
     _horizontal->setDxTarget(du);
     if (du < 0)
       cerr << Warning( "AutoHorizontal::setDuTarget(): Negative du=%s (should always be positive)\n"
@@ -930,6 +934,7 @@ namespace Anabatic {
 
   //Session::doglegReset();
 
+    DbU::Unit     oneGrid    = DbU::fromGrid( 1 );
     AutoContact*  autoTarget = getAutoTarget();
     AutoContact*  autoSource = getAutoSource();
     GCell*        begin      = autoSource->getGCell();
@@ -941,6 +946,7 @@ namespace Anabatic {
     if      (flags & Flags::Source) doglegAxis = getSourceX();
     else if (flags & Flags::Target) doglegAxis = getTargetX();
     else if (isLocal())             doglegAxis = (getSourceX() + getTargetX()) / 2;
+    if (doglegAxis % oneGrid) doglegAxis += oneGrid - doglegAxis % oneGrid;
     cdebug_log(149,0) << "Axis of the dogleg: " << DbU::getValueString(doglegAxis) << "." << endl;
 
     cdebug_log(149,0) << "Detaching from Target AutoContact " << autoTarget << "." << endl;

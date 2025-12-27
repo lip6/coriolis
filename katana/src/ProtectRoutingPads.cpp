@@ -105,39 +105,6 @@ namespace {
   };
 
 
-  bool  checkForLoopHV ( const vector<AutoContactTerminal*>& terminals )
-  {
-    AutoContactTerminal* prefTerm    = nullptr;
-    AutoContactTerminal* nonprefTerm = nullptr;
-    AutoSegment*         pref        = nullptr;
-    AutoSegment*         nonpref     = nullptr;
-    for ( AutoContactTerminal* terminal : terminals ) {
-      if (terminal->getSegment()->isHorizontal()) {
-        prefTerm = terminal;
-        pref     = terminal->getSegment();
-      } else {
-        nonprefTerm = terminal;
-        nonpref     = terminal->getSegment();
-      }
-    }
-    if (not pref or not nonpref) return false;
-    if (pref->isGlobal()) return false;
-    if (pref->getAnchoredLength() > pref->getPitch()) return false;
-    
-    AutoSegment* ppPref    =    pref->getOppositeAnchor(    prefTerm )->getPerpandicular(    pref ); 
-    AutoSegment* ppNonpref = nonpref->getOppositeAnchor( nonprefTerm )->getPerpandicular( nonpref ); 
-    if (not ppPref or not ppNonpref) return false;
-
-    if (ppPref->isReduced()) {
-      cdebug_log(145,0) << "Loop suppression on " << ppPref << endl;
-      ppPref->setAxis( nonpref->getAxis() );
-      return true;
-    }
-
-    return false;
-  }
-
-
   void  postProtectRoutingPadHV ( RoutingPad* rp )
   {
     cdebug_log(145,1) << "::postProtectRoutingPadHV() " << rp << endl;
@@ -192,6 +159,9 @@ namespace {
       cdebug_tabw(145,-1);
       return;
     }
+    RoutingPlane* planeM3 = nullptr;
+    if (Session::getAllowedDepth())
+      planeM3 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
     // if (not rp->isPunctual()) {
     //   cdebug_tabw(145,-1);
     //   return;
@@ -204,12 +174,15 @@ namespace {
 #if FEATURE_SPAN_CENTER
     Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
 #endif
+    cdebug_log(145,0) << "m1spacing=" << DbU::getValueString(m1spacing) << endl;
+    cdebug_log(145,0) << "m2spacing=" << DbU::getValueString(m2spacing) << endl;
 
 #if FEATURE_SPAN_GCELL_CENTER
     Box trackBb = bb;
     trackBb.inflate( 0, -halfViaBotSide );
 
     DbU::Unit y     = trackBb.getYCenter();
+    DbU::Unit x     = trackBb.getXCenter();
     GCell*    gcell = Session::getGCellUnder( bb.getXCenter(), bb.getYCenter() );
     if (gcell) {
       if      (trackBb.getYMax() <= gcell->getYCenter()) y = trackBb.getYMax();
@@ -223,7 +196,18 @@ namespace {
     if (track->getAxis() < trackBb.getYMin()) {
       y = track->getNextTrack()->getAxis();
     }
-    Box metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+    if (planeM3) {
+      trackBb.inflate( -halfViaBotSide, 0 );
+      if (not trackBb.isEmpty()) {
+        Track* track = planeM3->getTrackByPosition( x, Constant::Superior );
+        if (track->getAxis() <= trackBb.getXMax()) {
+          x = track->getAxis();
+        }
+      }
+    }
+
+
+    Box metal2bb = Box( x, y );
 #endif
 
 #if FEATURE_SPAN_ANCHOR
@@ -241,7 +225,9 @@ namespace {
     //   metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
     // else
     //   metal2bb.inflate( - m2spacing / 2, 0 );
-    metal2bb.inflate( (m2spacing + halfViaTopSide) / 2, 0 );
+    cdebug_log(145,0) << "metal2bb=" << metal2bb << endl;
+  //metal2bb.inflate( m2spacing/2 + halfViaTopSide, 0 );
+    metal2bb.inflate( halfViaTopSide, 0 );
 
     // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
     //                                   , bb.getYCenter()
@@ -510,137 +496,6 @@ namespace {
     Session::revalidate();
     cdebug_tabw(145,-1);
   }
-
-  
-
-  void  postProcessRoutingPad ( RoutingPad* rp )
-  {
-    cdebug_log(145,1) << "Post-process " << rp << endl;
-
-    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
-
-    vector<AutoContactTerminal*> vias;
-    for ( Contact* contact : rp->getSlaveComponents().getSubSet<Contact*>() ) {
-      AutoContact* via = Session::lookup( contact );
-      if (via)
-        vias.push_back( dynamic_cast<AutoContactTerminal*>( via ));
-    }
-    if (vias.size() < 2) {
-      cdebug_log(145,0) << "Less than 2 VIAs attached, skipping." << endl;
-      cdebug_tabw(145,-1);
-      return;
-    }
-    if (vias.size() > 3) {
-      cerr << Warning( "postProcessRoutingPads(): More than three VIAs on %s."
-                     , getString(rp).c_str() ) << endl;
-      cdebug_tabw(145,-1);
-      return;
-    }
-
-    vector< vector<AutoContactTerminal*> >  overlappings;
-    for ( AutoContactTerminal* via : vias ) {
-      bool sorted = false;
-      for ( auto& overlapping : overlappings ) {
-        for ( AutoContactTerminal* sortedVia : overlapping ) {
-          DbU::Unit dx = std::abs( sortedVia->getX() - via->getX() );
-          DbU::Unit dy = std::abs( sortedVia->getY() - via->getY() );
-          if ((dx < pitch) and (dy < pitch)) {
-            cdebug_log(145,0) << "Overlapping: " << via << endl;
-            overlapping.push_back( via );
-            sorted = true;
-            break;
-          }
-        }
-        if (sorted) break;
-      }
-      if (sorted) continue;
-
-      cdebug_log(145,0) << "Isolated: " << via << endl;
-      overlappings.push_back( vector<AutoContactTerminal*>() );
-      overlappings.back().push_back( via );
-    }
-
-    for ( auto overlapping : overlappings ) {
-      if (overlapping.size() < 2) {
-        cdebug_log(145,0) << "Less than 2 VIAs in the overlapping set, skipping." << endl;
-        continue;
-      }
-
-      for ( size_t i=1 ; i<overlapping.size() ; ++i ) {
-        BasicLayer* layer = overlapping[i]->getSegment()->getLayer()->getBasicLayers().getFirst();
-        Box         viaBb = Box( overlapping[i]->base()->getBoundingBox( layer ));
-        overlapping[i]->setLayer( overlapping[i]->getSegment()->getLayer() );
-        overlapping[i]->setSizes( viaBb.getWidth(), viaBb.getHeight() );
-      }
-
-      bool loopRemoved = checkForLoopHV( overlapping );
-
-      if (not loopRemoved) {
-        BasicLayer* layer  = overlapping[0]->getSegment()->getLayer()->getBasicLayers().getFirst();
-        Box         viaBb1 = Box( overlapping[0]->base()->getBoundingBox( layer ));
-        Horizontal* strap  = Horizontal::create( overlapping[0]->getNet()
-                                               , layer
-                                               , overlapping[0]->getY()
-                                               , viaBb1.getHeight()
-                                               , overlapping[0]->getX()
-                                               , overlapping[1]->getX()
-                                               );
-        cdebug_log(145,0) << "Added strap " << strap << endl;
-      }
-      // set<DbU::Unit> xs;
-      // set<DbU::Unit> ys;
-      
-      // for ( AutoContactTerminal* via : overlapping ) {
-      //   if (via->getSegment()->isHorizontal()) ys.insert( via->getY() );
-      //   else xs.insert( via->getX() );
-      // }
-      // if (xs.size() > 1) {
-      //   if (ys.empty()) {
-      //     cdebug_log(145,0) << "Adjust by shitfing Verticals" << endl;
-      //     for ( AutoContactTerminal* via : overlapping ) {
-      //       via->getSegment()->setAxis( *(xs.begin()) );
-      //       cdebug_log(145,0) << "Aligned: " << via << endl;
-      //     }
-      //   } else {
-      //     cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (X), cannot merge them.\n"
-      //                      "           On %s"
-      //                    , getString(rp).c_str() ) << endl;
-      //   }
-      //   continue;
-      // }
-      // if (ys.size() > 1) {
-      //   if (xs.empty()) {
-      //     cdebug_log(145,0) << "Adjust by shitfing Horizontals" << endl;
-      //     for ( AutoContactTerminal* via : overlapping ) {
-      //       via->getSegment()->setAxis( *(ys.begin()) );
-      //       cdebug_log(145,0) << "Aligned: " << via << endl;
-      //     }
-      //   } else {
-      //     cerr << Warning( "postProcessRoutingPad(): VIAs in diagonal (Y), cannot merge them.\n"
-      //                      "           On %s"
-      //                    , getString(rp).c_str() ) << endl;
-      //   }
-      //   continue;
-      // }
-
-      // if (xs.empty()) xs.insert( overlapping[0]->getX() );
-      // if (ys.empty()) ys.insert( overlapping[0]->getY() );
-
-      // cdebug_log(145,0) << "Adjust position to (" << DbU::getValueString(*(xs.begin()))
-      //                   <<                    "," << DbU::getValueString(*(ys.begin()))
-      //                   <<                    ")" << endl;
-      // for ( AutoContactTerminal* via : overlapping ) {
-      //   via->setPosition( *(xs.begin()), *(ys.begin()) );
-      //   via->unsetFlags( Anabatic::CntDrag );
-      //   via->invalidate();
-      //   cdebug_log(145,0) << "Aligned: " << via << endl;
-      //
-      // }
-    }
-
-    cdebug_tabw(145,-1);
-  }
   
 
 } // End of anonymous namespace.
@@ -712,40 +567,6 @@ namespace Katana {
     Session::close();
     cerr.flush();
     cout.flush();
-  }
-
-
-  void  KatanaEngine::_postProcessRoutingPads ()
-  {
-    // Breakpoint::stop( 0, "KatanaEngine::_postProcessRoutingPads()" );
-    cmess1 << "  o  Post-process RoutingPads." << endl;
-
-    openSession();
-
-    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
-    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
-
-    for ( Net* net : getCell()->getNets() ) {
-      if (net->isSupply()) continue;
-
-      DebugSession::open( net, 145, 150 );
-      cdebug_log(145,0) << "Post-process RoutingPads of " << net << endl;
-
-      NetData* data = getNetData( net );
-      if (data and data->isFixed()) continue;
-
-      vector<RoutingPad*> rps;
-      for ( RoutingPad* rp : net->getRoutingPads() )
-        rps.push_back( rp );
-
-      for ( size_t i=0 ; i<rps.size() ; ++i )
-        postProcessRoutingPad( rps[i] );
-
-      DebugSession::close();
-    }
-
-    Session::close();
   }
 
 

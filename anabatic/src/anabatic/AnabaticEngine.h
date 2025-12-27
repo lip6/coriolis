@@ -340,6 +340,7 @@ namespace Anabatic {
                     void              _layerAssignNoGlobalM2V ( unsigned long& total, unsigned long& global, set<Net*>& );
                     void              _layerAssignNoGlobalM2V ( Net*, set<Net*>&, unsigned long& total, unsigned long& global );
                     void              _saveNet                ( Net* );
+                    void              _postProcessRoutingPads ();
                     void              _destroyAutoContacts    ();
                     void              _destroyAutoSegments    ();
                     void              _check                  ( Net* net ) const;
