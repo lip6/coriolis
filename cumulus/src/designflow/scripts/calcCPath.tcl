@@ -34,7 +34,7 @@ while {$idx < $argc} {
   -OsdiDll -
   -o  {
      if {$idx < $argc} {
-     set osdidll [lindex $argv $idx]
+     set osdidll [linsert $osdidll end [lindex $argv $idx] ]
      incr idx
    } }
   -SpiceModel -

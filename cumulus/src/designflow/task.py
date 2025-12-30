@@ -186,6 +186,7 @@ class FlowTask ( object ):
     """
 
     cleanTargets = []
+    cleanGlobs   = []
 
     @staticmethod
     def _normFile ( depend ):
@@ -266,9 +267,16 @@ class FlowTask ( object ):
 
     def addClean ( self, targets ):
         """
-        Add the targets list to the global list. This is a helper method
+        Add the targets to be deleted to the global list. This is a helper method
         that has to be explicitely called in derived classes.
         """
         FlowTask.cleanTargets += FlowTask._normFileList( targets )
+
+    def addCleanGlob ( self, directory, glob ):
+        """
+        Add pattern of files or directories to be deleted. This is a helper method
+        that has to be explicitely called in derived classes.
+        """
+        FlowTask.cleanGlobs.append(( FlowTask._normFile(directory), glob ))
         
         
