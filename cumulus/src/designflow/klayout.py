@@ -140,7 +140,7 @@ class ShowDRC ( Klayout ):
 
         posixGDS  = gds.as_posix() if isinstance(gds,Path) else gds
         posixDRC  = drc.as_posix() if isinstance(drc,Path) else drc
-        depends   = [ gds ]
+        depends   = [ posixGDS ]
         arguments = [ posixGDS, '-m', posixDRC ]
         targets   = []
         env       = {}

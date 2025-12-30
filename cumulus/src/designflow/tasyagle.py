@@ -45,7 +45,7 @@ class TasYagle ( FlowTask ):
     AVERTEC_TOP         = guessAVERTEC_TOP()
     SpiceType           = None
     SpiceTrModel        = None
-    OSDIdll             = None
+    OSDIdlls            = []
     MBK_SPI_MODEL       = None
     MBK_CATA_LIB        = '.'
     Temperature         = None
@@ -152,8 +152,8 @@ class AvtShell ( TasYagle ):
                        , '-VssName'    ,     TasYagle.VssName
                        , '-Temperature', str(TasYagle.Temperature)
                        ]
-        if TasYagle.OSDIdll:
-            self.command += [ '-OsdiDll', str(TasYagle.OSDIdll) ]
+        for dll in TasYagle.OSDIdlls:
+            self.command += [ '-OsdiDll', str(dll) ]
         self.addClean( self.targets )
         
 

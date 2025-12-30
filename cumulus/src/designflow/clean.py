@@ -29,8 +29,19 @@ class Clean ( FlowTask ):
             if filePath.is_file():
                 print( '   - {:<40} [removed]'.format( filePath.as_posix() ))
                 filePath.unlink()
+            elif filePath.is_dir():
+                print( '   - {:<40} [removed (directory)]'.format( filePath.as_posix() ))
+                shutil.rmtree( filePath )
             else:
                 print( '   - {}'.format( filePath.as_posix() ))
+        for directory, glob in FlowTask.cleanGlobs:
+            for filePath in Path(directory).glob(glob):
+                if filePath.is_file():
+                    print( '   - {:<40} [removed]'.format( filePath.as_posix() ))
+                    filePath.unlink()
+                elif filePath.is_dir():
+                    print( '   - {:<40} [removed (directory)]'.format( filePath.as_posix() ))
+                    shutil.rmtree( filePath )
         if doExtrasClean and len(self.extrasClean):
             print( '   Removing extra clean files' )
             print( '   ==========================' )
