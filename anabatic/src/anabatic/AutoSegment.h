@@ -66,68 +66,69 @@ namespace Anabatic {
       friend class AutoVertical;
 
     public:
-      static const uint64_t  SegNoFlags           =  0L;
-      static const uint64_t  SegHorizontal        = (1L<< 0);
-      static const uint64_t  SegFixed             = (1L<< 1);
-      static const uint64_t  SegFixedAxis         = (1L<< 2);
-      static const uint64_t  SegGlobal            = (1L<< 3);
-      static const uint64_t  SegWeakGlobal        = (1L<< 4);
-      static const uint64_t  SegLongLocal         = (1L<< 5);
-      static const uint64_t  SegCanonical         = (1L<< 6);
-      static const uint64_t  SegBipoint           = (1L<< 7);
-      static const uint64_t  SegDogleg            = (1L<< 8);
-      static const uint64_t  SegStrap             = (1L<< 9);
-      static const uint64_t  SegSourceTop         = (1L<<10);
-      static const uint64_t  SegSourceBottom      = (1L<<11);
-      static const uint64_t  SegTargetTop         = (1L<<12);
-      static const uint64_t  SegTargetBottom      = (1L<<13);
-      static const uint64_t  SegIsReduced         = (1L<<14);
-      static const uint64_t  SegDrag              = (1L<<15);
-      static const uint64_t  SegDragSameLayer     = (1L<<16);
-      static const uint64_t  SegLayerChange       = (1L<<17);
-      static const uint64_t  SegSourceTerminal    = (1L<<18);  // Replace Terminal.
-      static const uint64_t  SegTargetTerminal    = (1L<<19);  // Replace Terminal.
-      static const uint64_t  SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal;
-      static const uint64_t  SegWeakTerminal1     = (1L<<20);  // Replace TopologicalEnd.
-      static const uint64_t  SegWeakTerminal2     = (1L<<21);  // Replace TopologicalEnd.
-      static const uint64_t  SegNotSourceAligned  = (1L<<22);
-      static const uint64_t  SegNotTargetAligned  = (1L<<23);
-      static const uint64_t  SegUnbound           = (1L<<24);
-      static const uint64_t  SegHalfSlackened     = (1L<<25);
-      static const uint64_t  SegSlackened         = (1L<<26);
-      static const uint64_t  SegAxisSet           = (1L<<27);
-      static const uint64_t  SegInvalidated       = (1L<<28);
-      static const uint64_t  SegInvalidatedSource = (1L<<29);
-      static const uint64_t  SegInvalidatedTarget = (1L<<30);
-      static const uint64_t  SegInvalidatedLayer  = (1L<<31);
-      static const uint64_t  SegCreated           = (1L<<32);
-      static const uint64_t  SegUserDefined       = (1L<<33);
-      static const uint64_t  SegAnalog            = (1L<<34);
-      static const uint64_t  SegWide              = (1L<<35);
-      static const uint64_t  SegShortNet          = (1L<<36);
-      static const uint64_t  SegUnbreakable       = (1L<<37);
-      static const uint64_t  SegNonPref           = (1L<<38);
-      static const uint64_t  SegAtMinArea         = (1L<<39);
-      static const uint64_t  SegNoMoveUp          = (1L<<40);
-      static const uint64_t  SegOnVSmall          = (1L<<41);
-      static const uint64_t  SegForOffgrid        = (1L<<42);
-      static const uint64_t  SegIsReducedDone     = (1L<<43);
-      static const uint64_t  SegIsBelowPitch      = (1L<<44);
-      static const uint64_t  SegBecomeBelowPitch  = (1L<<45);
-      static const uint64_t  SegGapFiller         = (1L<<46);
-      static const uint64_t  SegToMinimize        = (1L<<47);
+      static const uint64_t  SegNoFlags            =  0L;
+      static const uint64_t  SegHorizontal         = (1L<< 0);
+      static const uint64_t  SegFixed              = (1L<< 1);
+      static const uint64_t  SegFixedAxis          = (1L<< 2);
+      static const uint64_t  SegGlobal             = (1L<< 3);
+      static const uint64_t  SegWeakGlobal         = (1L<< 4);
+      static const uint64_t  SegLongLocal          = (1L<< 5);
+      static const uint64_t  SegCanonical          = (1L<< 6);
+      static const uint64_t  SegBipoint            = (1L<< 7);
+      static const uint64_t  SegDogleg             = (1L<< 8);
+      static const uint64_t  SegStrap              = (1L<< 9);
+      static const uint64_t  SegSourceTop          = (1L<<10);
+      static const uint64_t  SegSourceBottom       = (1L<<11);
+      static const uint64_t  SegTargetTop          = (1L<<12);
+      static const uint64_t  SegTargetBottom       = (1L<<13);
+      static const uint64_t  SegIsReduced          = (1L<<14);
+      static const uint64_t  SegDrag               = (1L<<15);
+      static const uint64_t  SegDragSameLayer      = (1L<<16);
+      static const uint64_t  SegLayerChange        = (1L<<17);
+      static const uint64_t  SegSourceTerminal     = (1L<<18);  // Replace Terminal.
+      static const uint64_t  SegTargetTerminal     = (1L<<19);  // Replace Terminal.
+      static const uint64_t  SegStrongTerminal     = SegSourceTerminal|SegTargetTerminal;
+      static const uint64_t  SegWeakTerminal1      = (1L<<20);  // Replace TopologicalEnd.
+      static const uint64_t  SegWeakTerminal2      = (1L<<21);  // Replace TopologicalEnd.
+      static const uint64_t  SegNotSourceAligned   = (1L<<22);
+      static const uint64_t  SegNotTargetAligned   = (1L<<23);
+      static const uint64_t  SegUnbound            = (1L<<24);
+      static const uint64_t  SegHalfSlackened      = (1L<<25);
+      static const uint64_t  SegSlackened          = (1L<<26);
+      static const uint64_t  SegAxisSet            = (1L<<27);
+      static const uint64_t  SegInvalidated        = (1L<<28);
+      static const uint64_t  SegInvalidatedSource  = (1L<<29);
+      static const uint64_t  SegInvalidatedTarget  = (1L<<30);
+      static const uint64_t  SegInvalidatedLayer   = (1L<<31);
+      static const uint64_t  SegCreated            = (1L<<32);
+      static const uint64_t  SegUserDefined        = (1L<<33);
+      static const uint64_t  SegAnalog             = (1L<<34);
+      static const uint64_t  SegWide               = (1L<<35);
+      static const uint64_t  SegShortNet           = (1L<<36);
+      static const uint64_t  SegUnbreakable        = (1L<<37);
+      static const uint64_t  SegNonPref            = (1L<<38);
+      static const uint64_t  SegAtMinArea          = (1L<<39);
+      static const uint64_t  SegNoMoveUp           = (1L<<40);
+      static const uint64_t  SegOnVSmall           = (1L<<41);
+      static const uint64_t  SegForOffgrid         = (1L<<42);
+      static const uint64_t  SegIsReducedDone      = (1L<<43);
+      static const uint64_t  SegIsBelowPitch       = (1L<<44);
+      static const uint64_t  SegBecomeBelowPitch   = (1L<<45);
+      static const uint64_t  SegGapFiller          = (1L<<46);
+      static const uint64_t  SegToMinimize         = (1L<<47);
+      static const uint64_t  SegIsMergeReducedDone = (1L<<48);
     // Masks.
-      static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
-      static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
-      static const uint64_t  SegSpinTop           = SegSourceTop    |SegTargetTop;
-      static const uint64_t  SegSpinBottom        = SegSourceBottom |SegTargetBottom;
-      static const uint64_t  SegDepthSpin         = SegSpinTop      |SegSpinBottom;
+      static const uint64_t  SegWeakTerminal       = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
+      static const uint64_t  SegNotAligned         = SegNotSourceAligned|SegNotTargetAligned;
+      static const uint64_t  SegSpinTop            = SegSourceTop    |SegTargetTop;
+      static const uint64_t  SegSpinBottom         = SegSourceBottom |SegTargetBottom;
+      static const uint64_t  SegDepthSpin          = SegSpinTop      |SegSpinBottom;
     // Observer flags (separate values).
-      static const unsigned int  Create           = (1 <<  0);
-      static const unsigned int  Destroy          = (1 <<  1);
-      static const unsigned int  Invalidate       = (1 <<  2);
-      static const unsigned int  Revalidate       = (1 <<  3);
-      static const unsigned int  RevalidatePPitch = (1 <<  4);
+      static const unsigned int  Create            = (1 <<  0);
+      static const unsigned int  Destroy           = (1 <<  1);
+      static const unsigned int  Invalidate        = (1 <<  2);
+      static const unsigned int  Revalidate        = (1 <<  3);
+      static const unsigned int  RevalidatePPitch  = (1 <<  4);
 
     public:
       class Observable : public StaticObservable<1> {
@@ -232,6 +233,7 @@ namespace Anabatic {
       inline         bool                isSpinTopOrBottom          () const;
       inline         bool                isReduced                  () const;
       inline         bool                isReducedDone              () const;
+      inline         bool                isMergeReducedDone         () const;
       inline         bool                isStrap                    () const;
       inline         bool                isDogleg                   () const;
       inline         bool                isUnbound                  () const;
@@ -327,6 +329,7 @@ namespace Anabatic {
       inline         void                incReduceds                ();
       inline         void                decReduceds                ();
       inline         void                setReducedDone             ();
+      inline         void                setMergeReducedDone        ();
              virtual void                setDuSource                ( DbU::Unit du ) = 0;
              virtual void                setDuTarget                ( DbU::Unit du ) = 0;
              virtual void                addDuSource                ( DbU::Unit du );
@@ -601,6 +604,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isSpinTopOrBottom      () const { return isSpinTop() or isSpinBottom(); }
   inline  bool            AutoSegment::isReduced              () const { return _flags & SegIsReduced; }
   inline  bool            AutoSegment::isReducedDone          () const { return _flags & SegIsReducedDone; }
+  inline  bool            AutoSegment::isMergeReducedDone     () const { return _flags & SegIsMergeReducedDone; }
   inline  bool            AutoSegment::isSlackened            () const { return _flags & SegSlackened; }
   inline  bool            AutoSegment::isToMinimize           () const { return _flags & SegToMinimize; }
   inline  bool            AutoSegment::isCanonical            () const { return _flags & SegCanonical; }
@@ -628,6 +632,7 @@ namespace Anabatic {
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setReducedDone         () { _flags |= SegIsReducedDone; }
+  inline  void            AutoSegment::setMergeReducedDone    () { _flags |= SegIsMergeReducedDone; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
   inline  void            AutoSegment::setWidth               ( DbU::Unit width ) { base()->setWidth(width); }
   inline  void            AutoSegment::setOptimalMin          ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }

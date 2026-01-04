@@ -736,7 +736,8 @@ namespace Anabatic {
 
     updateOrient();
 
-    uint64_t oldSpinFlags = _flags & SegDepthSpin;
+    bool     checkForMinArea = true;
+    uint64_t oldSpinFlags    = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
       AutoContact*  source       = getAutoSource();
@@ -747,8 +748,12 @@ namespace Anabatic {
       unsetFlags( SegSourceTop|SegSourceBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegSourceBottom : SegSourceTop ); 
-      if (source->isTurn() and source->getPerpandicular(this)->isReduced())
+      AutoSegment* perpandicular = source->getPerpandicular(this);
+      if (source->isTurn() and perpandicular->isReduced()) {
         incReduceds();
+        if ((segmentLayer == contactLayer) and (perpandicular->getLength() > getPPitch() / 2))
+          checkForMinArea = false;
+      }
     }
 
     if (_flags & (SegInvalidatedTarget|SegCreated)) {
@@ -760,23 +765,36 @@ namespace Anabatic {
       unsetFlags( SegTargetTop|SegTargetBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegTargetBottom : SegTargetTop ); 
-      if (target->isTurn() and target->getPerpandicular(this)->isReduced())
+      AutoSegment* perpandicular = target->getPerpandicular(this);
+      if (target->isTurn() and target->getPerpandicular(this)->isReduced()) {
         incReduceds();
+        if ((segmentLayer == contactLayer) and (perpandicular->getLength() > getPPitch() / 2))
+          checkForMinArea = false;
+      }
     }
 
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
     cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
-    if (not isGapFiller() and not isDragSameLayer() and (Session::getStage() < StagePostProcessRoutingPads)) {
-      for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
-        oldSpan.merge( segment->getSourcePosition() );
-        oldSpan.merge( segment->getTargetPosition() );
+    if (checkForMinArea) {
+      if (   not isGapFiller()
+         and not isDragSameLayer()
+         and (Session::getStage() < StagePostProcessRoutingPads)) {
+        for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
+          oldSpan.merge( segment->getSourcePosition() );
+          oldSpan.merge( segment->getTargetPosition() );
+        }
+        if (_flags & SegCreated) oldSpan.makeEmpty();
+        if (expandToMinLength(oldSpan)) updatePositions();
+        if (_flags & SegAtMinArea) {
+          if (unexpandToMinLength()) updatePositions();
+        }
       }
-      if (_flags & SegCreated) oldSpan.makeEmpty();
-      if (expandToMinLength(oldSpan)) updatePositions();
-      if (_flags & SegAtMinArea) {
-        if (unexpandToMinLength()) updatePositions();
-      }
+    } else {
+      unsetFlags( SegAtMinArea );
+      setDuSource( 0 );
+      setDuTarget( 0 );
+      updatePositions();
     }
 
     unsigned int observerFlags = Revalidate;

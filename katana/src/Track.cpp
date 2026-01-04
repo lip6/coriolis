@@ -1304,7 +1304,7 @@ namespace Katana {
                   DbU::Unit sourceAxis = 0;
                   DbU::Unit targetAxis = 0;
                   first->getEndAxes( sourceAxis, targetAxis );
-                  DbU::Unit duSource = gapsetCurr.targetU(j) - sourceAxis;
+                  DbU::Unit duSource = gapsetCurr.targetU(j) - minSpacing - sourceAxis;
                   cdebug_log(159,0) << "old duSource:" << DbU::getValueString(first->getDuSource()) << endl;
                   cdebug_log(159,0) << "new duSource:" << DbU::getValueString(duSource) << endl;
                   first->setDuSource( duSource );
@@ -1330,7 +1330,7 @@ namespace Katana {
                     DbU::Unit sourceAxis = 0;
                     DbU::Unit targetAxis = 0;
                     last->getEndAxes( sourceAxis, targetAxis );
-                    DbU::Unit duTarget = gapsetCurr.sourceU(j+1) - targetAxis;
+                    DbU::Unit duTarget = gapsetCurr.sourceU(j+1) + minSpacing/2 - targetAxis;
                     cdebug_log(159,0) << "old duTarget:" << DbU::getValueString(last->getDuTarget()) << endl;
                     cdebug_log(159,0) << "new duTarget:" << DbU::getValueString(duTarget) << endl;
                     last->setDuTarget( duTarget );
@@ -1507,7 +1507,9 @@ namespace Katana {
                         << endl;
       discard = discard or onlyFixedSpanRp;
       span.inflate( -halfMinSpacing );
-      if (not discard and (span.getSize() < techMinLength)) {
+      if (not discard
+       //and (_segments[j-1]->base()->getReduceds() == 0)
+         and (span.getSize() < techMinLength)) {
         cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
                      , getString(_segments[j-1]).c_str()
                      , DbU::getValueString(span.getSize()).c_str()
@@ -1528,7 +1530,10 @@ namespace Katana {
                       << " onlyFixedSpanRp=" << onlyFixedSpanRp 
                       << endl;
     discard = discard or onlyFixedSpanRp;
-    if (not discard and not span.isEmpty() and (span.getSize() < techMinLength)) {
+    if (   not discard
+       and not span.isEmpty()
+     //and (_segments[_segments.size()-1]->base()->getReduceds() == 0)
+       and (span.getSize() < techMinLength)) {
       cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
                    , getString(_segments[_segments.size()-1]).c_str()
                    , DbU::getValueString(span.getSize()).c_str()

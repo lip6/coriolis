@@ -207,7 +207,129 @@ namespace {
     cdebug_tabw(159,-1);
     return count;
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "::ReducedCluster".
+
+  class SortByAxis {
+    public:
+      inline bool  operator () ( AutoSegment* lhs, AutoSegment* rhs )
+                               { return lhs->getAxis() < rhs->getAxis(); }
+  };
+
+  class ReducedCluster {
+    public:
+              ReducedCluster ( AutoSegment* );
+      void    merge          ();
+      void    alignForSource ( size_t begin, size_t end );
+      void    alignForTarget ( size_t begin, size_t end );
+    private:
+                      ReducedCluster ( const ReducedCluster& ) = delete;
+      ReducedCluster& operator=      ( const ReducedCluster& ) = delete;
+    private:
+      AutoSegment*          _seed;
+      vector<AutoSegment*>  _sourceReduceds;
+      vector<AutoSegment*>  _targetReduceds;
+  };
+
+
+  ReducedCluster::ReducedCluster( AutoSegment* seed )
+    : _seed( seed )
+  {
+    DbU::Unit axis = seed->getAxis();
+    for ( AutoSegment* perpandicular : seed->getPerpandiculars() ) {
+      if (not perpandicular->isCanonical()) continue;
+      if (not perpandicular->isReduced()) continue;
+      perpandicular->setMergeReducedDone();
+      if (seed->isHorizontal()) {
+        if (perpandicular->getAutoSource()->getY()) {
+          _sourceReduceds.push_back( perpandicular );
+        } else {
+          _targetReduceds.push_back( perpandicular );
+        }
+      } else {
+        if (perpandicular->getAutoSource()->getX()) {
+          _sourceReduceds.push_back( perpandicular );
+        } else {
+          _targetReduceds.push_back( perpandicular );
+        }
+      }
+    }
+
+    sort( _sourceReduceds.begin(), _sourceReduceds.end(), SortByAxis() );
+    sort( _targetReduceds.begin(), _targetReduceds.end(), SortByAxis() );
+  }
+
+
+  void  ReducedCluster::merge ()
+  {
+    DbU::Unit ppitch = _seed->getPPitch();
+    if (_sourceReduceds.size() > 1) {
+      size_t i = 1;
+      size_t j = 0;
+      for ( ; i<_sourceReduceds.size() ; ++i ) {
+        if (_sourceReduceds[i]->getAxis() - _sourceReduceds[i-1]->getAxis() >= ppitch) {
+          if (j+1 < i) alignForSource( j, i-1 );
+          j = i;
+        }
+      }
+      --i;
+
+      if (j < i) alignForSource( j, i );
+    }
+
+    if (_targetReduceds.size() > 1) {
+      size_t i = 1;
+      size_t j = 0;
+      for ( ; i<_targetReduceds.size() ; ++i ) {
+        if (_targetReduceds[i]->getAxis() - _targetReduceds[i-1]->getAxis() >= ppitch) {
+          if (j+1 < i) alignForTarget( j, i-1 );
+          j = i;
+        }
+      }
+      --i;
+
+      if (j < i) alignForTarget( j, i );
+    }
+
+    Session::revalidate();
+  }
+
   
+  void    ReducedCluster::alignForSource ( size_t begin, size_t end )
+  {
+    bool      misaligned = false;
+    DbU::Unit alignAxis  = _sourceReduceds[ begin ]->getAxis();
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
+      if (_sourceReduceds[k]->getAutoTarget()->getLayer() != _sourceReduceds[k]->getLayer()) {
+        alignAxis = _sourceReduceds[ k ]->getAxis();
+      }
+      misaligned = true;
+    }
+    if (not misaligned) return;
+    for ( size_t k=begin ; k<=end ; ++k )
+      _sourceReduceds[ k ]->setAxis( alignAxis );
+  }
+
+  
+  void    ReducedCluster::alignForTarget ( size_t begin, size_t end )
+  {
+    bool      misaligned = false;
+    DbU::Unit alignAxis  = _targetReduceds[ begin ]->getAxis();
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
+      if (_targetReduceds[k]->getAutoSource()->getLayer() != _targetReduceds[k]->getLayer()) {
+        alignAxis = _targetReduceds[ k ]->getAxis();
+      }
+      misaligned = true;
+    }
+    if (not misaligned) return;
+    for ( size_t k=begin ; k<=end ; ++k )
+      _targetReduceds[ k ]->setAxis( alignAxis );
+  }
+
 
 }  // Anonymous namespace.
 
@@ -552,6 +674,22 @@ namespace Anabatic {
       }
 
       setStage( StagePostProcessRoutingPads );
+      for ( auto isegment : _getAutoSegmentLut() ) {
+        AutoSegment* reduced = isegment.second;
+        if (reduced->isReduced() and not reduced->isMergeReducedDone()) {
+          AutoSegment* seed1 = reduced->getAutoSource()->getPerpandicular( reduced );
+          if (seed1) {
+            ReducedCluster cluster1 ( seed1 );
+            cluster1.merge();
+          }
+          AutoSegment* seed2 = reduced->getAutoTarget()->getPerpandicular( reduced );
+          if (seed2) {
+            ReducedCluster cluster2 ( seed2 );
+            cluster2.merge();
+          }
+        }
+      }
+
       _postProcessRoutingPads();
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
@@ -1445,6 +1583,8 @@ namespace Anabatic {
   //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3408_hfns_1" ));
   //DebugSession::addToTrace( getCell()->getNet( "CLK_I_root_bl_bl_br_br_0" ));
   //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3986_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n14460_hfns_7" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n3452_hfns_0" ));
 
     size_t shortNets = 0;
 
