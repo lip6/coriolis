@@ -104,7 +104,7 @@ Printable Version of this Document
 
 
 .. contents::
-   :depth: 1
+   :depth: 3
 
 
 .. include:: ../../../etc/definitions.rst
