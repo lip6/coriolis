@@ -1,6 +1,6 @@
 
     version="2.5.5"
- docGithash="17783c54f"
+ docGithash="4e1ac7bf3"
      obsDir="../coriolis-obs/home:jpc-lip6/coriolis-eda"
 
  printHelp () {
@@ -79,6 +79,7 @@
                     packaging/patchvenv.sh                    \
                     packaging/find_files.sh                   \
                     packaging/coloquinte-clamp.patch          \
+                    packaging/coloquinte-no-eigen3.patch      \
                     packaging/lemon-no-soversion.patch        \
                     coriolis-eda-${version}.tar.gz            \
                     venv-al9-${version}.tar.gz                \

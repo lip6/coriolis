@@ -16,6 +16,7 @@ Source3:        find_files.sh
 Source10:       coriolis-docs-%{docGithash}.tar.gz
 Patch0:         coloquinte-clamp.patch 
 Patch1:         lemon-no-soversion.patch 
+Patch2:         coloquinte-no-eigen3.patch 
 Requires:       python3-doit
 
 
@@ -28,19 +29,33 @@ BuildRequires:  cmake
 BuildRequires:  doxygen
 BuildRequires:  python3-pip
 BuildRequires:  python3-devel
-BuildRequires:  texlive-latex
-BuildRequires:  texlive-dvips
 BuildRequires:  libstdc++-devel
 BuildRequires:  zlib-devel
 BuildRequires:  libicu-devel
 BuildRequires:  libzstd-devel
 BuildRequires:  boost-devel
 BuildRequires:  eigen3-devel
-BuildRequires:  qwt-qt5-devel
 BuildRequires:  libxml++-devel
-BuildRequires:  rapidjson-devel
 BuildRequires:  graphviz
 BuildRequires:  graphviz-gd
+
+# Common to all RHEL/Fedora/openSUSE
+%if 0%{?rhel} || 0%{?fedora} || 0%{?is_opensuse}
+BuildRequires:  rapidjson-devel
+BuildRequires:  qwt-qt5-devel
+BuildRequires:  texlive-latex
+BuildRequires:  texlive-dvips
+%endif
+
+# All Mageia
+%if 0%{?mageia}
+BuildRequires:  lib64opencl1
+BuildRequires:  rapidjson
+BuildRequires:	texlive
+BuildRequires:  lib64qwt-qt5-devel
+BuildRequires:	texlive-dist
+BuildRequires:	ghostscript-dvipdf
+%endif
 
 # openSUSE Tumbleweed
 %if 0%{?suse_version} >= 1699 && 0%{?is_opensuse}
@@ -167,6 +182,7 @@ Warning: This package is only a stub for now.
 %setup -q -n %{name}-%{version} -a 1
 #patch -P 0 -p1 -b .clamp 
 #patch -P 1 -p1 -b .no-soversion 
+%patch -P 2 -p1 -b .no-eigen3 
 
 
 %build
@@ -183,13 +199,14 @@ Warning: This package is only a stub for now.
  patchVEnvArgs="--use-system-packages"
  if [    \( 0%{?fedora} -ge 39 \) \
       -o \( 0%{?rhel}   -eq  8 \) \
-      -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) ]; then
+      -o \( 0%{?suse_version}%{?sle_version} -ne 0 \) \
+      -o \( 0%{?mageia} -ne 0 \) ]; then
    patchVEnvArgs="${patchVEnvArgs} --remove-venv-watchfiles"
  fi
  ./patchvenv.sh ${patchVEnvArgs}
   
  make PREFIX=%{_prefix} -f Makefile.LIP6 help install
- if [ \( 0%{?sle_version} -eq 150600 \) -o \( 0%{?rhel} -eq 8 \) ]; then
+ if [ \( 0%{?sle_version} -eq 150600 \) -o \( 0%{?rhel} -eq 8 \) -o \( 0%{?mageia} -ne 0 \) ]; then
    %{__mkdir_p} %{buildroot}%{_datadir}/doc
    pushd %{buildroot}%{_datadir}/doc
    tar zxf %{SOURCE10}
