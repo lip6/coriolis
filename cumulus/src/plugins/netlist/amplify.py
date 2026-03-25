@@ -11,9 +11,9 @@ from sympy import parse_expr, Id
 
 setupSky130_nsx2( checkToolkit='../../..' )
 
-LIB = '/dsk/l1/misc/roselyne/coriolis/src/alliance-check-toolkit/cells/nsxlib/nsxlib.lib'
-#LIB = Yosys.liberty # doesn't work ???
-#print("LIB = " + str(LIB))
+#LIB = '/dsk/l1/misc/roselyne/coriolis/src/alliance-check-toolkit/cells/nsxlib/nsxlib.lib'
+LIB = Yosys.liberty # doesn't work ???
+print("LIB = " + str(LIB))
 AF = CRL.AllianceFramework.get()
 Hurricane.UpdateSession.open()
 
@@ -25,7 +25,9 @@ Hurricane.UpdateSession.open()
 # TODO: add decorator to cells?
 def read_liberty():
     # TODO: read from setup
-    liberty_file = LIB
+    #liberty_file = LIB
+    liberty_file = Yosys.liberty
+    print(liberty_file)
     library = parse_liberty(open(liberty_file).read())
     fdict = {}
     for cell_group in library.get_groups('cell'):
