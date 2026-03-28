@@ -10,7 +10,7 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Library.hpp"                                 |
+// |  C++ Module  :  "./Library.h"                                   |
 // +-----------------------------------------------------------------+
 
 

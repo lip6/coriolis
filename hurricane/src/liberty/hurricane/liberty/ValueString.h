@@ -24,15 +24,17 @@ namespace Liberty {
       ValueString();
       ~ValueString();
 
-      inline const  std::string  &getAsString()                 const override;
-                    void          set(const std::string &value)       override;
-      inline        bool          hadQuotes()                   const;
+      inline const  std::string  &getAsString ()                          const override;
+                    void          set         (const std::string &value)        override;
+      inline        void          setHadQuotes(bool had_quotes = true)                  ;
+      inline        bool          hadQuotes   ()                          const         ;
     private:
-      std::string _value;
-      bool        _had_quotes; // default false
+      std::string _value      ;
+      bool        _had_quotes ; // default false
   };
 
-  inline const  std::string  &ValueString::getAsString()  const { return _value;      }
-  inline        bool          ValueString::hadQuotes()    const { return _had_quotes; }
+  inline const  std::string  &ValueString::getAsString  ()                const { return _value;            }
+  inline        bool          ValueString::hadQuotes    ()                const { return _had_quotes;       }
+  inline        void          ValueString::setHadQuotes (bool had_quotes)       { _had_quotes = had_quotes; }
 
 }
