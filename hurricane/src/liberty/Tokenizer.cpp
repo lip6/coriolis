@@ -19,7 +19,11 @@
 
 namespace Liberty {
 
-  Tokenizer::Tokenizer(const std::string &filepath): _filepath(filepath), _token(), _reader(), _state(Default), _is_next(false) {}
+  Tokenizer::Tokenizer(const std::string &filepath):  _filepath(filepath)
+                                                    , _token()
+                                                    , _reader()
+                                                    , _state(Default)
+                                                    , _is_next(false)     {}
 
   Tokenizer::~Tokenizer() {}
 
@@ -34,9 +38,9 @@ namespace Liberty {
   }
 
   const Token &Tokenizer::_buildTokenNext(char *begin, size_t end, TokenType type) {
-    _next_token.str = std::string_view(begin, end);
-    _next_token.type = type;
-    _is_next = true;
+    _next_token.str   = std::string_view(begin, end);
+    _next_token.type  = type;
+    _is_next          = true;
     return _next_token;
   }
 
@@ -46,18 +50,19 @@ namespace Liberty {
       _is_next = false;
       return _next_token;
     }
-    static const Token error {TokenType::Error, std::string_view("ERROR")};
-    static const Token end {TokenType::End, std::string_view("END")};
+    static const Token error  { TokenType::Error, std::string_view("ERROR") };
+    static const Token end    { TokenType::End  , std::string_view("END")   };
 
     char  *c;
     char  *begin = 0;
-    size_t size = 0;
+    size_t size  = 0;
     while (_reader.next(c)) {
       if (begin == 0)
         begin = c;
       switch (_state) {
         case Error:
           return error;
+
         case Default:
           switch (*c) {
             case '/':
@@ -105,17 +110,19 @@ namespace Liberty {
               std::cerr << "[ERROR] Parsing (CommentBegin) with unexpected char " << *c << std::endl;
               return error;
           }
-            break;
-          case CommentLine:
-            switch (*c) {
-              case '\n':
-                return _buildToken(begin, size, TokenType::CommentLine);
-              case '\r':
-                break;
-              default:
-                size++;
-            }
-            break;
+          break;
+
+        case CommentLine:
+          switch (*c) {
+            case '\n':
+              return _buildToken(begin, size, TokenType::CommentLine);
+            case '\r':
+              break;
+            default:
+              size++;
+          }
+          break;
+
           case CommentBlock:
             switch (*c) {
               case '*':
@@ -126,50 +133,52 @@ namespace Liberty {
                 break;
             }
             break;
-          case CommentBlockEnd:
-            switch (*c) {
-              case '/':
-                _state = Default;
-                return _buildToken(begin, ++size, TokenType::CommentBlock);
-              default:
-                _state = CommentBlock;
-                size++;
-            }
-            break;
-          case Expression:
-            switch (*c) {
-              case '/':
-                _state = CommentBegin;
-                return _buildToken(begin, size++, TokenType::Expression);
-              case '{':
-              case '}':
-              case '(':
-              case ')':
-              case '[':
-              case ']':
-              case ':':
-              case ';':
-              case ',':
-                _buildTokenNext(c, 1, _getTokenType(*c));
-              case ' ':
-              case '\r':
-              case '\n':
-              case '\t':
-                _state = Default;
-                return _buildToken(begin, size, TokenType::Expression);
-              default:
-                  size++;
-            }
-            break;
-          case QuotedExpression:
-            switch (*c) {
-              case '"':
-                _state = Default;
-                return _buildToken(begin, size, TokenType::QuotedExpression);
-              default:
-                  size++;
-            }
 
+        case CommentBlockEnd:
+          switch (*c) {
+            case '/':
+              _state = Default;
+              return _buildToken(begin, ++size, TokenType::CommentBlock);
+            default:
+              _state = CommentBlock;
+              size++;
+          }
+          break;
+
+        case Expression:
+          switch (*c) {
+            case '/':
+              _state = CommentBegin;
+              return _buildToken(begin, size++, TokenType::Expression);
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '[':
+            case ']':
+            case ':':
+            case ';':
+            case ',':
+              _buildTokenNext(c, 1, _getTokenType(*c));
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+              _state = Default;
+              return _buildToken(begin, size, TokenType::Expression);
+            default:
+                size++;
+          }
+          break;
+
+        case QuotedExpression:
+          switch (*c) {
+            case '"':
+              _state = Default;
+              return _buildToken(begin, size, TokenType::QuotedExpression);
+            default:
+                size++;
+          }
       }
     }
     return end;
