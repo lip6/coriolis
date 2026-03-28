@@ -22,7 +22,7 @@ namespace Liberty {
       ~Reader();
 
               bool  open(const char *filename);
-      inline  char  next();
+      inline  bool  next(char *&c);
 
     private:
       int     _fd;
@@ -32,11 +32,13 @@ namespace Liberty {
       void   *_data;
   };
 
-  inline char Reader::next()
+  inline bool Reader::next(char *&c)
   {
-    if (_current < _end)
-      return *(_current++);
-    return '\0';
+    if (_current < _end) {
+      c = _current++;
+      return true;
+    }
+    return false;
   }
 
 }
