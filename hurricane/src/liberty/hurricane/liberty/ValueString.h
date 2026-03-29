@@ -10,11 +10,12 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Value.h"                                     |
+// |  C++ Module  :  "./ValueString.h"                               |
 // +-----------------------------------------------------------------+
 
 #pragma once
 #include <string>
+#include <string_view>
 #include "Value.h"
 
 namespace Liberty {
@@ -24,17 +25,15 @@ namespace Liberty {
       ValueString();
       ~ValueString();
 
-      inline const  std::string  &getAsString ()                          const override;
-                    void          set         (const std::string &value)        override;
-      inline        void          setHadQuotes(bool had_quotes = true)                  ;
-      inline        bool          hadQuotes   ()                          const         ;
+      inline  std::string getAsString ()                          const override;
+      inline  void        set         (const std::string &value)        override;
+      inline  void        set         (const std::string_view &value);
     private:
-      std::string _value      ;
-      bool        _had_quotes ; // default false
+      std::string _value;
   };
 
-  inline const  std::string  &ValueString::getAsString  ()                const { return _value;            }
-  inline        bool          ValueString::hadQuotes    ()                const { return _had_quotes;       }
-  inline        void          ValueString::setHadQuotes (bool had_quotes)       { _had_quotes = had_quotes; }
+  inline  std::string ValueString::getAsString  ()                              const { return _value;  }
+  inline  void        ValueString::set          (const std::string &value)            { _value = value; }
+  inline  void        ValueString::set          (const std::string_view &value)       { _value = value; }
 
 }

@@ -10,31 +10,28 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Attribute.h"                                 |
+// |  C++ Module  :  "./ComplexValue.h"                              |
 // +-----------------------------------------------------------------+
 
 #pragma once
-#include "Statement.h"
-#include "Value.h"
 #include <string>
+#include <vector>
+#include "Value.h"
+#include "ValueString.h"
 
 namespace Liberty {
 
-  class Library;
-
-  class Attribute : public Statement {
+  class ComplexValue : public Value {
     public:
-      Attribute(Group *parent);
-      ~Attribute();
+      ComplexValue();
+      ~ComplexValue();
 
-      inline  bool      isAttribute ()              const override;
-      inline  Value    *getValue    ()              const         ;
-              void      setValue    (Value *value)                ;
+      std::string getAsString ()                          const override;
+      void        set         (const std::string &value)        override;
+      void        set         (const std::string_view &value)           ;
+      void        clear       ()                                        ;
     private:
-      Value *_value;
+      std::vector<ValueString*> _values;
   };
-
-  inline  bool    Attribute::isAttribute()  const { return true;    }
-  inline  Value  *Attribute::getValue()     const { return _value;  }
 
 }

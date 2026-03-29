@@ -18,12 +18,6 @@
 namespace Liberty {
 
   ValueString::ValueString(): Value() {}
-
   ValueString::~ValueString() {}
-
-  void ValueString::set(const std::string &value)
-  {
-    _value = value;
-  }
 
 }

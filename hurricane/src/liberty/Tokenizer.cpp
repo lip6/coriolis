@@ -50,12 +50,14 @@ namespace Liberty {
       _is_next = false;
       return _next_token;
     }
-    static const Token error  { TokenType::Error, std::string_view("ERROR") };
-    static const Token end    { TokenType::End  , std::string_view("END")   };
+    static const Token error      { TokenType::Error, std::string_view("ERROR") };
+    static const Token end        { TokenType::End  , std::string_view("END")   };
+    static const char  define[] = "define";
 
-    char  *c;
-    char  *begin = 0;
-    size_t size  = 0;
+    const char  *define_match = define;
+          char  *c;
+          char  *begin        = 0;
+          size_t size         = 0;
     while (_reader.next(c)) {
       if (begin == 0)
         begin = c;
@@ -88,8 +90,16 @@ namespace Liberty {
               return _buildToken(c, 1, _getTokenType(*c));
             case '"':
               _state = QuotedExpression;
-              begin = 0;
+              size++;
               break;
+            case 'd':
+              if (size == 0) {
+                _state = Define;
+                size++;
+                define_match++;
+                break;
+              }
+              [[fallthrough]];
             default:
               _state = Expression;
               size++;
@@ -145,11 +155,45 @@ namespace Liberty {
           }
           break;
 
+        case Define:
+          if (*define_match == '\0') { // should be end of define
+            switch (*c) {
+              case '/':
+                _state = CommentBegin;
+                return _buildToken(begin, size, TokenType::DefineStatement);
+              case '(':
+              case '{':
+              case '}':
+              case ')':
+              case '[':
+              case ']':
+              case ':':
+              case ';':
+              case ',':
+                _buildTokenNext(c, 1, _getTokenType(*c));
+              case ' ':
+              case '\r':
+              case '\n':
+              case '\t':
+                define_match = define;
+                _state = Default;
+                return _buildToken(begin, size, TokenType::DefineStatement);
+              default:
+                _state = Expression;
+            }
+          } else if (*c == *define_match) {
+            define_match++;
+            size++;
+            break;
+          } else {
+            _state = Expression;
+          }
+          [[fallthrough]];
         case Expression:
           switch (*c) {
             case '/':
               _state = CommentBegin;
-              return _buildToken(begin, size++, TokenType::Expression);
+              return _buildToken(begin, size, TokenType::Expression);
             case '{':
             case '}':
             case '(':
@@ -175,7 +219,7 @@ namespace Liberty {
           switch (*c) {
             case '"':
               _state = Default;
-              return _buildToken(begin, size, TokenType::QuotedExpression);
+              return _buildToken(begin, ++size, TokenType::QuotedExpression);
             default:
                 size++;
           }

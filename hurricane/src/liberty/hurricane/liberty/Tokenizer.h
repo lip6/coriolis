@@ -35,6 +35,7 @@ namespace Liberty {
     Colon,
     Coma,
     End,
+    DefineStatement,
   };
 
   inline const std::string TokenTypeToStr(TokenType type);
@@ -42,6 +43,7 @@ namespace Liberty {
   struct Token {
       TokenType        type;
       std::string_view str;
+
       operator bool() const {
         return !(type == Error || type == End);
       }
@@ -49,10 +51,10 @@ namespace Liberty {
 
   class Tokenizer {
     public:
-      Tokenizer (const std::string& filepath);
+      Tokenizer (const std::string &filepath);
       ~Tokenizer ();
 
-      bool         init ();
+            bool   init ();
       const Token& next ();
     private:
       enum State {
@@ -64,11 +66,12 @@ namespace Liberty {
         CommentBlockEnd,
         Expression,
         QuotedExpression,
+        Define,
       };
     private:
-      const Token&     _buildToken (char* begin, size_t end, TokenType type);
-      const Token&     _buildTokenNext (char* begin, size_t end, TokenType type);
-      inline TokenType _getTokenType (char c);
+      const   Token      &_buildToken (char* begin, size_t end, TokenType type);
+      const   Token      &_buildTokenNext (char* begin, size_t end, TokenType type);
+      inline  TokenType   _getTokenType (char c);
     private:
       const std::string  _filepath;
       Token              _token;
