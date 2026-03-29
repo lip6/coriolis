@@ -28,7 +28,8 @@ namespace Liberty {
 
   Library::~Library() {}
 
-  void Library::load() {} // TODO: parsing here
+  void Library::load() {
+  }
 
   Group *Library::getCellGroup(const std::string &cell_name) const
   {

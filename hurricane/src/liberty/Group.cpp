@@ -16,10 +16,17 @@
 #include <algorithm>
 #include "hurricane/liberty/Group.h"
 #include "hurricane/liberty/Attribute.h"
+#include "hurricane/liberty/Library.h"
 
 namespace Liberty {
 
-  Group::Group(Group *parent) : Statement(parent) {}
+  Group::Group(Group *parent) : Statement(parent)
+  {
+    if (parent)
+      _library = parent->getLibrary();
+    else
+      _library = dynamic_cast<Library*>(this);
+  }
 
   Group::~Group()
   {
@@ -49,6 +56,11 @@ namespace Liberty {
       return a->getName() == attribute_name;
     });
     return ret->getAsAttribute();
+  }
+
+  Library *Group::getLibrary()
+  {
+    return _library;
   }
 
 }

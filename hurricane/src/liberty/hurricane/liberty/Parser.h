@@ -10,31 +10,37 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Attribute.h"                                 |
+// |  C++ Module  :  "./Parser.h"                                    |
 // +-----------------------------------------------------------------+
 
-#pragma once
-#include "Statement.h"
-#include "Value.h"
 #include <string>
+#include "Library.h"
+#include "Tokenizer.h"
 
 namespace Liberty {
 
-  class Library;
-
-  class Attribute : public Statement {
+  class Parser {
     public:
-      Attribute(Group *parent);
-      ~Attribute();
+      Parser(const std::string &filepath);
+      ~Parser();
 
-      inline  bool      isAttribute ()              const override;
-      inline  Value    *getValue    ()              const         ;
-              void      setValue    (Value *value)                ;
+      bool parse(Library *lib);
+
     private:
-      Value *_value;
+      enum State {
+        Default,
+        DefineState,
+        First,
+        Paren,
+        ParenEnd,
+        SimpleAttribute,
+        SimpleAttributeEnd,
+      };
+    private:
+      bool _print_error(const Token &t);
+    private:
+      Tokenizer _tokenizer;
+      std::string _filepath;
   };
-
-  inline  bool    Attribute::isAttribute()  const { return true;    }
-  inline  Value  *Attribute::getValue()     const { return _value;  }
 
 }

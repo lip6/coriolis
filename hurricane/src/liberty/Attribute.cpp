@@ -26,12 +26,13 @@ namespace Liberty {
       delete _value;
   }
 
-  void Attribute::setValue(const std::string &value)
+  void Attribute::setValue(Value *value)
   {
     // logic to set value type should be added here
     // maybe add a type argument with default value to string
-    _value = new ValueString;
-    _value->set(value);
+    if (_value)
+      delete _value;
+    _value = value;
   }
 
 }

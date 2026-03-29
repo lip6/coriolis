@@ -25,26 +25,33 @@ namespace Liberty {
       Define(Group *parent);
       ~Define();
 
-      inline        bool          isDefine          ()                            const override;
-      inline        Group        *getGroup          ()                            const         ;
-      inline const  std::string  &getAttributeName  ()                            const         ;
-      inline const  std::string  &getAttributeType  ()                            const         ;
-      inline        void          setAttributeName  ( const std::string  &name  )               ;
-      inline        void          setAttributeType  ( const std::string  &type  )               ;
-      inline        void          setGroup          (       Group        *group )               ;
+      inline        bool          isDefine          () const override;
+      inline const  std::string  &getAttributeName  () const         ;
+      inline const  std::string  &getGroupName      () const         ;
+      inline const  std::string  &getAttributeType  () const         ;
+
+      inline        void          setAttributeName  ( const std::string       &name       );
+      inline        void          setAttributeName  ( const std::string_view  &name       );
+      inline        void          setAttributeType  ( const std::string       &type       );
+      inline        void          setAttributeType  ( const std::string_view  &type       );
+      inline        void          setGroupName      ( const std::string       &group_name );
+      inline        void          setGroupName      ( const std::string_view  &group_name );
     private:
-      Group        *_group;
-      std::string   _attribute_name;
-      std::string   _attribute_type; // should be specific type
+      std::string   _group_name     ;
+      std::string   _attribute_type ; // should be specific type
   };
 
-  inline  bool                Define::isDefine        ()  const { return true;            }
-  inline  Group              *Define::getGroup        ()  const { return _group;          }
-  inline const  std::string  &Define::getAttributeName()  const { return _attribute_name; }
+  inline  bool Define::isDefine() const { return true; }
+
+  inline const  std::string  &Define::getGroupName    ()  const { return _group_name;     }
+  inline const  std::string  &Define::getAttributeName()  const { return _name;           }
   inline const  std::string  &Define::getAttributeType()  const { return _attribute_type; }
 
-  inline  void  Define::setAttributeName(const std::string &name) { _attribute_name = name;   }
-  inline  void  Define::setAttributeType(const std::string &type) { _attribute_type = type;   }
-  inline  void  Define::setGroup        (Group *group           ) { _group          = group;  }
+  inline  void  Define::setAttributeName(const std::string      &name       ) { _name           = name      ;}
+  inline  void  Define::setAttributeName(const std::string_view &name       ) { _name           = name      ;}
+  inline  void  Define::setAttributeType(const std::string      &type       ) { _attribute_type = type      ;}
+  inline  void  Define::setAttributeType(const std::string_view &type       ) { _attribute_type = type      ;}
+  inline  void  Define::setGroupName    (const std::string      &group_name ) { _group_name     = group_name;}
+  inline  void  Define::setGroupName    (const std::string_view &group_name ) { _group_name     = group_name;}
 
 }

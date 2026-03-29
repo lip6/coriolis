@@ -18,7 +18,6 @@
 namespace Liberty {
 
   Value::Value() {}
-
   Value::~Value() {}
 
 }

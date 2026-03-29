@@ -31,17 +31,18 @@ namespace Liberty {
       Statement(Group *parent);
       virtual            ~Statement() = 0;
 
-      inline const        std::string  &getName       ()                    const ;
-                          Library      *getLibrary    ()                          ;
-      inline              Group        *getParent     ()                    const ;
-      inline              void          setName       ( std::string &name )       ;
-      inline virtual      bool          isGroup       ()                    const ;
-      inline virtual      bool          isAttribute   ()                    const ;
-      inline virtual      bool          isDefine      ()                    const ;
-                          Group        *getAsGroup    ()                          ;
-                          Attribute    *getAsAttribute()                          ;
-                          Define       *getAsDefine   ()                          ;
-    private:
+      inline const        std::string  &getName       ()                          const ;
+                          Library      *getLibrary    ()                                ;
+      inline              Group        *getParent     ()                          const ;
+      inline              void          setName       ( std::string &name )             ;
+      inline              void          setName       ( std::string_view &name )        ;
+      inline virtual      bool          isGroup       ()                          const ;
+      inline virtual      bool          isAttribute   ()                          const ;
+      inline virtual      bool          isDefine      ()                          const ;
+                          Group        *getAsGroup    ()                                ;
+                          Attribute    *getAsAttribute()                                ;
+                          Define       *getAsDefine   ()                                ;
+    protected:
       Group      *_parent;
       std::string _name;
   };
@@ -53,6 +54,10 @@ namespace Liberty {
   inline        bool          Statement::isDefine     ()  const { return false;   }
 
   inline        void          Statement::setName      ( std::string &name ) {
+    _name = name;
+  }
+
+  inline        void          Statement::setName      ( std::string_view &name ) {
     _name = name;
   }
 
