@@ -14,8 +14,10 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/ComplexValue.h"
+#include "hurricane/liberty/Value.h"
 #include "hurricane/liberty/ValueString.h"
 #include <string>
+#include <string_view>
 
 namespace Liberty {
 

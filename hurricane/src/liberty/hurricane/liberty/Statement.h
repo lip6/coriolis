@@ -18,9 +18,9 @@
 
 namespace Liberty {
 
-  class Group;
   class Attribute;
   class Define;
+  class Group;
   class Library;
 
   /**

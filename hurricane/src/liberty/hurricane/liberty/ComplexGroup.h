@@ -25,9 +25,9 @@ namespace Liberty {
       ComplexGroup(Group *parent);
       ~ComplexGroup();
 
-      inline        void                      addVariables(const std::string &variable)       ;
-      inline        void                      addVariables(const std::string_view &variable)       ;
-      inline const  std::vector<std::string> &getVariables()                            const ;
+      inline        void                      addVariables(const std::string &variable)             ;
+      inline        void                      addVariables(const std::string_view &variable)        ;
+      inline const  std::vector<std::string> &getVariables()                                  const ;
 
     private:
       std::vector<std::string> _variables;

@@ -14,7 +14,9 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/Tokenizer.h"
+#include <cstddef>
 #include <iostream>
+#include <string>
 #include <string_view>
 
 namespace Liberty {
@@ -40,7 +42,7 @@ namespace Liberty {
     _token.str = std::string_view(begin, end);
     _token.type = type;
     _token.line_count = _line_count;
-    _token.char_count = begin - _line_begin + 1;
+    _token.char_count = static_cast<size_t>(begin - _line_begin + 1);
     _token.token_count = _token_count++ - (_is_next ? 1:0);
     return _token;
   }
@@ -49,7 +51,7 @@ namespace Liberty {
     _next_token.str   = std::string_view(begin, end);
     _next_token.type  = type;
     _next_token.line_count = _line_count;
-    _next_token.char_count = begin - _line_begin + 1;
+    _token.char_count = static_cast<size_t>(begin - _line_begin + 1);
     _next_token.token_count = ++_token_count;
     _is_next          = true;
     return _next_token;
@@ -171,8 +173,13 @@ namespace Liberty {
             case '/':
               _state = Default;
               return _buildToken(begin, ++size, TokenType::CommentBlock);
+            case '\n':
+              _inc_line = true;
+              [[fallthrough]];
             default:
               _state = CommentBlock;
+              [[fallthrough]];
+            case '*':
               size++;
           }
           break;

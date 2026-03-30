@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/ValueString.h"
+#include "hurricane/liberty/Value.h"
 
 namespace Liberty {
 

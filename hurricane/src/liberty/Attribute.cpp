@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/Attribute.h"
+#include "hurricane/liberty/Statement.h"
 #include "hurricane/liberty/Value.h"
 
 namespace Liberty {

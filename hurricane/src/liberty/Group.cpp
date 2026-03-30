@@ -13,10 +13,12 @@
 // |  C++ Module  :  "./Group.cpp"                                   |
 // +-----------------------------------------------------------------+
 
-#include <algorithm>
-#include "hurricane/liberty/Group.h"
 #include "hurricane/liberty/Attribute.h"
+#include "hurricane/liberty/Group.h"
 #include "hurricane/liberty/Library.h"
+#include "hurricane/liberty/Statement.h"
+#include <algorithm>
+#include <string>
 
 namespace Liberty {
 

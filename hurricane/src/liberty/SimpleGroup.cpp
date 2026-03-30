@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/SimpleGroup.h"
+#include "hurricane/liberty/Group.h"
 
 namespace Liberty {
 

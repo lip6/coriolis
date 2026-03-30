@@ -14,9 +14,9 @@
 // +-----------------------------------------------------------------+
 
 #pragma once
-#include <string>
 #include "Library.h"
 #include "Tokenizer.h"
+#include <string>
 
 namespace Liberty {
 
@@ -40,9 +40,8 @@ namespace Liberty {
       };
     private:
       bool _print_error(const Token &t);
-      // Token _copy_empty(const Token &t);
     private:
-      Tokenizer _tokenizer;
+      Tokenizer   _tokenizer;
       std::string _filepath;
   };
 
