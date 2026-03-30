@@ -20,6 +20,10 @@
 
 namespace Liberty {
 
+  /**
+    * A ValueString holds a string value.
+    * Used by most of attributes.
+    * */
   class ValueString : public Value {
     public:
       ValueString();

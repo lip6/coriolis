@@ -25,7 +25,7 @@
 namespace Liberty {
 
   /**
-   *  Base class to parse Liberty Library of cells.
+   *  Base class to handle Liberty Library of cells.
    * */
   class Library: public SimpleGroup {
     public:

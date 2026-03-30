@@ -24,6 +24,17 @@ namespace Liberty {
 
   class Library;
 
+  /**
+    * A group is a statement which contains others statements.
+    * Depending on the number of expressions in between parentheses, it can be a
+    * SimpleGroup, ComplexGroup or AnonymousGroup.
+    * ```
+    * group_name (...)
+    * {
+    *   ... statements ...
+    * }
+    * ```
+    * */
   class Group : public Statement {
     public:
       Group(Group *parent);

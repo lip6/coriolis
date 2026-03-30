@@ -20,6 +20,12 @@ namespace Liberty {
 
   class Library;
 
+  /**
+    * A define statement is used to add custom attributes to a group.
+    * ```
+    * define (attribute_name, group_name, attribute_type);
+    * ```
+    * */
   class Define : public Statement {
     public:
       Define(Group *parent);

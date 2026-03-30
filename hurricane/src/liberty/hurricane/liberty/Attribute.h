@@ -22,6 +22,10 @@ namespace Liberty {
 
   class Library;
 
+  /**
+    * An attribute is a statement used to define characteristics
+    * of objects in the library.
+    * */
   class Attribute : public Statement {
     public:
       Attribute(Group *parent);

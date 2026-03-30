@@ -18,6 +18,15 @@
 
 namespace Liberty {
 
+  /**
+    * A simple group is a group with one name in between the parentheses.
+    * It is used to represent most objects in a library.
+    * ```
+    * group_name(name) {
+    *   ... statements ...
+    * }
+    * ```
+    * */
   class SimpleGroup: public Group {
     public:
       SimpleGroup(Group *parent);
