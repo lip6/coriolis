@@ -14,11 +14,13 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/Parser.h"
+#include "hurricane/liberty/AnonymousGroup.h"
+#include "hurricane/liberty/ComplexGroup.h"
 #include "hurricane/liberty/ComplexValue.h"
 #include "hurricane/liberty/Define.h"
+#include "hurricane/liberty/SimpleGroup.h"
 #include "hurricane/liberty/Statement.h"
 #include "hurricane/liberty/Attribute.h"
-#include "hurricane/liberty/Value.h"
 #include "hurricane/liberty/ValueString.h"
 #include <iostream>
 #include <queue>
@@ -51,6 +53,7 @@ namespace Liberty {
             case Expression:
             case QuotedExpression:
               waiting.push(t);
+              state = First;
               break;
             case DefineStatement:
               state = DefineState;
@@ -60,6 +63,8 @@ namespace Liberty {
               if (not current) // Out of library group.
                 return true;
               break;
+            case End:
+              return true;
             default:
               return _print_error(t);
           }
@@ -68,10 +73,11 @@ namespace Liberty {
         case First:
           switch (t.type) {
             case ParenOpen:
-              state = Paren; // could be a group or a complex statement
+              state = ParenBegin; // could be a group or a complex statement
               break;
             case Colon:
               state = SimpleAttribute;
+              break;
             default:
               return _print_error(t);
           }
@@ -86,7 +92,7 @@ namespace Liberty {
               to_add = new Attribute(current);
               value_str = new ValueString;
               value_str->set(t.str);
-              to_add->setName(waiting.back().str);
+              to_add->setName(waiting.front().str);
               waiting.pop();
               to_add->setValue(value_str);
               current->addStatement(to_add);
@@ -107,12 +113,31 @@ namespace Liberty {
             }
             break;
 
+          case ParenBegin:
+            switch (t.type) {
+              case Expression:
+              case QuotedExpression:
+                waiting.push(t);
+                [[fallthrough]];
+              case Coma:
+                state = Paren;
+                break;
+              case ParenClose:
+                // waiting.push(_copy_empty(t));
+                state = ParenEnd;
+                break;
+              default:
+                return _print_error(t);
+            }
+            break;
+
           case Paren:
             switch (t.type) {
               case Expression:
               case QuotedExpression:
-              case Coma:
                 waiting.push(t);
+                break;
+              case Coma:
                 break;
               case ParenClose:
                 state = ParenEnd;
@@ -125,7 +150,6 @@ namespace Liberty {
           case DefineState:
             switch(t.type) {
               Define *define;
-              Group *group;
               case Expression:
               case QuotedExpression:
                 waiting.push(t);
@@ -136,11 +160,11 @@ namespace Liberty {
                 if (waiting.size() != 3)
                   return _print_error(t);
                 define = new Define(current);
-                define->setAttributeName(waiting.back().str);
+                define->setAttributeName(waiting.front().str);
                 waiting.pop();
-                define->setGroupName(waiting.back().str);
+                define->setGroupName(waiting.front().str);
                 waiting.pop();
-                define->setAttributeType(waiting.back().str);
+                define->setAttributeType(waiting.front().str);
                 waiting.pop();
                 break;
               default:
@@ -150,31 +174,53 @@ namespace Liberty {
 
           case ParenEnd:
             switch (t.type) {
-              Group *group;
               Attribute *attribute;
               ComplexValue *complex_value;
               case CurlyOpen: // this is a group
-                if (waiting.size() != 1  or waiting.back().type == Coma)
+                // if (waiting.size() != 2  or waiting.front().type == Coma)
+                //   return _print_error(t);
+                if (waiting.size() == 2) {
+                  SimpleGroup *sgroup = new SimpleGroup(current);
+                  sgroup->setName(waiting.front().str);
+                  waiting.pop();
+                  sgroup->setGroupIdentifier(waiting.front().str);
+                  current->addStatement(sgroup);
+                  current = sgroup;
+                  waiting.pop();
+                } else if (waiting.size() > 2) {
+                  ComplexGroup *cgroup = new ComplexGroup(current);
+                  cgroup->setName(waiting.front().str);
+                  waiting.pop();
+                  while (not waiting.empty()) {
+                    cgroup->addVariables(waiting.front().str);
+                    waiting.pop();
+                  }
+                  current->addStatement(cgroup);
+                  current = cgroup;
+                } else if (waiting.size() == 1) {
+                  AnonymousGroup *agroup = new AnonymousGroup(current);
+                  agroup->setName(waiting.front().str);
+                  current->addStatement(agroup);
+                  current = agroup;
+                  waiting.pop();
+                } else {
                   return _print_error(t);
-                group = new Group(current);
-                group->setGroupName(waiting.back().str);
-                waiting.pop();
-                group->setName(waiting.back().str);
-                current->addStatement(group);
-                current = group;
-                waiting.pop();
+                }
+                state = Default;
                 break;
               case Semi: // this was a complex statement
                 attribute = new Attribute(current);
                 complex_value = new ComplexValue;
                 attribute->setValue(complex_value);
-                attribute->setName(waiting.back().str);
+                attribute->setName(waiting.front().str);
                 waiting.pop();
                 while (not waiting.empty()) {
-                  complex_value->set(waiting.back().str);
+                  complex_value->set(waiting.front().str);
                   waiting.pop();
                 }
                 current->addStatement(attribute);
+                state = Default;
+                break;
               default:
                 return _print_error(t);
             }
@@ -186,9 +232,18 @@ namespace Liberty {
   }
 
   bool Parser::_print_error(const Token &t) {
-    std::cerr << "[ERROR] While parsing file " << _filepath << " : unexpected token " << TokenTypeToStr(t.type)
-      << " '" << t.str << "'" << std::endl;
+    std::cerr << "[ERROR] While parsing file " << _filepath << " :" << std::endl
+      << "unexpected token " << t.token_count << " " << TokenTypeToStr(t.type)
+      << " '" << t.str << "' at " << t.line_count << ":" << t.char_count << std::endl;
     return false;
   }
+
+  // Token Parser::_copy_empty(const Token &t) {
+  //   Token empty = {TokenType::Expression, std::string_view(""), 0, 0, 0};
+  //   empty.char_count = t.char_count;
+  //   empty.line_count = t.line_count;
+  //   // no token count as token does not exist
+  //   return empty;
+  // }
 
 }

@@ -10,29 +10,15 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Attribute.cpp"                               |
+// |  C++ Module  :  "./SimpleGroup.cpp"                             |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Attribute.h"
-#include "hurricane/liberty/Value.h"
+#include "hurricane/liberty/SimpleGroup.h"
 
 namespace Liberty {
 
-  Attribute::Attribute(Group *parent): Statement(parent), _value(nullptr) {}
+  SimpleGroup::SimpleGroup(Group *parent): Group(parent) {}
 
-  Attribute::~Attribute()
-  {
-    if (_value)
-      delete _value;
-  }
-
-  void Attribute::setValue(Value *value)
-  {
-    // logic to set value type should be added here
-    // maybe add a type argument with default value to string
-    if (_value)
-      delete _value;
-    _value = value;
-  }
+  SimpleGroup::~SimpleGroup() {}
 
 }

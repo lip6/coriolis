@@ -34,14 +34,14 @@ namespace Liberty {
       delete statement;
   }
 
-  Group *Group::getGroup(const std::string &group_name, const std::string &name) const
+  Group *Group::getGroup(const std::string &group_name) const
   {
     Statement *ret;
-    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Group *item){
+    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
       if (item->isGroup())
         return false;
       Group *g = item->getAsGroup();
-      return g->getName() == name && g->getGroupName() == group_name;
+      return g->getName() == group_name;
     });
     return ret->getAsGroup();
   }
@@ -49,7 +49,7 @@ namespace Liberty {
   Attribute *Group::getAttribute(const std::string &attribute_name) const
   {
     Statement *ret;
-    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Group *item){
+    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
       if (item->isAttribute())
         return false;
       Attribute *a = item->getAsAttribute();

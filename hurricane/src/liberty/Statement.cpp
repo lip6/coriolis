@@ -22,6 +22,10 @@
 
 namespace Liberty {
 
+  Statement::Statement(Group *parent): _parent(parent) {}
+
+  Statement::~Statement() {}
+
   Group  *Statement::getAsGroup()
   {
     if (!isGroup()) {

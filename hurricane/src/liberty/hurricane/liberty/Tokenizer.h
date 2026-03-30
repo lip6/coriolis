@@ -13,6 +13,7 @@
 // |  C++ Module  :  "./Tokenizer.h"                                 |
 // +-----------------------------------------------------------------+
 
+#pragma once
 #include <string>
 #include <string_view>
 #include "Reader.h"
@@ -41,8 +42,11 @@ namespace Liberty {
   inline const std::string TokenTypeToStr(TokenType type);
 
   struct Token {
-      TokenType        type;
-      std::string_view str;
+      TokenType         type;
+      std::string_view  str;
+      size_t            line_count;
+      size_t            char_count;
+      size_t            token_count;
 
       operator bool() const {
         return !(type == Error || type == End);
@@ -73,12 +77,16 @@ namespace Liberty {
       const   Token      &_buildTokenNext (char* begin, size_t end, TokenType type);
       inline  TokenType   _getTokenType (char c);
     private:
-      const std::string  _filepath;
-      Token              _token;
-      Token              _next_token;
-      bool               _is_next;
-      Reader             _reader;
-      State              _state;
+      const std::string _filepath;
+      Token             _token;
+      Token             _next_token;
+      bool              _is_next;
+      Reader            _reader;
+      State             _state;
+      size_t            _line_count;
+      size_t            _token_count;
+      bool              _inc_line;
+      char             *_line_begin;
   };
 
   inline TokenType Tokenizer::_getTokenType (char c)
@@ -91,7 +99,7 @@ namespace Liberty {
     case '(':
       return TokenType::ParenOpen;
     case ')':
-      return TokenType::ParenOpen;
+      return TokenType::ParenClose;
     case '[':
       return TokenType::BracketOpen;
     case ']':
@@ -136,6 +144,8 @@ namespace Liberty {
         return "Coma";
       case End:
         return "End";
+      case DefineStatement:
+        return "DefineStatement";
       case QuotedExpression:
         return "QuotedExpression";
     }
