@@ -31,17 +31,19 @@ namespace Liberty {
       Statement(Group *parent);
       virtual            ~Statement() = 0;
 
-      inline const        std::string  &getName       ()                          const ;
-                          Library      *getLibrary    ()                                ;
-      inline              Group        *getParent     ()                          const ;
-      inline              void          setName       ( std::string &name )             ;
-      inline              void          setName       ( std::string_view &name )        ;
-      inline virtual      bool          isGroup       ()                          const ;
-      inline virtual      bool          isAttribute   ()                          const ;
-      inline virtual      bool          isDefine      ()                          const ;
-                          Group        *getAsGroup    ()                                ;
-                          Attribute    *getAsAttribute()                                ;
-                          Define       *getAsDefine   ()                                ;
+      inline const    std::string  &getName       () const ;
+                      Library      *getLibrary    ()       ;
+      inline          Group        *getParent     () const ;
+      inline virtual  bool          isGroup       () const ;
+      inline virtual  bool          isAttribute   () const ;
+      inline virtual  bool          isDefine      () const ;
+                      Group        *getAsGroup    ()       ;
+                      Attribute    *getAsAttribute()       ;
+                      Define       *getAsDefine   ()       ;
+
+      inline virtual void setName(const std::string      &name);
+      inline virtual void setName(      std::string_view &name);
+
     protected:
       Group      *_parent;
       std::string _name;
@@ -53,11 +55,11 @@ namespace Liberty {
   inline        bool          Statement::isAttribute  ()  const { return false;   }
   inline        bool          Statement::isDefine     ()  const { return false;   }
 
-  inline        void          Statement::setName      ( std::string &name ) {
+  inline void Statement::setName( const std::string &name ) {
     _name = name;
   }
 
-  inline        void          Statement::setName      ( std::string_view &name ) {
+  inline void Statement::setName( std::string_view &name ) {
     _name = name;
   }
 
