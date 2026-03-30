@@ -23,8 +23,8 @@ namespace Liberty {
       Reader();
       ~Reader();
 
-              bool  open(const char *filename);
-      inline  bool  next(char *&c);
+             bool open(const  char  *filename);
+      inline bool next(       char *&c       );
 
     private:
       int     _fd;

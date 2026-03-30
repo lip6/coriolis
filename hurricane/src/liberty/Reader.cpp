@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include "hurricane/liberty/Reader.h"
+#include <cstddef>
 #include <fcntl.h>
 #include <iostream>
 #include <unistd.h>
@@ -47,7 +48,7 @@ namespace Liberty {
       _fd = -1;
       return false;
     }
-    _size = sb.st_size;
+    _size = static_cast<size_t>(sb.st_size);
 
     _data = mmap(nullptr, _size, PROT_READ, MAP_PRIVATE, _fd, 0);
     if (_data == MAP_FAILED) {

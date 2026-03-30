@@ -13,14 +13,15 @@
 // |  C++ Module  :  "./Parser.cpp"                                  |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Parser.h"
 #include "hurricane/liberty/AnonymousGroup.h"
+#include "hurricane/liberty/Attribute.h"
 #include "hurricane/liberty/ComplexGroup.h"
 #include "hurricane/liberty/ComplexValue.h"
 #include "hurricane/liberty/Define.h"
+#include "hurricane/liberty/Parser.h"
 #include "hurricane/liberty/SimpleGroup.h"
 #include "hurricane/liberty/Statement.h"
-#include "hurricane/liberty/Attribute.h"
+#include "hurricane/liberty/Tokenizer.h"
 #include "hurricane/liberty/ValueString.h"
 #include <iostream>
 #include <queue>
@@ -238,12 +239,71 @@ namespace Liberty {
     return false;
   }
 
-  // Token Parser::_copy_empty(const Token &t) {
-  //   Token empty = {TokenType::Expression, std::string_view(""), 0, 0, 0};
-  //   empty.char_count = t.char_count;
-  //   empty.line_count = t.line_count;
-  //   // no token count as token does not exist
-  //   return empty;
-  // }
-
 }
+
+// // g++ -Wimplicit-fallthrough=3 -Wall -Wextra -g3 *.cpp
+// // main to test
+//
+// #include <cstddef>
+//
+// using namespace Liberty;
+//
+// void print_group(Group *g, size_t indent = 0) {
+//   std::string ind(indent, ' ');
+//   if (dynamic_cast<SimpleGroup*>(g)) {
+//     SimpleGroup *s = dynamic_cast<SimpleGroup*>(g);
+//     std::cout << ind << s->getName() << " (" << s->getGroupIdentifier() << ") {" << std::endl;
+//   } else if (dynamic_cast<ComplexGroup*>(g)) {
+//     ComplexGroup *c = dynamic_cast<ComplexGroup*>(g);
+//     std::cout << ind << c->getName() << " (";
+//     for (auto variable: c->getVariables())
+//       std::cout << variable << ", ";
+//     std::cout << ") {" << std::endl;
+//   } else if (dynamic_cast<AnonymousGroup*>(g)) {
+//     std::cout << ind << g->getName() << " () {" << std::endl;
+//   }
+//   indent += 2;
+//   ind = std::string(indent, ' ');
+//   for (Statement *s: g->getStatements()) {
+//     if (s->isGroup()) {
+//       print_group(s->getAsGroup(), indent);
+//     }
+//     else if (s->isDefine()) {
+//       Define *d = s->getAsDefine();
+//       std::cout << ind << "define("<< d->getAttributeName() << ", " << d->getGroupName() << ", "
+//         << d->getAttributeType() << ");" << std::endl;
+//     } else if (s->isAttribute()) {
+//       Attribute *a = s->getAsAttribute();
+//       std::cout << ind << a->getName();
+//       if (dynamic_cast<ValueString*>(a->getValue())) {
+//         ValueString *v = dynamic_cast<ValueString*>(a->getValue());
+//         std::cout << " : " << v->getAsString() << " ;"<< std::endl;
+//       } else {
+//         ComplexValue *v = dynamic_cast<ComplexValue*>(a->getValue());
+//         if (not v)
+//           std::cout << "ERROR STUFF" << std::endl;
+//         else {
+//           std::cout << "(" << v->getAsString() << ");" << std::endl;
+//         }
+//       }
+//     }
+//   }
+//   indent -= 2;
+//   ind = std::string(indent, ' ');
+// }
+//
+// int main (int ac, char **av)
+// {
+//   if (ac < 2) {
+//     std::cout << "Usage: " << av[0] << " /path/to.lib" << std::endl;
+//     return 1;
+//   }
+//
+//   Library lib(av[1]);
+//   bool ret = lib.load();
+//   std::cout << "Parsing returned : " << (ret ? "TRUE":"FALSE") << std::endl;
+//
+//   if (ret)
+//     print_group(&lib);
+//   return ret ? 0 : 1;
+// }

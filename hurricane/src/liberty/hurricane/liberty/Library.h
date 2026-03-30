@@ -15,8 +15,8 @@
 
 
 #pragma once
-#include "Statement.h"
 #include "SimpleGroup.h"
+#include "Statement.h"
 #include <filesystem>
 #include <map>
 #include <string>
@@ -32,17 +32,17 @@ namespace Liberty {
       Library (const std::string &filepath);  // TODO: find a way to fiter stuff
       ~Library ();
 
-              Group      *getCellGroup( const std::string &cell_name) const         ;
-      inline  std::string getFilePath ()                              const         ;
+              Group      *getCellGroup(const std::string &cell_name)  const;
+      inline  std::string getFilePath ()                              const;
 
       bool load(); /// Process the actual loading of library.
 
     private:
       void _include(const std::string &filename);
     private:
-      std::filesystem::path         _path ;  /// Library search path (file directory for includes)
-      std::map<std::string, Group*> _cells;  /// Contains cells (for search only)
-      std::map<std::string, Group*> _groups;  /// Contains cells (for search only)
+      std::filesystem::path         _path   ;  /// Library search path (file directory for includes)
+      std::map<std::string, Group*> _cells  ;  /// Contains cells (for search only)
+      std::map<std::string, Group*> _groups ;  /// Contains cells (for search only)
   };
 
   inline std::string Library::getFilePath() const

@@ -14,10 +14,10 @@
 // +-----------------------------------------------------------------+
 
 #pragma once
-#include <string>
-#include <vector>
 #include "Value.h"
 #include "ValueString.h"
+#include <string>
+#include <vector>
 
 namespace Liberty {
 

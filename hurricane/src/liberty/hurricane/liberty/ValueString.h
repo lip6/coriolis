@@ -14,9 +14,9 @@
 // +-----------------------------------------------------------------+
 
 #pragma once
+#include "Value.h"
 #include <string>
 #include <string_view>
-#include "Value.h"
 
 namespace Liberty {
 
@@ -25,9 +25,9 @@ namespace Liberty {
       ValueString();
       ~ValueString();
 
-      inline  std::string getAsString ()                          const override;
-      inline  void        set         (const std::string &value)        override;
-      inline  void        set         (const std::string_view &value);
+      inline  std::string getAsString ()                              const override;
+      inline  void        set         (const std::string &value)            override;
+      inline  void        set         (const std::string_view &value)               ;
     private:
       std::string _value;
   };

@@ -31,10 +31,11 @@ namespace Liberty {
       inline        bool          isGroup     ()                      const override;
       inline        void          addStatement(Statement *statement)                ;
                     Library      *getLibrary  ()                                    ;
-      inline const  std::vector<Statement*> &getStatements()          const         ;
 
-      Group     *getGroup     ( const std::string &group_name     )  const;
-      Attribute *getAttribute ( const std::string &attribute_name )  const;
+      inline const  std::vector<Statement*> &getStatements() const;
+
+      Group     *getGroup     ( const std::string &group_name     ) const;
+      Attribute *getAttribute ( const std::string &attribute_name ) const;
     protected:
       // group_name of group is in the parent class Statement.
       std::vector< Statement* > _statements;
