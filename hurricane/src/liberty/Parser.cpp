@@ -241,69 +241,69 @@ namespace Liberty {
 
 }
 
-// g++ -Wimplicit-fallthrough=3 -Wall -Wextra -g3 *.cpp
-// main to test
-
-#include <cstddef>
-
-using namespace Liberty;
-
-void print_group(Group *g, size_t indent = 0) {
-  std::string ind(indent, ' ');
-  if (dynamic_cast<SimpleGroup*>(g)) {
-    SimpleGroup *s = dynamic_cast<SimpleGroup*>(g);
-    std::cout << ind << s->getName() << " (" << s->getGroupIdentifier() << ") {" << std::endl;
-  } else if (dynamic_cast<ComplexGroup*>(g)) {
-    ComplexGroup *c = dynamic_cast<ComplexGroup*>(g);
-    std::cout << ind << c->getName() << " (";
-    for (auto variable: c->getVariables())
-      std::cout << variable << ", ";
-    std::cout << ") {" << std::endl;
-  } else if (dynamic_cast<AnonymousGroup*>(g)) {
-    std::cout << ind << g->getName() << " () {" << std::endl;
-  }
-  indent += 2;
-  ind = std::string(indent, ' ');
-  for (Statement *s: g->getStatements()) {
-    if (s->isGroup()) {
-      print_group(s->getAsGroup(), indent);
-    }
-    else if (s->isDefine()) {
-      Define *d = s->getAsDefine();
-      std::cout << ind << "define("<< d->getAttributeName() << ", " << d->getGroupName() << ", "
-        << d->getAttributeType() << ");" << std::endl;
-    } else if (s->isAttribute()) {
-      Attribute *a = s->getAsAttribute();
-      std::cout << ind << a->getName();
-      if (dynamic_cast<ValueString*>(a->getValue())) {
-        ValueString *v = dynamic_cast<ValueString*>(a->getValue());
-        std::cout << " : " << v->getAsString() << " ;"<< std::endl;
-      } else {
-        ComplexValue *v = dynamic_cast<ComplexValue*>(a->getValue());
-        if (not v)
-          std::cout << "ERROR STUFF" << std::endl;
-        else {
-          std::cout << "(" << v->getAsString() << ");" << std::endl;
-        }
-      }
-    }
-  }
-  indent -= 2;
-  ind = std::string(indent, ' ');
-}
-
-int main (int ac, char **av)
-{
-  if (ac < 2) {
-    std::cout << "Usage: " << av[0] << " /path/to.lib" << std::endl;
-    return 1;
-  }
-
-  Library lib(av[1]);
-  bool ret = lib.load();
-  std::cout << "Parsing returned : " << (ret ? "TRUE":"FALSE") << std::endl;
-
-  if (ret)
-    print_group(&lib);
-  return ret ? 0 : 1;
-}
+// // g++ -Wimplicit-fallthrough=3 -Wall -Wextra -g3 *.cpp
+// // main to test
+//
+// #include <cstddef>
+//
+// using namespace Liberty;
+//
+// void print_group(Group *g, size_t indent = 0) {
+//   std::string ind(indent, ' ');
+//   if (dynamic_cast<SimpleGroup*>(g)) {
+//     SimpleGroup *s = dynamic_cast<SimpleGroup*>(g);
+//     std::cout << ind << s->getName() << " (" << s->getGroupIdentifier() << ") {" << std::endl;
+//   } else if (dynamic_cast<ComplexGroup*>(g)) {
+//     ComplexGroup *c = dynamic_cast<ComplexGroup*>(g);
+//     std::cout << ind << c->getName() << " (";
+//     for (auto variable: c->getVariables())
+//       std::cout << variable << ", ";
+//     std::cout << ") {" << std::endl;
+//   } else if (dynamic_cast<AnonymousGroup*>(g)) {
+//     std::cout << ind << g->getName() << " () {" << std::endl;
+//   }
+//   indent += 2;
+//   ind = std::string(indent, ' ');
+//   for (Statement *s: g->getStatements()) {
+//     if (s->isGroup()) {
+//       print_group(s->getAsGroup(), indent);
+//     }
+//     else if (s->isDefine()) {
+//       Define *d = s->getAsDefine();
+//       std::cout << ind << "define("<< d->getAttributeName() << ", " << d->getGroupName() << ", "
+//         << d->getAttributeType() << ");" << std::endl;
+//     } else if (s->isAttribute()) {
+//       Attribute *a = s->getAsAttribute();
+//       std::cout << ind << a->getName();
+//       if (dynamic_cast<ValueString*>(a->getValue())) {
+//         ValueString *v = dynamic_cast<ValueString*>(a->getValue());
+//         std::cout << " : " << v->getAsString() << " ;"<< std::endl;
+//       } else {
+//         ComplexValue *v = dynamic_cast<ComplexValue*>(a->getValue());
+//         if (not v)
+//           std::cout << "ERROR STUFF" << std::endl;
+//         else {
+//           std::cout << "(" << v->getAsString() << ");" << std::endl;
+//         }
+//       }
+//     }
+//   }
+//   indent -= 2;
+//   ind = std::string(indent, ' ');
+// }
+//
+// int main (int ac, char **av)
+// {
+//   if (ac < 2) {
+//     std::cout << "Usage: " << av[0] << " /path/to.lib" << std::endl;
+//     return 1;
+//   }
+//
+//   Library lib(av[1]);
+//   bool ret = lib.load();
+//   std::cout << "Parsing returned : " << (ret ? "TRUE":"FALSE") << std::endl;
+//
+//   if (ret)
+//     print_group(&lib);
+//   return ret ? 0 : 1;
+// }
