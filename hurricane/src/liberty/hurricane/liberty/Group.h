@@ -15,6 +15,7 @@
 
 #pragma once
 #include "Statement.h"
+#include <istream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -28,14 +29,18 @@ namespace Liberty {
       Group(Group *parent);
       ~Group();
 
-      inline        bool          isGroup     ()                      const override;
-      inline        void          addStatement(Statement *statement)                ;
-                    Library      *getLibrary  ()                                    ;
+      inline        bool      isGroup           ()                      const override;
+      inline        void      addStatement      (Statement *statement)                ;
+                    Library  *getLibrary        ()                                    ;
+      inline        void      clear_statements  ()                                    ;
+
+      void setName (const std::string      &name) override;
+      void setName (      std::string_view &name) override;
 
       inline const  std::vector<Statement*> &getStatements() const;
 
-      Group     *getGroup     ( const std::string &group_name     ) const;
-      Attribute *getAttribute ( const std::string &attribute_name ) const;
+      Group      *getGroup    ( const std::string &group_name     ) const;
+      Attribute  *getAttribute( const std::string &attribute_name ) const;
     protected:
       // group_name of group is in the parent class Statement.
       std::vector< Statement* > _statements;
@@ -55,6 +60,10 @@ namespace Liberty {
   inline const std::vector<Statement*> &Group::getStatements() const
   {
     return _statements;
+  }
+
+  inline void Group::clear_statements() {
+    _statements.clear();
   }
 
 }

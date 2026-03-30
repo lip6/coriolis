@@ -19,6 +19,7 @@
 #include "hurricane/liberty/Statement.h"
 #include <algorithm>
 #include <string>
+#include <string_view>
 
 namespace Liberty {
 
@@ -63,6 +64,18 @@ namespace Liberty {
   Library *Group::getLibrary()
   {
     return _library;
+  }
+
+  void Group::setName(const std::string &name) {
+    _name = name;
+    if (_name == "cell")
+      _library->addCellGroup(_name, this);
+  }
+
+  void Group::setName(std::string_view &name) {
+    _name = name;
+    if (_name == "cell")
+      _library->addCellGroup(_name, this);
   }
 
 }

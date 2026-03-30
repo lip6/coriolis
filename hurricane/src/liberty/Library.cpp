@@ -33,11 +33,25 @@ namespace Liberty {
 
   bool Library::load() {
     Parser parser(_path.string());
-    return parser.parse(this);
+    if (not parser.parse(this))
+      return false;
+    // we need to make library top level.
+    SimpleGroup *actual = dynamic_cast<SimpleGroup*>(this->_statements.front()->getAsGroup());
+    if (!actual)
+      return false;
+    _statements.clear();
+    _statements = actual->getStatements();
+    this->setName(actual->getName());
+    this->setGroupIdentifier(actual->getGroupIdentifier());
+    actual->clear_statements();
+    delete actual;
+    return true;
   }
 
   Group *Library::getCellGroup(const std::string &cell_name) const
   {
+    if (_cells.find(cell_name) == _cells.end())
+      return nullptr;
     return _cells.at(cell_name);
   }
 
@@ -45,6 +59,13 @@ namespace Liberty {
     std::cerr << "[CRITICAL WARNING] Trying to parse include directive for " << filename << " "
       << "but that feature is not yet available. "
       << "Parts of your library are probably not parsed and will be missing." << std::endl;
+  }
+
+  void Library::addCellGroup(const std::string &cell_name, Group *group) {
+    if (_cells.find(cell_name) != _cells.end()) {
+      delete _cells.at(cell_name);
+    }
+    _cells[cell_name] = group;
   }
 
 }
