@@ -4,7 +4,8 @@ hurricane_includes = include_directories(
   'isobar',
   'configuration',
   'analog',
-  'viewer'
+  'viewer',
+  'liberty'
 )
 
 hurricane_deps = [qt_deps, py_deps, rapidjson, boost]
@@ -15,6 +16,7 @@ subdir('isobar')
 subdir('configuration')
 subdir('analog')
 subdir('viewer')
+subdir('liberty')
 
 py.extension_module(
   'Hurricane',
@@ -27,7 +29,7 @@ py.extension_module(
 )
 
 Hurricane = declare_dependency(
-  link_with: [viewer,analog,configuration,isobar,utilities,hurricane],
+  link_with: [viewer,analog,configuration,isobar,utilities,hurricane,liberty],
   include_directories: hurricane_includes,
   dependencies: [qt_deps, py_deps, boost, rapidjson]
 )
