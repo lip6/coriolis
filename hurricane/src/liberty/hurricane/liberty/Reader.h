@@ -13,7 +13,9 @@
 // |  C++ Module  :  "./Reader.h"                                    |
 // +-----------------------------------------------------------------+
 
+#pragma once
 #include <cstddef>
+
 namespace Liberty {
 
   class Reader {

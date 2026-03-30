@@ -22,7 +22,7 @@
 
 namespace Liberty {
 
-  Reader::Reader(): _fd(-1), _data(MAP_FAILED), _size(0) {}
+  Reader::Reader(): _fd(-1), _size(0), _data(MAP_FAILED) {}
 
   Reader::~Reader()
   {

@@ -17,18 +17,21 @@
 #include <filesystem>
 #include <iostream>
 #include "hurricane/liberty/Library.h"
+#include "hurricane/liberty/Parser.h"
 #include "hurricane/liberty/Statement.h"
 
 namespace Liberty {
 
-  Library::Library(const std::string &filepath):  Group(nullptr)
+  Library::Library(const std::string &filepath):  SimpleGroup(nullptr)
                                                 , _path(filepath)
                                                 , _cells()
   {}
 
   Library::~Library() {}
 
-  void Library::load() {
+  bool Library::load() {
+    Parser parser(_path.string());
+    return parser.parse(this);
   }
 
   Group *Library::getCellGroup(const std::string &cell_name) const

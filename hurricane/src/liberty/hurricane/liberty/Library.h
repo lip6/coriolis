@@ -16,7 +16,7 @@
 
 #pragma once
 #include "Statement.h"
-#include "Group.h"
+#include "SimpleGroup.h"
 #include <filesystem>
 #include <map>
 #include <string>
@@ -27,7 +27,7 @@ namespace Liberty {
   /**
    *  Base class to parse Liberty Library of cells.
    * */
-  class Library: public Group {
+  class Library: public SimpleGroup {
     public:
       Library (const std::string &filepath);  // TODO: find a way to fiter stuff
       ~Library ();
@@ -35,7 +35,7 @@ namespace Liberty {
               Group      *getCellGroup( const std::string &cell_name) const         ;
       inline  std::string getFilePath ()                              const         ;
 
-      void load(); /// Process the actual loading of library.
+      bool load(); /// Process the actual loading of library.
 
     private:
       void _include(const std::string &filename);

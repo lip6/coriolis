@@ -21,9 +21,14 @@ namespace Liberty {
 
   Tokenizer::Tokenizer(const std::string &filepath):  _filepath(filepath)
                                                     , _token()
+                                                    , _is_next(false)
                                                     , _reader()
                                                     , _state(Default)
-                                                    , _is_next(false)     {}
+                                                    , _line_count(0)
+                                                    , _token_count(1)
+                                                    , _inc_line(true)
+                                                    , _line_begin(0)
+  {}
 
   Tokenizer::~Tokenizer() {}
 
@@ -34,12 +39,18 @@ namespace Liberty {
   const Token &Tokenizer::_buildToken(char *begin, size_t end, TokenType type) {
     _token.str = std::string_view(begin, end);
     _token.type = type;
+    _token.line_count = _line_count;
+    _token.char_count = begin - _line_begin + 1;
+    _token.token_count = _token_count++ - (_is_next ? 1:0);
     return _token;
   }
 
   const Token &Tokenizer::_buildTokenNext(char *begin, size_t end, TokenType type) {
     _next_token.str   = std::string_view(begin, end);
     _next_token.type  = type;
+    _next_token.line_count = _line_count;
+    _next_token.char_count = begin - _line_begin + 1;
+    _next_token.token_count = ++_token_count;
     _is_next          = true;
     return _next_token;
   }
@@ -50,8 +61,8 @@ namespace Liberty {
       _is_next = false;
       return _next_token;
     }
-    static const Token error      { TokenType::Error, std::string_view("ERROR") };
-    static const Token end        { TokenType::End  , std::string_view("END")   };
+    static const Token error      { TokenType::Error, std::string_view("ERROR"), 0, 0, 0 };
+    static const Token end        { TokenType::End  , std::string_view("END")  , 0, 0, 0 };
     static const char  define[] = "define";
 
     const char  *define_match = define;
@@ -61,6 +72,11 @@ namespace Liberty {
     while (_reader.next(c)) {
       if (begin == 0)
         begin = c;
+      if (_inc_line) {
+        _line_count++;
+        _line_begin = c;
+        _inc_line = false;
+      }
       switch (_state) {
         case Error:
           return error;
@@ -71,9 +87,11 @@ namespace Liberty {
               _state = CommentBegin;
               size++;
               break;
+            case '\n':
+              _inc_line = true;
+              [[fallthrough]];
             case ' ':
             case '\r':
-            case '\n':
             case '\t':
             case '\\':
               begin = 0;
@@ -125,6 +143,7 @@ namespace Liberty {
         case CommentLine:
           switch (*c) {
             case '\n':
+              _inc_line = true;
               return _buildToken(begin, size, TokenType::CommentLine);
             case '\r':
               break;
@@ -135,6 +154,9 @@ namespace Liberty {
 
           case CommentBlock:
             switch (*c) {
+              case '\n':
+                _inc_line = true;
+                break;
               case '*':
                 _state = CommentBlockEnd;
                 [[fallthrough]];
@@ -171,10 +193,13 @@ namespace Liberty {
               case ';':
               case ',':
                 _buildTokenNext(c, 1, _getTokenType(*c));
+                [[fallthrough]];
               case ' ':
               case '\r':
               case '\n':
               case '\t':
+                if (*c == '\n')
+                  _inc_line = true;
                 define_match = define;
                 _state = Default;
                 return _buildToken(begin, size, TokenType::DefineStatement);
@@ -204,10 +229,13 @@ namespace Liberty {
             case ';':
             case ',':
               _buildTokenNext(c, 1, _getTokenType(*c));
+              [[fallthrough]];
             case ' ':
             case '\r':
             case '\n':
             case '\t':
+              if (*c == '\n')
+                _inc_line = true;
               _state = Default;
               return _buildToken(begin, size, TokenType::Expression);
             default:
@@ -217,6 +245,10 @@ namespace Liberty {
 
         case QuotedExpression:
           switch (*c) {
+            case '\n':
+              _inc_line = true;
+              size++;
+              break;
             case '"':
               _state = Default;
               return _buildToken(begin, ++size, TokenType::QuotedExpression);

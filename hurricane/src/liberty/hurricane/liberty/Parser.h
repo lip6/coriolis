@@ -13,6 +13,7 @@
 // |  C++ Module  :  "./Parser.h"                                    |
 // +-----------------------------------------------------------------+
 
+#pragma once
 #include <string>
 #include "Library.h"
 #include "Tokenizer.h"
@@ -31,6 +32,7 @@ namespace Liberty {
         Default,
         DefineState,
         First,
+        ParenBegin,
         Paren,
         ParenEnd,
         SimpleAttribute,
@@ -38,6 +40,7 @@ namespace Liberty {
       };
     private:
       bool _print_error(const Token &t);
+      // Token _copy_empty(const Token &t);
     private:
       Tokenizer _tokenizer;
       std::string _filepath;
