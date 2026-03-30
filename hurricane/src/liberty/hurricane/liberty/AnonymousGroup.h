@@ -18,6 +18,15 @@
 
 namespace Liberty {
 
+  /**
+    * An anonymous group is a group without a specific group name.
+    * Such as :
+    * ```
+    *   name () {
+    *     ... statements ...
+    *   }
+    * ```
+    * */
   class AnonymousGroup: public Group {
     public:
       AnonymousGroup(Group *parent);

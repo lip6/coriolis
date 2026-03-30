@@ -18,6 +18,9 @@
 
 namespace Liberty {
 
+  /**
+   *  Basic character by character file reader. Uses mmap to handle large files rapidly.
+   * */
   class Reader {
     public:
       Reader();

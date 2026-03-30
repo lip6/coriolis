@@ -41,6 +41,9 @@ namespace Liberty {
 
   inline const std::string TokenTypeToStr(TokenType type);
 
+  /**
+    * A token used to parse Liberty file.
+    * */
   struct Token {
       TokenType         type;
       std::string_view  str;
@@ -53,6 +56,9 @@ namespace Liberty {
       }
   };
 
+  /**
+    * Simple tokenizer to build token for Liberty files.
+    * */
   class Tokenizer {
     public:
       Tokenizer (const std::string &filepath);

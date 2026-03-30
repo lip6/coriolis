@@ -21,6 +21,13 @@
 
 namespace Liberty {
 
+  /**
+    * A complex value is a list of values, separated by comas. They are
+    * found in complex attributes.
+    * ```
+    * attribute_name (parameter1, [parameter2, parameter3]);
+    * ```
+    * */
   class ComplexValue : public Value {
     public:
       ComplexValue();

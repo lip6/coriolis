@@ -20,6 +20,15 @@
 
 namespace Liberty {
 
+  /**
+    * A ComplexGroup is a specific group, which does not have a group_name, but rather
+    * more than one variable name. `ff` group is a complex group.
+    * ```
+    * group_name (variable1, variable2) {
+    *   ... statements ...
+    * }
+    * ```
+    * */
   class ComplexGroup: public Group {
     public:
       ComplexGroup(Group *parent);

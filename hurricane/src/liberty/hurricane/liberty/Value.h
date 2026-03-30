@@ -18,6 +18,10 @@
 
 namespace Liberty {
 
+  /**
+    * A value is stored in every attribute.
+    * This is the generic class, that can be used to expand parsed types.
+    * */
   class Value {
     public:
       Value();

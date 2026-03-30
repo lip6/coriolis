@@ -20,6 +20,9 @@
 
 namespace Liberty {
 
+  /**
+   *  Parser to parse Liberty Library of cells.
+   * */
   class Parser {
     public:
       Parser(const std::string &filepath);
