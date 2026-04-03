@@ -68,14 +68,10 @@ namespace Liberty {
 
   void Group::setName(const std::string &name) {
     _name = name;
-    if (_name == "cell")
-      _library->addCellGroup(_name, this);
   }
 
   void Group::setName(std::string_view &name) {
     _name = name;
-    if (_name == "cell")
-      _library->addCellGroup(_name, this);
   }
 
 }

@@ -13,13 +13,31 @@
 // |  C++ Module  :  "./SimpleGroup.cpp"                             |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/SimpleGroup.h"
 #include "hurricane/liberty/Group.h"
+#include "hurricane/liberty/Library.h"
+#include "hurricane/liberty/SimpleGroup.h"
+#include <string>
+#include <string_view>
 
 namespace Liberty {
 
   SimpleGroup::SimpleGroup(Group *parent): Group(parent) {}
 
   SimpleGroup::~SimpleGroup() {}
+
+  void SimpleGroup::setGroupIdentifier(const std::string &group_id)
+  {
+    _group_identifier = group_id;
+    if (_group_identifier == "cell")
+      getLibrary()->addCellGroup(_group_identifier, this);
+  }
+
+  void SimpleGroup::setGroupIdentifier(const std::string_view &group_id)
+  {
+    _group_identifier = group_id;
+    if (_group_identifier == "cell")
+      getLibrary()->addCellGroup(_group_identifier, this);
+  }
+
 
 }
