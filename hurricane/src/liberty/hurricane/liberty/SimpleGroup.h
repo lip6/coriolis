@@ -32,23 +32,13 @@ namespace Liberty {
       SimpleGroup(Group *parent);
       ~SimpleGroup();
 
-      inline        void          setGroupIdentifier(const std::string &group_id)             ;
-      inline        void          setGroupIdentifier(const std::string_view &group_id)        ;
+                    void          setGroupIdentifier(const std::string &group_id)             ;
+                    void          setGroupIdentifier(const std::string_view &group_id)        ;
       inline const  std::string  &getGroupIdentifier()                                  const ;
 
     private:
       std::string _group_identifier;
   };
-
-  inline void SimpleGroup::setGroupIdentifier(const std::string &group_id)
-  {
-    _group_identifier = group_id;
-  }
-
-  inline void SimpleGroup::setGroupIdentifier(const std::string_view &group_id)
-  {
-    _group_identifier = group_id;
-  }
 
   inline const std::string &SimpleGroup::getGroupIdentifier() const
   {

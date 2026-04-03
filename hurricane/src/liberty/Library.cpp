@@ -62,8 +62,11 @@ namespace Liberty {
   }
 
   void Library::addCellGroup(const std::string &cell_name, Group *group) {
+    std::cout << "Adding cell '" << cell_name << "'" << std::endl;
     if (_cells.find(cell_name) != _cells.end()) {
-      delete _cells.at(cell_name);
+      if (_cells.at(cell_name))
+        delete _cells.at(cell_name);
+      _cells[cell_name] = nullptr;
     }
     _cells[cell_name] = group;
   }

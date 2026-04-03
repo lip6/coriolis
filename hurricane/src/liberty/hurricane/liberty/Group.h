@@ -55,6 +55,8 @@ namespace Liberty {
     protected:
       // group_name of group is in the parent class Statement.
       std::vector< Statement* > _statements;
+    private:
+      // NEVER access directly this pointer, use getLibrary !!!
       Library                  *_library;
   };
 
