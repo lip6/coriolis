@@ -669,7 +669,6 @@ class GaugeConf ( object ):
         contact = topContact
         depth   = -1
         while contact:
-            count   = 0
             segment = None
             for component in contact.getSlaveComponents():
                 if isinstance(component,Horizontal):
@@ -711,11 +710,10 @@ class GaugeConf ( object ):
             if lg.getDirection() == RoutingLayerGauge.Horizontal:
                 x = topContact.getX()
         if not (flags & GaugeConf.DeepDepth):
-            return y
+            return x
         contact = topContact
         depth   = -1
         while contact:
-            count   = 0
             segment = None
             for component in contact.getSlaveComponents():
                 if isinstance(component,Horizontal):
