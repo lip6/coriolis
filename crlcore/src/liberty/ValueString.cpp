@@ -10,30 +10,15 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Attribute.cpp"                               |
+// |  C++ Module  :  "./ValueString.cpp"                             |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Attribute.h"
-#include "hurricane/liberty/Statement.h"
-#include "hurricane/liberty/Value.h"
+#include "crlcore/liberty/ValueString.h"
+#include "crlcore/liberty/Value.h"
 
 namespace Liberty {
 
-  Attribute::Attribute(Group *parent): Statement(parent), _value(nullptr) {}
-
-  Attribute::~Attribute()
-  {
-    if (_value)
-      delete _value;
-  }
-
-  void Attribute::setValue(Value *value)
-  {
-    // logic to set value type should be added here
-    // maybe add a type argument with default value to string
-    if (_value)
-      delete _value;
-    _value = value;
-  }
+  ValueString::ValueString(): Value() {}
+  ValueString::~ValueString() {}
 
 }

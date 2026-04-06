@@ -10,15 +10,16 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./ValueString.cpp"                             |
+// |  C++ Module  :  "./ComplexGroup.cpp"                            |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/ValueString.h"
-#include "hurricane/liberty/Value.h"
+#include "crlcore/liberty/ComplexGroup.h"
+#include "crlcore/liberty/Group.h"
 
 namespace Liberty {
 
-  ValueString::ValueString(): Value() {}
-  ValueString::~ValueString() {}
+  ComplexGroup::ComplexGroup(Group *parent): Group(parent) {}
+
+  ComplexGroup::~ComplexGroup() {}
 
 }

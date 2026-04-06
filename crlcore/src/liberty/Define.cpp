@@ -10,16 +10,17 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./ComplexGroup.cpp"                            |
+// |  C++ Module  :  "./Define.cpp"                                  |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/ComplexGroup.h"
-#include "hurricane/liberty/Group.h"
+#include "crlcore/liberty/Define.h"
+#include "crlcore/liberty/Group.h"
+#include "crlcore/liberty/Statement.h"
 
 namespace Liberty {
 
-  ComplexGroup::ComplexGroup(Group *parent): Group(parent) {}
+  Define::Define(Group *parent): Statement(parent) {}
 
-  ComplexGroup::~ComplexGroup() {}
+  Define::~Define() {} // do not delete group here
 
 }

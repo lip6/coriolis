@@ -13,9 +13,9 @@
 // |  C++ Module  :  "./ComplexValue.cpp"                            |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/ComplexValue.h"
-#include "hurricane/liberty/Value.h"
-#include "hurricane/liberty/ValueString.h"
+#include "crlcore/liberty/ComplexValue.h"
+#include "crlcore/liberty/Value.h"
+#include "crlcore/liberty/ValueString.h"
 #include <string>
 #include <string_view>
 

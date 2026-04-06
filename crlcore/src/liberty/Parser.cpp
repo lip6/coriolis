@@ -13,16 +13,16 @@
 // |  C++ Module  :  "./Parser.cpp"                                  |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/AnonymousGroup.h"
-#include "hurricane/liberty/Attribute.h"
-#include "hurricane/liberty/ComplexGroup.h"
-#include "hurricane/liberty/ComplexValue.h"
-#include "hurricane/liberty/Define.h"
-#include "hurricane/liberty/Parser.h"
-#include "hurricane/liberty/SimpleGroup.h"
-#include "hurricane/liberty/Statement.h"
-#include "hurricane/liberty/Tokenizer.h"
-#include "hurricane/liberty/ValueString.h"
+#include "crlcore/liberty/AnonymousGroup.h"
+#include "crlcore/liberty/Attribute.h"
+#include "crlcore/liberty/ComplexGroup.h"
+#include "crlcore/liberty/ComplexValue.h"
+#include "crlcore/liberty/Define.h"
+#include "crlcore/liberty/Parser.h"
+#include "crlcore/liberty/SimpleGroup.h"
+#include "crlcore/liberty/Statement.h"
+#include "crlcore/liberty/Tokenizer.h"
+#include "crlcore/liberty/ValueString.h"
 #include <iostream>
 #include <queue>
 #include <string>

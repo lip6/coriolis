@@ -13,10 +13,10 @@
 // |  C++ Module  :  "./Group.cpp"                                   |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Attribute.h"
-#include "hurricane/liberty/Group.h"
-#include "hurricane/liberty/Library.h"
-#include "hurricane/liberty/Statement.h"
+#include "crlcore/liberty/Attribute.h"
+#include "crlcore/liberty/Group.h"
+#include "crlcore/liberty/Library.h"
+#include "crlcore/liberty/Statement.h"
 #include <algorithm>
 #include <string>
 #include <string_view>

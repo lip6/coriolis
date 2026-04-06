@@ -13,9 +13,9 @@
 // |  C++ Module  :  "./SimpleGroup.cpp"                             |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Group.h"
-#include "hurricane/liberty/Library.h"
-#include "hurricane/liberty/SimpleGroup.h"
+#include "crlcore/liberty/Group.h"
+#include "crlcore/liberty/Library.h"
+#include "crlcore/liberty/SimpleGroup.h"
 #include <string>
 #include <string_view>
 

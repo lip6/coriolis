@@ -14,10 +14,10 @@
 // +-----------------------------------------------------------------+
 
 
-#include "hurricane/liberty/Library.h"
-#include "hurricane/liberty/Parser.h"
-#include "hurricane/liberty/SimpleGroup.h"
-#include "hurricane/liberty/Statement.h"
+#include "crlcore/liberty/Library.h"
+#include "crlcore/liberty/Parser.h"
+#include "crlcore/liberty/SimpleGroup.h"
+#include "crlcore/liberty/Statement.h"
 #include <filesystem>
 #include <iostream>
 #include <string>
