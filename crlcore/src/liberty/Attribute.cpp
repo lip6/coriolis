@@ -10,16 +10,30 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./AnonymousGroup.cpp"                          |
+// |  C++ Module  :  "./Attribute.cpp"                               |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/AnonymousGroup.h"
-#include "hurricane/liberty/Group.h"
+#include "crlcore/liberty/Attribute.h"
+#include "crlcore/liberty/Statement.h"
+#include "crlcore/liberty/Value.h"
 
 namespace Liberty {
 
-  AnonymousGroup::AnonymousGroup(Group *parent): Group(parent) {}
+  Attribute::Attribute(Group *parent): Statement(parent), _value(nullptr) {}
 
-  AnonymousGroup::~AnonymousGroup() {}
+  Attribute::~Attribute()
+  {
+    if (_value)
+      delete _value;
+  }
+
+  void Attribute::setValue(Value *value)
+  {
+    // logic to set value type should be added here
+    // maybe add a type argument with default value to string
+    if (_value)
+      delete _value;
+    _value = value;
+  }
 
 }

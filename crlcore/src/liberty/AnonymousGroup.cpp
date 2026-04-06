@@ -10,14 +10,16 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Library.cpp"                                 |
+// |  C++ Module  :  "./AnonymousGroup.cpp"                          |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Value.h"
+#include "crlcore/liberty/AnonymousGroup.h"
+#include "crlcore/liberty/Group.h"
 
 namespace Liberty {
 
-  Value::Value() {}
-  Value::~Value() {}
+  AnonymousGroup::AnonymousGroup(Group *parent): Group(parent) {}
+
+  AnonymousGroup::~AnonymousGroup() {}
 
 }

@@ -10,17 +10,14 @@
 // |  Author      :                              Hippolyte MELICA    |
 // |  E-mail      :   hippolyte.melica@etu.sorbonne-universite.fr    |
 // | =============================================================== |
-// |  C++ Module  :  "./Define.cpp"                                  |
+// |  C++ Module  :  "./Library.cpp"                                 |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Define.h"
-#include "hurricane/liberty/Group.h"
-#include "hurricane/liberty/Statement.h"
+#include "crlcore/liberty/Value.h"
 
 namespace Liberty {
 
-  Define::Define(Group *parent): Statement(parent) {}
-
-  Define::~Define() {} // do not delete group here
+  Value::Value() {}
+  Value::~Value() {}
 
 }

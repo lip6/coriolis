@@ -13,7 +13,7 @@
 // |  C++ Module  :  "./Tokenizer.cpp"                               |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/liberty/Tokenizer.h"
+#include "crlcore/liberty/Tokenizer.h"
 #include <cstddef>
 #include <iostream>
 #include <string>
