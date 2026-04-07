@@ -75,6 +75,28 @@ namespace Spice {
   }
 
 
+  void  Entity::_recheckNets ()
+  {
+    bool  complete = true;
+    map< string, Net*, greater<string> >  orderedNets;
+    for ( Net* net : getCell()->getNets() ) {
+      orderedNets.insert( make_pair( getString(net->getName()), net ) );
+      complete = complete and BitExtension::get( net );
+    }
+    if (complete) return;
+    
+    for ( auto item : orderedNets ) {
+      Bit* bit = BitExtension::get( item.second );
+      if (not bit) {
+        bit = BitExtension::create( item.second, _bits.size() );
+        _bits.push_back( bit );
+      }
+      if (item.second->isPower ()) _powerNode  = bit->getIndex();
+      if (item.second->isGround()) _groundNode = bit->getIndex();
+    }
+  }
+
+
   void  Entity::setOrder ( const vector<Net*>& orderedNets )
   {
     for ( auto bit : _bits )
@@ -129,6 +151,7 @@ namespace Spice {
     for ( Bit* bit : _bits ) {
       const Net* net = bit->getNet();
       if (not net->isExternal() and asInterf) continue;
+      if (net->isDeepNet()) continue;
       if (asInterf) {
         out << "* " << "INTERF" //<< setw(6) << BitExtension::getName(net)
             << " " << NamingScheme::vhdlToVlog(net->getName()) << "\n";
@@ -143,6 +166,8 @@ namespace Spice {
 
   void Entity::toEntity ( ostream& out ) const
   {
+    const_cast<Entity*>( this )->_recheckNets();
+    
     set<Cell*,DBo::CompareById>  processedsModels;
     string  cellName = getString( getCell()->getName() );
     time_t  clock    = time( nullptr );

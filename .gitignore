@@ -12,6 +12,7 @@ GRTAGS
 .dir-locals.el
 .projectile
 .vscode
+.venv
 
 lefdef/src/lef/lef/lef.tab.h
 lefdef/src/def/def/def.tab.h

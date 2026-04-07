@@ -41,6 +41,11 @@ namespace Hurricane {
   class Pin : public Contact {
     public:
       typedef Contact Inherit;
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
     public:
       class AccessDirection {
@@ -123,6 +128,9 @@ namespace Hurricane {
       PlacementStatus  _placementStatus;
       Pin*             _nextOfCellPinMap;
   };
+
+  
+  inline const FastRTTI& Pin::fastRTTI () { return _fastRTTI; }
 
 
 } // Hurricane namespace.

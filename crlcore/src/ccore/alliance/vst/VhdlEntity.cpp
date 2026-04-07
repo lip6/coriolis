@@ -264,7 +264,7 @@ namespace Vhdl {
 
   const Signal* Entity::getGlobal ( string name ) const
   {
-    VectorSignal key ( name );
+    VectorSignal key ( _ns.convert(name) );
     auto isignal = _globals.find( &key );
     if (isignal != _globals.end()) return *isignal;
 

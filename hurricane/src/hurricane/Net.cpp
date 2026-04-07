@@ -252,6 +252,8 @@ class Net_SlavePlugs : public Collection<Plug*> {
 // Net implementation
 // ****************************************************************************************************
 
+FastRTTI  Net::_fastRTTI ( demangle(typeid(Net).name()), &Net::Inherit::fastRTTI() );
+
 Net::Net(Cell* cell, const Name& name)
 // ***********************************
 :    Inherit(),
@@ -285,6 +287,10 @@ Net* Net::create(Cell* cell, const Name& name)
 
     return net;
 }
+
+const FastRTTI& Net::vfastRTTI () const
+// ************************************
+{ return _fastRTTI; }
 
 Box Net::getBoundingBox() const
 // ****************************
@@ -814,6 +820,7 @@ Record* Net::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
+        record->add(getSlot("_fastRTTI", &_fastRTTI ), Record::Overload );
         record->add(getSlot("_cell", _cell));
         record->add(getSlot("_name", &_name));
         record->add(getSlot("_arity", &_arity));
@@ -983,7 +990,7 @@ Net::ComponentSet::ComponentSet()
 unsigned Net::ComponentSet::_getHashValue(Component* component) const
 // ******************************************************************
 {
-  return component->getId() / 8;
+  return hashFNV( component->getId() );
 }
 
 Component* Net::ComponentSet::_getNextElement(Component* component) const
@@ -1013,7 +1020,7 @@ Net::RubberSet::RubberSet()
 unsigned Net::RubberSet::_getHashValue(Rubber* rubber) const
 // *********************************************************
 {
-  return rubber->getId() / 8;
+  return hashFNV( rubber->getId() );
 }
 
 Rubber* Net::RubberSet::_getNextElement(Rubber* rubber) const

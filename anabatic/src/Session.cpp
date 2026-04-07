@@ -103,7 +103,7 @@ namespace Anabatic {
 
   void  Session::_preDestroy ()
   {
-    if (_anabatic->getState() <= EngineActive) {
+    if (_anabatic->getStage() < StageChainReduce) {
       _revalidate ();
       _anabatic->updateDensity();
     }
@@ -137,9 +137,6 @@ namespace Anabatic {
     set<Segment*>        exploredSegments;
     vector<AutoSegment*> aligneds;
 
-  // Should no longer be necessary to ensure determinism.
-  //sort( _segmentInvalidateds.begin(), _segmentInvalidateds.end(), AutoSegment::CompareId() );
-
     for ( size_t i=0 ; i<_segmentInvalidateds.size() ; i++ ) {
       AutoSegment* seedSegment = _segmentInvalidateds[i];
       AutoSegment* canonical   = seedSegment;
@@ -150,14 +147,14 @@ namespace Anabatic {
 
         bool isWeakGlobal = seedSegment->isGlobal();
         if (not seedSegment->isNotAligned()) {
-          forEach ( AutoSegment*, aligned, seedSegment->getAligneds() ) {
-            cdebug_log(145,0) << "Aligned: " << *aligned << endl;
-            aligneds.push_back ( *aligned );
+          for ( AutoSegment* aligned : seedSegment->getAligneds() ) {
+            cdebug_log(145,0) << "Aligned: " << aligned << endl;
+            aligneds.push_back ( aligned );
             exploredSegments.insert ( aligned->base() );
 
             isWeakGlobal = isWeakGlobal or aligned->isGlobal();
-            if (AutoSegment::CompareId()( *aligned, canonical ))
-              canonical = *aligned;
+            if (AutoSegment::CompareId()( aligned, canonical ))
+              canonical = aligned;
           }
         }
 
@@ -185,13 +182,13 @@ namespace Anabatic {
         if (aligneds.empty()) canonical->setFlags( AutoSegment::SegNotAligned );
 
         if (not getRoutingGauge()->isSymbolic()
-           and (userConstraints.getSize() < Session::getPitch(1)*2) ) {
-            cerr << Warning( "Session::_canonize(): On %s\n"
-                             "          Combined user constraints are too tight [%s : %s]."
-                           , getString(canonical).c_str()
-                           , DbU::getValueString(userConstraints.getVMin()).c_str()
-                           , DbU::getValueString(userConstraints.getVMax()).c_str()
-                           ) << endl;
+           and (userConstraints.getSize() < Session::getPitch(1)) ) {
+          cerr << Warning( "Session::_canonize(): On %s\n"
+                           "          Combined user constraints are too tight [%s : %s]."
+                         , getString(canonical).c_str()
+                         , DbU::getValueString(userConstraints.getVMin()).c_str()
+                         , DbU::getValueString(userConstraints.getVMax()).c_str()
+                         ) << endl;
         }
 
         cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
@@ -445,6 +442,15 @@ namespace Anabatic {
 
   void  Session::setAnabaticFlags ( Flags flags )
   { get("setKabaticFlags()")->_anabatic->flags() = flags; }
+
+
+  uint32_t  Session::getStage ()
+  { return get("getStage()")->_anabatic->getStage(); }
+
+
+  void  Session::setStage ( uint32_t stage )
+  { get("setStage()")->_anabatic->setStage(stage); }
+
 
 
   void  Session::link ( AutoContact* autoContact )

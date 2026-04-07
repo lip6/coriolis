@@ -70,6 +70,7 @@ namespace Tramontana {
 
   EquipotentialsWidget::EquipotentialsWidget ( QWidget* parent )
     : QWidget               (parent)
+    , _observer             (this)
     , _cellWidget           (nullptr)
     , _cell                 (nullptr)
     , _baseModel            (new EquipotentialsModel(this))
@@ -292,6 +293,7 @@ namespace Tramontana {
     TramontanaEngine* tramontana = nullptr;
     if (cell) tramontana = TramontanaEngine::get( cell );
     _openModel->setTramontana( tramontana );
+    if (tramontana) tramontana->addObserver( &_observer );
      
     string windowTitle = "Equis" + getString(cell);
     setWindowTitle( tr(windowTitle.c_str()) );
@@ -341,4 +343,12 @@ namespace Tramontana {
   }
 
 
-}
+  void  EquipotentialsWidget::notify ( EquipotentialsWidget* equiWidget, unsigned int flags )
+  {
+    cdebug.log(160) << "EquipotentialWidget::notify() flags=" << flags << endl;
+    if (flags & ToolEngine::AboutToDestroy) {
+      equiWidget->setCell( nullptr );
+    }
+  }
+
+}  // Tramontana namespace.

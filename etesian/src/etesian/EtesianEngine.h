@@ -61,12 +61,13 @@ namespace Etesian {
 
   class EtesianEngine : public CRL::ToolEngine {
     public:
-      static  const uint32_t  NoFlags     = 0;
-      static  const uint32_t  NeedsDiode  = (1<<0);
-      static  const uint32_t  FinalStage  = (1<<1);
-      static  const uint32_t  RightSide   = (1<<2);
-      static  const uint32_t  LeftSide    = (1<<3);
-      static  const uint32_t  CheckOngrid = (1<<4);
+      static  const uint32_t  NoFlags                = 0;
+      static  const uint32_t  NeedsDiode             = (1<<0);
+      static  const uint32_t  FinalStage             = (1<<1);
+      static  const uint32_t  RightSide              = (1<<2);
+      static  const uint32_t  LeftSide               = (1<<3);
+      static  const uint32_t  CheckOngrid            = (1<<4);
+      static  const uint32_t  FailedPolarizationTies = (1<<5);
     public:
       typedef ToolEngine  Super;
       typedef std::tuple<Net*,int32_t,uint32_t>                NetInfos;
@@ -79,6 +80,7 @@ namespace Etesian {
       static  EtesianEngine*          get                       ( const Cell* );
     public:                                                     
       inline  bool                    isExcluded                ( std::string ) const;
+      inline  uint32_t                getStatus                 () const;
       virtual Configuration*          getConfiguration          ();
       virtual const Configuration*    getConfiguration          () const;
       virtual const Name&             getName                   () const;
@@ -99,6 +101,8 @@ namespace Etesian {
       inline  DbU::Unit               getAntennaGateMaxWL       () const;
       inline  DbU::Unit               getAntennaDiodeMaxWL      () const;
       inline  DbU::Unit               getLatchUpDistance        () const;
+      inline  bool                    putTiesInEmptyArea        () const;
+      inline  DbU::Unit               getLatchUpMax             () const;
       inline  const FeedCells&        getFeedCells              () const;
       inline  const BufferCells&      getBufferCells            () const;
       inline  Cell*                   getDiodeCell              () const;
@@ -111,6 +115,8 @@ namespace Etesian {
       inline  Instance*               getBlockInstance          () const;
       inline  const NetNameSet&       getExcludedNets           () const;
       inline  const std::vector<Box>& getTrackAvoids            () const;
+      inline  uint32_t                setStatus                 ( uint32_t flags );
+      inline  uint32_t                resetStatus               ( uint32_t flags );
       inline  void                    setBlock                  ( Instance* );
       inline  void                    setFixedAbHeight          ( DbU::Unit );
       inline  void                    setFixedAbWidth           ( DbU::Unit );
@@ -151,6 +157,7 @@ namespace Etesian {
     // Attributes.
       static Name                                 _toolName;
     protected:
+             uint32_t                             _status;
              Configuration*                       _configuration;
              Instance*                            _block;
              bool                                 _placed;
@@ -174,6 +181,7 @@ namespace Etesian {
              DbU::Unit                            _sliceHeight;
              DbU::Unit                            _fixedAbHeight;
              DbU::Unit                            _fixedAbWidth;
+             DbU::Unit                            _latchUpMax;
              uint32_t                             _diodeCount;
              uint32_t                             _bufferCount;
              NetNameSet                           _excludedNets;
@@ -201,6 +209,7 @@ namespace Etesian {
 
 
 // Inline Functions.
+  inline  uint32_t               EtesianEngine::setStatus                 ( uint32_t flags ) { _status |= flags; return _status; }
   inline  void                   EtesianEngine::setViewer                 ( Hurricane::CellViewer* viewer ) { _viewer = viewer; }
   inline  Hurricane::CellViewer* EtesianEngine::getViewer                 () const { return _viewer; }
   inline  RoutingGauge*          EtesianEngine::getGauge                  () const { return getConfiguration()->getGauge(); }
@@ -219,7 +228,9 @@ namespace Etesian {
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
   inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
+  inline  bool                   EtesianEngine::putTiesInEmptyArea        () const { return getConfiguration()->putTiesInEmptyArea(); }
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
+  inline  DbU::Unit              EtesianEngine::getLatchUpMax             () const { return _latchUpMax; }
   inline  void                   EtesianEngine::useFeed                   ( Cell* cell ) { _feedCells.useFeed(cell); }
   inline  const FeedCells&       EtesianEngine::getFeedCells              () const { return _feedCells; }
   inline  const BufferCells&     EtesianEngine::getBufferCells            () const { return _bufferCells; }
@@ -228,6 +239,7 @@ namespace Etesian {
                                                                           
   inline  Cell*                  EtesianEngine::getBlockCell              () const { return (_block) ? _block->getMasterCell() : getCell(); }
   inline  Instance*              EtesianEngine::getBlockInstance          () const { return  _block; }
+  inline  uint32_t               EtesianEngine::resetStatus               ( uint32_t flags ) { _status &= ~flags; return _status; }
   inline  void                   EtesianEngine::setFixedAbHeight          ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
   inline  void                   EtesianEngine::setFixedAbWidth           ( DbU::Unit abWidth  ) { _fixedAbWidth  = abWidth; }
   inline  void                   EtesianEngine::setSpaceMargin            ( double margin ) { getConfiguration()->setSpaceMargin(margin); }

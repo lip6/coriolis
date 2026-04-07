@@ -478,7 +478,7 @@ namespace Etesian {
 
   uint32_t  EtesianEngine::doHFNS ()
   {
-    cmess2 << "     - High Fanout Net Synthesis (HFNS)." << endl;
+    cmess1 << "     - High Fanout Net Synthesis (HFNS)." << endl;
     startMeasures();
 
     BufferDatas* bufferDatas = getBufferCells().getBiggestBuffer();

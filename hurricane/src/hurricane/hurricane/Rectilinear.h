@@ -41,6 +41,11 @@ namespace Hurricane {
 // Class  :  "Rectilinear".
 
   class Rectilinear : public Component {
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
     public:
       typedef Component Super;
       static const uint32_t IsRectilinear = (1<<0);
@@ -85,6 +90,7 @@ namespace Hurricane {
   };
 
   
+  inline  const FastRTTI&      Rectilinear::fastRTTI      () { return _fastRTTI; }
   inline        bool           Rectilinear::isRectilinear () const { return _flags & IsRectilinear; }
   inline        Points         Rectilinear::getContour    () const { return new VectorCollection<Point>(_points); }
   inline  const vector<Point>& Rectilinear::getPoints     () const { return _points; }

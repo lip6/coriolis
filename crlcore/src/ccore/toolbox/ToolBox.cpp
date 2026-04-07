@@ -615,10 +615,10 @@ void ConnectPlugHooks(Cell* cell)
     forEach ( Instance*, iinstance,  cell->getInstances() ) {
       Cell* masterCell = iinstance->getMasterCell();
 
-      if ( masterCell->isTerminal() )
+      if ( masterCell->isTerminal() ) {
         ++gates;
-      else
-        _getInstancesCount ( masterCell, gatesByMaster );
+      } else
+        gates += _getInstancesCount ( masterCell, gatesByMaster );
     }
     gatesByMaster.insert ( make_pair(cell,gates) );
 

@@ -160,6 +160,7 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+
   static PyObject *PyRectilinear_getPoints ( PyRectilinear *self )
   {
     cdebug_log(20,0) << "Rectilinear.getPoints()" << endl;

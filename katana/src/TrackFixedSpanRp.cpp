@@ -22,6 +22,7 @@
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
@@ -49,6 +50,7 @@ namespace Katana {
   using Hurricane::RegularLayer;
   using Hurricane::Technology;
   using Hurricane::DataBase;
+  using Hurricane::Pin;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Anabatic::GCellsUnder;
@@ -56,6 +58,9 @@ namespace Katana {
 
 // -------------------------------------------------------------------
 // Class  :  "TrackFixedSpanRp".
+
+  
+  std::map<RoutingPad*,TrackFixedSpanRp*>  TrackFixedSpanRp::_rpLookup;
 
 
   TrackFixedSpanRp::TrackFixedSpanRp ( RoutingPad* rp, const Box& bb )
@@ -71,6 +76,8 @@ namespace Katana {
   void  TrackFixedSpanRp::_preDestroy ()
   {
     cdebug_log(155,0) << "TrackFixedSpanRp::_preDestroy() - " << (void*)this << endl;
+    auto irp = _rpLookup.find( _routingPad );
+    if (irp != _rpLookup.end()) _rpLookup.erase( irp );
     Super::_preDestroy();
   }
 
@@ -85,6 +92,7 @@ namespace Katana {
     trackTerminal = new TrackFixedSpanRp ( rp, bb );
     trackTerminal->_postCreate( track );
     cdebug_log(159,0) << trackTerminal << endl;
+    _rpLookup.insert( make_pair( rp, trackTerminal ));
     Session::addInsertEvent( trackTerminal, track, track->getAxis() );
     return trackTerminal;
   }
@@ -93,17 +101,36 @@ namespace Katana {
   bool         TrackFixedSpanRp::isFixedSpanRp () const { return true; }
   RoutingPad*  TrackFixedSpanRp::getRoutingPad () const { return _routingPad; }
 
+
+  bool  TrackFixedSpanRp::isOnPin () const
+  { return dynamic_cast<Pin*>( _routingPad->getOccurrence().getEntity() ); }
+
   
   void  TrackFixedSpanRp::setNet ( Net* )
   {
-    throw Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
-                 "        on %s."
-               , getString(this).c_str() );
+    // throw Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
+    //              "        on %s."
+    //            , getString(this).c_str() );
+    cerr << Error( "TrackFixedSpanRp::setNet(): Not callable on this type of object.\n"
+                   "        on %s."
+                 , getString(this).c_str() ) << endl;
   }
 
   Net* TrackFixedSpanRp::getNet () const
   { return _routingPad->getNet(); }
 
+
+  const Layer* TrackFixedSpanRp::getLayer () const
+  { return (getTrack()) ? getTrack()->getLayer() : nullptr; }
+
+
+  TrackFixedSpanRp* TrackFixedSpanRp::lookup ( RoutingPad* rp )
+  {
+    auto irp = _rpLookup.find( rp );
+    if (irp == _rpLookup.end()) return nullptr;
+    return irp->second;
+  }
+  
 
   string  TrackFixedSpanRp::_getTypeName () const
   { return "TrackFixedSpanRp"; }

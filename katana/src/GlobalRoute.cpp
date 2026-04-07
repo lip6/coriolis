@@ -16,6 +16,7 @@
 
 #include "flute.h"
 #include "hurricane/utilities/Dots.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"
@@ -41,6 +42,7 @@ namespace {
   using std::left;
   using std::right;
   using std::set;
+  using Hurricane::DebugSession;
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::DBo;
@@ -379,7 +381,6 @@ namespace Katana {
   using Hurricane::RoutingPad;
   using Hurricane::Instance;
   using CRL::Histogram;
-  using Anabatic::EngineState;
   using Anabatic::Dijkstra;
   using Anabatic::NetData;
 
@@ -517,7 +518,7 @@ namespace Katana {
 
   void  KatanaEngine::runGlobalRouter ( Flags flags )
   {
-    if (getState() >= EngineState::EngineGlobalLoaded)
+    if (getStage() >= Anabatic::StageGlobalRouted)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
     if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
@@ -559,6 +560,11 @@ namespace Katana {
     else
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
 
+    // cerr << "Net ordering:" << endl;
+    // for ( NetData* netData : getNetOrdering() ) {
+    //   cerr << netData << endl;
+    // }
+
     bool     globalEstimated = false;
     size_t   iteration       = 0;
     size_t   netCount        = 0;
@@ -568,6 +574,8 @@ namespace Katana {
 
       long   wireLength = 0;
       long   viaCount   = 0;
+
+    //if (iteration == 1) DebugSession::open( 112, 120 );
 
       netCount = 0;
       for ( NetData* netData : getNetOrdering() ) {
@@ -652,6 +660,8 @@ namespace Katana {
       cmess2 << " " << setw(7) << Timer::getStringMemory(getTimer().getIncrease())
              << " " << setw(6) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
+
+    //if (iteration == 1) DebugSession::close();
 
       ++iteration;
     } while ( (netCount > 0) and (iteration < globalIterations) );
@@ -751,7 +761,7 @@ namespace Katana {
       }
     }
 
-    setState( EngineState::EngineGlobalLoaded );
+    setStage( Anabatic::StageGlobalRouted );
     setGlobalRoutingSuccess( ovEdges.empty() );
 
     // for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
@@ -760,6 +770,20 @@ namespace Katana {
     //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;
     //   }
     // }
+
+    uint32_t maxFlatEdgeOverflow = getConfiguration()->getMaxFlatEdgeOverflow();
+    if (hoverflow + voverflow > maxFlatEdgeOverflow) {
+      throw Error( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u above maximum threshold %u.\n"
+                   "        On %s."
+                 , (hoverflow + voverflow)
+                 , maxFlatEdgeOverflow
+                 , getString(getCell()).c_str()
+                 );
+    } else {
+      if (hoverflow + voverflow > 0)
+        cerr << Warning( "KatanaEngine::runGlobalRouter(): Total edge overflow of %u below maximum threshold %u, continuing."
+                       , (hoverflow + voverflow), maxFlatEdgeOverflow ) << endl;
+    }
   }
 
 

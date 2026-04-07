@@ -45,6 +45,7 @@ namespace Anabatic {
       static const BaseFlags  HRailGCell          ; // = (1 << 14);
       static const BaseFlags  VRailGCell          ; // = (1 << 15);
       static const BaseFlags  GoStraight          ; // = (1 << 16);
+      static const BaseFlags  StdCellArea         ; // = (1 << 17);
     // Flags for Edge objects states only.                      
       static const BaseFlags  NullCapacity        ; // = (1 <<  5);
       static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);
@@ -118,6 +119,9 @@ namespace Anabatic {
       static const BaseFlags  ForOffgrid          ;
       static const BaseFlags  AllAbove            ;
       static const BaseFlags  IncBreakLevel       ;
+      static const BaseFlags  ToSameRipupLimit    ;
+      static const BaseFlags  CapInNonPrefDir     ;
+      static const BaseFlags  ToMinimize          ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );
@@ -137,13 +141,14 @@ namespace Anabatic {
 
   class StyleFlags : public Hurricane::BaseFlags {
     public:
-      static const BaseFlags  NoStyle  ; // =  0;
-      static const BaseFlags  HV       ; // = (1 <<  0);
-      static const BaseFlags  VH       ; // = (1 <<  1);
-      static const BaseFlags  OTH      ; // = (1 <<  2);
-      static const BaseFlags  Channel  ; // = (1 <<  3);
-      static const BaseFlags  Hybrid   ; // = (1 <<  4);
-      static const BaseFlags  M1Offgrid; // = (1 <<  5);
+      static const BaseFlags  NoStyle        ; // =  0;
+      static const BaseFlags  HV             ; // = (1 <<  0);
+      static const BaseFlags  VH             ; // = (1 <<  1);
+      static const BaseFlags  OTH            ; // = (1 <<  2);
+      static const BaseFlags  Channel        ; // = (1 <<  3);
+      static const BaseFlags  Hybrid         ; // = (1 <<  4);
+      static const BaseFlags  M1Offgrid      ; // = (1 <<  5);
+      static const BaseFlags  VSmallAsOffgrid; // = (1 <<  6);
     public:
       inline               StyleFlags   ( std::string );
       inline               StyleFlags   ( uint64_t flags = NoStyle );
@@ -170,13 +175,18 @@ namespace Anabatic {
                        };
 
 
-  enum EngineState     { EngineCreation      = 1
-                       , EngineGlobalLoaded  = 2
-                       , EngineActive        = 3
-                       , EngineDriving       = 4
-                       , EnginePreDestroying = 5
-                       , EngineGutted        = 6
-                       };
+  static const uint32_t  StageCreation               =  0;
+  static const uint32_t  StageGlobalRouted           =  1;
+  static const uint32_t  StageGlobalLoaded           =  2;
+  static const uint32_t  StageDetailInit             =  3;
+  static const uint32_t  StageNegociate              =  4;
+  static const uint32_t  StagePack                   =  5;
+  static const uint32_t  StageRepair                 =  6;
+  static const uint32_t  StageRealign                =  7;
+  static const uint32_t  StageChainReduce            =  8;
+  static const uint32_t  StagePostProcessRoutingPads =  9;
+  static const uint32_t  StagePreDestroying          = 10;
+  static const uint32_t  StageGutted                 = 11;
 
   enum EngineAlgorithm { EngineLoadGrByNet            = (1 <<  0)
                        , EngineLoadGrByGCell          = (1 <<  1)

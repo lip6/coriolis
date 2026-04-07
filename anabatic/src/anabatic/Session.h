@@ -85,7 +85,12 @@ namespace Anabatic {
       static  inline const Configuration*              getConfiguration      ();
       static         float                             getSaturateRatio      ();
       static         size_t                            getSaturateRp         ();
+      static  inline DbU::Unit                         getSmallNetWidth      ();
+      static  inline DbU::Unit                         getSmallNetHeight     ();
       static  inline size_t                            getAllowedDepth       ();
+      static  inline float                             getLowDensity         ();
+      static  inline float                             getLowUpDensity       ();
+      static  inline float                             getMoveUpReserve      ();
       static         DbU::Unit                         getExtensionCap       ();
       static  inline CellGauge*                        getCellGauge          ();
       static  inline DbU::Unit                         getSliceHeight        ();
@@ -111,6 +116,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getDContactWidth      ();
       static  inline DbU::Unit                         getDContactPitch      ();
       static  inline RoutingGauge*                     getRoutingGauge       ();
+      static         uint32_t                          getStage              ();
       static  inline bool                              isGLayer              ( const Layer* );
       static  inline bool                              isGMetal              ( const Layer* );
       static  inline bool                              isGContact            ( const Layer* );
@@ -149,6 +155,7 @@ namespace Anabatic {
       static  inline const set<Net*,DBo::CompareById>& getNetsModificateds   (); 
       static         void                              close                 ();
       static         void                              setAnabaticFlags      ( Flags );
+      static         void                              setStage              ( uint32_t );
       static  inline void                              dogleg                ( AutoSegment* );
       static  inline void                              doglegReset           ();
       static  inline void                              revalidateTopology    ();
@@ -239,8 +246,12 @@ namespace Anabatic {
   inline void                              Session::dogleg               ( AutoSegment* autoSegment ) { return get("dogleg(AutoSegment*)")->_dogleg(autoSegment); }
   inline void                              Session::destroyRequest       ( AutoSegment* autoSegment ) { return get("destroyRequest(AutoSegment*)")->_destroyRequest(autoSegment); }
                                            
-  inline size_t                            Session::getAllowedDepth      () { return getConfiguration()->getAllowedDepth(); }
-                                           
+  inline DbU::Unit                         Session::getSmallNetWidth     ()                     { return getConfiguration()->getSmallNetWidth(); }
+  inline DbU::Unit                         Session::getSmallNetHeight    ()                     { return getConfiguration()->getSmallNetHeight(); }
+  inline size_t                            Session::getAllowedDepth      ()                     { return getConfiguration()->getAllowedDepth(); }
+  inline float                             Session::getLowDensity        ()                     { return getConfiguration()->getLowDensity(); }
+  inline float                             Session::getLowUpDensity      ()                     { return getConfiguration()->getLowUpDensity(); }
+  inline float                             Session::getMoveUpReserve     ()                     { return getConfiguration()->getMoveUpReserve(); }
   inline DbU::Unit                         Session::getSliceHeight       ()                     { return getCellGauge()->getSliceHeight(); }
   inline DbU::Unit                         Session::getSliceStep         ()                     { return getCellGauge()->getSliceStep(); }
   inline size_t                            Session::getGVerticalDepth    ()                     { return getConfiguration()->getGVerticalDepth(); }

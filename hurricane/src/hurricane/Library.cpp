@@ -178,7 +178,7 @@ Name Library::LibraryMap::_getKey(Library* library) const
 unsigned Library::LibraryMap::_getHashValue(Name name) const
 // *********************************************************
 {
-  return name._getSharedName()->getHash() / 8;
+  return name._getSharedName()->getHash();
 }
 
 Library* Library::LibraryMap::_getNextElement(Library* library) const
@@ -214,7 +214,7 @@ Name Library::CellMap::_getKey(Cell* cell) const
 unsigned Library::CellMap::_getHashValue(Name name) const
 // ******************************************************
 {
-  return name._getSharedName()->getHash() / 8;
+  return name._getSharedName()->getHash();
 }
 
 Cell* Library::CellMap::_getNextElement(Cell* cell) const

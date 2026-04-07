@@ -174,6 +174,7 @@ namespace {
 
   void  ReducedChain::propagate ()
   {
+    cdebug_log(159,1) << "ReducedChain::propagate() from " << _reduceds.back() << endl;
     AutoContact* contact = _reduceds.front()->getAutoSource();
     while ( contact and contact->isTurn() ) {
       AutoSegment* perpandicular = contact->getPerpandicular( _reduceds.front() );
@@ -191,20 +192,144 @@ namespace {
       _reduceds.push_back( perpandicular );
       perpandicular->setReducedDone();
     }
+    cdebug_tabw(159,-1);
   }
 
 
   size_t  ReducedChain::reduce ()
   {
-    cdebug_log(159,0) << "ReducedChain::reduce()" << endl;
+    cdebug_log(159,1) << "ReducedChain::reduce()" << endl;
     size_t count = 0;
     for ( AutoSegment* segment : _reduceds ) {
       cdebug_log(159,0) << "| " << segment << endl;
       if (segment->reduceDoglegLayer()) ++count;
     }
+    cdebug_tabw(159,-1);
     return count;
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "::ReducedCluster".
+
+  class SortByAxis {
+    public:
+      inline bool  operator () ( AutoSegment* lhs, AutoSegment* rhs )
+                               { return lhs->getAxis() < rhs->getAxis(); }
+  };
+
+  class ReducedCluster {
+    public:
+              ReducedCluster ( AutoSegment* );
+      void    merge          ();
+      void    alignForSource ( size_t begin, size_t end );
+      void    alignForTarget ( size_t begin, size_t end );
+    private:
+                      ReducedCluster ( const ReducedCluster& ) = delete;
+      ReducedCluster& operator=      ( const ReducedCluster& ) = delete;
+    private:
+      AutoSegment*          _seed;
+      vector<AutoSegment*>  _sourceReduceds;
+      vector<AutoSegment*>  _targetReduceds;
+  };
+
+
+  ReducedCluster::ReducedCluster( AutoSegment* seed )
+    : _seed( seed )
+  {
+    DbU::Unit axis = seed->getAxis();
+    for ( AutoSegment* perpandicular : seed->getPerpandiculars() ) {
+      if (not perpandicular->isCanonical()) continue;
+      if (not perpandicular->isReduced()) continue;
+      perpandicular->setMergeReducedDone();
+      if (seed->isHorizontal()) {
+        if (perpandicular->getAutoSource()->getY()) {
+          _sourceReduceds.push_back( perpandicular );
+        } else {
+          _targetReduceds.push_back( perpandicular );
+        }
+      } else {
+        if (perpandicular->getAutoSource()->getX()) {
+          _sourceReduceds.push_back( perpandicular );
+        } else {
+          _targetReduceds.push_back( perpandicular );
+        }
+      }
+    }
+
+    sort( _sourceReduceds.begin(), _sourceReduceds.end(), SortByAxis() );
+    sort( _targetReduceds.begin(), _targetReduceds.end(), SortByAxis() );
+  }
+
+
+  void  ReducedCluster::merge ()
+  {
+    DbU::Unit ppitch = _seed->getPPitch();
+    if (_sourceReduceds.size() > 1) {
+      size_t i = 1;
+      size_t j = 0;
+      for ( ; i<_sourceReduceds.size() ; ++i ) {
+        if (_sourceReduceds[i]->getAxis() - _sourceReduceds[i-1]->getAxis() >= ppitch) {
+          if (j+1 < i) alignForSource( j, i-1 );
+          j = i;
+        }
+      }
+      --i;
+
+      if (j < i) alignForSource( j, i );
+    }
+
+    if (_targetReduceds.size() > 1) {
+      size_t i = 1;
+      size_t j = 0;
+      for ( ; i<_targetReduceds.size() ; ++i ) {
+        if (_targetReduceds[i]->getAxis() - _targetReduceds[i-1]->getAxis() >= ppitch) {
+          if (j+1 < i) alignForTarget( j, i-1 );
+          j = i;
+        }
+      }
+      --i;
+
+      if (j < i) alignForTarget( j, i );
+    }
+
+    Session::revalidate();
+  }
+
   
+  void    ReducedCluster::alignForSource ( size_t begin, size_t end )
+  {
+    bool      misaligned = false;
+    DbU::Unit alignAxis  = _sourceReduceds[ begin ]->getAxis();
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
+      if (_sourceReduceds[k]->getAutoTarget()->getLayer() != _sourceReduceds[k]->getLayer()) {
+        alignAxis = _sourceReduceds[ k ]->getAxis();
+      }
+      misaligned = true;
+    }
+    if (not misaligned) return;
+    for ( size_t k=begin ; k<=end ; ++k )
+      _sourceReduceds[ k ]->setAxis( alignAxis );
+  }
+
+  
+  void    ReducedCluster::alignForTarget ( size_t begin, size_t end )
+  {
+    bool      misaligned = false;
+    DbU::Unit alignAxis  = _targetReduceds[ begin ]->getAxis();
+    for ( size_t k=begin ; k<=end ; ++k ) {
+      if (_sourceReduceds[k]->getAxis() == alignAxis) continue;
+      if (_targetReduceds[k]->getAutoSource()->getLayer() != _targetReduceds[k]->getLayer()) {
+        alignAxis = _targetReduceds[ k ]->getAxis();
+      }
+      misaligned = true;
+    }
+    if (not misaligned) return;
+    for ( size_t k=begin ; k<=end ; ++k )
+      _targetReduceds[ k ]->setAxis( alignAxis );
+  }
+
 
 }  // Anonymous namespace.
 
@@ -303,10 +428,10 @@ namespace Anabatic {
       return;
     }
 
-    if (  (source.getX() >  gcellsArea.getXMax())
-       or (source.getY() >  gcellsArea.getYMax())
-       or (target.getX() <= gcellsArea.getXMin())
-       or (target.getY() <= gcellsArea.getYMin()) ) {
+    if (  (source.getX() > gcellsArea.getXMax())
+       or (source.getY() > gcellsArea.getYMax())
+       or (target.getX() < gcellsArea.getXMin())
+       or (target.getY() < gcellsArea.getYMin()) ) {
       cerr << Warning( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored).\n"
                        "          * GCells area: %s\n" 
                        "          * Obstacle area: [%s %s %s %s]" 
@@ -419,7 +544,7 @@ namespace Anabatic {
     : Super(cell)
     , _configuration    (new Configuration())
     , _chipTools        (cell)
-    , _state            (EngineCreation)
+    , _stage            (StageCreation)
     , _matrix           ()
     , _gcells           ()
     , _ovEdges          ()
@@ -494,11 +619,11 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "Anabatic::_preDestroy ()" << endl;
 
-    if (getState() < EngineGutted)
-      setState( EnginePreDestroying );
+    if (getStage() < StageGutted)
+      setStage( StagePreDestroying );
 
     _gutAnabatic();
-    _state = EngineGutted;
+    setStage( StageGutted );
 
     cdebug_log(145,0) << "About to delete base class ToolEngine." << endl;
     Super::_preDestroy();
@@ -519,7 +644,7 @@ namespace Anabatic {
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
 
-    if (_state == EngineDriving) {
+    if (getStage() == StageChainReduce) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
       size_t fixedSegments    = 0;
@@ -527,19 +652,45 @@ namespace Anabatic {
       size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
         DebugSession::open( isegment.second->getNet(), 159, 160 );
-        if (isegment.second->isReducedDone()) continue;
+        if (isegment.second->isReducedDone()) {
+          DebugSession::close();
+          continue;
+        }
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->canReduce( Flags::NullLength )) {
           if (isegment.second->isFixed()) isegment.second->reduce();
+          cdebug_log(159,1) << "ReducedChain on " << isegment.second << endl;
           ReducedChain  chain ( isegment.second );
           chain.propagate();
           sameLayerDoglegs += chain.reduce();
+          cdebug_tabw(159,-1);
         } else {
+          if (isegment.second->canReduce())
+            isegment.second->setFlags( AutoSegment::SegIsReduced );
           if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
         }
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
         DebugSession::close();
       }
+
+      setStage( StagePostProcessRoutingPads );
+      for ( auto isegment : _getAutoSegmentLut() ) {
+        AutoSegment* reduced = isegment.second;
+        if (reduced->isReduced() and not reduced->isMergeReducedDone()) {
+          AutoSegment* seed1 = reduced->getAutoSource()->getPerpandicular( reduced );
+          if (seed1) {
+            ReducedCluster cluster1 ( seed1 );
+            cluster1.merge();
+          }
+          AutoSegment* seed2 = reduced->getAutoTarget()->getPerpandicular( reduced );
+          if (seed2) {
+            ReducedCluster cluster2 ( seed2 );
+            cluster2.merge();
+          }
+        }
+      }
+
+      _postProcessRoutingPads();
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
       cmess1 << Dots::asSizet("     - Active AutoSegments"       ,AutoSegment::getAllocateds()-fixedSegments) << endl;
@@ -554,9 +705,9 @@ namespace Anabatic {
       cdebug_tabw(145,-1);
     }
 
-    if (_state < EngineGutted ) {
+    if (getStage() < StageGutted ) {
       cdebug_log(145,0) << "Gutting Anabatic." << endl;
-      _state = EngineGutted;
+      setStage( StageGutted );
       _flags |= Flags::DestroyBaseContact;
 
       _destroyAutoSegments();
@@ -762,7 +913,7 @@ namespace Anabatic {
   {
     _gutAnabatic();
     _flags.reset( Flags::DestroyMask );
-    _state = EngineCreation;
+    setStage( StageCreation );
 
     UpdateSession::open();
     GCell::create( this );
@@ -814,6 +965,14 @@ namespace Anabatic {
 
     (*inet).second->setExcluded( true );
   }
+
+
+  void  AnabaticEngine::resetStdCellArea ()
+  { _matrix.resetGCellsFlags( Flags::StdCellArea ); }
+
+  
+  void  AnabaticEngine::addStdCellArea ( const Box& area )
+  { _matrix.addStdCellArea( area ); }
 
 
   void AnabaticEngine::updateMatrix()
@@ -1221,10 +1380,10 @@ namespace Anabatic {
 
   void  AnabaticEngine::loadGlobalRouting ( uint32_t method )
   {
-    if (_state < EngineGlobalLoaded)
+    if (getStage() < StageGlobalRouted)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing not present yet.");
 
-    if (_state > EngineGlobalLoaded)
+    if (getStage() > StageGlobalRouted)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing already loaded.");
 
     antennaProtect();
@@ -1240,7 +1399,7 @@ namespace Anabatic {
         relaxOverConstraineds();
     }
 
-    _state = EngineActive;
+    setStage( StageGlobalLoaded );
   }
 
 
@@ -1266,22 +1425,26 @@ namespace Anabatic {
              and north->canDrag()
              and (south->getNet() != north->getNet())
              and (south->getX  () == north->getX  ()) ) {
-            Interval constraints ( gcell->getYMin(), north->getCBYMin() /*- pitch3*/ );
-            AutoSegment* terminal = south->getSegment();
-            AutoContact* opposite = terminal->getOppositeAnchor( south );
+            if (south->getSegment()->isVertical()) {
+              Interval     constraints ( gcell->getYMin(), north->getCBYMin() /*- pitch3*/ );
+              AutoSegment* terminal    = south->getSegment();
+              AutoContact* opposite    = terminal->getOppositeAnchor( south );
 
-            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-              segment->mergeUserConstraints( constraints );
-              constraineds.insert( segment );
+              for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+                segment->mergeUserConstraints( constraints );
+                constraineds.insert( segment );
+              }
             }
 
-            constraints = Interval( south->getCBYMax() /*+ pitch3*/, gcell->getYMax() );
-            terminal    = north->getSegment();
-            opposite    = terminal->getOppositeAnchor( north );
+            if (north->getSegment()->isVertical()) {
+              Interval     constraints = Interval( south->getCBYMax() /*+ pitch3*/, gcell->getYMax() );
+              AutoSegment* terminal    = north->getSegment();
+              AutoContact* opposite    = terminal->getOppositeAnchor( north );
 
-            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-              segment->mergeUserConstraints( constraints );
-              constraineds.insert( segment );
+              for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+                segment->mergeUserConstraints( constraints );
+                constraineds.insert( segment );
+              }
             }
           }
         }
@@ -1416,6 +1579,12 @@ namespace Anabatic {
   void  AnabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Building detailed routing from global. " << endl;
+  //DebugSession::addToTrace( getCell()->getNet( "core.abc_161789_new_n23199_hfns_2" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3408_hfns_1" ));
+  //DebugSession::addToTrace( getCell()->getNet( "CLK_I_root_bl_bl_br_br_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_30082_new_n3986_hfns_0" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n14460_hfns_7" ));
+  //DebugSession::addToTrace( getCell()->getNet( "abc_71600_new_n3452_hfns_0" ));
 
     size_t shortNets = 0;
 
@@ -1479,11 +1648,11 @@ namespace Anabatic {
     cdebug_log(149,0) << "Anabatic::updateNetTopology( " << net << " )" << endl;
     cdebug_tabw(145,1);
 
-    for ( AutoContact* contact : Session::getInvalidatedContacts() ) {
-      cdebug_log(145,0) << "Invalidated " << contact << endl;
-      if (contact->isInvalidatedTopology() and (contact->getNet() == net)) {
+    const vector<AutoContact*> contacts = Session::getInvalidatedContacts();
+    for ( size_t i=0 ; i<contacts.size() ; ++i ) {
+      AutoContact* contact = contacts[i];
+      if (contact->isInvalidatedTopology() and (contact->getNet() == net))
         contact->updateTopology();
-      }
     }
 
     cdebug_tabw(145,-1);
@@ -1494,16 +1663,16 @@ namespace Anabatic {
   void  AnabaticEngine::finalizeLayout ()
   {
     cdebug_log(145,0) << "Anabatic::finalizeLayout()" << endl;
-    if (_state > EngineDriving) return;
+    if (getStage() > StagePostProcessRoutingPads) return;
 
-    _state = EngineDriving;
+    setStage( StageChainReduce );
 
     startMeasures();
     _gutAnabatic();
     stopMeasures ();
     printMeasures( "fin" );
 
-    _state = EngineGutted;
+    setStage( StageGutted );
   }
 
 
@@ -1720,14 +1889,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoSegment* autoSegment )
   {
-    if (_state > EngineActive) return;
+    if (getStage() >= StageChainReduce) return;
     _autoSegmentLut[ autoSegment->base() ] = autoSegment;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoSegment* autoSegment )
   {
-    if (_state > EngineDriving) return;
+    if (getStage() >= StageChainReduce) return;
 
     AutoSegmentLut::iterator it = _autoSegmentLut.find( autoSegment->base() );
     if (it != _autoSegmentLut.end())
@@ -1747,14 +1916,14 @@ namespace Anabatic {
 
   void  AnabaticEngine::_link ( AutoContact* autoContact )
   {
-    if (_state > EngineActive) return;
+    if (getStage() >= StageChainReduce) return;
     _autoContactLut [ autoContact->base() ] = autoContact;
   }
 
 
   void  AnabaticEngine::_unlink ( AutoContact* autoContact )
   {
-    if ( _state > EngineActive ) return;
+    if (getStage() >= StageChainReduce) return;
 
     AutoContactLut::iterator it = _autoContactLut.find( autoContact->base() );
     if (it != _autoContactLut.end())
@@ -1771,7 +1940,7 @@ namespace Anabatic {
       expandeds++;
       sasp.second->destroy();
     }
-    if (_state == EngineDriving)
+    if (getStage() == StageChainReduce)
       cmess2 << "     - Expandeds     := " << expandeds << endl;
 
     _autoSegmentLut.clear();
@@ -1808,9 +1977,18 @@ namespace Anabatic {
   }
 
   
+  EdgeCapacity* AnabaticEngine::_cloneCapacity ( EdgeCapacity* capacity )
+  {
+    EdgeCapacity* clonedCapacity = new EdgeCapacity ( *capacity );
+    clonedCapacity->incref();
+    _unrefCapacity( capacity );
+    return clonedCapacity;
+  }
+
+  
   size_t  AnabaticEngine::_unrefCapacity ( EdgeCapacity* capacity )
   {
-    if (capacity->getref() < 2) _edgeCapacitiesLut.erase( capacity );
+    if (capacity->getref() == 1) _edgeCapacitiesLut.erase( capacity );
     return capacity->decref();
   }
   

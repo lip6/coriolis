@@ -116,6 +116,27 @@ extern "C" {
   }
 
 
+  static PyObject* PyLefImport_setGdsForeignLibrary ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLefImport_setGdsForeignLibrary()" << endl;
+    HTRY
+      PyObject* pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "O:LefImport.setGdsForeignLibrary", &pyLibrary )) {
+        if (IsPyLibrary(pyLibrary)) {
+          LefImport::setGdsForeignLibrary( PYLIBRARY_O(pyLibrary) );
+        } else {
+          PyErr_SetString( ConstructorError, "LefImport.setGdsForeignLibrary(): Bad parameter type (not a Library)." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString( ConstructorError, "LefImport.setGdsForeignLibrary(): Bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyLefImport_setGdsForeignDirectory ( PyObject*, PyObject* args )
   {
     cdebug_log(30,0) << "PyLefImport_setGdsForeignDirectory()" << endl;
@@ -140,7 +161,7 @@ extern "C" {
       PyObject*     pyYThreshold = NULL;
       unsigned int  flags        = 0;
       if (PyArg_ParseTuple( args, "OOI:LefImport.setPinFilter", &pyXThreshold, &pyYThreshold, &flags )) {
-        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyXThreshold), flags );
+        LefImport::setPinFilter( PyAny_AsLong(pyXThreshold), PyAny_AsLong(pyYThreshold), flags );
       } else {
         PyErr_SetString ( ConstructorError, "LefImport.setPinFilter(): Bad type or bad number of parameters." );
         return NULL;
@@ -212,6 +233,8 @@ extern "C" {
                                 , "Load a complete Cadence LEF library." }
     , { "reset"                 , (PyCFunction)PyLefImport_reset                 , METH_NOARGS|METH_STATIC
                                 , "Reset the Cadence LEF parser (clear technology)." }
+    , { "setGdsForeignLibrary"  , (PyCFunction)PyLefImport_setGdsForeignLibrary  , METH_VARARGS|METH_STATIC
+                                , "Sets the library from which FOREIGN GDS cells will be searched." }
     , { "setMergeLibrary"       , (PyCFunction)PyLefImport_setMergeLibrary       , METH_VARARGS|METH_STATIC
                                 , "Merge into this library instead of creating a new one." }
     , { "setGdsForeignDirectory", (PyCFunction)PyLefImport_setGdsForeignDirectory, METH_VARARGS|METH_STATIC

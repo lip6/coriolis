@@ -27,6 +27,9 @@ tstream  cdebug ( std::cerr );
 
 namespace Hurricane {
 
+  uint64_t                        FastRTTI::_classBit = 0;
+  std::map<uint64_t,std::string>  FastRTTI::_classNames;
+
 // -------------------------------------------------------------------
 // Function  :  "demangle ()".
 

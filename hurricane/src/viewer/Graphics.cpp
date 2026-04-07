@@ -116,6 +116,17 @@ namespace Hurricane {
   }
 
 
+  const QFont  Graphics::getLayoutFont ( bool bold, bool italic, bool underline )
+  {
+    QFont layoutFont = QApplication::font ();
+    layoutFont.setPointSize( isHighDpi() ? 5 : 10 );
+    layoutFont.setBold     ( bold );
+    layoutFont.setItalic   ( italic );
+    layoutFont.setUnderline( underline );
+    return layoutFont;
+  }
+
+
   const QFont  Graphics::getNormalFont ( bool bold, bool italic, bool underline )
   {
     QFont defaultFont = QApplication::font ();

@@ -30,6 +30,8 @@
 
 namespace Tramontana {
 
+  using Hurricane::FastRTTI;
+  using Hurricane::derived_cast;
   using Hurricane::Record;
   using Hurricane::Box;
   using Hurricane::DbU;
@@ -46,6 +48,7 @@ namespace Tramontana {
   using Hurricane::Occurrence;
   using Hurricane::Occurrences;
   class ShortCircuit;
+  class TramontanaEngine;
 
 
   class NetCompareByName {
@@ -67,6 +70,11 @@ namespace Tramontana {
 
 
   class Equipotential : public Entity {
+    private:
+      static              FastRTTI  _fastRTTI;
+    public:
+      static inline const FastRTTI& fastRTTI  (); 
+      virtual       const FastRTTI& vfastRTTI () const; 
     public:
       typedef  Entity  Super;
       typedef  std::map< Net*, std::pair<uint32_t,uint32_t>, NetCompareByName >  NetMap;
@@ -82,6 +90,8 @@ namespace Tramontana {
       static        Equipotential* get               ( Component* );
       static        Equipotential* get               ( Occurrence );
       static        Occurrence     getChildEqui      ( Occurrence );
+      static        size_t         getNetSize        ( TramontanaEngine*, Net* );
+      static        void           clearNetSizes     ();
     public:
       static        Equipotential* create            ( Cell* );
       inline        bool           isEmpty           () const;
@@ -126,6 +136,8 @@ namespace Tramontana {
                                    Equipotential     ( const Equipotential& ) = delete;
                     Equipotential& operator=         ( const Equipotential& ) = delete;
     private:
+      static std::map<Net*,size_t>  _netSizes;
+    private:
       Cell*                       _owner;
       Box                         _boundingBox;
       NetMap                      _nets;
@@ -140,6 +152,7 @@ namespace Tramontana {
   };
 
   
+  inline const FastRTTI&       Equipotential::fastRTTI         () { return _fastRTTI; }
   inline       bool            Equipotential::isEmpty          () const { return _components.empty() and _childs.empty(); }
   inline       bool            Equipotential::isBuried         () const { return (_flags & Buried); }
   inline       bool            Equipotential::isPower          () const { return (_flags & Power); }

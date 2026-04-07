@@ -35,6 +35,11 @@ class Net;
 
 class Rubber : public Go {
 // *********************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -103,6 +108,9 @@ class Rubber : public Go {
         public: void _release();
 
 };
+
+  
+  inline const FastRTTI& Rubber::fastRTTI () { return _fastRTTI; }
 
 
 } // End of Hurricane namespace.

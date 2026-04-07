@@ -295,6 +295,7 @@ namespace Etesian {
 
   EtesianEngine::EtesianEngine ( Cell* cell )
     : Super         (cell)
+    , _status       (NoFlags)
     , _configuration(new Configuration())
     , _block        (NULL)
     , _ySpinSet     (false)
@@ -317,6 +318,7 @@ namespace Etesian {
     , _sliceHeight  (0)
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
+    , _latchUpMax   (0)
     , _diodeCount   (0)
     , _bufferCount  (0)
     , _excludedNets ()
@@ -388,9 +390,11 @@ namespace Etesian {
       Cell*  tie     = DataBase::getDB()->getCell( tieName );
       if (not tie)
         tie = AllianceFramework::get()->getCell( tieName, Catalog::State::Views|Catalog::State::Foreign );
-      if (tie)
+      if (tie) {
         _feedCells.useTie( tie );
-      else
+        if (getConfiguration()->getLatchUpDistance())
+          _latchUpMax = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
+      } else
         cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" tie cell."
                        , tieName.c_str()
                        ) << endl;
@@ -720,7 +724,7 @@ namespace Etesian {
     if (sliceHeight % vpitch) {
       throw Error( "EtesianEngine::toColoquinte(): Slice height (%s) must be a multiple of vpitch (%s)."
                  , DbU::getValueString(sliceHeight).c_str()
-                 , DbU::getValueString(vpitch) );
+                 , DbU::getValueString(vpitch).c_str() );
     }
     
     DbU::Unit totalLength    = (_placeArea.getHeight() / sliceHeight) * _placeArea.getWidth();
@@ -876,6 +880,7 @@ namespace Etesian {
     // Translate the placeable instances
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
+    //cerr << occurrence << endl;
       if (instanceId >= (int) instancesNb) {
         // This will be an error
         ++instanceId;

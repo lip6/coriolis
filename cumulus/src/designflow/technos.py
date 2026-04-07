@@ -20,10 +20,9 @@ class Where ( object ):
         if 'CORIOLIS_TOP' in os.environ: Where.coriolisTop = Path( os.environ['CORIOLIS_TOP'] )
         if 'ALLIANCE_TOP' in os.environ: Where.allianceTop = Path( os.environ['ALLIANCE_TOP'] )
         if 'CELLS_TOP'    in os.environ: Where.cellsTop    = Path( os.environ['CELLS_TOP'] )
-        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
         #print( Where.coriolisTop, Where.allianceTop )
         if not Where.coriolisTop:
-            print( 'technos.Where.__init__(): Unable to locate Coriolis top.' )
+            Where.coriolisTop = Path.cwd().parent
         if checkToolkit is None:
             checkToolkit = Path.home() / 'coriolis-2.x' / 'src' / 'alliance-check-toolkit'
         else:
@@ -31,6 +30,7 @@ class Where ( object ):
                 checkToolkit = Path( checkToolkit )
             if not Where.cellsTop:
                 Where.cellsTop = checkToolkit / 'cells'
+        if Where.coriolisTop and not Where.allianceTop: Where.allianceTop = Where.coriolisTop
         Where.checkToolkit = checkToolkit
         if not Where.cellsTop and Where.allianceTop:
             Where.cellsTop = Where.allianceTop / 'cells'
@@ -465,57 +465,6 @@ def setupSky130_c4m ( checkToolkit=None, pdkMasterTop=None ):
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
 
 
-def setupGf180mcu_c4m ( checkToolkit=None
-                      , pdkMasterTop=Path('/usr/share/open_pdks/C4M.gf180mcu') ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import overlay, l, u, n
-    from .yosys    import Yosys
-
-    if isinstance(pdkMasterTop,str):
-        pdkMasterTop = Path( pdkMasterTop )
-    if not pdkMasterTop.is_dir():
-        print( '[ERROR] technos.setupGf180mcu_c4m(): pdkMasterTop directory do *not* exists:' )
-        print( '        "{}"'.format(pdkMasterTop.as_posix()) )
-    #sys.path.append( (pdkMasterTop / 'libs.tech'
-    #                               / 'coriolis'
-    #                               / 'techno'
-    #                               / 'etc'
-    #                               / 'coriolis2').resolve().as_posix() )
-
-    Where( checkToolkit )
-
-    from ..technos.node180.gf180mcu_c4m import techno, StdCell3V3Lib, iolib
-    techno.setup()
-    StdCell3V3Lib.setup()
-    iolib.setup( Where.checkToolkit / '..' / 'gf180mcu-pdk' )
-
-    liberty  = pdkMasterTop / 'libs.ref' / 'StdCell3V3Lib' / 'liberty' / 'StdCell3V3Lib_nom.lib'
-    
-    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
-        cfg.misc.catchCore           = False
-        cfg.misc.minTraceLevel       = 12300
-        cfg.misc.maxTraceLevel       = 12400
-        cfg.misc.info                = False
-        cfg.misc.paranoid            = False
-        cfg.misc.bug                 = False
-        cfg.misc.logMode             = True
-        cfg.misc.verboseLevel1       = True
-        cfg.misc.verboseLevel2       = True
-        cfg.etesian.graphics         = 3
-        cfg.etesian.spaceMargin      = 0.10
-        cfg.katana.eventsLimit       = 4000000
-        af  = CRL.AllianceFramework.get()
-        lg5 = af.getRoutingGauge('StdCell3V3Lib').getLayerGauge( 5 )
-        lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
-        env = af.getEnvironment()
-        env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
-
-    Yosys.setLiberty( liberty )
-    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
-
-
 def setupFreePDK45_c4m ( checkToolkit=None, pdkMasterTop=None ):
     from ..        import Cfg 
     from ..        import Viewer
@@ -619,55 +568,6 @@ def setupTSMC_c180_c4m ( checkToolkit=None, ndaTop=None ):
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
 
 
-def setupGF180MCU_GF ( checkToolkit=None, pdkTop=None, useHV=False ):
-    from ..        import Cfg 
-    from ..        import Viewer
-    from ..        import CRL 
-    from ..helpers import setNdaTopDir, overlay, l, u, n
-    from .yosys    import Yosys
-
-    if isinstance(pdkTop,str):
-        pdkTop = Path( pdkTop )
-    if not pdkTop:
-        print( '[ERROR] technos.setupGF180MCU_GF(): pdkTop directory has *not* been set.' )
-    if not pdkTop.is_dir():
-        print( '[ERROR] technos.setupSky130_c4m(): pdkTop directory do *not* exists:' )
-        print( '        "{}"'.format(pdkTop.as_posix()) )
-
-    Where( checkToolkit )
-
-    cellsTop = pdkTop / 'libraries' / 'gf180mcu_fd_sc_mcu9t5v0' / 'latest' / 'cells'
-   #liberty  = pdkTop / 'libraries' / 'gf180mcu_fd_sc_mcu9t5v0' / 'latest' / 'liberty' / 'gf180mcu_fd_sc_mcu9t5v0__tt_025C_5v00.lib'
-    liberty  = pdkTop / 'FULL.lib'
-
-    from coriolis.technos.node180.gf180mcu import techno
-    from coriolis.technos.node180.gf180mcu import mcu9t5v0
-    techno.setup( useHV )
-    mcu9t5v0.setup( cellsTop, useHV )
-    
-    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
-        cfg.misc.catchCore           = False
-        cfg.misc.minTraceLevel       = 12300
-        cfg.misc.maxTraceLevel       = 12400
-        cfg.misc.info                = False
-        cfg.misc.paranoid            = False
-        cfg.misc.bug                 = False
-        cfg.misc.logMode             = True
-        cfg.misc.verboseLevel1       = False
-        cfg.misc.verboseLevel2       = False
-        cfg.etesian.graphics         = 2
-        cfg.anabatic.topRoutingLayer = 'Metal5'
-        cfg.katana.eventsLimit       = 4000000
-        af  = CRL.AllianceFramework.get()
-       #lg5 = af.getRoutingGauge( 'mcu9t' ).getLayerGauge( 5 ) 
-       #lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
-        env = af.getEnvironment()
-        env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
-
-    Yosys.setLiberty( liberty )
-    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
-
-
 def setupAMS350 ( checkToolkit=None, ndaTop=None, cellsTop=None ):
     from   ..        import Cfg 
     from   ..        import Viewer
@@ -714,9 +614,9 @@ def setupAMS350 ( checkToolkit=None, ndaTop=None, cellsTop=None ):
         env = af.getEnvironment()
         env.setCLOCK( '^ck$|m_clock|^clk$' )
 
-        sxlib   = cellsTop / 'nsxlib'
+        sxlib   = cellsTop / 'nsxlib2'
         iolib   = cellsTop / 'niolib'
-        liberty = sxlib    / 'nsxlib.lib'
+        liberty = sxlib    / 'nsxlib2.lib'
         env.addSYSTEM_LIBRARY( library=iolib.as_posix(), mode=CRL.Environment.Prepend )
         env.addSYSTEM_LIBRARY( library=sxlib.as_posix(), mode=CRL.Environment.Prepend )
         if not sxlib.is_dir():

@@ -1469,6 +1469,8 @@ namespace Anabatic {
     , _connectedsId  (-1)
     , _queue         ()
     , _flags         (0)
+    , _errors        ()
+    , _warnings      ()
   {
     const vector<GCell*>& gcells = _anabatic->getGCells();
     for ( GCell* gcell : gcells ) {
@@ -1480,7 +1482,23 @@ namespace Anabatic {
 
   Dijkstra::~Dijkstra ()
   {
+    _showErrors();
+    _showWarnings();
     for ( Vertex* vertex : _vertexes ) delete vertex;
+  }
+
+
+  void  Dijkstra::_showErrors () const
+  {
+    for ( const Error& error : _errors )
+      cerr << error << endl;
+  }
+
+
+  void  Dijkstra::_showWarnings () const
+  {
+    for ( const Warning& warning : _warnings )
+      cerr << warning << endl;
   }
 
 
@@ -1519,11 +1537,11 @@ namespace Anabatic {
       Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
       if (horizontal) {
         if (not Session::isGLayer(horizontal->getLayer())) {
-          cerr << Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
-                         "        (%s)"
-                       , getString(net->getName()).c_str()
-                       , getString(component).c_str()
-                       ) << endl;
+          _pushError( Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
+                             "        (%s)"
+                           , getString(net->getName()).c_str()
+                           , getString(component).c_str()
+                           ));
           continue;
         }
         GCell* begin = _anabatic->getGCellUnder( horizontal->getSource()->getPosition() );
@@ -1535,11 +1553,11 @@ namespace Anabatic {
       Vertical* vertical = dynamic_cast<Vertical*>( component );
       if (vertical) {
         if (not Session::isGLayer(vertical->getLayer())) {
-          cerr << Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
-                         "        (%s)"
-                       , getString(net->getName()).c_str()
-                       , getString(component).c_str()
-                       ) << endl;
+          _pushError( Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
+                             "        (%s)"
+                           , getString(net->getName()).c_str()
+                           , getString(component).c_str()
+                           ));
           continue;
         }
         GCell* begin = _anabatic->getGCellUnder( vertical->getSource()->getPosition() );
@@ -1583,6 +1601,7 @@ namespace Anabatic {
 
     if (rps.size() < 2) {
       cdebug_tabw(112,-1);
+      DebugSession::close();
       return;
     }
 
@@ -1590,7 +1609,7 @@ namespace Anabatic {
     for ( auto rp : rps ) {
       if (not _anabatic->getConfiguration()->selectRpComponent(rp)) {
         if (not _anabatic->getConfiguration()->isM1Offgrid())
-          cerr << Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+          _pushWarning( Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ));
       }
 
       cdebug_log(112,0) << "@ rp: " << rp << ", getUserCenter(): " << rp->getUserCenter() << endl;
@@ -1605,13 +1624,12 @@ namespace Anabatic {
       if (state and state->isSymmetric()) _limitSymSearchArea( rp );
         
       if (not gcell) {
-        cerr << Error( "Dijkstra::load(): %s\n"
-                       "        @%s of %s is not under any GCell.\n"
-                       "        It will be ignored so the routing may be incomplete."
-                     , getString(rp).c_str()
-                     , getString(center).c_str()
-                     , getString(_net).c_str()
-                     ) << endl;
+        _pushError( Error( "Dijkstra::load(): %s\n"
+                           "        @%s of %s is not under any GCell.\n"
+                           "        It will be ignored so the routing may be incomplete."
+                         , getString(rp).c_str()
+                         , getString(center).c_str()
+                         , getString(_net).c_str() ));
         continue;
       }
 
@@ -1654,6 +1672,9 @@ namespace Anabatic {
 
         ++_connectedsId;
         for ( Vertex* vertex : connecteds ) {
+          if (not vertex->hasValidStamp()) {
+            vertex->setDriver( false );
+          }
           vertex->getGCell()->flags().reset( Flags::GoStraight );
           vertex->setDistance     ( Vertex::unreached );
           vertex->setStamp        ( _stamp );
@@ -1662,8 +1683,10 @@ namespace Anabatic {
           vertex->setDegree       ( 0 );
           vertex->setRpCount      ( 0 );
           vertex->setFrom         ( NULL );
-          if (isDriver)
+          if (isDriver) {
             vertex->setDriver( true );
+            cdebug_log(112,0) << "| Set as driver: " << vertex << endl;
+          }
 
           vertex->setFrom2        ( NULL);
           vertex->unsetFlags      ( Vertex::UseFromFrom2 );
@@ -1681,6 +1704,11 @@ namespace Anabatic {
           vertex->setDegree( degree );
           cdebug_log(112,0) << "| Add: " << vertex << endl;
         }
+      } else {
+        if (isDriver) {
+          cdebug_log(112,0) << "| Set as driver: " << seed << endl;
+          seed->setDriver( true );
+        }
       }
 
       seed->incRpCount();
@@ -1690,40 +1718,38 @@ namespace Anabatic {
     }
 
     if (driverCount == 0) {
-      cerr << Error( "Diskstra::load(): Net \"%s\" do not have a driver.\n"
-                   , getString(_net->getName()).c_str()
-                   ) << endl;
+      _pushError( Error( "Dijkstra::load(): Net \"%s\" do not have a driver."
+                       , getString(_net->getName()).c_str() ));
     }
     if ((driverCount > 1) and not (net->getDirection() & (Net::Direction::ConnTristate|Net::Direction::ConnWiredOr))) {
-      cerr << Error( "Diskstra::load(): Net \"%s\" have multiple drivers (%u).\n"
-                   , getString(_net->getName()).c_str(), driverCount
-                   ) << endl;
+      _pushError( Error( "Dijkstra::load(): Net \"%s\" have multiple drivers (%u)."
+                       , getString(_net->getName()).c_str(), driverCount ));
     }
 
     if (state and state->isSymmetric() and not state->isSelfSym() and state->isSymMaster()) {
       if (state->isSymVertical()) {
         if (   (_searchArea.getXMin() < state->getSymAxis())
            and (_searchArea.getXMax() > state->getSymAxis()) ) {
-          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
-                         "        Vertical symmetry axis @%s is inside the net area %s."
-                       , getString(_net->getName()).c_str()
-                       , getString(state->getSymNet()->getName()).c_str()
-                       , DbU::getValueString(state->getSymAxis()).c_str()
-                       , getString(_searchArea).c_str()
-                       ) << endl;
+          _pushError( Error( "Dijkstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+                             "        Vertical symmetry axis @%s is inside the net area %s."
+                           , getString(_net->getName()).c_str()
+                           , getString(state->getSymNet()->getName()).c_str()
+                           , DbU::getValueString(state->getSymAxis()).c_str()
+                           , getString(_searchArea).c_str()
+                           ));
         }
       }
 
       if (state->isSymHorizontal()) {
         if (   (_searchArea.getYMin() < state->getSymAxis())
            and (_searchArea.getYMax() > state->getSymAxis()) ) {
-          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
-                         "        Horizontal symmetry axis @%s is inside the net area %s."
-                       , getString(_net->getName()).c_str()
-                       , getString(state->getSymNet()->getName()).c_str()
-                       , DbU::getValueString(state->getSymAxis()).c_str()
-                       , getString(_searchArea).c_str()
-                       ) << endl;
+          _pushError( Error( "Dijkstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+                             "        Horizontal symmetry axis @%s is inside the net area %s."
+                           , getString(_net->getName()).c_str()
+                           , getString(state->getSymNet()->getName()).c_str()
+                           , DbU::getValueString(state->getSymAxis()).c_str()
+                           , getString(_searchArea).c_str()
+                           ));
         }
       }
     }
@@ -1880,9 +1906,13 @@ namespace Anabatic {
     VertexSet  drivers;
 
     for (  Vertex* vertex : _targets ) {
-      if (vertex->isDriver()) drivers.insert( vertex );
+      if (vertex->isDriver()) {
+        drivers.insert( vertex );
+        cdebug_log(112,0) << "Found driver " << vertex << endl;
+      }
     }
-    if (drivers.empty()) drivers = _targets;
+  //if (drivers.empty()) drivers = _targets;
+    drivers = _targets;
 
 #if THIS_IS_DISABLED
     if (_mode & Mode::Monotonic) {
@@ -1893,11 +1923,11 @@ namespace Anabatic {
 
         firstSource = (v1->getCenter().getX() <= v2->getCenter().getY()) ? v1 : v2;
       } else {
-        cerr << Error( "Dijkstra::_selectFirstSource(): %s cannot be routed in monotonic mode.\n"
-                       "        Must have exactly two terminals (%u), revert to Standart."
-                     , getString(_net).c_str()
-                     , _targets.size()
-                     ) << endl;
+        _pushError( Error( "Dijkstra::_selectFirstSource(): %s cannot be routed in monotonic mode.\n"
+                           "        Must have exactly two terminals (%u), revert to Standart."
+                         , getString(_net).c_str()
+                         , _targets.size()
+                         ))
         _mode = Mode::Standart;
       }
     }
@@ -1912,18 +1942,33 @@ namespace Anabatic {
 
       Point areaCenter;
       if (hasDevice) areaCenter = _getPonderedPoint();
-      else           areaCenter = _searchArea.getCenter();
+      else {
+        areaCenter = _searchArea.getCenter();
+        DbU::Unit barycenterX = 0;
+        DbU::Unit barycenterY = 0;
+        for (  Vertex* vertex : _targets ) {
+          barycenterX += vertex->getGCell()->getXCenter();
+          barycenterY += vertex->getGCell()->getYCenter();
+        }
+        areaCenter = Point( barycenterX / _targets.size()
+                          , barycenterY / _targets.size() );
+      }
 
       auto ivertex = drivers.begin();
 
       firstSource = *ivertex++;
       DbU::Unit  minDistance = areaCenter.manhattanDistance( firstSource->getCenter() );
+      cdebug_log(112,0) << "Initial source "
+                        << firstSource << " " << DbU::getValueString(minDistance) << endl;
 
       for ( ; ivertex != drivers.end() ; ++ivertex ) {
         DbU::Unit distance = areaCenter.manhattanDistance( (*ivertex)->getCenter() );
+        cdebug_log(112,0) << "Looking for "
+                          << *ivertex << " " << DbU::getValueString(distance) << endl;
         if (distance < minDistance) {
           minDistance = distance;
           firstSource = *ivertex;
+        } else if (distance == minDistance) {
         }
       }
     }
@@ -2147,9 +2192,7 @@ namespace Anabatic {
       return true;
     }
 
-    cerr << Error( "Dijkstra::propagate(): %s has unreachable targets."
-                 , getString(_net).c_str()
-                 ) << endl;
+    _pushError( Error( "Dijkstra::propagate(): %s has unreachable targets.", getString(_net).c_str() ));
     
     cdebug_log(112, 0) << "Unreached targets:" << endl;
     for ( Vertex* v : _targets )
@@ -2847,6 +2890,8 @@ namespace Anabatic {
 
   bool Dijkstra::_attachSymContactsHook( RoutingPad* rp )
   {
+    cdebug_log(112,1) << "Dijkstra::_attachSymContactHook() " << rp << endl;
+
     NetRoutingState* state = NetRoutingExtension::get( _net );
     if (state){
       if (state->isSelfSym()){
@@ -2859,10 +2904,14 @@ namespace Anabatic {
           Contact* vcontact = seed->getGContact( _net );
           rp->getBodyHook()->detach();
           rp->getBodyHook()->attach( vcontact->getBodyHook() );
+          cdebug_tabw(112,-1);
+          cdebug_log(112,0) << "return -> true" << rp << endl;
           return true;
         }
       }
     }
+    cdebug_log(112,0) << "return -> false" << rp << endl;
+    cdebug_tabw(112,-1);
     return false;
   }
 

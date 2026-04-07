@@ -206,7 +206,7 @@ namespace Anabatic {
           if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
             yborder -= DbU::fromLambda( 1.0 );
           else
-            yborder -= DbU::fromLambda( 0.5 );
+            yborder -= DbU::fromLambda( (lg->getDepth() == 0) ? 0.5 : 0.0 );
         }
       }
     }
@@ -215,9 +215,10 @@ namespace Anabatic {
     DbU::Unit   xMax;
     DbU::Unit   yMin;
     DbU::Unit   yMax;
-    Vertical*   vertical;
-    Horizontal* horizontal;
-    RoutingPad* routingPad;
+    Pin*        pin        = nullptr;
+    Vertical*   vertical   = nullptr;
+    Horizontal* horizontal = nullptr;
+    RoutingPad* routingPad = nullptr;
 
     if ( (horizontal = dynamic_cast<Horizontal*>(component)) ) {
       cdebug_log(145,0) << "Anchor: " << horizontal << "@" << horizontal->getSourcePosition() << endl;
@@ -234,27 +235,57 @@ namespace Anabatic {
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
       Occurrence     occurrence     = routingPad->getOccurrence();
       Transformation transformation = occurrence.getPath().getTransformation();
-      Horizontal*    horizontal     = dynamic_cast<Horizontal*>( occurrence.getEntity() );
-      Vertical*      vertical       = dynamic_cast<Vertical*  >( occurrence.getEntity() );
+
+      horizontal = dynamic_cast<Horizontal*>( occurrence.getEntity() );
+      vertical   = dynamic_cast<Vertical*  >( occurrence.getEntity() );
+      pin        = dynamic_cast<Pin*       >( occurrence.getEntity() );
 
       cdebug_log(145,0) << "Anchor: " << occurrence.getEntity() << endl;
       cdebug_log(145,0) << "transf: " << transformation << endl;
 
-      if (horizontal or vertical) {
+      if (horizontal or vertical or pin) {
         Box bb;
       // Assume that transformation contains no rotations (for now).
         if (horizontal) { bb = horizontal->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnHorizontal ); }
         if (vertical)   { bb = vertical  ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnVertical ); }
+        if (pin)        { bb = pin       ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnPin ); }
 
+        if (Session::getRoutingGauge()->isSymbolic() and (lg->getDepth() == 0)) {
+          if (vertical and (vertical->getWidth() == DbU::fromLambda(1.0))) {
+            cerr << Error( "AutoContactTerminal::getNativeConstraintBox(): Anchored on narrow METAL1 vertical.\n"
+                         "        On: %s"
+                         , getString(this).c_str()
+                         ) << endl;
+            bb.inflate( DbU::fromLambda(0.5), 0 );
+          }
+        }
+        
         transformation.applyOn( bb );
         cdebug_log(145,0) << "Shrink border x:" << DbU::getValueString(xborder)
                           <<              " y:" << DbU::getValueString(yborder)
                           << endl;
 
-      // HARDCODED.
-        if (   (Session::getRoutingGauge()->getName() == "sxlib")
-           and (bb.getWidth() == DbU::fromLambda(1.0)) ) {
-          bb.inflate( DbU::fromLambda(0.5), 0 );
+        if (Session::getRoutingGauge()->isSymbolic()) {
+          if (lg->isHorizontal() xor (horizontal != nullptr)) {
+            cdebug_log(145,0) << "Gauge and segment orientation differ, rotating VIA bottom." << endl;
+            std::swap( xborder, yborder );
+          }
+        } else {
+          if ((bb.getHeight() > 2*xborder) and (bb.getWidth () > 2*yborder)) {
+            if (lg->isVertical()) {
+              if (xborder < yborder) {
+                cdebug_log(145,0) << "H gauge and (xborder < yborder) -> rotate VIA bot metal." << endl;
+                std::swap( xborder, yborder );
+                base()->setRotatedBottomMetal( true );
+              }
+            } else {
+              if (xborder > yborder) {
+                cdebug_log(145,0) << "V gauge and (xborder > yborder) -> rotate VIA bot metal." << endl;
+                std::swap( xborder, yborder );
+                base()->setRotatedBottomMetal( true );
+              }
+            }
+          }
         }
 
         bb.inflate( -xborder, -yborder );
@@ -262,6 +293,12 @@ namespace Anabatic {
         yMin = bb.getYMin();
         xMax = bb.getXMax();
         yMax = bb.getYMax();
+        if (bb.isEmpty()) {
+          cerr << Error( "AutoContactTerminal::getNativeConstraintBox(): Empty native constraints.\n"
+                         "        On: %s"
+                       , getString(this).c_str()
+                       ) << endl;
+        }
       } else {
         xMin = xMax = component->getPosition().getX();
         yMin = yMax = component->getPosition().getY();
@@ -319,7 +356,6 @@ namespace Anabatic {
 
     order( xMin, xMax );
     order( yMin, yMax );
-
     Box bb ( xMin, yMin, xMax, yMax );
 
     if (_segment and _segment->isWide()) {
@@ -346,6 +382,7 @@ namespace Anabatic {
   void  AutoContactTerminal::cacheDetach ( AutoSegment* segment )
   {
     if (_segment == segment) {
+      cdebug_log(145,0) << _getTypeName() << "::cacheDetach() " << this << endl;
     //_segment->unsetFlags( AutoSegment::SegAxisSet );
       _segment = NULL;
       setFlags( CntInvalidatedCache );
@@ -372,12 +409,16 @@ namespace Anabatic {
     _segment = segment;
     unsetFlags( CntInvalidatedCache  );
 
-    if (  (dynamic_cast<AutoHorizontal*>(_segment) and (getFlags() & CntOnHorizontal))
-       or (dynamic_cast<AutoVertical*>  (_segment) and (getFlags() & CntOnVertical  )) ) {
+    Box landingZone = getNativeConstraintBox();
+    if (  (dynamic_cast<AutoHorizontal*>(_segment) and (landingZone.getWidth () > 0))
+       or (dynamic_cast<AutoVertical*>  (_segment) and (landingZone.getHeight() > 0)) ) {
       _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegAxisSet );
+      if (getRoutingPad()->getLayer() == _segment->getLayer())
+        _segment->setFlags( AutoSegment::SegDragSameLayer );
       setFlags( CntDrag );
 
       cdebug_log(145,0) << "Drag Contact/Segment set" << endl;
+      cdebug_log(145,0) << "  " << this << endl;
     }
 
     cdebug_log(145,0) << "Cached:" << _segment << endl;
@@ -411,15 +452,19 @@ namespace Anabatic {
     }
     if (horizontals[0] != NULL ) {
       _segment = Session::lookup( horizontals[0] );
-      if (getFlags() & CntOnHorizontal) {
+      if (getFlags() & (CntOnHorizontal|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
+        if (getRoutingPad()->getLayer() == _segment->getLayer())
+          _segment->setFlags( AutoSegment::SegDragSameLayer );
       }
     } else {
       _segment = Session::lookup( verticals[0] );
-      if (getFlags() & CntOnVertical) {
+      if (getFlags() & (CntOnVertical|CntOnPin)) {
         setFlags( CntDrag );
         _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
+        if (getRoutingPad()->getLayer() == _segment->getLayer())
+          _segment->setFlags( AutoSegment::SegDragSameLayer );
       }
     }
     if (_segment == NULL) {
@@ -484,14 +529,15 @@ namespace Anabatic {
             cdebug_log(145,0) << "Draging H interval ["
                               << DbU::getValueString(getCBXMin()) << " "
                               << DbU::getValueString(getCBXMax()) << "]" << endl;
-            Point onGrid = Session::getNearestGridPoint( Point(perpandicular->getAxis(),getY())
-                                                       , getConstraintBox() );
-            DbU::Unit x = onGrid.getX();
+            // Point onGrid = Session::getNearestGridPoint( Point(perpandicular->getAxis(),getY())
+            //                                            , getConstraintBox() );
+            // DbU::Unit x = onGrid.getX();
+            DbU::Unit x = perpandicular->getAxis();
             x = std::min( x, getCBXMax() );
             x = std::max( x, getCBXMin() );
             setX( x );
             cdebug_log(145,0) << "Dragging to X @" << DbU::getValueString(x)
-                              << " pitched:" << DbU::getValueString(onGrid.getX())
+            //<< " pitched:" << DbU::getValueString(onGrid.getX())
                               << " " << getConstraintBox() << endl;
           }
         }

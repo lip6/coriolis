@@ -249,7 +249,7 @@ namespace Bora {
             slicingtree->updateWireOccupation( dijkstra );
           }
         }
-        katana->setState( Anabatic::EngineState::EngineGlobalLoaded );
+        katana->setStage( Anabatic::StageGlobalRouted );
 
         slicingtree->expandRoutingChannel();
         slicingtree->replace();

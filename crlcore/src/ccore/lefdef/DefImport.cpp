@@ -71,8 +71,8 @@ namespace {
 
   class DefParser {
     public:
-      const uint32_t NoPatch =  0;
-      const uint32_t Sky130  = (1 << 10);
+      const uint32_t NoPatch    =  0;
+      const uint32_t Sky130     = (1 << 10);
     public:
       static AllianceFramework* getFramework             ();
       static Cell*              getLefCell               ( string name );
@@ -90,6 +90,7 @@ namespace {
                                ~DefParser                ();
       inline bool               hasErrors                ();
       inline bool               isSky130                 () const;
+      inline bool               doVHDLRename             () const;
       inline unsigned int       getFlags                 () const;
       inline AllianceLibrary*   getLibrary               ();
       inline Cell*              getCell                  ();
@@ -199,6 +200,7 @@ namespace {
   inline void               DefParser::setUnits                 ( double units ) { _defUnits = 1/units; }
   inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::fromPhysical(_defUnits*(double)u,DbU::UnitPower::Micro); }
   inline bool               DefParser::isSky130                 () const { return _flags & Sky130; }
+  inline bool               DefParser::doVHDLRename             () const { return _flags & DefImport::VHDLRename; }
   inline bool               DefParser::hasErrors                () { return not _errors.empty(); }
   inline unsigned int       DefParser::getFlags                 () const { return _flags; }
   inline string             DefParser::getBusBits               () const { return _busBits; }
@@ -273,7 +275,7 @@ namespace {
 
   void  DefParser::toHurricaneName ( string& defName )
   {
-    if (_busBits != "()") {
+    if ((_busBits != "()") and doVHDLRename()) {
       if (defName[defName.size()-1] == _busBits[1]) {
         size_t pos = defName.rfind( _busBits[0] );
         if (pos != string::npos) {
@@ -579,8 +581,9 @@ namespace {
     if (pin->hasSpecial() and (hnet->isSupply() or hnet->isClock()))
        hnet->setGlobal( true );
 
+    Pin::AccessDirection orient = Pin::AccessDirection::UNDEFINED;
     if (pin->isPlaced() or pin->isFixed()) {
-      Point position ( fromDefUnits(pin->placementX()), fromDefUnits(pin->placementY()) );
+      Point  position ( fromDefUnits(pin->placementX()), fromDefUnits(pin->placementY()) );
       string layerName = pin->layer(0);
       Layer* layer     = parser->lookupLayer( layerName );
       int    x1        = 0;
@@ -592,6 +595,34 @@ namespace {
                 , fromDefUnits(y1)
                 , fromDefUnits(x2)
                 , fromDefUnits(y2) );
+      Transformation transf = Transformation( 0, 0, fromDefOrientation( pin->orient() ));
+      transf.applyOn( shape );
+      Box dieArea = parser->getCell()->getAbutmentBox();
+      DbU::Unit westDistance  = std::abs( position.getX() - dieArea.getXMin() );
+      DbU::Unit eastDistance  = std::abs( position.getX() - dieArea.getXMax() );
+      DbU::Unit southDistance = std::abs( position.getY() - dieArea.getYMin() );
+      DbU::Unit northDistance = std::abs( position.getY() - dieArea.getYMax() );
+      DbU::Unit minDistance   = westDistance;
+      Pin::AccessDirection side = Pin::AccessDirection::WEST;
+      if (eastDistance  < minDistance) { side = Pin::AccessDirection::EAST;  minDistance = eastDistance; }
+      if (southDistance < minDistance) { side = Pin::AccessDirection::SOUTH; minDistance = southDistance; }
+      if (northDistance < minDistance) { side = Pin::AccessDirection::NORTH; }
+      orient = side;
+      // if (orient != side) {
+      //   cerr << Warning( "Pin \"%s\" of net \"%s\" has a suspicious orientation.\n"
+      //                  "          @%s, (dW=%s dE=%s dS=%s dN=%s) DEF: %s vs. guessed %s."
+      //                  , pinName.c_str()
+      //                  , netName.c_str()
+      //                  , getString( position   ).c_str()
+      //                  , DbU::getValueString(  westDistance ).c_str()
+      //                  , DbU::getValueString(  eastDistance ).c_str()
+      //                  , DbU::getValueString( southDistance ).c_str()
+      //                  , DbU::getValueString( northDistance ).c_str()
+      //                  , getString( orient     ).c_str()
+      //                  , getString( side ).c_str()
+      //                  ) << endl;
+      //   orient = side;
+      // }
 
       if (not layer) {
         ostringstream message;
@@ -603,7 +634,7 @@ namespace {
 
       Pin* pin = Pin::create( hnet
                             , pinName
-                            , Pin::AccessDirection::UNDEFINED
+                            , orient
                             , Pin::PlacementStatus::FIXED
                             , layer
                             , position.getX()

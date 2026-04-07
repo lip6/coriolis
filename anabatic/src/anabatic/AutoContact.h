@@ -71,10 +71,12 @@ namespace Anabatic {
                        , CntUserNativeConstraints = (1 << 14)
                        , CntOnVertical            = (1 << 15)
                        , CntOnHorizontal          = (1 << 16)
-                       , CntDrag                  = (1 << 17)
-                       , CntHDogleg               = (1 << 18)
-                       , CntVDogleg               = (1 << 19)
-                       , CntMetalOnly             = (1 << 20)
+                       , CntOnPin                 = (1 << 17)
+                       , CntDrag                  = (1 << 18)
+                       , CntHDogleg               = (1 << 19)
+                       , CntVDogleg               = (1 << 20)
+                       , CntMetalOnly             = (1 << 21)
+                       , CntLockConstraintBox     = (1 << 22)
                        };
 
   class AutoContact {
@@ -98,6 +100,10 @@ namespace Anabatic {
       inline  DbU::Unit        getHeight                  () const;
       inline  DbU::Unit        getHalfHeight              () const;
       inline  Components       getSlaveComponents         () const;
+      inline  bool             isRotatedTopMetal          () const;
+      inline  bool             isRotatedBottomMetal       () const;
+      inline  void             setRotatedTopMetal         ( bool state );
+      inline  void             setRotatedBottomMetal      ( bool state );
     // Wrapped Contact Modifiers.                         
       inline  void             setLayer                   ( const Layer* );
       inline  void             setWidth                   ( DbU::Unit );
@@ -161,6 +167,7 @@ namespace Anabatic {
       inline  DbU::Unit        getCBYMax                  () const;
       inline  Box              getConstraintBox           () const;
               Box&             intersectConstraintBox     ( Box& box ) const;
+      inline  void             lockConstraintBox          ();
     // Collections.
               AutoSegments     getAutoSegments            ();
     // Modifiers.              
@@ -258,6 +265,10 @@ namespace Anabatic {
   inline void           AutoContact::setDx                  ( DbU::Unit dx ) { _contact->setDx(dx); }
   inline void           AutoContact::setDy                  ( DbU::Unit dy ) { _contact->setDy(dy); }
   inline void           AutoContact::setOffset              ( DbU::Unit dx, DbU::Unit dy ) { _contact->setOffset(dx,dy); }
+  inline bool           AutoContact::isRotatedTopMetal      () const { return _contact->isRotatedTopMetal(); }
+  inline bool           AutoContact::isRotatedBottomMetal   () const { return _contact->isRotatedBottomMetal(); }
+  inline void           AutoContact::setRotatedTopMetal     ( bool state ) { _contact->setRotatedTopMetal(state); }
+  inline void           AutoContact::setRotatedBottomMetal  ( bool state ) { _contact->setRotatedBottomMetal(state); }
 // AutoContact Inline Functions.                                        
   inline bool          AutoContact::isInCreationStage       () const { return _flags&CntInCreationStage; }
   inline bool          AutoContact::isInvalidated           () const { return _flags&CntInvalidated; }
@@ -290,6 +301,7 @@ namespace Anabatic {
   inline DbU::Unit     AutoContact::getCBXMax               () const { return isFixed() ? _contact->getX() : _xMax; }
   inline DbU::Unit     AutoContact::getCBYMin               () const { return isFixed() ? _contact->getY() : _yMin; }
   inline DbU::Unit     AutoContact::getCBYMax               () const { return isFixed() ? _contact->getY() : _yMax; }
+  inline  void         AutoContact::lockConstraintBox       () { _flags |= CntLockConstraintBox; }
 
   inline unsigned int  AutoContact::getMinDepth () const
   { size_t minDepth, maxDepth; getDepthSpan(minDepth,maxDepth); return minDepth; }

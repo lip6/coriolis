@@ -35,6 +35,7 @@ anabatic = shared_library(
   'LayerAssign.cpp',
   'AntennaProtect.cpp',
   'PreRouteds.cpp',
+  'PostProcessRoutingPads.cpp',
   'AnabaticEngine.cpp',
   anabatic_py,
 

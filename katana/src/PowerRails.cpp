@@ -17,6 +17,7 @@
 #include <map>
 #include <list>
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -37,6 +38,7 @@
 #include "crlcore/AllianceFramework.h"
 #include "anabatic/GCell.h"
 #include "katana/RoutingPlane.h"
+#include "katana/TrackMarkerSpacing.h"
 #include "katana/TrackFixedSegment.h"
 #include "katana/TrackFixedSpan.h"
 #include "katana/Track.h"
@@ -47,6 +49,7 @@ namespace {
 
   using namespace std;
   using Hurricane::DebugSession;
+  using Hurricane::Breakpoint;
   using Hurricane::Warning;
   using Hurricane::Error;
   using Hurricane::DbU;
@@ -69,6 +72,7 @@ namespace {
   using Hurricane::Go;
   using Hurricane::Rubber;
   using Hurricane::Layer;
+  using Hurricane::ParallelSpacings;
   using Hurricane::BasicLayer;
   using Hurricane::RegularLayer;
   using Hurricane::Transformation;
@@ -317,7 +321,7 @@ namespace {
           bool operator() ( const Rail* lhs, const Rail* rhs );
       };
 
-      class RailMatch : public unary_function<Rail*,bool> {
+      class RailMatch {
         public:
           inline      RailMatch  ( DbU::Unit axis, DbU::Unit width );
           inline bool operator() ( const Rail* );
@@ -522,7 +526,6 @@ namespace {
       ++ichunknext;
 
       for ( ; ichunk != _chunks.end() ; ++ichunk, ++ichunknext ) {
-
         if (ichunknext != _chunks.end()) {
           if ((*ichunk).intersect(*ichunknext))
             cerr << Error( "Overlaping consecutive chunks in %s %s Rail @%s:\n"
@@ -560,6 +563,18 @@ namespace {
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
           element->setFlags( TElemUseBlockageNet );
         }
+
+        Box bb = segment->getBoundingBox();
+        ParallelSpacings spacings = layer->getParallelSpacings( bb, true );
+        if (spacings.size() > 1) {
+          cdebug_log(159,0) << "Wider spacing for " << segment << endl;
+          for ( size_t i=0 ; i<spacings.size() ; ++i ) {
+            cdebug_log(159,9) << "[" << i << "] parallel=" << DbU::getValueString(spacings.parallelLength(i))
+                              <<               " spacing=" << DbU::getValueString(spacings.spacing(i)) << endl;
+          }
+
+          TrackMarkerSpacing::create( segment );
+        }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();
@@ -596,6 +611,11 @@ namespace {
                             << endl;
           element->setFlags( TElemUseBlockageNet );
         }
+
+        Box bb = segment->getBoundingBox();
+        ParallelSpacings spacings = layer->getParallelSpacings( bb, false );
+        if (spacings.size() > 1)
+          TrackMarkerSpacing::create( segment );
       }
     }
   }
@@ -1251,6 +1271,7 @@ namespace Katana {
   //DebugSession::close();
 
     printCompletion();
+    Breakpoint::stop( 100, "PowerRails setup done." );
   }
 
 

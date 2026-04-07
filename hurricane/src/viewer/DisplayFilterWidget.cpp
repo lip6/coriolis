@@ -209,6 +209,7 @@ namespace Hurricane {
 
     _updateState = ExternalEmit;
     changeQueryFilter ();
+    _updateState = ExternalEmit;
     changeDbuMode ( _cellWidget->getDbuMode(), _cellWidget->getUnitPower() );
   }
 

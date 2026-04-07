@@ -31,6 +31,7 @@
 #include "katana/TrackSegmentRegular.h"
 #include "katana/TrackSegmentNonPref.h"
 #include "katana/TrackSegmentWide.h"
+#include "katana/TrackFixedSpanRp.h"
 #include "katana/Track.h"
 #include "katana/Session.h"
 #include "katana/RoutingEvent.h"
@@ -104,12 +105,15 @@ namespace Katana {
 
   void  TrackSegment::_preDestroy ()
   {
-    cdebug_log(155,0) << "TrackSegment::_preDestroy() - " << (void*)this
+    cdebug_log(160,1) << "TrackSegment::_preDestroy() - " << (void*)this
                << " [" << (void*)_base << ", "
                << (void*)(_base?_base->base():NULL) << "]" << endl;
+    cdebug_log(160,0) << "  " << this << endl;
 
-    DbU::Unit length = base()->getLength();
+    DbU::Unit length = base()->getAnchoredLength();
     if ( (length > 0) and (length < getPPitch()) ) {
+      cdebug_log(160,0) << "Length below P-Pitch -> adjusting width ("
+                        << DbU::getValueString(length) << ")" << endl;
       BasicLayer* layer  = getLayer()->getBasicLayers().getFirst();
       DbU::Unit   width  = base()->getWidth();
       Contact*    source = base()->getAutoSource()->base();
@@ -121,11 +125,14 @@ namespace Katana {
         width = std::max( width, source->getBoundingBox(layer).getWidth() );
         width = std::max( width, target->getBoundingBox(layer).getWidth() );
       }
+      cdebug_log(160,0) << "Set width to " << DbU::getValueString(width) << endl;
       base()->base()->setWidth( width );
     }
 
     base()->setObserver( AutoSegment::Observable::TrackSegment, NULL );
     TrackElement::_preDestroy();
+
+    cdebug_tabw(160,-1);
   }
 
 
@@ -138,7 +145,9 @@ namespace Katana {
     bool useNonPref = (segment->getDirection() xor Session::getDirection(segment->getLayer()));
 
     DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
-    TrackElement* trackElement     = Session::lookup( segment->base() );
+  // TO_CHECK.
+  //TrackElement* trackElement     = Session::lookup( segment->base() );
+    TrackElement* trackElement     = Session::lookup( segment );
     if (not trackElement) { 
       if (useNonPref) {
         trackElement = new TrackSegmentNonPref( segment );
@@ -288,7 +297,7 @@ namespace Katana {
       return Interval(false);
     }
 
-    return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
+    return _track->expandFreeInterval( getCenterU(), begin, end, Track::InsideElement, getNet() );
   }
 
 
@@ -405,21 +414,35 @@ namespace Katana {
   }
 
 
+  void  TrackSegment::forcePositions ( DbU::Unit source, DbU::Unit target )
+  { _base->forcePositions( source, target ); }
+
+
+  void  TrackSegment::forcePositions ( const Interval& freeSpan )
+  {
+    _base->forcePositions( freeSpan );
+    _base->invalidate();
+  }
+
+
   void  TrackSegment::setTrack ( Track* track )
   {
+    cdebug_log(155,0) << "TrackSegment::setTrack(): " << this << endl;
+    cdebug_log(155,0) << "  To " << track << endl;
+
     if (track) {
       DbU::Unit axis = track->getAxis();
       if (isWide()) {
         DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
         axis += (pitch * (getTrackSpan() - 1)) / 2;
         
-        cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
+        cdebug_log(155,0) << "pitch:" << DbU::getValueString(pitch)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
       if (isNonPref()) {
         axis = getAxis();
         
-        cdebug_log(155,0) << "TrackSegment::setTrack(): Non-preferred, keep @" << DbU::getValueString(axis)
+        cdebug_log(155,0) << "Non-preferred, keep @" << DbU::getValueString(axis)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
       
@@ -434,58 +457,14 @@ namespace Katana {
   { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
-  // void  TrackSegment::detach ()
-  // {
-  //   cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
-
-  //   setTrack( NULL );
-  //   setFlags( TElemLocked );
-  //   addTrackCount( -1 );
-  // }
-
-
-  void  TrackSegment::detach ( TrackSet& removeds )
-  {
-    cdebug_log(159,1) << "TrackSegment::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
-                      << getTrackSpan() << endl;
-
-    Track* wtrack = getTrack();
-    for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
-      removeds.insert( wtrack );
-      cdebug_log(159,0) << "| " << wtrack << endl;
-      
-      wtrack = wtrack->getNextTrack();
-    }
-  //addTrackCount( -getTrackSpan() );
-    addTrackCount( -1  );
-
-  //detach();
-    setTrack( NULL );
-    setFlags( TElemLocked );
-
-    cdebug_tabw(159,-1);
-  }
-
-
   void  TrackSegment::revalidate ()
   {
     DebugSession::open( getNet(), 159, 160 );
 
     unsetFlags( TElemCreated ); 
-    cdebug_log(159,0) << "revalidate() - " << this << endl;
+    cdebug_log(159,0) << "TrackSegment::revalidate() - " << this << endl;
 
-    if (isNonPref()) {
-      Interval perpandicularSpan ( getAxis() );
-      DbU::Unit cap = std::max( base()->getExtensionCap( Anabatic::Flags::Source )
-                              , base()->getExtensionCap( Anabatic::Flags::Target ));
-      perpandicularSpan.inflate( cap );
-
-      _sourceU = perpandicularSpan.getVMin();
-      _targetU = perpandicularSpan.getVMax();
-    }
-    else
-      _base->getCanonical( _sourceU, _targetU );
-
+    _base->getCanonical( _sourceU, _targetU );
     if (isNonPref()) updateTrackSpan();
 
     if (_track) {
@@ -501,11 +480,21 @@ namespace Katana {
   }
 
 
-  void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
+  void  TrackSegment::setAxis ( DbU::Unit axis, Flags flags  )
   {
     if (_data) {
-      if (axis == getAxis()) _data->incSameRipup();
-      else _data->resetSameRipup();
+      if (flags & Flags::ToSameRipupLimit) {
+        if (not isNonPref()) {
+          uint32_t  ripupLimit = Session::getKatanaEngine()->getRipupLimit( this );
+        //_data->setSameRipup( (ripupLimit > 2) ? ripupLimit-2 : 0 );
+          _data->setSameRipup( 3 );
+        }
+      } else {
+        if (Session::getStage() >= Anabatic::StageNegociate) {
+          if (axis == getAxis()) _data->incSameRipup();
+          else _data->resetSameRipup();
+        }
+      }
     }
     _base->setAxis( axis, flags );
     invalidate();
@@ -634,6 +623,10 @@ namespace Katana {
 
   bool  TrackSegment::canMoveUp ( float reserve, Flags flags ) const
   { return _base->canMoveUp( reserve, flags ); }
+
+
+  bool  TrackSegment::canReduce () const
+  { return _base->canReduce(); }
 
 
   bool  TrackSegment::canSlacken () const
@@ -783,10 +776,10 @@ namespace Katana {
       return false;
     }
 
-    if (hasSourceDogleg() or hasTargetDogleg()) {
-      cdebug_log(159,0) << "Failed: already has source or target dogleg." << endl;
-      return false;
-    }
+    // if (hasSourceDogleg() or hasTargetDogleg()) {
+    //   cdebug_log(159,0) << "Failed: already has source or target dogleg." << endl;
+    //   return false;
+    // }
 
     if (getDepth() < 3) {
       if (getBreakLevel() and (getLength() / getBreakLevel() < Session::getSliceHeight())) {
@@ -988,15 +981,35 @@ namespace Katana {
   }
 
 
+
+  TrackElement* TrackSegment::promoteToPref ()
+  {
+    TrackElement* perpandicular = nullptr;
+    TrackElement* parallel      = nullptr;
+
+    base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
+    DataNegociate* data = getDataNegociate();
+    if (data and data->hasRoutingEvent())
+      data->getRoutingEvent()->setDisabled( true );
+
+    base()->promoteToPref( Flags::NoFlags );
+    _postDoglegs( perpandicular, parallel );
+
+    cdebug_log(159,0) << "TrackSegment::promoteToPref() " << this << endl;
+
+    return perpandicular;
+  }
+  
+
   TrackElement* TrackSegment::makeDogleg ()
   {
     Anabatic::AutoContact* source = _base->getAutoSource();
     Anabatic::AutoContact* target = _base->getAutoTarget();
     Anabatic::GCell*       gcell  = _base->getAutoSource()->getGCell();
 
-    TrackElement* dogleg   = NULL;
-    TrackElement* parallel = NULL;
-    makeDogleg( gcell, dogleg, parallel );
+    TrackElement* dogleg   = nullptr;
+    TrackElement* parallel = nullptr;
+    makeDogleg( gcell, dogleg, parallel, Flags::NoFlags );
 
     if (dogleg) {
       if (source->isTerminal() xor target->isTerminal()) {
@@ -1016,14 +1029,17 @@ namespace Katana {
   TrackElement* TrackSegment::makeDogleg ( Anabatic::GCell* dogLegGCell
                                          , TrackElement*&   perpandicular
                                          , TrackElement*&   parallel
+                                         , Flags            flags
                                          )
   {
-    cdebug_log(159,0) << "TrackSegment::makeDogleg(GCell*)" << endl;
+    cdebug_log(159,1) << "TrackSegment::makeDogleg(GCell*)" << endl;
     cdebug_log(159,0) << "Break in: " << dogLegGCell << endl;
+    cdebug_log(159,0) << "Flags: " << flags << endl;
 
-    base()->makeDogleg( dogLegGCell, Flags::IncBreakLevel );
+    base()->makeDogleg( dogLegGCell, flags|Flags::IncBreakLevel );
     _postDoglegs( perpandicular, parallel );
 
+    cdebug_tabw(159,-1);
     return perpandicular;
   }
 
@@ -1048,6 +1064,8 @@ namespace Katana {
 
   void  TrackSegment::_postDoglegs ( TrackElement*& perpandicular, TrackElement*& parallel )
   {
+    const uint32_t  nonPrefLevel = 0; // Also check with 6.
+      
     cdebug_log(159,1) << "TrackSegment::_postDoglegs()" << endl;
 
     const vector<AutoSegment*>& doglegs = Session::getDoglegs();
@@ -1066,17 +1084,35 @@ namespace Katana {
       //segments[i+0]->getDataNegociate()->resetStateCount();
         segments[i+0]->getDataNegociate()->setState( DataNegociate::RipupPerpandiculars );
 
+        AutoContact* originalSource = segments[i+0]->base()->getAutoSource();
+        if (originalSource->isTurn()) {
+          AutoSegment* sourcePp = originalSource->getPerpandicular( segments[i+0]->base() );
+          if (sourcePp and sourcePp->isNonPref())
+            Session::lookup( sourcePp )->reschedule( nonPrefLevel );
+        }
+
         cdebug_log(159,0) << "Looking up new perpand:  " << doglegs[i+1] << endl;
         segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+1],0) );
         segments[i+1]->setFlags( TElemSourceDogleg|TElemTargetDogleg  );
 
         cdebug_log(159,0) << "Looking up new parallel: " << doglegs[i+2] << endl;
-        segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
-        segments[i+2]->setFlags( TElemSourceDogleg );
-        segments[i+2]->getDataNegociate()->resetStateCount();
-        segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
+        if (doglegs[i+2]) {
+          segments.push_back( Session::getNegociateWindow()->createTrackSegment(doglegs[i+2],0) );
+          segments[i+2]->setFlags( TElemSourceDogleg );
+          segments[i+2]->getDataNegociate()->resetStateCount();
+          segments[i+2]->getDataNegociate()->setState( segments[i+0]->getDataNegociate()->getState() );
 
-        segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
+          segments[i+0]->getDataNegociate()->setChildSegment( segments[i+2] );
+
+          AutoContact* originalTarget = segments[i+0]->base()->getAutoTarget();
+          if (originalTarget->isTurn()) {
+            AutoSegment* targetPp = originalTarget->getPerpandicular( segments[i+0]->base() );
+            if (targetPp and targetPp->isNonPref())
+              Session::lookup( targetPp )->reschedule( nonPrefLevel );
+          }
+        } else {
+          segments.push_back( nullptr );
+        }
 
         perpandicular = segments[i+1];
         parallel      = segments[i+2];
@@ -1088,7 +1124,8 @@ namespace Katana {
     //if ( getGCell() != originalGCell ) swapTrack ( segments[2] );
 
       for ( size_t i=0 ; i<doglegs.size() ; ++i ) {
-        segments[i]->reschedule ( ((i%3==1) ? 0 : 1) );
+        if (not segments[i]) continue;
+        segments[i]->reschedule( ((i%3==1) ? 0 : 1) );
         const char* segPart = "Unknown";
         switch ( i%3 ) {
           case 0: segPart = "original "; break;
@@ -1108,6 +1145,37 @@ namespace Katana {
   }
 
 
+  void  TrackSegment::reduce ()
+  {
+    _base->reduce();
+    if (getDepth() != 2) return;
+    
+    DataNegociate* data = getDataNegociate();
+    if (not data) return;
+
+    for ( TrackElement* perpandicular : data->getPerpandiculars() ) {
+      Track* track = perpandicular->getTrack();
+      if (track) {
+        size_t           index = track->find( perpandicular );
+        TrackFixedSpanRp* prev = dynamic_cast<TrackFixedSpanRp*>( track->getPrevious( index, getNet() ));
+        TrackFixedSpanRp* next = dynamic_cast<TrackFixedSpanRp*>( track->getNext    ( index, getNet() ));
+        if (prev) {
+          if (perpandicular->getSourceU() - prev->getTargetU() < 2*getPitch()) {
+            cdebug_log(159,0) << "Close call for reduced " << this << endl;
+            cdebug_log(159,0) << "  -> prev " << prev << endl;
+          }
+        }
+        if (next) {
+          if (next->getSourceU() - perpandicular->getTargetU() < 2*getPitch()) {
+            cdebug_log(159,0) << "Close call for reduced " << this << endl;
+            cdebug_log(159,0) << "  -> next " << prev << endl;
+          }
+        }
+      }
+    }
+  }
+  
+
   bool  TrackSegment::_check () const
   {
     if (not base()) return true;
@@ -1124,8 +1192,13 @@ namespace Katana {
     base()->checkPositions();
 
     if (isNonPref()) {
-      Interval perpandicularSpan ( getAxis() );
-      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
+      Interval   perpandicularSpan ( getAxis() );
+      DbU::Unit  cap               = base()->getExtensionCap( Anabatic::Flags::Source );
+      perpandicularSpan.inflate( cap );
+      if (getId() == 825)
+        cerr << "  axis=" << DbU::getValueString(getAxis())
+             <<   " cap=" << DbU::getValueString(cap)
+             << endl;
 
       min = perpandicularSpan.getVMin();
       max = perpandicularSpan.getVMax();
@@ -1160,7 +1233,10 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU) + " "
+              + ((isBlockage()     ) ? "B" : "-")
+              + ((isFixed()        ) ? "F" : "-")
               + ((isNonPref()      ) ? "P" : "-")
+              + ((isOneTrack()     ) ? "1" : "-")
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")

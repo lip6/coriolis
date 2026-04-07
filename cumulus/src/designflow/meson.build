@@ -1,3 +1,4 @@
+
 designflow = files([
   '__init__.py',
   'alias.py',
@@ -15,6 +16,8 @@ designflow = files([
   'flatph.py',
   'genpat.py',
   'graal.py',
+  'gtkwave.py',
+  'iverilog.py',
   'klayout.py',
   'loon.py',
   'lvx.py',
@@ -22,12 +25,14 @@ designflow = files([
   'pnrcheck.py',
   'routecheck.py',
   's2r.py',
+  'tasyagle.py',
   'surelog.py',
   'sv2v.py',
   'svase.py',
   'task.py',
   'technos.py',
   'vasy.py',
+  'x2y.py',
   'yosys.py',
   'yosysnp.py',
 ])

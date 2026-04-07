@@ -39,6 +39,7 @@ namespace CRL {
       static void                reset                  ();
       static Hurricane::Library* load                   ( std::string fileName );
       static void                setMergeLibrary        ( Hurricane::Library* );
+      static void                setGdsForeignLibrary   ( Hurricane::Library* );
       static void                setGdsForeignDirectory ( std::string path );
       static void                setPinFilter           ( DbU::Unit xThreshold, DbU::Unit yThreshold, uint32_t flags );
       static Hurricane::Layer*   getLayer               ( std::string name);

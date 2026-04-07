@@ -308,10 +308,6 @@ namespace CRL {
   }
 
 
-  DbU::Unit  RoutingLayerGauge::getTrackPosition ( DbU::Unit start, long index ) const
-  { return index * _pitch + _offset + start; }
-
-
   string  RoutingLayerGauge::_getTypeName () const
   {
     return "CRL::RoutingLayerGauge";

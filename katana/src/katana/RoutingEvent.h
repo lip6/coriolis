@@ -35,11 +35,11 @@ namespace Katana {
 
   using std::set;
   using std::vector;
-  using std::binary_function;
   using std::labs;
   using Hurricane::DbU;
   using Hurricane::Interval;
   using Hurricane::Net;
+  using Anabatic::AutoSegment;
   class TrackElement;
   class Track;
   class RoutingEventHistory;
@@ -55,21 +55,23 @@ namespace Katana {
     private:
       class Key {
         public:
-          class Compare : public binary_function<const Key&,const Key&,bool> {
+          class Compare {
             public:
               bool  operator() ( const Key& lhs, const Key& rhs ) const;
           };
 
         public:
-                Key    ( const RoutingEvent* );
-          void  update ( const RoutingEvent* );
+                       Key          ( const RoutingEvent* );
+                 void  update       ( const RoutingEvent* );
+          inline bool  isNonPref    () const;
+          inline bool  isHorizontal () const;
         private:
           unsigned int  _tracksNb  :16;
           unsigned int  _rpDistance: 4;
           float         _priority;
           uint32_t      _eventLevel;
-          uint32_t      _segFlags;
           uint32_t      _layerDepth;
+          uint64_t      _segFlags;
           DbU::Unit     _length;
           DbU::Unit     _axis;
           DbU::Unit     _sourceU;
@@ -80,12 +82,12 @@ namespace Katana {
 
     public:
     // Sub-Class: "Compare".
-      class Compare : public binary_function<const RoutingEvent*,const RoutingEvent*,bool> {
+      class Compare {
         public:
           bool  operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const;
       };
     // Sub-Class: "CompareById".
-      class CompareById : public binary_function<const RoutingEvent*,const RoutingEvent*,bool> {
+      class CompareById {
         public:
           inline bool  operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const;
       };
@@ -117,6 +119,7 @@ namespace Katana {
               uint32_t                     getState              () const;
       inline  const Key&                   getKey                () const;
       inline  TrackElement*                getSegment            () const;
+      inline  DataNegociate*               getDataNegociate      () const;
       inline  const vector<TrackElement*>& getPerpandiculars     () const;
       inline  DbU::Unit                    getAxisHint           () const;
       inline  DbU::Unit                    getAxisHistory        () const;
@@ -138,7 +141,7 @@ namespace Katana {
                                                                  );
               void                         setSegment            ( TrackElement* );
               RoutingEvent*                reschedule            ( RoutingEventQueue&, uint32_t eventLevel );
-              void                         setState              ( uint32_t );
+              void                         setState              ( uint32_t, Flags flags=Flags::NoFlags );
       inline  void                         setTimeStamp          ( uint32_t );
       inline  void                         setProcessed          ( bool state=true );
       inline  void                         setDisabled           ( bool state=true );
@@ -210,6 +213,7 @@ namespace Katana {
   inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }
+  inline DataNegociate*                RoutingEvent::getDataNegociate        () const { return _dataNegociate; }
   inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _dataNegociate->getPerpandiculars(); }
 //inline const vector<TrackElement*>&  RoutingEvent::getPerpandiculars       () const { return _perpandiculars; }
   inline DbU::Unit                     RoutingEvent::getAxisHistory          () const { return _axisHistory; }
@@ -243,6 +247,10 @@ namespace Katana {
 
 
   typedef  set<RoutingEvent*,RoutingEvent::CompareById>  RoutingEventSet;
+
+  
+  inline bool  RoutingEvent::Key::isNonPref    () const { return _segFlags & AutoSegment::SegNonPref; }
+  inline bool  RoutingEvent::Key::isHorizontal () const { return _segFlags & AutoSegment::SegHorizontal; }
 
 
 // -------------------------------------------------------------------

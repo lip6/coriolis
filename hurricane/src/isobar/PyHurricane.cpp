@@ -27,6 +27,7 @@
 #include "hurricane/isobar/PyOrientation.h"
 #include "hurricane/isobar/PyDataBase.h"
 #include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyLibraryCollection.h"
 #include "hurricane/isobar/PyEntity.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyCellCollection.h"
@@ -550,6 +551,7 @@ extern "C" {
     PyDataBase_LinkPyType ();
     PyTechnology_LinkPyType ();
     PyLibrary_LinkPyType ();
+    PyLibraryCollection_LinkPyType ();
     PyEntity_LinkPyType ();
     PyTypeEntity.tp_getattro = PyEntity_getattro;
     PyTypeEntity.tp_setattro = PyEntity_setattro;
@@ -630,6 +632,8 @@ extern "C" {
     PYTYPE_READY( DataBase                      )
     PYTYPE_READY( Technology                    )
     PYTYPE_READY( Library                       )
+    PYTYPE_READY( LibraryCollection             )
+    PYTYPE_READY( LibraryCollectionLocator      )
     PYTYPE_READY( Entity                        )
     PYTYPE_READY( EntityVector                  )
     PYTYPE_READY( EntityVectorIterator          )
@@ -749,6 +753,7 @@ extern "C" {
     __cs.addType( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
     __cs.addType( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
     __cs.addType( "library"    , &PyTypeLibrary               , "<Library>"               , false );
+    __cs.addType( "libCol"     , &PyTypeLibraryCollection     , "<LibraryCollection>"     , false );
     __cs.addType( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
     __cs.addType( "refCol"     , &PyTypeReferenceCollection   , "<ReferenceCollection>"   , false );
     __cs.addType( "net"        , &PyTypeNet                   , "<Net>"                   , false, "ent" );

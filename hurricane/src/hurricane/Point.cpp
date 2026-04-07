@@ -104,6 +104,14 @@ Point& Point::translate(const DbU::Unit& dx, const DbU::Unit& dy)
     return *this;
 }
 
+Point& Point::translate(const Point& p)
+// ************************************
+{
+    _x += p.getX();
+    _y += p.getY();
+    return *this;
+}
+
 Point Point::getTranslated(const DbU::Unit& dx, const DbU::Unit& dy) const {
     return Point(*this).translate(dx, dy);
 }

@@ -81,13 +81,28 @@ namespace Tramontana {
   using Hurricane::Instance;
 
 
+  bool isTracedOcc ( Occurrence occ )
+  {
+    if (not occ.isValid()) return false;
+    if (not occ.getPath().getHeadInstance()) return false;
+    if (occ.getPath().getHeadInstance()->getId() != 17812) return false;
+    if (   (occ.getEntity()->getId() !=  1385)
+       and (occ.getEntity()->getId() != 73435)) 
+      return false;
+    return true;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Tramontana::Tile".
 
 
-  uint32_t       Tile::_idCounter = 0;
-  uint32_t       Tile::_time      = 0;
-  vector<Tile*>  Tile::_allocateds;
+  uint32_t        Tile::_time      = 0;
+  vector<Tile*>   Tile::_allocateds;
+  vector<Tile*>   Tile::_destroyQueue;
+  vector<size_t>  Tile::_freeds;
+  size_t          Tile::_peakTiles  = 0;
+  size_t          Tile::_totalTiles = 0;
 
 
   Tile::Tile (       Occurrence  occurrence
@@ -95,7 +110,8 @@ namespace Tramontana {
              , const BasicLayer* layer
              , const Box&        boundingBox
              ,       Tile*       parent )
-    : _id            (_idCounter++)
+    : _id            (0)
+    , _refCount      (0)
     , _occurrence    (occurrence) 
     , _deepOccurrence(deepOccurrence) 
     , _layer         (layer)
@@ -106,14 +122,25 @@ namespace Tramontana {
     , _rank          (0)
     , _timeStamp     (0)
   {
-    cdebug_log(165,0) << "Tile::Tile() " << this << endl;
-    _allocateds.push_back( this );
+    _totalTiles++;
+    if (not _freeds.empty()) {
+      _id = _freeds.back();
+      _freeds.pop_back();
+      _allocateds[ _id ] = this;
+    } else {
+      _id = _allocateds.size();
+      _allocateds.push_back( this );
+      _peakTiles++;
+    }
+    if (_parent) _parent->incRefCount();
+
     if (occurrence.getPath().isEmpty()) {
       if (not occurrence.getEntity()) {
         cerr << Error( "Tile::Tile(): Cannot build on an empty Occurrence." ) << endl;
       }
       _flags |= TopLevel;
     }
+    cdebug_log(165,0) << "Tile::Tile() " << this << endl;
   }
 
 
@@ -203,14 +230,32 @@ namespace Tramontana {
     Tile* tile = new Tile ( childEqui, occurrence, layer, bb, rootTile );
     sweepLine->add( tile );
 
+  //cerr << "Tile::create() " << (void*)tile << ":" << tile << endl;
+
     return tile;
   }
 
 
-  void  Tile::destroy ()
+  void  Tile::queuedDestroy ()
   {
-    cdebug_log(165,1) << "Tile::destroy() " << this << endl;
-    cdebug_tabw(165,-1);
+    if (isFreed()) return;
+    if (_parent) _parent->decRefCount();
+    _flags |= Freed;
+    cdebug_log(165,0) << "Tile::destroy() " << this << endl;
+    _destroyQueue.push_back( this );
+  }
+
+
+  void  Tile::destroyQueued ()
+  {
+
+    for ( Tile* tile : _destroyQueue ) {
+      _allocateds[ tile->getId() ] = nullptr;
+      _freeds.push_back( tile->getId() );
+    //cerr << "Tile::destroyQueued() " << (void*)tile << ":" << tile << endl;
+      delete tile;
+    }
+    _destroyQueue.clear();
   }
 
 
@@ -220,9 +265,60 @@ namespace Tramontana {
 
   void  Tile::deleteAllTiles ()
   {
-    for ( Tile* tile : _allocateds) delete tile;
+    int64_t delCount = 0;
+    for ( Tile* tile : _allocateds) {
+      if (tile) delCount++;
+      delete tile;
+    }
+    int64_t delta = (int64_t)_allocateds.size() - (int64_t)_freeds.size() - delCount;
+    if (delta < 0) {
+      cerr << Error( "Tile::deleteAllTiles(): Delete more tiles than allocated, brace for a crash.\n"
+                     "        Has allocateds %lu, freed %lu in excess of %ld."
+                   , _allocateds.size(), _freeds.size(), delCount-_freeds.size()
+                   ) << endl;
+    }
+    if (delta > 0) {
+      cerr << Error( "Tile::deleteAllTiles(): Delete less tiles than allocated, memory leak.\n"
+                     "        Has allocateds %lu, freed %lu short of %ld."
+                   , _allocateds.size(), _freeds.size(), _freeds.size()-delCount
+                   ) << endl;
+    }
     _allocateds.clear();
-    _idCounter = 0;
+    _freeds.clear();
+    _peakTiles  = 0;
+    _totalTiles = 0;
+  }
+
+
+  void  Tile::showStats ()
+  {
+    size_t roots        = 0;
+    size_t childs       = 0;
+    size_t mergedChilds = 0;
+    size_t nullRefCount = 0;
+    size_t nonFreeds    = 0;
+    for ( Tile* tile : _allocateds ) {
+      if (not tile) continue;
+      if (tile->getParent()) {
+        childs++;
+        if (tile->isOccMerged())
+          mergedChilds++;
+      } else
+        roots++;
+      if (tile->getRefCount() == 0) {
+        nullRefCount++;
+        if (not tile->isFreed() and tile->isOccMerged())
+          nonFreeds++;
+      }
+    }
+    cerr << "\n        o  Tile statistics:" << endl;
+    cerr << Dots::asUInt("           - Roots"           , roots             ) << endl;
+    cerr << Dots::asUInt("           - Childs"          , childs            ) << endl;
+    cerr << Dots::asUInt("           - Merged childs"   , mergedChilds      ) << endl;
+    cerr << Dots::asUInt("           - Null refcount"   , nullRefCount      ) << endl;
+    cerr << Dots::asUInt("           - Non freeds"      , nonFreeds         ) << endl;
+    cerr << Dots::asUInt("           - Total allocateds", _allocateds.size()) << endl;
+    cerr << Dots::asUInt("           - Freed"           , _freeds.size()    ) << endl;
   }
 
 
@@ -234,7 +330,7 @@ namespace Tramontana {
       if ((flags & MakeLeafEqui) and not getEquipotential()) {
         newEquipotential();
       }
-    //cdebug_tabw(165,-1);
+      cdebug_tabw(165,-1);
       return this;
     }
     
@@ -251,10 +347,15 @@ namespace Tramontana {
       // }
       root = root->getParent();
       cdebug_log(165,0) << "| parent " << root << endl;
+      if (root->isFreed())
+        cerr << Error( "Tile::getRoot(): On %s,\n"
+                       "        parent tile is already freed %s."
+                     , getString(this).c_str()
+                     , getString(root).c_str()
+                     ) << endl;
     }
     cdebug_log(165,0) << "> root " << root << " "
                       << (root->getEquipotential() ? getString(root->getEquipotential()) : "equi=NULL") << endl;
-
 
     if (flags & MergeEqui) {
       Equipotential* rootEqui = root->getEquipotential();
@@ -282,7 +383,7 @@ namespace Tramontana {
       }
     }
 
-  //cdebug_tabw(165,-1);
+    cdebug_tabw(165,-1);
     return root;
   }
 
@@ -380,6 +481,24 @@ namespace Tramontana {
   }
 
 
+  void  Tile::check ( string tag ) const
+  {
+    if (_id != 205594) return;
+    
+    cerr << tag << endl;
+    cerr << "  Tile::check() " << this << endl;
+    size_t childCount = 0;
+    for ( const Tile* tile : _allocateds ) {
+      if (not tile) continue;
+      if (tile->getParent() and (tile->getParent() == this)) {
+        cerr << "    | child " << tile << endl;
+        childCount++;
+      }
+    }
+    cerr << "    childs:" << childCount << " vs. ref:" << _refCount << endl;
+  }
+
+
   string  Tile::_getTypeName () const
   { return "Tramontana::Tile"; }
 
@@ -388,7 +507,11 @@ namespace Tramontana {
   {
     ostringstream  os;
     os << "<Tile tid:" << _id
-       << " " << (getEquipotential() ? "E" : "-")
+       << " ref=" << _refCount
+       << " " << (_parent            ? "p" : "-")
+       <<        (getEquipotential() ? "E" : "-")
+       <<        (isOccMerged     () ? "m" : "-")
+       <<        (isFreed         () ? "F" : "-")
        << " " << _boundingBox
        << " " << _layer->getName()
        << " " << _occurrence << ">";
@@ -400,6 +523,8 @@ namespace Tramontana {
   {
     Record* record = new Record ( _getString() );
     if (record) {
+      record->add( getSlot( "_refCount"   ,  _refCount    ) );
+      record->add( getSlot( "_parent"     ,  _parent      ) );
       record->add( getSlot( "_occurrence" , &_occurrence  ) );
       record->add( getSlot( "_layer"      ,  _layer       ) );
       record->add( getSlot( "_boundingBox", &_boundingBox ) );

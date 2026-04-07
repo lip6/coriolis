@@ -402,7 +402,7 @@ namespace Hurricane {
         layer = RegularLayer::create( techno, name, basicLayer );
         layer->setSymbolic      ( isSymbolic );
         layer->setMinimalSize   ( minimalSize );
-        layer->setMinimalSpacing( minimalSpacing );
+        layer->setMinimalSpacing( minimalSpacing, 0, 0 );
         layer->setEnclosure     ( basicLayer, enclosure      );
         layer->setExtentionCap  ( basicLayer, extensionCap   );
         layer->setExtentionWidth( basicLayer, extensionWidth );

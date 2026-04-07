@@ -19,13 +19,13 @@ import collections
 from   operator            import itemgetter
 from   ...                import Cfg
 from   ...Hurricane       import DataBase, Breakpoint, DbU, Box, Transformation, \
-                                 Path, Layer, Occurrence, Net,                   \
+                                 Path, Layer, BasicLayer, Occurrence, Net,       \
                                  NetExternalComponents, RoutingPad, Horizontal,  \
                                  Vertical, Contact, Pin, Plug, Instance
 from   ...CRL             import AllianceFramework, RoutingLayerGauge, Catalog, \
                                  Gds, Spice
 from   ...helpers         import trace, l, u, n
-from   ...helpers.io      import ErrorMessage, WarningMessage, catch
+from   ...helpers.io      import ErrorMessage, WarningMessage, catch, vprint
 from   ...helpers.overlay import CfgCache, CfgDefault, UpdateSession
 from   ..                 import getParameter
 from   ..rsave            import rsave
@@ -76,14 +76,16 @@ class GaugeConf ( object ):
     SourceExtend    = 0x0800
 
     def __init__ ( self ):
-        self._cellGauge      = None
-        self._ioPadGauge     = None
-        self._routingGauge   = None
-        self._topLayerDepth  = 0
-        self._plugToRp       = { }
-        self._rpToAccess     = { }
+        self._cellGauge           = None
+        self._ioPadGauge          = None
+        self._routingGauge        = None
+        self._topLayerDepth       = 0
+        self._plugToRp            = { }
+        self._rpToAccess          = { }
+        self._eastWestPinsIndex   = None
+        self._northSouthPinsIndex = None
         self._loadRoutingGauge()
-        self._routingBb       = Box()
+        self._routingBb           = Box()
         return
 
     @property
@@ -207,6 +209,45 @@ class GaugeConf ( object ):
             print( WarningMessage( 'IO pad gauge "{}" not found.'.format(ioPadGaugeName) ))
         trace( 550, '-' )
 
+    def _setIoPinsLayerIndexes ( self ):
+        """
+        Look through the routing layer gauges to assing the layers used for
+        I/O pins for blocks in east/west and north/south direction.
+        """
+        upperEastWestPins = Cfg.getParamBool('block.upperEastWestPins').asBool()
+        eastWestCount     = 2 if upperEastWestPins else 1
+        self._eastWestPinsIndex   = None
+        self._northSouthPinsIndex = None
+        for depth in range(0,self.topLayerDepth+1):
+            layerGauge = self._routingGauge.getLayerGauge( depth )
+            if layerGauge.getType() in [ RoutingLayerGauge.PinOnly
+                                       , RoutingLayerGauge.Unusable
+                                       , RoutingLayerGauge.BottomPowerSupply ]:
+                continue
+            if     (self._eastWestPinsIndex is None) \
+               and layerGauge.getDirection() == RoutingLayerGauge.Horizontal:
+                eastWestCount -= 1
+                if not eastWestCount:
+                    self._eastWestPinsIndex = depth
+            if     (self._northSouthPinsIndex is None) \
+               and layerGauge.getDirection() == RoutingLayerGauge.Vertical:
+                self._northSouthPinsIndex = depth
+
+    def getIoPinTrack ( self, flags, index ):
+        if (flags & (IoPin.NORTH|IoPin.SOUTH)):
+            layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
+        else:
+            layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
+        return layerGauge.getOffset() + index * layerGauge.getPitch()
+
+    def getIoPinPitch ( self, flags ):
+        if (flags & (IoPin.NORTH|IoPin.SOUTH)):
+            layerGauge = self._routingGauge.getLayerGauge( self._northSouthPinsIndex )
+        else:
+            layerGauge = self._routingGauge.getLayerGauge( self._eastWestPinsIndex )
+        return layerGauge.getPitch()
+            
+
     def isHorizontal ( self, layer ):
         mask = layer.getMask()
         for lg in self._routingGauge.getLayerGauges():
@@ -219,6 +260,27 @@ class GaugeConf ( object ):
         return False
 
     def isVertical ( self, layer ): return not self.isHorizontal( layer )
+
+    def computeCoreSize ( self, side, blockAR=1.0 ):
+        """
+        Compute the size of the core from a side (in DbU) and an aspect ratio.
+        The size are adjusted so they fit an exact number of GCells.
+        """
+        gcellAR    = Cfg.getParamDouble('anabatic.gcellAspectRatio',1.0).asDouble()
+        gcellWidth = int( self.sliceHeight * gcellAR )
+        if gcellWidth % self.sliceStep:
+            gcellWidth += self.sliceStep - gcellWidth % self.sliceStep
+        width      = int( side - side % gcellWidth )
+        height     = side / blockAR
+        height     = int( height - height % self.sliceHeight)
+        vprint( 1, '  o  Computing core size from a side of {} and aspect ratio of {}.' \
+                   .format( DbU.getValueString(side), blockAR ))
+        vprint( 1, '     - Block is {} x {} ({} x {} GCells).' \
+                   .format( DbU.getValueString(width)          \
+                          , DbU.getValueString(height)         \
+                          , width / gcellWidth                 \
+                          , height / self.sliceHeight ))
+        return width, height
 
     def createContact ( self, net, x, y, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
@@ -318,7 +380,15 @@ class GaugeConf ( object ):
             hdepth = self.horizontalDepth
             vdepth = self.verticalDepth
         
-        #hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
+        rpBb         = rp.getBoundingBox()
+        applyOffsets = True
+        hpitch       = self._routingGauge.getLayerGauge(hdepth).getPitch()
+        if self._routingGauge.isHV() and not (startDepth % 2):
+            rgH = self.routingGauge.getLayerGauge( startDepth+1 )
+            if rpBb.getHeight() < 3 * rgH.getPitch():
+                applyOffsets = False
+        trace( 550, '\tapplyOffsets:{}\n'.format( applyOffsets ))
+            
         #hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
         #contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
         #midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
@@ -347,10 +417,11 @@ class GaugeConf ( object ):
             else:
                 if yoffset is None:
                     yoffset = 0
-                    if flags & GaugeConf.OffsetBottom1: yoffset = -1
-                    if flags & GaugeConf.OffsetBottom2: yoffset = -2
-                    if flags & GaugeConf.OffsetTop1:    yoffset =  1
-                    if flags & GaugeConf.OffsetTop2:    yoffset =  2
+                    if applyOffsets:
+                        if flags & GaugeConf.OffsetBottom1: yoffset = -1
+                        if flags & GaugeConf.OffsetBottom2: yoffset = -2
+                        if flags & GaugeConf.OffsetTop1:    yoffset =  1
+                        if flags & GaugeConf.OffsetTop2:    yoffset =  2
                     trace( 550, '\tyoffset (from flags):{}\n'.format( yoffset ))
                 ytrack = self.getTrack( rpContact.getY(), self.horizontalDeepDepth, yoffset )
                 trace( 550, '\tyoffset (from contact):{}\n'.format(yoffset) )
@@ -382,6 +453,18 @@ class GaugeConf ( object ):
                                           , rg.getViaWidth()
                                           , rg.getViaWidth()
                                           )
+                bottomLayer = rp.getLayer()
+                if not isinstance(bottomLayer,BasicLayer):
+                    for basicLayer in bottomLayer.getBasicLayers():
+                        bottomLayer = basicLayer
+                        break;
+                bbMetal1 = contact1.getBoundingBox( bottomLayer )
+                if not rpBb.contains(bbMetal1):
+                    contact1.setRotatedBottomMetal( True )
+                    bbMetal1 = contact1.getBoundingBox( bottomLayer )
+                    if not rpBb.contains(bbMetal1):
+                        raise ErrorMessage( 1, [ 'GaugeConf.rpAccess(): Bottom metal of contact not fully inside RoutingPad.'
+                                               , str(contact1) ] )
                 segment = Vertical.create( rpContact
                                          , contact1
                                          , rpContact.getLayer()
@@ -676,7 +759,7 @@ class GaugeConf ( object ):
             depth     = self._routingGauge.getLayerDepth( layer )
             minArea   = self._routingGauge.getRoutingLayer( depth ).getMinimalArea()
             extension = 0
-            if minArea:
+            if minArea and depth > 0:
                 minLength = DbU.fromPhysical( minArea / DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
                                             , DbU.UnitPowerMicro )
                 minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior );
@@ -882,9 +965,10 @@ class ChipConf ( object ):
     """
 
     def __init__ ( self, blockConf ):
+        blockConf.cfg.chip.ioPadGauge = None
         self.blockConf    = blockConf
         self.name         = 'chip'
-        self.ioPadGauge   = None
+        self.ioPadGauge   = blockConf.cfg.chip.ioPadGauge
         self.padInstances = []
         self.southPads    = []
         self.northPads    = []
@@ -1420,6 +1504,7 @@ class BlockConf ( GaugeConf ):
     """
     
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
+        trace( 550, '\tBlockConf.ioPads={}\n'.format( ioPads ))
         super(BlockConf,self).__init__()
         self.validated     = True
         self.editor        = None
@@ -1452,24 +1537,32 @@ class BlockConf ( GaugeConf ):
         self.trackAvoids   = []
         self.isBuilt       = False
         self.useHarness    = False
+        self.ioPinsInTracks = False
         self.ioPins        = []
         self.ioPinsCounts  = {}
         self.ioPinsArg     = ioPins
         self.ioPadsArg     = ioPads
-        self.doLvx         = False
+        self.doLvx         = 'corona'
         self.cfg.etesian.aspectRatio      = None
         self.cfg.etesian.spaceMargin      = None
         self.cfg.etesian.latchUpDistance  = None
+        self.cfg.block.upperEastWestPins  = None
         self.cfg.block.spareSide          = None
         self.cfg.block.vRailsPeriod       = None
         self.cfg.katana.dumpMeasures      = None
+        self.cfg.tramontana.mergeSupplies = False
         self.cfg.spares.useFeedTrackAvoid = CfgDefault(False)
         self.cfg.spares.htreeRootOffset   = CfgDefault(3)
         self.cfg.spares.htreeOffset       = CfgDefault(5)
-        self.chipConf = ChipConf( self )
+        self.chipConf   = ChipConf( self )
         self.etesian    = None
         self.katana     = None
         self.tramontana = None
+
+    def _toIoPinSpec ( self, flags, stem, uindex, ustep, count ):
+        trackPos  = self.getIoPinTrack( flags, uindex )
+        trackStep = ustep * self.getIoPinPitch( flags )
+        return (flags, stem, trackPos, trackStep, count)
 
     def _postInit ( self ):
         trace( 550, ',+', '\tblock.configuration._postInit()\n' )
@@ -1478,8 +1571,11 @@ class BlockConf ( GaugeConf ):
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
         self.feedsConf     = FeedsConf( self.framework, self.cfg )
         self.powersConf    = PowersConf( self.framework, self.cfg )
+        self._setIoPinsLayerIndexes()
         for ioPinSpec in self.ioPinsArg:
-            self.ioPins.append( IoPin( *ioPinSpec ) )
+            if self.ioPinsInTracks:
+                ioPinSpec = self._toIoPinSpec( *ioPinSpec )
+            self.ioPins.append( IoPin( *ioPinSpec ))
         for line in range(len(self.ioPadsArg)):
             bits = []
             if not isinstance(self.ioPadsArg[line][-1],str) \
@@ -1494,9 +1590,13 @@ class BlockConf ( GaugeConf ):
                            ]
                     for i in range( 2, len(self.ioPadsArg[line])-1 ):
                         spec.append( self.ioPadsArg[line][i].format( bit ))
+                    trace( 550, '\tcall addIoPad() on {}\n'.format( line ))
                     self.chipConf.addIoPad( spec, line )
             else:
+                trace( 550, '\tcall addIoPad() on {}\n'.format( line ))
                 self.chipConf.addIoPad( self.ioPadsArg[line], line )
+        
+        trace( 550, '\tcall self.padInstances={}\n'.format( self.chipConf.padInstances ))
         trace( 550, ',-' )
 
     @property

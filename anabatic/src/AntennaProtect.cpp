@@ -983,7 +983,7 @@ namespace Anabatic {
       if (netData) {
         for ( auto item : clusterSegments ) {
           cdebug_log(147,0) << "No move up: " << item.first << endl;
-          netData->setNoMoveUp( item.first );
+        //netData->setNoMoveUp( item.first );
         }
       }
 
@@ -1069,6 +1069,7 @@ namespace Anabatic {
         cdebug_log(147,0) << "Sum WL " << DbU::getValueString(clustersWL) << " below gate threshold "
                           << DbU::getValueString(antennaGateMaxWL) << ", no need of a diode." << endl;
         cdebug_tabw(147,-2);
+        DebugSession::close();
         return;
       }
       
@@ -1158,9 +1159,9 @@ namespace Anabatic {
     cmess2 << Dots::asString    ( "     - Antenna gate maximum WL"   , DbU::getValueString(etesian->getAntennaGateMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna diode maximum WL"  , DbU::getValueString(etesian->getAntennaDiodeMaxWL()) ) << endl;
     cmess2 << Dots::asString    ( "     - Antenna segment maximum WL", DbU::getValueString(segmentMaxWL) ) << endl;
-    cmess2 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
-    cmess2 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
-    cmess2 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
+    cmess1 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
+    cmess1 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
+    cmess1 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;
 
     stopMeasures();
     printMeasures( "antennas" );

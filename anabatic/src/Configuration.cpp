@@ -17,6 +17,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <array>
 #include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
@@ -49,6 +50,7 @@ namespace Anabatic {
   using  std::setprecision;
   using  std::ostringstream;
   using  std::vector;
+  using  std::array;
   using  Hurricane::tab;
   using  Hurricane::Warning;
   using  Hurricane::Error;
@@ -85,21 +87,29 @@ namespace Anabatic {
     , _cg               (NULL)
     , _rg               (NULL)
     , _extensionCaps    ()
-    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",100.0)->asDouble())
-    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio"   , 80.0)->asDouble())
-    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      , 8   )->asInt())
-    , _globalThreshold  (0)
-    , _allowedDepth     (0)
-    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
-    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH        (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
-    , _edgeCostK        (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
-    , _edgeHInc         (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
-    , _edgeHScaling     (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
-    , _globalIterations (Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
-    , _diodeName        (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
-    , _antennaGateMaxWL (Cfg::getParamInt   ("etesian.antennaGateMaxWL" ,      0  )->asInt())
-    , _antennaDiodeMaxWL(Cfg::getParamInt   ("etesian.antennaDiodeMaxWL",      0  )->asInt())
+    , _gcellAspectRatio (Cfg::getParamPercentage("anabatic.gcellAspectRatio",    100.0)->asDouble())
+    , _saturateRatio    (Cfg::getParamDouble    ("anabatic.saturateRatio"   ,      0.8)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"      ,      8  )->asInt())
+    , _globalThreshold  (0)                                                      
+    , _hsmallThreshold  (Cfg::getParamInt       ("anabatic.hsmallThreshold" ,      3  )->asInt())
+    , _vsmallThreshold  (Cfg::getParamInt       ("anabatic.vsmallThreshold" ,      3  )->asInt())
+    , _vlargeThreshold  (Cfg::getParamInt       ("anabatic.vlargeThreshold" ,      0  )->asInt())
+    , _allowedDepth     (0)                                                      
+    , _lowDensity       (Cfg::getParamDouble    ("anabatic.lowDensity"      ,      0.6)->asDouble())
+    , _lowUpDensity     (Cfg::getParamDouble    ("anabatic.lowUpDensity"    ,      0.2)->asDouble())
+    , _moveUpReserve    (Cfg::getParamDouble    ("anabatic.moveUpReserve"   ,      1.5)->asDouble())
+    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",  24  )->asInt()))
+    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" ,   4  )->asInt()))
+    , _edgeCostH        (Cfg::getParamDouble    ("anabatic.edgeCostH"       ,      9.0)->asDouble())
+    , _edgeCostK        (Cfg::getParamDouble    ("anabatic.edgeCostK"       ,    -10.0)->asDouble())
+    , _edgeHInc         (Cfg::getParamDouble    ("anabatic.edgeHInc"        ,      1.5)->asDouble())
+    , _edgeHScaling     (Cfg::getParamDouble    ("anabatic.edgeHScaling"    ,      1.0)->asDouble())
+    , _globalIterations (Cfg::getParamInt       ("anabatic.globalIterations",     10  )->asInt())
+    , _diodeName        (Cfg::getParamString    ("etesian.diodeName"        , "dio_x0")->asString() )
+    , _antennaGateMaxWL (Cfg::getParamInt       ("etesian.antennaGateMaxWL" ,      0  )->asInt())
+    , _antennaDiodeMaxWL(Cfg::getParamInt       ("etesian.antennaDiodeMaxWL",      0  )->asInt())
+    , _smallNetWidth    (Cfg::getParamInt       ("anabatic.smallNetWidth"   ,      0  )->asInt())
+    , _smallNetHeight   (Cfg::getParamInt       ("anabatic.smallNetHeight"  ,      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -200,7 +210,13 @@ namespace Anabatic {
     , _gcellAspectRatio (other._gcellAspectRatio)
     , _saturateRatio    (other._saturateRatio)
     , _globalThreshold  (other._globalThreshold)
+    , _hsmallThreshold  (other._hsmallThreshold)
+    , _vsmallThreshold  (other._vsmallThreshold)
+    , _vlargeThreshold  (other._vlargeThreshold)
     , _allowedDepth     (other._allowedDepth)
+    , _lowDensity       (other._lowDensity)
+    , _lowUpDensity     (other._lowUpDensity)
+    , _moveUpReserve    (other._moveUpReserve)
     , _edgeCostH        (other._edgeCostH)
     , _edgeCostK        (other._edgeCostK)
     , _edgeHInc         (other._edgeHInc)
@@ -209,6 +225,8 @@ namespace Anabatic {
     , _diodeName        (other._diodeName)
     , _antennaGateMaxWL (other._antennaGateMaxWL)
     , _antennaDiodeMaxWL(other._antennaDiodeMaxWL)
+    , _smallNetWidth    (other._smallNetWidth)
+    , _smallNetHeight   (other._smallNetHeight)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -515,11 +533,14 @@ namespace Anabatic {
     DbU::Unit  bestSpan         = 0;
     Component* ongridComponent  = NULL;
     Component* offgridComponent = NULL;
-    DbU::Unit  viaShrink        = 0;
+    DbU::Unit  viaHShrink       = 0;
+    DbU::Unit  viaVShrink       = 0;
     if (not isSymbolic()) {
-      viaShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
+      viaHShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureH );
+      viaVShrink = _rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureV );
       cdebug_log(112,0) << "viaWidth/2: " << DbU::getValueString(_rg->getViaWidth( (size_t)0 )/2) << endl;
       cdebug_log(112,0) << "via12.BH:   " << DbU::getValueString(via12->getBottomEnclosure( Layer::EnclosureH )) << endl;
+      cdebug_log(112,0) << "via12.BV:   " << DbU::getValueString(via12->getBottomEnclosure( Layer::EnclosureV )) << endl;
     }
 
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
@@ -547,55 +568,65 @@ namespace Anabatic {
       DbU::Unit  trackPos = 0;
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
-      
-      bb.inflate( -viaShrink );
-      if (gauge->isVertical()) {
-        trackPos = gauge->getTrackPosition( ab.getXMin()
-                                          , ab.getXMax()
-                                          , bb.getCenter().getX()
-                                          , Constant::Nearest );
-        minPos = bb.getXMin();
-        maxPos = bb.getXMax();
 
-        cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
-        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
-        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
-      } else {
-        trackPos = gauge->getTrackPosition( ab.getYMin()
-                                          , ab.getYMax()
-                                          , bb.getCenter().getY()
-                                          , Constant::Nearest );
-        minPos = bb.getYMin();
-        maxPos = bb.getYMax();
+      array<Box,2> bbs = { bb, bb };
+      bbs[0].inflate( -viaHShrink, -viaVShrink );
+      bbs[1].inflate( -viaVShrink, -viaHShrink );
 
-        cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
-        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
-        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
-      }
+      for ( size_t i=0 ; i<bbs.size() ; ++i ) {
+        if (bbs[i].isEmpty()) continue;
+        cdebug_log(112,0) << "Trying component BB [" << i << "] " << bbs[i] << endl;
 
-      cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
-      cdebug_log(112,0) << "| " << transformation << endl;
-      cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
-      cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
-      cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
-                        <<         DbU::getValueString(maxPos) << endl;
-        
-      if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        DbU::Unit span = (maxPos - minPos) / gauge->getPitch();
-        if (not ongridComponent or (bestSpan < span)) {
-          cdebug_log(112,0) << "Best span=" << (maxPos-minPos) << " " << component << endl;
-          ongridComponent = component;
-          bestSpan        = span;
-          if (gauge->isVertical())
-            ongridCenter = Point( trackPos, bb.getCenter().getY() );
-          else
-            ongridCenter = Point( bb.getCenter().getX(), trackPos );
+        if (gauge->isVertical()) {
+          trackPos = gauge->getTrackPosition( ab.getXMin()
+                                            , ab.getXMax()
+                                            , bb.getCenter().getX()
+                                            , Constant::Nearest );
+          minPos = bb.getXMin();
+          maxPos = bb.getXMax();
+
+          cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
+          cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
+          cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
+        } else {
+          trackPos = gauge->getTrackPosition( ab.getYMin()
+                                            , ab.getYMax()
+                                            , bb.getCenter().getY()
+                                            , Constant::Nearest );
+          minPos = bb.getYMin();
+          maxPos = bb.getYMax();
+
+          cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
+          cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
+          cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
+          cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
         }
-      } else {
-        cdebug_log(112,0) << "Component is offgrid." << endl;
-        offgridComponent = candidate;
+
+        cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
+        cdebug_log(112,0) << "| " << transformation << endl;
+        cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
+        cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
+        cdebug_log(112,0) << "| " << DbU::getValueString(minPos) << " < trackPos < "
+                          <<         DbU::getValueString(maxPos) << endl;
+        
+        if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
+          DbU::Unit span = (maxPos - minPos) / gauge->getPitch();
+          if (not ongridComponent or (bestSpan < span)) {
+            cdebug_log(112,0) << "Best span=" << (maxPos-minPos) << " " << component << endl;
+            ongridComponent = component;
+            bestSpan        = span;
+            if (gauge->isVertical())
+              ongridCenter = Point( trackPos, bb.getCenter().getY() );
+            else
+              ongridCenter = Point( bb.getCenter().getX(), trackPos );
+            if (i == 1) rp->setFlags  ( RoutingPad::RotateBottomMetal );
+            else        rp->unsetFlags( RoutingPad::RotateBottomMetal );
+          }
+        } else {
+          cdebug_log(112,0) << "Component is offgrid." << endl;
+          offgridComponent = candidate;
+        }
       }
     }
 
@@ -656,32 +687,45 @@ namespace Anabatic {
 
   void  Configuration::checkRoutingPadSize ( RoutingPad* rp ) const
   {
+    DebugSession::open( rp->getNet(), 145, 160 );
     Point  source;
     Point  target;
 
     size_t    rpDepth        = getLayerDepth( rp->getLayer() );
     DbU::Unit punctualLength = 0;
     if (rpDepth == 0) ++rpDepth;
+    DbU::Unit pitch = getPitch( rpDepth );
     if (not isSymbolic()) punctualLength += getLayerGauge( rpDepth )->getWireWidth();
-    punctualLength += getPitch( rpDepth );
+    punctualLength += pitch;
 
     getPositions( rp, source, target );
 
     DbU::Unit width  = abs( target.getX() - source.getX() );
     DbU::Unit height = abs( target.getY() - source.getY() );
+    cdebug_log(145,0) << "pitch="  << DbU::getValueString(pitch)
+                      << " hsmallTHreshold=" << _hsmallThreshold
+                      << " vsmallTHreshold=" << _vsmallThreshold
+                      << " vlargeTHreshold=" << _vlargeThreshold
+                      << endl;
+    cdebug_log(145,0) << "width =" << DbU::getValueString(width ) << endl;
+    cdebug_log(145,0) << "height=" << DbU::getValueString(height) << endl;
     uint64_t  flags  = 0;
-    flags |= (width  < 3*getPitch(rpDepth)) ? RoutingPad::HSmall : 0;
-    flags |= (height < 3*getPitch(rpDepth)) ? RoutingPad::VSmall : 0;
+    flags |= (width  <  _hsmallThreshold*pitch) ? RoutingPad::HSmall : 0;
+    flags |= (height <  _vsmallThreshold*pitch) ? RoutingPad::VSmall : 0;
+    flags |= (height >= _vlargeThreshold*pitch) ? RoutingPad::VLarge : 0;
     flags |= ((width < punctualLength) and (height < punctualLength)) ? RoutingPad::Punctual : 0;
 
     rp->unsetFlags( RoutingPad::HSmall|RoutingPad::VSmall|RoutingPad::Punctual );
     rp->setFlags  ( flags );
     cdebug_log(145,0) << "::checkRoutingPadSize(): pitch[" << rpDepth << "]:"
-               << DbU::getValueString(getPitch(rpDepth)) << " "
+               << DbU::getValueString(pitch) << " "
                << ((flags & RoutingPad::HSmall  ) ? "HSmall "   : " ")
                << ((flags & RoutingPad::VSmall  ) ? "VSmall "   : " ")
+               << ((flags & RoutingPad::VLarge  ) ? "VLarge "   : " ")
                << ((flags & RoutingPad::Punctual) ? "Punctual " : " ")
                << endl;
+
+    DebugSession::close();
   }
   
 
@@ -696,8 +740,12 @@ namespace Anabatic {
 
     cout << "  o  Configuration of ToolEngine<Anabatic> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
-    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
+    cout << Dots::asString    ("     - Top routing layer"           ,topLayerName     ) << endl;
     cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
+    cout << Dots::asDouble    ("     - Low density threshold"       ,_lowDensity      ) << endl;
+    cout << Dots::asDouble    ("     - Low up density threshold"    ,_lowUpDensity    ) << endl;
+    cout << Dots::asDouble    ("     - Move up reserve"             ,_moveUpReserve   ) << endl;
+    cout << Dots::asDouble    ("     - Saturate ratio (per layer)"  ,_saturateRatio   ) << endl;
   }
 
 
@@ -730,6 +778,9 @@ namespace Anabatic {
     record->add( getSlot( "_gmetalv"         , _gmetalv          ) );
     record->add( getSlot( "_gcontact"        , _gcontact         ) );
     record->add( getSlot( "_allowedDepth"    , _allowedDepth     ) );
+    record->add( getSlot( "_lowDensity"      , _lowDensity       ) );
+    record->add( getSlot( "_lowUpDensity"    , _lowUpDensity     ) );
+    record->add( getSlot( "_moveUpReserve"   , _moveUpReserve    ) );
     record->add( getSlot( "_edgeCostH"       , _edgeCostH        ) );
     record->add( getSlot( "_edgeCostK"       , _edgeCostK        ) );
     record->add( getSlot( "_edgeHInc"        , _edgeHInc         ) );

@@ -354,7 +354,6 @@ namespace Anabatic {
 
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
-    cdebug_log(149,0) << "Session::getSaturateRatio()=" << Session::getSaturateRatio() << endl;
 
     GCellKeyQueue  queue;
     GCell::Set     invalidateds;
@@ -761,7 +760,7 @@ namespace Anabatic {
 
     Flags flags = Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer;
     if (seedDepth > 2) flags |= Flags::IgnoreContacts;
-    if (not seed->canMoveUp( 2.0, flags) ) {
+    if (not seed->canMoveUp( 3.0, flags) ) {
       cdebug_log(149,0) << "Reject seed move up, cannot move up." << endl;
       DebugSession::close();
       return false;

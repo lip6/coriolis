@@ -44,6 +44,11 @@ namespace Hurricane {
   class Diagonal : public Component {
     public:
       typedef Component Super;
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
   
     public:
       static  Diagonal*    create            ( Net*, const Layer*, const Point& source, const Point& target, DbU::Unit width );
@@ -85,6 +90,9 @@ namespace Hurricane {
             DbU::Unit  _width;
             DbU::Unit  _dWidth;  // octagon half Y.
   };
+
+  
+  inline const FastRTTI& Diagonal::fastRTTI () { return _fastRTTI; }
 
 
 // -------------------------------------------------------------------

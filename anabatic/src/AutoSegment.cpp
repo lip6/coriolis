@@ -15,7 +15,9 @@
 
 
 #include <cmath>
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/DataBase.h"
@@ -25,7 +27,8 @@
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/Session.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
+#include "anabatic/AutoContactTurn.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/AutoHorizontal.h"
 #include "anabatic/AutoVertical.h"
@@ -130,10 +133,10 @@ namespace {
       if ( !terminalContact->isTerminal() ) {
         AutoSegment* segment      = NULL;
         size_t       segmentCount = 0;
-        forEach ( Component*, icomponent, terminalContact->getSlaveComponents() ) {
-          if ( *icomponent == autoSegment->base() ) continue;
+        for ( Component* component : terminalContact->getSlaveComponents() ) {
+          if ( component == autoSegment->base() ) continue;
 
-          Segment* connex = dynamic_cast<Segment*>(*icomponent);
+          Segment* connex = dynamic_cast<Segment*>(component);
           if ( !connex ) continue;
 
           segment = Session::lookup ( connex );
@@ -177,7 +180,7 @@ namespace {
       inline size_t     getAttractorsCount () const;
              DbU::Unit  getLowerMedian     () const;
              DbU::Unit  getUpperMedian     () const;
-             void       addAttractor       ( DbU::Unit position );
+             void       addAttractor       ( DbU::Unit position, size_t weight=1 );
     protected:
       map<DbU::Unit,size_t>  _attractors;
       size_t                 _attractorsCount;
@@ -195,9 +198,12 @@ namespace {
   }
 
 
-  void  AttractorsMap::addAttractor ( DbU::Unit position )
+  void  AttractorsMap::addAttractor ( DbU::Unit position, size_t weight )
   {
-    _attractors[position]++;
+    if (_attractors.find(position) == _attractors.end())
+      _attractors[position] = weight;
+    else
+      _attractors[position] += weight;
     _attractorsCount++;
 
     cdebug_log(145,0) << "add Attractor @" << DbU::getValueString(position)
@@ -332,6 +338,9 @@ namespace {
 
 namespace Anabatic {
 
+  using Hurricane::Breakpoint;
+  using Hurricane::UpdateSession;
+
 
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoSegment::CompareByDepthLength".
@@ -441,10 +450,12 @@ namespace Anabatic {
 
   size_t                         AutoSegment::_allocateds    = 0;
   size_t                         AutoSegment::_globalsCount  = 0;
+  size_t                         AutoSegment::_movedUp       = 0;
   bool                           AutoSegment::_analogMode    = false;
   bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
-  vector< array<DbU::Unit*,4> >  AutoSegment::_extensionCaps;
+  vector< array<DbU::Unit*,7> >  AutoSegment::_extensionCaps;
+  vector< bool >                 AutoSegment::_canReduceUp;
 
 
   void  AutoSegment::setAnalogMode   ( bool state ) { _analogMode = state; }
@@ -454,38 +465,53 @@ namespace Anabatic {
 
   void  AutoSegment::initialize ()
   {
-    // cerr << "AutoSegment::initialize()" << endl;
+#define SHOW_WIRE_CAP_TABLE 0
+#if SHOW_WIRE_CAP_TABLE
+    cerr << "AutoSegment::initialize()" << endl;
+#endif
 
     _initialized = true;
     DbU::Unit twoGrid = DbU::fromGrid( 2 );
     for ( size_t depth=0 ; depth<Session::getDepth() ; ++depth ) {
-      DbU::Unit* viaToTopCap    = new DbU::Unit ( 0 );
-      DbU::Unit* viaToBottomCap = new DbU::Unit ( 0 );
-      DbU::Unit* viaToSameCap   = new DbU::Unit ( 0 );
-      DbU::Unit* minimalLength  = new DbU::Unit ( 0 );
-      bool       isVertical     = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
-      uint32_t   flags          = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
+      const Layer* routingLayer     = Session::getRoutingLayer( depth );
+      DbU::Unit*   viaToTopCap      = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToTopCapNp    = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToBottomCap   = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToBottomCapNp = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToSameCap     = new DbU::Unit ( 0 );
+      DbU::Unit*   viaToSameCapNp   = new DbU::Unit ( 0 );
+      DbU::Unit*   minimalLength    = new DbU::Unit ( 0 );
+      bool         isVertical       = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
+      uint32_t     flags            = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
+      uint32_t     flagsNp          = (isVertical) ? Layer::EnclosureH : Layer::EnclosureV ;
 
-      // cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
-      //      << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
-      // cerr << "  minimalSpacing: "
-      //      << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
+#if SHOW_WIRE_CAP_TABLE
+      cerr << "  " << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
+           << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
+      cerr << "    minimalSpacing: "
+           << DbU::getValueString( Session::getLayerGauge(depth)->getLayer()->getMinimalSpacing() ) << endl;
+#endif
 
-      *viaToSameCap = Session::getPWireWidth(depth)/2;
+      *viaToSameCap   = Session::getPWireWidth(depth) / 2;
+      *viaToSameCapNp = Session::getWireWidth(depth) / 2;
+      //*viaToSameCapNp = routingLayer->getMinimalSpacing() / 2;
 
     // Bottom metal of the VIA going *up*.
       const Layer* viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth) );
-      if (viaLayer)
-        *viaToTopCap = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flags );
+      if (viaLayer) {
+        *viaToTopCap   = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flags );
+        *viaToTopCapNp = Session::getViaWidth(depth)/2 + viaLayer->getBottomEnclosure( flagsNp );
+      }
 
     // Top metal of the VIA going *down*.
       if (depth > 0) {
         viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth-1) );
-        if (viaLayer)
-          *viaToBottomCap = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
+        if (viaLayer) {
+          *viaToBottomCap   = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
+          *viaToBottomCapNp = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flagsNp );
+        }
       }
 
-      const Layer* routingLayer = Session::getRoutingLayer( depth );
       double minimalArea = routingLayer->getMinimalArea();
       if (minimalArea != 0.0) {
         *minimalLength = DbU::fromMicrons( minimalArea / DbU::toMicrons( Session::getWireWidth(depth) ) );
@@ -494,17 +520,31 @@ namespace Anabatic {
           *minimalLength += twoGrid - modulo;
       }
 
-      // cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
-      // cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
-      // if (depth > 0)                                                                          
-      //   cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-      // cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-      // cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
- 
-      _extensionCaps.push_back( std::array<DbU::Unit*,4>( {{ viaToTopCap
+#if SHOW_WIRE_CAP_TABLE
+      cerr << "    viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
+      cerr << "    viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
+      if (depth > 0)                                                                          
+        cerr << "    viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
+      cerr << "    viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
+      cerr << "    viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+      cerr << "    minimal Area:     " << minimalArea << endl;
+      cerr << "    wire width:       " << DbU::getValueString(Session::getWireWidth(depth)) << endl;
+      cerr << "    minimal length:   " << DbU::getValueString(*minimalLength) << endl;
+#endif
+
+      _extensionCaps.push_back( std::array<DbU::Unit*,7>( {{ viaToTopCap
+                                                           , viaToTopCapNp
                                                            , viaToBottomCap
+                                                           , viaToBottomCapNp
                                                            , viaToSameCap
+                                                           , viaToSameCapNp
                                                            , minimalLength }} ) );
+
+      if (depth > 0) {
+        _canReduceUp.push_back(  Session::getLayerGauge(depth-1)->getPitch()
+                              >= Session::getLayerGauge(depth  )->getPitch() );
+      } else
+        _canReduceUp.push_back( true );
     }
   }
 
@@ -675,10 +715,11 @@ namespace Anabatic {
   void  AutoSegment::invalidate ( AutoContact* contact )
   {
     cdebug_log(149,0) << "AutoSegment::invalidate() " << this << endl;
-    cdebug_log(149,0) << " -> " << contact << endl;
+    cdebug_log(149,0) << "  -> " << contact << endl;
     if (Session::doDestroyTool()) return;
     if (contact == getAutoSource()) setFlags( SegInvalidatedSource );
     if (contact == getAutoTarget()) setFlags( SegInvalidatedTarget );
+    cdebug_log(149,0) << "  Done" << endl;
   }
 
 
@@ -695,7 +736,8 @@ namespace Anabatic {
 
     updateOrient();
 
-    uint64_t oldSpinFlags = _flags & SegDepthSpin;
+    bool     checkForMinArea = true;
+    uint64_t oldSpinFlags    = _flags & SegDepthSpin;
 
     if (_flags & (SegInvalidatedSource|SegCreated)) {
       AutoContact*  source       = getAutoSource();
@@ -706,8 +748,12 @@ namespace Anabatic {
       unsetFlags( SegSourceTop|SegSourceBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegSourceBottom : SegSourceTop ); 
-      if (source->isTurn() and source->getPerpandicular(this)->isReduced())
+      AutoSegment* perpandicular = source->getPerpandicular(this);
+      if (source->isTurn() and perpandicular->isReduced()) {
         incReduceds();
+        if ((segmentLayer == contactLayer) and (perpandicular->getLength() > getPPitch() / 2))
+          checkForMinArea = false;
+      }
     }
 
     if (_flags & (SegInvalidatedTarget|SegCreated)) {
@@ -719,19 +765,43 @@ namespace Anabatic {
       unsetFlags( SegTargetTop|SegTargetBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
         setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegTargetBottom : SegTargetTop ); 
-      if (target->isTurn() and target->getPerpandicular(this)->isReduced())
+      AutoSegment* perpandicular = target->getPerpandicular(this);
+      if (target->isTurn() and target->getPerpandicular(this)->isReduced()) {
         incReduceds();
+        if ((segmentLayer == contactLayer) and (perpandicular->getLength() > getPPitch() / 2))
+          checkForMinArea = false;
+      }
     }
 
     Interval oldSpan = Interval( _sourcePosition, _targetPosition );
-    if (_flags & SegCreated) oldSpan.makeEmpty();
-    expandToMinLength( oldSpan );
-    if (_flags & SegAtMinArea) unexpandToMinLength();
+    cdebug_log(149,0) << "Old span: " << oldSpan << endl;
     updatePositions();
+    if (checkForMinArea) {
+      if (   not isGapFiller()
+         and not isDragSameLayer()
+         and (Session::getStage() < StagePostProcessRoutingPads)) {
+        for ( AutoSegment* segment : getAligneds(Flags::WithSelf) ) {
+          oldSpan.merge( segment->getSourcePosition() );
+          oldSpan.merge( segment->getTargetPosition() );
+        }
+        if (_flags & SegCreated) oldSpan.makeEmpty();
+        if (expandToMinLength(oldSpan)) updatePositions();
+        if (_flags & SegAtMinArea) {
+          if (unexpandToMinLength()) updatePositions();
+        }
+      }
+    } else {
+      unsetFlags( SegAtMinArea );
+      setDuSource( 0 );
+      setDuTarget( 0 );
+      updatePositions();
+    }
 
     unsigned int observerFlags = Revalidate;
     if ( (_flags & SegCreated) or (oldSpinFlags != (_flags & SegDepthSpin)) )
       observerFlags |= RevalidatePPitch;
+
+    if ((_flags & SegCreated) and not (_flags & SegToMinimize)) updateNativeConstraints();
 
     unsetFlags( SegInvalidated
               | SegInvalidatedSource
@@ -777,10 +847,16 @@ namespace Anabatic {
     DbU::Unit  cap   = 0;
 
     if (flags & Flags::Source) {
-      if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
-      else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
-      else                                   cap = getViaToSameCap  (depth);
-      // if (getId() == 473829) {
+      if (flags & Flags::CapInNonPrefDir) {
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCapNp   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCapNp( depth );
+        else                                   cap = getViaToSameCapNp  ( depth );
+      } else {
+        if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   ( depth );
+        else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap( depth );
+        else                                   cap = getViaToSameCap  ( depth );
+      }
+      // if (getId() == 2721666) {
       //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
       //                     << " (source) flags:" << getFlags()
       //                     << " VIA cap:" << DbU::getValueString(cap)
@@ -788,19 +864,27 @@ namespace Anabatic {
       //                     << " b:" << (getFlags() & SegSourceTop)
       //                     << endl;
       // }
-      if (not (flags & Flags::NoSegExt)) {
-        // cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+      if (not isNonPref() and not (flags & Flags::NoSegExt)) {
+        //cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          // cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          if (getId() == 2721666) {
+            cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          }
         }
       }
     } else {
       if (flags & Flags::Target) {
-        if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
-        else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
-        else                                   cap = getViaToSameCap  (depth);
-        // if (getId() == 473829) {
+        if (flags & Flags::CapInNonPrefDir) {
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCapNp   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCapNp( depth );
+          else                                   cap = getViaToSameCapNp  ( depth );
+        } else {
+          if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   ( depth );
+          else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap( depth );
+          else                                   cap = getViaToSameCap  ( depth );
+        }
+        // if (getId() == 2721666) {
         //   cdebug_log(150,0) << "getExtensionCap(): depth=" << depth
         //                     << " (target) flags:" << getFlags()
         //                     << " VIA cap:" << DbU::getValueString(cap)
@@ -808,11 +892,13 @@ namespace Anabatic {
         //                     << " b:" << (getFlags() & SegTargetTop)
         //                     << endl;
         // }
-        if (not (flags & Flags::NoSegExt)) {
+        if (not isNonPref() and not (flags & Flags::NoSegExt)) {
           // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
           if (getDuTarget() > cap) {
             cap = getDuTarget();
-            // cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+            if (getId() == 2721666) {
+              cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+            }
           }
         }
       } else {
@@ -866,22 +952,19 @@ namespace Anabatic {
   }
 
 
-  AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max )
+  AutoSegment* AutoSegment::getCanonical ( DbU::Unit& min, DbU::Unit& max ) const
   {
     cdebug_log(145,0) << "AutoSegment::getCanonical() - " << this << endl;
 
     min = getSourcePosition();
     max = getTargetPosition();
-
     if (max < min) swap( min, max );
 
   //cdebug_log(145,0) << "[" << DbU::getValueString(min) << " " << DbU::getValueString(max) << "]" << endl;
 
-    AutoSegment* canonical    = this;
+    AutoSegment* canonical    = const_cast<AutoSegment*>( this );
     size_t       canonicals   = isCanonical();
     size_t       aligneds     = 1;
-    DbU::Unit    collapsedMin;
-    DbU::Unit    collapsedMax;
 
     if (not isNotAligned()) {
       for ( AutoSegment* segment : getAligneds() ) {
@@ -890,8 +973,8 @@ namespace Anabatic {
           canonicals++;
         }
 
-        collapsedMin = segment->getSourcePosition();
-        collapsedMax = segment->getTargetPosition();
+        DbU::Unit collapsedMin = segment->getSourcePosition();
+        DbU::Unit collapsedMax = segment->getTargetPosition();
         if (collapsedMax < collapsedMin) swap( collapsedMin, collapsedMax );
         if (collapsedMin < min) min = collapsedMin;
         if (collapsedMax > max) max = collapsedMax;
@@ -923,12 +1006,13 @@ namespace Anabatic {
 
     sourceAxis = getSourceU();
     targetAxis = getTargetU();
+    if (sourceAxis > targetAxis) std::swap( sourceAxis, targetAxis );
 
   //if (not isNotAligned()) {
-      for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
-        sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
-        targetAxis = std::max( targetAxis, aligned->getTargetU() );
-      }
+    for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
+      sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
+      targetAxis = std::max( targetAxis, aligned->getTargetU() );
+    }
   //}
   }
 
@@ -955,8 +1039,8 @@ namespace Anabatic {
   { return AutoSegments_CachedOnContact( getAutoTarget(), direction ); }
 
 
-  AutoSegments  AutoSegment::getAligneds ( Flags flags )
-  { return AutoSegments_Aligneds( this, flags ); }
+  AutoSegments  AutoSegment::getAligneds ( Flags flags ) const
+  { return AutoSegments_Aligneds( const_cast<AutoSegment*>(this), flags ); }
 
 
   AutoSegments  AutoSegment::getConnecteds ( Flags flags )
@@ -1027,6 +1111,28 @@ namespace Anabatic {
       for( AutoSegment* segment : getAligneds() )
         segment->setFlags( flags );
     }
+  }
+
+
+  void  AutoSegment::addDuSource ( DbU::Unit du )
+  {
+    DbU::Unit sourceCap = -getExtensionCap( Flags::Source|Flags::LayerCapOnly );
+    DbU::Unit duSource  =  getDuSource();
+    if (not duSource) duSource = sourceCap;
+    duSource += du;
+    if (duSource > sourceCap) duSource = 0;
+    setDuSource( duSource );
+  }
+
+
+  void  AutoSegment::addDuTarget ( DbU::Unit du )
+  {
+    DbU::Unit targetCap = -getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+    DbU::Unit duTarget  =  getDuTarget();
+    if (not duTarget) duTarget = targetCap;
+    duTarget += du;
+    if (duTarget < targetCap) duTarget = 0;
+    setDuTarget( duTarget );
   }
 
 
@@ -1178,6 +1284,33 @@ namespace Anabatic {
     if (flags & Flags::Realignate) setAxis( getAxis(), flags );
 
   //setAxis( optimalMin, flags );
+
+    if (isNonPref()) {
+      cdebug_log(149,0) << "Non-pref: aligning parallel" << endl;
+      AutoContactTerminal* source = dynamic_cast<AutoContactTerminal*>( getAutoSource() );
+      AutoContactTerminal* target = dynamic_cast<AutoContactTerminal*>( getAutoTarget() );
+      AutoContactTurn*     turn   = nullptr;
+      if (source or target) {
+        if (target) {
+          source = target;
+          turn   = dynamic_cast<AutoContactTurn*>( getAutoSource() );
+        } else {
+          turn   = dynamic_cast<AutoContactTurn*>( getAutoTarget() );
+        }
+        if (turn) {
+          AutoSegment* perpandicular = turn->getPerpandicular( this );
+          cdebug_log(149,0) << "perpandicular: " << perpandicular << endl;
+          turn = dynamic_cast<AutoContactTurn*>( perpandicular->getOppositeAnchor( turn ));
+          if (turn) {
+            AutoSegment* parallel = turn->getPerpandicular( perpandicular );
+            if (parallel->isUnsetAxis()) {
+              parallel->setAxis( getAxis() );
+              cdebug_log(149,0) << "parallel aligned: " << parallel << endl;
+            }
+          }
+        }
+      }
+    }
 
     cdebug_tabw(149,-1);
     return false;
@@ -1445,32 +1578,43 @@ namespace Anabatic {
           attractors.addAttractor( terminalMax );
       }
   
-      for ( AutoSegment* autoSegment : getPerpandiculars(flags) ) {
-        cdebug_log(145,1) << "| Perpandicular " << autoSegment << endl;
-        if (autoSegment->isGlobal()) {
+      for ( AutoSegment* perpandicular : getPerpandiculars(flags) ) {
+        cdebug_log(145,1) << "| Perpandicular " << perpandicular << endl;
+        if (perpandicular->isGlobal()) {
           cdebug_log(145,0) << "Used as global." << endl;
 
-          const Interval& side = sideStack.getSideAt( autoSegment->getAxis() );
-          cdebug_log(145,0) << "Side @" << DbU::getValueString(autoSegment->getAxis())
+          const Interval& side = sideStack.getSideAt( perpandicular->getAxis() );
+          cdebug_log(145,0) << "Side @" << DbU::getValueString(perpandicular->getAxis())
                             << " " << side << endl;
 
-          if (autoSegment->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
-          if (autoSegment->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
+          if (perpandicular->getSourceU() < side.getVMin()) attractors.addAttractor( sideStack.getGSideMin() );
+          if (perpandicular->getTargetU() > side.getVMax()) attractors.addAttractor( sideStack.getGSideMax() );
 
         // // Sloppy implentation.
-        //   DbU::Unit perpandMin = autoSegment->getSourceU();
-        //   DbU::Unit perpandMax = autoSegment->getTargetU();
+        //   DbU::Unit perpandMin = perpandicular->getSourceU();
+        //   DbU::Unit perpandMax = perpandicular->getTargetU();
 
         //   if (perpandMin < minGCell) attractors.addAttractor( minGCell );
         //   if (perpandMax > maxGCell) attractors.addAttractor( maxGCell );
-        } else if (autoSegment->isLocal()) {
-          if (autoSegment->isStrongTerminal()) {
+        } else if (perpandicular->isLocal()) {
+          AutoSegment* parallel = nullptr;
+          if (  (perpandicular->getAutoSource() == source) 
+             or (perpandicular->getAutoSource() == target)) {
+            parallel = perpandicular->getAutoTarget()->getPerpandicular( perpandicular );
+          } else if (  (perpandicular->getAutoTarget() == source) 
+                    or (perpandicular->getAutoTarget() == target)) {
+            parallel = perpandicular->getAutoSource()->getPerpandicular( perpandicular );
+          }
+          if (parallel and parallel->isNonPref()) {
+            cdebug_log(145,0) << "Perpandicular with non-pref paralle -> use NP axis." << endl;
+            attractors.addAttractor( parallel->getAxis(), 2 );
+          } else if (perpandicular->isStrongTerminal()) {
             cdebug_log(145,0) << "Used as strong terminal." << endl;
 
             DbU::Unit  terminalMin;
             DbU::Unit  terminalMax;
   
-            if (getTerminalInterval( autoSegment
+            if (getTerminalInterval( perpandicular
                                    , NULL
                                    , isHorizontal()
                                    , terminalMin
@@ -1479,11 +1623,11 @@ namespace Anabatic {
               if (terminalMin != terminalMax)
                 attractors.addAttractor( terminalMax );
             }
-          } else if (autoSegment->isLongLocal() or (autoSegment->getAnchoredLength() > getPPitch()*20)) {
+          } else if (perpandicular->isLongLocal() or (perpandicular->getAnchoredLength() > getPPitch()*20)) {
             cdebug_log(145,0) << "Used as long global attractor." << endl;
 
-            DbU::Unit perpandMin = autoSegment->getSourceU();
-            DbU::Unit perpandMax = autoSegment->getTargetU();
+            DbU::Unit perpandMin = perpandicular->getSourceU();
+            DbU::Unit perpandMax = perpandicular->getTargetU();
 
             if (perpandMin != perpandMax) {
               if (perpandMin == getAxis()) attractors.addAttractor( perpandMax ); 
@@ -1543,10 +1687,133 @@ namespace Anabatic {
   }
 
 
+  void  AutoSegment::updatePositions ()
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target );
+
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "updatePositions() " << this << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << " duSource " << DbU::getValueString(getDuSource()) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << " duTarget " << DbU::getValueString(getDuTarget()) << endl;
+
+    if (isNonPref()) {
+      DbU::Unit ppCap = std::max( sourceCap, targetCap );
+      _sourcePosition = getAxis() - ppCap;
+      _targetPosition = getAxis() + ppCap;
+    } else {
+      DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+      DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::NoSegExt );
+      DbU::Unit targetPos1 = getTargetU() + targetCap;
+      DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::NoSegExt );
+
+      if (sourcePos2 < sourcePos1) {
+        if (_sourcePosition != sourcePos2) {
+          if (sourcePos2 < _sourcePosition)
+            setFlags( SegBecomeBelowPitch );
+          _sourcePosition = sourcePos2;
+        }
+      } else
+        _sourcePosition = sourcePos1;
+
+      if (targetPos2 > targetPos1) {
+        if (_targetPosition != targetPos2) {
+          if (targetPos2 > _targetPosition)
+            setFlags( SegBecomeBelowPitch );
+          _targetPosition = targetPos2;
+        }
+      } else
+        _targetPosition = targetPos1;
+    }
+
+    cdebug_log(145,-1) << "updated() " << this << endl;
+    DebugSession::close();
+  }
+
+
+  Interval  AutoSegment::getNonPrefSpan () const
+  {
+    DbU::Unit sourceCap  = getExtensionCap( Flags::Source|Flags::CapInNonPrefDir );
+    DbU::Unit targetCap  = getExtensionCap( Flags::Target|Flags::CapInNonPrefDir );
+
+    DebugSession::open( getNet(), 145, 146 );
+    cdebug_log(145,1) << "getNonPrefSpan() " << this << endl;
+    cdebug_log(145,0) << "sourceCap " << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(145,0) << "targetCap " << DbU::getValueString(targetCap) << endl;
+    
+    if (not isNonPref()) {
+      cdebug_tabw(145,-1);
+      DebugSession::close();
+      return Interval();
+    }
+    cdebug_log(145,-1) << "updated() " << this << endl;
+
+    DbU::Unit sourcePos1 = getSourceU() - sourceCap;
+    DbU::Unit sourcePos2 = getTargetU() - getExtensionCap( Flags::Target|Flags::CapInNonPrefDir|Flags::NoSegExt );
+    DbU::Unit targetPos1 = getTargetU() + targetCap;
+    DbU::Unit targetPos2 = getSourceU() + getExtensionCap( Flags::Source|Flags::CapInNonPrefDir|Flags::NoSegExt );
+    Interval span ( std::min(sourcePos1,sourcePos2)+1, std::max(targetPos1,targetPos2)-1 );
+    cdebug_log(145,0) << "Non-pref span " << span << endl;
+
+    cdebug_tabw(145,-1);
+    DebugSession::close();
+
+    return span;
+  }
+
+
+  bool  AutoSegment::checkPositions () const
+  {
+    bool      coherency      = true;
+    DbU::Unit sourceU        = getSourceU();
+    DbU::Unit targetU        = getTargetU();
+    DbU::Unit sourcePosition = 0;
+    DbU::Unit targetPosition = 0;
+
+    if (isNonPref()) {
+      DbU::Unit sourceCap = getExtensionCap( Flags::Source );
+      DbU::Unit targetCap = getExtensionCap( Flags::Target );
+      DbU::Unit ppCap     = std::max( sourceCap, targetCap );
+      sourcePosition = getAxis() - ppCap;
+      targetPosition = getAxis() + ppCap;
+    } else {
+      sourcePosition = std::min( sourceU - getExtensionCap(Flags::Source)
+                               , targetU - getExtensionCap(Flags::Target|Flags::NoSegExt) );
+      targetPosition = std::max( targetU + getExtensionCap(Flags::Target)
+                               , sourceU + getExtensionCap(Flags::Source|Flags::NoSegExt) );
+    }
+
+    if ( _sourcePosition != sourcePosition ) {
+      cerr << Error ( "%s\n        Source position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_sourcePosition).c_str()
+                    , DbU::getValueString( sourcePosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    if ( _targetPosition != targetPosition ) {
+      cerr << Error ( "%s\n        Target position incoherency: "
+                      "Shadow: %s, real: %s."
+                    , _getString().c_str() 
+                    , DbU::getValueString(_targetPosition).c_str()
+                    , DbU::getValueString( targetPosition).c_str()
+                    ) << endl;
+      coherency = false;
+    }
+
+    return coherency;
+  }
+
+
   AutoSegment* AutoSegment::canonize ( Flags flags )
   {
-    cdebug_log(149,0) << "canonize() - " << this << endl;
-    if (Session::getAnabatic()->isCanonizeDisabled()) return this;
+    cdebug_log(149,1) << "canonize() - " << this << endl;
+    if (Session::getAnabatic()->isCanonizeDisabled()) {
+      cdebug_tabw(149,-1);
+      return this;
+    }
 
     // if (isCanonical() and isGlobal()) {
     //   cdebug_log(149,0) << "* " << this << " canonical" << endl;
@@ -1559,20 +1826,20 @@ namespace Anabatic {
     bool                  hasGlobal    = isGlobal();
 
     if (not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds(flags) ) {
-        if (isegment->isFixed()) continue;
+      for ( AutoSegment* segment : getAligneds(flags) ) {
+        if (segment->isFixed()) continue;
 
-        hasGlobal = hasGlobal or isegment->isGlobal();
-        segments.push_back( *isegment );
+        hasGlobal = hasGlobal or segment->isGlobal();
+        segments.push_back( segment );
 
         if (not hasCanonical) {
-          if (isegment->isCanonical()) {
-            cdebug_log(149,0) << "* " << *isegment << " canonical already set" << endl;
-            canonical    = *isegment;
+          if (segment->isCanonical()) {
+            cdebug_log(149,0) << "* " << segment << " canonical already set" << endl;
+            canonical    = segment;
             hasCanonical = true;
           }
 
-          if (CompareId()(*isegment,canonical)) canonical = *isegment;
+          if (CompareId()(segment,canonical)) canonical = segment;
         }
       }
 
@@ -1598,6 +1865,7 @@ namespace Anabatic {
       unsetFlags( SegWeakGlobal );
     }
 
+    cdebug_tabw(149,-1);
     return canonical;
   }
 
@@ -1611,14 +1879,14 @@ namespace Anabatic {
     innerContacts.insert( make_pair(getAutoTarget(),0x4) );
 
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        if ( (icontact = innerContacts.find(isegment->getAutoSource())) != innerContacts.end() ) {
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if ( (icontact = innerContacts.find(segment->getAutoSource())) != innerContacts.end() ) {
           if (icontact->second & 0x1) icontact->second |= 0x2;
           else                        icontact->second |= 0x1;
         } else
           innerContacts.insert( make_pair(getAutoSource(),0x1) );
         
-        if ( (icontact = innerContacts.find(isegment->getAutoTarget())) != innerContacts.end() ) {
+        if ( (icontact = innerContacts.find(segment->getAutoTarget())) != innerContacts.end() ) {
           if (icontact->second & 0x4) icontact->second |= 0x8;
           else                        icontact->second |= 0x4;
         } else
@@ -1665,8 +1933,8 @@ namespace Anabatic {
 
     for ( icontact=contacts.begin() ; icontact != contacts.end() ; icontact++ ) {
       if ( (icontact->second == 0x1) or (icontact->second == 0x4) ) {
-        forEach ( Segment*, isegment, icontact->first->getSlaveComponents().getSubSet<Segment*>() ) {
-          AutoSegment* autoSegment = Session::lookup ( *isegment );
+        for ( Segment* segment : icontact->first->getSlaveComponents().getSubSet<Segment*>() ) {
+          AutoSegment* autoSegment = Session::lookup ( segment );
           if (not autoSegment) continue;
           if (autoSegment->getDirection() == getDirection()) continue;
 
@@ -1686,11 +1954,11 @@ namespace Anabatic {
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
-    cerr << "AutoSegment::isUTurn():" << endl;
+    cdebug_log(159,0) << "AutoSegment::isUTurn():" << endl;
 
     if (not source->isTurn() or not target->isTurn()) return false;
 
-    cerr << "  Turn connected" << endl;
+    cdebug_log(159,0) << "  Turn connected" << endl;
 
     AutoSegment* perpandicular = source->getPerpandicular( this );
     bool onPSourceSource = (perpandicular->getAutoSource() == source);
@@ -1698,7 +1966,7 @@ namespace Anabatic {
     perpandicular = target->getPerpandicular( this );
     bool onPTargetSource = (perpandicular->getAutoSource() == target);
 
-    cerr << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
+    cdebug_log(159,0) << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
 
     return not (onPSourceSource xor onPTargetSource);
   }
@@ -1707,10 +1975,27 @@ namespace Anabatic {
   bool  AutoSegment::isNearMinArea () const
   {
     cdebug_log(149,0) << "AutoSegment::isNearMinArea() - " << this << endl;
+
+    DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
     if (isNonPref()) return false;
     if (isGlobal()) {
-      if (getLength() > getPPitch()) return false;
+      if (getLength() > techMinLength) return false;
       cdebug_log(149,0) << "| Considering this global anyway because it is too short. " << endl;
+    }
+    if (not isNotAligned()) {
+      Interval alignedLength;
+      getCanonical( alignedLength );
+      cdebug_log(149,0) << "alignedLength=" << alignedLength
+                        << " minimalSpacing=" << DbU::getValueString(getLayer()->getMinimalSpacing()) << endl;
+      alignedLength.inflate( -getLayer()->getMinimalSpacing() );
+      if (alignedLength.getSize() >= techMinLength) {
+        cdebug_log(149,0) << "| Canonical " << alignedLength
+                          << " " << DbU::getValueString( alignedLength.getSize() )
+                          << " length superior to tech min length "
+                          << DbU::getValueString(techMinLength) << " "
+                          << this << endl;
+        return false;
+      }
     }
 
     DbU::Unit sourceAxis = 0;
@@ -1720,26 +2005,46 @@ namespace Anabatic {
       cdebug_log(149,0) << "| Canonical axis length superior to P-Pitch " << this << endl;
       return false;
     }
-    cdebug_log(149,0) << "  Length below P-Pitch." << endl;
+    cdebug_log(149,0) << "  Length below P-Pitch (axis S:"
+                      << DbU::getValueString(sourceAxis) << " T:"
+                      << DbU::getValueString(targetAxis) << ")"
+                      << endl;
     return true;
   }
 
 
-  void  AutoSegment::expandToMinLength ( Interval span )
+  bool  AutoSegment::expandToMinLength ( Interval span )
   {
-    if (not isNearMinArea()) return;
+    if (not isNearMinArea()) return false;
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(149,1) << "AutoSegment::expandToMinLength() " << this << endl;
     cdebug_log(149,0) << "In span=" << span << endl;
     cdebug_log(149,0) << "Before: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
                       << " "         << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
                       << "]" << endl;
+    cdebug_log(149,0) << "Source " << getAutoSource() << endl;
+    cdebug_log(149,0) << "Target " << getAutoTarget() << endl;
 
     DbU::Unit halfMinSpacing = getLayer()->getMinimalSpacing() / 2;
     DbU::Unit sourceCap      = getExtensionCap( Flags::Source|Flags::LayerCapOnly );
     DbU::Unit targetCap      = getExtensionCap( Flags::Target|Flags::LayerCapOnly );
-    DbU::Unit segMinLength   = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit anchoredLength = getAnchoredLength();
+    DbU::Unit segMinLength   = anchoredLength + sourceCap + targetCap;
     DbU::Unit techMinLength  = getMinimalLength( Session::getLayerDepth( getLayer() ));
+
+    if (not isNotAligned()) {
+      Interval alignedLength;
+      getCanonical( alignedLength );
+      alignedLength.inflate( -getLayer()->getMinimalSpacing() );
+      cdebug_log(149,0) << "Aligned length "      << DbU::getValueString(alignedLength.getSize())
+                        << " vs. current length " << DbU::getValueString(segMinLength) << endl;
+      if (alignedLength.getSize() >= techMinLength) {
+        cdebug_tabw(149,-1);
+        DebugSession::close();
+        return false;
+      }
+    }
+
     cdebug_log(149,0) << "Minimal length "      << DbU::getValueString(techMinLength)
                       << " vs. current length " << DbU::getValueString(segMinLength) << endl;
     if (segMinLength >= techMinLength) {
@@ -1747,21 +2052,29 @@ namespace Anabatic {
         setFlags( SegAtMinArea );
       cdebug_tabw(149,-1);
       DebugSession::close();
-      return;
+      return false;
     }
     sourceCap    = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     targetCap    = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
-    segMinLength = getAnchoredLength() + sourceCap + targetCap;
+    segMinLength = anchoredLength + sourceCap + targetCap;
+
+    cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(anchoredLength) << endl;
+    cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
+    cdebug_log(149,0) << "* duSource "        << DbU::getValueString(getDuSource()) << endl;
+    cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(getDuTarget()) << endl;
     
     DbU::Unit oneGrid      = DbU::fromGrid( 1 );
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
-    if (targetExpand % oneGrid)
-      targetExpand += oneGrid - targetExpand % oneGrid;
-    if (sourceExpand % oneGrid)
-      sourceExpand -= oneGrid + sourceExpand % oneGrid;
+    if (targetExpand % oneGrid) targetExpand += oneGrid - targetExpand % oneGrid;
+    if (sourceExpand % oneGrid) sourceExpand -= oneGrid + sourceExpand % oneGrid;
+    if (targetExpand - sourceExpand + anchoredLength > techMinLength) targetExpand -= oneGrid;
+    cdebug_log(149,0) <<  "before shift sourceExpand=" << DbU::getValueString(sourceExpand)
+                      <<              " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     if (not span.isEmpty()) {
       DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand + halfMinSpacing);
+      cdebug_log(149,0) <<  "shift left=" << DbU::getValueString(shiftLeft) << endl;
       if (shiftLeft < 0) {
         if (targetExpand + shiftLeft < targetCap)
           shiftLeft = targetCap - targetExpand;
@@ -1769,6 +2082,7 @@ namespace Anabatic {
         sourceExpand += shiftLeft;
       }
       DbU::Unit shiftRight = span.getVMin() - (getSourceU() + sourceExpand - halfMinSpacing);
+      cdebug_log(149,0) <<  "shift right=" << DbU::getValueString(shiftRight) << endl;
       if (shiftRight > 0) {
         if (sourceExpand + shiftRight < sourceCap)
           shiftRight = - sourceExpand - sourceCap;
@@ -1778,18 +2092,21 @@ namespace Anabatic {
     }
     setDuSource( sourceExpand );
     setDuTarget( targetExpand );
-    cdebug_log(149,0) <<  "sourceExpand=" << DbU::getValueString(sourceExpand)
-                      << " targetExpand=" << DbU::getValueString(targetExpand) << endl;
+    cdebug_log(149,0) <<  "after shift sourceExpand=" << DbU::getValueString(sourceExpand)
+                      <<             " targetExpand=" << DbU::getValueString(targetExpand) << endl;
     cdebug_log(149,0) << "After: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
                       << " "        << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
                       << "] expand:" << DbU::getValueString(techMinLength - segMinLength)<< endl;
     setFlags( SegAtMinArea );
+    updatePositions();
     cdebug_tabw(149,-1);
     DebugSession::close();
+
+    return true;
   }
 
 
-  void  AutoSegment::unexpandToMinLength ()
+  bool  AutoSegment::unexpandToMinLength ()
   {
     cdebug_log(149,0) << "AutoSegment::unexpandToMinLength() " << this << endl;
   // Note: sourceU is a negative number.
@@ -1799,32 +2116,34 @@ namespace Anabatic {
     DbU::Unit duTarget      = getDuTarget();
     DbU::Unit sourceCap     = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
     DbU::Unit targetCap     = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
-    DbU::Unit segLength     = getTargetU() - getSourceU();
-    DbU::Unit segMinLength  = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit segLength     = getAnchoredLength();
+    DbU::Unit segFullLength = segLength - duSource  + duTarget;
+    DbU::Unit segMinLength  = segLength + sourceCap + targetCap;
     DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
 
     cdebug_log(149,0) << "* Anchored length " << DbU::getValueString(getAnchoredLength()) << endl;
-    cdebug_log(149,0) << "* Source cap " << DbU::getValueString(sourceCap) << endl;
-    cdebug_log(149,0) << "* Target cap " << DbU::getValueString(targetCap) << endl;
-    cdebug_log(149,0) << "* duSource " << DbU::getValueString(duSource) << endl;
-    cdebug_log(149,0) << "* duTarget " << DbU::getValueString(duTarget) << endl;
+    cdebug_log(149,0) << "* Full length "     << DbU::getValueString(segFullLength) << endl;
+    cdebug_log(149,0) << "* Source cap "      << DbU::getValueString(sourceCap) << endl;
+    cdebug_log(149,0) << "* Target cap "      << DbU::getValueString(targetCap) << endl;
+    cdebug_log(149,0) << "* duSource "        << DbU::getValueString(duSource) << endl;
+    cdebug_log(149,0) << "* duTarget "        << DbU::getValueString(duTarget) << endl;
 
     if ((duSource == 0) and (duTarget == 0)) {
       cdebug_log(149,0) << "Already reset!" << endl;
-      return;
+      return false;
     }
 
-    if (segLength <= techMinLength) {
+    if (segFullLength <= techMinLength) {
       cdebug_log(149,0) << "Still at min area, do nothing." << endl;
-      return;
+      return false;
     }
 
-    if (segMinLength > techMinLength) {
+    if (segLength >= techMinLength) {
       cdebug_log(149,0) << "Complete reset." << endl;
       setDuSource( 0 );
       setDuTarget( 0 );
       unsetFlags( SegAtMinArea );
-      return;
+      return true;
     }
 
     DbU::Unit shrink = (getAnchoredLength() + duTarget - duSource) - techMinLength;
@@ -1834,26 +2153,40 @@ namespace Anabatic {
                      , DbU::getValueString(shrink).c_str()
                      , getString(this).c_str()
                      ) << endl;
-      return;
-    }
-    
-    DbU::Unit margin = -duSource - sourceCap;
-    if (shrink <= margin) {
-      cdebug_log(149,0) << "Shrink source of " << DbU::getValueString(shrink) << endl;
-      duSource += shrink;
-      setDuSource( duSource );
-      return;
+      return false;
     }
 
-    setDuSource( 0 );
-    cdebug_log(149,0) << "Shrink target of " << DbU::getValueString(shrink) << endl;
-    margin = duTarget - targetCap;
-    if (margin > shrink)
-      setDuTarget( duTarget - shrink );
-    else {
-      cdebug_log(149,0) << "Target reset" << endl;
-      setDuTarget( 0 );
+    if (duSource) {
+      if (-duSource < sourceCap) setDuSource( 0 );
+      else {
+        DbU::Unit sourceMargin = -duSource - sourceCap;
+        if (shrink < sourceMargin) {
+          cdebug_log(149,0) << "Shrink (full) source of " << DbU::getValueString(shrink) << endl;
+          duSource += shrink;
+          shrink = 0;
+        } else {
+          cdebug_log(149,0) << "Shrink (partial) source of " << DbU::getValueString(shrink) << endl;
+          shrink -= sourceMargin;
+          duSource = 0;
+        }
+        setDuSource( duSource );
+      }
     }
+
+    if (shrink and duTarget) {
+      if (duTarget < targetCap) setDuTarget( 0 );
+      else {
+        DbU::Unit targetMargin = duTarget - targetCap;
+        if (targetMargin < shrink) duTarget = 0;
+        else {
+          cdebug_log(149,0) << "Shrink target of " << DbU::getValueString(shrink) << endl;
+          duTarget -= shrink;
+        }
+        setDuTarget( duTarget );
+      }
+    }
+
+    return true;
   }
 
 
@@ -1877,8 +2210,16 @@ namespace Anabatic {
     cdebug_log(159,0) << "AutoSegment::canReduce():" << this << endl;
     cdebug_log(159,0) << "  _reduceds:" << _reduceds << endl;
 
+    if (isSpinTop() and not canReduceUp(getDepth())) {
+      cdebug_log(159,0) << "  Cannot reduce up (increasing pitch)" << endl;
+      return false;
+    }
+
     DbU::Unit length = getAnchoredLength();
     if (length > getPPitch()) {
+      cdebug_log(159,0) << "  Length > PPitch ("
+                        << DbU::getValueString(length) << " > "
+                        << DbU::getValueString(getPPitch()) << ")" << endl;
       if (isGlobal() or isFixed()) return false;
     }
 
@@ -1889,10 +2230,10 @@ namespace Anabatic {
     AutoContact* target = getAutoTarget();
 
     if (isFixed()) {
-      cdebug_log(159,0) << "isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
+      cdebug_log(159,0) << "  isSpinTopOrBottom():" << isSpinTopOrBottom() << endl;
       if (length < getPPitch()) {
-        if (Session::getAnabatic()->getState() >= Anabatic::EngineDriving) {
-          cdebug_log(159,0) << "In EngineDriving mode" << endl;
+        if (Session::getAnabatic()->getStage() >= Anabatic::StageChainReduce) {
+          cdebug_log(159,0) << "  In EngineChainReduce mode" << endl;
           return isSpinTopOrBottom();
         }
       }
@@ -1905,7 +2246,10 @@ namespace Anabatic {
 
     if (not Session::getAnabatic()->isChannelStyle()
        and (getDepth() == 1) and isSpinBottom()) return false;
-    if ((flags & Flags::WithPerpands) and _reduceds) return false;
+    if ((flags & Flags::WithPerpands) and _reduceds) {
+      cdebug_log(159,0) << "  Flags::WithPerpands and (_reduceds > 0)" << endl;
+      return false;
+    }
 
     cdebug_log(159,0) << "  source:" << source->isHTee() << "+" << source->isVTee() << endl;
     cdebug_log(159,0) << "  target:" << target->isHTee() << "+" << target->isVTee() << endl;
@@ -1916,10 +2260,14 @@ namespace Anabatic {
     // if (  source->isHTee() or source->isVTee()
     //    or target->isHTee() or target->isVTee() ) return false;
 
-    cdebug_log(159,0) << "  length:" << DbU::getValueString(length) << endl;
+    cdebug_log(159,0) << "  length:" << DbU::getValueString(length)
+                      << " (" << length << ")" << endl;
     if (flags & Flags::NullLength) return (length == 0); 
 
     unsigned int perpandicularDepth = getDepth();
+    cdebug_log(159,0) << "  perpandicularDepth=" << perpandicularDepth
+                      << " Session::getDepth()=" << Session::getDepth()
+                      << endl;
     if (isSpinBottom()) {
       if (perpandicularDepth > 0) --perpandicularDepth;
     } else if (isSpinTop()) {
@@ -1928,17 +2276,19 @@ namespace Anabatic {
     } else
       return false;
     
-    if (getAnchoredLength() >= Session::getPitch(perpandicularDepth) * 2) return false;
+    cdebug_log(159,0) << "  ppitch*2:" << DbU::getValueString(Session::getPitch(perpandicularDepth)*2) << endl;
+    if (length >= Session::getPitch(perpandicularDepth) * 2) return false;
 
+    cdebug_log(159,0) << "  -> Can be reduced" << endl;
     return true;
   }
 
 
   bool  AutoSegment::reduce ( Flags flags )
   {
+    cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
     if (isReduced()) return false;
     if (not canReduce(flags)) return false;
-    cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -1959,8 +2309,8 @@ namespace Anabatic {
 
   uint32_t  AutoSegment::getNonReduceds ( Flags flags ) const
   {
-    if (not canReduce(flags)) return false;
     cdebug_log(159,0) << "AutoSegment::getNonReduceds():" << this << endl;
+    if (not canReduce(flags)) return false;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -1992,7 +2342,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::raise ()
+  bool  AutoSegment::raise ( vector<AutoSegment*>& canReduces )
   {
     if (not (_flags & SegIsReduced)) return false;
     cdebug_log(159,0) << "AutoSegment::raise():" << this << endl;
@@ -2003,13 +2353,19 @@ namespace Anabatic {
     _flags &= ~SegIsReduced;
     for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
       if (perpandicular == this) continue;
-      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
+      cdebug_log(159,0) << "  dec PP reduceds=" << perpandicular->getReduceds()
+                        << " " << perpandicular << endl;
+      if (not perpandicular->getReduceds() and perpandicular->canReduce())
+        canReduces.push_back( perpandicular );
     }
     for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
       if (perpandicular == this) continue;
-      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
+      cdebug_log(159,0) << "  dec PP reduceds=" << perpandicular->getReduceds()
+                        << " " << perpandicular << endl;
+      if (not perpandicular->getReduceds() and perpandicular->canReduce())
+        canReduces.push_back( perpandicular );
     }
 
     return true;
@@ -2019,6 +2375,8 @@ namespace Anabatic {
   void  AutoSegment::changeDepth ( unsigned int depth, Flags flags )
   {
     DebugSession::open( getNet(), 145, 150 );
+
+    if ((getDepth() < depth) and isCanonical()) _movedUp++;
 
     cdebug_log(149,1) << "changeDepth() " << depth << " - " << this << endl;
     Session::invalidate( getNet() );
@@ -2148,8 +2506,8 @@ namespace Anabatic {
     }
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, getAligneds() ) {
-        isegment->getGCells( gcells );
+      for ( AutoSegment* segment : getAligneds() ) {
+        segment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; ++i ) {
           maxDensity = std::max( maxDensity, gcells[i]->getFeedthroughs(depth) );
         }
@@ -2166,15 +2524,32 @@ namespace Anabatic {
                       << " (reserve:" << reserve << ")" << endl;
 
     if ( isLayerChange()    or isFixed() or isUnbreakable() or isNoMoveUp() ) return false;
-    if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
-    if ( isLocal()          and (not (flags & Flags::AllowLocal   )) ) return false;
+    if ( isStrongTerminal()               and (not (flags & Flags::AllowTerminal)) ) return false;
+    if ( isLocal() and not isWeakGlobal() and (not (flags & Flags::AllowLocal   )) ) return false;
 
     size_t depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
     if (depth+2 >= Session::getRoutingGauge()->getDepth()) return false;
 
+    bool   nLowDensity   = true;
+    bool   nLowUpDensity = true;
+    float  lowDensity    = Session::getLowDensity();
+    float  lowUpDensity  = Session::getLowUpDensity();
+
     vector<GCell*> gcells;
     getGCells( gcells );
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
+      cdebug_log(159,0) << "  lowDensity in " << gcells[i]
+                        << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      if ( nLowDensity and (gcells[i]->getWDensity(depth-2) > lowDensity) ) {
+        nLowDensity = false;
+        cdebug_log(159,0) << "  lowDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      }
+      if ( nLowUpDensity and (gcells[i]->getWDensity(depth) > lowUpDensity) ) {
+        nLowUpDensity = false;
+        cdebug_log(159,0) << "  lowUpDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth) << endl;
+      }
       if (not gcells[i]->hasFreeTrack(depth+2,reserve,flags)) return false;
     }
 
@@ -2188,6 +2563,9 @@ namespace Anabatic {
       if (getAutoSource()->getMinDepth() < depth) return false;
       if (getAutoTarget()->getMinDepth() < depth) return false;
     }
+
+    // if (    nLowDensity   and (flags & Flags::CheckLowDensity  )) return false;
+    // if (not nLowUpDensity and (flags & Flags::CheckLowUpDensity)) return false;
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
       for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds(flags) ) {
@@ -2242,13 +2620,13 @@ namespace Anabatic {
     }
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        isegment->getGCells( gcells );
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        segment->getGCells( gcells );
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
           if (not gcells[i]->hasFreeTrack(depth-2,reserve)) return false;
         }
-        if (isegment->getAutoSource()->getMaxDepth() < depth) return false;
-        if (isegment->getAutoTarget()->getMaxDepth() < depth) return false;
+        if (segment->getAutoSource()->getMaxDepth() < depth) return false;
+        if (segment->getAutoTarget()->getMaxDepth() < depth) return false;
       }
     }
 
@@ -2271,6 +2649,8 @@ namespace Anabatic {
 
     bool   nLowDensity   = true;
     bool   nLowUpDensity = true;
+    float  lowDensity    = Session::getLowDensity();
+    float  lowUpDensity  = Session::getLowUpDensity();
 
     if ( isLayerChange() or isFixed() or isUnbreakable() or isNoMoveUp() ) return false;
     if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
@@ -2283,15 +2663,25 @@ namespace Anabatic {
     getGCells( gcells );
 
     for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-      if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.5) ) nLowDensity   = false;
-      if ( nLowUpDensity and (gcells[i]->getWDensity(depth)   > 0.2) ) nLowUpDensity = false;
+      cdebug_log(159,0) << "  lowDensity in " << gcells[i]
+                        << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      if ( nLowDensity and (gcells[i]->getWDensity(depth-2) > lowDensity) ) {
+        nLowDensity = false;
+        cdebug_log(159,0) << "  lowDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+      }
+      if ( nLowUpDensity and (gcells[i]->getWDensity(depth) > lowUpDensity) ) {
+        nLowUpDensity = false;
+        cdebug_log(159,0) << "  lowUpDensity false in " << gcells[i]
+                          << " d:" << gcells[i]->getWDensity(depth) << endl;
+      }
       if (not gcells[i]->hasFreeTrack(depth,reserve,Flags::AllAbove)) {
-        cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
+        cdebug_log(159,0) << "  Not enough free track in " << gcells[i] << endl;
         return false;
       }
     }
 
-    cdebug_log(159,0) << "Enough free track under canonical segment." << endl;
+    cdebug_log(159,0) << "  Enough free track under canonical segment." << endl;
 
     if (not (flags & Flags::IgnoreContacts)) {
       if (getAutoSource()->getMinDepth() < depth-2) return false;
@@ -2307,7 +2697,7 @@ namespace Anabatic {
     // if (getAutoSource()->isTurn() and (getAutoSource()->getPerpandicular(this)->getLayer() == getLayer())) return false;
     // if (getAutoTarget()->isTurn() and (getAutoTarget()->getPerpandicular(this)->getLayer() == getLayer())) return false;
        
-    cdebug_log(159,0) << "Both source & target Contacts can move up." << endl;
+    cdebug_log(159,0) << "  Both source & target Contacts can move up." << endl;
 
   //bool hasGlobalSegment = false;
     if ((flags & Flags::Propagate) and not isNotAligned()) {
@@ -2323,15 +2713,18 @@ namespace Anabatic {
         segment->getGCells( gcells );
 
         for ( size_t i=0 ; i<gcells.size() ; i++ ) {
-          if ( nLowDensity   and (gcells[i]->getWDensity(depth-2) > 0.6) )
+          if ( nLowDensity and (gcells[i]->getWDensity(depth-2) > lowDensity) ) {
             nLowDensity = false;
-          if ( nLowUpDensity and (gcells[i]->getWDensity(depth,Flags::AllAbove) > 0.2) ) {
-            cdebug_log(159,0) << "lowUpDensity false in " << gcells[i]
-                              << "d:" << gcells[i]->getWDensity(depth) << endl;
+            cdebug_log(159,0) << "  lowDensity false in " << gcells[i]
+                              << " d:" << gcells[i]->getWDensity(depth-2) << endl;
+          }
+          if ( nLowUpDensity and (gcells[i]->getWDensity(depth,Flags::AllAbove) > lowUpDensity) ) {
             nLowUpDensity = false;
+            cdebug_log(159,0) << "  lowUpDensity false in " << gcells[i]
+                              << " d:" << gcells[i]->getWDensity(depth) << endl;
           }
           if (not gcells[i]->hasFreeTrack(depth,reserve)) {
-            cdebug_log(159,0) << "Not enough free track in " << gcells[i] << endl;
+            cdebug_log(159,0) << "  Not enough free track in " << gcells[i] << endl;
             return false;
           }
         }
@@ -2342,24 +2735,28 @@ namespace Anabatic {
     if (not nLowUpDensity and (flags & Flags::CheckLowUpDensity)) return false;
 
     if ( (depth >= 4) and (flags & Flags::WithPerpands) ) {
-      float fragmentation = (*gcells.begin())->getFragmentation( depth-1 );
-      cdebug_log(159,0) << "Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
+      if (getAutoSource()->getMinDepth() + 1 < depth) {
+        float fragmentation = (*gcells.begin())->getFragmentation( depth-1 );
+        cdebug_log(159,0) << "  Check begin GCell perpandicular fragmentation: " << fragmentation << endl;
 
-      if (fragmentation < 0.5) {
-        cdebug_log(159,0) << "Not enough free track for perpandicular in begin GCell "
-                          << "(frag:" << fragmentation << ")."
-                          << endl;
-        return false;
+        if (fragmentation < 0.5) {
+          cdebug_log(159,0) << "  Not enough free track for perpandicular in begin GCell "
+                            << "(frag:" << fragmentation << ")."
+                            << endl;
+          return false;
+        }
       }
 
-      fragmentation = (*gcells.rbegin())->getFragmentation( depth-1 );
-      cdebug_log(159,0) << "Check end GCell perpandicular fragmentation: " << fragmentation << endl;
+      if (getAutoTarget()->getMinDepth() + 1 < depth) {
+        float fragmentation = (*gcells.rbegin())->getFragmentation( depth-1 );
+        cdebug_log(159,0) << "  Check end GCell perpandicular fragmentation: " << fragmentation << endl;
 
-      if (fragmentation < 0.5) {
-        cdebug_log(159,0) << "Not enough free track for perpandicular in end GCell "
-                          << "(frag:" << fragmentation << ")."
-                          << endl;
-        return false;
+        if (fragmentation < 0.5) {
+          cdebug_log(159,0) << "  Not enough free track for perpandicular in end GCell "
+                            << "(frag:" << fragmentation << ")."
+                            << endl;
+          return false;
+        }
       }
     }
 
@@ -2377,15 +2774,6 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::moveUpToPref ( Flags flags )
-  {
-    size_t depth = Session::getRoutingGauge()->getLayerDepth(getLayer());
-    if (not isNonPref() or (depth >= Session::getAllowedDepth())) return false;
-    changeDepth( depth + 1, flags|Flags::Propagate );
-    return true;
-  }
-
-
   bool  AutoSegment::moveDown ( Flags flags )
   {
   //if ( not canPivotDown(0.0,flags) ) return false;
@@ -2397,10 +2785,21 @@ namespace Anabatic {
 
   bool  AutoSegment::reduceDoglegLayer ()
   {
-    if (not isReduced()) return false;
+    // if (getId() == 562712) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 0, "Before reducing 562712." );
+    //   UpdateSession::open();
+    // }
 
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(159,1) << "AutoSegment::reduceDoglegLayer(): " << this << endl;
+
+    if (not isReduced()) {
+      cdebug_log(159,0) << "Segment is *not* reduced, doing nothing." << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return false;
+    }
 
     bool         success = false;
     AutoContact* source  = getAutoSource();
@@ -2419,7 +2818,7 @@ namespace Anabatic {
     } else {
       for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
         if (perpandicular == this) continue;
-        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
+        cdebug_log(151,0) << "  S connected:" << perpandicular << endl;
         minSourceDepth = std::min( minSourceDepth, perpandicular->getDepth() );
         maxSourceDepth = std::max( maxSourceDepth, perpandicular->getDepth() );
       }
@@ -2432,7 +2831,7 @@ namespace Anabatic {
     } else {
       for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
         if (perpandicular == this) continue;
-        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
+        cdebug_log(151,0) << "  T connected:" << perpandicular << endl;
         minTargetDepth = std::min( minTargetDepth, perpandicular->getDepth() );
         maxTargetDepth = std::max( maxTargetDepth, perpandicular->getDepth() );
       }
@@ -2461,11 +2860,59 @@ namespace Anabatic {
       setDuSource( 0 );
       setDuTarget( 0 );
 
+      if (source->isTurn() and target->isTurn()) {
+        AutoSegment* sourcePp = source->getPerpandicular( this );
+        bool onPSourceSource = (sourcePp->getAutoSource() == source);
+
+        AutoSegment* targetPp = target->getPerpandicular( this );
+        bool onPTargetSource = (targetPp->getAutoSource() == target);
+
+        cdebug_log(159,0) << "Turn connected PSourceSource=" << onPSourceSource
+                          <<               " PTargetSource=" << onPTargetSource
+                          << endl;
+
+        if (not (onPSourceSource xor onPTargetSource)) {
+          cdebug_log(159,0) << "UTurn" << endl;
+          DbU::Unit axis = 0;
+          if (isHorizontal()) {
+            if (onPSourceSource)
+              axis = std::min( sourcePp->getAutoTarget()->getY(), targetPp->getAutoTarget()->getY() );
+            else
+              axis = std::max( sourcePp->getAutoSource()->getY(), targetPp->getAutoSource()->getY() );
+
+            setAxis( axis );
+            source->setY( axis );
+            target->setY( axis );
+            cdebug_log(159,0) << "UTurn (H) compact on axis " << DbU::getValueString(axis) << endl;
+          } else {
+            if (onPSourceSource)
+              axis = std::min( sourcePp->getAutoTarget()->getX(), targetPp->getAutoTarget()->getX() );
+            else
+              axis = std::max( sourcePp->getAutoSource()->getX(), targetPp->getAutoSource()->getX() );
+
+            setAxis( axis );
+            source->setX( axis );
+            target->setX( axis );
+            cdebug_log(159,0) << "UTurn (V) compact on axis " << DbU::getValueString(axis) << endl;
+          }
+          sourcePp->setFlags( (onPSourceSource) ? SegInvalidatedSource : SegInvalidatedTarget );
+          targetPp->setFlags( (onPTargetSource) ? SegInvalidatedSource : SegInvalidatedTarget );
+          sourcePp->revalidate();
+          targetPp->revalidate();
+        }
+      }
+
       success = true;
     }
 
     cdebug_tabw(159,-1);
     DebugSession::close();
+
+    // if (getId() == 562712) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 0, "After reducing 562712." );
+    //   UpdateSession::open();
+    // }
     return success;
 
     
@@ -2616,6 +3063,123 @@ namespace Anabatic {
 #endif
 
 
+  AutoSegment* AutoSegment::getNonPrefPerpand ( AutoContact*& terminal, Flags& flags ) const
+  {
+    if (not isNonPref()) return nullptr;
+    AutoContact* autoSource = getAutoSource();
+    AutoContact* autoTarget = getAutoTarget();
+    AutoContact* turn       = nullptr;
+
+    if (autoSource->isTerminal()) { turn = autoTarget; terminal = autoSource; }
+    if (autoTarget->isTerminal()) { turn = autoSource; terminal = autoTarget; }
+    if (not turn) return nullptr;
+
+    AutoSegment* perpandicular = turn->getPerpandicular( this );
+    flags |= (perpandicular->getAutoSource() == turn) ? Flags::Source : Flags::Target;
+    return perpandicular;
+  }
+
+
+  bool  AutoSegment::promoteToPref ( Flags flags )
+  {
+    cdebug_log(149,0) << "AutoSegment::promoteToPref() " << this << endl;
+
+    if (not isNonPref()) {
+      cdebug_log(149,0) << "Reject: not isNonPref() " << endl;
+      return false;
+    }
+    size_t     depth = Session::getRoutingGauge()->getLayerDepth( getLayer() );
+    DbU::Unit  pitch = Session::getRoutingGauge()->getPitch( getLayer() );
+    if (depth >= Session::getAllowedDepth()) {
+      cdebug_log(149,0) << "Reject: at maximum depth (top layer)" << endl;
+      return false;
+    }
+    cdebug_log(149,0) << "promoting..." << endl;
+
+    Box          viaConstraints;
+    Interval     cagedConstraints = getUserConstraints();
+    AutoContact* autoSource       = getAutoSource();
+    AutoContact* autoTarget       = getAutoTarget();
+    AutoContact* terminal         = nullptr;
+
+    unsetFlags( SegNonPref );
+    if (autoSource->isTerminal()) terminal = autoSource;
+    if (autoTarget->isTerminal()) terminal = autoTarget;
+    if (not terminal) {
+      changeDepth( depth + 1, flags|Flags::Propagate );
+      return true;
+    }
+
+    Flags     perpandDir  = isHorizontal() ? Flags::Vertical  : Flags::Horizontal;
+    DbU::Unit perpandAxis = isHorizontal() ? terminal->getX() : terminal->getY();
+
+    Layer* contactLayer = Session::getRoutingGauge()->getContactLayer( depth );
+    Session::dogleg( this );
+
+    AutoSegment* perpandicular = nullptr;
+    if (terminal == autoTarget) {
+      targetDetach();
+      viaConstraints = autoSource->getConstraintBox();
+      perpandicular  = autoSource->getPerpandicular( this );
+    } else {
+      sourceDetach();
+      perpandicular  = autoTarget->getPerpandicular( this );
+      viaConstraints = autoTarget->getConstraintBox();
+    }
+    if (perpandicular) {
+      perpandicular->unsetFlags( AutoSegment::SegDrag );
+      perpandicular->updateNativeConstraints();
+    }
+    viaConstraints.inflate( 2*pitch );
+
+    invalidate( Flags::Topology );
+    terminal->invalidate( Flags::Topology );
+    AutoContact* dlContact1 = AutoContactTurn::create( terminal->getGCell(), getNet(), contactLayer );
+    dlContact1->setConstraintBox( viaConstraints );
+    dlContact1->lockConstraintBox();
+    cdebug_log(149,0) << dlContact1 << endl;
+    AutoSegment* segment1 = AutoSegment::create( terminal, dlContact1, perpandDir );
+    cdebug_log(149,0) << segment1 << endl;
+    segment1->setLayer( depth );
+    segment1->_setAxis( perpandAxis );
+    segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
+    cdebug_log(149,0) << "New " << dlContact1->base() << "." << endl;
+    Session::dogleg( segment1 );
+      
+    terminal  ->unsetFlags( CntWeakTerminal|CntDrag );
+    dlContact1->setFlags  ( CntWeakTerminal );
+    if (terminal == autoTarget) {
+      targetAttach( dlContact1 );
+      autoTarget->cacheAttach( segment1 );
+      autoSource->invalidate( Flags::Topology );
+      autoSource->restoreNativeConstraintBox();
+    } else {
+      sourceAttach( dlContact1 );
+      autoSource->cacheAttach( segment1 );
+      autoTarget->invalidate( Flags::Topology );
+      autoTarget->restoreNativeConstraintBox();
+    }
+    setLayer( depth+1 );
+    Session::dogleg( nullptr );
+
+    if (isAnalog  ()) segment1->setFlags( SegAnalog );
+    if (isNoMoveUp()) segment1->setFlags( SegNoMoveUp );
+    unsetFlags( AutoSegment::SegDrag|SegDragSameLayer );
+
+    cdebug_log(149,0) << "terminal: " << terminal << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+2] new paral: " << nullptr << endl;
+    cdebug_log(149,0) << "Session::dogleg[x+0] original:  " << this << endl;
+
+    dlContact1->updateCache();
+    updateNativeConstraints();
+    mergeUserConstraints( cagedConstraints );
+    updatePositions();
+
+    return true;
+  }
+
+
   Flags  AutoSegment::canDogleg ( Interval interval )
   {
     cdebug_log(149,0) << "AutoSegment::canDogleg(Interval) " << interval << endl;
@@ -2652,11 +3216,15 @@ namespace Anabatic {
     cdebug_log(149,1) << "AutoSegment::makeDogleg(AutoContact*) " << from << endl;
     cdebug_log(149,0)   << this << endl;
 
-    RoutingGauge*               rg           = Session::getRoutingGauge();
-    size_t                      segmentDepth = rg->getLayerDepth( getLayer() );
-    const vector<AutoSegment*>& doglegs      = Session::getDoglegs();
-    size_t                      index        = doglegs.size();
-    bool                        isSource     = (getAutoSource() == from);
+    RoutingGauge*               rg              = Session::getRoutingGauge();
+    size_t                      segmentDepth    = rg->getLayerDepth( getLayer() );
+    const vector<AutoSegment*>& doglegs         = Session::getDoglegs();
+    size_t                      index           = doglegs.size();
+    AutoContact*                source          = getAutoSource();
+    AutoContact*                target          = getAutoTarget();
+    bool                        isSource        = (source == from);
+    bool                        sourceOnNonPref = (source->getLayer() == getLayer());
+    bool                        targetOnNonPref = (target->getLayer() == getLayer());
 
     cdebug_log(149,0) << "isSource:" << isSource << endl;
 
@@ -2665,6 +3233,36 @@ namespace Anabatic {
       cdebug_tabw(149,-1);
       return NULL;
     }
+
+    if (sourceOnNonPref) {
+      cdebug_log(149,0) << "Source on non-pref, reset axis on anchor span." << endl;
+      AutoSegment* perpandicular = source->getPerpandicular( this );
+      if (perpandicular) {
+        AutoContact* anchor = (perpandicular->getAutoSource() == source)
+                                ? perpandicular->getAutoTarget()
+                                : perpandicular->getAutoSource();
+        Box bb = anchor->getConstraintBox();
+        DbU::Unit axis = getAxis();
+        if (isHorizontal() and ((axis < bb.getYMin()) or (axis > bb.getYMax()))) axis = bb.getYCenter();
+        if (isVertical  () and ((axis < bb.getXMin()) or (axis > bb.getXMax()))) axis = bb.getXCenter();
+        doglegs[ index ]->setAxis( axis );
+      }
+    }
+    if (targetOnNonPref) {
+      cdebug_log(149,0) << "Target on non-pref, reset axis on anchor span." << endl;
+      AutoSegment* perpandicular = target->getPerpandicular( this );
+      if (perpandicular) {
+        AutoContact* anchor = (perpandicular->getAutoSource() == target)
+                                ? perpandicular->getAutoTarget()
+                                : perpandicular->getAutoSource();
+        Box bb = anchor->getConstraintBox();
+        DbU::Unit axis = getAxis();
+        if (isHorizontal() and ((axis < bb.getYMin()) or (axis > bb.getYMax()))) axis = bb.getYCenter();
+        if (isVertical  () and ((axis < bb.getXMin()) or (axis > bb.getXMax()))) axis = bb.getXCenter();
+        doglegs[ index+2 ]->setAxis( axis );
+      }
+    }
+    
     doglegs[ index+1 ]->setAxis( isHorizontal() ? from->getX() : from->getY() );
 
     if (not from->getLayer()->contains(getLayer())) {
@@ -2729,9 +3327,9 @@ namespace Anabatic {
     if (getSpanU().contains(interval.getVMax())) { rightCandidate = this; rightDoglegCount++; }
 
     if (not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, getAligneds(flags) ) {
-        if (isegment->getSpanU().contains(interval.getVMin())) { leftCandidate  = *isegment; leftDoglegCount++; }
-        if (isegment->getSpanU().contains(interval.getVMax())) { rightCandidate = *isegment; rightDoglegCount++; }
+      for ( AutoSegment* segment : getAligneds(flags) ) {
+        if (segment->getSpanU().contains(interval.getVMin())) { leftCandidate  = segment; leftDoglegCount++; }
+        if (segment->getSpanU().contains(interval.getVMax())) { rightCandidate = segment; rightDoglegCount++; }
       }
     }
 
@@ -2797,7 +3395,7 @@ namespace Anabatic {
     Flags  rflags = Flags::NoFlags;
 
     if (    doglegGCell->isIoPad()
-       and (Session::getAnabatic()->getState() != EngineGlobalLoaded) ) {
+       and (Session::getAnabatic()->getStage() != StageGlobalLoaded) ) {
       cerr << Bug( "Attempt to make a dogleg in a GCell under a Pad\n"
                    "      %s\n"
                    "      %s"
@@ -2908,6 +3506,9 @@ namespace Anabatic {
     s.insert ( s.size()-1, sdistance );
     s.insert ( s.size()-1, sblevel );
     s.insert ( s.size()-1, _getStringFlags() );
+    string shadowSpan = " [" + DbU::getValueString(_sourcePosition)
+                      +  ":" + DbU::getValueString(_targetPosition) + "]";
+    s.insert ( s.size()-1, shadowSpan );
     return s;
   }
 
@@ -2970,6 +3571,16 @@ namespace Anabatic {
 
     cdebug_log(149,0) << "Source:" << source << endl;
     cdebug_log(149,0) << "Target:" << target << endl;
+    if (source == target) {
+      throw Error( "AutoSegment::create(Hurricane::Segment*): Source and target contact are the same.\n"
+                   "        Source: %s\n"
+                   "        Target: %s\n"
+                   "        Segment: %s\n"
+                 , getString(source).c_str()
+                 , getString(target).c_str()
+                 , getString(segment).c_str()
+                 );
+    }
 
     if (source->isFixed() and target->isFixed()) {
       if ( (horizontal) and (source->getY() != target->getY()))
@@ -3078,6 +3689,14 @@ namespace Anabatic {
                                    , size_t       depth
                                    )
   {
+    if (source == target) {
+      throw Error( "AutoSegment::create(): Source and target contact are the same.\n"
+                   "        Source: %s\n"
+                   "        Target: %s\n"
+                 , getString(source).c_str()
+                 , getString(target).c_str()
+                 );
+    }
   // Hardcoded: make the assumption that,
   //    depth=0 is terminal reserved  |  METAL1
   //    depth=1 is horizontal         |  METAL2
@@ -3259,8 +3878,8 @@ namespace Anabatic {
 
       if (currentContact->getAnchor()) { cdebug_tabw(145,-1); return true; }
 
-      forEach ( Component*, component, currentContact->getSlaveComponents() ) {
-        Segment* segment = dynamic_cast<Segment*>( *component );
+      for ( Component* component : currentContact->getSlaveComponents() ) {
+        Segment* segment = dynamic_cast<Segment*>( component );
         if (not segment) continue;
 
         AutoSegment* autoSegment = Session::lookup( segment );

@@ -1,0 +1,23 @@
+diff --git coriolis/subprojects/coloquinte/src/place_global/net_model.cpp coriolis/subprojects/coloquinte/src/place_global/net_model.cpp
+index 5c7b7d3..e425107 100644
+--- coriolis/subprojects/coloquinte/src/place_global/net_model.cpp
++++ coriolis/subprojects/coloquinte/src/place_global/net_model.cpp
+@@ -1,8 +1,8 @@
+ #include "place_global/net_model.hpp"
+ 
+-#include <eigen3/Eigen/Dense>
+-#include <eigen3/Eigen/IterativeLinearSolvers>
+-#include <eigen3/Eigen/Sparse>
++#include <Eigen/Dense>
++#include <Eigen/IterativeLinearSolvers>
++#include <Eigen/Sparse>
+ #include <limits>
+ 
+ namespace coloquinte {
+@@ -679,4 +679,4 @@ std::vector<float> NetModel::solveB2B(const std::vector<float> &netPlacement,
+                      params.penaltyCutoffDistance);
+   return builder.solve(params.tolerance, params.maxNbIterations);
+ }
+-}  // namespace coloquinte
+\ No newline at end of file
++}  // namespace coloquinte

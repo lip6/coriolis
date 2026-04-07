@@ -338,6 +338,7 @@ namespace Hurricane {
       inline  Cell::Flags           getStopCellFlags       () const;
       inline  size_t                getDepth               () const;
       inline  const Transformation& getTransformation      () const;
+      inline  const Box&            getTopArea             () const;
       inline  const Box&            getArea                () const;
       inline  DbU::Unit             getThreshold           () const;
       inline  const BasicLayer*     getBasicLayer          () const;
@@ -403,6 +404,7 @@ namespace Hurricane {
   inline  unsigned int          Query::getStopLevel       () const { return _stack.getStopLevel(); }
   inline  Cell::Flags           Query::getStopCellFlags   () const { return _stack.getStopCellFlags(); }
   inline  size_t                Query::getDepth           () const { return _stack.size(); }
+  inline  const Box&            Query::getTopArea         () const { return _stack.getTopArea(); }
   inline  const Box&            Query::getArea            () const { return _stack.getArea(); }
   inline  const Transformation& Query::getTransformation  () const { return _stack.getTransformation(); }
   inline  Path                  Query::getPath            () const { return _stack.getPath(); }

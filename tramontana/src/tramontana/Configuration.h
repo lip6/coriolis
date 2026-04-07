@@ -44,20 +44,23 @@ namespace Tramontana {
              Configuration*   clone                     () const;
     // Methods.                                         
       inline bool             doMergeSupplies           () const;
+      inline uint32_t         getInstancesPerWindows    () const;
              void             print                     ( Cell* ) const;
              Record*          _getRecord                () const;
              string           _getString                () const;
              string           _getTypeName              () const;
     protected:
     // Attributes.
-      bool  _mergeSupplies;
+      bool      _mergeSupplies;
+      uint32_t  _instancesPerWindows;
     private:
                              Configuration ( const Configuration& );
       Configuration& operator=             ( const Configuration& );
   };
 
 
-  inline bool  Configuration::doMergeSupplies () const { return _mergeSupplies; }
+  inline bool      Configuration::doMergeSupplies        () const { return _mergeSupplies; }
+  inline uint32_t  Configuration::getInstancesPerWindows () const { return _instancesPerWindows; }
 
 
 } // Tramontana namespace.

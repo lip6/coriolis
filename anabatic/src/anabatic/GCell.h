@@ -43,7 +43,6 @@ namespace Anabatic {
   using std::string;
   using std::vector;
   using std::set;
-  using std::binary_function;
   using Hurricane::StaticObservable;
   using Hurricane::BaseObserver;
   using Hurricane::Name;
@@ -100,14 +99,14 @@ namespace Anabatic {
                  Observable& operator=  ( const StaticObservable& );
       };
     public:
-      class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
+      class CompareByDensity {
         public:
                       CompareByDensity ( size_t depth );
           inline bool operator()       ( GCell* lhs, GCell* rhs ) const;
         private:
           size_t  _depth;
       };
-      class CompareByKey : public binary_function<const GCell*,const GCell*,bool> {
+      class CompareByKey {
         public:
           inline bool  operator() ( const GCell* lhs, const GCell* rhs ) const;
       };
@@ -166,6 +165,7 @@ namespace Anabatic {
       inline        bool                  isGoStraight         () const;
       inline        bool                  isHRail              () const;
       inline        bool                  isVRail              () const;
+      inline        bool                  isStdCellArea        () const;
       inline        bool                  isStdCellRow         () const;
       inline        bool                  isChannelRow         () const;
                     bool                  isWest               ( GCell* ) const;
@@ -305,7 +305,7 @@ namespace Anabatic {
       inline        void                  setObserver          ( size_t slot, BaseObserver* );
       inline        void                  notify               ( unsigned int flags );
     // ExtensionGo support.                                    
-      inline  const Name&                 staticGetName        (); 
+      static        Name                  staticGetName        (); 
       virtual const Name&                 getName              () const;
       virtual       void                  translate            ( const DbU::Unit&, const DbU::Unit& );
       virtual       Box                   getBoundingBox       () const;
@@ -372,6 +372,7 @@ namespace Anabatic {
   inline       bool                  GCell::isGoStraight     () const { return _flags & Flags::GoStraight; }
   inline       bool                  GCell::isHRail          () const { return _flags & Flags::HRailGCell; }
   inline       bool                  GCell::isVRail          () const { return _flags & Flags::VRailGCell; }
+  inline       bool                  GCell::isStdCellArea    () const { return _flags & Flags::StdCellArea; }
   inline       bool                  GCell::isStdCellRow     () const { return _flags & Flags::StdCellRow; }
   inline       bool                  GCell::isChannelRow     () const { return _flags & Flags::ChannelRow; }
   inline       bool                  GCell::isSaturated      () const { return _flags & Flags::Saturated; }

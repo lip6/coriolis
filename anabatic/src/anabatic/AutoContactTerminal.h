@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_AUTOCONTACT_TERMINAL_H
-#define  ANABATIC_AUTOCONTACT_TERMINAL_H
-
+#pragma   once
 #include  "anabatic/AutoContact.h"
 #include  "anabatic/AutoSegments.h"
 
@@ -90,6 +88,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AutoContactTerminal);
-
-
-#endif  // ANABATIC_AUTOCONTACT_TERMINAL_H

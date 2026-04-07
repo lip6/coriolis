@@ -409,6 +409,8 @@ namespace Anabatic {
       else
         strError << "        ?: " << horizontals[i] << "\n"; 
     }
+    if (not horizontals[0]) strError << "        No horizontal connecteds\n";
+    if (not verticals  [0]) strError << "        No verticals connecteds\n";
 
     for ( size_t i=0 ; (i<10) and (verticals[i] != NULL); ++i ) {
       AutoSegment* autoSegment = Session::lookup ( verticals[i] );
@@ -489,7 +491,7 @@ namespace Anabatic {
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox() << endl;
+    cdebug_log(149,0) << "  Set to: " << getConstraintBox() << endl;
     cdebug_log(149,0) << "* " << _gcell << endl;
   }
 
@@ -545,7 +547,10 @@ namespace Anabatic {
 
 
   void  AutoContact::restoreNativeConstraintBox ()
-  { setConstraintBox ( getNativeConstraintBox() ); }
+  {
+    if (_flags & CntLockConstraintBox) return;
+    setConstraintBox ( getNativeConstraintBox() );
+  }
 
                  
   Box& AutoContact::intersectConstraintBox ( Box& box ) const

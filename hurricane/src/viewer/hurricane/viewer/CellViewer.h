@@ -74,6 +74,8 @@ namespace Hurricane {
       Q_OBJECT;
                                    
     public:                        
+      typedef  QMainWindow  Super;
+    public:                        
       enum               { CellHistorySize = 10 };
       enum  Flag         { InCellChange    = 0x0001 };
       enum  FunctionFlag { NoFlags         = 0x0000
@@ -140,6 +142,7 @@ namespace Hurricane {
               void                  reframe                   ( const Box& , bool historyEnable=true );
               void                  runScript                 ( QString scriptPath );
       virtual CellViewer*           vcreate                   () const;
+      virtual void                  closeEvent                ( QCloseEvent* );
       virtual std::string           _getString                () const;
     public slots:                   
               void                  doAction                  ();

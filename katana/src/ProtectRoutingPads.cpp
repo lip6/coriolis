@@ -17,11 +17,14 @@
 #include <map>
 #include <list>
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Rectilinear.h"
@@ -31,7 +34,7 @@
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
 #include "crlcore/Catalog.h"
-#include "anabatic/AutoContact.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/AutoSegment.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AnabaticEngine.h"
@@ -48,6 +51,7 @@ namespace {
 
   using namespace std;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
@@ -58,6 +62,7 @@ namespace {
   using Hurricane::Layer;
   using Hurricane::BasicLayer;
   using Hurricane::RegularLayer;
+  using Hurricane::Pin;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::Rectilinear;
@@ -70,7 +75,9 @@ namespace {
   using Hurricane::NetRoutingExtension;
   using Hurricane::NetRoutingState;
   using CRL::CatalogExtension;
+  using Anabatic::GCell;
   using Anabatic::AutoContact;
+  using Anabatic::AutoContactTerminal;
   using Anabatic::AutoSegment;
   using namespace Katana;
 
@@ -98,31 +105,144 @@ namespace {
   };
 
 
+  void  postProtectRoutingPadHV ( RoutingPad* rp )
+  {
+    cdebug_log(145,1) << "::postProtectRoutingPadHV() " << rp << endl;
+
+    RoutingGauge* rg         = Session::getRoutingGauge();
+    RoutingPlane* planeM2    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     m2spacing  = planeM2->getLayer()->getMinimalSpacing();
+    const Layer*  via12      = Session::getContactLayer( 0 );
+    DbU::Unit     viaVShrink = rg->getViaWidth( (size_t)0 )/2 + via12->getBottomEnclosure( Layer::EnclosureV );
+    Box           bb         = rp->getBoundingBox();
+
+    bb.inflate( m2spacing/2, -viaVShrink );
+    Track*        track      = planeM2->getTrackByPosition( bb.getYMin(), Constant::Superior );
+
+    Track*   trackFree  = nullptr;
+    size_t   freeAccess = 0;
+    Interval rpInterval ( bb.getXMin(), bb.getXMax() );
+    for ( ; track and (track->getAxis() <= bb.getYMax()) ; track = track->getNextTrack() ) {
+      Interval freeInterval = track->getFreeInterval( bb.getXCenter(), rp->getNet() );
+      if (not freeInterval.isEmpty() and freeInterval.contains(rpInterval)) {
+        freeAccess++;
+        if (not trackFree) trackFree = track;
+      }
+    }
+
+    if (freeAccess < 2) {
+      cdebug_log(145,0) << "RoutingPad is almost fully obstructed" << endl;
+      if (trackFree) {
+        Box metal2bb ( bb.getXMin(), trackFree->getAxis()-1, bb.getXMax(), trackFree->getAxis()+1 );
+        TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, trackFree );
+        cdebug_log(145,0) << "| " << element << endl;
+      }
+    }
+    
+    cdebug_tabw(145,-1);
+  }
+
+
   void  protectRoutingPadHV ( RoutingPad* rp )
   {
+#define FEATURE_SPAN_CENTER       0
+#define FEATURE_SPAN_GCELL_CENTER 1
+#define FEATURE_SPAN_ANCHOR       0
+    
     cdebug_log(145,1) << "::protectRoutingPadHV() " << rp << endl;
-    if (not rp->isPunctual()) {
+
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
+    Box           bb      = rp->getBoundingBox();
+    if (not rp->isVSmall() and (bb.getWidth() < 3*pitch)) {
       cdebug_tabw(145,-1);
       return;
     }
+    RoutingPlane* planeM3 = nullptr;
+    if (Session::getAllowedDepth())
+      planeM3 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
+    // if (not rp->isPunctual()) {
+    //   cdebug_tabw(145,-1);
+    //   return;
+    // }
 
-    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
-    Box           bb          = rp->getBoundingBox();
-    Track*        track       = plane->getTrackByPosition( bb.getYCenter(), Constant::Nearest );
-    DbU::Unit     halfViaSide = AutoSegment::getViaToTopCap( 0 );
-    Box           metal2bb    = Box( bb.getXMin() - halfViaSide
-                                   , bb.getYCenter()
-                                   , bb.getXMax() + halfViaSide
-                                   , bb.getYCenter()
-                                   );
+    DbU::Unit     m1spacing      = planeM1->getLayer()->getMinimalSpacing();
+    DbU::Unit     m2spacing      = planeM2->getLayer()->getMinimalSpacing();
+    DbU::Unit     halfViaBotSide = AutoSegment::getViaToBottomCap( 1 );
+    DbU::Unit     halfViaTopSide = AutoSegment::getViaToTopCap( 1 );
+#if FEATURE_SPAN_CENTER
+    Box           metal2bb       = Box( bb.getXCenter(), bb.getYCenter(), bb.getXCenter(), bb.getYCenter() );
+#endif
+    cdebug_log(145,0) << "m1spacing=" << DbU::getValueString(m1spacing) << endl;
+    cdebug_log(145,0) << "m2spacing=" << DbU::getValueString(m2spacing) << endl;
+
+#if FEATURE_SPAN_GCELL_CENTER
+    Box trackBb = bb;
+    trackBb.inflate( 0, -halfViaBotSide );
+
+    DbU::Unit y     = trackBb.getYCenter();
+    DbU::Unit x     = trackBb.getXCenter();
+    GCell*    gcell = Session::getGCellUnder( bb.getXCenter(), bb.getYCenter() );
+    if (gcell) {
+      if      (trackBb.getYMax() <= gcell->getYCenter()) y = trackBb.getYMax();
+      else if (trackBb.getYMin() >= gcell->getYCenter()) y = trackBb.getYMin();
+      else    y = gcell->getYCenter();
+    }
+    Track* track = planeM2->getTrackByPosition( y, Constant::Nearest );
+    if (track->getAxis() > trackBb.getYMax()) {
+      y = track->getPreviousTrack()->getAxis();
+    }
+    if (track->getAxis() < trackBb.getYMin()) {
+      y = track->getNextTrack()->getAxis();
+    }
+    if (planeM3) {
+      trackBb.inflate( -halfViaBotSide, 0 );
+      if (not trackBb.isEmpty()) {
+        Track* track = planeM3->getTrackByPosition( x, Constant::Superior );
+        if (track->getAxis() <= trackBb.getXMax()) {
+          x = track->getAxis();
+        }
+      }
+    }
+
+
+    Box metal2bb = Box( x, y );
+#endif
+
+#if FEATURE_SPAN_ANCHOR
+    Contact* anchor = nullptr;
+    for ( Component* slave : rp->getSlaveComponents() ) {
+      anchor = dynamic_cast<Contact*>( slave );
+      if (anchor) break;
+    }
+    DbU::Unit y        = (anchor) ? anchor->getY() : bb.getYCenter();
+    Box       metal2bb = Box( bb.getXCenter(), y, bb.getXCenter(), y );
+#endif
+
+    // if (bb.getWidth() < pitch)
+    // //metal2bb.inflate( halfViaTopSide - halfViaBotSide, 0 );
+    //   metal2bb.inflate( (m1spacing - m2spacing)/2, 0 );
+    // else
+    //   metal2bb.inflate( - m2spacing / 2, 0 );
+    cdebug_log(145,0) << "metal2bb=" << metal2bb << endl;
+  //metal2bb.inflate( m2spacing/2 + halfViaTopSide, 0 );
+    metal2bb.inflate( halfViaTopSide, 0 );
+
+    // Box           metal2bb       = Box( bb.getXMin() - halfViaTopSide + halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   , bb.getXMax() + halfViaTopSide - halfViaBotSide
+    //                                   , bb.getYCenter()
+    //                                   );
 
   //bb.inflate( 0, Session::getLayerGauge((size_t)1)->getPitch() );
-    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, track );
-    cdebug_log(145,0) << "halfViaSside=" << DbU::getValueString(halfViaSide) << endl;
+    Track*            ntrack   = planeM2->getTrackByPosition( metal2bb.getYCenter(), Constant::Nearest );
+    TrackFixedSpanRp* element = TrackFixedSpanRp::create( rp, metal2bb, ntrack );
+    cdebug_log(145,0) << "halfViaTopSide=" << DbU::getValueString(halfViaTopSide) << endl;
+    cdebug_log(145,0) << "halfViaBotSide=" << DbU::getValueString(halfViaBotSide) << endl;
     cdebug_log(145,0) << "| " << element << endl;
     
     cdebug_tabw(145,-1);
-    return;
   }
 
 
@@ -208,6 +328,15 @@ namespace {
       const Layer*  layer = component->getLayer();
       RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer( layer );
       if (not plane) continue;
+
+      Pin* pin = dynamic_cast<Pin*>( component );
+      if (pin) {
+        Box bb = pin->getBoundingBox();
+        transformation.applyOn( bb );
+        bbs.push_back( make_pair( bb, layer ));
+        cdebug_log(145,0) << "@ " << pin << " bb:" << bb << endl;
+        continue;
+      }
 
       Segment* segment = dynamic_cast<Segment*>( component );
       if (segment) {
@@ -367,13 +496,14 @@ namespace {
     Session::revalidate();
     cdebug_tabw(145,-1);
   }
-
+  
 
 } // End of anonymous namespace.
 
 
 namespace Katana {
 
+  using Hurricane::Breakpoint;
   using Hurricane::DataBase;
   using Hurricane::Technology;
   using Hurricane::BasicLayer;
@@ -386,6 +516,10 @@ namespace Katana {
     cmess1 << "  o  Protect external components not useds as RoutingPads." << endl;
 
     openSession();
+
+    RoutingPlane* planeM1 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 0 );
+    RoutingPlane* planeM2 = Session::getKatanaEngine()->getRoutingPlaneByIndex( 1 );
+    DbU::Unit     pitch   = planeM2->getLayerGauge()->getPitch();
 
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
@@ -404,6 +538,30 @@ namespace Katana {
         protectRoutingPad( rps[i], flags );
 
       DebugSession::close();
+    }
+
+    if (not Session::getRoutingGauge()->isVH()) {
+      for ( Net* net : getCell()->getNets() ) {
+        if (net->isSupply()) continue;
+
+        DebugSession::open( net, 145, 150 );
+        cdebug_log(145,0) << "Protect RoutingPads of " << net << endl;
+
+        NetData* data = getNetData( net );
+        if (data and data->isFixed()) continue;
+
+        vector<RoutingPad*> rps;
+        for ( RoutingPad* rp : net->getRoutingPads() ) {
+          Box  bb = rp->getBoundingBox();
+          if (rp->isVSmall() or (bb.getWidth() > 3*pitch)) continue;
+          rps.push_back( rp );
+        }
+
+        for ( size_t i=0 ; i<rps.size() ; ++i )
+          postProtectRoutingPadHV( rps[i] );
+
+        DebugSession::close();
+      }
     }
 
     Session::close();

@@ -190,15 +190,19 @@ class Side ( object ):
                                 , pinPos.getX()
                                 , pinPos.getY()
                                 , gauge.getWireWidth()
-                                , gauge.getWireWidth() # // 2
+                                , gauge.getWireWidth() * 2 # // 2
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
                 self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         else:
-            gauge = self.conf.hDeepRG
-            upos  = ioPin.upos
+            pinDepth = self.conf.horizontalDeepDepth
+            if self.conf.cfg.block.upperEastWestPins:
+                pinDepth += 2
+            gauge  = self.conf.routingGauge.getLayerGauge( pinDepth )
+            ppitch = self.conf.routingGauge.getLayerPitch( pinDepth )
+            upos   = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)
                 net      = self.conf.cell.getNet( pinName )
@@ -223,7 +227,7 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth() // 2
+                                , ppitch * 2
                                 , gauge.getWireWidth()
                                 )
                 NetExternalComponents.setExternal( pin )
@@ -244,10 +248,18 @@ class Side ( object ):
                 for lg in rg.getLayerGauges():
                     if lg.getLayer().getMask() == pin.getLayer().getMask():
                         offset = lg.getPitch()
-                        if   self.side & IoPin.WEST:  pin.setX( pin.getDx()-offset )
-                        elif self.side & IoPin.EAST:  pin.setX( pin.getDx()+offset )
-                        elif self.side & IoPin.SOUTH: pin.setY( pin.getDy()-offset )
-                        elif self.side & IoPin.NORTH: pin.setY( pin.getDy()+offset )
+                        if   self.side & IoPin.WEST:
+                            pin.setX    ( pin.getDx()-offset )
+                            pin.setWidth( pin.getWidth() + offset*2 )
+                        elif self.side & IoPin.EAST:
+                            pin.setX    ( pin.getDx()+offset )
+                            pin.setWidth( pin.getWidth() + offset*2 )
+                        elif self.side & IoPin.SOUTH:
+                            pin.setY     ( pin.getDy()-offset )
+                            pin.setHeight( pin.getHeight() + offset*2 )
+                        elif self.side & IoPin.NORTH:
+                            pin.setY     ( pin.getDy()+offset )
+                            pin.setHeight( pin.getHeight() + offset*2 )
 
     def checkOverlaps ( self ):
         """
@@ -865,30 +877,46 @@ class Block ( object ):
         self.etesian.toHurricane()
         self.etesian.flattenPower()
         if self.conf.isCoreBlock: self.doConnectCore()
-        status = self.route()
+        pnrStatus = self.route()
         if not self.conf.isCoreBlock:
             self.addBlockages()
             self.expandIoPins()
         self.conf.isBuilt = True
-        if self.conf.doLvx: self.doLvx()
-        return status
+        lvxStatus = True
+        if self.conf.doLvx is not False:
+            lvxStatus = self.doLvx()
+        if pnrStatus != lvxStatus:
+            raise ErrorMessage( 1, [ 'PnR and LVX status incoherency (PnR={}, LVX={})' \
+                                     .format( pnrStatus, lvxStatus )
+                                   , 'This strongly hints at a bug in the PnR...'
+                                   ] )
+        return pnrStatus and lvxStatus
 
     def doLvx ( self ):
         """
         Performs and optional gate-level extraction and LVX to independently
-        ensure that the PnR has not gone wrong. raise an exception in case of
-        a failure.
+        ensure that the PnR has not gone wrong. Return a boolean status.
         """
-        topCell = self.conf.chip if self.conf.isCoreBlock else self.conf.cell
+        if self.conf.isCoreBlock:
+            if self.conf.doLvx == 'corona':
+                topCell = self.conf.corona
+            else:
+                topCell = self.conf.chip
+        else:
+            topCell = self.conf.cell
+            self.conf.cfg.tramontana.mergeSupplies = True
+        self.conf.cfg.apply()
         self.tramontana = Tramontana.TramontanaEngine.create( topCell )
         self.tramontana.printConfiguration()
         self.tramontana.extract()
         self.tramontana.printSummary()
-        if not self.tramontana.getSuccessState():
-            raise ErrorMessage( 1, 'Extraction+LVX has failed on "{}".'.format( topCell.getName() ))
-        Breakpoint.stop( 100, 'Block.doLvx() Successful Extract+LVS, before Tramontana.destroy().' )
-        self.tramontana.destroy()
-        self.tramontana = None
+        status = self.tramontana.getSuccessState()
+        Breakpoint.stop( 100, 'Block.doLvx() Extract+LVS status={}, before Tramontana.destroy().' \
+                              .format( status ))
+        if status:
+            self.tramontana.destroy()
+            self.tramontana = None
+        return status
 
 
     def useBlockInstance ( self, instancePathName , transf ):

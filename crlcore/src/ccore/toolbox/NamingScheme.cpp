@@ -29,7 +29,7 @@ namespace CRL {
   using Hurricane::Instance;
 
 
-  Name NamingScheme::vhdlToVlog ( const Name& vhdlName )
+  Name NamingScheme::vhdlToVlog ( Name vhdlName )
   {
     string  vlogName;
 
@@ -39,11 +39,11 @@ namespace CRL {
       if (translated == ')' ) translated = ']';
       vlogName += translated;
     }
-    return Name(vlogName);
+    return vlogName;
   }
 
 
-  Name NamingScheme::vlogToVhdl ( const Name& vlogName, uint32_t flags )
+  Name  NamingScheme::vlogToVhdl ( Name vlogName, uint32_t flags )
   {
     string  vhdlName;
     string  loweredName;
@@ -116,7 +116,7 @@ namespace CRL {
     if (loweredName             == "false" ) vhdlName.insert(0,"value_");
     if (loweredName             == "undef" ) vhdlName.insert(0,"value_");
 
-    return Name(vhdlName);
+    return vhdlName;
   }
 
 
@@ -162,7 +162,14 @@ namespace CRL {
   Name  NamingScheme::convert ( const Name& name ) const
   {
     if (_converter == nullptr) return name;
-    return _converter(name,_flags);
+    return _converter( name, _flags );
+  }
+
+
+  string  NamingScheme::convert ( string name ) const
+  {
+    if (_converter == nullptr) return name;
+    return getString( _converter( Name(name), _flags) );
   }
 
 

@@ -244,9 +244,7 @@ namespace Hurricane {
     if ( _material == Material::cut   ) getTechnology()->_getCutMask  ().set(getMask());
 
     if (_gds2Layer) {
-      Layer::Mask extractMask = Layer::Mask( 1 );
-      extractMask << _gds2Layer;
-
+      Layer::Mask extractMask = Layer::Mask( (1 << _gds2Layer) );
       if (!extractMask)
         throw Error("Can't create " + _TName("BasicLayer") + " : extract mask capacity overflow");
 

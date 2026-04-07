@@ -204,11 +204,14 @@ namespace Etesian {
   }
   
 
-  void  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
+  uint32_t  Slice::insertTies ( DbU::Unit latchUpMax, size_t islice )
   {
     cdebug_log(121,1) << "Slice::insertTies() @" << DbU::getValueString(_ybottom) << endl;
-    for ( SubSlice& subSlice : _subSlices ) subSlice.insertTies( latchUpMax, islice%2 );
+    uint32_t status = EtesianEngine::NoFlags;
+    for ( SubSlice& subSlice : _subSlices )
+      status |= subSlice.insertTies( latchUpMax, islice%2 );
     cdebug_tabw(121,-1);
+    return status;
   }
 
 
@@ -251,10 +254,10 @@ namespace Etesian {
                         , size_t yspin )
   {
     cdebug_log(147,1) << "Slice::fillHole() @" << DbU::getValueString(ybottom)
-                      << "hole=[" << DbU::getValueString(xmin)
-                      << " "      << DbU::getValueString(xmax)
+                      << " hole=[" << DbU::getValueString(xmin)
+                      << " "       << DbU::getValueString(xmax)
                       << "]" << endl;
-    cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
+  //cdebug_log(147,0) << "before=" << (*before).getInstance() << endl;
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed == NULL) {
       cerr << Error("Slice::fillHole(): No feed has been registered, ignoring.") << endl;
@@ -265,6 +268,7 @@ namespace Etesian {
     bool      addEndTie = false;
     DbU::Unit xtie      = xmin;
     DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceHStep();
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
     if (modulo) {
       xtie += getEtesian()->getSliceHStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
@@ -277,7 +281,10 @@ namespace Etesian {
     modulo = (xmax - getXMin()) % getEtesian()->getSliceHStep();
     if (modulo) xmax -= modulo;
 
-    Cell*     tie       = getEtesian()->getFeedCells().getTie();
+    Cell* tie = nullptr;
+    if (getEtesian()->putTiesInEmptyArea())
+      tie = getEtesian()->getFeedCells().getTie();
+
     DbU::Unit feedWidth = 0;
     if (tie) {
       feedWidth = tie->getAbutmentBox().getWidth();
@@ -309,10 +316,17 @@ namespace Etesian {
       }
     }
 
+    DbU::Unit feedLength = 0;
     feedWidth = feed->getAbutmentBox().getWidth();
     while ( true ) {
       if (xtie >= xmax) break;
-      if (xtie+feedWidth >  xmax) {
+
+      if (tie and (feedLength >= getEtesian()->getLatchUpMax())) {
+        feed = tie;
+        feedWidth = tie->getAbutmentBox().getWidth();
+      }
+      
+      if (xtie+feedWidth > xmax) {
       // Feed is too big, try to find a smaller one.
         feed = NULL;
         int pitch = (int)((xmax-xtie) / getEtesian()->getSliceHStep());
@@ -344,7 +358,14 @@ namespace Etesian {
                          , feed->getAbutmentBox().getWidth()
                          , getEtesian()->toCell( Occurrence(instance) )));
       cdebug_log(147,0) << "  " << instance << " @" << instance->getTransformation() << endl;
+
       xtie += feedWidth;
+      if (feed == tie) {
+        feedLength = 0;
+        feed       = getEtesian()->getFeedCells().getBiggestFeed();
+        feedWidth  = feed->getAbutmentBox().getWidth();
+      } else
+        feedLength += feedWidth;
     }
 
     if (addEndTie) {
@@ -632,12 +653,22 @@ namespace Etesian {
   }
 
 
-  void  Area::insertTies ( DbU::Unit latchUpMax )
+  uint32_t  Area::insertTies ()
   {
+    DbU::Unit latchUpMax = getEtesian()->getLatchUpMax();
+    if (latchUpMax == 0) return EtesianEngine::NoFlags;
+
+    if (not getEtesian()->getFeedCells().getTie()) {
+      cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
+      return EtesianEngine::NoFlags;
+    }
+
+    uint32_t status = EtesianEngine::NoFlags;
     for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
-      _slices[islice]->insertTies( latchUpMax, islice );
+      status |= _slices[islice]->insertTies( latchUpMax, islice );
     }
     validate( latchUpMax );
+    return status;
   }
 
 
@@ -727,7 +758,7 @@ namespace Etesian {
     count = 0;
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
-      cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
+    //cerr << Error("SubSlice::getAverageChunk(): No feed has been registered, ignoring.") << endl;
       return -1;
     }
     DbU::Unit  feedWidth  = feed->getAbutmentBox().getWidth();
@@ -822,8 +853,9 @@ namespace Etesian {
   }
   
 
-  void  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
+  uint32_t  SubSlice::insertTies ( DbU::Unit latchUpMax, size_t yspin )
   {
+    uint32_t  status       = EtesianEngine::NoFlags;
     size_t    count        = 0;
     DbU::Unit averageChunk = getAverageChunk( count );
     if (averageChunk > latchUpMax) {
@@ -832,13 +864,13 @@ namespace Etesian {
                    , getString(DbU::getValueString(getYBottom())).c_str()
                    , getString((*_beginTile).getOccurrence()).c_str()
                    ) << endl;
-      return;
+      return EtesianEngine::FailedPolarizationTies;
     }
     
     Cell* feed = _slice->getEtesian()->getFeedCells().getTie();
     if (feed == NULL) {
       cerr << Error( "SubSlice::insertTies(): No feed has been registered, ignoring." ) << endl;
-      return;
+      return EtesianEngine::NoFlags;
     }
     DbU::Unit  feedWidth = feed->getAbutmentBox().getWidth();
 
@@ -950,6 +982,7 @@ namespace Etesian {
         tileLength   += (*iTile).getWidth();
 
         if (iTile == _beginTile) {
+          status |= EtesianEngine::FailedPolarizationTies;
           cerr << Error( "SubSlice::insertTies(): Not enough free space to insert polarization ties.\n"
                          "        @Y=%s, begin=%s"
                        , getString(DbU::getValueString(getYBottom())).c_str()
@@ -960,7 +993,9 @@ namespace Etesian {
         --iTile;
       } 
     }
+
     cdebug_tabw(121,-2);
+    return status;
   }
 
   
@@ -997,7 +1032,7 @@ namespace Etesian {
   //Breakpoint::stop( 100, "Before adding feeds." );
     cmess2 << "  o  Adding feed cells." << endl;
 
-  //DebugSession::open( 145, 150 );
+  //DebugSession::open( 120, 150 );
     UpdateSession::open();
 
     if (_area) delete _area;
@@ -1074,19 +1109,20 @@ namespace Etesian {
 
     for ( const Box& trackAvoid : _trackAvoids )
       _area->trackAvoid( trackAvoid );
-    if (getConfiguration()->getLatchUpDistance()) {
-      Cell* tie = getFeedCells().getTie();
-      if (tie) {
-        DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - tie->getAbutmentBox().getWidth();
-        _area->insertTies( tieSpacing );
-      }
-    }
+    _status |= _area->insertTies();
     _area->addFeeds();
 
     UpdateSession::close();
   //DebugSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
+
+    if (_status & FailedPolarizationTies) {
+      throw Error( "EtesianEngine::toHurricane(): Not enough space to insert all the polarization ties.\n"
+                   "        You should increase free space on %s."
+                 , getString(getCell()).c_str()
+                 );
+    }
 
     Breakpoint::stop( 101, "EtesianEngine::toHurricane() finished." );
   }

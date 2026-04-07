@@ -32,6 +32,8 @@ namespace Hurricane {
 // Entity implementation
 // ****************************************************************************************************
 
+  FastRTTI  Entity::_fastRTTI ( demangle(typeid(Entity).name()), &Entity::Inherit::fastRTTI() );
+
 
   Entity::Entity()
     : Inherit()
@@ -92,6 +94,10 @@ namespace Hurricane {
   }
 
 
+  const FastRTTI& Entity::vfastRTTI () const
+  { return _fastRTTI; }
+
+
   void  Entity::_toJson ( JsonWriter* writer ) const
   {
     Inherit::_toJson( writer );
@@ -111,6 +117,7 @@ namespace Hurricane {
   {
     Record* record = Inherit::_getRecord();
     if (record) {
+      record->add( getSlot("_fastRTTI" , &_fastRTTI ), Record::Overload );
       Occurrence occurrence = Occurrence(this);
       if (occurrence.hasProperty())
         record->add( getSlot("Occurrence", occurrence) );

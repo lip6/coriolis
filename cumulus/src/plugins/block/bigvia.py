@@ -63,6 +63,8 @@ class BigVia ( object ):
         self.vias        = {}
         self.widths [depth] = width
         self.heights[depth] = height
+        self.maxRows     = 0
+        self.maxCols     = 0
 
     def __str__ ( self ):
         global rg
@@ -96,13 +98,20 @@ class BigVia ( object ):
         bb = Box( self.x, self.y )
         bb.inflate( self.widths[depth] // 2, self.heights[depth] // 2 )
         return bb
-        
 
     def getPlate ( self, metal ):
         if not self.hasLayout: return None
         for plate in self.plates.values():
             if plate.getLayer().contains(metal): return plate
         return None
+
+    def setMaxRows ( self, maxRows ):
+        self.maxRows = maxRows
+        self.flags  |= BigVia.FitToVias
+
+    def setMaxCols ( self, maxCols ):
+        self.maxCols = maxCols
+        self.flags  |= BigVia.FitToVias
 
     def mergeDepth ( self, depth ):
         if self.hasLayout:
@@ -175,109 +184,128 @@ class BigVia ( object ):
                         maxCutMatrix = cutMatrix
                 for cutMatrix in cutMatrixes:
                     cutMatrix[1] = maxCutMatrix[0] + maxCutMatrix[1] - cutMatrix[0]
-                    cutMatrix[2] = maxCutMatrix[2]
             for depth in range(self.bottomDepth,self.topDepth):
                 self._doCutMatrix( depth, cutMatrixes[ depth - self.bottomDepth ] )
         self.hasLayout = True
 
     def _computeCutMatrix ( self, depth ):
+        twoGrid      = DbU.fromGrid( 2.0 )
         viaLayer     = rg.getContactLayer( depth )
         cutLayer     = viaLayer.getCut()
         cutSide      = cutLayer.getMinimalSize()
         cutSpacing   = cutLayer.getMinimalSpacing()
+        cutVSpacing  = int(cutSpacing * 1.4)
+        cutVSpacing  = cutVSpacing - cutVSpacing%twoGrid
         if not cutSide:
             raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Minimal side of cut layer "{}" is zero.' \
                                    .format( cutLayer.getName() ))
         if not cutSpacing:
             raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Cut spacing on layer "{}" is zero.' \
                                    .format( cutLayer.getName() ))
-        if self.flags & BigVia.FitToVias:
             trace( 550, '\tBigVia: {} Use FitToVias\n'.format(self) )
-            botPlate = self.plates[ depth ]
 
-            botHEnclosure = viaLayer.getBottomEnclosure( Layer.EnclosureH )
-            cutNb         = (self.rwidth - 2*botHEnclosure + cutSpacing) // (cutSide + cutSpacing)
-            if cutNb == 0: cutNb = 1
-            minHSide = 2*botHEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
+        botPlate      = self.plates[ depth ]
+        botHEnclosure = viaLayer.getBottomEnclosure( Layer.EnclosureH )
+        botXCutNb     = (self.rwidth - 2*botHEnclosure + cutSpacing) // (cutSide + cutSpacing)
+        if botXCutNb == 0:
+            if self.flags & BigVia.AllowHorizontalExpand:
+                botXCutNb = 1
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut (bottom) of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Width is too small to fit a single VIA cut.' 
+                                       ] )
+        minHSide = 2*botHEnclosure + botXCutNb*cutSide + (botXCutNb-1)*cutSpacing
+        if self.flags & BigVia.FitToVias:
             if (depth == self.bottomDepth) or (botPlate.getWidth() < minHSide):
                 botPlate.setWidth( minHSide )
 
-            botVEnclosure = viaLayer.getBottomEnclosure( Layer.EnclosureV )
-            cutNb         = (self.rheight - 2*botVEnclosure + cutSpacing) // (cutSide + cutSpacing)
-            if cutNb == 0: cutNb = 1
-            minVSide = 2*botVEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
-            if (depth == self.bottomDepth) or (botPlate.getHeight() < minVSide):
+        botVEnclosure = viaLayer.getBottomEnclosure( Layer.EnclosureV )
+        botYCutNb     = (self.rheight - 2*botVEnclosure + cutVSpacing) // (cutSide + cutVSpacing)
+        if botYCutNb == 0:
+            if self.flags & BigVia.AllowVerticalExpand:
+                botYCutNb = 1
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut (bottom) of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Height is too small to fit a single VIA cut.' 
+                                       ] )
+        if self.maxRows: botYCutNb = min( botYCutNb, self.maxRows )
+        minVSide = 2*botVEnclosure + botYCutNb*cutSide + (botYCutNb-1)*cutVSpacing
+        if self.flags & BigVia.FitToVias:
+           #if (depth == self.bottomDepth) or (botPlate.getHeight() < minVSide):
+            if (depth == self.bottomDepth):
+                trace( 550, '\tForcing bot plate height to {}\n'.format(DbU.getValueString(minVSide) ))
                 botPlate.setHeight( minVSide )
 
-            topPlate = self.plates[ depth+1 ]
-
-            topHEnclosure = viaLayer.getTopEnclosure( Layer.EnclosureH )
-            cutNb         = (self.rwidth - 2*topHEnclosure + cutSpacing) // (cutSide + cutSpacing)
-            if cutNb == 0: cutNb = 1
-            minHSide = 2*topHEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
+        topPlate      = self.plates[ depth+1 ]
+        topHEnclosure = viaLayer.getTopEnclosure( Layer.EnclosureH )
+        topXCutNb     = (self.rwidth - 2*topHEnclosure + cutSpacing) // (cutSide + cutSpacing)
+        if topXCutNb == 0:
+            if self.flags & BigVia.AllowHorizontalExpand:
+                topXCutNb = 1
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut (top) of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Width is too small to fit a single VIA cut.' 
+                                       ] )
+        minHSide = 2*topHEnclosure + topXCutNb*cutSide + (topXCutNb-1)*cutSpacing
+        if self.flags & BigVia.FitToVias:
             topPlate.setWidth( minHSide )
 
-            topVEnclosure = viaLayer.getTopEnclosure( Layer.EnclosureV )
-            cutNb         = (self.rheight - 2*topVEnclosure + cutSpacing) // (cutSide + cutSpacing)
-            if cutNb == 0: cutNb = 1
-            minVSide = 2*topVEnclosure + cutNb*cutSide + (cutNb-1)*cutSpacing
+        topVEnclosure = viaLayer.getTopEnclosure( Layer.EnclosureV )
+        topYCutNb     = (self.rheight - 2*topVEnclosure + cutVSpacing) // (cutSide + cutVSpacing)
+        if topYCutNb == 0:
+            if self.flags & BigVia.AllowVerticalExpand:
+                topYCutNb = 1
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut (top) of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Height is too small to fit a single VIA cut.' 
+                                       ] )
+        if self.maxRows: topYCutNb = min( topYCutNb, self.maxRows )
+        minVSide = 2*topVEnclosure + topYCutNb*cutSide + (topYCutNb-1)*cutVSpacing
+        if self.flags & BigVia.FitToVias:
             topPlate.setHeight( minVSide )
 
-            return [cutSide, cutSpacing, botHEnclosure]
+        xcuts = min( botXCutNb, topXCutNb )
+        ycuts = min( botYCutNb, topYCutNb )
 
-        topEnclosure = max( viaLayer.getTopEnclosure( Layer.EnclosureH )
-                          , viaLayer.getTopEnclosure( Layer.EnclosureV ))
-        botEnclosure = max( viaLayer.getBottomEnclosure( Layer.EnclosureH )
-                          , viaLayer.getBottomEnclosure( Layer.EnclosureV ))
-        enclosure    = max( topEnclosure, botEnclosure )
-        trace( 550, '\tBigVia: {}\n'.format(self) )
-        trace( 550, '\t| topEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topEnclosure)) )
-        trace( 550, '\t| botEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botEnclosure)) )
-        trace( 550, '\t| enclosure   [{}]: {}\n'.format(depth,DbU.getValueString(enclosure)) )
-        trace( 550, '\t| cut spacing of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSpacing)) )
-        trace( 550, '\t| cut side of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSide)) )
-        cutArea    = self.plates[ depth ].getBoundingBox()
-        hEnclosure = enclosure + cutSide//2
-        vEnclosure = hEnclosure
-        trace( 550, '\t| cut area: {} {} x {}\n'.format(cutArea
-                                                       ,DbU.getValueString(cutArea.getWidth ())
-                                                       ,DbU.getValueString(cutArea.getHeight())) )
-        if hEnclosure*2 > cutArea.getWidth():
-            raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
-                                     .format( cutLayer.getName(), self )
-                                   , 'Width is too small to fit a single VIA cut.' 
-                                   ] )
-        if self.flags & BigVia.AllowHorizontalExpand:
-            hEnclosure = cutArea.getWidth()//2
-        if vEnclosure*2 > cutArea.getHeight():
-            raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
-                                     .format( cutLayer.getName(), self )
-                                   , 'Height is too small to fit a single VIA cut.' 
-                                   ] )
-        if self.flags & BigVia.AllowVerticalExpand:
-            vEnclosure = cutArea.getHeight()//2
-        return [cutSide, cutSpacing, hEnclosure]
+        trace( 550, '\t_computeCutMatrix()\n' )
+        trace( 550, '\t|   viaLayer     [{}]: {}\n'.format(depth,viaLayer) )
+        trace( 550, '\t|   topPlate: {}\n'.format( topPlate ))
+        trace( 550, '\t|   botPlate: {}\n'.format( botPlate ))
+        trace( 550, '\t| * botHEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botHEnclosure)) )
+        trace( 550, '\t|   botVEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botVEnclosure)) )
+        trace( 550, '\t|   topHEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topHEnclosure)) )
+        trace( 550, '\t|   topVEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topVEnclosure)) )
+        trace( 550, '\t| * cut side of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSide)) )
+        trace( 550, '\t| * cut spacing of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSpacing)) )
+        trace( 550, '\t| * cut matrix of {}: {} x {}\n'.format(cutLayer.getName(),xcuts,ycuts) )
+
+        return [cutSide, cutSpacing, xcuts, ycuts ]
 
     def _doCutMatrix ( self, depth, cutMatrix ):
-        cutSide    = cutMatrix[0]
-        cutSpacing = cutMatrix[1]
-        hEnclosure = cutMatrix[2]
-        viaLayer   = rg.getContactLayer( depth )
-        cutLayer   = viaLayer.getCut()
-        cutArea    = self.plates[ depth ].getBoundingBox()
-        cutArea.inflate( -hEnclosure, -hEnclosure )
-        xoffset    = (cutArea.getWidth () % (cutSide+cutSpacing)) // 2
-        yoffset    = (cutArea.getHeight() % (cutSide+cutSpacing)) // 2
-        cutArea.translate( xoffset, yoffset )
+        twoGrid     = DbU.fromGrid( 2.0 )
+        cutSide     = cutMatrix[0]
+        cutSpacing  = cutMatrix[1]
+        cutVSpacing = int(cutSpacing * 1.4)
+        cutVSpacing = cutVSpacing - cutVSpacing%twoGrid
+        xcutNb      = cutMatrix[2]
+        ycutNb      = cutMatrix[3]
+        viaLayer    = rg.getContactLayer( depth )
+        cutLayer    = viaLayer.getCut()
+
+        xmin = self.x - ((xcutNb - 1) * (cutSide+ cutSpacing)) // 2
+        ymin = self.y - ((ycutNb - 1) * (cutSide+cutVSpacing)) // 2
+
         self.vias[ depth ] = []
-        y = cutArea.getYMin()
-        while y <= cutArea.getYMax():
-            x = cutArea.getXMin()
-            self.vias[ depth ].append( [] )
-            while x <= cutArea.getXMax():
+
+        for j in range(ycutNb):
+            for i in range(xcutNb):
+                x = xmin + (cutSide+ cutSpacing)  * i
+                y = ymin + (cutSide+ cutVSpacing) * j
                 cut = Contact.create( self.net, cutLayer, x, y, cutSide, cutSide )
-                self.vias[ depth ][ -1 ].append( cut )
-                x += cutSide + cutSpacing
-                trace( 550, '\t| cut {})\n'.format( cut ))
-            y += cutSide + cutSpacing
+                self.vias[ depth ].append( cut )
+                trace( 550, '\t  | cut {})\n'.format( cut ))
         

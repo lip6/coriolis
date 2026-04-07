@@ -328,20 +328,20 @@ namespace Anabatic {
         setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
         if (south()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Vertical );
+        AutoSegment::create( getSouthContact(), getNorthContact(), Flags::Vertical );
       } else {
         setSouthWestContact( AutoContactTurn::create( getGCell(), getNet(), viaLayer ) );
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
         if (west()) swapCornerContacts();
 
-        AutoSegment::create( getSouthWestContact(), getNorthEastContact(), Flags::Horizontal );
+        AutoSegment::create( getWestContact(), getEastContact(), Flags::Horizontal );
       }
     } else { // fields.globals == 4.
       AutoContact* turn = AutoContactTurn::create( getGCell(), getNet(), viaLayer );
       setSouthWestContact( AutoContactHTee::create( getGCell(), getNet(), viaLayer ) );
       setNorthEastContact( AutoContactVTee::create( getGCell(), getNet(), viaLayer ) );
-      AutoSegment::create( getSouthWestContact(), turn, Flags::Horizontal );
-      AutoSegment::create( turn, getNorthEastContact(), Flags::Vertical );
+      AutoSegment::create( getWestContact(), turn, Flags::Horizontal );
+      AutoSegment::create( turn, getNorthContact(), Flags::Vertical );
     } 
     
     cdebug_tabw(145,-1);
@@ -537,8 +537,13 @@ namespace Anabatic {
 
     if (getSourceContact()) {
       uint64_t     segmentBound  = getSegmentHookType( getFromHook() );
-      AutoContact* targetContact
-        = (segmentBound & (NorthBound|EastBound)) ? getNorthEastContact() : getSouthWestContact() ;
+      AutoContact* targetContact = nullptr;
+      switch ( segmentBound ) {
+        case EastBound:  targetContact = getEastContact (); break;
+        case WestBound:  targetContact = getWestContact (); break;
+        case NorthBound: targetContact = getNorthContact(); break;
+        case SouthBound: targetContact = getSouthContact(); break;
+      }
       if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
 
       AutoContact* sourceContact = getSourceContact();
@@ -567,10 +572,10 @@ namespace Anabatic {
     } else
       setFromHook( NULL );
     
-    push( east (), getNorthEastContact() );
-    push( west (), getSouthWestContact() );
-    push( north(), getNorthEastContact() );
-    push( south(), getSouthWestContact() );
+    push( east (), getEastContact() );
+    push( west (), getWestContact() );
+    push( north(), getNorthContact() );
+    push( south(), getSouthContact() );
 
     cdebug_tabw(145,-1);
     return true;

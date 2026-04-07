@@ -113,6 +113,31 @@ namespace Katana {
                  , addeds,(after-before) ) << endl;
     }
 
+#ifdef CHECK_UPCOMING_5_EVENTS
+    size_t topStackSize = std::min( (size_t)5, (size_t)_events.size() );
+    if (topStackSize > 1) {
+      vector<RoutingEvent*> topStack;
+      auto ievent = _events.end();
+      for ( size_t i=0 ; i<topStackSize ; ++i ) {
+        topStack.push_back( *(--ievent) );
+      }
+
+      bool badOrder = false;
+      for ( size_t i=0 ; i<topStackSize-1 ; ++i ) {
+        if (topStack[i]->getEventLevel() > topStack[i+1]->getEventLevel()) {
+          badOrder = true;
+          break;
+        }
+      }
+
+      if (badOrder or (RoutingEvent::getProcesseds() > 813620)) {
+        cerr << "Suspicious event queue order" << endl;
+        for ( size_t i=0 ; i<topStackSize-1 ; ++i )
+          cerr << "[" << i << "] " << topStack[i] << endl;
+      }
+    }
+#endif
+
     cdebug_tabw(159,-1);
   }
 
@@ -152,19 +177,30 @@ namespace Katana {
     _keyCheck ();
 #endif
 
-    multiset<RoutingEvent*,RoutingEvent::Compare>::iterator ievent = _events.find(event);
-    size_t count = _events.count(event);
-    if (count > 1) {
-      cerr << Bug( "RoutingEventQueue::repush(): %d events matches key %p.", count, event ) << endl;
-#if defined(CHECK_ROUTINGEVENT_QUEUE)
-      _keyCheck ();
-#endif
+    auto   duplicates = _events.equal_range( event );
+    size_t count      = 0;
+    for ( auto ievent = duplicates.first ; ievent != duplicates.second ; ++ievent ) {
+      if ((*ievent == event) and not (*ievent)->isDisabled()) count++;
     }
 
-    if (ievent != _events.end()) {
-      _events.erase( ievent );
+    if (count > 1) {
+      cerr << Bug( "RoutingEventQueue::repush(): %d events matches key %p:%s."
+                 , count , event, getString(event).c_str()
+                 ) << endl;
     }
-    push ( event );
+
+    if (count > 0) {
+      auto ievent = duplicates.first;
+      while (ievent != duplicates.second ) {
+        auto eraseEvent = ievent++;
+        if (*eraseEvent == event) _events.erase( eraseEvent );
+      }
+// #if defined(CHECK_ROUTINGEVENT_QUEUE)
+//    _keyCheck ();
+// #endif
+    }
+
+    push( event );
   }
 
 

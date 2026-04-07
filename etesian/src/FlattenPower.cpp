@@ -364,7 +364,7 @@ namespace {
   }
 
 
-  class RailMatch : public unary_function<Rail*,bool> {
+  class RailMatch {
     public:
       inline      RailMatch  ( DbU::Unit axis, DbU::Unit width );
       inline bool operator() ( const Rail* );

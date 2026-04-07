@@ -61,7 +61,7 @@ class Surelog ( FlowTask ):
         shutil.move( 'slpp_all/surelog.uhdm', self.file_target(0) )
         return True
 
-    def create_doit_tasks ( self ):
+    def asDoitTask ( self ):
         return { 'basename' : self.basename
                , 'actions'  : [ self.doTask ]
                , 'doc'      : 'Run {}.'.format( self )

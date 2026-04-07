@@ -72,6 +72,8 @@ namespace Spice {
               std::string      _getString      () const;
               Record*          _getRecord      () const;
     private:
+              void             _recheckNets    ();
+    private:
       static std::vector<Entity*>  _entities;
       static std::ptrdiff_t        _offset;
              std::vector<Bit*>     _bits;

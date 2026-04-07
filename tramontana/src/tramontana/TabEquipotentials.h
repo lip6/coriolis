@@ -47,11 +47,11 @@ namespace Tramontana {
       virtual void                  selectionModeChanged  ();
 
     protected:
-      EquipotentialsWidget* _browser;
-      QCheckBox*            _syncEquipotentials;
-      QCheckBox*            _showSelection;
-      QCheckBox*            _showBuried;
-      bool                  _cwCumulativeSelection;
+      EquipotentialsWidget*        _browser;
+      QCheckBox*                   _syncEquipotentials;
+      QCheckBox*                   _showSelection;
+      QCheckBox*                   _showBuried;
+      bool                         _cwCumulativeSelection;
   };
 
 

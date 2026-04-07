@@ -242,12 +242,13 @@ void DumpContacts(ofstream& ccell, Cell *cell)
 
   void DumpSegments ( ofstream& ccell, Cell* cell )
   {
-    const char* mbkLayer     = NULL;
+    const char* mbkLayer     = nullptr;
     DbU::Unit   x1, x2, y1, y2, width;
-    Segment*    segment      = NULL;
-    RoutingPad* rp           = NULL;
+    Segment*    segment      = nullptr;
+    Pin*        pin          = nullptr;
+    RoutingPad* rp           = nullptr;
     bool        external     = false;
-    const char* direction    = NULL;
+    const char* direction    = nullptr;
 
     for ( Net* net : cell->getNets() ) {
       string netName = toMBKName( net->getName() );
@@ -269,7 +270,7 @@ void DumpContacts(ofstream& ccell, Cell *cell)
             y2           = rp->getTargetY();
             width        = segment->getWidth();
           } else {
-            Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+            pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
             if (pin and (rp->getOccurrence().getPath().getHeadInstance() != NULL)) {
               Box bb ( pin->getBoundingBox() );
               rp->getOccurrence().getPath().getTransformation().applyOn( bb );
@@ -345,7 +346,8 @@ unsigned getPinIndex(Name& pinname)
 
 void DumpPins(ofstream &ccell, Cell* cell)
 {
-  const char* mbkLayer = NULL;
+  const char* mbkLayer  = nullptr;
+  const char* direction = nullptr;
 
   for ( Net* net : cell->getExternalNets() ) {
     vector<Pin*> pins;
@@ -373,15 +375,46 @@ void DumpPins(ofstream &ccell, Cell* cell)
       indexesSet.insert(index);
 
       DbU::Unit width = 0;
-      switch ( pin->getAccessDirection() ) {
-        case Pin::AccessDirection::NORTH:
-        case Pin::AccessDirection::SOUTH: width = pin->getWidth(); break;
-        case Pin::AccessDirection::EAST:
-        case Pin::AccessDirection::WEST: width = pin->getHeight(); break;
-        default:
-          break;
+      if (  (pin->getAccessDirection() == Pin::AccessDirection::NORTH)
+         or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH)) {
+        width = pin->getWidth();
+      } else {
+        width = pin->getHeight();
       }
 
+      DbU::Unit cap = pin->getLayer()->getExtentionCap();
+      if ((pin->getWidth() > cap) and (pin->getHeight() > cap)) {
+        Box       bb  ( pin->getBoundingBox() );
+        DbU::Unit x1, x2, y1, y2;
+        if (  (pin->getAccessDirection() == Pin::AccessDirection::NORTH)
+           or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH)) {
+          x1        = bb.getCenter().getX();
+          x2        = x1;
+          y1        = bb.getYMin() + cap;
+          y2        = bb.getYMax() - cap;
+          width     = bb.getWidth();
+          direction = "UP";
+        } else {
+          x1        = bb.getXMin() + cap;
+          x2        = bb.getXMax() - cap;
+          y1        = bb.getCenter().getY();
+          y2        = y1;
+          width     = bb.getHeight();
+          direction = "RIGHT";
+        }
+        
+        ccell << "S "
+              << toMBKlambda(x1) << ","
+              << toMBKlambda(y1) << ","
+              << toMBKlambda(x2) << ","
+              << toMBKlambda(y2) << ","
+              << toMBKlambda(width) << ","
+              << toMBKName(net->getName()) << ","
+              << direction << "," 
+              << mbkLayer
+              << endl;
+      }
+      
       ccell << "C " << toMBKlambda(pin->getX())
             << ","  << toMBKlambda(pin->getY())
             << ","  << toMBKlambda(width)

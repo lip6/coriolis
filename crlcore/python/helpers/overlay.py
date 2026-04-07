@@ -25,6 +25,7 @@ Contains:
 * ``overlay.CfgCache``      : A cache for Cfg parameters.
 """
 
+import sys
 from ..  import Cfg
 from ..  import Hurricane
 from .io import isVL
@@ -101,7 +102,7 @@ class CfgDefault ( object ):
     It is used as a very last ditch to get a value for a parameter.
     """
 
-    def __init__ ( self, v ):
+    def __init__ ( self, v=None ):
         self.vDefault = v
 
     def __str__ ( self ):
@@ -353,4 +354,6 @@ class CfgCache ( object ):
                 self._rattr[attrName].display()
                 continue
             print( '     - {}.{} = {}'.format(self._path,attrName,self._rattr[attrName]) )
+        sys.stdout.flush()
+        sys.stderr.flush()
 

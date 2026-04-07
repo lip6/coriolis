@@ -344,8 +344,9 @@ extern "C" {
     PyObject* arg0 = NULL;
     PyObject* arg1 = NULL;
     __cs.init ("Box.translate");
-    if (PyArg_ParseTuple(args,"O&O&:Box.translate", Converter, &arg0, Converter, &arg1)) {
-      if (__cs.getObjectIds() == INTS2_ARG) box->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+    if (PyArg_ParseTuple(args,"O&|O&:Box.translate", Converter, &arg0, Converter, &arg1)) {
+      if      (__cs.getObjectIds() == INTS2_ARG) box->translate( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      else if (__cs.getObjectIds() == POINT_ARG) box->translate( *PYPOINT_O(arg0) );
       else {
         PyErr_SetString ( ConstructorError, "Box.translate(): Invalid type for parameter(s)." );
         return NULL;
@@ -356,7 +357,8 @@ extern "C" {
     }
     HCATCH
 
-    Py_RETURN_NONE;
+    Py_INCREF ( self );
+    return ( (PyObject*)self );
   }
 
 

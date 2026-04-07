@@ -23,7 +23,6 @@ include = [
   "coloquinte",
   "crlcore",
   "cumulus",
-  "equinox",
   "etesian",
   "flute",
   "foehn",
@@ -35,7 +34,6 @@ include = [
   "oroshi",
   "pdm.lock",
   "pyproject.toml",
-  "solstice",
   "stratus1",
   "tramontana",
   "tutorial",
@@ -43,7 +41,7 @@ include = [
   "unittests",
 ]
 [build-system]
-requires = ["setuptools", "pdm-backend", "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",  "ninja", "meson-python == 0.13.2", "cmake", "dunamai"]
+requires = ["setuptools", "pdm-backend", "ninja", "meson-python == 0.13.2", "cmake", "dunamai"]
 build-backend = "mesonpy"
 
 [tool.cibuildwheel.linux]
@@ -78,7 +76,6 @@ doc = [
     "markupsafe >= 2.0.0"
 ]
 dev = [
-    "meson @ git+https://github.com/robtaylor/meson@homebrew-fixes",
     "ninja",
     "meson-python == 0.13.2",
     "cmake",

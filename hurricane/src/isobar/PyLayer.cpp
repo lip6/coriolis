@@ -349,6 +349,36 @@ extern "C" {
   }
 
 
+  static PyObject* PyLayer_setMinimalSpacing ( PyLayer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyLayer_setMinimalSpacing()" << endl;
+    HTRY
+    GENERIC_METHOD_HEAD(Layer,cobject,"PyLayer.setMinimalSpacing()")
+
+    PyObject* pyMinimalSpacing = NULL;
+    PyObject* pyWidth          = NULL;
+    PyObject* pyParallelLength = NULL;
+    if (PyArg_ParseTuple( args, "O|OO:PyLayer.setMinimalSpacing()"
+                              , &pyMinimalSpacing
+                              , &pyWidth
+                              , &pyParallelLength)) {
+      if (pyWidth)
+        cobject->setMinimalSpacing( PyAny_AsLong(pyMinimalSpacing)
+                                  , PyAny_AsLong(pyWidth)
+                                  , PyAny_AsLong(pyParallelLength) );
+      else 
+        cobject->setMinimalSpacing( PyAny_AsLong(pyMinimalSpacing), 0, 0 );
+    } else {
+      PyErr_SetString ( ConstructorError
+                      , "Layer.setMinimalSpacing(): Parameter is not of long (DbU) type" );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   GetNameMethod               (Layer, layer)
   predicateFromLayer          (                          above             ,PyLayer,Layer)
   predicateFromLayer          (                          below             ,PyLayer,Layer)
@@ -375,10 +405,10 @@ extern "C" {
   DirectGetLongAttribute      (PyLayer_getMinimalSize   ,getMinimalSize    ,PyLayer,Layer)
   DirectGetLongAttribute      (PyLayer_getMinimalSpacing,getMinimalSpacing ,PyLayer,Layer)
   DirectGetDoubleAttribute    (PyLayer_getMinimalArea   ,getMinimalArea    ,PyLayer,Layer)
+  DirectVoidMethod            (Layer,layer,printSpacingTable )
 
   SetNameMethod(Layer, layer)
   updatorFromDbu          (setMinimalSize   ,PyLayer,Layer)
-  updatorFromDbu          (setMinimalSpacing,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
   DirectSetBoolAttribute  (PyLayer_setSymbolic   ,setSymbolic   ,PyLayer,Layer)
@@ -390,7 +420,9 @@ extern "C" {
 
 
   PyMethodDef PyLayer_Methods[] =
-    { { "getTechnology"       , (PyCFunction)PyLayer_getTechnology       , METH_NOARGS
+    { { "printSpacingTable"   , (PyCFunction)PyLayer_printSpacingTable   , METH_NOARGS
+                              , "Display the spacing table for this layer (LEF like)." }
+    , { "getTechnology"       , (PyCFunction)PyLayer_getTechnology       , METH_NOARGS
                               , "Returns the technology owning the layer." }
     , { "getName"             , (PyCFunction)PyLayer_getName             , METH_NOARGS
                               , "Returns the name of the layer." }

@@ -1,7 +1,6 @@
 
 
- venv      = source .venv/bin/activate
- localpath = export PATH=${HOME}/.local/bin:${PATH};
+ venv = . .venv/bin/activate;
 
  REGRESSION_DIR = 
  ifneq ($(findstring nightly,$(shell pwd)),)
@@ -15,12 +14,54 @@
  ifneq ($(shell which nproc 2> /dev/null),)
    SMP_FLAGS = -j$(shell nproc)
  endif
- SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
- CORIOLIS_SRC = ${SRC_DIR}/coriolis
- ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
- BUILDTYPE    = release
- BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
- PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+
+ USE_VENV = Yes
+ ifneq ($(findstring abuild/rpmbuild,$(shell pwd)),)
+   $(info Using RPM directory tree scheme)
+   PYTHON_BIN   = python3
+   ifneq ($(findstring coriolis-eda-2.5.5-build,$(shell pwd)),)
+     SRC_DIR    = ${HOME}/rpmbuild/BUILD/coriolis-eda-2.5.5-build
+   else
+     SRC_DIR    = ${HOME}/rpmbuild/BUILD
+   endif
+   CORIOLIS_SRC = ${SRC_DIR}/coriolis-eda-2.5.5
+   ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+   BUILDDIR     = ${CORIOLIS_SRC}/build
+   PREFIX       = /usr
+ else
+   ifneq ($(findstring packages/BUILD,$(shell pwd)),)
+     $(info Using DEB directory tree scheme)
+     PYTHON_BIN   = python3
+     SRC_DIR      = /usr/src/packages/BUILD
+     CORIOLIS_SRC = ${SRC_DIR}
+     ALLIANCE_SRC = ${SRC_DIR}
+     BUILDDIR     = ${CORIOLIS_SRC}/build
+     PREFIX       = /usr
+   else
+     $(info Using LIP6 build directory tree scheme)
+#    PYTHON_BIN   = /usr/bin/python3.11
+     PYTHON_BIN   = python3
+     SRC_DIR      = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/src
+     CORIOLIS_SRC = ${SRC_DIR}/coriolis
+     ALLIANCE_SRC = ${SRC_DIR}/alliance/alliance/src
+     BUILDTYPE    = release
+     BUILDDIR     = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/build
+     PREFIX       = ${HOME}$(REGRESSION_DIR)/coriolis-2.x/$(BUILDTYPE)/install
+   endif
+ endif
+
+ ifeq ($(USE_VENV),Yes)
+   PDM_BIN     = $(CORIOLIS_SRC)/.venv/bin/pdm
+   MESON_BIN   = $(CORIOLIS_SRC)/.venv/bin/meson
+   PELICAN_BIN = $(CORIOLIS_SRC)/.venv/bin/pelican
+   DOIT_BIN    = $(CORIOLIS_SRC)/.venv/bin/doit
+ else
+   PDM_BIN     = /usr/bin/pdm
+   MESON_BIN   = /usr/bin/meson
+   PELICAN_BIN = /usr/bin/pelican
+   DOIT_BIN    = /usr/bin/doit
+ endif
+
 
 
 help:
@@ -37,9 +78,11 @@ help:
 	 echo "    ego@home:coriolis> make uninstall";                                        \
 	 echo "============================================================================"; \
 	 echo "SMP_FLAGS    = $(SMP_FLAGS)" ;                                                 \
+	 echo "SRC_DIR      = $(SRC_DIR)" ;                                                   \
 	 echo "CORIOLIS_SRC = $(CORIOLIS_SRC)" ;                                              \
 	 echo "BUILDDIR     = $(BUILDDIR)" ;                                                  \
 	 echo "PREFIX       = $(PREFIX)" ;                                                    \
+	 echo "DESTDIR      = $(DESTDIR)" ;                                                   \
 	 echo "============================================================================";
 
 
@@ -55,28 +98,55 @@ check_dir:
 	 fi
 
 
-$(HOME)/.local/bin/pdm:
-	@pip install pdm
+$(CORIOLIS_SRC)/.venv:
+	$(PYTHON_BIN) -m venv .venv
 
 
-$(CORIOLIS_SRC)/.pdm-plugins/bin/pdm: $(HOME)/.local/bin/pdm
-	@$(localpath) pdm install --no-self -d --plugins
+$(MESON_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(MESON_BIN)" ]; then pip install meson; fi
 
 
-wipe:
-	@$(localpath) pdm run meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
+$(PELICAN_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(PELICAN_BIN)" ]; then pip install pelican; fi
 
 
-setup:
-	@$(localpath) pdm run meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix -Donly-docs=false
+$(DOIT_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(DOIT_BIN)" ]; then pip install doit==0.33.1; fi
 
 
-configure:
-	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+ifeq ($(USE_SYSTEM_PDM),)
+
+$(PDM_BIN): $(CORIOLIS_SRC)/.venv
+	$(venv) if [ ! -x "$(PDM_BIN)" ]; then pip install pdm; pdm install --no-self -d --plugins; fi
 
 
-install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup configure
-	@$(localpath) pdm run meson install -C $(BUILDDIR)
+install_venv: $(PDM_BIN) $(MESON_BIN) $(PELICAN_BIN) #$(DOIT_BIN)
+
+else
+
+install_venv: $(MESON_BIN) $(PELICAN_BIN)
+
+endif
+
+
+wheel: check_dir install_venv 
+	$(venv) python -m pip --use-feature=in-tree-build wheel .
+
+
+wipe: check_dir install_venv
+	$(venv) meson setup ${BUILDDIR} --wipe -Dpython.install_env=prefix -Donly-docs=false
+
+
+setup: check_dir install_venv
+	$(venv) meson setup ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix -Donly-docs=false
+
+
+configure: check_dir install_venv
+	$(venv) meson configure ${BUILDDIR} --prefix=$(PREFIX) -Dpython.install_env=prefix
+
+
+install: setup configure
+	$(venv) meson install -C $(BUILDDIR)
 	@echo "";                                                                             \
 	 echo "============================================================================"; \
 	 echo "Coriolis has been successfully built";                                         \
@@ -86,10 +156,11 @@ install: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm setup configure
 	 echo "============================================================================";
 
 
-install_docs: check_dir $(CORIOLIS_SRC)/.pdm-plugins/bin/pdm configure
-	@$(localpath) pdm run meson configure ${BUILDDIR} --prefix=$(PREFIX) \
-	                                                  -Ddocs=true
-	@$(localpath) pdm run meson install -C $(BUILDDIR)
+install_docs: check_dir configure
+	$(venv) echo "PYTHON=`which python`"
+	$(venv) meson configure ${BUILDDIR} --prefix=$(PREFIX) -Ddocs=true
+	$(venv) meson install -C $(BUILDDIR)
+	@echo "Documentation generated and installed."
 
 
 install_alliance:
@@ -103,6 +174,26 @@ install_alliance:
 	 cd $(BUILDDIR); \
 	 $(ALLIANCE_SRC)/configure --prefix=$(PREFIX) --enable-alc-shared; \
 	 make -j1 install
+
+install_tasyagle:
+	cd ../tas-yagle && ./build.sh --LIP6
+
+install_ihpsg13g2:
+	cd ../coriolis-pdk-ihpsg13g2 && ./build-LIP6.sh
+
+install_ihpsg13g2_c4m:
+	cd ../coriolis-pdk-ihpsg13g2-c4m && ./build-LIP6.sh
+
+install_gf180mcu:
+	cd ../coriolis-pdk-gf180mcu && ./build-LIP6.sh
+
+install_g180mcu_c4m:
+	cd ../coriolis-pdk-gf180mcu-c4m && ./build-LIP6.sh
+
+install_all_pdks: install_ihpsg13g2     \
+                  install_ihpsg13g2_c4m \
+                  install_gf180mcu      \
+                  install_g180mcu_c4m
 
 
 clean_build: check_dir
@@ -120,4 +211,4 @@ clean_pdm:
 
 uninstall: check_dir
 	@echo "Removing the whole build & install tree..."; \
-	@$(localpath) pdm run ninja -C $(BUILDDIR) uninstall
+	@$(venv) ninja -C $(BUILDDIR) uninstall

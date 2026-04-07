@@ -24,6 +24,7 @@
 #include <vector>
 using namespace std;
 
+#include "hurricane/Timer.h"
 #include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Plug.h"
@@ -834,6 +835,7 @@ namespace CRL {
   Cell* Blif::load ( string cellPath, bool enforceVhdl )
   {
     using namespace std;
+    using Hurricane::Timer;
 
     string mainName;
     string blifFile  = cellPath;
@@ -845,7 +847,9 @@ namespace CRL {
   
     auto framework = AllianceFramework::get();
   
-    cmess2 << "     " << tab++ << "+ " << blifFile << " [blif]" << endl;
+    // Timer  timer;
+    // timer.start();
+    // cmess2 << "     " << tab++ << "+ " << blifFile << " [blif]" << endl;
 
     Cell*                 mainModel = NULL;
     Model*                blifModel = NULL;
@@ -994,6 +998,14 @@ namespace CRL {
     }
     tab--;
 
+    // timer.suspend();
+    // ostringstream result;
+
+    // result <<  Timer::getStringTime(timer.getCombTime()) 
+    //        << ", " << Timer::getStringMemory(timer.getIncrease());
+    // cmess1 << Dots::asString( "     - Pure file reading", result.str() ) << endl;
+    // timer.resume();
+
     Model::orderModels();
     Model::connectModels();
     if (enforceVhdl) Model::toVhdlModels();
@@ -1006,6 +1018,18 @@ namespace CRL {
       cerr << Warning( "Blif::load(): File %s.blif doesn't contains any \".model\".\n"
                      , blifFile.c_str()
                      );
+    // timer.stop();
+    // result.str( "" );
+    // result <<  Timer::getStringTime(timer.getCombTime()) 
+    //        << ", " << Timer::getStringMemory(timer.getIncrease());
+    // cmess1 << Dots::asString( "     - Done in", result.str() ) << endl;
+
+    // if (mainModel) {
+    //   cerr << "NetMap hash table of " << mainModel << endl;
+    //   mainModel->_getNetMap().Stats();
+    //   cerr << "InstanceMap hash table of " << mainModel << endl;
+    //   mainModel->_getInstanceMap().Stats();
+    // }
 
     return mainModel;
   }

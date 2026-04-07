@@ -64,6 +64,12 @@ typedef  multimap<Entity*,Entity*>  SlaveEntityMap;
 class Cell : public Entity {
 // *************************
 
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
+
 // Types
 // *****
 
@@ -238,15 +244,15 @@ class Cell : public Entity {
         const Cell* _cell;
     };
 
-    class InstanceMap : public IntrusiveMap<Name, Instance> {
+    class InstanceMap : public IntrusiveMap<const SharedName*, Instance> {
     // ****************************************************
 
-        public: typedef IntrusiveMap<Name, Instance> Inherit;
+        public: typedef IntrusiveMap<const SharedName*, Instance> Inherit;
 
         public: InstanceMap();
 
-        public: virtual Name _getKey(Instance* instance) const;
-        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual const SharedName* _getKey(Instance* instance) const;
+        public: virtual unsigned _getHashValue(const SharedName* name) const;
         public: virtual Instance* _getNextElement(Instance* instance) const;
         public: virtual void _setNextElement(Instance* instance, Instance* nextInstance) const;
 
@@ -414,7 +420,7 @@ class Cell : public Entity {
     public: Flags& getFlags() { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
     public: Entity* getEntity(const Signature&) const;
-    public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
+    public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name._getSharedName());};
     public: Instances getInstances() const {return _instanceMap.getElements();};
     public: Instances getPlacedInstances() const;
     public: Instances getFixedInstances() const;
@@ -523,12 +529,16 @@ class Cell : public Entity {
     public: void materialize();
     public: void unmaterialize();
     public: Cell* getClone();
+    public: void flatten(Instance*);
     public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
     public: void notify(unsigned flags);  
     public: void destroyPhysical();
 };
+
+  
+inline const FastRTTI& Cell::fastRTTI () { return _fastRTTI; }
 
 
 inline  Cell::ClonedSet::Locator::Locator ( const Locator& other )

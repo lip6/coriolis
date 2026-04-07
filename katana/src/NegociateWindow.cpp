@@ -68,8 +68,13 @@ namespace {
       if (   segment->isBlockage()
          or (segment->isFixed()
             and not (segment->isVertical() and Session::getKatanaEngine()->isChannelStyle()))) {
-        cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
-        cost.setInfinite   ();
+        if (segment->isFixedSpanRp()) {
+          cdebug_log(159,0) << "FixedSpan cost from: " << segment << endl;
+          cost.setOverlapSpanRp();
+        } else {
+          cdebug_log(159,0) << "Infinite cost from: " << segment << endl;
+          cost.setInfinite();
+        }
         cost.setOverlap    ();
         cost.setHardOverlap();
         cost.setBlockage   ();
@@ -262,6 +267,7 @@ namespace Katana {
   using std::cerr;
   using std::endl;
   using std::setw;
+  using std::setfill;
   using std::left;
   using std::right;
   using std::setprecision;
@@ -421,7 +427,7 @@ namespace Katana {
     Interval span;
     autoSegment = autoSegment->getCanonical( span );
 
-    bool           created;
+    bool           created      = false;
     TrackElement*  trackSegment = TrackSegment::create( autoSegment, insTrack, created );
 
     if (not (flags & Flags::LoadingStage))
@@ -591,55 +597,6 @@ namespace Katana {
   }
 
 
-  void  NegociateWindow::_pack ( size_t& count, bool last )
-  {
-    uint64_t limit     = _katana->getEventsLimit();
-    _katana->setStage( StagePack );
-
-    RoutingEventQueue  packQueue;
-  //for ( size_t i = (count > 600) ? count-600 : 0
-  //    ; (i<_eventHistory.size()-(last ? 0 : 100)) and not isInterrupted() ; i++ ) {
-    for ( size_t i=0 ; i<_eventHistory.size() ; ++i ) {
-      RoutingEvent* event = _eventHistory.getNth(i);
-
-      if ( event and not event->isCloned() ) {
-        cerr << "Cloned:" << event->isCloned()
-             << " UTurn:" << event->getSegment()->isUTurn() << " " << event->getSegment() << endl;
-      }
-          
-      if ( event and not event->isCloned() and event->getSegment()->isUTurn() ) {
-        event->reschedule( packQueue, 0 );
-      }
-    }
-    packQueue.commit();
-
-    while ( not packQueue.empty() and not isInterrupted() ) {
-      RoutingEvent* event = packQueue.pop();
-
-      if (tty::enabled()) {
-        cmess2 << "        <pack.event:" << tty::bold << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << tty::reset
-               << " remains:" << right << setw(8) << setfill('0')
-               << packQueue.size() << ">"
-               << setfill(' ') << tty::reset << tty::cr;
-        cmess2.flush();
-      } else {
-        cmess2 << "        <pack.event:" << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
-               << event->getSegment()
-               << endl;
-        cmess2.flush();
-      }
-
-      event->process( packQueue, _eventHistory, _eventLoop );
-
-      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
-    }
-  // Count will be wrong!
-  }
-
-
   size_t  NegociateWindow::_negociate ()
   {
     cdebug_log(9000,0) << "Deter| NegociateWindow::_negociate()" << endl;
@@ -647,8 +604,9 @@ namespace Katana {
 
     cmess1 << "     o  Negociation Stage." << endl;
 
-    unsigned long limit     = _katana->getEventsLimit();
-    bool          profiling = _katana->profileEventCosts();
+    bool          printLineFeed = false;
+    bool          profiling     = _katana->profileEventCosts();
+    unsigned long limit         = _katana->getEventsLimit();
     ofstream      ofprofile;
 
     if (profiling) ofprofile.open( "katana.profile.txt" );
@@ -660,12 +618,14 @@ namespace Katana {
     _statistics.setLoadedEventsCount( _eventQueue.size() );
 
     size_t count = 0;
-    _katana->setStage( StageNegociate );
+    _katana->setStage( Anabatic::StageNegociate );
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
+      size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
+      _statistics.incEventsCount( 1, depth );
+
       if (ofprofile.is_open()) {
-        size_t depth = _katana->getConfiguration()->getLayerDepth( event->getSegment()->getLayer() );
         if (depth < 6) {
           ofprofile << setw(10) << right << count << " ";
           for ( size_t i=0 ; i<6 ; ++i ) {
@@ -686,6 +646,7 @@ namespace Katana {
                << _eventQueue.size()
                << setfill(' ') << tty::reset << ">" << tty::cr;
         cmess2.flush ();
+        printLineFeed = true;
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
@@ -699,40 +660,67 @@ namespace Katana {
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
 
-      // if (RoutingEvent::getProcesseds() == 49053) {
+      // if (RoutingEvent::getProcesseds() == 71065) {
+      //   DebugSession::open( 159, 160 );
+      // }
+
+      // if (RoutingEvent::getProcesseds() == 71923) {
+      //   DebugSession::close();
+      // }
+
+      // if (   (RoutingEvent::getProcesseds() > 152474)
+      //    and (RoutingEvent::getProcesseds() < 152490)) {
       //   UpdateSession::close();
-      //   Breakpoint::stop( 0, "After processing RoutingEvent 49053." );
+      //   ostringstream message;
+      //   message << "After processing RoutingEvent " << (count-1) << ".";
+      //   Breakpoint::stop( 0, message.str() );
       //   UpdateSession::open();
       // }
 
-    //if (event->getSegment()->getNet()->getId() == 239546) {
-    //  UpdateSession::close();
-    //  ostringstream message;
-    //  message << "After processing an event from Net id:239546\n" << event;
-    //  Breakpoint::stop( 0, message.str() );
-    //  UpdateSession::open();
-    //}
+      // if (  (event->getSegment()->getId() == 88365)
+      //    or (event->getSegment()->getId() == 88368)) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing AutoSegment " << event->getSegment()->getId()
+      //           << " (@event:" << (count-1) << ")";
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
 
-    //if (count and not (count % 500)) {
-    //  _pack( count, false );
-    //} 
-
-    //if (RoutingEvent::getProcesseds() == 65092) {
-    //  UpdateSession::close();
-    //  Breakpoint::stop( 0, "Overlap has happened" );
-    //  UpdateSession::open();
-    //}
-      if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+      // if (event->getSegment()->getNet()->getId() == 239546 178313) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing an event from Net id:239546\n" << event;
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
+         
+      // if (count and not (count % 500)) {
+      //   _negociatePack( count, false );
+      // } 
+         
+      // if (RoutingEvent::getProcesseds() == 146128) {
+      //   UpdateSession::close();
+      //   Breakpoint::stop( 0, "After event 146127" );
+      //   UpdateSession::open();
+      // }
+      if (RoutingEvent::getProcesseds() >= limit) {
+        setInterrupt( true );
+        cerr << Error( "NegociateWindow::_negociate(): Routing events limit has been reached (%ld).\n"
+                       "        You may consider increasing \"katana.eventsLimit\"."
+                     , limit ) << endl;
+      }
     }
+    if (printLineFeed) cmess2 << endl;
+    
     _statistics.setProcessedEventsCount( RoutingEvent::getProcesseds() );
-  //_pack( count, true );
     _negociateRepair();
 
     if (_katana->getConfiguration()->runRealignStage()) {
       cmess1 << "     o  Realign Stage." << endl;
       
-      cdebug_log(159,0) << "Loadind realign queue." << endl;
-      _katana->setStage( StageRealign );
+      cdebug_log(159,0) << "Loading realign queue." << endl;
+      _katana->setStage( Anabatic::StageRealign );
       for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
         RoutingEvent* event = _eventHistory.getNth(i);
         if (not event->isCloned() and event->getSegment()->canRealign())
@@ -761,13 +749,24 @@ namespace Katana {
         }
         event->process( _eventQueue, _eventHistory, _eventLoop );
         count++;
-        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+        if (RoutingEvent::getProcesseds() >= limit) {
+          setInterrupt( true );
+          cerr << Error( "NegociateWindow::_negociate(): Routing events limit has been reached (%ld).\n"
+                         "        You may consider increasing \"katana.eventsLimit\"."
+                       , limit ) << endl;
+        }
+
+        // if (RoutingEvent::getProcesseds() == 55063) {
+        //   UpdateSession::close();
+        //   Breakpoint::stop( 0, "Stoping after event 55063" );
+        //   UpdateSession::open();
+        // }
       }
 
       _negociateRepair();
     }
 
-    if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
+    _negociatePack( count, true );
 
     size_t eventsCount = _eventHistory.size();
 
@@ -786,8 +785,78 @@ namespace Katana {
   }
 
 
+  void  NegociateWindow::_negociatePack ( size_t& count, bool last )
+  {
+    // UpdateSession::close();
+    // Breakpoint::stop( 0, "NegociateWindow::_negociatePack()" );
+    // UpdateSession::open();
+
+    cmess1 << "     o  Pack Stage." << endl;
+
+    bool     printLineFeed = false;
+    uint64_t limit         = _katana->getEventsLimit();
+    _katana->setStage( Anabatic::StagePack );
+
+  //for ( size_t i = (count > 600) ? count-600 : 0
+  //    ; (i<_eventHistory.size()-(last ? 0 : 100)) and not isInterrupted() ; i++ ) {
+    size_t historySize = _eventHistory.size();
+    for ( size_t i=0 ; i<historySize ; ++i ) {
+      RoutingEvent* event = _eventHistory.getNth(i);
+          
+      DebugSession::open( event->getSegment()->getNet(), 159, 160 );
+
+      if ( event and not event->isCloned()
+         and not event->getSegment()->isReduced()
+         and     event->getSegment()->isUTurn() ) {
+      //if (event->getSegment()->getId() != 566821) continue;
+
+        event->reschedule( _eventQueue, 0 );
+        _eventQueue.commit();
+
+        while ( not _eventQueue.empty() and not isInterrupted() ) {
+          RoutingEvent* packEvent = _eventQueue.pop();
+          if (not packEvent) continue;
+
+          if (tty::enabled()) {
+            cmess2 << "        <pack.event:" << tty::bold << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << tty::reset
+                   << " remains:" << right << setw(8) << setfill('0')
+                   << _eventQueue.size() << ">"
+                   << setfill(' ') << tty::reset << tty::cr;
+            cmess2.flush();
+            printLineFeed = true;
+          } else {
+            cmess2 << "        <pack.event:" << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                   << packEvent->getEventLevel() << ":" << event->getPriority() << "> "
+                   << _eventQueue.size() << " "
+                   << packEvent->getSegment()
+                   << endl;
+            cmess2.flush();
+          }
+
+          packEvent->process( _eventQueue, _eventHistory, _eventLoop );
+          if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+
+          // if (RoutingEvent::getProcesseds() == 161770) {
+          //   UpdateSession::close();
+          //   Breakpoint::stop( 0, "Stoping after event 161769 (pack stage)" );
+          //   UpdateSession::open();
+          // }
+        }
+      }
+
+      DebugSession::close();
+    }
+    if (printLineFeed) cmess2 << endl;
+  }
+
+
   void  NegociateWindow::_negociateRepair ()
   {
+    UpdateSession::close();
+    Breakpoint::stop( 99, "NegociateWindow::_negociateRepair()" );
+    UpdateSession::open();
     cdebug_log(159,1) << "NegociateWindow::_negociateRepair() - " << _segments.size() << endl;
 
     uint64_t limit = _katana->getEventsLimit();
@@ -797,11 +866,10 @@ namespace Katana {
     cmess1 << "     o  Repair Stage." << endl;
     cdebug_log(159,0) << "Loadind Repair queue." << endl;
 
-    _katana->setStage( StageRepair );
+    _katana->setStage( Anabatic::StageRepair );
     for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
       RoutingEvent* event = _eventHistory.getNth(i);
       if (not event->isCloned() and (event->getState() >= DataNegociate::Unimplemented)) {
-        event->setState( DataNegociate::Repair );
         event->reschedule( _eventQueue, 0 );
       }
     }
@@ -809,6 +877,7 @@ namespace Katana {
     cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
            << _eventQueue.size() << ">" << setfill(' ') << endl;
 
+    bool printLineFeed = false;
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
@@ -819,6 +888,7 @@ namespace Katana {
                << _eventQueue.size() << ">"
                << setfill(' ') << tty::reset << tty::cr;
         cmess2.flush();
+        printLineFeed = true;
       } else {
         cmess2 << "        <repair.event:" << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
@@ -832,7 +902,17 @@ namespace Katana {
 
       count++;
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+
+      // if (   (RoutingEvent::getProcesseds() > 143848+1)
+      //    and (RoutingEvent::getProcesseds() < 143858+1)) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing repair RoutingEvent " << (RoutingEvent::getProcesseds()-1) << ".";
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
     }
+    if (printLineFeed) cmess2 << endl;
 
     cdebug_tabw(159,-1);
   }
@@ -900,16 +980,30 @@ namespace Katana {
     ostringstream os;
     os << setprecision(2) << fixed << ripupRatio << "%";
 
+    size_t totalEvents = RoutingEvent::getProcesseds();
     cmess1 << "  o  Computing statistics." << endl;
-    cmess1 << Dots::asString( "     - Event ripup ratio", os.str() ) << endl;
-    cmess1 << Dots::asSizet ( "     - Processeds Events Total",RoutingEvent::getProcesseds()) << endl;
+    cmess1 << Dots::asSizet ( "     - Loaded Events"
+                            , _statistics.getLoadedEventsCount()) << endl;
     cmess1 << Dots::asSizet ( "     - Unique Events Total"
-                           ,(RoutingEvent::getProcesseds() - RoutingEvent::getCloneds())) << endl;
+                            ,(totalEvents - RoutingEvent::getCloneds())) << endl;
+    cmess1 << Dots::asSizet ( "     - Processeds Events Total",totalEvents) << endl;
+    cmess1 << Dots::asString( "     - Event ripup ratio", os.str() ) << endl;
+    for ( auto keyValue : _statistics.getEventsMap() ) {
+      ostringstream title;
+      title << "     - Processeds Events in "
+            << getKatanaEngine()->getConfiguration()->getRoutingLayer( keyValue.first )->getName();
+      
+      ostringstream result;
+      result << keyValue.second << setprecision(2) << fixed << " (" << setfill(' ') << right << setw(5)
+             << ((float)keyValue.second / totalEvents) * 100.0 << "%)";
+      cmess1 << Dots::asString( title.str(), result.str() ) << endl;
+    }
+    
     cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
     _katana->printCompletion();
 
-    _katana->addMeasure<size_t>( "Events" , RoutingEvent::getProcesseds(), 12 );
-    _katana->addMeasure<size_t>( "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
+    _katana->addMeasure<size_t>( "Events" , totalEvents, 12 );
+    _katana->addMeasure<size_t>( "UEvents", totalEvents-RoutingEvent::getCloneds(), 12 );
 
     Histogram* densityHistogram = new Histogram ( 1.0, 0.1, 2 );
     _katana->addMeasure<Histogram>( "GCells Density Histogram", densityHistogram );

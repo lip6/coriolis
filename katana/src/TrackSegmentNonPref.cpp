@@ -82,7 +82,9 @@ namespace Katana {
 
   void  TrackSegmentNonPref::_preDestroy ()
   {
+    cdebug_log(160,1) << "TrackSegmentNonPref::_preDestroy() " << this << endl;
     Super::_preDestroy();
+    cdebug_tabw(160,-1);
   }
 
 
@@ -91,21 +93,40 @@ namespace Katana {
   uint32_t  TrackSegmentNonPref::getTrackCount () const { return _trackCount; }
 
 
+  bool  TrackSegmentNonPref::canPromoteToPref ( Flags flags ) const
+  {
+    cdebug_log(159,0) << "canPromoteToPref() " << this << endl;
+    cdebug_log(159,0) << "_segment->getDirection() " << getDirection() << endl;
+    cdebug_log(159,0) << "_segment->isForOffgrid() " << isForOffgrid() << endl;
+    cdebug_log(159,0) << "Session::getDirection() " << Session::getDirection(getLayer()) << endl;
+    if (Session::getStage() != Anabatic::StageNegociate) return false;
+    if (isForOffgrid()) return false;
+    if (getDirection() == Session::getDirection(getLayer())) return false;
+    if (flags & Flags::IgnoreRipupState) return true;
+    if (getDataNegociate() and (getDataNegociate()->getState() < DataNegociate::MaximumSlack))
+      return false;
+    return true;
+  }
+
+
   void  TrackSegmentNonPref::updateTrackSpan ()
   {
     DebugSession::open( getNet(), 150, 160 );
-    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackspan() " << /*(void*)this    << ":" <<*/ this << endl;
+    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackSpan() " << /*(void*)this    << ":" <<*/ this << endl;
 
-    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer(_base->getLayer());
-    Interval      newAxisSpan ( _base->getSourcePosition(), _base->getTargetPosition() );
+    RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer( getLayer() );
+    Interval      newAxisSpan = _base->getNonPrefSpan();
   //newAxisSpan.inflate( base()->getExtensionCap( Anabatic::Flags::NoFlags ));
+    newAxisSpan.inflate( (getLayer()->getMinimalSpacing() + Session::getWireWidth(getLayer()))/2 );
     Track*        ntrack      = plane->getTrackByPosition( newAxisSpan.getVMin(), Constant::Superior );
 
+    cdebug_log(159,0) << "new Axis span:       " << newAxisSpan << endl;
     cdebug_log(159,0) << "getSourceU():        " << DbU::getValueString( _base->getSourceU() ) << endl;
     cdebug_log(159,0) << "getTargetU():        " << DbU::getValueString( _base->getTargetU() ) << endl;
     cdebug_log(159,0) << "getSourcePosition(): " << DbU::getValueString( _base->getSourcePosition() ) << endl;
     cdebug_log(159,0) << "getTargetPosition(): " << DbU::getValueString( _base->getTargetPosition() ) << endl;
-    cdebug_log(159,0) << "new Axis span: " << newAxisSpan << endl;
+    cdebug_log(159,0) << "minimalSpacing:      " << DbU::getValueString( getLayer()->getMinimalSpacing() ) << endl;
+    cdebug_log(159,0) << "Routing wire width:  " << DbU::getValueString( Session::getWireWidth(getLayer()) ) << endl;
     
     if (ntrack) {
       cdebug_log(159,0) << "+ " << ntrack << endl;
@@ -178,22 +199,6 @@ namespace Katana {
     Super::invalidate();
 
     if (getTrack()) reschedule( 0 );
-  }
-
-
-  void  TrackSegmentNonPref::promoteToPref ()
-  {
-    base()->setObserver( AutoSegment::Observable::TrackSegment, nullptr );
-    bool          created = false;
-    TrackElement* segment = TrackSegment::create( base(), nullptr, created );
-    if (segment->isNonPref())
-      throw Error( "TrackSegmentNonPref::promoteToPref(): Layer/direction incoherency for prefered,\n"
-                   "        From non-pref %s."
-                 , getString(this).c_str() );
-    DataNegociate* data = getDataNegociate();
-    if (data and data->hasRoutingEvent())
-      data->getRoutingEvent()->setDisabled( true );
-    segment->reschedule( 0 );
   }
 
 

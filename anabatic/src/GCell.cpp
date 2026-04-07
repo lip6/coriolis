@@ -58,7 +58,7 @@ namespace {
           bool operator() ( const Axis* lhs, const Axis* rhs ) const;
       };
 
-      class AxisMatch : public unary_function<Axis*,bool> {
+      class AxisMatch {
         public:
           inline      AxisMatch  ( DbU::Unit axis );
           inline bool operator() ( const Axis* );
@@ -279,6 +279,7 @@ namespace Anabatic {
 
   uint32_t  GCell::getDisplayMode () { return _displayMode; }
   void      GCell::setDisplayMode ( uint32_t mode ) { _displayMode = mode; }
+  Name      GCell::staticGetName  () { return _extensionName; }
 
 
   GCell::GCell ( AnabaticEngine* anabatic, DbU::Unit xmin, DbU::Unit ymin )
@@ -720,6 +721,7 @@ namespace Anabatic {
     GCell* chunk = _create( x, getYMin() );
     cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
+    if (_flags & Flags::StdCellArea) chunk->_flags |= Flags::StdCellArea;
     _moveEdges( chunk, 0, Flags::EastSide );
     Edge::create( this, chunk, Flags::Horizontal );
 
@@ -781,6 +783,7 @@ namespace Anabatic {
     GCell* chunk = _create( getXMin(), y );
     cdebug_log(110,0) << "New chunk:" << chunk << endl;
 
+    if (_flags & Flags::StdCellArea) chunk->_flags |= Flags::StdCellArea;
     _moveEdges( chunk, 0, Flags::NorthSide );
     Edge::create( this, chunk, Flags::Vertical );
 
@@ -849,6 +852,7 @@ namespace Anabatic {
     //   return false;
     // }
 
+    _flags |= Flags::StdCellArea;
     GCell*    row    = this;
     GCell*    column = NULL;
     DbU::Unit ycut   = vspan.getVMin()+vside;
@@ -886,8 +890,11 @@ namespace Anabatic {
     if (cmess1.enabled()) {
       const vector<RoutingLayerGauge*>& layerGauges
         = getAnabatic()->getConfiguration()->getRoutingGauge()->getLayerGauges();
+      cout << Dots::asDouble( "     - GCell aspect ratio", _anabatic->getConfiguration()->getGCellAspectRatio()) << endl;
+      cout << Dots::asString( "     - GCell width"       , DbU::getValueString(getMatrixHSide())) << endl;
+      cout << Dots::asString( "     - GCell height"      , DbU::getValueString(getMatrixVSide())) << endl;
       const Edge* edge = getEastEdge();
-      if (edge) {
+      if (edge and edge->getCapacities()) {
         cout << "     o  East capacities of south west GCell (Horizontal)." << endl;
         for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
           ostringstream os;
@@ -899,7 +906,7 @@ namespace Anabatic {
         cout << Dots::asUInt( "        - Whole GR/H edge" ,edge->getCapacity() ) << endl;
       }
       edge = getNorthEdge();
-      if (edge) {
+      if (edge and edge->getCapacities()) {
         cout << "     o  North capacities of south west GCell (Vertical)." << endl;
         for ( size_t depth=0 ; depth < edge->getCapacities()->size() ; ++depth ) {
           ostringstream os;
@@ -1734,16 +1741,20 @@ namespace Anabatic {
     if (flags & Flags::AllAbove) {
       for ( size_t i=depth; i <= Session::getAllowedDepth() ; i += 2 ) {
         capacity     += getCapacity( i );
-        feedthroughs += _feedthroughs[i] + 0.99 + reserve;
+        feedthroughs += _feedthroughs[i];
+        cdebug_log(149,0) << "(loop) feedthroughs=" <<  _feedthroughs << endl;
       }
     } else {
       capacity     += getCapacity( depth );
-      feedthroughs += _feedthroughs[depth] + 0.99 + reserve;
+      feedthroughs += _feedthroughs[depth];
+      cdebug_log(149,0) << "feedthroughs=" <<  _feedthroughs << endl;
     }
+    feedthroughs += + 0.99 + reserve;
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
                       << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-                      << " " << feedthroughs << " vs. " << capacity
+                      << " " <<  _feedthroughs[depth] << "+" << reserve
+                      << "/" << feedthroughs << " vs. " << capacity
                       << " " << this << endl;
 
     return (feedthroughs < capacity);

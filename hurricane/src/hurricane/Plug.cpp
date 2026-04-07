@@ -54,6 +54,8 @@ class Plug_IsConnectedFilter : public Filter<Plug*> {
 // Plug implementation
 // ****************************************************************************************************
 
+FastRTTI  Plug::_fastRTTI ( demangle(typeid(Plug).name()), &Plug::Inherit::fastRTTI() );
+
 Plug::Plug(Instance* instance, Net* masterNet)
 // *******************************************
 :    Inherit(NULL, true),
@@ -82,6 +84,10 @@ void Plug::destroy()
 {
     throw Error("Abnormal deletion of " + _TName("Plug"));
 }
+
+const FastRTTI& Plug::vfastRTTI () const
+// *************************************
+{ return _fastRTTI; }
 
 Cell* Plug::getCell() const
 // ************************
@@ -222,7 +228,8 @@ Record* Plug::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-        record->add(getSlot("Instance", _instance));
+        record->add(getSlot("_fastRTTI", &_fastRTTI), Record::Overload );
+        record->add(getSlot("Instance" , _instance ));
         record->add(getSlot("MasterNet", _masterNet));
     }
     return record;

@@ -23,8 +23,8 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-manylinux2014
-  FALLBACK_TAG: ghcr.io/${{ github.repository }}-manylinux2014:main
+  IMAGE_NAME: ${{ github.repository }}-manylinux_2_28
+  FALLBACK_TAG: ghcr.io/${{ github.repository }}-manylinux_2_28:main
 
 jobs:
   build-custom-manylinux:
@@ -85,16 +85,16 @@ jobs:
         # Github Actions doesn't support pairing matrix values together, let's improvise
         # https://github.com/github/feedback/discussions/7835#discussioncomment-1769026
         buildplat:
-          - [ubuntu-20.04, manylinux_x86_64]
-          -  [macos-13, macosx_x86_64]
+          - [ubuntu-24.04, manylinux_x86_64]
+          #- [macos-15, macosx_x86_64]
           #- [ubuntu-20.04, musllinux_x86_64]
           #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
             python: "pp39"
-          - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
+          - buildplat: [ ubuntu-24.04, musllinux_x86_64 ]
             python: "pp39"
     steps:
       - name: Checkout Coriolis
@@ -151,11 +151,11 @@ jobs:
           CIBW_BEFORE_ALL: ""
           CIBW_MANYLINUX_X86_64_IMAGE: ${{ needs.build-custom-manylinux.outputs.tag }}
           CIBW_ENVIRONMENT_LINUX: |
-            USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64/boost169 BOOST_INCLUDEDIR=/usr/include/boost169 PKG_CONFIG_PATH=`python3 -c "import sysconfig; sysconfig.get_config_var('LIBPC')"`
+            USE_CCACHE=1 CCACHE_DIR=/.ccache BOOST_LIBRARYDIR=/usr/lib64 BOOST_INCLUDEDIR=/usr/include/boost PKG_CONFIG_PATH=`python3 -c "import sysconfig; sysconfig.get_config_var('LIBPC')"`
           CIBW_BEFORE_BUILD: env
 
 
-      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.python }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./wheelhouse/*.whl
@@ -168,11 +168,11 @@ jobs:
     strategy:
       matrix:
         buildplat:
-          - [ubuntu-20.04, manylinux_x86_64]
-          - [macos-13, macosx_x86_64]
-            #- [ubuntu-20.04, musllinux_x86_64]
-            #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+          - [ubuntu-24.04, manylinux_x86_64]
+          #- [macos-15, macosx_x86_64]
+          #- [ubuntu-20.04, musllinux_x86_64]
+          #- [windows-2019, win_amd64]
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
@@ -202,16 +202,16 @@ jobs:
     strategy:
       matrix:
         buildplat:
-          - [ubuntu-20.04, manylinux_x86_64]
-          - [macos-13, macosx_x86_64]
-            #- [ubuntu-20.04, musllinux_x86_64]
-            #- [windows-2019, win_amd64]
-        python: ["cp39", "cp310", "cp311", "cp312"]  # "pp39"
+          - [ubuntu-24.04, manylinux_x86_64]
+          #- [macos-15, macosx_x86_64]
+          #- [ubuntu-20.04, musllinux_x86_64]
+          #- [windows-2019, win_amd64]
+        python: ["cp38", "cp39", "cp310", "cp311", "cp312"]  # "pp39"
         exclude:
           # Don't build PyPy 32-bit windows
           - buildplat: [windows-2019, win32]
             python: "pp39"
-          - buildplat: [ ubuntu-20.04, musllinux_x86_64 ]
+          - buildplat: [ ubuntu-24.04, musllinux_x86_64 ]
             python: "pp39"
 
     environment: pypi

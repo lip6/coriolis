@@ -115,6 +115,7 @@ namespace Hurricane {
 // DataBase implementation
 // ****************************************************************************************************
 
+FastRTTI  DataBase::_fastRTTI ( demangle(typeid(DataBase).name()), &DBo::fastRTTI() );
 DataBase* DataBase::_db = NULL;
 
 
@@ -165,6 +166,10 @@ void DataBase::_preDestroy()
     _db = NULL;
 }
 
+const FastRTTI& DataBase::vfastRTTI () const
+// *****************************************
+{ return _fastRTTI; }
+
 string DataBase::_getString() const
 // ********************************
 {
@@ -176,11 +181,12 @@ Record* DataBase::_getRecord() const
 {
     Record* record = Inherit::_getRecord();
     if (record) {
-      record->add(getSlot("_technology"                ,  _technology             ));
-      record->add(getSlot("_rootLibrary"               ,  _rootLibrary            ));
-      record->add(getSlot("DbU::precision"             ,  DbU::getPrecision()     ));
-      record->add(getSlot("DbU::resolution"            ,  DbU::db(1)              ));
-      record->add(getSlot("DbU::getGridsPerLambda"     ,  DbU::getGridsPerLambda()));
+      record->add( getSlot("_fastRTTI"                  , &_fastRTTI               ), Record::Overload );
+      record->add( getSlot("_technology"                ,  _technology             ));
+      record->add( getSlot("_rootLibrary"               ,  _rootLibrary            ));
+      record->add( getSlot("DbU::precision"             ,  DbU::getPrecision()     ));
+      record->add( getSlot("DbU::resolution"            ,  DbU::db(1)              ));
+      record->add( getSlot("DbU::getGridsPerLambda"     ,  DbU::getGridsPerLambda()));
       record->add( DbU::getValueSlot("DbU::polygonStep", &DbU::_polygonStep       ));
     //record->add(getSlot("GridStep", getValueString(getGridStep())));
     }

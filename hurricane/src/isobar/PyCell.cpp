@@ -783,6 +783,33 @@ extern "C" {
   }
 
 
+  static PyObject* PyCell_flatten ( PyCell *self, PyObject* args ) {
+    cdebug_log(20,0) << "PyCell_flatten ()" << endl;
+
+    PyObject* arg0     = NULL;
+    Instance* instance = NULL;
+
+    HTRY
+      METHOD_HEAD("Cell.flatten()")
+      __cs.init( "Cell.flattenNets" );
+      if (not PyArg_ParseTuple(args,"O:Cell.flatten", &arg0 )) {
+        PyErr_SetString( ConstructorError, "Cell.flatten(): Takes one parameter." );
+        return NULL;
+      }
+  
+      if (arg0 != Py_None) {
+        if (not IsPyInstance(arg0)) {
+          PyErr_SetString( ConstructorError, "Cell.flatten(): First argument must be None or an Instance." );
+          return NULL;
+        }
+        instance = PYINSTANCE_O( arg0 );
+      }
+      cell->flatten( instance );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_destroyPhysical ()"
 
@@ -880,6 +907,7 @@ extern "C" {
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "flattenNets"         , (PyCFunction)PyCell_flattenNets         , METH_VARARGS, "Perform a virtual flatten, possibly limited to one instance." }
+    , { "flatten"             , (PyCFunction)PyCell_flatten             , METH_VARARGS, "Flatten the instance." }
     , { "destroyPhysical"     , (PyCFunction)PyCell_destroyPhysical     , METH_NOARGS , "Destroy all physical components, including DeepNets (vflatten)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

@@ -87,11 +87,12 @@ namespace Bora {
                                        , string            iname )
   {
     Cell* cell   = Hurricane::Cell::create( Hurricane::DataBase::getDB()->getRootLibrary(), cname );
+    cell->setTerminalNetlist( true );
+
     Net*  subnet = Hurricane::Net::create( cell, net->getName() );
+    subnet->setExternal( true );
   
     DbU::Unit width = CRL::AllianceFramework::get()->getRoutingGauge()->getVerticalPitch()* npitch;
-    subnet->setExternal( true );
-
     Hurricane::Vertical* v = Hurricane::Vertical::create( subnet, layer, width/2, width );
     NetExternalComponents::setExternal( v );
 

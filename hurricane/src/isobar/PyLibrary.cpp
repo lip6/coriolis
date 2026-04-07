@@ -16,6 +16,7 @@
 
 #include "hurricane/isobar/PyDataBase.h"
 #include "hurricane/isobar/PyLibrary.h"
+#include "hurricane/isobar/PyLibraryCollection.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyCellCollection.h"
 
@@ -130,19 +131,38 @@ extern "C" {
   }
 
 
+  static PyObject* PyLibrary_getLibraries( PyLibrary* self )
+  {
+    cdebug_log(20,0) << "PyLibrary_getLibraries()" << endl;
+    METHOD_HEAD( "Library.getLibraries()" )
+
+    PyLibraryCollection* pyLibraryCollection = NULL;
+    HTRY
+      Libraries* libs = new Libraries( lib->getLibraries() );
+      pyLibraryCollection = PyObject_NEW( PyLibraryCollection, &PyTypeLibraryCollection );
+      if (not pyLibraryCollection) { 
+        return NULL;
+      }
+      pyLibraryCollection->_object = libs;
+    HCATCH
+    return (PyObject*)pyLibraryCollection;
+  }
+
+
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyLibrary_destroy, PyLibrary)
 
 
   PyMethodDef PyLibrary_Methods[] =
-    { { "create"    , (PyCFunction)PyLibrary_create       , METH_VARARGS|METH_STATIC
-                    , "Creates a new library." }
-    , { "getName"   , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
-    , { "getLibrary", (PyCFunction)PyLibrary_getSubLibrary, METH_VARARGS, "Get the sub-library named <name>" }
-    , { "getCell"   , (PyCFunction)PyLibrary_getCell      , METH_VARARGS, "Get the cell of name <name>" }
-    , { "getCells"  , (PyCFunction)PyLibrary_getCells     , METH_NOARGS , "Returns the collection of all cells of the library." }
-    , { "destroy"   , (PyCFunction)PyLibrary_destroy      , METH_NOARGS
-                    , "Destroy associated hurricane object The python object remains." }
+    { { "create"      , (PyCFunction)PyLibrary_create       , METH_VARARGS|METH_STATIC
+                      , "Creates a new library." }
+    , { "getName"     , (PyCFunction)PyLibrary_getName      , METH_NOARGS , "Returns the name of the library." }
+    , { "getLibrary"  , (PyCFunction)PyLibrary_getSubLibrary, METH_VARARGS, "Get the sub-library named <name>" }
+    , { "getLibraries", (PyCFunction)PyLibrary_getLibraries , METH_VARARGS, "Return the collection of child libraries." }
+    , { "getCell"     , (PyCFunction)PyLibrary_getCell      , METH_VARARGS, "Get the cell of name <name>" }
+    , { "getCells"    , (PyCFunction)PyLibrary_getCells     , METH_NOARGS , "Returns the collection of all cells of the library." }
+    , { "destroy"     , (PyCFunction)PyLibrary_destroy      , METH_NOARGS
+                      , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
     };
 

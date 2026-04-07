@@ -34,7 +34,7 @@ namespace Hurricane {
     public:
       static void           dump         ();
     public:
-      inline unsigned long  getHash      () const;
+      inline unsigned int   getHash      () const;
              const string&  _getSString  () const { return _string; };
              string         _getTypeName () const { return _TName("SharedName"); };
              string         _getString   () const;
@@ -55,13 +55,13 @@ namespace Hurricane {
 
     private:
       static SharedNameMap* _SHARED_NAME_MAP;
-             unsigned long  _hash;
+             unsigned int   _hash;
              int            _count;
              string         _string;
   };
 
 
-  inline  unsigned long  SharedName::getHash () const { return _hash; }
+  inline  unsigned int  SharedName::getHash () const { return _hash; }
 
 
 } // End of Hurricane namespace.

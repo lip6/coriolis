@@ -45,6 +45,11 @@ namespace Hurricane {
 
 class Net : public Entity {
 // **********************
+    private:
+      static  FastRTTI  _fastRTTI;
+    public:
+      static  inline const FastRTTI& fastRTTI  (); 
+      virtual        const FastRTTI& vfastRTTI () const; 
 
 // Types
 // *****
@@ -266,6 +271,9 @@ class Net : public Entity {
     };
 
 };
+
+  
+  inline const FastRTTI& Net::fastRTTI () { return _fastRTTI; }
 
 
 // -------------------------------------------------------------------

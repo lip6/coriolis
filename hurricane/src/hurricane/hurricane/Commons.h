@@ -33,6 +33,7 @@
 #define HURRICANE_COMMONS_H
 
 #include <cstdio>
+#include <cstdint>
 #include <cassert>
 #include <cmath>
 #include <memory>
@@ -148,6 +149,69 @@ namespace Hurricane {
 
   string& split ( std::string& );
 
+  
+// -------------------------------------------------------------------
+// Function : Fowler-Noll-Vo hash.
+//
+// Reference:
+//     https://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function
+
+  inline unsigned int  hashFNV ( unsigned int id )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( unsigned int idBytes = id ; idBytes ; idBytes >>= 8 ) {
+      hash = hash * FNVPrime;
+      hash = hash xor (idBytes & 0xFF);
+    }
+    return hash;
+  }
+
+  inline unsigned int  iterFNV ( unsigned int hash, unsigned int id )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVPrime = 0x01000193;
+
+    for ( unsigned int idBytes = id ; idBytes ; idBytes >>= 8 ) {
+      hash = hash * FNVPrime;
+      hash = hash xor (idBytes & 0xFF);
+    }
+    return hash;
+  }
+
+
+  inline unsigned int  hashFNV ( std::string s )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( size_t i=0 ; i<s.size() ; ++i ) {
+      hash = hash * FNVPrime;
+      hash = hash xor s[i];
+    }
+    return hash;
+  }
+
+
+  inline unsigned int  hashFNV ( const char* s )
+  {
+  // Assume unsigned int is 32 bits.
+    static const unsigned int FNVOffsetBasis = 0x811c9dc5;
+    static const unsigned int FNVPrime       = 0x01000193;
+
+    unsigned int hash = FNVOffsetBasis;
+    for ( ; (int)(*s) != 0 ; ++s ) { 
+      hash = hash * FNVPrime;
+      hash = hash xor *s;
+    }
+    return hash;
+  }
+
 
 } // End of Hurricane namespace.
 
@@ -176,6 +240,9 @@ template<typename Data> inline std::string  getString ( Data data )
 { return std::string("<type ")
          + Hurricane::demangle(typeid(data).name())
          + std::string(" unsupported by getString()>"); }
+
+template<> inline std::string  getString<std::nullptr_t> ( std::nullptr_t )
+{ return "nullptr" ; }
 
 // "const &" flavors.
 
@@ -903,108 +970,6 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
 }
 
 
-# define GETSTRING_POINTER_SUPPORT(Data) \
-  template<> inline std::string getString<Data*>( Data* data )             \
-  {                                                                        \
-    if (!data) return "NULL [" #Data "]";                                  \
-    return data->_getString();                                             \
-  }                                                                        \
-                                                                           \
-  template<> inline std::string getString<const Data*>( const Data* data ) \
-  { if (!data) return "NULL [const " #Data "]"; return data->_getString(); }
-
-
-# define IOSTREAM_POINTER_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
-  {                                                                  \
-    if (!d) return o << "NULL [" #Data "]";                          \
-    return o << "&" << getString<const Data*>(d);                    \
-  }                                                                  \
-  inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
-  {                                                                  \
-    if (!d) return o << "NULL [const " #Data "]";                    \
-    return o << "&" << getString<const Data*>(d);                    \
-  }                                                                  \
-
-
-# define GETRECORD_POINTER_SUPPORT(Data) \
-  template<> inline Hurricane::Record* getRecord<Data*>( Data* data )             \
-  { if (!data) return NULL; return data->_getRecord(); }                          \
-                                                                                  \
-  template<> inline Hurricane::Record* getRecord<const Data*>( const Data* data ) \
-  { if (!data) return NULL; return data->_getRecord(); }
-
-
-# define GETSTRING_REFERENCE_SUPPORT(Data) \
-  template<> inline std::string getString<Data&>( Data& data )             \
-  { return data._getString(); }                                            \
-                                                                           \
-  template<> inline std::string getString<const Data&>( const Data& data ) \
-  { return data._getString(); }
-
-
-# define IOSTREAM_REFERENCE_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data& d )             \
-  { return o << getString<Data&>(d); }                                     \
-                                                                           \
-  inline std::ostream& operator<< ( std::ostream& o, const Data& d )       \
-  { return o << getString<const Data&>(d); }                               \
-                                                                           \
-
-# define GETRECORD_REFERENCE_SUPPORT(Data) \
-  template<> inline Hurricane::Record* getRecord<Data&>( Data& data )             \
-  { return data._getRecord(); }                                                   \
-                                                                                  \
-  template<> inline Hurricane::Record* getRecord<const Data&>( const Data& data ) \
-  { return data._getRecord(); }
-
-
-# define GETSTRING_VALUE_SUPPORT(Data) \
-  template<> inline std::string getString<Data>( Data data )  \
-  { return data._getString(); }
-
-
-# define IOSTREAM_VALUE_SUPPORT(Data) \
-  inline std::ostream& operator<< ( std::ostream& o, Data d )   \
-  { return o << getString<Data>(d); }
-
-
-# define GETRECORD_VALUE_SUPPORT(Data) \
-  template<> inline Hurricane::Record* getRecord<Data>( Data data ) \
-  { return data._getRecord(); }
-
-
-# define INSPECTOR_P_SUPPORT(Data)   \
-  GETRECORD_POINTER_SUPPORT(Data)    \
-  GETSTRING_POINTER_SUPPORT(Data)    \
-  IOSTREAM_POINTER_SUPPORT(Data)
-
-
-# define INSPECTOR_R_SUPPORT(Data)   \
-  GETRECORD_REFERENCE_SUPPORT(Data)  \
-  GETSTRING_REFERENCE_SUPPORT(Data)  \
-  IOSTREAM_REFERENCE_SUPPORT(Data)
-
-
-# define INSPECTOR_PR_SUPPORT(Data)  \
-  GETSTRING_POINTER_SUPPORT(Data)    \
-  GETSTRING_REFERENCE_SUPPORT(Data)  \
-  GETSTRING_VALUE_SUPPORT(Data)      \
-  IOSTREAM_POINTER_SUPPORT(Data)     \
-  IOSTREAM_REFERENCE_SUPPORT(Data)   \
-  GETRECORD_POINTER_SUPPORT(Data)    \
-  GETRECORD_REFERENCE_SUPPORT(Data)
-
-
-# define INSPECTOR_PV_SUPPORT(Data)  \
-  GETSTRING_POINTER_SUPPORT(Data)    \
-  GETSTRING_VALUE_SUPPORT(Data)      \
-  IOSTREAM_POINTER_SUPPORT(Data)     \
-  IOSTREAM_VALUE_SUPPORT(Data)       \
-  GETRECORD_POINTER_SUPPORT(Data)    \
-  GETRECORD_VALUE_SUPPORT(Data)
-
-
 #include "hurricane/Tabulation.h"
 
 
@@ -1062,9 +1027,10 @@ inline tstream& tstream::tabw        ( int level, int count ) { setLevel(level);
 inline tstream& tstream::put         ( char c ) { if (enabled()) static_cast<std::ostream*>(this)->put(c); return *this; }  
 inline tstream& tstream::flush       () { if (enabled()) static_cast<std::ostream*>(this)->flush(); return *this; }  
 inline tstream& tstream::operator<<  ( std::ostream& (*pf)(std::ostream&) ) { if (enabled()) (*pf)(*this); return *this; }
+inline tstream& operator<< ( tstream& o, const Hurricane::Tabulation& t )
+{ static_cast<std::ostream&>(o) << t; return o; }
 
-
-inline tstream&  tstream::_tab  () { if (enabled()) (*this) << _tabulation; return *this; }  
+inline tstream&  tstream::_tab  () { if (enabled()) (* static_cast<std::ostream*>(this)) << _tabulation; return *this; }  
 inline tstream&  tstream::_tabw ( int count )
 {
   if (enabled()) {
@@ -1123,6 +1089,116 @@ extern tstream  cdebug;
 #define  cdebug_tabw(level,indent)  cdebug.tabw(level,indent)
 
 
+# define GETSTRING_POINTER_SUPPORT(Data) \
+  template<> inline std::string getString<Data*>( Data* data )             \
+  {                                                                        \
+    if (!data) return "NULL [" #Data "]";                                  \
+    return data->_getString();                                             \
+  }                                                                        \
+                                                                           \
+  template<> inline std::string getString<const Data*>( const Data* data ) \
+  { if (!data) return "NULL [const " #Data "]"; return data->_getString(); }
+
+
+# define IOSTREAM_POINTER_SUPPORT(Data) \
+  inline std::ostream& operator<< ( std::ostream& o, Data* d )       \
+  {                                                                  \
+    if (!d) return o << "NULL [" #Data "]";                          \
+    return o << "&" << getString<const Data*>(d);                    \
+  }                                                                  \
+  inline std::ostream& operator<< ( std::ostream& o, const Data* d ) \
+  {                                                                  \
+    if (!d) return o << "NULL [const " #Data "]";                    \
+    return o << "&" << getString<const Data*>(d);                    \
+  }                                                                  \
+
+
+# define TSTREAM_POINTER_SUPPORT(Data) \
+  inline tstream& operator<< ( tstream& o, Data* d )       \
+  { return o << "&" << getString<const Data*>(d); }                  \
+  inline tstream& operator<< ( tstream& o, const Data* d ) \
+  { return o << "&" << getString<const Data*>(d); }
+
+
+# define GETRECORD_POINTER_SUPPORT(Data) \
+  template<> inline Hurricane::Record* getRecord<Data*>( Data* data )             \
+  { if (!data) return NULL; return data->_getRecord(); }                          \
+                                                                                  \
+  template<> inline Hurricane::Record* getRecord<const Data*>( const Data* data ) \
+  { if (!data) return NULL; return data->_getRecord(); }
+
+
+# define GETSTRING_REFERENCE_SUPPORT(Data) \
+  template<> inline std::string getString<Data&>( Data& data )             \
+  { return data._getString(); }                                            \
+                                                                           \
+  template<> inline std::string getString<const Data&>( const Data& data ) \
+  { return data._getString(); }
+
+
+# define IOSTREAM_REFERENCE_SUPPORT(Data) \
+  inline std::ostream& operator<< ( std::ostream& o, Data& d )             \
+  { return o << getString<Data&>(d); }                                     \
+                                                                           \
+  inline std::ostream& operator<< ( std::ostream& o, const Data& d )       \
+  { return o << getString<const Data&>(d); }                               \
+                                                                           \
+
+# define GETRECORD_REFERENCE_SUPPORT(Data) \
+  template<> inline Hurricane::Record* getRecord<Data&>( Data& data )             \
+  { return data._getRecord(); }                                                   \
+                                                                                  \
+  template<> inline Hurricane::Record* getRecord<const Data&>( const Data& data ) \
+  { return data._getRecord(); }
+
+
+# define GETSTRING_VALUE_SUPPORT(Data) \
+  template<> inline std::string getString<Data>( Data data )  \
+  { return data._getString(); }
+
+
+# define IOSTREAM_VALUE_SUPPORT(Data) \
+  inline std::ostream& operator<< ( std::ostream& o, Data d )   \
+  { return o << getString<Data>(d); }
+
+
+# define GETRECORD_VALUE_SUPPORT(Data) \
+  template<> inline Hurricane::Record* getRecord<Data>( Data data ) \
+  { return data._getRecord(); }
+
+
+# define INSPECTOR_P_SUPPORT(Data)   \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  IOSTREAM_POINTER_SUPPORT(Data)     \
+  TSTREAM_POINTER_SUPPORT(Data)
+
+
+# define INSPECTOR_R_SUPPORT(Data)   \
+  GETRECORD_REFERENCE_SUPPORT(Data)  \
+  GETSTRING_REFERENCE_SUPPORT(Data)  \
+  IOSTREAM_REFERENCE_SUPPORT(Data)
+
+
+# define INSPECTOR_PR_SUPPORT(Data)  \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  GETSTRING_REFERENCE_SUPPORT(Data)  \
+  GETSTRING_VALUE_SUPPORT(Data)      \
+  IOSTREAM_POINTER_SUPPORT(Data)     \
+  IOSTREAM_REFERENCE_SUPPORT(Data)   \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETRECORD_REFERENCE_SUPPORT(Data)
+
+
+# define INSPECTOR_PV_SUPPORT(Data)  \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  GETSTRING_VALUE_SUPPORT(Data)      \
+  IOSTREAM_POINTER_SUPPORT(Data)     \
+  IOSTREAM_VALUE_SUPPORT(Data)       \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETRECORD_VALUE_SUPPORT(Data)
+
+
 // x-----------------------------------------------------------------x
 // |            Classes Neededs in All Hurricane Modules             |
 // x-----------------------------------------------------------------x
@@ -1131,3 +1207,104 @@ extern tstream  cdebug;
 #include "hurricane/Initializer.h"
 #include "hurricane/JsonWriter.h"
 #include "hurricane/JsonObject.h"
+
+  
+namespace Hurricane {
+  
+// -------------------------------------------------------------------
+// Class :  FastRTTI
+//
+// Reference:
+//     https://tinodidriksen.com/2010/04/cpp-dynamic-cast-performance/
+
+
+  class FastRTTI {
+    private:
+      static uint64_t                        _classBit;
+      static std::map<uint64_t,std::string>  _classNames;
+             std::string                     _className;
+      const  FastRTTI*                       _baseRTTI;
+             uint64_t                        _baseIds;
+             uint64_t                        _classId;
+    public:
+      inline              FastRTTI     ( std::string className, const FastRTTI* baseRTTI );
+    public:               
+      inline uint64_t     classId      () const;
+      inline bool         hasBaseClass ( uint64_t ) const;
+      inline void         initialize   ();
+      inline std::string  _getString   () const;
+      inline Record*      _getRecord   () const;
+  };
+
+
+  FastRTTI::FastRTTI ( std::string className, const FastRTTI* baseRTTI )
+    : _className("<"+className+">")
+    , _baseRTTI(baseRTTI)
+    , _baseIds(0)
+  {
+    if (baseRTTI) const_cast<FastRTTI*>( baseRTTI )->initialize();
+    initialize();
+  }
+
+  inline uint64_t  FastRTTI::classId     () const { return _classId; }
+
+  inline bool  FastRTTI::hasBaseClass ( uint64_t baseClassId ) const
+  { return (_baseIds bitand baseClassId); }
+
+  inline void  FastRTTI::initialize ()
+  {
+    if (classId()) return;
+    _classId = (1 << _classBit++);
+
+    _classNames[ _classId ] = _className;
+    if (_baseRTTI) _baseIds = _baseRTTI->_baseIds;
+    _baseIds |= _classId;
+  }
+
+
+  template<typename Derived>
+  class derived_cast {
+    private:
+      Derived* _derivedPointer;
+    public:
+      template<typename Base>
+      inline  derived_cast ( Base* basePointer )
+        : _derivedPointer(nullptr)
+      {
+        if (not basePointer) return;
+        if (basePointer->vfastRTTI().hasBaseClass( Derived::fastRTTI().classId() ))
+          _derivedPointer = static_cast<Derived*>( basePointer );
+      }
+      inline  operator Derived* () const;
+  };
+
+  template<typename Derived>
+  inline derived_cast<Derived>::operator Derived* () const { return _derivedPointer; }
+
+
+}  // Hurricane namespace.
+
+
+INSPECTOR_P_SUPPORT(Hurricane::FastRTTI);
+
+
+namespace Hurricane {
+
+
+  inline std::string FastRTTI::_getString  () const { return _className + ":" + getString(_baseIds);  }
+
+  inline Record* FastRTTI::_getRecord () const
+  {
+    Record* record = new Record ( getString(this) );
+    for ( size_t bit=0 ; bit<64 ; ++bit ) {
+      uint64_t classMask = (((uint64_t)1) << bit);
+      if (_baseIds & classMask) {
+        std::string baseName = getString( classMask ) + " -> " + _classNames[ classMask ];
+        record->add( getSlot( getString(bit), baseName ));
+      }
+    }
+    return record;
+  }
+
+
+}  // Hurricane namespace.
