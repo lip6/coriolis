@@ -2337,6 +2337,7 @@ namespace Anabatic {
     if      (isSpinBottom()) --perpandicularDepth;
     else if (isSpinTop   ()) ++perpandicularDepth;
     else return true;
+    if (perpandicularDepth > Session::getAllowedDepth()) return false;
 
     return (getAnchoredLength() >= (Session::getPitch(perpandicularDepth) * 2));
   }
