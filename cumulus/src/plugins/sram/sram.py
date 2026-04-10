@@ -161,7 +161,8 @@ class Column ( object ):
 
     def __del__ ( self ):
         """ Needed to disable Python attribute uses on reference instance. """
-        PythonAttributes.disable( self.insts[0] )
+        if len(self.insts):
+            PythonAttributes.disable( self.insts[0] )
 
     @property
     def kind ( self ): return Column.KIND_COLUMN
