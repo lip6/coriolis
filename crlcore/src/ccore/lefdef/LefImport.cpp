@@ -343,6 +343,7 @@ namespace {
                                        , pinFilter.getXThreshold()
                                        , pinFilter.getYThreshold() );
     Box best;
+    Box offgrid;
     for ( Box& candidate : boxes ) {
       DbU::Unit widthAdjust  = candidate.getWidth () % DbU::twoGrid;
       DbU::Unit heightAdjust = candidate.getHeight() % DbU::twoGrid;
@@ -367,7 +368,11 @@ namespace {
           cdebug_log(100,0) << "  deltaMin=" << DbU::getValueString(deltaMin)
                             <<  " deltaMax=" << DbU::getValueString(deltaMax)
                             << endl;
-          if (trackMin > trackMax) continue;
+          if (trackMin > trackMax) {
+            if (offgrid.isEmpty() or pinFilter.match(candidate,offgrid))
+              offgrid = candidate;
+            continue;
+          }
           if (deltaMin < deltaMax) candidate.inflate( 0, 0, 0, -heightAdjust );
           else                     candidate.inflate( 0, -heightAdjust, 0, 0 );
         } else {
@@ -375,11 +380,18 @@ namespace {
         }
       }
       
-      if (widthAdjust ) candidate.inflate( 0, 0, -widthAdjust, 0 );
+      if (widthAdjust) candidate.inflate( 0, 0, -widthAdjust, 0 );
 
       cdebug_log(100,0) << "| " << candidate << endl;
       if (pinFilter.match(candidate,best))
         best = candidate;
+    }
+    if (best.isEmpty()) {
+      best = offgrid;
+      if (not rectilinear->getNet()->isSupply())
+        cerr << Warning( "LefParser::_createBestSegment(): Pin \"%s\" of \"%s\" has no terminal ongrid."
+                       , getString(rectilinear->getNet()->getName()).c_str()
+                       , getString(_cell->getName()).c_str() ) << endl;
     }
     if (not best.isEmpty()) {
       if (best.getWidth() < best.getHeight()) {
@@ -453,6 +465,8 @@ namespace {
   {
     auto item = _layerLut.find( layerName );
     if (item != _layerLut.end()) return (*item).second;
+
+    cdebug_log(100,0) <<  "LefParser::getLayer() Unknown layer name \"" << layerName << "\"." << endl;
     return NULL;
   }
 
@@ -1374,9 +1388,6 @@ namespace {
       }
 
       if (ongrids.empty()) {
-        if (not isSupply) 
-          cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
-                         , pinName.c_str() ) << endl;
         for ( Component* component : components ) {
           NetExternalComponents::setExternal( component );
           cdebug_log(100,0) << "| -> " << component << endl;
