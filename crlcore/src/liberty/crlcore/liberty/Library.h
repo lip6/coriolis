@@ -17,10 +17,10 @@
 #pragma once
 #include "SimpleGroup.h"
 #include "Statement.h"
+#include "hurricane/Library.h"
 #include <filesystem>
 #include <map>
 #include <string>
-#include <vector>
 
 namespace Liberty {
 
@@ -29,11 +29,12 @@ namespace Liberty {
    * */
   class Library: public SimpleGroup {
     public:
-      Library (const std::string &filepath);  // TODO: find a way to fiter stuff
+      Library (const std::string &filepath);
       ~Library ();
 
               Group      *getCellGroup(const std::string &cell_name               ) const ;
               void        addCellGroup(const std::string &cell_name, Group *group )       ;
+              void        mapLibertyToDb (Hurricane::DataBase *db)                  const ;
       inline  std::string getFilePath ()                                            const ;
 
       bool load(); /// Process the actual loading of library.

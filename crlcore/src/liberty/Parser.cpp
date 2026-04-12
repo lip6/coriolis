@@ -40,6 +40,7 @@ namespace Liberty {
       return false;
     State state = Default;
     Group *current = dynamic_cast<Group*>(lib);
+    bool CurrentIsLibrary = true;
     std::queue<Token> waiting;
 
     while (1) {
@@ -181,7 +182,12 @@ namespace Liberty {
                 // if (waiting.size() != 2  or waiting.front().type == Coma)
                 //   return _print_error(t);
                 if (waiting.size() == 2) {
-                  SimpleGroup *sgroup = new SimpleGroup(current);
+                  SimpleGroup *sgroup;
+                  if (CurrentIsLibrary) {
+                    sgroup = dynamic_cast<SimpleGroup*>(current);
+                    CurrentIsLibrary = false;
+                  } else
+                    sgroup = new SimpleGroup(current);
                   sgroup->setName(waiting.front().str);
                   waiting.pop();
                   sgroup->setGroupIdentifier(waiting.front().str);

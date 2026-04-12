@@ -1,4 +1,5 @@
 pyCRL_includes = include_directories('.')
+liberty_includes = include_directories('../liberty/crlcore/liberty')
 
 pyCRL_files = files([
   'PyCRL.cpp',
@@ -8,6 +9,7 @@ pyCRL_files = files([
   'PyCatalogState.cpp',
   'PyEnvironment.cpp',
   'PyAllianceLibrary.cpp',
+  'PyLiberty.cpp',
   'PyCellGauge.cpp',
   'PyRoutingGauge.cpp',
   'PyRoutingLayerGauge.cpp',
@@ -39,9 +41,9 @@ py.extension_module(
 pycrlcore = shared_library(
   'pycrlcore',
   pyCRL_files,
-  link_with: crlcore,
+  link_with: [crlcore, liberty],
   dependencies: [qt_deps, boost, Hurricane],
-  include_directories: crlcore_includes,
+  include_directories: [crlcore_includes, liberty_includes],
   install: true,
 )
 
@@ -49,9 +51,9 @@ pycrlcore = shared_library(
 py.extension_module(
   'CRL',
   pyCRL_files,
-  link_with: pycrlcore,
+  link_with: [pycrlcore, liberty],
   dependencies: [qt_deps, py_mod_deps, boost, Hurricane],
-  include_directories: crlcore_includes,
+  include_directories: [crlcore_includes, liberty_includes],
   subdir: 'coriolis',
   install: true
 )
