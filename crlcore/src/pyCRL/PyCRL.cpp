@@ -25,6 +25,7 @@
 #include "crlcore/PyAllianceFramework.h"
 #include "crlcore/PyEnvironment.h"
 #include "crlcore/PyAllianceLibrary.h"
+#include "crlcore/PyLiberty.h"
 #include "crlcore/PyCellGauge.h"
 #include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyRoutingLayerGauge.h"
@@ -97,12 +98,14 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   static PyMethodDef PyCRL_Methods[] =
-    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing      , METH_VARARGS
-                              , "Partial build of a ring" }
-    , { "restoreNetsDirection", (PyCFunction)PyToolBox_restoreNetsDirection, METH_VARARGS
-                              , "Compute and set nets direction of a complete cell hierarchy." }
-    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL         , METH_NOARGS
-                              , "Clear all VHDL informations on all cells." }
+    { { "createPartRing"             , (PyCFunction)PyToolBox_createPartRing       , METH_VARARGS
+                                     , "Partial build of a ring" }
+    , { "restoreNetsDirection"       , (PyCFunction)PyToolBox_restoreNetsDirection , METH_VARARGS
+                                     , "Compute and set nets direction of a complete cell hierarchy." }
+    , { "destroyAllVHDL"             , (PyCFunction)PyVhdl_destroyAllVHDL          , METH_NOARGS
+                                     , "Clear all VHDL informations on all cells." }
+    , { "getLibertyGroupFromCell"    , (PyCFunction)PyCRL_getLibertyGroupFromCell   , METH_VARARGS
+                                     , "Get the Liberty Group attached to a Hurricane Cell." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
@@ -120,6 +123,10 @@ extern "C" {
     PyCatalog_LinkPyType ();
     PyEnvironment_LinkPyType ();
     PyAllianceLibrary_LinkPyType ();
+    PyLibertyLibrary_LinkPyType ();
+    PyLibertyGroup_LinkPyType ();
+    PyLibertyAttribute_LinkPyType ();
+    PyLibertyValue_LinkPyType ();
     PyCellGauge_LinkPyType ();
     PyRoutingGauge_LinkPyType ();
     PyRoutingLayerGauge_LinkPyType ();
@@ -144,6 +151,10 @@ extern "C" {
     PYTYPE_READY_NEW ( Catalog );
     PYTYPE_READY_NEW ( Environment );
     PYTYPE_READY_NEW ( AllianceLibrary );
+    PYTYPE_READY_NEW ( LibertyLibrary );
+    PYTYPE_READY ( LibertyGroup );
+    PYTYPE_READY ( LibertyAttribute );
+    PYTYPE_READY ( LibertyValue );
     PYTYPE_READY_NEW ( CellGauge );
     PYTYPE_READY_NEW ( RoutingGauge );
     PYTYPE_READY_NEW ( RoutingLayerGaugeVector );
@@ -182,6 +193,14 @@ extern "C" {
     PyModule_AddObject ( module, "Catalog", (PyObject*)&PyTypeCatalog );
     Py_INCREF ( &PyTypeAllianceLibrary );
     PyModule_AddObject ( module, "AllianceLibrary", (PyObject*)&PyTypeAllianceLibrary );
+    Py_INCREF ( &PyTypeLibertyLibrary );
+    PyModule_AddObject ( module, "LibertyLibrary", (PyObject*)&PyTypeLibertyLibrary );
+    Py_INCREF ( &PyTypeLibertyGroup );
+    PyModule_AddObject ( module, "LibertyGroup", (PyObject*)&PyTypeLibertyGroup );
+    Py_INCREF ( &PyTypeLibertyAttribute );
+    PyModule_AddObject ( module, "LibertyAttribute", (PyObject*)&PyTypeLibertyAttribute );
+    Py_INCREF ( &PyTypeLibertyValue );
+    PyModule_AddObject ( module, "LibertyValue", (PyObject*)&PyTypeLibertyValue );
     Py_INCREF ( &PyTypeEnvironment );
     PyModule_AddObject ( module, "Environment", (PyObject*)&PyTypeEnvironment );
     Py_INCREF ( &PyTypeCellGauge );

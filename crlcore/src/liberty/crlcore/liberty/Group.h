@@ -15,7 +15,7 @@
 
 #pragma once
 #include "Statement.h"
-#include <istream>
+#include "Attribute.h"
 #include <map>
 #include <string>
 #include <string_view>
@@ -42,7 +42,7 @@ namespace Liberty {
       ~Group();
 
       inline        bool      isGroup           ()                      const override;
-      inline        void      addStatement      (Statement *statement)                ;
+                    void      addStatement      (Statement *statement)                ;
                     Library  *getLibrary        ()                                    ;
       inline        void      clear_statements  ()                                    ;
 
@@ -65,13 +65,6 @@ namespace Liberty {
   inline bool Group::isGroup() const
   {
     return true;
-  }
-
-  inline void Group::addStatement(Statement *statement)
-  {
-    _statements.push_back(statement);
-    if (statement->isAttribute())
-      _attributes.at(statement->getName()) = statement->getAsAttribute();
   }
 
   inline const std::vector<Statement*> &Group::getStatements() const

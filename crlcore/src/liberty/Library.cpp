@@ -15,9 +15,15 @@
 
 
 #include "crlcore/liberty/Library.h"
+#include "crlcore/liberty/LibertyLibProperty.h"
+#include "crlcore/liberty/LibertyProperty.h"
 #include "crlcore/liberty/Parser.h"
 #include "crlcore/liberty/SimpleGroup.h"
 #include "crlcore/liberty/Statement.h"
+#include "hurricane/Cells.h"
+#include "hurricane/Library.h"
+#include "hurricane/DataBase.h"
+#include <cstddef>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -33,26 +39,16 @@ namespace Liberty {
 
   bool Library::load() {
     Parser parser(_path.string());
-    if (not parser.parse(this))
-      return false;
-    // we need to make library top level.
-    SimpleGroup *actual = dynamic_cast<SimpleGroup*>(this->_statements.front()->getAsGroup());
-    if (!actual)
-      return false;
-    _statements.clear();
-    _statements = actual->getStatements();
-    this->setName(actual->getName());
-    this->setGroupIdentifier(actual->getGroupIdentifier());
-    actual->clear_statements();
-    delete actual;
-    return true;
+    return parser.parse(this);
   }
 
   Group *Library::getCellGroup(const std::string &cell_name) const
   {
-    if (_cells.find(cell_name) == _cells.end())
-      return nullptr;
-    return _cells.at(cell_name);
+    auto it = _cells.find(cell_name);
+    if (it != _cells.end()) {
+      return it->second;
+    }
+    return nullptr;
   }
 
   void Library::_include(const std::string &filename) {
@@ -62,13 +58,40 @@ namespace Liberty {
   }
 
   void Library::addCellGroup(const std::string &cell_name, Group *group) {
-    std::cout << "Adding cell '" << cell_name << "'" << std::endl;
-    if (_cells.find(cell_name) != _cells.end()) {
-      if (_cells.at(cell_name))
-        delete _cells.at(cell_name);
-      _cells[cell_name] = nullptr;
+    auto it = _cells.find(cell_name);
+    if (it != _cells.end()) {
+      if (it->second)
+        delete it->second;
+      it->second = group;
+      return;
     }
-    _cells[cell_name] = group;
+    _cells.insert({cell_name, group});
   }
 
+  void Library::mapLibertyToDb(Hurricane::DataBase *db) const
+  {
+    using Hurricane::Cell;
+
+    Hurricane::Library* root = db->getRootLibrary();
+    size_t count = 0;
+
+    for (Hurricane::Library * lib : root->getLibraries()) {
+      for (Cell *cell : lib->getCells()) {
+        Group *liberty_cell = getCellGroup(cell->getName()._getString());
+        if (!liberty_cell) {
+          std::cerr << "[WARNING] Cell " << cell->getName()._getString()<< " is not found in Liberty library "
+            << _path.filename()<< std::endl;
+          continue;
+        }
+        LibertyProperty *property = new LibertyProperty(liberty_cell);
+        cell->put(property);
+        count++;
+      }
+    }
+    std::cout << "[INFO] Matched " << count << " cells of library. Added Liberty infos." << std::endl;
+
+    // Make db own Liberty::Library to free it properly (at this point python won't do it).
+    LibertyLibProperty *library_prop = new LibertyLibProperty(this);
+    db->put(library_prop);
+  }
 }
