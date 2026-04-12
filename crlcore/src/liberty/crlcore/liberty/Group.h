@@ -16,6 +16,7 @@
 #pragma once
 #include "Statement.h"
 #include <istream>
+#include <map>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -54,7 +55,8 @@ namespace Liberty {
       Attribute  *getAttribute( const std::string &attribute_name ) const;
     protected:
       // group_name of group is in the parent class Statement.
-      std::vector< Statement* > _statements;
+      std::vector< Statement* >           _statements;
+      std::map<std::string, Attribute *>  _attributes;
     private:
       // NEVER access directly this pointer, use getLibrary !!!
       Library                  *_library;
@@ -68,6 +70,8 @@ namespace Liberty {
   inline void Group::addStatement(Statement *statement)
   {
     _statements.push_back(statement);
+    if (statement->isAttribute())
+      _attributes.at(statement->getName()) = statement->getAsAttribute();
   }
 
   inline const std::vector<Statement*> &Group::getStatements() const

@@ -51,14 +51,7 @@ namespace Liberty {
 
   Attribute *Group::getAttribute(const std::string &attribute_name) const
   {
-    Statement *ret;
-    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
-      if (item->isAttribute())
-        return false;
-      Attribute *a = item->getAsAttribute();
-      return a->getName() == attribute_name;
-    });
-    return ret->getAsAttribute();
+    return _attributes.at(attribute_name);
   }
 
   Library *Group::getLibrary()
