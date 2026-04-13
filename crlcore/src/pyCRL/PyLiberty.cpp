@@ -289,6 +289,17 @@ extern "C" {
   }
 
 
+  static PyObject* PyLibertyGroup_getGroupName ( PyLibertyGroup* self )
+  {
+    cdebug_log(30,0) << "PyLibertyGroup_getGroupName()" << endl;
+    HTRY
+      METHOD_HEAD_GROUP("LibertyGroup.getGroupName()")
+      return PyString_FromString( group->getGroupName().c_str() );
+    HCATCH
+    return NULL;
+  }
+
+
   static PyObject* PyLibertyGroup_getStatements ( PyLibertyGroup* self )
   {
     cdebug_log(30,0) << "PyLibertyGroup_getStatements()" << endl;
@@ -334,6 +345,28 @@ extern "C" {
   }
 
 
+  static PyObject* PyLibertyGroup_getGroups ( PyLibertyGroup* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyLibertyGroup_getGroups()" << endl;
+    HTRY
+      METHOD_HEAD_GROUP("LibertyGroup.getGroups()")
+      char* groupNameRegex = NULL;
+      if ( not PyArg_ParseTuple( args, "s:LibertyGroup.getGroups", &groupNameRegex ) ) {
+        PyErr_SetString( ConstructorError, "LibertyGroup.getGroups(): Invalid arguments." );
+        return NULL;
+      }
+
+      std::vector<Liberty::Group*> groups = group->getGroups( groupNameRegex );
+      PyObject* list = PyList_New( groups.size() );
+      for ( size_t i = 0; i < groups.size(); ++i ) {
+        PyList_SetItem( list, i, PyLibertyGroup_Link(groups[i]) );
+      }
+      return list;
+    HCATCH
+    return NULL;
+  }
+
+
   static PyObject* PyLibertyGroup_getAttribute ( PyLibertyGroup* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyLibertyGroup_getAttribute()" << endl;
@@ -355,10 +388,14 @@ extern "C" {
   PyMethodDef PyLibertyGroup_Methods[] =
     { { "getName"       , (PyCFunction)PyLibertyGroup_getName       , METH_NOARGS
                         , "Return the name of the group." }
+    , { "getGroupName"  , (PyCFunction)PyLibertyGroup_getGroupName  , METH_NOARGS
+                        , "Return the group identifier (cell, pin, timing, ...)." }
     , { "getStatements" , (PyCFunction)PyLibertyGroup_getStatements , METH_NOARGS
                         , "Return list of statements (Groups and Attributes) in this group." }
     , { "getGroup"      , (PyCFunction)PyLibertyGroup_getGroup      , METH_VARARGS
                         , "Get a sub-group by name." }
+    , { "getGroups"     , (PyCFunction)PyLibertyGroup_getGroups     , METH_VARARGS
+              , "Get all sub-groups whose group name matches a regex." }
     , { "getAttribute"  , (PyCFunction)PyLibertyGroup_getAttribute  , METH_VARARGS
                         , "Get an attribute by name." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

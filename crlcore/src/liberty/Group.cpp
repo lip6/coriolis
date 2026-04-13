@@ -18,9 +18,12 @@
 #include "crlcore/liberty/Library.h"
 #include "crlcore/liberty/Statement.h"
 #include <algorithm>
+#include <boost/process/group.hpp>
 #include <iostream>
+#include <regex>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace Liberty {
 
@@ -59,14 +62,29 @@ namespace Liberty {
 
   Group *Group::getGroup(const std::string &group_name) const
   {
-    Statement *ret;
-    ret = *std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
+    auto ret = std::find_if(_statements.begin(), _statements.end(), [&](Statement *item){
       if (not item->isGroup())
         return false;
       Group *g = item->getAsGroup();
-      return g->getName() == group_name;
+      return g->getGroupName() == group_name;
     });
-    return ret->getAsGroup();
+    if (ret == _statements.end())
+        return nullptr;
+    return (*ret)->getAsGroup();
+  }
+
+  std::vector<Group *> Group::getGroups(const std::string &group_name_regex) const
+  {
+    std::regex rgx(group_name_regex);
+    std::vector<Group *> ret;
+    for (Statement *s:_statements) {
+      if (not s->isGroup())
+        continue;
+      Group *g = s->getAsGroup();
+      if (std::regex_match(g->getGroupName(), rgx))
+        ret.push_back(g);
+    }
+    return ret;
   }
 
   Attribute *Group::getAttribute(const std::string &attribute_name) const

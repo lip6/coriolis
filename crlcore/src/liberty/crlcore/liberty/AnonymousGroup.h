@@ -15,6 +15,7 @@
 
 #pragma once
 #include "Group.h"
+#include <string>
 
 namespace Liberty {
 
@@ -31,6 +32,13 @@ namespace Liberty {
     public:
       AnonymousGroup(Group *parent);
       ~AnonymousGroup();
+
+      inline std::string getGroupName() const override;
   };
+
+  inline std::string AnonymousGroup::getGroupName() const
+  {
+    return _name + "()";
+  }
 
 }
